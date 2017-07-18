@@ -61,6 +61,7 @@ typedef NS_ENUM(NSInteger, ZIKViewRouteRealType) {
 };
 
 @class ZIKViewRouter, ZIKViewRouteConfiguration, ZIKViewRemoveConfiguration;
+@protocol ZIKViewRouteSource;
 
 /**
  Error handler for all view router, for debug and log.
@@ -118,7 +119,8 @@ typedef void(^ZIKRouteGlobalErrorHandler)(__kindof ZIKViewRouter * _Nullable rou
 - (nullable instancetype)initWithConfigure:(void(NS_NOESCAPE ^)(__kindof ZIKViewRouteConfiguration *config))configAction
                            removeConfigure:(void(NS_NOESCAPE ^ _Nullable)(__kindof ZIKViewRemoveConfiguration *config))removeConfigAction;
 
-- (nullable instancetype)initForInitialView:(UIViewController *)initialViewController configure:(void(NS_NOESCAPE ^)(__kindof ZIKViewRouteConfiguration *config))configAction;
+///The initial view controller of storyboard for launching app is not from segue, so you have to manually create it's router and do -performRoute to prepare it. The first calling of -performXXX methods only do preparation for router inited with this method, after first calling, it can perform normally. You can use this to prepare other view create from external.
+- (nullable instancetype)initForExternalView:(id<ZIKViewRouteSource>)externalView configure:(void(NS_NOESCAPE ^ _Nullable)(__kindof ZIKViewRouteConfiguration *config))configAction;
 /**
  Whether can perform a view route now
  @discusstion
@@ -238,7 +240,6 @@ typedef NS_ENUM(NSInteger, ZIKViewRouteError) {
 #pragma mark Configuration
 
 @class ZIKViewRoutePopoverConfiguration,ZIKViewRouteSegueConfiguration;
-@protocol ZIKViewRouteSource;
 @protocol ZIKViewRouteContainer;
 typedef UIViewController<ZIKViewRouteContainer>*_Nonnull(^ZIKViewRouteContainerWrapper)(UIViewController *destination);
 typedef void(^ZIKViewRoutePopoverConfigure)(ZIKViewRoutePopoverConfiguration *popoverConfig);

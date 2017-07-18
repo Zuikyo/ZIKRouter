@@ -192,7 +192,7 @@ static dispatch_semaphore_t g_globalErrorSema;
 @interface ZIKViewRouter ()<ZIKRouterProtocol,ZIKViewRouterProtocol>
 @property (nonatomic, assign) BOOL routingFromInternal;
 @property (nonatomic, assign) ZIKViewRouteRealType realRouteType;
-@property (nonatomic, assign) BOOL isExternalView;
+@property (nonatomic, assign) BOOL preparingExternalView;
 @property (nonatomic, strong, nullable) ZIKPresentationState *stateBeforeRoute;
 @property (nonatomic, weak, nullable) UIViewController<ZIKViewRouteContainer> *container;
 @property (nonatomic, strong, nullable) ZIKViewRouter *retainedSelf;
@@ -725,9 +725,25 @@ _Nullable Class ZIKViewRouterForConfig(Protocol<ZIKRoutableConfigDynamicGetter> 
     return self;
 }
 
-- (nullable instancetype)initForInitialView:(UIViewController *)initialViewController configure:(void(NS_NOESCAPE ^)(__kindof ZIKViewRouteConfiguration *config))configAction {
-    NSParameterAssert([initialViewController conformsToProtocol:@protocol(ZIKRoutableView)]);
-    if (![initialViewController conformsToProtocol:@protocol(ZIKRoutableView)]) {
+- (nullable instancetype)initForExternalView:(id<ZIKViewRouteSource>)externalView configure:(void(NS_NOESCAPE ^ _Nullable)(__kindof ZIKViewRouteConfiguration *config))configAction {
+    if (![externalView conformsToProtocol:@protocol(ZIKRoutableView)]) {
+        [[self class] _o_callbackGlobalErrorHandlerWithRouter:nil action:@selector(init) error:[[self class] errorWithCode:ZIKViewRouteErrorInvalidConfiguration localizedDescription:[NSString stringWithFormat:@"init for invalid external view: (%@)",externalView]]];
+        NSAssert(NO, @"init for invalid external view");
+        return nil;
+    }
+    CFMutableSetRef routers = (CFMutableSetRef)CFDictionaryGetValue(g_viewToRoutersMap, (__bridge const void *)([externalView class]));
+    BOOL valid = YES;
+    if (!routers) {
+        valid = NO;
+    } else {
+        NSSet *registeredRouters = (__bridge NSSet *)(routers);
+        if (![registeredRouters containsObject:[self class]]) {
+            valid = NO;
+        }
+    }
+    if (!valid) {
+        [[self class] _o_callbackGlobalErrorHandlerWithRouter:nil action:@selector(init) error:[[self class] errorWithCode:ZIKViewRouteErrorInvalidConfiguration localizedDescription:[NSString stringWithFormat:@"init for invalid external view, this view is not registered with this router: (%@)",externalView]]];
+        NSAssert(NO, @"init for invalid external view, this view is not registered with this router");
         return nil;
     }
     ZIKViewRouteConfiguration *configuration = [[self class] defaultRouteConfiguration];
@@ -738,9 +754,9 @@ _Nullable Class ZIKViewRouterForConfig(Protocol<ZIKRoutableConfigDynamicGetter> 
     configuration.autoCreated = YES;
     configuration.handleExternalRoute = YES;
     self = [self initWithConfiguration:configuration removeConfiguration:nil];
-    [self attachDestination:initialViewController];
-    self.isExternalView = YES;
-    [initialViewController setZIK_routeTypeFromRouter:@(ZIKViewRouteTypeGetDestination)];
+    [self attachDestination:externalView];
+    self.preparingExternalView = YES;
+    [(id)externalView setZIK_routeTypeFromRouter:@(ZIKViewRouteTypeGetDestination)];
     return self;
 }
 
@@ -957,8 +973,8 @@ _Nullable Class ZIKViewRouterForConfig(Protocol<ZIKRoutableConfigDynamicGetter> 
     NSParameterAssert(configuration);
     NSAssert([[[self class] defaultRouteConfiguration] isKindOfClass:[configuration class]], @"When using custom configuration class，you must override +defaultRouteConfiguration to return your custom configuration instance.");
     
-    if (self.isExternalView) {
-        [self prepareForPerformRouteOnDestination:self.destination];
+    if (self.preparingExternalView) {
+        [self _o_performRouteForPreparingExternalView];
         return;
     }
     if (configuration.routeType == ZIKViewRouteTypePerformSegue) {
@@ -974,6 +990,16 @@ _Nullable Class ZIKViewRouterForConfig(Protocol<ZIKRoutableConfigDynamicGetter> 
             [super performWithConfiguration:configuration];
         });
     }
+}
+
+- (void)_o_performRouteForPreparingExternalView {
+    id destination = self.destination;
+    NSAssert(destination, @"Destination can't be nil for preparing external view");
+    [self notifyRouteState:ZIKRouterStateRouting];
+    [self prepareForPerformRouteOnDestination:destination];
+    [self notifyRouteState:ZIKRouterStateRouted];
+    [self notifyPerformRouteSuccessWithDestination:destination];
+    self.preparingExternalView = NO;
 }
 
 + (__kindof ZIKViewRouter *)performWithSource:(id)source {
@@ -1653,30 +1679,6 @@ destinationStateBeforeRoute:(ZIKPresentationState *)destinationStateBeforeRoute
         }
         return NO;
     }
-    
-//    if (routeType == ZIKViewRouteTypeGetDestination) {
-//        if (message) {
-//            *message = [NSString stringWithFormat:@"Router can't remove, ZIKViewRouteTypeGetDestination doesn't support remove. router:%@",self];
-//        }
-//        return NO;
-//    }
-    
-    //TODO:当view是从代码中执行route，通过hook willMoveToParent精确判断
-    //update realRouteType
-//    if (realRouteType == ZIKViewRouteRealTypeUnknown) {
-//        if ([destination isKindOfClass:[UIViewController class]]) {
-//            realRouteType = [[self class] _o_realRouteTypeForViewController:destination];
-//        } else if ([destination isKindOfClass:[UIView class]]) {
-//            if ([self _o_canRemoveFromSuperview]) {
-//                realRouteType = ZIKViewRouteRealTypeAddAsSubview;
-//            } else {
-//                realRouteType = ZIKViewRouteRealTypeCustom;
-//            }
-//        } else {
-//            realRouteType = ZIKViewRouteRealTypeCustom;
-//        }
-//        self.realRouteType = realRouteType;
-//    }
     
     switch (realRouteType) {
         case ZIKViewRouteRealTypeUnknown:
@@ -2371,7 +2373,7 @@ destinationStateBeforeRoute:(ZIKPresentationState *)destinationStateBeforeRoute
                     }
                     NSAssert(ZIKClassIsCustomClass(performer), @"performer should be a subclass of UIViewController in your project.");
                 }
-                
+                //todo:get performer in -viewDidLoad of superview's controller 
                 ZIKViewRouter *destinationRouter = [routerClass routerFromView:destination source:source];
                 destinationRouter.routingFromInternal = YES;
                 destinationRouter.realRouteType = ZIKViewRouteRealTypeAddAsSubview;
