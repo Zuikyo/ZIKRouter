@@ -15,7 +15,7 @@ BOOL ZIKClassIsCustomClass(Class class) {
     if (!class) {
         return NO;
     }
-    if ([NSBundle bundleForClass:class] == [NSBundle mainBundle]) {
+    if ([[NSBundle bundleForClass:class] isEqual:[NSBundle mainBundle]]) {
         return YES;
     }
     return NO;
