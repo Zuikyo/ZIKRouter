@@ -99,7 +99,12 @@ RegisterRoutableViewWithConfigProtocol(UIAlertView, ZIKCompatibleAlertConfigProt
 
 #pragma mark Implementation for custom route
 
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wincomplete-implementation"
+
 @implementation ZIKCompatibleAlertViewRouter
+
+#pragma clang diagnostic pop
 
 - (id)destinationWithConfiguration:(ZIKCompatibleAlertViewConfiguration *)configuration {
     id destination;

@@ -26,7 +26,7 @@ DeclareRoutableConfigProtocol(ZIKCompatibleAlertConfigProtocol, ZIKCompatibleAle
 - (ZIKCompatibleAlertViewConfiguration *)configuration;
 
 - (nullable instancetype)initWithConfiguration:(ZIKCompatibleAlertViewConfiguration *)configuration
-                           removeConfiguration:(nullable ZIKCompatibleAlertViewConfiguration *)removeConfiguration NS_DESIGNATED_INITIALIZER;
+                           removeConfiguration:(nullable ZIKCompatibleAlertViewConfiguration *)removeConfiguration;
 
 - (nullable instancetype)initWithConfigure:(void(^)(ZIKCompatibleAlertViewConfiguration *config))configAction
                            removeConfigure:(void(^ _Nullable)(__kindof ZIKViewRemoveConfiguration *config))removeConfigAction;

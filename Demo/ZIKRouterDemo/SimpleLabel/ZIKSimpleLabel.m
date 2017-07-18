@@ -9,6 +9,7 @@
 #import "ZIKSimpleLabel.h"
 
 @implementation ZIKSimpleLabel
+@dynamic frame;
 
 - (void)willMoveToSuperview:(UIView *)newSuperview {
     [super willMoveToSuperview:newSuperview];
