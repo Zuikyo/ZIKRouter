@@ -12,51 +12,103 @@ NS_ASSUME_NONNULL_BEGIN
 
 @class ZIKRouteConfiguration;
 
-///ZIKRouter的子类要实现的协议
+///ZIKRouter subclass
 @protocol ZIKRouterProtocol <NSObject>
 @required
-///生成目标对象，并传入初始化参数
+///Generate destination and initilize it with configuration
 - (id)destinationWithConfiguration:(__kindof ZIKRouteConfiguration *)configuration;
-///在这里执行具体的路由逻辑
-- (void)performRouteOnDestination:(id)destination fromSource:(id)source;
+///Perform your custom route action
+- (void)performRouteOnDestination:(nullable id)destination configuration:(__kindof ZIKRouteConfiguration *)configuration;
 + (__kindof ZIKRouteConfiguration *)defaultRouteConfiguration;
 
 @optional
-- (void)performWithConfiguration:(__kindof ZIKRouteConfiguration *)configuration;
+- (BOOL)canPerform;
+- (BOOL)canRemove;
+//If you can undo your route action, such as dismiss a routed view, do remove in this
+- (void)removeDestination:(id)destination configuration:(__kindof ZIKRouteConfiguration *)removeConfiguration;
++ (__kindof ZIKRouteConfiguration *)defaultRemoveConfiguration;
+
 - (NSString *)errorDomain;
 
 @end
 
-///路由的基类，不能直接使用
-@interface ZIKRouter : NSObject <ZIKRouterProtocol>
-@property (nonatomic,readonly, strong) __kindof ZIKRouteConfiguration *configuration;
+typedef NS_ENUM(NSInteger, ZIKRouterState) {
+    ZIKRouterStateNotRoute,
+    ZIKRouterStateRouting,
+    ZIKRouterStateRouted,
+    ZIKRouterStateRouteFailed,
+    ZIKRouterStateRemoving,
+    ZIKRouterStateRemoved,
+    ZIKRouterStateRemoveFailed
+};
 
-- (instancetype)initWithConfiguration:(__kindof ZIKRouteConfiguration *)configuration NS_DESIGNATED_INITIALIZER;
-- (instancetype)initWithConfigure:(void(^)(__kindof ZIKRouteConfiguration * configuration))configAction;
+///Abstract class for router
+@interface ZIKRouter : NSObject <ZIKRouterProtocol>
+///State of route, not thread safe
+@property (nonatomic, readonly, assign) ZIKRouterState state;
+///Configuration for performRoute; return copy of configuration, so modify this won't change the real configuration inside router
+@property (nonatomic, readonly, copy) __kindof ZIKRouteConfiguration *configuration;
+///Configuration for removeRoute; return copy of configuration, so modify this won't change the real configuration inside router
+@property (nonatomic, readonly, copy ,nullable) __kindof ZIKRouteConfiguration *removeConfiguration;
+//Latest error when route action failed
+@property (nonatomic, readonly, strong, nullable) NSError *error;
+
+- (nullable instancetype)initWithConfiguration:(__kindof ZIKRouteConfiguration *)configuration
+                           removeConfiguration:(nullable __kindof ZIKRouteConfiguration *)removeConfiguration NS_DESIGNATED_INITIALIZER;
+///Convenient method to create configuration in a builder block
+- (nullable instancetype)initWithConfigure:(void(NS_NOESCAPE ^)(__kindof ZIKRouteConfiguration *config))configAction
+                           removeConfigure:(void(NS_NOESCAPE ^ _Nullable)( __kindof ZIKRouteConfiguration *config))removeConfigAction;
 - (instancetype)init NS_UNAVAILABLE;
 
+- (BOOL)canPerform;
+///Not thread safe
 - (void)performRoute;
+///Not thread safe
+- (void)performRouteWithSuccessHandler:(void(^ __nullable)(void))performerSuccessHandler
+                    performerErrorHandler:(void(^ __nullable)(SEL routeAction, NSError *error))performerErrorHandler;
 
-///当目标对象不需要初始化参数时，可以直接执行
-+ (void)performWithSource:(id)source;
-///传入目标对象需要的初始化参数后执行
-+ (void)performWithConfigure:(void(^ NS_NOESCAPE)(__kindof ZIKRouteConfiguration *configuration))configAction;
+- (BOOL)canRemove;
+///Not thread safe
+- (void)removeRoute;
+///Not thread safe
+- (void)removeRouteWithSuccessHandler:(void(^ __nullable)(void))performerSuccessHandler
+                   performerErrorHandler:(void(^ __nullable)(SEL routeAction, NSError *error))performerErrorHandler;
 
+///If this route action doesn't need any argument, just perform directly
++ (nullable __kindof ZIKRouter *)performRoute;
+///Set dependencies required by destination and perform route
++ (nullable __kindof ZIKRouter *)performWithConfigure:(void(NS_NOESCAPE ^)(__kindof ZIKRouteConfiguration *configuration))configAction;
++ (nullable __kindof ZIKRouter *)performWithConfigure:(void(NS_NOESCAPE ^)(__kindof ZIKRouteConfiguration *configuration))configAction
+                                      removeConfigure:(void(NS_NOESCAPE ^)(__kindof ZIKRouteConfiguration *configuration))removeConfigAction;
+
++ (NSString *)descriptionOfState:(ZIKRouterState)state;
 @end
 
-@interface ZIKRouter (SubClassPrivate)
+typedef void(^ZIKRouteErrorHandler)(SEL routeAction, NSError *error);
+typedef void(^ZIKRouteStateNotifier)(ZIKRouterState oldState, ZIKRouterState newState);
 
-+ (NSError *)errorWithCode:(NSInteger)code userInfo:(nullable NSDictionary *)userInfo;
-+ (NSError *)errorWithCode:(NSInteger)code localizedDescription:(NSString *)description;
-- (void)errorCallbackWithRouteAction:(SEL)routeAction error:(NSError *)error;
+///For config destination
+@interface ZIKRouteConfiguration : NSObject <NSCopying>
 
-@end
+/**
+ @note
+ Use weakSelf in providerErrorHandler to avoid retain cycle.
+ */
+@property (nonatomic, copy, nullable) ZIKRouteErrorHandler providerErrorHandler;
 
-///用于配置目标对象，传递需要的初始化参数
-@interface ZIKRouteConfiguration : NSObject
-///方法的调用者，可以在这里进行权限限制
-@property (nonatomic, weak) id source;
-@property (nonatomic, copy, nullable) void(^errorHandler)(SEL routeAction, NSError *error);
+/**
+ @note
+ Use weakSelf in providerSuccessHandler to avoid retain cycle.
+ */
+@property (nonatomic, copy, nullable) void(^providerSuccessHandler)(void);
+@property (nonatomic, copy, nullable) ZIKRouteErrorHandler performerErrorHandler;
+@property (nonatomic, copy, nullable) void(^performerSuccessHandler)(void);
+
+/**
+ @note
+ Use weakSelf in stateNotifier to avoid retain cycle.
+ */
+@property (nonatomic, copy, nullable) ZIKRouteStateNotifier stateNotifier;
 @end
 
 NS_ASSUME_NONNULL_END
