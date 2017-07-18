@@ -15,7 +15,12 @@ BOOL ZIKClassIsCustomClass(Class class) {
     if (!class) {
         return NO;
     }
-    if ([[NSBundle bundleForClass:class] isEqual:[NSBundle mainBundle]]) {
+    static NSString *mainBundlePath;
+    static dispatch_once_t onceToken;
+    dispatch_once(&onceToken, ^{
+        mainBundlePath = [[NSBundle mainBundle] bundlePath];
+    });
+    if ([[[NSBundle bundleForClass:class] bundlePath] isEqualToString:mainBundlePath]) {
         return YES;
     }
     return NO;
