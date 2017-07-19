@@ -95,9 +95,15 @@ typedef void(^ZIKRouteGlobalErrorHandler)(__kindof ZIKViewRouter * _Nullable rou
  
  Method swizzle declaration:
  
- What did ZIKViewRouter hooked: -willMoveToParentViewController:, -didMoveToParentViewController:, -viewWillAppear:, -viewDidAppear:, -viewWillDisappear:, -viewDidDisappear:, -willMoveToSuperview:, -didMoveToSuperview, -willMoveToWindow:, -didMoveToWindow, all UIViewControllers' -prepareForSegue:sender:, all UIStoryboardSegues' -perform.
+ What did ZIKViewRouter hooked: -willMoveToParentViewController:, -didMoveToParentViewController:, -viewWillAppear:, -viewDidAppear:, -viewWillDisappear:, -viewDidDisappear:, -viewDidLoad, -willMoveToSuperview:, -didMoveToSuperview, -willMoveToWindow:, -didMoveToWindow, all UIViewControllers' -prepareForSegue:sender:, all UIStoryboardSegues' -perform.
  
- ZIKViewRouter hooks these methods for simple AOP. -willMoveToWindow:, -prepareForSegue:sender: will detect if the view is registered with a router, and auto create a router if it's not routed from it's router.
+ ZIKViewRouter hooks these methods for AOP. -willMoveToSuperview, -willMoveToWindow:, -prepareForSegue:sender: will detect if the view is registered with a router, and auto create a router if it's not routed from it's router.
+ 
+ About auto create:
+ 
+ When a UIViewController is registered, and is routing from storyboard segue, a router will be auto created to prepare the UIViewController. If the destination needs preparing, the segue's performer is responsible for preparing in delegate method -prepareForDestinationRoutingFromExternal:configuration:. But if a UIViewController is routed from code manually, ZIKViewRouter won't auto create router, only get AOP notify, because we can't find the performer to prepare the destination. So you should avoid route the UIViewController from code manually, if you use a router as a dependency injector for preparing the UIViewController. You can check whether the destination is prepared in those AOP delegate methods.
+ 
+ When Adding a registered UIView by code or xib, a router will be auto created. We search the view controller with custom class (not system class like native UINavigationController, or any container view controller) in it's view hierarchy as the performer. If the registered UIView needs preparing, you have to add the view to a superview in a view controller before it removed from superview. If there is no view controller to prepare it(1. add it to a superview, and the superview is never added to a view controller; 2. add it to a UIWindow). If your custom class view use a routable view as it's part, the custom view should use a router to add and prepare the routable view, then the routable view don't need to search performer because it already prepared.
  */
 @interface ZIKViewRouter : ZIKRouter
 ///If this router's view is a UIViewController routed from storyboard, or a UIView added as subview from xib or code, a router will be auto created to prepare the view, and the router's autoCreated is YES; But when a UIViewController is routed from code manually or is the initial view controller of app in storyboard, router won't be auto created because we can't find the performer to prepare the destination.
@@ -158,7 +164,7 @@ typedef void(^ZIKRouteGlobalErrorHandler)(__kindof ZIKViewRouter * _Nullable rou
  
  4. If route type is adaptative type, it will choose different presentation for different situation (ZIKViewRouteTypePerformSegue, ZIKViewRouteTypeShow, ZIKViewRouteTypeShowDetail). Then if it's real route type is not Push/PresentModally/PresentAsPopover/AddAsChildViewController, destination can't be removed.
  
- 5. Router was auto created when destination is displayed, so router don't know destination's state before route, and can't analyze it's real route type to do corresponding remove action.
+ 5. Router was auto created when a destination is displayed and not from storyboard, so router don't know destination's state before route, and can't analyze it's real route type to do corresponding remove action.
  
  6. Destination's route type is complicated and is considered as custom route type. Such as destination is added to a UITabBarController, then added to a UINavigationController, and finally presented modally. We don't know the remove action should do dismiss or pop or remove from it's UITabBarController.
  
@@ -626,8 +632,8 @@ ZIKViewRouterRegisterViewWithConfigProtocolForExclusiveRouter(self, @protocol(Un
 /**
  Register a viewClass with it's router's class, so we can create the router of a view when view is not created from router(UIViewController from storyboard or UIView added with -addSubview:, can't detect UIViewController displayed from code because we can't get the performer vc), and require the performer to config the view, and get AOP notified for some route actions. Always use macro RegisterRoutableView to quick register.
  @note
- One view may be registered with multi routers, when view is routed from storyboard or -addSubview:, a router will be auto created from one of the registered router classes randomly.
- One router may manage multi views.
+ One view may be registered with multi routers, when view is routed from storyboard or -addSubview:, a router will be auto created from one of the registered router classes randomly. If you want to use a certain router, see ZIKViewRouterRegisterViewForExclusiveRouter().
+ One router may manage multi views. You can register multi view classes to a same router class.
  
  @param viewClass The view class managed by router
  @param routerClass The router class to bind with view class
@@ -669,6 +675,7 @@ extern void ZIKViewRouterRegisterViewWithViewProtocolForExclusiveRouter(Class vi
 ///This is a ZIKViewRouterRegisterViewWithConfigProtocol() for ZIKViewRouterRegisterViewForExclusiveRouter(), read their comments.
 extern void ZIKViewRouterRegisterViewWithConfigProtocolForExclusiveRouter(Class viewClass, Protocol *configProtocol, Class routerClass);
 
+///If a UIViewController or UIView conforms to ZIKRoutableView, means there is a router class for it. Don't use it in other place.
 @protocol ZIKRoutableView <NSObject>
 
 @end

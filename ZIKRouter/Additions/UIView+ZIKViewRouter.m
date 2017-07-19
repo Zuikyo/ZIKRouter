@@ -77,9 +77,6 @@ BOOL ZIKClassIsCustomClass(Class class) {
         }
         return parent;
     } else if ([nextResponder isKindOfClass:[UIView class]]) {
-        if (ZIKClassIsCustomClass([nextResponder class])) {
-            return nextResponder;
-        }
         return [(UIView *)nextResponder ZIK_routePerformer];
     } else {
         return nil;

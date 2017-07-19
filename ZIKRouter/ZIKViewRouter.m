@@ -2311,6 +2311,119 @@ destinationStateBeforeRoute:(ZIKPresentationState *)destinationStateBeforeRoute
     }
 }
 
+///Add subview by code or storyboard will auto create a corresponding router. We assume it's superview's view controller as the performer. If your custom class view use a routable view as it's part, the custom view should use a router to add and prepare the routable view, then the routable view don't need to search performer.
+
+/**
+ When a routable view is added from storyboard or xib
+ Invoking order in subview when subview needs prepare:
+ 1.willMoveToSuperview: (can't find performer until -viewDidLoad, add to preparing list)
+ 2.didMoveToSuperview
+ 3.ZIKViewRouter_hook_viewDidLoad
+    4.didFinishPrepareDestination:configuration:
+    5.viewDidLoad
+ 6.willMoveToWindow:
+    7.router:willPerformRouteOnDestination:fromSource:
+ 8.didMoveToWindow
+    9.router:didPerformRouteOnDestination:fromSource:
+ 
+ Invoking order in subview when subview doesn't need prepare:
+ 1.willMoveToSuperview: (don't need to find performer, so finish directly)
+    2.didFinishPrepareDestination:configuration:
+ 3.didMoveToSuperview
+ 4.willMoveToWindow:
+    5.router:willPerformRouteOnDestination:fromSource:
+ 6.didMoveToWindow
+    7.router:didPerformRouteOnDestination:fromSource:
+ */
+
+/**
+ Directly add a routable subview to a visible UIView in view controller.
+ Invoking order in subview:
+ 1.willMoveToWindow:
+ 2.willMoveToSuperview: (superview is already in a view controller, so can find performer now)
+    3.didFinishPrepareDestination:configuration:
+    4.router:willPerformRouteOnDestination:fromSource:
+ 5.didMoveToWindow
+    6.router:didPerformRouteOnDestination:fromSource:
+ 7.didMoveToSuperview
+ */
+
+/**
+ Directly add a routable subview to an invisible UIView in view controller.
+ Invoking order in subview:
+ 1.willMoveToSuperview: (superview is already in a view controller, so can find performer now)
+    2.didFinishPrepareDestination:configuration:
+ 3.didMoveToSuperview
+ 4.willMoveToWindow: (when superview is visible)
+    5.router:willPerformRouteOnDestination:fromSource:
+ 6.didMoveToWindow
+    7.router:didPerformRouteOnDestination:fromSource:
+ */
+
+/**
+ Add a routable subview to a superview, then add the superview to a UIView in view controller.
+ Invoking order in subview when subview needs prepare:
+ 1.willMoveToSuperview: (add to prepare list if it's superview chain is not in window)
+ 2.didMoveToSuperview
+ 3.willMoveToWindow: (still in preparing list, if destination is already on screen, search performer fail, else search in didMoveToWindow)
+ 4.didMoveToWindow
+    5.didFinishPrepareDestination:configuration:
+    6.router:willPerformRouteOnDestination:fromSource:
+ 
+ Invoking order in subview when subview doesn't need prepare:
+ 1.willMoveToSuperview: (don't need to find performer, so finish directly)
+    2.didFinishPrepareDestination:configuration:
+ 3.didMoveToSuperview
+ 4.willMoveToWindow:
+    5.router:willPerformRouteOnDestination:fromSource:
+ 6.didMoveToWindow
+    7.router:didPerformRouteOnDestination:fromSource:
+ */
+
+/**
+ Add a routable subview to a superviw, but the superview was never added to any view controller. This should get an assert failure when subview needs prepare.
+ Invoking order in subview when subview needs prepare:
+ 1.willMoveToSuperview:newSuperview (add to preparing list, prepare until )
+ 2.didMoveToSuperview
+ 3.willMoveToSuperview:nil
+    4.when detected that router is still in prepareing list, means last preparation is not finished, assert fail, route fail with a invalid performer error.
+    5.router:willRemoveRouteOnDestination:fromSource:
+ 6.didMoveToSuperview
+    7.router:didRemoveRouteOnDestination:fromSource:
+ 
+ Invoking order in subview when subview don't need prepare:
+ 1.willMoveToSuperview:newSuperview
+    2.didFinishPrepareDestination:configuration:
+ 3.didMoveToSuperview
+ 4.willMoveToSuperview:nil
+    5.router:willPerformRouteOnDestination:fromSource:
+    6.router:didPerformRouteOnDestination:fromSource: (the view was never displayed after added, so willMoveToWindow: is never be invoked, so router needs to end the perform route action here.)
+    7.router:willRemoveRouteOnDestination:fromSource:
+ 8.didMoveToSuperview
+    9.router:didRemoveRouteOnDestination:fromSource:
+ */
+
+/**
+ Add a routable subview to a UIWindow. This should get an assert failure when subview needs prepare.
+ Invoking order in subview when subview needs prepare:
+ 1.willMoveToWindow:newWindow
+ 2.willMoveToSuperview:newSuperview
+    3.when detected that newSuperview is already on screen, but can't find the performer, assert fail, get a global invalid performer error
+    4.router:willPerformRouteOnDestination:fromSource: (if no assert fail, route will continue)
+ 5.didMoveToWindow
+    6.router:didPerformRouteOnDestination:fromSource:
+ 7.didMoveToSuperview
+ 
+ Invoking order in subview when subview doesn't need prepare:
+ 1.willMoveToWindow:newWindow
+ 2.willMoveToSuperview:newSuperview
+    3.didFinishPrepareDestination:configuration:
+    4.router:willPerformRouteOnDestination:fromSource:
+ 5.didMoveToWindow
+    6.router:didPerformRouteOnDestination:fromSource:
+ 7.didMoveToSuperview
+ */
+
 - (void)ZIKViewRouter_hook_willMoveToSuperview:(nullable UIView *)newSuperview {
     UIView *destination = (UIView *)self;
     if ([self conformsToProtocol:@protocol(ZIKRoutableView)]) {
@@ -2321,9 +2434,15 @@ destinationStateBeforeRoute:(ZIKPresentationState *)destinationStateBeforeRoute
                 if ([g_preparingUIViewRouters containsObject:destinationRouter]) {
                     //Didn't fine the performer of UIView until it's removing from superview, maybe it's superview was never added to any view controller
                     [g_preparingUIViewRouters removeObject:destinationRouter];
-                    NSString *description = [NSString stringWithFormat:@"Didn't fine the performer of UIView until it's removing from superview, maybe it's superview was never added to any view controller. Can't find which custom UIView or UIViewController added destination:(%@) as subview, so we can't notify the performer to config the destination. You may add destination to a UIWindow in code directly, and the UIWindow is not a custom class. Please change your code and add subview by a custom view router with ZIKViewRouteTypeAddAsSubview. Destination superview: %@.",destination, destination.superview];                    
+                    NSString *description = [NSString stringWithFormat:@"Didn't fine the performer of UIView until it's removing from superview, maybe it's superview was never added to any view controller. Can't find which custom UIView or UIViewController added destination:(%@) as subview, so we can't notify the performer to config the destination. You may add destination to a UIWindow in code directly, and the UIWindow is not a custom class. Please change your code and add subview by a custom view router with ZIKViewRouteTypeAddAsSubview. Destination superview: (%@).",destination, newSuperview];
                     [destinationRouter endPerformRouteWithError:[ZIKViewRouter errorWithCode:ZIKViewRouteErrorInvalidPerformer localizedDescription:description]];
                     NSAssert(NO, description);
+                }
+                //superview never be added to a view controller
+                if (destinationRouter.state == ZIKRouterStateRouting &&
+                    ![destination ZIK_firstAvailableUIViewController]) {
+                    [ZIKViewRouter AOP_notifyAll_router:destinationRouter willPerformRouteOnDestination:destination fromSource:destination.superview];
+                    [destinationRouter endPerformRouteWithSuccess];
                 }
             }
             [[NSNotificationCenter defaultCenter] postNotificationName:kZIKViewRouteWillRemoveRouteNotification object:destination];
@@ -2351,7 +2470,7 @@ destinationStateBeforeRoute:(ZIKPresentationState *)destinationStateBeforeRoute
                     }
                     //Adding to a superview on screen.
                     if (!performer && (newSuperview.window || [newSuperview isKindOfClass:[UIWindow class]])) {
-                        NSString *description = [NSString stringWithFormat:@"Adding to a superview on screen. Can't find which custom UIView or UIViewController added destination:(%@) as subview, so we can't notify the performer to config the destination. You may add destination to a UIWindow in code directly, and the UIWindow is not a custom class. Please change your code and add subview by a custom view router with ZIKViewRouteTypeAddAsSubview. Destination superview: %@.",destination, destination.superview];
+                        NSString *description = [NSString stringWithFormat:@"Adding to a superview on screen. Can't find which custom UIView or UIViewController added destination:(%@) as subview, so we can't notify the performer to config the destination. You may add destination to a UIWindow in code directly, and the UIWindow is not a custom class. Please change your code and add subview by a custom view router with ZIKViewRouteTypeAddAsSubview. Destination superview: (%@).",destination, newSuperview];
                         [ZIKViewRouter _o_callbackError_invalidPerformerWithAction:@selector(performRoute) errorDescription:description];
                         NSAssert(NO, description);
                     }
@@ -2448,7 +2567,6 @@ destinationStateBeforeRoute:(ZIKPresentationState *)destinationStateBeforeRoute
                     if (!destinationRouter) {
                         destinationRouter = [routerClass routerFromView:destination source:source];
                         destinationRouter.routingFromInternal = YES;
-                        destinationRouter.realRouteType = ZIKViewRouteRealTypeAddAsSubview;
                         [destinationRouter notifyRouteState:ZIKRouterStateRouting];
                         [destination setZIK_destinationViewRouter:destinationRouter];
                     }
@@ -2554,6 +2672,7 @@ destinationStateBeforeRoute:(ZIKPresentationState *)destinationStateBeforeRoute
                 [routeTypeFromRouter integerValue] == ZIKViewRouteTypeGetDestination) {
                 [ZIKViewRouter AOP_notifyAll_router:router didPerformRouteOnDestination:destination fromSource:superview];
             }
+            router.routingFromInternal = NO;
             if (routeTypeFromRouter) {
                 [destination setZIK_routeTypeFromRouter:nil];
             }

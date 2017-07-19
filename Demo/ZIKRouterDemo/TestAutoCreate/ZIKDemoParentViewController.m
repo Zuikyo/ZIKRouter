@@ -17,6 +17,28 @@
 
 @implementation ZIKDemoParentViewController
 
+///Add subview by code or storyboard will auto create a corresponding router. We assume it's superview's view controller as the performer. If your custom class view use a routable view as it's part, the custom view should use a router to add and prepare the routable view, then the routable view don't need to search performer.
+
+/**
+ When a routable view is added from storyboard
+ Invoking order in subview when subview needs prepare:
+ 1.willMoveToSuperview:
+ 2.didMoveToSuperview
+ 3.ZIKViewRouter_hook_viewDidLoad
+    3.didFinishPrepareDestination:configuration:
+    4.viewDidLoad
+ 5.willMoveToWindow:
+    6.router:willPerformRouteOnDestination:fromSource:
+ 7.didMoveToWindow
+ 
+ Invoking order in subview when subview doesn't need prepare:
+ 1.willMoveToSuperview:
+    2.didFinishPrepareDestination:configuration:
+    3.router:willPerformRouteOnDestination:fromSource:
+ 4.didMoveToSuperview
+ 5.willMoveToWindow:
+ 6.didMoveToWindow
+ */
 - (void)viewDidLoad {
     [super viewDidLoad];
     // Do any additional setup after loading the view.
@@ -39,12 +61,111 @@
     [childInfoViewController didMoveToParentViewController:self];
 }
 
-///Add subview by code will auto create a corresponding router. We assume it's superview's view controller as the performer
+/**
+ Directly add to visible self.view.
+ Invoking order in subview:
+ 1.willMoveToWindow:
+ 2.willMoveToSuperview:
+    3.didFinishPrepareDestination:configuration:
+    4.router:willPerformRouteOnDestination:fromSource:
+ 5.didMoveToWindow
+ 6.didMoveToSuperview
+ */
 - (IBAction)addSubviewManually:(id)sender {
+    UIButton *button = sender;
     ZIKSimpleLabel *destination = [[ZIKSimpleLabel alloc] init];
-//    destination.text = @"Label added manually";
-    destination.frame = CGRectMake(100, 100, 200, 50);
+    destination.text = @"Label added manually";
+    destination.frame = CGRectMake(button.frame.origin.x, button.frame.origin.y - 100, 200, 50);
     [self.view addSubview:destination];
+}
+
+/**
+ Add to a superview, then add the superview to self.view.
+ Invoking order in subview when subview needs prepare:
+ 1.willMoveToSuperview:
+ 2.didMoveToSuperview
+ 3.willMoveToWindow:
+ 4.didMoveToWindow
+    5.didFinishPrepareDestination:configuration:
+    6.router:willPerformRouteOnDestination:fromSource:
+ 
+ Invoking order in subview when subview doesn't need prepare:
+ 1.willMoveToSuperview:
+    2.didFinishPrepareDestination:configuration:
+ 3.didMoveToSuperview
+ 4.willMoveToWindow:
+    5.router:willPerformRouteOnDestination:fromSource:
+ 6.didMoveToWindow
+ */
+- (IBAction)addSubviewManually2:(id)sender {
+    UIButton *button = sender;
+    ZIKSimpleLabel *destination = [[ZIKSimpleLabel alloc] init];
+//        destination.text = @"Label added manually";
+    destination.frame = CGRectMake(button.frame.origin.x, button.frame.origin.y - 100, 200, 50);
+    UIView *superview = [UIView new];
+    [superview addSubview:destination];
+//    [self.view addSubview:superview];
+    
+    UINavigationController *nav = (UINavigationController *)[[(UISplitViewController *)self.presentingViewController viewControllers] firstObject];
+    [[[nav viewControllers] lastObject].view addSubview:superview];
+}
+
+/**
+ Add to a superviw, but the superview was never added to any view controller. This should get an assert failure when subview need prepare.
+ Invoking order in subview when subview needs prepare:
+ 1.willMoveToSuperview:newSuperview
+ 2.didMoveToSuperview
+ 3.willMoveToSuperview:nil
+    4.when detected that last preparing is not finished, assert fail, get a invalid performer error
+ 5.didMoveToSuperview
+ 
+ Invoking order in subview when subview doesn't need prepare:
+ 1.willMoveToSuperview:newSuperview
+    2.didFinishPrepareDestination:configuration:
+ 3.didMoveToSuperview
+ 4.willMoveToSuperview:nil
+    5.router:willPerformRouteOnDestination:fromSource:
+    6.router:didPerformRouteOnDestination:fromSource: (the view was never displayed after added, so willMoveToWindow: is never be invoked, so router need to end the perform route action here.)
+    7.router:willRemoveRouteOnDestination:fromSource:
+ 8.didMoveToSuperview
+    9.router:didRemoveRouteOnDestination:fromSource:
+ */
+- (IBAction)addSubviewManuallyWithoutViewController:(id)sender {
+    UIButton *button = sender;
+    ZIKSimpleLabel *destination = [[ZIKSimpleLabel alloc] init];
+        destination.text = @"Label added manually";
+    destination.frame = CGRectMake(button.frame.origin.x, button.frame.origin.y - 100, 200, 50);
+    UIView *superview = [UIView new];
+    [superview addSubview:destination];
+}
+
+/**
+ Add to a UIWindow.  This should get an assert failure when subview need prepare.
+ Invoking order in subview when subview needs prepare:
+ 1.willMoveToWindow:newWindow
+ 2.willMoveToSuperview:newSuperview
+    3.when detected that newSuperview is already on screen, but can't find the performer, assert fail, get a invalid performer error
+ 4.didMoveToWindow
+ 5.didMoveToSuperview
+ 
+ Invoking order in subview when subview doesn't need prepare:
+ 1.willMoveToWindow:newWindow
+ 2.willMoveToSuperview:newSuperview
+    3.didFinishPrepareDestination:configuration:
+    4.router:willPerformRouteOnDestination:fromSource:
+ 5.didMoveToWindow
+ 6.didMoveToSuperview
+ */
+- (IBAction)addSubviewManuallyWithoutViewController2:(id)sender {
+    UIButton *button = sender;
+    ZIKSimpleLabel *destination = [[ZIKSimpleLabel alloc] init];
+//        destination.text = @"Label added manually";
+    destination.frame = CGRectMake(button.frame.origin.x, button.frame.origin.y - 100, 200, 50);
+    [self.view.window addSubview:destination];
+    
+    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(10 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+        [destination removeFromSuperview];
+    });
 }
 
 - (void)handleRemoveInfoViewController:(UIViewController *)infoViewController {

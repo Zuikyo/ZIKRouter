@@ -25,6 +25,10 @@ RegisterRoutableViewWithViewProtocol(ZIKSimpleLabel, ZIKSimpleLabelProtocol, ZIK
     return YES;
 }
 
+- (void)didFinishPrepareDestination:(id)destination configuration:(__kindof ZIKViewRouteConfiguration *)configuration {
+    
+}
+
 + (NSArray<NSNumber *> *)supportedRouteTypes {
     return kDefaultRouteTypesForView;
 }
