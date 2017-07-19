@@ -2316,6 +2316,16 @@ destinationStateBeforeRoute:(ZIKPresentationState *)destinationStateBeforeRoute
     if ([self conformsToProtocol:@protocol(ZIKRoutableView)]) {
         if (!newSuperview) {
             //Removing from superview
+            ZIKViewRouter *destinationRouter = [destination ZIK_destinationViewRouter];
+            if (destinationRouter) {
+                if ([g_preparingUIViewRouters containsObject:destinationRouter]) {
+                    //Didn't fine the performer of UIView until it's removing from superview, maybe it's superview was never added to any view controller
+                    [g_preparingUIViewRouters removeObject:destinationRouter];
+                    NSString *description = [NSString stringWithFormat:@"Didn't fine the performer of UIView until it's removing from superview, maybe it's superview was never added to any view controller. Can't find which custom UIView or UIViewController added destination:(%@) as subview, so we can't notify the performer to config the destination. You may add destination to a UIWindow in code directly, and the UIWindow is not a custom class. Please change your code and add subview by a custom view router with ZIKViewRouteTypeAddAsSubview. Destination superview: %@.",destination, destination.superview];                    
+                    [destinationRouter endPerformRouteWithError:[ZIKViewRouter errorWithCode:ZIKViewRouteErrorInvalidPerformer localizedDescription:description]];
+                    NSAssert(NO, description);
+                }
+            }
             [[NSNotificationCenter defaultCenter] postNotificationName:kZIKViewRouteWillRemoveRouteNotification object:destination];
             NSNumber *routeTypeFromRouter = [destination ZIK_routeTypeFromRouter];
             if (!routeTypeFromRouter ||
