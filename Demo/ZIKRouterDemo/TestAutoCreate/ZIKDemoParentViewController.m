@@ -74,7 +74,7 @@
 - (IBAction)addSubviewManually:(id)sender {
     UIButton *button = sender;
     ZIKSimpleLabel *destination = [[ZIKSimpleLabel alloc] init];
-    destination.text = @"Label added manually";
+//    destination.text = @"Label added manually";
     destination.frame = CGRectMake(button.frame.origin.x, button.frame.origin.y - 100, 200, 50);
     [self.view addSubview:destination];
 }
@@ -104,10 +104,7 @@
     destination.frame = CGRectMake(button.frame.origin.x, button.frame.origin.y - 100, 200, 50);
     UIView *superview = [UIView new];
     [superview addSubview:destination];
-//    [self.view addSubview:superview];
-    
-    UINavigationController *nav = (UINavigationController *)[[(UISplitViewController *)self.presentingViewController viewControllers] firstObject];
-    [[[nav viewControllers] lastObject].view addSubview:superview];
+    [self.view addSubview:superview];
 }
 
 /**
@@ -133,7 +130,7 @@
 - (IBAction)addSubviewManuallyWithoutViewController:(id)sender {
     UIButton *button = sender;
     ZIKSimpleLabel *destination = [[ZIKSimpleLabel alloc] init];
-        destination.text = @"Label added manually";
+//        destination.text = @"Label added manually";
     destination.frame = CGRectMake(button.frame.origin.x, button.frame.origin.y - 100, 200, 50);
     UIView *superview = [UIView new];
     [superview addSubview:destination];
@@ -162,10 +159,6 @@
 //        destination.text = @"Label added manually";
     destination.frame = CGRectMake(button.frame.origin.x, button.frame.origin.y - 100, 200, 50);
     [self.view.window addSubview:destination];
-    
-    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(10 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
-        [destination removeFromSuperview];
-    });
 }
 
 - (void)handleRemoveInfoViewController:(UIViewController *)infoViewController {

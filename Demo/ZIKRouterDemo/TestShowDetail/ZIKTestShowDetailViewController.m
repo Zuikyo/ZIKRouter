@@ -30,12 +30,12 @@
                                config.containerWrapper = ^UIViewController<ZIKViewRouteContainer> * _Nonnull(UIViewController * _Nonnull destination) {
 //                                     UINavigationController *container = [[UINavigationController alloc] initWithRootViewController:destination];
 //                                     return container;
-//                                     UITabBarController *container = [[UITabBarController alloc] init];
-//                                     [container setViewControllers:@[destination]];
-//                                     return container;
-                                   UISplitViewController *container = [[UISplitViewController alloc] init];
-                                   [container setViewControllers:@[destination]];
-                                   return container;
+                                     UITabBarController *container = [[UITabBarController alloc] init];
+                                     [container setViewControllers:@[destination]];
+                                     return container;
+//                                   UISplitViewController *container = [[UISplitViewController alloc] init];
+//                                   [container setViewControllers:@[destination]];
+//                                   return container;
                                };
                                config.sender = sender;
                                config.prepareForRoute = ^(id<ZIKInfoViewProtocol>  _Nonnull destination) {
