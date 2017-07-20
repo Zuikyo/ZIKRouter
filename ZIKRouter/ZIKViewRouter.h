@@ -103,7 +103,7 @@ typedef void(^ZIKRouteGlobalErrorHandler)(__kindof ZIKViewRouter * _Nullable rou
  
  When a UIViewController is registered, and is routing from storyboard segue, a router will be auto created to prepare the UIViewController. If the destination needs preparing, the segue's performer is responsible for preparing in delegate method -prepareForDestinationRoutingFromExternal:configuration:. But if a UIViewController is routed from code manually, ZIKViewRouter won't auto create router, only get AOP notify, because we can't find the performer to prepare the destination. So you should avoid route the UIViewController from code manually, if you use a router as a dependency injector for preparing the UIViewController. You can check whether the destination is prepared in those AOP delegate methods.
  
- When Adding a registered UIView by code or xib, a router will be auto created. We search the view controller with custom class (not system class like native UINavigationController, or any container view controller) in it's view hierarchy as the performer. If the registered UIView needs preparing, you have to add the view to a superview in a view controller before it removed from superview. If there is no view controller to prepare it(1. add it to a superview, and the superview is never added to a view controller; 2. add it to a UIWindow). If your custom class view use a routable view as it's part, the custom view should use a router to add and prepare the routable view, then the routable view don't need to search performer because it already prepared.
+ When Adding a registered UIView by code or xib, a router will be auto created. We search the view controller with custom class (not system class like native UINavigationController, or any container view controller) in it's responder hierarchy as the performer. If the registered UIView needs preparing, you have to add the view to a superview in a view controller before it removed from superview. If there is no view controller to prepare it(such as: 1. add it to a superview, and the superview is never added to a view controller; 2. add it to a UIWindow). If your custom class view use a routable view as it's part, the custom view should use a router to add and prepare the routable view, then the routable view don't need to search performer because it already prepared.
  */
 @interface ZIKViewRouter : ZIKRouter
 ///If this router's view is a UIViewController routed from storyboard, or a UIView added as subview from xib or code, a router will be auto created to prepare the view, and the router's autoCreated is YES; But when a UIViewController is routed from code manually or is the initial view controller of app in storyboard, router won't be auto created because we can't find the performer to prepare the destination.
@@ -127,6 +127,7 @@ typedef void(^ZIKRouteGlobalErrorHandler)(__kindof ZIKViewRouter * _Nullable rou
 
 ///The initial view controller of storyboard for launching app is not from segue, so you have to manually create it's router and do -performRoute to prepare it. The first calling of -performXXX methods only do preparation for router inited with this method, after first calling, it can perform normally. You can use this to prepare other view create from external.
 - (nullable instancetype)initForExternalView:(id<ZIKViewRouteSource>)externalView configure:(void(NS_NOESCAPE ^ _Nullable)(__kindof ZIKViewRouteConfiguration *config))configAction;
+
 /**
  Whether can perform a view route now
  @discusstion
@@ -316,6 +317,8 @@ typedef void(^ZIKViewRouteSegueConfiger)(NS_NOESCAPE ZIKViewRouteSegueConfigure)
  
  @note
  Use weakSelf in routeCompletion to avoid retain cycle.
+ 
+  ZIKViewRouter use UIViewController's transitionCoordinator to do completion, so if you override segue's -perform or override -showViewController:sender: and provide custom transition, but didn't use a transitionCoordinator (such as use +[UIView animateWithDuration:animations:completion:] to animate), routeCompletion when be called immediately, before the animation real complete.
  */
 @property (nonatomic, copy, nullable) void(^routeCompletion)(id destination);
 
@@ -736,13 +739,51 @@ extern NSArray<NSNumber *> *kDefaultRouteTypesForView;
  
  Source may be nil when remove route, because source may already be deallced.
  */
-///AOP callback when any perform route action will begin. All router classes managing the same view class will be notified.
+
+/**
+ AOP callback when any perform route action will begin. All router classes managing the same view class will be notified.
+ @discussion
+ Invoked time:
+ 
+ For UIViewController routing from router or storyboard, invoked after destination is preapared and about to do route action.
+ For UIViewController not routing from router, or routed by ZIKViewRouteTypeGetDestination or ZIKViewRouteTypeAddAsChildViewController then displayed manually, invoked in -viewWillAppear:. The parameter `router` is nil.
+ For UIView routing by ZIKViewRouteTypeAddAsSubview type, invoked after destination is prepared and before -addSubview: is called.
+ For UIView routing from xib or from manually addSubview: or routed by ZIKViewRouteTypeGetDestination, invoked after destination is prepared, and is about to be visible (moving to window), but not when -willMoveToSuperview:. Beacuse we need to auto create router and search performer in responder hierarchy, in some situation, the responder is only available when the UIView is on a window. See comments inside -ZIKViewRouter_hook_willMoveToSuperview: for more detial.
+ */
 + (void)router:(nullable ZIKViewRouter *)router willPerformRouteOnDestination:(id)destination fromSource:(nullable id)source;
-///AOP callback when any perform route action did finish. All router classes managing the same view class will be notified.
+
+/**
+ AOP callback when any perform route action did finish. All router classes managing the same view class will be notified.
+ @discussion
+ Invoked time:
+ 
+ For UIViewController routing from router or storyboard, invoked after route animation is finished. See -routeCompletion.
+ For UIViewController not routing from router, or routed by ZIKViewRouteTypeAddAsChildViewController or ZIKViewRouteTypeGetDestination then displayed manually, invoked in -viewDidAppear:. The parameter `router` is nil.
+ For UIView routing by ZIKViewRouteTypeAddAsSubview type, invoked after -addSubview: is called.
+ For UIView routing from xib or from manually addSubview: or routed by ZIKViewRouteTypeGetDestination, invoked after destination is visible (did move to window), but not when -didMoveToSuperview:. See comments inside -ZIKViewRouter_hook_willMoveToSuperview: for more detial.
+ */
 + (void)router:(nullable ZIKViewRouter *)router didPerformRouteOnDestination:(id)destination fromSource:(nullable id)source;
-///AOP callback when any remove route action will begin. All router classes managing the same view class will be notified.
+
+/**
+ AOP callback when any remove route action will begin. All router classes managing the same view class will be notified.
+ @discussion
+ Invoked time:
+ 
+ For UIViewController or UIView removing from router, invoked before remove route action is called.
+ For UIViewController not removing from router, invoked in -viewWillDisappear:. The parameter `router` is nil.
+ For UIView not removing from router, invoked in willMoveToSuperview:nil. The parameter `router` is nil.
+ */
 + (void)router:(nullable ZIKViewRouter *)router willRemoveRouteOnDestination:(id)destination fromSource:(nullable id)source;
-///AOP callback when any remove route action did finish. All router classes managing the same view class will be notified.
+
+/**
+ AOP callback when any remove route action did finish. All router classes managing the same view class will be notified.
+ @discussion
+ Invoked time:
+ 
+ For UIViewController or UIView removing from router, invoked after remove route action is called.
+ For UIViewController not removing from router, invoked in -viewDidDisappear:. The parameter `router` is nil.
+ For UIView not removing from router, invoked in didMoveToSuperview:nil. The parameter `router` is nil. The source may be nil, bacause superview may be dealloced
+ */
 + (void)router:(nullable ZIKViewRouter *)router didRemoveRouteOnDestination:(id)destination fromSource:(nullable id)source;
 
 @end

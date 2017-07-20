@@ -22,13 +22,15 @@
 @interface UIView (_ZIKViewRouter)
 @end
 @implementation UIView (_ZIKViewRouter)
+///Temporary bind auto created router to a UIView when it's not addSubView: by router. Reset to nil when view is removed.
 - (__kindof ZIKViewRouter *)ZIK_destinationViewRouter {
     return objc_getAssociatedObject(self, "ZIK_destinationViewRouter");
 }
 - (void)setZIK_destinationViewRouter:(nullable ZIKViewRouter *)viewRouter {
     objc_setAssociatedObject(self, "ZIK_destinationViewRouter", viewRouter, OBJC_ASSOCIATION_RETAIN);
 }
-- (NSNumber *)ZIK_routeTypeFromRouter {
+///Route type when view is routed from a router, will reset to nil when view is removed
+- (nullable NSNumber *)ZIK_routeTypeFromRouter {
     NSNumber *result = objc_getAssociatedObject(self, "ZIK_routeTypeFromRouter");
     return result;
 }
@@ -46,6 +48,7 @@
 @interface UIViewController (_ZIKViewRouter)
 @end
 @implementation UIViewController (_ZIKViewRouter)
+///Route type when view is routed from a router. Reset to nil when view is removed.
 - (nullable NSNumber *)ZIK_routeTypeFromRouter {
     NSNumber *result = objc_getAssociatedObject(self, "ZIK_routeTypeFromRouter");
     return result;
@@ -55,6 +58,7 @@
                       [routeType integerValue] <= ZIKViewRouteTypeGetDestination);
     objc_setAssociatedObject(self, "ZIK_routeTypeFromRouter", routeType, OBJC_ASSOCIATION_RETAIN);
 }
+///Temporary bind auto created routers to a segue destination for routable views in destination. Reset to nil when segue is performed.
 - (nullable NSArray<ZIKViewRouter *> *)ZIK_destinationViewRouters {
     return objc_getAssociatedObject(self, "ZIK_destinationViewRouters");
 }
@@ -62,6 +66,7 @@
     NSParameterAssert(!viewRouters || [viewRouters isKindOfClass:[NSArray class]]);
     objc_setAssociatedObject(self, "ZIK_destinationViewRouters", viewRouters, OBJC_ASSOCIATION_RETAIN);
 }
+///Temporary bind a router to a UIViewController when performing segue from the router. Reset to nil when segue is performed.
 - (__kindof ZIKViewRouter *)ZIK_sourceViewRouter {
     return objc_getAssociatedObject(self, "ZIK_sourceViewRouter");
 }
@@ -2431,6 +2436,7 @@ destinationStateBeforeRoute:(ZIKPresentationState *)destinationStateBeforeRoute
             //Removing from superview
             ZIKViewRouter *destinationRouter = [destination ZIK_destinationViewRouter];
             if (destinationRouter) {
+                //This is routing from router
                 if ([g_preparingUIViewRouters containsObject:destinationRouter]) {
                     //Didn't fine the performer of UIView until it's removing from superview, maybe it's superview was never added to any view controller
                     [g_preparingUIViewRouters removeObject:destinationRouter];
@@ -2438,12 +2444,14 @@ destinationStateBeforeRoute:(ZIKPresentationState *)destinationStateBeforeRoute
                     [destinationRouter endPerformRouteWithError:[ZIKViewRouter errorWithCode:ZIKViewRouteErrorInvalidPerformer localizedDescription:description]];
                     NSAssert(NO, description);
                 }
-                //superview never be added to a view controller
+                //Destination don't need prepare, but it's superview never be added to a view controller, so destination is never on a window
                 if (destinationRouter.state == ZIKRouterStateRouting &&
                     ![destination ZIK_firstAvailableUIViewController]) {
+                    //end perform
                     [ZIKViewRouter AOP_notifyAll_router:destinationRouter willPerformRouteOnDestination:destination fromSource:destination.superview];
                     [destinationRouter endPerformRouteWithSuccess];
                 }
+                [destination setZIK_destinationViewRouter:nil];
             }
             [[NSNotificationCenter defaultCenter] postNotificationName:kZIKViewRouteWillRemoveRouteNotification object:destination];
             NSNumber *routeTypeFromRouter = [destination ZIK_routeTypeFromRouter];
@@ -2452,9 +2460,11 @@ destinationStateBeforeRoute:(ZIKPresentationState *)destinationStateBeforeRoute
                 [ZIKViewRouter AOP_notifyAll_router:nil willRemoveRouteOnDestination:destination fromSource:destination.superview];
             }
         } else if (!destination.ZIK_routed) {
+            //Adding to a superview
             ZIKViewRouter *router;
             NSNumber *routeTypeFromRouter = [destination ZIK_routeTypeFromRouter];
             if (!routeTypeFromRouter) {
+                //Not routing from router
                 Class routerClass = ZIKViewRouterForRegisteredView([destination class]);
                 NSAssert([routerClass isSubclassOfClass:[ZIKViewRouter class]], @"Use macro RegisterRoutableView to register destination in it's router, router should be subclass of ZIKViewRouter.");
                 NSAssert([routerClass _o_validateSupportedRouteTypesForUIView], @"Router for UIView only suppourts ZIKViewRouteTypeAddAsSubview, ZIKViewRouteTypeGetDestination and ZIKViewRouteTypeCustom, override +supportedRouteTypes in your router.");
@@ -2525,7 +2535,7 @@ destinationStateBeforeRoute:(ZIKPresentationState *)destinationStateBeforeRoute
             NSNumber *routeTypeFromRouter = [destination ZIK_routeTypeFromRouter];
             if (!routeTypeFromRouter ||
                 [routeTypeFromRouter integerValue] == ZIKViewRouteTypeGetDestination) {
-                [ZIKViewRouter AOP_notifyAll_router:nil didRemoveRouteOnDestination:destination fromSource:nil];//Can't get source, source may already be dealloced here
+                [ZIKViewRouter AOP_notifyAll_router:nil didRemoveRouteOnDestination:destination fromSource:nil];//Can't get source, source may already be dealloced here or is in dealloc
             }
             if (routeTypeFromRouter) {
                 [destination setZIK_routeTypeFromRouter:nil];
@@ -2550,7 +2560,7 @@ destinationStateBeforeRoute:(ZIKPresentationState *)destinationStateBeforeRoute
                 NSString *failedToPrepareDescription;
                 if (destinationRouter) {
                     if ([g_preparingUIViewRouters containsObject:destinationRouter]) {
-                        //Didn't fine the performer of UIView route  before it's displayed on screen
+                        //Didn't fine the performer of UIView route  before it's displayed on screen. But maybe can find in -didMoveToWindow.
                         [g_preparingUIViewRouters removeObject:destinationRouter];
                         failedToPrepareDescription = [NSString stringWithFormat:@"Didn't fine the performer of UIView route before it's displayed on screen. Can't find which custom UIView or UIViewController added destination:(%@) as subview, so we can't notify the performer to config the destination. You may add destination to a UIWindow in code directly, and the UIWindow is not a custom class. Please change your code and add subview by a custom view router with ZIKViewRouteTypeAddAsSubview. Destination superview: %@.",destination, destination.superview];
                     }
@@ -2662,6 +2672,7 @@ destinationStateBeforeRoute:(ZIKPresentationState *)destinationStateBeforeRoute
                         }
                     }
                 }
+                //end perform
                 [destinationRouter notifyRouteState:ZIKRouterStateRouted];
                 [destinationRouter notifyPerformRouteSuccessWithDestination:destination];
                 [destination setZIK_destinationViewRouter:nil];
@@ -2956,7 +2967,12 @@ destinationStateBeforeRoute:(ZIKPresentationState *)destinationStateBeforeRoute
     if ([vc isKindOfClass:[UINavigationController class]]) {
         isContainerVC = YES;
         if ([(UINavigationController *)vc viewControllers].count > 0) {
-            rootVCs = @[[[(UINavigationController *)vc viewControllers] firstObject]];
+            UIViewController *rootViewController = [[(UINavigationController *)vc viewControllers] firstObject];
+            if (rootViewController) {
+                rootVCs = @[rootViewController];
+            } else {
+                rootVCs = @[];
+            }
         }
     } else if ([vc isKindOfClass:[UITabBarController class]]) {
         isContainerVC = YES;
