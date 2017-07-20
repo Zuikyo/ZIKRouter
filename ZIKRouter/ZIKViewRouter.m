@@ -717,7 +717,7 @@ _Nullable Class ZIKViewRouterForConfig(Protocol<ZIKRoutableConfigDynamicGetter> 
     return self;
 }
 
-- (nullable instancetype)initForExternalView:(id<ZIKViewRouteSource>)externalView configure:(void(NS_NOESCAPE ^ _Nullable)(__kindof ZIKViewRouteConfiguration *config))configAction {
+- (nullable instancetype)initForExternalView:(id<ZIKViewRouteSource>)externalView configure:(void(NS_NOESCAPE ^ _Nullable)(__kindof ZIKViewRouteConfiguration *config))configBuilder {
     if (![externalView conformsToProtocol:@protocol(ZIKRoutableView)]) {
         [[self class] _o_callbackGlobalErrorHandlerWithRouter:nil action:@selector(init) error:[[self class] errorWithCode:ZIKViewRouteErrorInvalidConfiguration localizedDescription:[NSString stringWithFormat:@"init for invalid external view: (%@)",externalView]]];
         NSAssert(NO, @"init for invalid external view");
@@ -739,8 +739,8 @@ _Nullable Class ZIKViewRouterForConfig(Protocol<ZIKRoutableConfigDynamicGetter> 
         return nil;
     }
     ZIKViewRouteConfiguration *configuration = [[self class] defaultRouteConfiguration];
-    if (configAction) {
-        configAction(configuration);
+    if (configBuilder) {
+        configBuilder(configuration);
     }
     configuration.routeType = ZIKViewRouteTypeGetDestination;
     configuration.autoCreated = YES;
@@ -809,6 +809,16 @@ _Nullable Class ZIKViewRouterForConfig(Protocol<ZIKRoutableConfigDynamicGetter> 
         return YES;
     }
     return NO;
+}
+
+- (void)prepare {
+    NSAssert(self.preparingExternalView, @"Only router created with -initForExternalView:configure: needs to prepare.");
+    if (self.preparingExternalView) {
+        id destination = self.destination;
+        NSAssert(destination, @"Destination can't be nil for preparing external view");
+        [self prepareForPerformRouteOnDestination:destination];
+        self.preparingExternalView = NO;
+    }
 }
 
 #pragma mark ZIKViewRouterProtocol
@@ -958,8 +968,7 @@ _Nullable Class ZIKViewRouterForConfig(Protocol<ZIKRoutableConfigDynamicGetter> 
     NSAssert([[[self class] defaultRouteConfiguration] isKindOfClass:[configuration class]], @"When using custom configuration class，you must override +defaultRouteConfiguration to return your custom configuration instance.");
     
     if (self.preparingExternalView) {
-        [self _o_performRouteForPreparingExternalView];
-        return;
+        [self prepare];
     }
     if (configuration.routeType == ZIKViewRouteTypePerformSegue) {
         [self performRouteOnDestination:nil configuration:configuration];
@@ -976,19 +985,16 @@ _Nullable Class ZIKViewRouterForConfig(Protocol<ZIKRoutableConfigDynamicGetter> 
     }
 }
 
-- (void)_o_performRouteForPreparingExternalView {
-    id destination = self.destination;
-    NSAssert(destination, @"Destination can't be nil for preparing external view");
-    [self notifyRouteState:ZIKRouterStateRouting];
-    [self prepareForPerformRouteOnDestination:destination];
-    [self notifyRouteState:ZIKRouterStateRouted];
-    [self notifyPerformRouteSuccessWithDestination:destination];
-    self.preparingExternalView = NO;
++ (__kindof ZIKViewRouter *)performWithSource:(id)source {
+    return [self performWithConfigure:^(__kindof ZIKViewRouteConfiguration * _Nonnull config) {
+        config.source = source;
+    }];
 }
 
-+ (__kindof ZIKViewRouter *)performWithSource:(id)source {
-    return [self performWithConfigure:^(__kindof ZIKViewRouteConfiguration * _Nonnull configuration) {
-        configuration.source = source;
++ (__kindof ZIKViewRouter *)performWithSource:(id)source routeType:(ZIKViewRouteType)routeType {
+    return [self performWithConfigure:^(__kindof ZIKViewRouteConfiguration * _Nonnull config) {
+        config.source = source;
+        config.routeType = routeType;
     }];
 }
 

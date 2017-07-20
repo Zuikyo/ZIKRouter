@@ -28,14 +28,14 @@ DeclareRoutableConfigProtocol(ZIKCompatibleAlertConfigProtocol, ZIKCompatibleAle
 - (nullable instancetype)initWithConfiguration:(ZIKCompatibleAlertViewConfiguration *)configuration
                            removeConfiguration:(nullable ZIKCompatibleAlertViewConfiguration *)removeConfiguration;
 
-- (nullable instancetype)initWithConfigure:(void(^)(ZIKCompatibleAlertViewConfiguration *config))configAction
-                           removeConfigure:(void(^ _Nullable)(__kindof ZIKViewRemoveConfiguration *config))removeConfigAction;
+- (nullable instancetype)initWithConfigure:(void(^)(ZIKCompatibleAlertViewConfiguration *config))configBuilder
+                           removeConfigure:(void(^ _Nullable)(__kindof ZIKViewRemoveConfiguration *config))removeConfigBuilder;
 
 + (nullable __kindof ZIKViewRouter *)performWithSource:(id)source NS_UNAVAILABLE;
 
-+ (nullable __kindof ZIKViewRouter *)performWithConfigure:(void(^)(ZIKCompatibleAlertViewConfiguration *config))configAction;
-+ (nullable __kindof ZIKViewRouter *)performWithConfigure:(void(^)(ZIKCompatibleAlertViewConfiguration *config))configAction
-                                          removeConfigure:(void(^)( __kindof ZIKViewRemoveConfiguration * config))removeConfigAction;
++ (nullable __kindof ZIKViewRouter *)performWithConfigure:(void(^)(ZIKCompatibleAlertViewConfiguration *config))configBuilder;
++ (nullable __kindof ZIKViewRouter *)performWithConfigure:(void(^)(ZIKCompatibleAlertViewConfiguration *config))configBuilder
+                                          removeConfigure:(void(^)( __kindof ZIKViewRemoveConfiguration * config))removeConfigBuilder;
 @end
 
 NS_ASSUME_NONNULL_END

@@ -29,9 +29,9 @@
     
     UINavigationController *masterNavigationController = [splitViewController.viewControllers firstObject];
     UIViewController *masterViewController = [[masterNavigationController viewControllers] firstObject];
-    ZIKViewRouter *masterPrepareRouter = [[MasterViewRouter alloc] initForExternalView:masterViewController configure:nil];
     //Prepare master with it's router
-    [masterPrepareRouter performRoute];
+    [[[MasterViewRouter alloc] initForExternalView:masterViewController configure:nil] prepare];
+    
     return YES;
 }
 

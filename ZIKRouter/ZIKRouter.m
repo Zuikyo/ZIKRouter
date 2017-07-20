@@ -40,16 +40,16 @@ NSString *kZIKRouterErrorDomain = @"kZIKRouterErrorDomain";
     return self;
 }
 
-- (instancetype)initWithConfigure:(void(^)(__kindof ZIKRouteConfiguration * configuration))configAction removeConfigure:(void(^ _Nullable)( __kindof ZIKRouteConfiguration *configuration))removeConfigAction {
-    NSParameterAssert(configAction);
+- (instancetype)initWithConfigure:(void(^)(__kindof ZIKRouteConfiguration * configuration))configBuilder removeConfigure:(void(^ _Nullable)( __kindof ZIKRouteConfiguration *configuration))removeConfigBuilder {
+    NSParameterAssert(configBuilder);
     ZIKRouteConfiguration *configuration = [[self class] defaultRouteConfiguration];
-    if (configAction) {
-        configAction(configuration);
+    if (configBuilder) {
+        configBuilder(configuration);
     }
     ZIKRouteConfiguration *removeConfiguration;
-    if (removeConfigAction) {
+    if (removeConfigBuilder) {
         removeConfiguration = [[self class] defaultRemoveConfiguration];
-        removeConfigAction(removeConfiguration);
+        removeConfigBuilder(removeConfiguration);
     }
     return [self initWithConfiguration:configuration removeConfiguration:removeConfiguration];
 }
@@ -110,16 +110,16 @@ NSString *kZIKRouterErrorDomain = @"kZIKRouterErrorDomain";
     return router;
 }
 
-+ (__kindof ZIKRouter *)performWithConfigure:(void(^)(__kindof ZIKRouteConfiguration *configuration))configAction {
-    NSParameterAssert(configAction);
-    ZIKRouter *route = [[self alloc] initWithConfigure:configAction removeConfigure:nil];
++ (__kindof ZIKRouter *)performWithConfigure:(void(^)(__kindof ZIKRouteConfiguration *configuration))configBuilder {
+    NSParameterAssert(configBuilder);
+    ZIKRouter *route = [[self alloc] initWithConfigure:configBuilder removeConfigure:nil];
     [route performRoute];
     return route;
 }
 
-+ (__kindof ZIKRouter *)performWithConfigure:(void(^)(__kindof ZIKRouteConfiguration *configuration))configAction removeConfigure:(void(^)( __kindof ZIKRouteConfiguration * configuration))removeConfigAction {
-    NSParameterAssert(configAction);
-    ZIKRouter *route = [[self alloc] initWithConfigure:configAction removeConfigure:removeConfigAction];
++ (__kindof ZIKRouter *)performWithConfigure:(void(^)(__kindof ZIKRouteConfiguration *configuration))configBuilder removeConfigure:(void(^)( __kindof ZIKRouteConfiguration * configuration))removeConfigBuilder {
+    NSParameterAssert(configBuilder);
+    ZIKRouter *route = [[self alloc] initWithConfigure:configBuilder removeConfigure:removeConfigBuilder];
     [route performRoute];
     return route;
 }

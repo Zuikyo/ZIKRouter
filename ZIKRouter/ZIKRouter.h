@@ -56,8 +56,8 @@ typedef NS_ENUM(NSInteger, ZIKRouterState) {
 - (nullable instancetype)initWithConfiguration:(__kindof ZIKRouteConfiguration *)configuration
                            removeConfiguration:(nullable __kindof ZIKRouteConfiguration *)removeConfiguration NS_DESIGNATED_INITIALIZER;
 ///Convenient method to create configuration in a builder block
-- (nullable instancetype)initWithConfigure:(void(NS_NOESCAPE ^)(__kindof ZIKRouteConfiguration *config))configAction
-                           removeConfigure:(void(NS_NOESCAPE ^ _Nullable)( __kindof ZIKRouteConfiguration *config))removeConfigAction;
+- (nullable instancetype)initWithConfigure:(void(NS_NOESCAPE ^)(__kindof ZIKRouteConfiguration *config))configBuilder
+                           removeConfigure:(void(NS_NOESCAPE ^ _Nullable)( __kindof ZIKRouteConfiguration *config))removeConfigBuilder;
 - (instancetype)init NS_UNAVAILABLE;
 
 - (BOOL)canPerform;
@@ -77,9 +77,9 @@ typedef NS_ENUM(NSInteger, ZIKRouterState) {
 ///If this route action doesn't need any argument, just perform directly
 + (nullable __kindof ZIKRouter *)performRoute;
 ///Set dependencies required by destination and perform route
-+ (nullable __kindof ZIKRouter *)performWithConfigure:(void(NS_NOESCAPE ^)(__kindof ZIKRouteConfiguration *configuration))configAction;
-+ (nullable __kindof ZIKRouter *)performWithConfigure:(void(NS_NOESCAPE ^)(__kindof ZIKRouteConfiguration *configuration))configAction
-                                      removeConfigure:(void(NS_NOESCAPE ^)(__kindof ZIKRouteConfiguration *configuration))removeConfigAction;
++ (nullable __kindof ZIKRouter *)performWithConfigure:(void(NS_NOESCAPE ^)(__kindof ZIKRouteConfiguration *configuration))configBuilder;
++ (nullable __kindof ZIKRouter *)performWithConfigure:(void(NS_NOESCAPE ^)(__kindof ZIKRouteConfiguration *configuration))configBuilder
+                                      removeConfigure:(void(NS_NOESCAPE ^)(__kindof ZIKRouteConfiguration *configuration))removeConfigBuilder;
 
 + (NSString *)descriptionOfState:(ZIKRouterState)state;
 @end
