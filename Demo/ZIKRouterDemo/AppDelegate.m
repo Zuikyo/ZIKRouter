@@ -9,6 +9,7 @@
 #import "AppDelegate.h"
 #import "DetailViewController.h"
 #import "ZIKViewRouter.h"
+#import "MasterViewRouter.h"
 
 @interface AppDelegate () <UISplitViewControllerDelegate>
 
@@ -25,6 +26,12 @@
     UINavigationController *navigationController = [splitViewController.viewControllers lastObject];
     navigationController.topViewController.navigationItem.leftBarButtonItem = splitViewController.displayModeButtonItem;
     splitViewController.delegate = self;
+    
+    UINavigationController *masterNavigationController = [splitViewController.viewControllers firstObject];
+    UIViewController *masterViewController = [[masterNavigationController viewControllers] firstObject];
+    ZIKViewRouter *masterPrepareRouter = [[MasterViewRouter alloc] initForExternalView:masterViewController configure:nil];
+    //Prepare master with it's router
+    [masterPrepareRouter performRoute];
     return YES;
 }
 

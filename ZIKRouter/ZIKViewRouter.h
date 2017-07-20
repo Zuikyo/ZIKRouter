@@ -692,10 +692,12 @@ extern NSArray<NSNumber *> *kDefaultRouteTypesForView;
 @protocol ZIKViewRouterProtocol <NSObject>
 
 /**
- Create and initialize your destination with configuration
+ Create and initialize your destination with configuration.
  
  @note
- ZIKViewRouteTypePerformSegue won't invoke this method, because destination is created from storyboard
+ Router with ZIKViewRouteTypePerformSegue route type won't invoke this method, because destination is created from storyboard.
+ Router created with -initForExternalView:configure: won't invoke this method.
+ This methods is only responsible for create the destination. The additional initialization should be in -prepareDestination:configuration:.
  
  @param configuration configuration for route
  @return return a UIViewController or UIView, If the configuration is invalid, return nil to make this route failed
@@ -706,7 +708,7 @@ extern NSArray<NSNumber *> *kDefaultRouteTypesForView;
 
 ///Whether the destination is all configed. Destination created from external will use this method to determine whether the router have to search the performer to prepare itself.
 + (BOOL)destinationPrepared:(id)destination;
-///Prepare the destination with the configuration. When view is routed from external and +destinationPrepared: return YES, router will skip this method. Unwind segue to destination won't call this method.
+///Prepare the destination with the configuration when view is first appear (when it's removed and routed again, it's alse treated as first appear). Unwind segue to destination won't call this method.
 - (void)prepareDestination:(id)destination configuration:(__kindof ZIKViewRouteConfiguration *)configuration;
 ///Called when view is first appear (when it's removed and routed again, it's alse treated as first appear) and preparation is finished. Unwind segue to destination won't call this method.
 - (void)didFinishPrepareDestination:(id)destination configuration:(__kindof ZIKViewRouteConfiguration *)configuration;

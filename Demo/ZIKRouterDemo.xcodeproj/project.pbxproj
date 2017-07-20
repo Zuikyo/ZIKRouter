@@ -51,6 +51,7 @@
 		F84A02411F1E5D9200959026 /* ZIKPresentationState.m in Sources */ = {isa = PBXBuildFile; fileRef = F84A02361F1E5D9200959026 /* ZIKPresentationState.m */; };
 		F84A02421F1E5D9200959026 /* ZIKRouter.m in Sources */ = {isa = PBXBuildFile; fileRef = F84A02391F1E5D9200959026 /* ZIKRouter.m */; };
 		F84A02441F1E5D9200959026 /* ZIKViewRouter.m in Sources */ = {isa = PBXBuildFile; fileRef = F84A023E1F1E5D9200959026 /* ZIKViewRouter.m */; };
+		F8BCCB981F208D2B0051716B /* MasterViewRouter.m in Sources */ = {isa = PBXBuildFile; fileRef = F8BCCB971F208D2B0051716B /* MasterViewRouter.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -145,6 +146,8 @@
 		F84A023A1F1E5D9200959026 /* ZIKViewRouter+Private.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "ZIKViewRouter+Private.h"; sourceTree = "<group>"; };
 		F84A023D1F1E5D9200959026 /* ZIKViewRouter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ZIKViewRouter.h; sourceTree = "<group>"; };
 		F84A023E1F1E5D9200959026 /* ZIKViewRouter.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ZIKViewRouter.m; sourceTree = "<group>"; };
+		F8BCCB961F208D2B0051716B /* MasterViewRouter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MasterViewRouter.h; sourceTree = "<group>"; };
+		F8BCCB971F208D2B0051716B /* MasterViewRouter.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MasterViewRouter.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -362,6 +365,8 @@
 				F84239CE1F0CDE78000FEE5F /* AppDelegate.m */,
 				F84239D01F0CDE78000FEE5F /* MasterViewController.h */,
 				F84239D11F0CDE78000FEE5F /* MasterViewController.m */,
+				F8BCCB961F208D2B0051716B /* MasterViewRouter.h */,
+				F8BCCB971F208D2B0051716B /* MasterViewRouter.m */,
 				F84239D31F0CDE78000FEE5F /* DetailViewController.h */,
 				F84239D41F0CDE78000FEE5F /* DetailViewController.m */,
 				F82ECAB51F17DC51007168AA /* TestPush */,
@@ -524,6 +529,7 @@
 				F82ECAE31F17DE69007168AA /* ZIKLocationServiceRouter.m in Sources */,
 				F82ECAD91F17DC51007168AA /* ZIKTestPushViewController.m in Sources */,
 				F82ECAC71F17DC51007168AA /* ZIKTestGetDestinationViewRouter.m in Sources */,
+				F8BCCB981F208D2B0051716B /* MasterViewRouter.m in Sources */,
 				F82ECAC31F17DC51007168AA /* ZIKDemoParentViewRouter.m in Sources */,
 				F84A02421F1E5D9200959026 /* ZIKRouter.m in Sources */,
 				F82ECAD71F17DC51007168AA /* ZIKTestPresentModallyViewController.m in Sources */,

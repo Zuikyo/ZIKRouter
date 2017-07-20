@@ -2061,6 +2061,7 @@ destinationStateBeforeRoute:(ZIKPresentationState *)destinationStateBeforeRoute
             if (configuration.handleExternalRoute) {
                 [self prepareForPerformRouteOnDestination:destination];
             } else {
+                [self prepareDestination:destination configuration:configuration];
                 [self didFinishPrepareDestination:destination configuration:configuration];
             }
         }
@@ -2480,7 +2481,7 @@ destinationStateBeforeRoute:(ZIKPresentationState *)destinationStateBeforeRoute
                     }
                     //Adding to a superview on screen.
                     if (!performer && (newSuperview.window || [newSuperview isKindOfClass:[UIWindow class]])) {
-                        NSString *description = [NSString stringWithFormat:@"Adding to a superview on screen. Can't find which custom UIView or UIViewController added destination:(%@) as subview, so we can't notify the performer to config the destination. You may add destination to a UIWindow in code directly, and the UIWindow is not a custom class. Please change your code and add subview by a custom view router with ZIKViewRouteTypeAddAsSubview. Destination superview: (%@).",destination, newSuperview];
+                        NSString *description = [NSString stringWithFormat:@"Adding to a superview on screen. Can't find which custom UIView or UIViewController added destination:(%@) as subview, so we can't notify the performer to config the destination. You may add destination to a UIWindow in code directly. Please change your code and add subview by a custom view router with ZIKViewRouteTypeAddAsSubview. Destination superview: (%@).",destination, newSuperview];
                         [ZIKViewRouter _o_callbackError_invalidPerformerWithAction:@selector(performRoute) errorDescription:description];
                         NSAssert(NO, description);
                     }
@@ -2502,6 +2503,7 @@ destinationStateBeforeRoute:(ZIKPresentationState *)destinationStateBeforeRoute
                         NSAssert(!newSuperview.window && ![newSuperview isKindOfClass:[UIWindow class]], @"When new superview is already on screen, performer should not be nil.");
                     }
                 } else {
+                    [destinationRouter prepareDestination:destination configuration:destinationRouter._nocopy_configuration];
                     [destinationRouter didFinishPrepareDestination:destination configuration:destinationRouter._nocopy_configuration];
                     destinationRouter.prepared = YES;
                 }
@@ -2611,6 +2613,7 @@ destinationStateBeforeRoute:(ZIKPresentationState *)destinationStateBeforeRoute
                             if (needPrepare) {
                                 [ZIKViewRouter _o_prepareForDestinationRoutingFromExternal:destination router:destinationRouter performer:performer];
                             } else {
+                                [destinationRouter prepareDestination:destination configuration:destinationRouter._nocopy_configuration];
                                 [destinationRouter didFinishPrepareDestination:destination configuration:destinationRouter._nocopy_configuration];
                             }
                         } else {
