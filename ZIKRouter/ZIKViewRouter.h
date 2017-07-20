@@ -810,7 +810,7 @@ extern NSArray<NSNumber *> *kDefaultRouteTypesForView;
  @note If a UIViewController is routing from manually code or is the initial view controller of app in storyboard (like directly use [performer.navigationController pushViewController:destination animated:YES]), the view will be detected, but won't create a router to search performer and prepare the destination, because we don't know which view controller is the performer calling -pushViewController:animated: (any child view controller in navigationController's stack can perform the route).
 
  @param destination the view will be routed. You can distinguish destinations with their view protocols.
- @param configuration config for the route. You can distinguish destinations with their router's config protocols.
+ @param configuration config for the route. You can distinguish destinations with their router's config protocols. You can modify this to prepare the route, but  source, routeType, segueConfiguration, handleExternalRoute won't be modified even you change them.
  */
 - (void)prepareForDestinationRoutingFromExternal:(id)destination configuration:(__kindof ZIKViewRouteConfiguration *)configuration;
 

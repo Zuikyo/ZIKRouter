@@ -1456,7 +1456,24 @@ _Nullable Class ZIKViewRouterForConfig(Protocol<ZIKRoutableConfigDynamicGetter> 
         }
         
         if ([performer respondsToSelector:@selector(prepareForDestinationRoutingFromExternal:configuration:)]) {
-            [performer prepareForDestinationRoutingFromExternal:destination configuration:router._nocopy_configuration];
+            ZIKViewRouteConfiguration *config = router._nocopy_configuration;
+            id source = config.source;
+            ZIKViewRouteType routeType = config.routeType;
+            ZIKViewRouteSegueConfiguration *segueConfig = config.segueConfiguration;
+            BOOL handleExternalRoute = config.handleExternalRoute;
+            [performer prepareForDestinationRoutingFromExternal:destination configuration:config];
+            if (config.source != source) {
+                config.source = source;
+            }
+            if (config.routeType != routeType) {
+                config.routeType = routeType;
+            }
+            if (segueConfig.identifier && ![config.segueConfiguration.identifier isEqualToString:segueConfig.identifier]) {
+                config.segueConfiguration = segueConfig;
+            }
+            if (config.handleExternalRoute != handleExternalRoute) {
+                config.handleExternalRoute = handleExternalRoute;
+            }
         } else {
             [router _o_callbackError_invalidSourceWithAction:@selector(performRoute) errorDescription:@"Destination %@ 's performer :%@ missed -prepareForDestinationRoutingFromExternal:configuration: to config destination.",destination, performer];
             NSAssert(NO, @"Destination %@ 's performer :%@ missed -prepareForDestinationRoutingFromExternal:configuration: to config destination.",destination, performer);
