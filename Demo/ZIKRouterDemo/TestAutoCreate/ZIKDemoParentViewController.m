@@ -7,7 +7,7 @@
 //
 
 #import "ZIKDemoParentViewController.h"
-#import "ZIKViewRouter.h"
+#import <ZIKRouterKit/ZIKRouterKit.h>
 #import "ZIKInfoViewProtocol.h"
 #import "ZIKSimpleLabel.h"
 

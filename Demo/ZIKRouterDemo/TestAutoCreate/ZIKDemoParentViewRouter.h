@@ -6,7 +6,7 @@
 //  Copyright © 2017年 zuik. All rights reserved.
 //
 
-#import "ZIKViewRouter.h"
+#import <ZIKRouterKit/ZIKRouterKit.h>
 
 @interface ZIKDemoParentViewRouter : ZIKViewRouter <ZIKViewRouterProtocol>
 

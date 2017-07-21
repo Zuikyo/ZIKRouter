@@ -1,12 +1,12 @@
 //
 //  ZIKRouter_Private.h
-//  ZIKViperDemo
+//  ZIKRouter
 //
 //  Created by zuik on 2017/5/24.
 //  Copyright © 2017年 zuik. All rights reserved.
 //
 
-#import "ZIKRouter.h"
+#import <ZIKRouterKit/ZIKRouter.h>
 
 NS_ASSUME_NONNULL_BEGIN
 

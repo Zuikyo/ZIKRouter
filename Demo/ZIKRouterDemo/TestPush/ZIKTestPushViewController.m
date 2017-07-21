@@ -7,7 +7,7 @@
 //
 
 #import "ZIKTestPushViewController.h"
-#import "ZIKViewRouter.h"
+#import <ZIKRouterKit/ZIKRouterKit.h>
 #import "ZIKInfoViewProtocol.h"
 
 @interface ZIKTestPushViewController () <ZIKInfoViewDelegate>

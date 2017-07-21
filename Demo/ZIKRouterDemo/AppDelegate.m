@@ -8,7 +8,7 @@
 
 #import "AppDelegate.h"
 #import "DetailViewController.h"
-#import "ZIKViewRouter.h"
+#import <ZIKRouterKit/ZIKRouterKit.h>
 #import "MasterViewRouter.h"
 
 @interface AppDelegate () <UISplitViewControllerDelegate>
@@ -18,6 +18,7 @@
 @implementation AppDelegate
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
+    [ZIKViewRouter setup];
     [ZIKViewRouter setGlobalErrorHandler:^(ZIKViewRouter * _Nullable router, SEL  _Nonnull routeAction, NSError * _Nonnull error) {
         NSLog(@"❌ZIKRouter Error: router's action (%@) catch error! code:%@, description: %@, router:(%@)", NSStringFromSelector(routeAction), @(error.code), error.localizedDescription,router);
     }];

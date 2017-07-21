@@ -1,6 +1,6 @@
 //
 //  UIViewController+ZIKViewRouter.m
-//  ZIKViperDemo
+//  ZIKRouter
 //
 //  Created by zuik on 2017/5/31.
 //  Copyright © 2017年 zuik. All rights reserved.
@@ -9,7 +9,7 @@
 #import "UIViewController+ZIKViewRouter.h"
 #import "UIView+ZIKViewRouter.h"
 #import "ZIKPresentationState.h"
-#import "ZIKRouter+Private.h"
+#import <ZIKRouter+Private.h>
 #import <objc/runtime.h>
 
 @implementation UIViewController (ZIKViewRouter)

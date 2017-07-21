@@ -6,7 +6,8 @@
 //  Copyright © 2017年 zuik. All rights reserved.
 //
 
-#import "ZIKRouter.h"
+#import <UIKit/UIKit.h>
+#import <ZIKRouterKit/ZIKRouter.h>
 NS_ASSUME_NONNULL_BEGIN
 
 ///Route type for view
@@ -106,6 +107,8 @@ typedef void(^ZIKRouteGlobalErrorHandler)(__kindof ZIKViewRouter * _Nullable rou
  When Adding a registered UIView by code or xib, a router will be auto created. We search the view controller with custom class (not system class like native UINavigationController, or any container view controller) in it's responder hierarchy as the performer. If the registered UIView needs preparing, you have to add the view to a superview in a view controller before it removed from superview. If there is no view controller to prepare it(such as: 1. add it to a superview, and the superview is never added to a view controller; 2. add it to a UIWindow). If your custom class view use a routable view as it's part, the custom view should use a router to add and prepare the routable view, then the routable view don't need to search performer because it already prepared.
  */
 @interface ZIKViewRouter : ZIKRouter
+///Setup in -application:didFinishLaunchingWithOptions: before use ZIKViewRouter.
++ (void)setup;
 ///If this router's view is a UIViewController routed from storyboard, or a UIView added as subview from xib or code, a router will be auto created to prepare the view, and the router's autoCreated is YES; But when a UIViewController is routed from code manually or is the initial view controller of app in storyboard, router won't be auto created because we can't find the performer to prepare the destination.
 @property (nonatomic, readonly, assign) BOOL autoCreated;
 ///Whether current routing action is from router, or from external

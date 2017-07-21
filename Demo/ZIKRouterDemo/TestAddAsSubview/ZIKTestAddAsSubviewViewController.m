@@ -7,7 +7,7 @@
 //
 
 #import "ZIKTestAddAsSubviewViewController.h"
-#import "ZIKViewRouter.h"
+#import <ZIKRouterKit/ZIKRouterKit.h>
 #import "ZIKSimpleLabelProtocol.h"
 
 @interface ZIKTestAddAsSubviewViewController ()

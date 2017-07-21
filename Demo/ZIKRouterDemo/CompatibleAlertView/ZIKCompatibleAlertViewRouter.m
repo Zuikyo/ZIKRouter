@@ -8,8 +8,8 @@
 
 #import "ZIKCompatibleAlertViewRouter.h"
 #import <objc/runtime.h>
-#import "ZIKRouter+Private.h"
-#import "ZIKViewRouter+Private.h"
+#import <ZIKRouterKit/ZIKRouter+Private.h>
+#import <ZIKRouterKit/ZIKViewRouter+Private.h>
 
 RegisterRoutableViewWithConfigProtocol(UIAlertController, ZIKCompatibleAlertConfigProtocol, ZIKCompatibleAlertViewRouter)
 RegisterRoutableViewWithConfigProtocol(UIAlertView, ZIKCompatibleAlertConfigProtocol, ZIKCompatibleAlertViewRouter)

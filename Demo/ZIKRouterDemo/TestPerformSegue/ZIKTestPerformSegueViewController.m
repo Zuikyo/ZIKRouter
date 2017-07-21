@@ -7,7 +7,7 @@
 //
 
 #import "ZIKTestPerformSegueViewController.h"
-#import "ZIKViewRouter.h"
+#import <ZIKRouterKit/ZIKRouterKit.h>
 #import "ZIKInfoViewProtocol.h"
 #import "ZIKSimpleLabelProtocol.h"
 #import "ZIKTestPerformSegueViewRouter.h"

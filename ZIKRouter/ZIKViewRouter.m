@@ -7,7 +7,7 @@
 //
 
 #import "ZIKViewRouter.h"
-#import "ZIKRouter+Private.h"
+#import <ZIKRouterKit/ZIKRouter+Private.h>
 #import "ZIKViewRouter+Private.h"
 #import <objc/runtime.h>
 #import "UIViewController+ZIKViewRouter.h"
@@ -208,7 +208,13 @@ static NSMutableArray *g_preparingUIViewRouters;
 @dynamic _nocopy_configuration;
 @dynamic _nocopy_removeConfiguration;
 
-__attribute__((constructor))
++ (void)setup {
+    static dispatch_once_t onceToken;
+    dispatch_once(&onceToken, ^{
+        _initializeZIKViewRouter();
+    });
+}
+
 static void _initializeZIKViewRouter(void) {
     kDefaultRouteTypesForViewController = @[
                                             @(ZIKViewRouteTypePush),
