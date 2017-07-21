@@ -77,9 +77,9 @@ typedef void(^ZIKRouteGlobalErrorHandler)(__kindof ZIKViewRouter * _Nullable rou
 #pragma mark ZIKViewRouter
 
 /**
- A view router for decoupling and dependency injection with protocol, supporting all route types in UIKit. Subclass it and implement ZIKViewRouterProtocol to make router of your view.
+ An router for decoupling between modules, and injecting dependencies with protocol. The view router can perform all navigation types in UIKit through one method. Subclass it and implement ZIKViewRouterProtocol to make router of your view.
  @discussion
- Features: 
+ Features:
  
  1. Prepare the route with protocol and block, instead of directly configuring the destination (the source is coupled with the destination) or in delegate method (in -prepareForSegue:sender: you have to distinguish different destinations, and they're alse coupled with source).
  

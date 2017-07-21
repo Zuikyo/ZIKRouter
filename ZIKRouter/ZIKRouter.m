@@ -19,6 +19,7 @@ NSString *kZIKRouterErrorDomain = @"kZIKRouterErrorDomain";
     dispatch_semaphore_t _stateSema;
 }
 @property (nonatomic, assign) ZIKRouterState state;
+@property (nonatomic, assign) ZIKRouterState preState;
 @property (nonatomic, strong, nullable) NSError *error;
 @property (nonatomic, copy) __kindof ZIKRouteConfiguration *configuration;
 @property (nonatomic, copy, nullable) __kindof ZIKRouteConfiguration *removeConfiguration;
@@ -65,6 +66,7 @@ NSString *kZIKRouterErrorDomain = @"kZIKRouterErrorDomain";
 - (void)notifyRouteState:(ZIKRouterState)state {
     dispatch_semaphore_wait(_stateSema, DISPATCH_TIME_FOREVER);
     ZIKRouterState oldState = self.state;
+    self.preState = oldState;
     self.state = state;
     
     if (self._nocopy_configuration.stateNotifier) {

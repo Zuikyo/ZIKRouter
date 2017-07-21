@@ -23,6 +23,15 @@
     objc_setAssociatedObject(self, "ZIK_routed", @(routed), OBJC_ASSOCIATION_RETAIN);
 }
 
+- (BOOL)ZIK_removing {
+    NSNumber *result = objc_getAssociatedObject(self, "ZIK_removing");
+    return [result boolValue];
+}
+
+- (void)setZIK_removing:(BOOL)removing {
+    objc_setAssociatedObject(self, "ZIK_removing", @(removing), OBJC_ASSOCIATION_RETAIN);
+}
+
 - (BOOL)ZIK_isAppRootViewController {
     NSAssert([UIApplication sharedApplication].delegate.window.rootViewController, @"Can't find rootViewController");
     return [UIApplication sharedApplication].delegate.window.rootViewController == self;

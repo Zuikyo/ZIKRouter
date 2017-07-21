@@ -10,6 +10,7 @@
 
 @implementation ZIKCustomTransitionSegue
 
+///If a custom segue provide custom present, you should use ZIKViewRouteTypeCustom to provide custom remove.
 - (void)perform {
     UIViewController *source = self.sourceViewController;
     UIViewController *destination = self.destinationViewController;

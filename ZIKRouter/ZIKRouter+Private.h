@@ -15,6 +15,7 @@ extern IMP ZIKRouter_ReplaceMethodWithMethodAndGetOriginalImp(Class originalClas
 
 ///expost APIs to subclass
 @interface ZIKRouter ()
+@property (nonatomic, readonly, assign) ZIKRouterState preState;
 ///subclass can get the real configuration to avoid unnecessary copy
 @property (nonatomic, readonly, copy) __kindof ZIKRouteConfiguration *_nocopy_configuration;
 @property (nonatomic, readonly, copy) __kindof ZIKRouteConfiguration *_nocopy_removeConfiguration;

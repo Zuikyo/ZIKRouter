@@ -43,6 +43,7 @@
 
 @interface UIViewController ()
 - (void)setZIK_routed:(BOOL)routed;
+- (void)setZIK_removing:(BOOL)removing;
 @end
 
 @interface UIViewController (_ZIKViewRouter)
@@ -80,30 +81,40 @@
     objc_setAssociatedObject(self, "ZIK_CurrentClassCallingPrepareForSegue", vcClass, OBJC_ASSOCIATION_RETAIN);
 }
 - (UIViewController *)ZIK_parentMovingTo {
-    NSPointerArray *container = objc_getAssociatedObject(self, "ZIK_parentMovingTo");
-    return [container pointerAtIndex:0];
+    UIViewController *(^weakContainer)(void) = objc_getAssociatedObject(self, "ZIK_parentMovingTo");
+    if (weakContainer) {
+        return weakContainer();
+    }
+    return nil;
 }
 - (void)setZIK_parentMovingTo:(nullable UIViewController *)parentMovingTo {
     NSParameterAssert(!parentMovingTo || [parentMovingTo isKindOfClass:[UIViewController class]]);
     id object = nil;
     if (parentMovingTo) {
-        NSPointerArray *container = [NSPointerArray weakObjectsPointerArray];
-        [container addPointer:(__bridge void * _Nullable)(parentMovingTo)];
-        object = container;
+        __weak typeof(UIViewController *)weakParent = parentMovingTo;
+        UIViewController *(^weakContainer)(void) = ^ {
+            return weakParent;
+        };
+        object = weakContainer;
     }
     objc_setAssociatedObject(self, "ZIK_parentMovingTo", object, OBJC_ASSOCIATION_RETAIN);
 }
-- (UIViewController *)ZIK_parentRemovingFrom {
-    NSPointerArray *container = objc_getAssociatedObject(self, "ZIK_parentRemovingFrom");
-    return [container pointerAtIndex:0];
+- (nullable UIViewController *)ZIK_parentRemovingFrom {
+    UIViewController *(^weakContainer)(void) = objc_getAssociatedObject(self, "ZIK_parentRemovingFrom");
+    if (weakContainer) {
+        return weakContainer();
+    }
+    return nil;
 }
 - (void)setZIK_parentRemovingFrom:(nullable UIViewController *)parentRemovingFrom {
     NSParameterAssert(!parentRemovingFrom || [parentRemovingFrom isKindOfClass:[UIViewController class]]);
     id object;
     if (parentRemovingFrom) {
-        NSPointerArray *container = [NSPointerArray weakObjectsPointerArray];
-        [container addPointer:(__bridge void * _Nullable)(parentRemovingFrom)];
-        object = container;
+        __weak typeof(UIViewController *)weakParent = parentRemovingFrom;
+        UIViewController *(^weakContainer)(void) = ^ {
+            return weakParent;
+        };
+        object = weakContainer;
     }
     objc_setAssociatedObject(self, "ZIK_parentRemovingFrom", object, OBJC_ASSOCIATION_RETAIN);
 }
@@ -161,6 +172,7 @@ NSString *const kZIKViewRouteWillPerformRouteNotification = @"kZIKViewRouteWillP
 NSString *const kZIKViewRouteDidPerformRouteNotification = @"kZIKViewRouteDidPerformRouteNotification";
 NSString *const kZIKViewRouteWillRemoveRouteNotification = @"kZIKViewRouteWillRemoveRouteNotification";
 NSString *const kZIKViewRouteDidRemoveRouteNotification = @"kZIKViewRouteDidRemoveRouteNotification";
+NSString *const kZIKViewRouteRemoveRouteCanceledNotification = @"kZIKViewRouteRemoveRouteCanceledNotification";
 NSString *const kZIKViewRouteErrorDomain = @"kZIKViewRouteErrorDomain";
 
 static BOOL _assert_isLoadFinished = NO;
@@ -713,6 +725,7 @@ _Nullable Class ZIKViewRouterForConfig(Protocol<ZIKRoutableConfigDynamicGetter> 
         [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(_o_handleDidPerformRouteNotification:) name:kZIKViewRouteDidPerformRouteNotification object:nil];
         [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(_o_handleWillRemoveRouteNotification:) name:kZIKViewRouteWillRemoveRouteNotification object:nil];
         [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(_o_handleDidRemoveRouteNotification:) name:kZIKViewRouteDidRemoveRouteNotification object:nil];
+        [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(_o_handleRemoveRouteCanceledNotification:) name:kZIKViewRouteRemoveRouteCanceledNotification object:nil];
     }
     return self;
 }
@@ -2089,9 +2102,6 @@ destinationStateBeforeRoute:(ZIKPresentationState *)destinationStateBeforeRoute
             }
         }
     }
-    if (state == ZIKRouterStateRemoving) {
-        [self _o_callbackError_unbalancedTransitionWithAction:@selector(performRoute) errorDescription:@"Unbalanced calls to begin/end appearance transitions for destination. This error occurs when you try and display a view controller before the current view controller is finished displaying. This may cause the UIViewController skips or messes up the order calling -viewWillAppear:, -viewDidAppear:, -viewWillDisAppear: and -viewDidDisappear:, and messes up the route state. Current error reason is trying to perform route on destination when destination is removing, router:(%@), callStack:%@",self,[NSThread callStackSymbols]];
-    }
 }
 
 - (void)_o_handleDidPerformRouteNotification:(NSNotification *)note {
@@ -2156,6 +2166,18 @@ destinationStateBeforeRoute:(ZIKPresentationState *)destinationStateBeforeRoute
     }
 }
 
+- (void)_o_handleRemoveRouteCanceledNotification:(NSNotification *)note {
+    id destination = note.object;
+    if (!self.destination || self.destination != destination) {
+        return;
+    }
+    if (!self.routingFromInternal &&
+        self.state == ZIKRouterStateRemoving) {
+        ZIKRouterState preState = self.preState;
+        [self notifyRouteState:preState];//not performed from router (dealed by system, or your code)
+    }
+}
+
 - (void)ZIKViewRouter_hook_willMoveToParentViewController:(UIViewController *)parent {
     [self ZIKViewRouter_hook_willMoveToParentViewController:parent];
     if (parent) {
@@ -2186,11 +2208,20 @@ destinationStateBeforeRoute:(ZIKPresentationState *)destinationStateBeforeRoute
 }
 
 - (void)ZIKViewRouter_hook_viewWillAppear:(BOOL)animated {
-    if ([self conformsToProtocol:@protocol(ZIKRoutableView)]) {
+    UIViewController *destination = (UIViewController *)self;
+    BOOL removing = destination.ZIK_removing;
+    BOOL isRoutableView = ([self conformsToProtocol:@protocol(ZIKRoutableView)] == YES);
+    if (removing) {
+        [destination setZIK_removing:NO];
+        if (isRoutableView) {
+            [[NSNotificationCenter defaultCenter] postNotificationName:kZIKViewRouteRemoveRouteCanceledNotification object:destination];
+        }
+    }
+    if (isRoutableView) {
         BOOL routed = [(UIViewController *)self ZIK_routed];
         if (!routed) {
+            NSAssert(removing == NO, @"removing a not routed view is unexpected");
             UIViewController *parentMovingTo = [(UIViewController *)self ZIK_parentMovingTo];
-            UIViewController *destination = (UIViewController *)self;
             [[NSNotificationCenter defaultCenter] postNotificationName:kZIKViewRouteWillPerformRouteNotification object:destination];
             NSNumber *routeTypeFromRouter = [destination ZIK_routeTypeFromRouter];
             if (!routeTypeFromRouter ||
@@ -2280,7 +2311,7 @@ destinationStateBeforeRoute:(ZIKPresentationState *)destinationStateBeforeRoute
             }
         }
         [destination setZIK_parentRemovingFrom:source];
-        [destination setZIK_routed:NO];
+        [destination setZIK_removing:YES];
         break;
     }
     
@@ -2288,10 +2319,10 @@ destinationStateBeforeRoute:(ZIKPresentationState *)destinationStateBeforeRoute
 }
 
 - (void)ZIKViewRouter_hook_viewDidDisappear:(BOOL)animated {
+    UIViewController *destination = (UIViewController *)self;
+    BOOL removing = destination.ZIK_removing;
     if ([self conformsToProtocol:@protocol(ZIKRoutableView)]) {
-        UIViewController *destination = (UIViewController *)self;
-        
-        if (!destination.ZIK_routed) {
+        if (removing) {
             UIViewController *source = destination.ZIK_parentRemovingFrom;
             [[NSNotificationCenter defaultCenter] postNotificationName:kZIKViewRouteDidRemoveRouteNotification object:destination];
             NSNumber *routeTypeFromRouter = [destination ZIK_routeTypeFromRouter];
@@ -2302,6 +2333,32 @@ destinationStateBeforeRoute:(ZIKPresentationState *)destinationStateBeforeRoute
             if (routeTypeFromRouter) {
                 [destination setZIK_routeTypeFromRouter:nil];
             }
+        }
+    }
+    if (removing) {
+        [destination setZIK_removing:NO];
+        [destination setZIK_routed:NO];
+    } else {
+        //Check unbalanced calls to begin/end appearance transitions
+        UIViewController *node = destination;
+        while (node) {
+            UIViewController *parentRemovingFrom = node.ZIK_parentRemovingFrom;
+            UIViewController *source;
+            if (parentRemovingFrom ||
+                node.isMovingFromParentViewController ||
+                (!node.parentViewController && !node.presentingViewController && ![node ZIK_isAppRootViewController])) {
+                source = parentRemovingFrom;
+            } else if (node.isBeingDismissed) {
+                source = node.presentingViewController;
+            } else {
+                node = node.parentViewController;
+                continue;
+            }
+            
+            [destination setZIK_parentRemovingFrom:source];
+            [ZIKViewRouter _o_callbackGlobalErrorHandlerWithRouter:nil action:@selector(removeRoute) error:[ZIKViewRouter errorWithCode:ZIKViewRouteErrorUnbalancedTransition localizedDescriptionFormat:@"Unbalanced calls to begin/end appearance transitions for destination. This error occurs when you try and display a view controller before the current view controller is finished displaying. This may cause the UIViewController skips or messes up the order calling -viewWillAppear:, -viewDidAppear:, -viewWillDisAppear: and -viewDidDisappear:, and messes up the route state. Current error reason is already removed destination but destination appears again before -viewDidDisappear:, router:(%@), callStack:%@",self,[NSThread callStackSymbols]]];
+            NSAssert(NO, @"Unbalanced calls to begin/end appearance transitions for destination. This error may from your custom transition.");
+            break;
         }
     }
     

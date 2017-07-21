@@ -8,6 +8,8 @@
 
 #import "ZIKViewRouter.h"
 
+NS_ASSUME_NONNULL_BEGIN
+
 ///Use these methods when implementing your custom route
 @interface ZIKViewRouter ()
 @property (nonatomic, readonly, copy) __kindof ZIKViewRouteConfiguration *_nocopy_configuration;
@@ -21,6 +23,9 @@
 ///Call it when route performancer failed.
 - (void)endPerformRouteWithError:(NSError *)error;
 
+///If your custom route type is performing a segue, use this to perform the segue, don't need to use -beginPerformRoute and -endPerformRouteWithSuccess. `Source` is the view controller to perform the segue.
+- (void)_o_performSegueWithIdentifier:(NSString *)identifier fromSource:(UIViewController *)source sender:(nullable id)sender;
+
 ///Call it when route will remove.
 - (void)beginRemoveRouteFromSource:(id)source;
 ///Call it when route is successfully removed.
@@ -29,3 +34,5 @@
 - (void)endRemoveRouteWithError:(NSError *)error;
 
 @end
+
+NS_ASSUME_NONNULL_END

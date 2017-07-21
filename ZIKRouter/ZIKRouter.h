@@ -42,7 +42,7 @@ typedef NS_ENUM(NSInteger, ZIKRouterState) {
     ZIKRouterStateRemoveFailed
 };
 
-///Abstract class for router
+///Abstract class for router. A router for decoupling between modules, and injecting dependencies with protocol.
 @interface ZIKRouter : NSObject <ZIKRouterProtocol>
 ///State of route, not thread safe
 @property (nonatomic, readonly, assign) ZIKRouterState state;
