@@ -2899,17 +2899,24 @@ destinationStateBeforeRoute:(ZIKPresentationState *)destinationStateBeforeRoute
     void(^prepareForRouteInSourceRouter)(id destination);
     if (sourceRouter) {
         prepareForRouteInSourceRouter = sourceRouter._nocopy_configuration.prepareForRoute;
+    }
+    
+    //Prepare for unwind destination or unroutable views
+    if (sourceRouter && sourceRouter._nocopy_configuration.segueConfiguration.segueDestination == destination) {
         if (isUnwindSegue) {
-            //Only prepare unwind destination from router
             if (prepareForRouteInSourceRouter) {
                 prepareForRouteInSourceRouter(destination);
             }
             return;
         }
+        if (![destination conformsToProtocol:@protocol(ZIKRoutableView)]) {
+            if (prepareForRouteInSourceRouter) {
+                prepareForRouteInSourceRouter(destination);
+            }
+        }
     }
-    
     //Prepare routable views
-    for (NSInteger idx = destinationRouters.count - 1; idx >= 0; idx--) {
+    for (NSInteger idx = 0; idx <= destinationRouters.count - 1; idx++) {
         ZIKViewRouter *router = [destinationRouters objectAtIndex:idx];
         UIViewController * routableView = router.destination;
         NSAssert(routableView, @"Destination wasn't set when create destinationRouters");
@@ -2926,20 +2933,6 @@ destinationStateBeforeRoute:(ZIKPresentationState *)destinationStateBeforeRoute
             [ZIKViewRouter _o_prepareForDestinationRoutingFromExternal:routableView router:router performer:(UIViewController *)self];
         }
         [ZIKViewRouter AOP_notifyAll_router:router willPerformRouteOnDestination:routableView fromSource:source];
-    }
-    //Prepare for unwind destination or unroutable views
-    if (sourceRouter && sourceRouter._nocopy_configuration.segueConfiguration.segueDestination == destination) {
-        if (isUnwindSegue) {
-            if (prepareForRouteInSourceRouter) {
-                prepareForRouteInSourceRouter(destination);
-            }
-            return;
-        }
-        if (![destination conformsToProtocol:@protocol(ZIKRoutableView)]) {
-            if (prepareForRouteInSourceRouter) {
-                prepareForRouteInSourceRouter(destination);
-            }
-        }
     }
 }
 
