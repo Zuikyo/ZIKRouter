@@ -11,8 +11,9 @@
 #import <ZIKRouterKit/ZIKRouter+Private.h>
 #import <ZIKRouterKit/ZIKViewRouter+Private.h>
 
-RegisterRoutableViewWithConfigProtocol(UIAlertController, ZIKCompatibleAlertConfigProtocol, ZIKCompatibleAlertViewRouter)
-RegisterRoutableViewWithConfigProtocol(UIAlertView, ZIKCompatibleAlertConfigProtocol, ZIKCompatibleAlertViewRouter)
+RegisterRoutableView(UIAlertController, ZIKCompatibleAlertViewRouter)
+RegisterRoutableView(UIAlertView, ZIKCompatibleAlertViewRouter)
+RegisterRoutableConfigProtocol(ZIKCompatibleAlertConfigProtocol, ZIKCompatibleAlertViewRouter)
 
 #pragma mark Compatible UIAlertView
 

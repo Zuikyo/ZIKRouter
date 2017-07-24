@@ -9,7 +9,8 @@
 #import "ZIKSimpleLabelRouter.h"
 #import "ZIKSimpleLabel.h"
 
-RegisterRoutableViewWithViewProtocol(ZIKSimpleLabel, ZIKSimpleLabelProtocol, ZIKSimpleLabelRouter)
+RegisterRoutableView(ZIKSimpleLabel, ZIKSimpleLabelRouter)
+RegisterRoutableViewProtocol(ZIKSimpleLabelProtocol, ZIKSimpleLabelRouter)
 @implementation ZIKSimpleLabelRouter
 
 - (id)destinationWithConfiguration:(__kindof ZIKRouteConfiguration *)configuration {

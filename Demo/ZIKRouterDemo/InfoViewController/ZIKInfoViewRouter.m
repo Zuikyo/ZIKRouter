@@ -9,7 +9,8 @@
 #import "ZIKInfoViewRouter.h"
 #import "ZIKInfoViewController.h"
 
-RegisterRoutableViewWithViewProtocolForExclusiveRouter(ZIKInfoViewController, ZIKInfoViewProtocol, ZIKInfoViewRouter)
+RegisterRoutableViewForExclusiveRouter(ZIKInfoViewController, ZIKInfoViewRouter)
+RegisterRoutableViewProtocol(ZIKInfoViewProtocol, ZIKInfoViewRouter)
 
 @implementation ZIKInfoViewRouter
 
