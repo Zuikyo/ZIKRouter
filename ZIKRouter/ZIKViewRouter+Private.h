@@ -6,7 +6,7 @@
 //  Copyright © 2017年 zuik. All rights reserved.
 //
 
-#import <ZIKRouterKit/ZIKViewRouter.h>
+#import "ZIKViewRouter.h"
 
 NS_ASSUME_NONNULL_BEGIN
 
