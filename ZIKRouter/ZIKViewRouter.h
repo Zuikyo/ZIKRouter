@@ -7,7 +7,7 @@
 //
 
 #import <UIKit/UIKit.h>
-#import <ZIKRouterKit/ZIKRouter.h>
+#import "ZIKRouter.h"
 NS_ASSUME_NONNULL_BEGIN
 
 ///Route type for view

@@ -7,7 +7,7 @@
 //
 
 #import <UIKit/UIKit.h>
-#import <ZIKRouterKit/ZIKViewRouter.h>
+#import "ZIKViewRouter.h"
 
 NS_ASSUME_NONNULL_BEGIN
 
