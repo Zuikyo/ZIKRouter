@@ -2186,7 +2186,7 @@ destinationStateBeforeRoute:(ZIKPresentationState *)destinationStateBeforeRoute
         
         [(UIViewController *)self setZIK_parentMovingTo:nil];
     } else {
-        NSAssert([(UIViewController *)self parentViewController] != nil, @"currentParent should be nil when removed from parent");
+        NSAssert([(UIViewController *)self parentViewController] == nil, @"currentParent should be nil when removed from parent");
         //If you do removeFromSuperview before removeFromParentViewController, -didMoveToParentViewController:nil in child view controller may be called twice.
         //        NSAssert([(UIViewController *)self ZIK_parentRemovingFrom], @"RemovingFrom should be set in -ZIKViewRouter_hook_willMoveToParentViewController.");
         
