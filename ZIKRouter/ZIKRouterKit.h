@@ -8,11 +8,11 @@
 
 #import <Foundation/Foundation.h>
 #import <UIKit/UIKit.h>
-#import <ZIKRouterKit/ZIKRouter.h>
-#import <ZIKRouterKit/ZIKViewRouter.h>
-#import <ZIKRouterKit/ZIKPresentationState.h>
-#import <ZIKRouterKit/UIView+ZIKViewRouter.h>
-#import <ZIKRouterKit/UIViewController+ZIKViewRouter.h>
+#import "ZIKRouter.h"
+#import "ZIKViewRouter.h"
+#import "ZIKPresentationState.h"
+#import "UIView+ZIKViewRouter.h"
+#import "UIViewController+ZIKViewRouter.h"
 
 //! Project version number for ZIKRouter.
 FOUNDATION_EXPORT double ZIKRouterKitVersionNumber;

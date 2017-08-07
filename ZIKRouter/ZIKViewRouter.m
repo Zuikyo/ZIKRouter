@@ -241,7 +241,6 @@ static void _initializeZIKViewRouter(void) {
     
     Class ZIKViewRouterClass = [ZIKViewRouter class];
     Class UIResponderClass = [UIResponder class];
-    Class UIViewClass = [UIView class];
     Class UIViewControllerClass = [UIViewController class];
     Class UIStoryboardSegueClass = [UIStoryboardSegue class];
     
@@ -285,7 +284,7 @@ static void _initializeZIKViewRouter(void) {
     EnumerateClassList(^(__unsafe_unretained Class class) {
         if (ClassIsSubclassOfClass(class, UIResponderClass)) {
             if (class_conformsToProtocol(class, @protocol(ZIKRoutableView))) {
-                NSCAssert([class isSubclassOfClass:UIViewClass] || [class isSubclassOfClass:UIViewControllerClass], @"ZIKRoutableView only suppourt UIView and UIViewController");
+                NSCAssert([class isSubclassOfClass:[UIView class]] || [class isSubclassOfClass:UIViewControllerClass], @"ZIKRoutableView only suppourt UIView and UIViewController");
                 [routableViews addObject:class];
             }
             if (ClassIsSubclassOfClass(class, UIViewControllerClass)) {
@@ -2187,8 +2186,7 @@ destinationStateBeforeRoute:(ZIKPresentationState *)destinationStateBeforeRoute
         
         [(UIViewController *)self setZIK_parentMovingTo:nil];
     } else {
-        UIViewController *currentParent = [(UIViewController *)self parentViewController];
-        NSAssert(!currentParent, @"currentParent should be nil when removed from parent");
+        NSAssert([(UIViewController *)self parentViewController] != nil, @"currentParent should be nil when removed from parent");
         //If you do removeFromSuperview before removeFromParentViewController, -didMoveToParentViewController:nil in child view controller may be called twice.
         //        NSAssert([(UIViewController *)self ZIK_parentRemovingFrom], @"RemovingFrom should be set in -ZIKViewRouter_hook_willMoveToParentViewController.");
         
