@@ -46,7 +46,7 @@
 		F85F4D3A1F224130003106C3 /* ZIKPresentationState.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = F85F4D161F223F0F003106C3 /* ZIKPresentationState.h */; };
 		F85F4D3B1F224130003106C3 /* UIView+ZIKViewRouter.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = F85F4D0F1F223F0F003106C3 /* UIView+ZIKViewRouter.h */; };
 		F85F4D3C1F224130003106C3 /* UIViewController+ZIKViewRouter.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = F85F4D111F223F0F003106C3 /* UIViewController+ZIKViewRouter.h */; };
-		F85F4D541F22599E003106C3 /* ZIKRouterKit.h in Headers */ = {isa = PBXBuildFile; fileRef = F85F4D531F22599E003106C3 /* ZIKRouterKit.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		F8B0D86F1F38D541006824F2 /* ZIKRouter-umbrella.h in Headers */ = {isa = PBXBuildFile; fileRef = F8B0D86E1F38D541006824F2 /* ZIKRouter-umbrella.h */; settings = {ATTRIBUTES = (Public, ); }; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -79,7 +79,7 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
-		F85F4CFF1F223EB0003106C3 /* ZIKRouterKit.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = ZIKRouterKit.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		F85F4CFF1F223EB0003106C3 /* ZIKRouter.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = ZIKRouter.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		F85F4D031F223EB0003106C3 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		F85F4D0A1F223F0F003106C3 /* ZIKViewRouter.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ZIKViewRouter.m; sourceTree = "<group>"; };
 		F85F4D0B1F223F0F003106C3 /* ZIKViewRouter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ZIKViewRouter.h; sourceTree = "<group>"; };
@@ -94,7 +94,7 @@
 		F85F4D151F223F0F003106C3 /* ZIKPresentationState.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ZIKPresentationState.m; sourceTree = "<group>"; };
 		F85F4D161F223F0F003106C3 /* ZIKPresentationState.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ZIKPresentationState.h; sourceTree = "<group>"; };
 		F85F4D271F2240D2003106C3 /* libZIKRouter.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libZIKRouter.a; sourceTree = BUILT_PRODUCTS_DIR; };
-		F85F4D531F22599E003106C3 /* ZIKRouterKit.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; lineEnding = 0; path = ZIKRouterKit.h; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objcpp; };
+		F8B0D86E1F38D541006824F2 /* ZIKRouter-umbrella.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = "ZIKRouter-umbrella.h"; path = "Framework/ZIKRouter-umbrella.h"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -126,7 +126,7 @@
 		F85F4D001F223EB0003106C3 /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				F85F4CFF1F223EB0003106C3 /* ZIKRouterKit.framework */,
+				F85F4CFF1F223EB0003106C3 /* ZIKRouter.framework */,
 				F85F4D271F2240D2003106C3 /* libZIKRouter.a */,
 			);
 			name = Products;
@@ -135,7 +135,7 @@
 		F85F4D011F223EB0003106C3 /* ZIKRouter */ = {
 			isa = PBXGroup;
 			children = (
-				F85F4D531F22599E003106C3 /* ZIKRouterKit.h */,
+				F8B0D86E1F38D541006824F2 /* ZIKRouter-umbrella.h */,
 				F85F4D0C1F223F0F003106C3 /* ZIKRouter.h */,
 				F85F4D141F223F0F003106C3 /* ZIKRouter.m */,
 				F85F4D131F223F0F003106C3 /* ZIKRouter+Private.h */,
@@ -168,7 +168,7 @@
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				F85F4D541F22599E003106C3 /* ZIKRouterKit.h in Headers */,
+				F8B0D86F1F38D541006824F2 /* ZIKRouter-umbrella.h in Headers */,
 				F85F4D191F223F0F003106C3 /* ZIKRouter.h in Headers */,
 				F85F4D181F223F0F003106C3 /* ZIKViewRouter.h in Headers */,
 				F85F4D221F223F0F003106C3 /* ZIKPresentationState.h in Headers */,
@@ -182,9 +182,9 @@
 /* End PBXHeadersBuildPhase section */
 
 /* Begin PBXNativeTarget section */
-		F85F4CFE1F223EB0003106C3 /* ZIKRouterKit */ = {
+		F85F4CFE1F223EB0003106C3 /* ZIKRouter */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = F85F4D071F223EB0003106C3 /* Build configuration list for PBXNativeTarget "ZIKRouterKit" */;
+			buildConfigurationList = F85F4D071F223EB0003106C3 /* Build configuration list for PBXNativeTarget "ZIKRouter" */;
 			buildPhases = (
 				F85F4CFA1F223EB0003106C3 /* Sources */,
 				F85F4CFB1F223EB0003106C3 /* Frameworks */,
@@ -195,9 +195,9 @@
 			);
 			dependencies = (
 			);
-			name = ZIKRouterKit;
+			name = ZIKRouter;
 			productName = ZIKRouter;
-			productReference = F85F4CFF1F223EB0003106C3 /* ZIKRouterKit.framework */;
+			productReference = F85F4CFF1F223EB0003106C3 /* ZIKRouter.framework */;
 			productType = "com.apple.product-type.framework";
 		};
 		F85F4D261F2240D2003106C3 /* libZIKRouter */ = {
@@ -254,7 +254,7 @@
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
-				F85F4CFE1F223EB0003106C3 /* ZIKRouterKit */,
+				F85F4CFE1F223EB0003106C3 /* ZIKRouter */,
 				F85F4D261F2240D2003106C3 /* libZIKRouter */,
 				F8D11F4A1F2268CA0035240D /* multiBuild */,
 			);
@@ -317,7 +317,7 @@
 /* Begin PBXTargetDependency section */
 		F8D11F4F1F2268D30035240D /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = F85F4CFE1F223EB0003106C3 /* ZIKRouterKit */;
+			target = F85F4CFE1F223EB0003106C3 /* ZIKRouter */;
 			targetProxy = F8D11F4E1F2268D30035240D /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
@@ -349,6 +349,7 @@
 				COPY_PHASE_STRIP = NO;
 				CURRENT_PROJECT_VERSION = 1;
 				DEBUG_INFORMATION_FORMAT = dwarf;
+				DEFINES_MODULE = YES;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				ENABLE_TESTABILITY = YES;
 				GCC_C_LANGUAGE_STANDARD = gnu99;
@@ -366,6 +367,7 @@
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				IPHONEOS_DEPLOYMENT_TARGET = 7.0;
+				MODULEMAP_FILE = ZIKRouter/Framework/module.modulemap;
 				MTL_ENABLE_DEBUG_INFO = YES;
 				ONLY_ACTIVE_ARCH = YES;
 				SDKROOT = iphoneos;
@@ -401,6 +403,7 @@
 				COPY_PHASE_STRIP = NO;
 				CURRENT_PROJECT_VERSION = 1;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				DEFINES_MODULE = YES;
 				ENABLE_NS_ASSERTIONS = NO;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				GCC_C_LANGUAGE_STANDARD = gnu99;
@@ -412,6 +415,7 @@
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				IPHONEOS_DEPLOYMENT_TARGET = 7.0;
+				MODULEMAP_FILE = ZIKRouter/Framework/module.modulemap;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				SDKROOT = iphoneos;
 				TARGETED_DEVICE_FAMILY = "1,2";
@@ -436,6 +440,7 @@
 				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				MACH_O_TYPE = mh_dylib;
+				MODULEMAP_FILE = ZIKRouter/Framework/module.modulemap;
 				PRODUCT_BUNDLE_IDENTIFIER = com.zuik.ZIKRouter;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
@@ -457,6 +462,7 @@
 				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				MACH_O_TYPE = mh_dylib;
+				MODULEMAP_FILE = ZIKRouter/Framework/module.modulemap;
 				PRODUCT_BUNDLE_IDENTIFIER = com.zuik.ZIKRouter;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
@@ -515,7 +521,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		F85F4D071F223EB0003106C3 /* Build configuration list for PBXNativeTarget "ZIKRouterKit" */ = {
+		F85F4D071F223EB0003106C3 /* Build configuration list for PBXNativeTarget "ZIKRouter" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				F85F4D081F223EB0003106C3 /* Debug */,

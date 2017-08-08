@@ -1,5 +1,5 @@
 //
-//  ZIKRouterKit.h
+//  ZIKRouter-umbrella.h
 //  ZIKRouter
 //
 //  Created by zuik on 2017/7/21.
@@ -15,7 +15,7 @@
 #import "UIViewController+ZIKViewRouter.h"
 
 //! Project version number for ZIKRouter.
-FOUNDATION_EXPORT double ZIKRouterKitVersionNumber;
+FOUNDATION_EXPORT double ZIKRouterVersionNumber;
 
 //! Project version string for ZIKRouter.
-FOUNDATION_EXPORT const unsigned char ZIKRouterKitVersionString[];
+FOUNDATION_EXPORT const unsigned char ZIKRouterVersionString[];

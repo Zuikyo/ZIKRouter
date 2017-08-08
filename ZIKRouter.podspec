@@ -18,6 +18,8 @@ Pod::Spec.new do |s|
   s.source_files  = "ZIKRouter/*.{h,m}", "ZIKRouter/Additions/*.{h,m}"
 # s.public_header_files = "ZIKRouter/*.h"
   s.private_header_files = "ZIKRouter/ZIKRouter+Private.h", "ZIKRouter/ZIKViewRouter+Private.h"
+  s.preserve_path = 'ZIKRouter/Framework/module.modulemap'
+  s.module_map = 'ZIKRouter/Framework/module.modulemap'
 
   s.frameworks = "Foundation", "UIKit"
 
