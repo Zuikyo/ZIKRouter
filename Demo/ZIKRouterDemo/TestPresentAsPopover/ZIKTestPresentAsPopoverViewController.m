@@ -7,7 +7,7 @@
 //
 
 #import "ZIKTestPresentAsPopoverViewController.h"
-#import <ZIKRouterKit/ZIKRouterKit.h>
+@import ZIKRouter;
 #import "ZIKInfoViewProtocol.h"
 
 @interface ZIKTestPresentAsPopoverViewController () <ZIKInfoViewDelegate, UIPopoverPresentationControllerDelegate>

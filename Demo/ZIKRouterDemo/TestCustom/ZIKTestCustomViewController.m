@@ -7,7 +7,7 @@
 //
 
 #import "ZIKTestCustomViewController.h"
-#import <ZIKRouterKit/ZIKRouterKit.h>
+@import ZIKRouter;
 #import "ZIKCompatibleAlertConfigProtocol.h"
 
 @interface ZIKTestCustomViewController ()

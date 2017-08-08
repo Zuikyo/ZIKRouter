@@ -6,7 +6,7 @@
 //  Copyright © 2017年 zuik. All rights reserved.
 //
 
-#import <ZIKRouterKit/ZIKRouter.h>
+@import ZIKRouter;
 
 @interface ZIKLocationServiceRouter : ZIKRouter <ZIKRouterProtocol>
 

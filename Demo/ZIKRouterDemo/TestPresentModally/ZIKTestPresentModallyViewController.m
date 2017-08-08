@@ -7,7 +7,7 @@
 //
 
 #import "ZIKTestPresentModallyViewController.h"
-#import <ZIKRouterKit/ZIKRouterKit.h>
+@import ZIKRouter;
 #import "ZIKInfoViewProtocol.h"
 
 @interface ZIKTestPresentModallyViewController () <ZIKInfoViewDelegate>
