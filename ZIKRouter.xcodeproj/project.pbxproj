@@ -25,12 +25,12 @@
 		F85F4D171F223F0F003106C3 /* ZIKViewRouter.m in Sources */ = {isa = PBXBuildFile; fileRef = F85F4D0A1F223F0F003106C3 /* ZIKViewRouter.m */; };
 		F85F4D181F223F0F003106C3 /* ZIKViewRouter.h in Headers */ = {isa = PBXBuildFile; fileRef = F85F4D0B1F223F0F003106C3 /* ZIKViewRouter.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		F85F4D191F223F0F003106C3 /* ZIKRouter.h in Headers */ = {isa = PBXBuildFile; fileRef = F85F4D0C1F223F0F003106C3 /* ZIKRouter.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		F85F4D1A1F223F0F003106C3 /* ZIKViewRouter+Private.h in Headers */ = {isa = PBXBuildFile; fileRef = F85F4D0D1F223F0F003106C3 /* ZIKViewRouter+Private.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		F85F4D1A1F223F0F003106C3 /* ZIKViewRouter+Private.h in Headers */ = {isa = PBXBuildFile; fileRef = F85F4D0D1F223F0F003106C3 /* ZIKViewRouter+Private.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		F85F4D1B1F223F0F003106C3 /* UIView+ZIKViewRouter.h in Headers */ = {isa = PBXBuildFile; fileRef = F85F4D0F1F223F0F003106C3 /* UIView+ZIKViewRouter.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		F85F4D1C1F223F0F003106C3 /* UIView+ZIKViewRouter.m in Sources */ = {isa = PBXBuildFile; fileRef = F85F4D101F223F0F003106C3 /* UIView+ZIKViewRouter.m */; };
 		F85F4D1D1F223F0F003106C3 /* UIViewController+ZIKViewRouter.h in Headers */ = {isa = PBXBuildFile; fileRef = F85F4D111F223F0F003106C3 /* UIViewController+ZIKViewRouter.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		F85F4D1E1F223F0F003106C3 /* UIViewController+ZIKViewRouter.m in Sources */ = {isa = PBXBuildFile; fileRef = F85F4D121F223F0F003106C3 /* UIViewController+ZIKViewRouter.m */; };
-		F85F4D1F1F223F0F003106C3 /* ZIKRouter+Private.h in Headers */ = {isa = PBXBuildFile; fileRef = F85F4D131F223F0F003106C3 /* ZIKRouter+Private.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		F85F4D1F1F223F0F003106C3 /* ZIKRouter+Private.h in Headers */ = {isa = PBXBuildFile; fileRef = F85F4D131F223F0F003106C3 /* ZIKRouter+Private.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		F85F4D201F223F0F003106C3 /* ZIKRouter.m in Sources */ = {isa = PBXBuildFile; fileRef = F85F4D141F223F0F003106C3 /* ZIKRouter.m */; };
 		F85F4D211F223F0F003106C3 /* ZIKPresentationState.m in Sources */ = {isa = PBXBuildFile; fileRef = F85F4D151F223F0F003106C3 /* ZIKPresentationState.m */; };
 		F85F4D221F223F0F003106C3 /* ZIKPresentationState.h in Headers */ = {isa = PBXBuildFile; fileRef = F85F4D161F223F0F003106C3 /* ZIKPresentationState.h */; settings = {ATTRIBUTES = (Public, ); }; };
