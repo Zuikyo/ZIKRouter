@@ -19,6 +19,7 @@
 #import "ZIKTestCustomViewRouter.h"
 #import "ZIKTestGetDestinationViewRouter.h"
 #import "ZIKTestAutoCreateViewRouter.h"
+#import "ZIKTestServiceRouterViewRouter.h"
 
 typedef NS_ENUM(NSInteger,ZIKRouterTestType) {
     ZIKRouterTestTypePush,
@@ -31,7 +32,8 @@ typedef NS_ENUM(NSInteger,ZIKRouterTestType) {
     ZIKRouterTestTypeAddAsSubview,
     ZIKRouterTestTypeCustom,
     ZIKRouterTestTypeGetDestination,
-    ZIKRouterTestTypeAutoCreate
+    ZIKRouterTestTypeAutoCreate,
+    ZIKRouterTestTypeServiceRouter
 };
 
 @interface MasterViewController () <UIViewControllerPreviewingDelegate>
@@ -72,7 +74,7 @@ typedef NS_ENUM(NSInteger,ZIKRouterTestType) {
 
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
-    return 11;
+    return 12;
 }
 
 
@@ -115,6 +117,9 @@ typedef NS_ENUM(NSInteger,ZIKRouterTestType) {
         case ZIKRouterTestTypeAutoCreate:
             name = @"Test AutoCreate";
             break;
+        case ZIKRouterTestTypeServiceRouter:
+            name = @"Test ServiceRouter";
+            break;
         default:
             name = @"undefined";
             break;
@@ -126,56 +131,19 @@ typedef NS_ENUM(NSInteger,ZIKRouterTestType) {
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
     [tableView deselectRowAtIndexPath:indexPath animated:YES];
     
-    Class routerClass;
+    Class routerClass = [self routerClassForIndexPath:indexPath];
     ZIKRouterTestType testType = indexPath.row;
     ZIKViewRouteType routeType = ZIKViewRouteTypeShowDetail;
     switch (testType) {
         case ZIKRouterTestTypePush:
-            routerClass = [ZIKTestPushViewRouter class];
-            routeType = ZIKViewRouteTypePush;
-            break;
-            
-        case ZIKRouterTestTypePresentModally:
-            routerClass = [ZIKTestPresentModallyViewRouter class];
-            break;
-            
-        case ZIKRouterTestTypePresentAsPopover:
-            routerClass = [ZIKTestPresentAsPopoverViewRouter class];
-            break;
-            
-        case ZIKRouterTestTypePerformSegue:
-            routerClass = [ZIKTestPerformSegueViewRouter class];
-            break;
-            
         case ZIKRouterTestTypeShow:
-            routerClass = [ZIKTestShowViewRouter class];
-            routeType = ZIKViewRouteTypePush;
-            break;
-            
         case ZIKRouterTestTypeShowDetail:
-            routerClass = [ZIKTestShowDetailViewRouter class];
-            routeType = ZIKViewRouteTypePush;
-            break;
-            
-        case ZIKRouterTestTypeAddAsChildViewController:
-            routerClass = [ZIKTestAddAsChildViewRouter class];
-            break;
-            
-        case ZIKRouterTestTypeAddAsSubview:
-            routerClass = [ZIKTestAddAsSubviewViewRouter class];
-            break;
-            
-        case ZIKRouterTestTypeCustom:
-            routerClass = [ZIKTestCustomViewRouter class];
-            break;
-            
-        case ZIKRouterTestTypeGetDestination:
-            routerClass = [ZIKTestGetDestinationViewRouter class];
-            break;
-            
         case ZIKRouterTestTypeAutoCreate:
-            routerClass = [ZIKTestAutoCreateViewRouter class];
             routeType = ZIKViewRouteTypePush;
+            break;
+        
+        default:
+            routeType = ZIKViewRouteTypeShowDetail;
             break;
     }
     
@@ -185,9 +153,7 @@ typedef NS_ENUM(NSInteger,ZIKRouterTestType) {
     }];
 }
 
-- (nullable UIViewController *)previewingContext:(id <UIViewControllerPreviewing>)previewingContext viewControllerForLocation:(CGPoint)location {
-    __block UIViewController *destinationViewController;
-    NSIndexPath *indexPath = [self.tableView indexPathForRowAtPoint:location];
+- (Class)routerClassForIndexPath:(NSIndexPath *)indexPath {
     Class routerClass;
     ZIKRouterTestType testType = indexPath.row;
     switch (testType) {
@@ -234,7 +200,19 @@ typedef NS_ENUM(NSInteger,ZIKRouterTestType) {
         case ZIKRouterTestTypeAutoCreate:
             routerClass = [ZIKTestAutoCreateViewRouter class];
             break;
+            
+        case ZIKRouterTestTypeServiceRouter:
+            routerClass = [ZIKTestServiceRouterViewRouter class];
+            break;
     }
+    return routerClass;
+}
+
+- (nullable UIViewController *)previewingContext:(id <UIViewControllerPreviewing>)previewingContext viewControllerForLocation:(CGPoint)location {
+    __block UIViewController *destinationViewController;
+    NSIndexPath *indexPath = [self.tableView indexPathForRowAtPoint:location];
+    Class routerClass = [self routerClassForIndexPath:indexPath];
+    
     [routerClass performWithConfigure:^(ZIKViewRouteConfiguration *config) {
         config.source = self;
         config.routeType = ZIKViewRouteTypeGetDestination;

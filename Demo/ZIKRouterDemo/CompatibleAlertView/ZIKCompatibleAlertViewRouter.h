@@ -35,7 +35,7 @@ DeclareRoutableConfigProtocol(ZIKCompatibleAlertConfigProtocol, ZIKCompatibleAle
 
 + (nullable __kindof ZIKViewRouter *)performWithConfigure:(void(^)(ZIKCompatibleAlertViewConfiguration *config))configBuilder;
 + (nullable __kindof ZIKViewRouter *)performWithConfigure:(void(^)(ZIKCompatibleAlertViewConfiguration *config))configBuilder
-                                          removeConfigure:(void(^)( __kindof ZIKViewRemoveConfiguration * config))removeConfigBuilder;
+                                          removeConfigure:(void(^ _Nullable)( __kindof ZIKViewRemoveConfiguration * config))removeConfigBuilder;
 @end
 
 NS_ASSUME_NONNULL_END
