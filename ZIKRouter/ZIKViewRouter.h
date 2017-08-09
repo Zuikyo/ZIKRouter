@@ -129,18 +129,6 @@ typedef void(^ZIKRouteGlobalErrorHandler)(__kindof ZIKViewRouter * _Nullable rou
                            removeConfigure:(void(NS_NOESCAPE ^ _Nullable)(__kindof ZIKViewRemoveConfiguration *config))removeConfigBuilder;
 
 /**
- This method is for preparing the external view, it's route type is always ZIKViewRouteTypeGetDestination, so you can't use it to perform route.
- @discussion
- The initial view controller of storyboard for launching app is not from segue, so you have to manually create it's router and call -prepare to prepare it. If not prepared, the first calling of -performXXX methods will auto call -prepare. You can use this to prepare other view create from external.
- 
- @param externalView The view to prepare
- @param configBuilder builder for configuration
- @return A router for the external view. If the external view is not registered with this router class, return nil and get assert failure.
- */
-- (nullable instancetype)initForExternalView:(id<ZIKViewRouteSource>)externalView configure:(void(NS_NOESCAPE ^ _Nullable)(__kindof ZIKViewRouteConfiguration *config))configBuilder;
-///Prepare the destination in router created with -initForExternalView:configure:. If router is not created with -initForExternalView:configure:, this do nothing.
-- (void)prepare;
-/**
  Whether can perform a view route now
  @discusstion
  Situations when return NO:
@@ -157,15 +145,43 @@ typedef void(^ZIKRouteGlobalErrorHandler)(__kindof ZIKViewRouter * _Nullable rou
 
 + (nullable __kindof ZIKRouter *)performRoute NS_UNAVAILABLE;
 
-///If this destination doesn't need any variable to initialize, just pass source and perform route with default configuration provided by router
-+ (nullable __kindof ZIKViewRouter *)performWithSource:(id<ZIKViewRouteSource>)source;
-///If this destination doesn't need any variable to initialize, just pass source and perform route
-+ (__kindof ZIKViewRouter *)performWithSource:(id<ZIKViewRouteSource>)source routeType:(ZIKViewRouteType)routeType;
-///Assign correct variables in config builder
-+ (nullable __kindof ZIKViewRouter *)performWithConfigure:(void(NS_NOESCAPE ^)(__kindof ZIKViewRouteConfiguration *config))configBuilder;
+///Convenient method to perform route
 + (nullable __kindof ZIKViewRouter *)performWithConfigure:(void(NS_NOESCAPE ^)(__kindof ZIKViewRouteConfiguration *config))configBuilder
-                                          removeConfigure:(void(NS_NOESCAPE ^)( __kindof ZIKViewRemoveConfiguration *config))removeConfigBuilder;
+                                          removeConfigure:(void(NS_NOESCAPE ^ _Nullable)( __kindof ZIKViewRemoveConfiguration *config))removeConfigBuilder;
++ (nullable __kindof ZIKViewRouter *)performWithConfigure:(void(NS_NOESCAPE ^)(__kindof ZIKViewRouteConfiguration *config))configBuilder;
+///If this destination doesn't need any variable to initialize, just pass source and perform route.
++ (__kindof ZIKViewRouter *)performWithSource:(id<ZIKViewRouteSource>)source routeType:(ZIKViewRouteType)routeType;
 
+/**
+ Perform route on destination. If you get a prepared destination by ZIKViewRouteTypeGetDestination, you can use this method to perform route on the destination.
+
+ @param destination The destination to perform route
+ @param configBuilder Builder for config when perform route
+ @param removeConfigBuilder Builder for config when remove route
+ @return A router for the destination. If the destination is not registered with this router class, return nil and get assert failure.
+ */
++ (nullable __kindof ZIKViewRouter *)performOnDestination:(id)destination
+                                                configure:(void(NS_NOESCAPE ^)(__kindof ZIKViewRouteConfiguration *config))configBuilder
+                                          removeConfigure:(void(NS_NOESCAPE ^ _Nullable)( __kindof ZIKViewRemoveConfiguration *config))removeConfigBuilder;
++ (nullable __kindof ZIKViewRouter *)performOnDestination:(id)destination
+                                                configure:(void(NS_NOESCAPE ^)(__kindof ZIKViewRouteConfiguration *config))configBuilder;
++ (__kindof ZIKViewRouter *)performOnDestination:(id)destination source:(id<ZIKViewRouteSource>)source routeType:(ZIKViewRouteType)routeType;
+
+/**
+ Prepare destination from external, then you can use the router to perform route.
+ @discussion
+ The initial view controller of storyboard for launching app is not from segue, so you have to manually create it's router and use this method to prepare it. You can use this to prepare other view create from external.
+
+ @param destination The destination to prepare
+ @param configBuilder Builder for config when perform route
+ @param removeConfigBuilder Builder for config when remove route
+ @return A router for the destination. If the destination is not registered with this router class, return nil and get assert failure.
+ */
++ (nullable __kindof ZIKViewRouter *)prepareDestination:(id)destination
+                                              configure:(void(NS_NOESCAPE ^)(__kindof ZIKViewRouteConfiguration *config))configBuilder
+                                        removeConfigure:(void(NS_NOESCAPE ^ _Nullable)( __kindof ZIKViewRemoveConfiguration *config))removeConfigBuilder;
++ (nullable __kindof ZIKViewRouter *)prepareDestination:(id)destination
+                                              configure:(void(NS_NOESCAPE ^)(__kindof ZIKViewRouteConfiguration *config))configBuilder;
 /**
  Whether can remove a performed view route. Always use it in main thread, bacause state may change in main thread after you check the state in child thread.
  @discussion
@@ -630,7 +646,7 @@ extern void ZIKViewRouter_registerViewForExclusiveRouter(Class viewClass, Class 
  
  You can register your protocol and let the view conforms to the protocol in category in your interface adapter.
  
- @param viewProtocol the protocol conformed by view to identify the routerClass
+ @param viewProtocol The protocol conformed by view to identify the routerClass
  @param routerClass The router class to bind with view class
  */
 void ZIKViewRouter_registerViewProtocol(Protocol *viewProtocol, Class routerClass);
@@ -642,7 +658,7 @@ void ZIKViewRouter_registerViewProtocol(Protocol *viewProtocol, Class routerClas
  
   You can register your protocol and let the configuration conforms to the protocol in category in your interface adapter.
  
- @param configProtocol the protocol conformed by default configuration of the routerClass
+ @param configProtocol The protocol conformed by default configuration of the routerClass
  @param routerClass The router class to bind with view class
  */
 void ZIKViewRouter_registerConfigProtocol(Protocol *configProtocol, Class routerClass);
@@ -677,9 +693,25 @@ extern NSArray<NSNumber *> *kDefaultRouteTypesForView;
 
 ///Whether the destination is all configed. Destination created from external will use this method to determine whether the router have to search the performer to prepare itself.
 + (BOOL)destinationPrepared:(id)destination;
-///Prepare the destination with the configuration when view is first appear (when it's removed and routed again, it's alse treated as first appear, so you should check whether the destination is already prepared or not). Unwind segue to destination won't call this method.
+
+/**
+ Prepare the destination with the configuration when view is first appear. Unwind segue to destination won't call this method.
+ @warning
+ when it's removed and routed again, it's alse treated as first appear, so this method may be called more than once. You should check whether the destination is already prepared to avoid unnecessary preparation.
+
+ @param destination the view to perform route
+ @param configuration the config for route
+ */
 - (void)prepareDestination:(id)destination configuration:(__kindof ZIKViewRouteConfiguration *)configuration;
-///Called when view is first appear (when it's removed and routed again, it's alse treated as first appear) and preparation is finished. Unwind segue to destination won't call this method.
+
+/**
+ Called when view is first appear and preparation is finished. You can check whether destination is preapred correctly. Unwind segue to destination won't call this method.
+ @warning
+ when it's removed and routed again, it's alse treated as first appear, so this method may be called more than once.
+ 
+ @param destination the view to perform route
+ @param configuration the config for route
+ */
 - (void)didFinishPrepareDestination:(id)destination configuration:(__kindof ZIKViewRouteConfiguration *)configuration;
 
 //TODO:use bit operation
@@ -768,7 +800,7 @@ extern NSArray<NSNumber *> *kDefaultRouteTypesForView;
  @note If a UIViewController is routing from manually code or is the initial view controller of app in storyboard (like directly use [performer.navigationController pushViewController:destination animated:YES]), the view will be detected, but won't create a router to search performer and prepare the destination, because we don't know which view controller is the performer calling -pushViewController:animated: (any child view controller in navigationController's stack can perform the route).
 
  @param destination the view will be routed. You can distinguish destinations with their view protocols.
- @param configuration config for the route. You can distinguish destinations with their router's config protocols. You can modify this to prepare the route, but  source, routeType, segueConfiguration, handleExternalRoute won't be modified even you change them.
+ @param configuration config for the route. You can distinguish destinations with their router's config protocols. You can modify this to prepare the route, but source, routeType, segueConfiguration, handleExternalRoute won't be modified even you change them.
  */
 - (void)prepareForDestinationRoutingFromExternal:(id)destination configuration:(__kindof ZIKViewRouteConfiguration *)configuration;
 

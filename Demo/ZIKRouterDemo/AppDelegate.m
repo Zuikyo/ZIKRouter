@@ -30,8 +30,11 @@
     
     UINavigationController *masterNavigationController = [splitViewController.viewControllers firstObject];
     UIViewController *masterViewController = [[masterNavigationController viewControllers] firstObject];
+    
     //Prepare master with it's router
-    [[[MasterViewRouter alloc] initForExternalView:masterViewController configure:nil] prepare];
+    [MasterViewRouter prepareDestination:masterViewController configure:^(__kindof ZIKViewRouteConfiguration * _Nonnull config) {
+        config.routeType = ZIKViewRouteTypeGetDestination;
+    }];
     
     return YES;
 }

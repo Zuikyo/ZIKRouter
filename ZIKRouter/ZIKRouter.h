@@ -79,7 +79,7 @@ typedef NS_ENUM(NSInteger, ZIKRouterState) {
 ///Set dependencies required by destination and perform route
 + (nullable __kindof ZIKRouter *)performWithConfigure:(void(NS_NOESCAPE ^)(__kindof ZIKRouteConfiguration *configuration))configBuilder;
 + (nullable __kindof ZIKRouter *)performWithConfigure:(void(NS_NOESCAPE ^)(__kindof ZIKRouteConfiguration *configuration))configBuilder
-                                      removeConfigure:(void(NS_NOESCAPE ^)(__kindof ZIKRouteConfiguration *configuration))removeConfigBuilder;
+                                      removeConfigure:(void(NS_NOESCAPE ^ _Nullable)(__kindof ZIKRouteConfiguration *configuration))removeConfigBuilder;
 
 + (NSString *)descriptionOfState:(ZIKRouterState)state;
 @end
