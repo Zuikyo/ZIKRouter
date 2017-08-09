@@ -10,8 +10,12 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-extern bool ZIKRouter_ReplaceMethodWithMethod(Class originalClass, SEL originalSelector, Class swizzledClass, SEL swizzledSelector);
-extern IMP ZIKRouter_ReplaceMethodWithMethodAndGetOriginalImp(Class originalClass, SEL originalSelector, Class swizzledClass, SEL swizzledSelector);
+extern bool ZIKRouter_replaceMethodWithMethod(Class originalClass, SEL originalSelector, Class swizzledClass, SEL swizzledSelector);
+extern IMP ZIKRouter_replaceMethodWithMethodAndGetOriginalImp(Class originalClass, SEL originalSelector, Class swizzledClass, SEL swizzledSelector);
+extern void ZIKRouter_enumerateClassList(void(^handler)(Class class));
+extern void ZIKRouter_enumerateProtocolList(void(^handler)(Protocol *protocol));
+extern bool ZIKRouter_classIsSubclassOfClass(Class class, Class parentClass);
+extern NSArray *ZIKRouter_subclassesComformToProtocol(NSArray<Class> *classes, Protocol *protocol);
 
 ///expost APIs to subclass
 @interface ZIKRouter ()
@@ -24,10 +28,10 @@ extern IMP ZIKRouter_ReplaceMethodWithMethodAndGetOriginalImp(Class originalClas
 //Attach a destination not created from router
 - (void)attachDestination:(id)destination;
 
-///if a router need to perform on a specific thread, override -performWithConfiguration: and call [super performWithConfiguration:configuration] in that thread
+///If a router need to perform on a specific thread, override -performWithConfiguration: and call [super performWithConfiguration:configuration] in that thread
 - (void)performWithConfiguration:(__kindof ZIKRouteConfiguration *)configuration;
 
-///change state
+///Change state
 - (void)notifyRouteState:(ZIKRouterState)state;
 
 - (void)notifySuccessWithAction:(SEL)routeAction;

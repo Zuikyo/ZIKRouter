@@ -47,6 +47,9 @@
 		F85F4D3B1F224130003106C3 /* UIView+ZIKViewRouter.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = F85F4D0F1F223F0F003106C3 /* UIView+ZIKViewRouter.h */; };
 		F85F4D3C1F224130003106C3 /* UIViewController+ZIKViewRouter.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = F85F4D111F223F0F003106C3 /* UIViewController+ZIKViewRouter.h */; };
 		F8B0D86F1F38D541006824F2 /* ZIKRouter-umbrella.h in Headers */ = {isa = PBXBuildFile; fileRef = F8B0D86E1F38D541006824F2 /* ZIKRouter-umbrella.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		F8FD8EB41F3AAEAB00D7EECB /* ZIKServiceRouter.h in Headers */ = {isa = PBXBuildFile; fileRef = F8FD8EB21F3AAEAB00D7EECB /* ZIKServiceRouter.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		F8FD8EB51F3AAEAB00D7EECB /* ZIKServiceRouter.m in Sources */ = {isa = PBXBuildFile; fileRef = F8FD8EB31F3AAEAB00D7EECB /* ZIKServiceRouter.m */; };
+		F8FD8ECA1F3B2D0D00D7EECB /* ZIKServiceRouter+Private.h in Headers */ = {isa = PBXBuildFile; fileRef = F8FD8EC91F3B2D0D00D7EECB /* ZIKServiceRouter+Private.h */; settings = {ATTRIBUTES = (Public, ); }; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -95,6 +98,9 @@
 		F85F4D161F223F0F003106C3 /* ZIKPresentationState.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ZIKPresentationState.h; sourceTree = "<group>"; };
 		F85F4D271F2240D2003106C3 /* libZIKRouter.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libZIKRouter.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		F8B0D86E1F38D541006824F2 /* ZIKRouter-umbrella.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = "ZIKRouter-umbrella.h"; path = "Framework/ZIKRouter-umbrella.h"; sourceTree = "<group>"; };
+		F8FD8EB21F3AAEAB00D7EECB /* ZIKServiceRouter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ZIKServiceRouter.h; sourceTree = "<group>"; };
+		F8FD8EB31F3AAEAB00D7EECB /* ZIKServiceRouter.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ZIKServiceRouter.m; sourceTree = "<group>"; };
+		F8FD8EC91F3B2D0D00D7EECB /* ZIKServiceRouter+Private.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "ZIKServiceRouter+Private.h"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -144,6 +150,9 @@
 				F85F4D0D1F223F0F003106C3 /* ZIKViewRouter+Private.h */,
 				F85F4D161F223F0F003106C3 /* ZIKPresentationState.h */,
 				F85F4D151F223F0F003106C3 /* ZIKPresentationState.m */,
+				F8FD8EB21F3AAEAB00D7EECB /* ZIKServiceRouter.h */,
+				F8FD8EB31F3AAEAB00D7EECB /* ZIKServiceRouter.m */,
+				F8FD8EC91F3B2D0D00D7EECB /* ZIKServiceRouter+Private.h */,
 				F85F4D0E1F223F0F003106C3 /* Additions */,
 				F85F4D031F223EB0003106C3 /* Info.plist */,
 			);
@@ -171,11 +180,13 @@
 				F8B0D86F1F38D541006824F2 /* ZIKRouter-umbrella.h in Headers */,
 				F85F4D191F223F0F003106C3 /* ZIKRouter.h in Headers */,
 				F85F4D181F223F0F003106C3 /* ZIKViewRouter.h in Headers */,
+				F8FD8EB41F3AAEAB00D7EECB /* ZIKServiceRouter.h in Headers */,
 				F85F4D221F223F0F003106C3 /* ZIKPresentationState.h in Headers */,
 				F85F4D1D1F223F0F003106C3 /* UIViewController+ZIKViewRouter.h in Headers */,
 				F85F4D1B1F223F0F003106C3 /* UIView+ZIKViewRouter.h in Headers */,
 				F85F4D1F1F223F0F003106C3 /* ZIKRouter+Private.h in Headers */,
 				F85F4D1A1F223F0F003106C3 /* ZIKViewRouter+Private.h in Headers */,
+				F8FD8ECA1F3B2D0D00D7EECB /* ZIKServiceRouter+Private.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -293,6 +304,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				F85F4D1E1F223F0F003106C3 /* UIViewController+ZIKViewRouter.m in Sources */,
+				F8FD8EB51F3AAEAB00D7EECB /* ZIKServiceRouter.m in Sources */,
 				F85F4D201F223F0F003106C3 /* ZIKRouter.m in Sources */,
 				F85F4D211F223F0F003106C3 /* ZIKPresentationState.m in Sources */,
 				F85F4D171F223F0F003106C3 /* ZIKViewRouter.m in Sources */,

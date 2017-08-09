@@ -21,13 +21,14 @@ NS_ASSUME_NONNULL_BEGIN
 - (void)performRouteOnDestination:(nullable id)destination configuration:(__kindof ZIKRouteConfiguration *)configuration;
 + (__kindof ZIKRouteConfiguration *)defaultRouteConfiguration;
 
-@optional
 - (BOOL)canPerform;
 - (BOOL)canRemove;
 //If you can undo your route action, such as dismiss a routed view, do remove in this
-- (void)removeDestination:(id)destination configuration:(__kindof ZIKRouteConfiguration *)removeConfiguration;
+- (void)removeDestination:(id)destination removeConfiguration:(__kindof ZIKRouteConfiguration *)removeConfiguration;
 + (__kindof ZIKRouteConfiguration *)defaultRemoveConfiguration;
 
+@optional
++ (BOOL)completeSynchronously;
 - (NSString *)errorDomain;
 
 @end
@@ -77,10 +78,11 @@ typedef NS_ENUM(NSInteger, ZIKRouterState) {
 ///If this route action doesn't need any argument, just perform directly
 + (nullable __kindof ZIKRouter *)performRoute;
 ///Set dependencies required by destination and perform route
-+ (nullable __kindof ZIKRouter *)performWithConfigure:(void(NS_NOESCAPE ^)(__kindof ZIKRouteConfiguration *configuration))configBuilder;
-+ (nullable __kindof ZIKRouter *)performWithConfigure:(void(NS_NOESCAPE ^)(__kindof ZIKRouteConfiguration *configuration))configBuilder
-                                      removeConfigure:(void(NS_NOESCAPE ^ _Nullable)(__kindof ZIKRouteConfiguration *configuration))removeConfigBuilder;
++ (nullable __kindof ZIKRouter *)performWithConfigure:(void(NS_NOESCAPE ^)(__kindof ZIKRouteConfiguration *config))configBuilder;
++ (nullable __kindof ZIKRouter *)performWithConfigure:(void(NS_NOESCAPE ^)(__kindof ZIKRouteConfiguration *config))configBuilder
+                                      removeConfigure:(void(NS_NOESCAPE ^ _Nullable)(__kindof ZIKRouteConfiguration *config))removeConfigBuilder;
 
++ (BOOL)completeSynchronously;
 + (NSString *)descriptionOfState:(ZIKRouterState)state;
 @end
 

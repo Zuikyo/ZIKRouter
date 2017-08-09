@@ -119,10 +119,10 @@
 //}
 
 //+ (void)load {
-//    ZIKRouter_ReplaceMethodWithMethod(self, @selector(presentViewController:animated:completion:),
+//    ZIKRouter_replaceMethodWithMethod(self, @selector(presentViewController:animated:completion:),
 //                            self, @selector(ZIK_presentViewController:animated:completion:));
 //
-//    ZIKRouter_ReplaceMethodWithMethod(self, @selector(presentModalViewController:animated:),
+//    ZIKRouter_replaceMethodWithMethod(self, @selector(presentModalViewController:animated:),
 //                            self, @selector(ZIK_presentModalViewController:animated:));
 //}
 //

@@ -155,7 +155,7 @@ NSString *kZIKRouterErrorDomain = @"kZIKRouterErrorDomain";
     NSAssert(NO, @"ZIKRouter: %@ not conforms to ZIKRouterProtocol!",[self class]);
 }
 
-- (void)removeDestination:(id)destination removeConfiguration:(nullable __kindof ZIKRouteConfiguration *)removeConfiguration {
+- (void)removeDestination:(id)destination removeConfiguration:(__kindof ZIKRouteConfiguration *)removeConfiguration {
     NSAssert(NO, @"ZIKRouter: %@ not conforms to ZIKRouterProtocol!",[self class]);
 }
 
@@ -172,6 +172,10 @@ NSString *kZIKRouterErrorDomain = @"kZIKRouterErrorDomain";
 + (ZIKRouteConfiguration *)defaultRemoveConfiguration {
     NSAssert(NO, @"ZIKRouter: %@ not conforms to ZIKRouterProtocol!",[self class]);
     return nil;
+}
+
++ (BOOL)completeSynchronously {
+    return YES;
 }
 
 #pragma mark Error Handle
@@ -358,7 +362,7 @@ NSString *kZIKRouterErrorDomain = @"kZIKRouterErrorDomain";
 
 @end
 
-bool ZIKRouter_ReplaceMethodWithMethod(Class originalClass, SEL originalSelector, Class swizzledClass, SEL swizzledSelector) {
+bool ZIKRouter_replaceMethodWithMethod(Class originalClass, SEL originalSelector, Class swizzledClass, SEL swizzledSelector) {
     Method originalMethod = class_getInstanceMethod(originalClass, originalSelector);
     Method swizzledMethod = class_getInstanceMethod(swizzledClass, swizzledSelector);
     if (!originalMethod) {
@@ -395,7 +399,7 @@ bool ZIKRouter_ReplaceMethodWithMethod(Class originalClass, SEL originalSelector
     return true;
 }
 
-IMP ZIKRouter_ReplaceMethodWithMethodAndGetOriginalImp(Class originalClass, SEL originalSelector, Class swizzledClass, SEL swizzledSelector) {
+IMP ZIKRouter_replaceMethodWithMethodAndGetOriginalImp(Class originalClass, SEL originalSelector, Class swizzledClass, SEL swizzledSelector) {
     NSCParameterAssert(!(originalClass == swizzledClass && originalSelector == swizzledSelector));
     Method originalMethod = class_getInstanceMethod(originalClass, originalSelector);
     Method swizzledMethod = class_getInstanceMethod(swizzledClass, swizzledSelector);
@@ -442,4 +446,53 @@ IMP ZIKRouter_ReplaceMethodWithMethodAndGetOriginalImp(Class originalClass, SEL 
         method_setImplementation(originalMethod, swizzledIMP);
         return originalIMP;
     }
+}
+
+void ZIKRouter_enumerateClassList(void(^handler)(Class class)) {
+    NSCParameterAssert(handler);
+    int numClasses = objc_getClassList(NULL, 0);
+    Class *classes = NULL;
+    // from http://stackoverflow.com/a/8731509/46768
+    classes = (__unsafe_unretained Class *)malloc(sizeof(Class) * numClasses);
+    numClasses = objc_getClassList(classes, numClasses);
+    
+    for (NSInteger i = 0; i < numClasses; i++) {
+        Class class = classes[i];
+        handler(class);
+    }
+    
+    free(classes);
+}
+
+void ZIKRouter_enumerateProtocolList(void(^handler)(Protocol *protocol)) {
+    NSCParameterAssert(handler);
+    unsigned int outCount;
+    Protocol *__unsafe_unretained *protocols = objc_copyProtocolList(&outCount);
+    for (int i = 0; i < outCount; i++) {
+        Protocol *protocol = protocols[i];
+        handler(protocol);
+    }
+    free(protocols);
+}
+
+bool ZIKRouter_classIsSubclassOfClass(Class class, Class parentClass) {
+    Class superClass = class;
+    do {
+        superClass = class_getSuperclass(superClass);
+    } while (superClass && superClass != parentClass);
+    
+    if (superClass == nil) {
+        return false;
+    }
+    return true;
+}
+
+NSArray *ZIKRouter_subclassesComformToProtocol(NSArray<Class> *classes, Protocol *protocol) {
+    NSMutableArray *result = [NSMutableArray array];
+    for (Class class in classes) {
+        if (class_conformsToProtocol(class, protocol)) {
+            [result addObject:class];
+        }
+    }
+    return result;
 }
