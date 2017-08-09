@@ -13,10 +13,12 @@
 
 - (void)willMoveToSuperview:(UIView *)newSuperview {
     [super willMoveToSuperview:newSuperview];
+    
 }
 
 - (void)didMoveToSuperview {
     [super didMoveToSuperview];
+    
 }
 
 - (void)willMoveToWindow:(UIWindow *)newWindow {

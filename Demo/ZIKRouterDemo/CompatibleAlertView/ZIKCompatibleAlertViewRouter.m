@@ -12,7 +12,7 @@
 
 RegisterRoutableView(UIAlertController, ZIKCompatibleAlertViewRouter)
 RegisterRoutableView(UIAlertView, ZIKCompatibleAlertViewRouter)
-RegisterRoutableConfigProtocol(ZIKCompatibleAlertConfigProtocol, ZIKCompatibleAlertViewRouter)
+RegisterRoutableViewConfigProtocol(ZIKCompatibleAlertConfigProtocol, ZIKCompatibleAlertViewRouter)
 
 #pragma mark Compatible UIAlertView
 

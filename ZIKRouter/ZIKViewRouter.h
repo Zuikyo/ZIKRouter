@@ -453,7 +453,7 @@ extern _Nullable Class ZIKViewRouterForView(Protocol<ZIKRoutableViewDynamicGette
 /**
  Get the router class combined with a custom ZIKViewRouteConfiguration conforming to a unique protocol.
  @discussion
- Similar to ZIKViewRouterForView(), this function is for decoupling route behavior with router class. If configurations of a view can't be set directly with a protocol the view conforms, you can use a custom ZIKViewRouteConfiguration to config these configurations. Use macro RegisterRoutableConfigProtocol to register the protocol, then you don't need to import the router's header when perform route.
+ Similar to ZIKViewRouterForView(), this function is for decoupling route behavior with router class. If configurations of a view can't be set directly with a protocol the view conforms, you can use a custom ZIKViewRouteConfiguration to config these configurations. Use macro RegisterRoutableViewConfigProtocol to register the protocol, then you don't need to import the router's header when perform route.
  @code
  //ZIKLoginViewProtocol
  @protocol ZIKLoginViewProtocol <NSObject>
@@ -466,7 +466,7 @@ extern _Nullable Class ZIKViewRouterForView(Protocol<ZIKRoutableViewDynamicGette
  @end
  
  //in ZIKLoginViewRouter.h
- DeclareRoutableConfigProtocol(ZIKLoginViewProtocol, ZIKLoginViewRouter)
+ DeclareRoutableViewConfigProtocol(ZIKLoginViewProtocol, ZIKLoginViewRouter)
  
  @interface ZIKLoginViewConfiguration : ZIKViewRouteConfiguration <NSCopying, ZIKLoginViewProtocol>
  @property (nonatomic, copy) NSString *account;
@@ -474,7 +474,7 @@ extern _Nullable Class ZIKViewRouterForView(Protocol<ZIKRoutableViewDynamicGette
  
  //in ZIKLoginViewRouter.m
  RegisterRoutableView(ZIKLoginViewController, ZIKLoginViewRouter)
- RegisterRoutableConfigProtocol(ZIKLoginViewProtocol, ZIKLoginViewRouter)
+ RegisterRoutableViewConfigProtocol(ZIKLoginViewProtocol, ZIKLoginViewRouter)
  
  - (id)destinationWithConfiguration:(ZIKLoginViewConfiguration *)configuration {
      ZIKLoginViewController *destination = [ZIKLoginViewController new];
@@ -492,7 +492,7 @@ extern _Nullable Class ZIKViewRouterForView(Protocol<ZIKRoutableViewDynamicGette
  
  It's safe to use protocols declared in router's header and won't get nil. ZIKViewRouter will validate all declared and registered protocols when app launch in DEBUG mode. The "ZIKRoutableConfigDynamicGetter" is for 100% safe in case someone pass a undeclared protocol, you can define a protocol like "#define _ZIKLoginConfigProtocol_ (Protocol<ZIKRoutableConfigDynamicGetter> *)\@protocol(ZIKLoginConfigProtocol)", and use the macro like ZIKViewRouterForView(_ZIKLoginConfigProtocol_). Then if someone pass a undefined protocol, there will be a warning. Add "-Werror=incompatible-pointer-types" to "Build Settings->Other C Flags" to change build warning to build error.
 
- @param configProtocol The protocol declared with DeclareRoutableConfigProtocol in router's header
+ @param configProtocol The protocol declared with DeclareRoutableViewConfigProtocol in router's header
  @return A router class matched with the view. Return nil if protocol is nil or not declared. There will be an assert failure when result is nil.
  */
 extern _Nullable Class ZIKViewRouterForConfig(Protocol<ZIKRoutableConfigDynamicGetter> *configProtocol);
@@ -560,8 +560,8 @@ ZIKViewRouter_registerViewProtocol(@protocol(UniqueViewProtocolName), [ViewRoute
 } \
 @end \
 
-///Declare a config protocol in router's header file registered by RegisterRoutableConfigProtocol. If a protocol is declared in a router's header, it's safe to use it with ZIKViewRouterForConfig().
-#define DeclareRoutableConfigProtocol(UniqueConfigProtocolName, ViewRouterClass) \
+///Declare a config protocol in router's header file registered by RegisterRoutableViewConfigProtocol. If a protocol is declared in a router's header, it's safe to use it with ZIKViewRouterForConfig().
+#define DeclareRoutableViewConfigProtocol(UniqueConfigProtocolName, ViewRouterClass) \
 @protocol UniqueConfigProtocolName;\
 @class ViewRouterClass;\
 @protocol ZIKDeclareCheck_##UniqueConfigProtocolName##ViewRouterClass <ZIKDeclareCheckConfigProtocol> \
@@ -573,13 +573,13 @@ __attribute__((constructor)) static void ZIKDeclareCheck_##UniqueConfigProtocolN
 }   \
 
 ///Register a config protocol conformed by router's default configuration with a router class in your custom router's .m file. See ZIKViewRouter_registerConfigProtocol(). There will be a build failure if duplicate protocol name was registered and an assert failure if router class is not registered.
-#define RegisterRoutableConfigProtocol(UniqueConfigProtocolName, ViewRouterClass) \
+#define RegisterRoutableViewConfigProtocol(UniqueConfigProtocolName, ViewRouterClass) \
 Protocol *kUniqueRoutableConfigProtocol_##UniqueConfigProtocolName;\
 @interface ViewRouterClass (UniqueConfigProtocolName) \
 @end \
 @implementation ViewRouterClass (UniqueConfigProtocolName) \
 + (void)load { \
-NSAssert(@protocol(ZIKDeclareCheck_##UniqueConfigProtocolName##ViewRouterClass), @"Protocol should be declared in header with DeclareRoutableConfigProtocol.");    \
+NSAssert(@protocol(ZIKDeclareCheck_##UniqueConfigProtocolName##ViewRouterClass), @"Protocol should be declared in header with DeclareRoutableViewConfigProtocol.");    \
 ZIKViewRouter_registerConfigProtocol(@protocol(UniqueConfigProtocolName), [ViewRouterClass class]); \
 } \
 @end \
@@ -603,13 +603,13 @@ ZIKViewRouter_registerViewProtocol(@protocol(UniqueViewProtocolName), [ViewRoute
 } \
 @end \
 
-///Declare a config protocol in router's header file registered by RegisterRoutableConfigProtocol.
-#define DeclareRoutableConfigProtocol(UniqueConfigProtocolName, ViewRouterClass) \
+///Declare a config protocol in router's header file registered by RegisterRoutableViewConfigProtocol.
+#define DeclareRoutableViewConfigProtocol(UniqueConfigProtocolName, ViewRouterClass) \
 @protocol UniqueConfigProtocolName;\
 @class ViewRouterClass;\
 
 ///Register a config protocol conformed by router's default configuration with a router class in your custom router's .m file. See ZIKViewRouter_registerConfigProtocol().
-#define RegisterRoutableConfigProtocol(UniqueConfigProtocolName, ViewRouterClass) \
+#define RegisterRoutableViewConfigProtocol(UniqueConfigProtocolName, ViewRouterClass) \
 @interface ViewRouterClass (UniqueConfigProtocolName) \
 @end \
 @implementation ViewRouterClass (UniqueConfigProtocolName) \
