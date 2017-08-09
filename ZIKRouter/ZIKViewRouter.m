@@ -211,11 +211,24 @@ static NSMutableArray *g_preparingUIViewRouters;
 @dynamic _nocopy_configuration;
 @dynamic _nocopy_removeConfiguration;
 
++ (void)load {
+    static dispatch_once_t onceToken;
+    dispatch_once(&onceToken, ^{
+        ZIKRouter_ReplaceMethodWithMethod([UIApplication class], @selector(setDelegate:),
+                                          self, @selector(ZIKViewRouter_hook_setDelegate:));
+    });
+}
+
 + (void)setup {
     static dispatch_once_t onceToken;
     dispatch_once(&onceToken, ^{
         _initializeZIKViewRouter();
     });
+}
+
++ (void)ZIKViewRouter_hook_setDelegate:(id<UIApplicationDelegate>)delegate {
+    [ZIKViewRouter setup];
+    [self ZIKViewRouter_hook_setDelegate:delegate];
 }
 
 static void _initializeZIKViewRouter(void) {
@@ -236,7 +249,6 @@ static void _initializeZIKViewRouter(void) {
     g_globalErrorSema = dispatch_semaphore_create(1);
     
     g_preparingUIViewRouters = [NSMutableArray array];
-    
     NSMutableArray *routableViews = [NSMutableArray array];
     
     Class ZIKViewRouterClass = [ZIKViewRouter class];
@@ -605,7 +617,7 @@ static _Nullable Class ZIKViewRouterForRegisteredView(Class viewClass) {
 _Nullable Class ZIKViewRouterForView(Protocol<ZIKRoutableViewDynamicGetter> *viewProtocol) {
     NSCParameterAssert(viewProtocol);
     NSCAssert(g_viewProtocolToRouterMap, @"Didn't register any protocol yet.");
-    NSCAssert(g_routableViews, @"g_routableViews should not be initlized.");
+    NSCAssert(g_routableViews, @"g_routableViews should be initialized.");
     NSCAssert(_assert_isLoadFinished, @"Only get router after app did finish launch.");
     NSCAssert(SubclassesComformToProtocol(g_routableViews, viewProtocol).count <= 1, @"More than one view class conforms to this protocol, please use a unique protocol only conformed by the view class you want to fetch.");
     
@@ -633,7 +645,7 @@ _Nullable Class ZIKViewRouterForView(Protocol<ZIKRoutableViewDynamicGetter> *vie
 _Nullable Class ZIKViewRouterForConfig(Protocol<ZIKRoutableConfigDynamicGetter> *configProtocol) {
     NSCParameterAssert(configProtocol);
     NSCAssert(g_configProtocolToRouterMap, @"Didn't register any protocol yet.");
-    NSCAssert(g_routableViews, @"g_routableViews should not be initlized.");
+    NSCAssert(g_routableViews, @"g_routableViews should be initialized.");
     NSCAssert(_assert_isLoadFinished, @"Only get router after app did finish launch.");
     
     static dispatch_once_t onceToken;

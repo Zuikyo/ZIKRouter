@@ -18,7 +18,6 @@
 @implementation AppDelegate
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
-    [ZIKViewRouter setup];
     [ZIKViewRouter setGlobalErrorHandler:^(ZIKViewRouter * _Nullable router, SEL  _Nonnull routeAction, NSError * _Nonnull error) {
         NSLog(@"❌ZIKRouter Error: router's action (%@) catch error! code:%@, description: %@, router:(%@)", NSStringFromSelector(routeAction), @(error.code), error.localizedDescription,router);
     }];
