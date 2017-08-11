@@ -83,11 +83,11 @@ typedef void(^ZIKViewRouteGlobalErrorHandler)(__kindof ZIKViewRouter * _Nullable
  @discussion
  Features:
  
- 1. Prepare the route with protocol and block, instead of directly configuring the destination (the source is coupled with the destination) or in delegate method (in -prepareForSegue:sender: you have to distinguish different destinations, and they're alse coupled with source).
+ 1. Prepare the route with protocol in block, instead of directly configuring the destination (the source is coupled with the destination) or in delegate method (in -prepareForSegue:sender: you have to distinguish different destinations, and they're alse coupled with source).
  
  2. Support all route types in UIKit, and can remove the destination without using -popViewControllerAnimated:/-dismissViewControllerAnimated:completion:/removeFromParentViewController/removeFromSuperview in different sistuation. Router can choose the proper method. You can alse add custom route type.
  
- 3. Find destination with registered protocol, decoupling the source with the destination class.
+ 3. Find destination with registered protocol, decoupling the source with and the destination class.
  
  4. Support storyboard. UIViewController and UIView from a segue can auto create it's registered router (but the initial view controller of app is exceptional, it's not from a segue).
  
