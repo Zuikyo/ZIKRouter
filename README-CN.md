@@ -4,7 +4,7 @@
 
 View router将UIKit中的所有界面跳转方式封装成一个统一的方法。
 
-Service router用于模块寻找，通过protocol寻找对应的模块，并用protocol进行依赖注入。
+Service router用于模块寻找，通过protocol寻找对应的模块，并用protocol进行依赖注入和模块调用。
 
 ---
 
