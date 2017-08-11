@@ -103,7 +103,7 @@ ZIKRouter是基于面向接口编程的思想进行设计的。调用者不必�
             };
             config.routeCompletion = ^(id<ZIKTimeServiceInput> destination) {
                 //获取到timeService，进行调用
-                timeService = destination;
+                id<ZIKTimeServiceInput> timeService = destination;
                 NSString *timeString = [timeService currentTimeString];
                 self.timeLabel.text = timeString;
             };

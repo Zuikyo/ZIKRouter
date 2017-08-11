@@ -116,7 +116,7 @@ Get a module and use:
             };
             config.routeCompletion = ^(id<ZIKTimeServiceInput> destination) {
                 //Get timeService success
-                timeService = destination;
+                id<ZIKTimeServiceInput> timeService = destination;
                 //Use the service
                 NSString *timeString = [timeService currentTimeString];
                 self.timeLabel.text = timeString;
