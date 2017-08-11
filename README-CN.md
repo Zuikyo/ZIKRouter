@@ -183,7 +183,7 @@ RegisterRoutableViewProtocol(MasterViewProtocol, MasterViewRouter)
 - (void)showMasterViewController {
 	ZIKViewRouter *router;
 	
-	//可以直接使用ZIKTestPushViewRouter，也可以用ZIKViewRouterForView(@protocol(MasterViewProtocol))获取Router类
+	//可以直接使用ZIKTestPushViewRouter，也可以用ZIKViewRouterForView(@protocol(MasterViewProtocol))获取router类
 	//区别是用protocol获取时，就可以用protocol来配置目的界面
 	router = [ZIKTestPushViewRouter
 	          performWithConfigure:^(ZIKViewRouteConfiguration *config) {
@@ -191,7 +191,7 @@ RegisterRoutableViewProtocol(MasterViewProtocol, MasterViewRouter)
 	              config.routeType = ZIKViewRouteTypePush;
 	              config.animated = YES;
 	              config.prepareForRoute = ^(UIViewController *destination) {
-	              //界面显示前配置
+	                  //界面显示前配置
 	                  destination.modalTransitionStyle = UIModalTransitionStyleCoverVertical;
 	              };
 	              config.routeCompletion = ^(UIViewController *destination) {
