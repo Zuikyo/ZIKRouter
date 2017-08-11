@@ -22,7 +22,7 @@ typedef NS_ENUM(NSInteger,ZIKViewRouteType) {
     ///Navigation using @code[source performSegueWithIdentifier:destination sender:sender]@endcode If segue's destination doesn't comform to ZIKRoutableView, just use ZIKViewRouter to perform the segue. If destination contains child view controllers, and childs conform to ZIKRoutableView, prepareForRoute and routeCompletion will be called repeatedly for each routable view.
     ZIKViewRouteTypePerformSegue,
     /**
-     Adaptative type. Navigation using @code-[source showDetailViewController:destination sender:sender]@endcode
+     Adaptative type. Navigation using @code-[source showViewController:destination sender:sender]@endcode
      In UISplitViewController (source is master/detail or in master/detail's navigation stack): if master/detail is a UINavigationController and destination is not a UINavigationController, push destination on master/detail's stack, else replace master/detail with destination.
      
      In UINavigationController, push destination on stack.
@@ -31,7 +31,7 @@ typedef NS_ENUM(NSInteger,ZIKViewRouteType) {
      */
     ZIKViewRouteTypeShow NS_ENUM_AVAILABLE_IOS(8_0),
     /** 
-     Navigation using @code-[source showDetailViewController:destination sender:sender]@endcode
+     Adaptative type. Navigation using @code-[source showDetailViewController:destination sender:sender]@endcode
      In UISplitViewController, replace detail with destination, if collapsed, forward to master view controller, if master is a UINavigationController, push on stack, else replace master with destination.
      
      In UINavigationController, present modally.
@@ -41,9 +41,9 @@ typedef NS_ENUM(NSInteger,ZIKViewRouteType) {
     ZIKViewRouteTypeShowDetail NS_ENUM_AVAILABLE_IOS(8_0),
     ///Get destination viewController and do @code[source addChildViewController:destination]@endcode; You need to get destination in routeCompletion, and add it's view to your view hierarchy; source must be a UIViewController.
     ZIKViewRouteTypeAddAsChildViewController,
-    ///Get your Custom UIView and do @code[source addSubview:destination]@endcode; source must be a UIView.
+    ///Get your custom UIView and do @code[source addSubview:destination]@endcode; source must be a UIView.
     ZIKViewRouteTypeAddAsSubview,
-    ///Subclass router can provide custom presentation. Class of source and destination is specified by subclass.
+    ///Subclass router can provide custom presentation. Class of source and destination is specified by subclass router.
     ZIKViewRouteTypeCustom,
     ///Just create and return a UIViewController or UIView in routeCompletion; Source is not needed for this type.
     ZIKViewRouteTypeGetDestination
@@ -105,7 +105,7 @@ typedef void(^ZIKViewRouteGlobalErrorHandler)(__kindof ZIKViewRouter * _Nullable
  
  When a UIViewController is registered, and is routing from storyboard segue, a router will be auto created to prepare the UIViewController. If the destination needs preparing, the segue's performer is responsible for preparing in delegate method -prepareForDestinationRoutingFromExternal:configuration:. But if a UIViewController is routed from code manually, ZIKViewRouter won't auto create router, only get AOP notify, because we can't find the performer to prepare the destination. So you should avoid route the UIViewController from code manually, if you use a router as a dependency injector for preparing the UIViewController. You can check whether the destination is prepared in those AOP delegate methods.
  
- When Adding a registered UIView by code or xib, a router will be auto created. We search the view controller with custom class (not system class like native UINavigationController, or any container view controller) in it's responder hierarchy as the performer. If the registered UIView needs preparing, you have to add the view to a superview in a view controller before it removed from superview. If there is no view controller to prepare it(such as: 1. add it to a superview, and the superview is never added to a view controller; 2. add it to a UIWindow). If your custom class view use a routable view as it's part, the custom view should use a router to add and prepare the routable view, then the routable view don't need to search performer because it already prepared.
+ When Adding a registered UIView by code or xib, a router will be auto created. We search the view controller with custom class (not system class like native UINavigationController, or any container view controller) in it's responder hierarchy as the performer. If the registered UIView needs preparing, you have to add the view to a superview in a view controller before it removed from superview. There will be an assert failure if there is no view controller to prepare it (such as: 1. add it to a superview, and the superview is never added to a view controller; 2. add it to a UIWindow). If your custom class view use a routable view as it's subview, the custom view should use a router to add and prepare the routable view, then the routable view don't need to search performer because it already prepared.
  */
 @interface ZIKViewRouter : ZIKRouter <ZIKRouterProtocol>
 
@@ -170,9 +170,9 @@ typedef void(^ZIKViewRouteGlobalErrorHandler)(__kindof ZIKViewRouter * _Nullable
 /**
  Prepare destination from external, then you can use the router to perform route.
  @discussion
- The initial view controller of storyboard for launching app is not from segue, so you have to manually create it's router and use this method to prepare it. You can use this to prepare other view create from external.
+ The initial view controller of storyboard for launching app is not from segue, so you have to manually create it's router and use this method to prepare it. You can also use this to prepare other view create from external, use it like a builder.
 
- @param destination The destination to prepare
+ @param destination The destination to prepare. Destination must be registered with this router class.
  @param configBuilder Builder for config when perform route
  @param removeConfigBuilder Builder for config when remove route
  @return A router for the destination. If the destination is not registered with this router class, return nil and get assert failure.
@@ -191,7 +191,7 @@ typedef void(^ZIKViewRouteGlobalErrorHandler)(__kindof ZIKViewRouter * _Nullable
  
  2. Destination was already poped/dismissed/removed/dealloced.
  
- 3. Use ZIKViewRouteTypeCustom and the router didn't provide removeRoute, canRemoveCustomRoute return NO.
+ 3. Use ZIKViewRouteTypeCustom and the router didn't provide removeRoute, or -canRemoveCustomRoute return NO.
  
  4. If route type is adaptative type, it will choose different presentation for different situation (ZIKViewRouteTypePerformSegue, ZIKViewRouteTypeShow, ZIKViewRouteTypeShowDetail). Then if it's real route type is not Push/PresentModally/PresentAsPopover/AddAsChildViewController, destination can't be removed.
  
@@ -205,7 +205,7 @@ typedef void(^ZIKViewRouteGlobalErrorHandler)(__kindof ZIKViewRouter * _Nullable
  */
 - (BOOL)canRemove;
 
-///Main thread only
+///Remove a routed destination. Auto choose proper remove action in pop/dismiss/removeFromParentViewController/removeFromSuperview/custom. If -canRemove return NO, this will failed, use -removeRouteWithSuccessHandler:performerErrorHandler: to get error info. Main thread only.
 - (void)removeRoute;
 
 ///Router doesn't support all routeTypes, for example, router for a UIView destination can't support those UIViewController's routeTypes
@@ -228,7 +228,7 @@ typedef NS_ENUM(NSInteger, ZIKViewRouteError) {
     ///If you use ZIKViewRouterForView() or ZIKViewRouterForConfig() to fetch router with protocol, the protocol must be declared. There will be an assert failure for debugging.
     ZIKViewRouteErrorInvalidProtocol,
     
-    ///Configuration missed some values, or some values were conflict. There will be an assert failure for debugging.
+    ///Configuration missed some required values, or some values were conflict. There will be an assert failure for debugging.
     ZIKViewRouteErrorInvalidConfiguration,
     
     ///This router doesn't support the route type you assigned. There will be an assert failure for debugging.
@@ -254,6 +254,7 @@ typedef NS_ENUM(NSInteger, ZIKViewRouteError) {
     
     ///See containerWrapper
     ZIKViewRouteErrorInvalidContainer,
+    
     /**
      Perform or remove route action failed
      @discussion
@@ -263,14 +264,14 @@ typedef NS_ENUM(NSInteger, ZIKViewRouteError) {
      
      3. Do removeRoute when a router is not performed yet.
      
-     4. Do removeRoute when routeType is not supported (ZIKViewRouteTypePerformSegue or ZIKViewRouteTypeCustom).
+     4. Do removeRoute when real routeType is not supported.
      */
     ZIKViewRouteErrorActionFailed,
     
-    ///A unwind segue was aborted because -[destinationViewController canPerformUnwindSegueAction:fromViewController:withSender:] return NO or can't perform segue
+    ///An unwind segue was aborted because -[destinationViewController canPerformUnwindSegueAction:fromViewController:withSender:] return NO or can't perform segue.
     ZIKViewRouteErrorSegueNotPerformed,
     
-    ///Another same route action is performing
+    ///Another same route action is performing.
     ZIKViewRouteErrorOverRoute,
 };
 
@@ -294,7 +295,7 @@ typedef void(^ZIKViewRouteSegueConfiger)(NS_NOESCAPE ZIKViewRouteSegueConfigure)
  
  For ZIKViewRouteTypeAddAsSubview, source must be a UIView.
  
- For ZIKViewRouteTypeCustom, source is not needed.
+ For ZIKViewRouteTypeGetDestination, source is not needed.
  */
 @property (nonatomic, weak) id<ZIKViewRouteSource> source;
 ///The style of route, default is ZIKViewRouteTypePresentModally. Subclass router may return other default value.
@@ -311,7 +312,7 @@ typedef void(^ZIKViewRouteSegueConfiger)(NS_NOESCAPE ZIKViewRouteSegueConfigure)
  
  For ZIKViewRouteTypeShow, if source is in a UINavigationController, container can't be a UINavigationController or UISplitViewController
  
- For ZIKViewRouteTypeShowDetail, if source is in a collapsed UISplitViewController, and master is a UINavigationController, , container can't be a UINavigationController or UISplitViewController
+ For ZIKViewRouteTypeShowDetail, if source is in a collapsed UISplitViewController, and master is a UINavigationController, container can't be a UINavigationController or UISplitViewController
  
  For ZIKViewRouteTypeAddAsChildViewController, will add container as source's child, so you have to add container's view to source's view in routeCompletion, not the destination's view
  */
@@ -348,7 +349,7 @@ typedef void(^ZIKViewRouteSegueConfiger)(NS_NOESCAPE ZIKViewRouteSegueConfigure)
  @note
  Use weakSelf in routeCompletion to avoid retain cycle.
  
-  ZIKViewRouter use UIViewController's transitionCoordinator to do completion, so if you override segue's -perform or override -showViewController:sender: and provide custom transition, but didn't use a transitionCoordinator (such as use +[UIView animateWithDuration:animations:completion:] to animate), routeCompletion when be called immediately, before the animation real complete.
+  ZIKViewRouter use UIViewController's transitionCoordinator to do completion, so if you override segue's -perform or override -showViewController:sender: and provide custom transition, but didn't use a transitionCoordinator (such as use +[UIView animateWithDuration:animations:completion:] to animate), routeCompletion when be called immediately, before the animation really completes.
  */
 @property (nonatomic, copy, nullable) void(^routeCompletion)(id destination);
 
@@ -394,6 +395,7 @@ typedef void(^ZIKViewRouteSegueConfiger)(NS_NOESCAPE ZIKViewRouteSegueConfigure)
 @property (nonatomic, assign) BOOL animated;
 
 /**
+ Handler when finish remove.
  @note
  Use weakSelf in routeCompletion to avoid retain cycle.
  */
@@ -403,7 +405,7 @@ typedef void(^ZIKViewRouteSegueConfiger)(NS_NOESCAPE ZIKViewRouteSegueConfigure)
 @property (nonatomic, assign) BOOL handleExternalRoute;
 @end
 
-#pragma mark Dynamic getter
+#pragma mark Dynamic discover
 
 @protocol ZIKRoutableViewDynamicGetter <NSObject>
 @end
@@ -445,7 +447,7 @@ typedef void(^ZIKViewRouteSegueConfiger)(NS_NOESCAPE ZIKViewRouteSegueConfigure)
  
  It's safe to use protocols declared in router's header and won't get nil. ZIKViewRouter will validate all declared and registered protocols when app launch in DEBUG mode. The "ZIKRoutableViewDynamicGetter" is for 100% safe in case someone pass a undeclared protocol, you can define a protocol like "#define _ZIKLoginViewProtocol_ (Protocol<ZIKRoutableViewDynamicGetter> *)\@protocol(ZIKLoginViewProtocol)", and use the macro like ZIKViewRouterForView(_ZIKLoginViewProtocol_). Then if someone pass a undefined protocol, there will be a warning. Add "-Werror=incompatible-pointer-types" to "Build Settings->Other C Flags" to change build warning to build error.
  
- @param viewProtocol The protocol declared with DeclareRoutableViewProtocol in router's header
+ @param viewProtocol The protocol declared with DeclareRoutableViewProtocol in router's header.
  @return A router class matched with the view. Return nil if protocol is nil or not declared. There will be an assert failure when result is nil.
  */
 extern _Nullable Class ZIKViewRouterForView(Protocol<ZIKRoutableViewDynamicGetter> *viewProtocol);
@@ -453,7 +455,7 @@ extern _Nullable Class ZIKViewRouterForView(Protocol<ZIKRoutableViewDynamicGette
 /**
  Get the router class combined with a custom ZIKViewRouteConfiguration conforming to a unique protocol.
  @discussion
- Similar to ZIKViewRouterForView(), this function is for decoupling route behavior with router class. If configurations of a view can't be set directly with a protocol the view conforms, you can use a custom ZIKViewRouteConfiguration to config these configurations. Use macro RegisterRoutableViewConfigProtocol to register the protocol, then you don't need to import the router's header when perform route.
+ Similar to ZIKViewRouterForView(), this function is for decoupling route behavior with router class. If configurations of a module can't be set directly with a protocol the view conforms, you can use a custom ZIKViewRouteConfiguration to config these configurations. Use macro RegisterRoutableViewConfigProtocol to register the protocol, then you don't need to import the router's header when perform route.
  @code
  //ZIKLoginViewProtocol
  @protocol ZIKLoginViewProtocol <NSObject>
@@ -478,9 +480,12 @@ extern _Nullable Class ZIKViewRouterForView(Protocol<ZIKRoutableViewDynamicGette
  
  - (id)destinationWithConfiguration:(ZIKLoginViewConfiguration *)configuration {
      ZIKLoginViewController *destination = [ZIKLoginViewController new];
-     destination.account = configuration.account;
      return destination;
  }
+ - (void)prepareDestination:(ZIKLoginViewController *)destination configuration:(ZIKLoginViewConfiguration *)configuration {
+     destination.account = configuration.account;
+ }
+ 
  //Get ZIKLoginViewRouter and perform route
  [ZIKViewRouterForConfig(@protocol(ZIKLoginViewProtocol))
      performWithConfigure:^(ZIKViewRouteConfiguration<ZIKLoginViewProtocol> *config) {
@@ -681,11 +686,13 @@ extern NSArray<NSNumber *> *kDefaultRouteTypesForView;
  
  @note
  Router with ZIKViewRouteTypePerformSegue route type won't invoke this method, because destination is created from storyboard.
- Router created with -initForExternalView:configure: won't invoke this method.
+ 
+ Router created with -performOnDestination:configure:removeConfigure: won't invoke this method.
+ 
  This methods is only responsible for create the destination. The additional initialization should be in -prepareDestination:configuration:.
  
- @param configuration configuration for route
- @return return a UIViewController or UIView, If the configuration is invalid, return nil to make this route failed.
+ @param configuration Configuration for route
+ @return A UIViewController or UIView, If the configuration is invalid, return nil to make this route failed.
  */
 - (nullable id<ZIKRoutableView>)destinationWithConfiguration:(__kindof ZIKViewRouteConfiguration *)configuration;
 
@@ -697,10 +704,12 @@ extern NSArray<NSNumber *> *kDefaultRouteTypesForView;
 /**
  Prepare the destination with the configuration when view is first appear. Unwind segue to destination won't call this method.
  @warning
- when it's removed and routed again, it's alse treated as first appear, so this method may be called more than once. You should check whether the destination is already prepared to avoid unnecessary preparation.
+ When it's removed and routed again, it's alse treated as first appear, so this method may be called more than once. You should check whether the destination is already prepared to avoid unnecessary preparation.
+ 
+ If you get a prepared destination by ZIKViewRouteTypeGetDestination or -prepareDestination:configure:removeConfigure:, this method will be called. When the destination is routed, this method will also be called, because the destination may be changed.
 
- @param destination the view to perform route
- @param configuration the config for route
+ @param destination The view to perform route
+ @param configuration The config for route
  */
 - (void)prepareDestination:(id)destination configuration:(__kindof ZIKViewRouteConfiguration *)configuration;
 
@@ -709,13 +718,12 @@ extern NSArray<NSNumber *> *kDefaultRouteTypesForView;
  @warning
  when it's removed and routed again, it's alse treated as first appear, so this method may be called more than once.
  
- @param destination the view to perform route
- @param configuration the config for route
+ @param destination The view to perform route
+ @param configuration The config for route
  */
 - (void)didFinishPrepareDestination:(id)destination configuration:(__kindof ZIKViewRouteConfiguration *)configuration;
 
-//TODO:use bit operation
-///Default is kDefaultRouteTypesForViewController for UIViewController type destination, if your destination is a UIView, override this and return kDefaultRouteTypesForView
+///Default is kDefaultRouteTypesForViewController for UIViewController type destination, if your destination is a UIView, override this and return kDefaultRouteTypesForView. Router can also limit the route type.
 + (NSArray<NSNumber *> *)supportedRouteTypes;
 ///You can do dependency injection by subclass ZIKViewRouteConfiguration, and add your custom property; Then you must override this to return a default instance of your subclass
 + (__kindof ZIKViewRouteConfiguration *)defaultRouteConfiguration;
@@ -799,8 +807,8 @@ extern NSArray<NSNumber *> *kDefaultRouteTypesForView;
  If a UIViewController/UIView is routing from storyboard or a UIView is added by -addSubview:, the view will be detected, and a router will be created to prepare it. If the view need prepare, the router will search the performer of current route and call this method to prepare the destination.
  @note If a UIViewController is routing from manually code or is the initial view controller of app in storyboard (like directly use [performer.navigationController pushViewController:destination animated:YES]), the view will be detected, but won't create a router to search performer and prepare the destination, because we don't know which view controller is the performer calling -pushViewController:animated: (any child view controller in navigationController's stack can perform the route).
 
- @param destination the view will be routed. You can distinguish destinations with their view protocols.
- @param configuration config for the route. You can distinguish destinations with their router's config protocols. You can modify this to prepare the route, but source, routeType, segueConfiguration, handleExternalRoute won't be modified even you change them.
+ @param destination The view will be routed. You can distinguish destinations with their view protocols.
+ @param configuration Config for the route. You can distinguish destinations with their router's config protocols. You can modify this to prepare the route, but source, routeType, segueConfiguration, handleExternalRoute won't be modified even you change them.
  */
 - (void)prepareForDestinationRoutingFromExternal:(id)destination configuration:(__kindof ZIKViewRouteConfiguration *)configuration;
 

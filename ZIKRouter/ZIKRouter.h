@@ -45,7 +45,7 @@ typedef NS_ENUM(NSInteger, ZIKRouterState) {
 
 ///Abstract class for router. A router for decoupling between modules, and injecting dependencies with protocol.
 @interface ZIKRouter : NSObject <ZIKRouterProtocol>
-///State of route, not thread safe
+///State of route
 @property (nonatomic, readonly, assign) ZIKRouterState state;
 ///Configuration for performRoute; return copy of configuration, so modify this won't change the real configuration inside router
 @property (nonatomic, readonly, copy) __kindof ZIKRouteConfiguration *configuration;
@@ -93,20 +93,26 @@ typedef void(^ZIKRouteStateNotifier)(ZIKRouterState oldState, ZIKRouterState new
 @interface ZIKRouteConfiguration : NSObject <NSCopying>
 
 /**
+ Error handler for router's creater.
  @note
  Use weakSelf in providerErrorHandler to avoid retain cycle.
  */
 @property (nonatomic, copy, nullable) ZIKRouteErrorHandler providerErrorHandler;
 
 /**
+ Success handler for router's creater.
  @note
  Use weakSelf in providerSuccessHandler to avoid retain cycle.
  */
 @property (nonatomic, copy, nullable) void(^providerSuccessHandler)(void);
+
+///Error handler for router's performer, will reset to nil after perform.
 @property (nonatomic, copy, nullable) ZIKRouteErrorHandler performerErrorHandler;
+///Success handler for router's performer, will reset to nil after perform.
 @property (nonatomic, copy, nullable) void(^performerSuccessHandler)(void);
 
 /**
+ Monitor state change
  @note
  Use weakSelf in stateNotifier to avoid retain cycle.
  */
