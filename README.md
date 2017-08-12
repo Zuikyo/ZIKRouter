@@ -200,9 +200,9 @@ RegisterRoutableViewProtocol(MasterViewProtocol, MasterViewRouter)
 - (void)showMasterViewController {
 	ZIKViewRouter *router;
 	
-	//You can directly use ZIKTestPushViewRouter，or use ZIKViewRouterForView(@protocol(MasterViewProtocol)) to get the class.
+	//You can directly use MasterViewRouter，or use ZIKViewRouterForView(@protocol(MasterViewProtocol)) to get the class.
 	//When you use protocol to get the router class, you can use the protocol to config the destination
-	router = [ZIKTestPushViewRouter
+	router = [MasterViewRouter
 	          performWithConfigure:^(ZIKViewRouteConfiguration *config) {
 	              config.source = self;
 	              config.routeType = ZIKViewRouteTypePush;
@@ -221,7 +221,7 @@ RegisterRoutableViewProtocol(MasterViewProtocol, MasterViewRouter)
 	 self.router = router;
 }
 
-- (void)removeMasterViewController {	    
+- (void)removeMasterViewController {
 	//You can use the router to remove a routed view
 	[self.router removeRouteWithSuccessHandler:^{
 	    //Remove success
