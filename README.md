@@ -205,7 +205,7 @@ RegisterRoutableViewProtocol(MasterViewProtocol, MasterViewRouter)
 	router = [MasterViewRouter
 	          performWithConfigure:^(ZIKViewRouteConfiguration *config) {
 	              config.source = self;
-	              config.routeType = ZIKViewRouteTypePush;
+	              config.routeType = ZIKViewRouteTypePresentModally;
 	              config.animated = YES;
 	              config.prepareForRoute = ^(UIViewController *destination) {
 	              //Config transition style
