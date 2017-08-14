@@ -606,7 +606,7 @@ _Nullable Class ZIKViewRouterForView(Protocol<ZIKRoutableViewDynamicGetter> *vie
     return nil;
 }
 
-_Nullable Class ZIKViewRouterForConfig(Protocol<ZIKRoutableConfigDynamicGetter> *configProtocol) {
+_Nullable Class ZIKViewRouterForConfig(Protocol<ZIKRoutableViewConfigDynamicGetter> *configProtocol) {
     NSCParameterAssert(configProtocol);
     NSCAssert(g_configProtocolToRouterMap, @"Didn't register any protocol yet.");
     NSCAssert(_assert_isLoadFinished, @"Only get router after app did finish launch.");

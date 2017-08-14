@@ -10,7 +10,7 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-#define _ZIKCompatibleAlertConfigProtocol_ (Protocol<ZIKRoutableConfigDynamicGetter> *)@protocol(ZIKCompatibleAlertConfigProtocol)
+#define _ZIKCompatibleAlertConfigProtocol_ (Protocol<ZIKRoutableViewConfigDynamicGetter> *)@protocol(ZIKCompatibleAlertConfigProtocol)
 @protocol ZIKCompatibleAlertConfigProtocol <NSObject>
 @property(nonatomic,copy) NSString *title;
 @property(nullable,nonatomic,copy) NSString *message;

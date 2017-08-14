@@ -409,7 +409,7 @@ typedef void(^ZIKViewRouteSegueConfiger)(NS_NOESCAPE ZIKViewRouteSegueConfigure)
 
 @protocol ZIKRoutableViewDynamicGetter <NSObject>
 @end
-@protocol ZIKRoutableConfigDynamicGetter <NSObject>
+@protocol ZIKRoutableViewConfigDynamicGetter <NSObject>
 @end
 
 /**
@@ -495,12 +495,12 @@ extern _Nullable Class ZIKViewRouterForView(Protocol<ZIKRoutableViewDynamicGette
  @endcode
  See ZIKViewRouter_registerConfigProtocol() for more info.
  
- It's safe to use protocols declared in router's header and won't get nil. ZIKViewRouter will validate all declared and registered protocols when app launch in DEBUG mode. The "ZIKRoutableConfigDynamicGetter" is for 100% safe in case someone pass a undeclared protocol, you can define a protocol like "#define _ZIKLoginConfigProtocol_ (Protocol<ZIKRoutableConfigDynamicGetter> *)\@protocol(ZIKLoginConfigProtocol)", and use the macro like ZIKViewRouterForView(_ZIKLoginConfigProtocol_). Then if someone pass a undefined protocol, there will be a warning. Add "-Werror=incompatible-pointer-types" to "Build Settings->Other C Flags" to change build warning to build error.
+ It's safe to use protocols declared in router's header and won't get nil. ZIKViewRouter will validate all declared and registered protocols when app launch in DEBUG mode. The "ZIKRoutableViewConfigDynamicGetter" is for 100% safe in case someone pass a undeclared protocol, you can define a protocol like "#define _ZIKLoginConfigProtocol_ (Protocol<ZIKRoutableViewConfigDynamicGetter> *)\@protocol(ZIKLoginConfigProtocol)", and use the macro like ZIKViewRouterForView(_ZIKLoginConfigProtocol_). Then if someone pass a undefined protocol, there will be a warning. Add "-Werror=incompatible-pointer-types" to "Build Settings->Other C Flags" to change build warning to build error.
 
  @param configProtocol The protocol declared with DeclareRoutableViewConfigProtocol in router's header
  @return A router class matched with the view. Return nil if protocol is nil or not declared. There will be an assert failure when result is nil.
  */
-extern _Nullable Class ZIKViewRouterForConfig(Protocol<ZIKRoutableConfigDynamicGetter> *configProtocol);
+extern _Nullable Class ZIKViewRouterForConfig(Protocol<ZIKRoutableViewConfigDynamicGetter> *configProtocol);
 
 #pragma mark ZIKViewRouterProtocol
 

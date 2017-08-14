@@ -62,7 +62,7 @@ typedef void(^ZIKServiceRouteGlobalErrorHandler)(__kindof ZIKServiceRouter * _Nu
 ///Default implemenation will call routeCompletion synchronously, so the user can get service synchronously. Subclass router may return NO if it's service can only be generated asynchronously.
 + (BOOL)completeSynchronously;
 
-///Set error callback for all view router instance. Use this to debug and log
+///Set error callback for all service router instance. Use this to debug and log
 + (void)setGlobalErrorHandler:(ZIKServiceRouteGlobalErrorHandler)globalErrorHandler;
 @end
 
