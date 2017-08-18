@@ -33,8 +33,22 @@
 }
 
 - (BOOL)ZIK_isAppRootViewController {
-    NSAssert([UIApplication sharedApplication].delegate.window.rootViewController, @"Can't find rootViewController");
-    return [UIApplication sharedApplication].delegate.window.rootViewController == self;
+    Class UIApplication = NSClassFromString(@"UIApplication");
+    id sharedApplication = [UIApplication performSelector:@selector(sharedApplication)];
+    id appDelegate = [sharedApplication performSelector:@selector(delegate)];
+    UIWindow *window = [appDelegate performSelector:@selector(window)];
+    UIViewController *rootViewController = window.rootViewController;
+    if (rootViewController) {
+        return rootViewController == self;
+    }
+    //Maybe in app extension
+    id nextResponder = [self nextResponder];
+    if ([nextResponder isKindOfClass:[UIWindow class]]) {
+        if ([[nextResponder nextResponder] isKindOfClass:UIApplication]) {
+            return YES;
+        }
+    }
+    return NO;
 }
 
 - (BOOL)ZIK_isRootViewControllerInContainer {

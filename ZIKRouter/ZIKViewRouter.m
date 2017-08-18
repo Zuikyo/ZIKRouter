@@ -216,6 +216,7 @@ static NSMutableArray *g_preparingUIViewRouters;
     dispatch_once(&onceToken, ^{
         ZIKRouter_replaceMethodWithMethod([UIApplication class], @selector(setDelegate:),
                                           self, @selector(ZIKViewRouter_hook_setDelegate:));
+        ZIKRouter_replaceMethodWithMethodType([UIStoryboard class], @selector(storyboardWithName:bundle:), true, self, @selector(ZIKViewRouter_hook_storyboardWithName:bundle:), true);
     });
 }
 
@@ -229,6 +230,14 @@ static NSMutableArray *g_preparingUIViewRouters;
 + (void)ZIKViewRouter_hook_setDelegate:(id<UIApplicationDelegate>)delegate {
     [ZIKViewRouter setup];
     [self ZIKViewRouter_hook_setDelegate:delegate];
+}
+
++ (UIStoryboard *)ZIKViewRouter_hook_storyboardWithName:(NSString *)name bundle:(nullable NSBundle *)storyboardBundleOrNil {
+    static dispatch_once_t onceToken;
+    dispatch_once(&onceToken, ^{
+        _initializeZIKViewRouter();
+    });
+    return [self ZIKViewRouter_hook_storyboardWithName:name bundle:storyboardBundleOrNil];
 }
 
 static void _initializeZIKViewRouter(void) {
@@ -2277,31 +2286,33 @@ destinationStateBeforeRoute:(ZIKPresentationState *)destinationStateBeforeRoute
 
 - (void)ZIKViewRouter_hook_viewWillDisappear:(BOOL)animated {
     UIViewController *destination = (UIViewController *)self;
-    UIViewController *node = destination;
-    while (node) {
-        UIViewController *parentRemovingFrom = node.ZIK_parentRemovingFrom;
-        UIViewController *source;
-        if (parentRemovingFrom || //removing from navigation / willMoveToParentViewController:nil, removeFromParentViewController
-            node.isMovingFromParentViewController || //removed from splite
-            (!node.parentViewController && !node.presentingViewController && ![node ZIK_isAppRootViewController])) {
-            source = parentRemovingFrom;
-        } else if (node.isBeingDismissed) {
-            source = node.presentingViewController;
-        } else {
-            node = node.parentViewController;
-            continue;
-        }
-        if ([self conformsToProtocol:@protocol(ZIKRoutableView)]) {
-            [[NSNotificationCenter defaultCenter] postNotificationName:kZIKViewRouteWillRemoveRouteNotification object:destination];
-            NSNumber *routeTypeFromRouter = [destination ZIK_routeTypeFromRouter];
-            if (!routeTypeFromRouter ||
-                [routeTypeFromRouter integerValue] == ZIKViewRouteTypeGetDestination) {
-                [ZIKViewRouter AOP_notifyAll_router:nil willRemoveRouteOnDestination:destination fromSource:source];
+    if (destination.ZIK_removing == NO) {
+        UIViewController *node = destination;
+        while (node) {
+            UIViewController *parentRemovingFrom = node.ZIK_parentRemovingFrom;
+            UIViewController *source;
+            if (parentRemovingFrom || //removing from navigation / willMoveToParentViewController:nil, removeFromParentViewController
+                node.isMovingFromParentViewController || //removed from splite
+                (!node.parentViewController && !node.presentingViewController && ![node ZIK_isAppRootViewController])) {
+                source = parentRemovingFrom;
+            } else if (node.isBeingDismissed) {
+                source = node.presentingViewController;
+            } else {
+                node = node.parentViewController;
+                continue;
             }
+            if ([self conformsToProtocol:@protocol(ZIKRoutableView)]) {
+                [[NSNotificationCenter defaultCenter] postNotificationName:kZIKViewRouteWillRemoveRouteNotification object:destination];
+                NSNumber *routeTypeFromRouter = [destination ZIK_routeTypeFromRouter];
+                if (!routeTypeFromRouter ||
+                    [routeTypeFromRouter integerValue] == ZIKViewRouteTypeGetDestination) {
+                    [ZIKViewRouter AOP_notifyAll_router:nil willRemoveRouteOnDestination:destination fromSource:source];
+                }
+            }
+            [destination setZIK_parentRemovingFrom:source];
+            [destination setZIK_removing:YES];
+            break;
         }
-        [destination setZIK_parentRemovingFrom:source];
-        [destination setZIK_removing:YES];
-        break;
     }
     
     [self ZIKViewRouter_hook_viewWillDisappear:animated];
@@ -2327,7 +2338,7 @@ destinationStateBeforeRoute:(ZIKPresentationState *)destinationStateBeforeRoute
     if (removing) {
         [destination setZIK_removing:NO];
         [destination setZIK_routed:NO];
-    } else {
+    } else if (ZIKClassIsCustomClass([destination class])) {
         //Check unbalanced calls to begin/end appearance transitions
         UIViewController *node = destination;
         while (node) {

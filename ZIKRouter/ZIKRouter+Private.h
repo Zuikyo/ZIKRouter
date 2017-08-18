@@ -11,6 +11,7 @@
 NS_ASSUME_NONNULL_BEGIN
 
 extern bool ZIKRouter_replaceMethodWithMethod(Class originalClass, SEL originalSelector, Class swizzledClass, SEL swizzledSelector);
+extern bool ZIKRouter_replaceMethodWithMethodType(Class originalClass, SEL originalSelector, bool originIsClassMethod, Class swizzledClass, SEL swizzledSelector, bool swizzledIsClassMethod);
 extern IMP ZIKRouter_replaceMethodWithMethodAndGetOriginalImp(Class originalClass, SEL originalSelector, Class swizzledClass, SEL swizzledSelector);
 extern void ZIKRouter_enumerateClassList(void(^handler)(Class class));
 extern void ZIKRouter_enumerateProtocolList(void(^handler)(Protocol *protocol));

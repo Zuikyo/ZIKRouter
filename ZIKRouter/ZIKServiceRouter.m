@@ -42,6 +42,7 @@ static dispatch_semaphore_t g_globalErrorSema;
     dispatch_once(&onceToken, ^{
         ZIKRouter_replaceMethodWithMethod([UIApplication class], @selector(setDelegate:),
                                           self, @selector(ZIKServiceRouter_hook_setDelegate:));
+        ZIKRouter_replaceMethodWithMethodType([UIStoryboard class], @selector(storyboardWithName:bundle:), true, self, @selector(ZIKServiceRouter_hook_storyboardWithName:bundle:), true);
     });
 }
 
@@ -55,6 +56,14 @@ static dispatch_semaphore_t g_globalErrorSema;
 + (void)ZIKServiceRouter_hook_setDelegate:(id<UIApplicationDelegate>)delegate {
     [ZIKServiceRouter setup];
     [self ZIKServiceRouter_hook_setDelegate:delegate];
+}
+
++ (UIStoryboard *)ZIKServiceRouter_hook_storyboardWithName:(NSString *)name bundle:(nullable NSBundle *)storyboardBundleOrNil {
+    static dispatch_once_t onceToken;
+    dispatch_once(&onceToken, ^{
+        _initializeZIKServiceRouter();
+    });
+    return [self ZIKServiceRouter_hook_storyboardWithName:name bundle:storyboardBundleOrNil];
 }
 
 void _initializeZIKServiceRouter() {
