@@ -280,6 +280,11 @@ static void _initializeZIKViewRouter(void) {
                                       ZIKViewRouterClass, @selector(ZIKViewRouter_hook_viewDidAppear:));
     ZIKRouter_replaceMethodWithMethod(UIViewControllerClass, @selector(viewWillDisappear:),
                                       ZIKViewRouterClass, @selector(ZIKViewRouter_hook_viewWillDisappear:));
+    if (NSClassFromString(@"SLComposeServiceViewController")) {
+        //fix SLComposeServiceViewController doesn't call -[super viewWillDisappear:]
+        ZIKRouter_replaceMethodWithMethod(NSClassFromString(@"SLComposeServiceViewController"), @selector(viewWillDisappear:),
+                                          ZIKViewRouterClass, @selector(ZIKViewRouter_hook_viewWillDisappear:));
+    }
     ZIKRouter_replaceMethodWithMethod(UIViewControllerClass, @selector(viewDidDisappear:),
                                       ZIKViewRouterClass, @selector(ZIKViewRouter_hook_viewDidDisappear:));
     ZIKRouter_replaceMethodWithMethod(UIViewControllerClass, @selector(viewDidLoad),
