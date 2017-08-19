@@ -233,10 +233,7 @@ static NSMutableArray *g_preparingUIViewRouters;
 }
 
 + (UIStoryboard *)ZIKViewRouter_hook_storyboardWithName:(NSString *)name bundle:(nullable NSBundle *)storyboardBundleOrNil {
-    static dispatch_once_t onceToken;
-    dispatch_once(&onceToken, ^{
-        _initializeZIKViewRouter();
-    });
+    [ZIKViewRouter setup];
     return [self ZIKViewRouter_hook_storyboardWithName:name bundle:storyboardBundleOrNil];
 }
 
