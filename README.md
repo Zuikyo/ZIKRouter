@@ -134,27 +134,29 @@ Get a module and use:
 Create a subclass of `ZIKViewRouter` for your module:
 
 ```
-//MasterViewRouter.h
-
-//Declare that this protocol is registered, you can use the protocol to get the MasterViewRouter class by ZIKViewRouterForView()
-DeclareRoutableViewProtocol(MasterViewProtocol, MasterViewRouter)
-
-@interface MasterViewRouter : ZIKViewRouter <ZIKViewRouterProtocol>
+//MasterViewProtocol.h
+//ZIKViewRotable declares that MasterViewProtocol can be used to get a router class by ZIKViewRouterForView()
+@protocol MasterViewProtocol: ZIKViewRotable
 
 @end
 ```
 ```
+//MasterViewRouter.h
+@interface MasterViewRouter : ZIKViewRouter <ZIKViewRouterProtocol>
+@end
+
 //MasterViewRouter.m
-
-//Register MasterViewController with  MasterViewRouter. A view can be registered in multi routers, and a router can be registered with multi views.
-RegisterRoutableView(MasterViewController, MasterViewRouter)
-
-//Register MasterViewProtocol
-RegisterRoutableViewProtocol(MasterViewProtocol, MasterViewRouter)
-
 @implementation MasterViewRouter
 
 //implementation of ZIKViewRouterProtocol
+
++ (void)registerRoutableDestination {
+    //Register MasterViewController with  MasterViewRouter. A view can be registered in multi routers, and a router can be registered with multi views.
+    ZIKViewRouter_registerView([MasterViewController class], self);
+    
+    //Register MasterViewProtocol, then you can use ZIKViewRouterForView() to get MasterViewRouter class. You can also use subclass of ZIKViewRouteAdapter, and register protocols for other ZIKViewRouter classes in it's +registerRoutableDestination
+    ZIKViewRouter_registerViewProtocol(@protocol(MasterViewProtocol), self);
+}
 
 //Initialize and return the destination
 - (id)destinationWithConfiguration:(__kindof ZIKRouteConfiguration *)configuration {

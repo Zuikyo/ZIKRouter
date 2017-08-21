@@ -118,27 +118,31 @@ ZIKRouter是基于面向接口编程的思想进行设计的。调用者不必�
 ### 为模块创建对应Router
 
 ```
-//MasterViewRouter.h
-
-//声明Master界面的protocol已经被注册，可以用于获取MasterViewRouter类
-DeclareRoutableViewProtocol(MasterViewProtocol, MasterViewRouter)
-
-@interface MasterViewRouter : ZIKViewRouter <ZIKViewRouterProtocol>
+//MasterViewProtocol.h
+//声明Master界面的protocol已经被注册，可以用ZIKViewRouterForView()获取MasterViewRouter类
+@protocol MasterViewProtocol: ZIKViewRotable
 
 @end
 ```
 ```
+//MasterViewRouter.h
+@interface MasterViewRouter : ZIKViewRouter <ZIKViewRouterProtocol>
+@end
+
 //MasterViewRouter.m
-
-//把MasterViewController和对应的Router子类进行注册，一个Router可以注册多个界面，一个界面也可以使用多个Router
-RegisterRoutableView(MasterViewController, MasterViewRouter)
-
-//注册MasterViewProtocol，可以动态获取到MasterViewRouter类
-RegisterRoutableViewProtocol(MasterViewProtocol, MasterViewRouter)
-
 @implementation MasterViewRouter
 
 //实现ZIKRouter的接口
+
+//注册当前Router所管理的view
++ (void)registerRoutableDestination {
+    //把MasterViewController和对应的Router子类进行注册，一个Router可以注册多个界面，一个界面也可以使用多个Router
+    ZIKViewRouter_registerView([MasterViewController class], self);
+    
+    //注册MasterViewProtocol，可以动态获取到MasterViewRouter类。也可以用ZIKViewRouteAdapter子类的 +registerRoutableDestination 来为其他ZIKViewRouter类注册protocol
+    ZIKViewRouter_registerViewProtocol(@protocol(MasterViewProtocol), self);
+}
+
 //返回需要获取的目的模块
 - (id)destinationWithConfiguration:(__kindof ZIKRouteConfiguration *)configuration {
     UIStoryboard *sb = [UIStoryboard storyboardWithName:@"Main" bundle:nil];
