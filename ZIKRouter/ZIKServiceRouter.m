@@ -94,7 +94,7 @@ void _initializeZIKServiceRouter() {
 #if ZIKSERVICEROUTER_CHECK
             CFMutableSetRef services = (CFMutableSetRef)CFDictionaryGetValue(_check_routerToServicesMap, (__bridge const void *)(class));
             NSSet *serviceSet = (__bridge NSSet *)(services);
-            NSCAssert2(serviceSet.count > 0 || ZIKRouter_classIsSubclassOfClass(class, NSClassFromString(@"ZIKServiceRouteAdapter")), @"This router class(%@) was not resgistered with any service class. Use ZIKViewRouter_registerService() to register service in Router(%@)'s +registerRoutableDestination.",class,class);
+            NSCAssert2(serviceSet.count > 0 || ZIKRouter_classIsSubclassOfClass(class, NSClassFromString(@"ZIKServiceRouteAdapter")) || class == NSClassFromString(@"ZIKServiceRouteAdapter"), @"This router class(%@) was not resgistered with any service class. Use ZIKViewRouter_registerService() to register service in Router(%@)'s +registerRoutableDestination.",class,class);
 #endif
         }
     });
