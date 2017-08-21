@@ -46,6 +46,10 @@
 		F85F4D3A1F224130003106C3 /* ZIKPresentationState.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = F85F4D161F223F0F003106C3 /* ZIKPresentationState.h */; };
 		F85F4D3B1F224130003106C3 /* UIView+ZIKViewRouter.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = F85F4D0F1F223F0F003106C3 /* UIView+ZIKViewRouter.h */; };
 		F85F4D3C1F224130003106C3 /* UIViewController+ZIKViewRouter.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = F85F4D111F223F0F003106C3 /* UIViewController+ZIKViewRouter.h */; };
+		F876296A1F4B0E0500028BBF /* ZIKViewRoutable.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = F8B99A591F4ACD4D0063127F /* ZIKViewRoutable.h */; };
+		F876296B1F4B0E0500028BBF /* ZIKViewConfigRoutable.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = F8B99A5B1F4ACE300063127F /* ZIKViewConfigRoutable.h */; };
+		F876296C1F4B0E0500028BBF /* ZIKServiceRoutable.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = F8B99A5D1F4ADB350063127F /* ZIKServiceRoutable.h */; };
+		F876296D1F4B0E0500028BBF /* ZIKServiceConfigRoutable.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = F8B99A5F1F4ADB4A0063127F /* ZIKServiceConfigRoutable.h */; };
 		F8B0D86F1F38D541006824F2 /* ZIKRouter-umbrella.h in Headers */ = {isa = PBXBuildFile; fileRef = F8B0D86E1F38D541006824F2 /* ZIKRouter-umbrella.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		F8B99A5A1F4ACD4D0063127F /* ZIKViewRoutable.h in Headers */ = {isa = PBXBuildFile; fileRef = F8B99A591F4ACD4D0063127F /* ZIKViewRoutable.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		F8B99A5C1F4ACE300063127F /* ZIKViewConfigRoutable.h in Headers */ = {isa = PBXBuildFile; fileRef = F8B99A5B1F4ACE300063127F /* ZIKViewConfigRoutable.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -73,6 +77,10 @@
 			dstPath = include;
 			dstSubfolderSpec = 16;
 			files = (
+				F876296A1F4B0E0500028BBF /* ZIKViewRoutable.h in CopyFiles */,
+				F876296B1F4B0E0500028BBF /* ZIKViewConfigRoutable.h in CopyFiles */,
+				F876296C1F4B0E0500028BBF /* ZIKServiceRoutable.h in CopyFiles */,
+				F876296D1F4B0E0500028BBF /* ZIKServiceConfigRoutable.h in CopyFiles */,
 				F85F4D361F224130003106C3 /* ZIKRouter.h in CopyFiles */,
 				F85F4D371F224130003106C3 /* ZIKRouter+Private.h in CopyFiles */,
 				F85F4D381F224130003106C3 /* ZIKViewRouter.h in CopyFiles */,
@@ -457,7 +465,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				CODE_SIGN_IDENTITY = "";
-				CURRENT_PROJECT_VERSION = 0.42;
+				CURRENT_PROJECT_VERSION = 0.5;
 				DEFINES_MODULE = YES;
 				DEVELOPMENT_TEAM = "";
 				DYLIB_COMPATIBILITY_VERSION = 1;
@@ -479,7 +487,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				CODE_SIGN_IDENTITY = "";
-				CURRENT_PROJECT_VERSION = 0.42;
+				CURRENT_PROJECT_VERSION = 0.5;
 				DEFINES_MODULE = YES;
 				DEVELOPMENT_TEAM = "";
 				DYLIB_COMPATIBILITY_VERSION = 1;
