@@ -22,6 +22,12 @@
 /* End PBXAggregateTarget section */
 
 /* Begin PBXBuildFile section */
+		F850CF8F1F4B1C01004319A0 /* ZIKViewRouteAdapter.h in Headers */ = {isa = PBXBuildFile; fileRef = F850CF8D1F4B1C01004319A0 /* ZIKViewRouteAdapter.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		F850CF901F4B1C01004319A0 /* ZIKViewRouteAdapter.m in Sources */ = {isa = PBXBuildFile; fileRef = F850CF8E1F4B1C01004319A0 /* ZIKViewRouteAdapter.m */; };
+		F850CF931F4B1E52004319A0 /* ZIKServiceRouteAdapter.h in Headers */ = {isa = PBXBuildFile; fileRef = F850CF911F4B1E52004319A0 /* ZIKServiceRouteAdapter.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		F850CF941F4B1E52004319A0 /* ZIKServiceRouteAdapter.m in Sources */ = {isa = PBXBuildFile; fileRef = F850CF921F4B1E52004319A0 /* ZIKServiceRouteAdapter.m */; };
+		F850CF951F4B214C004319A0 /* ZIKViewRouteAdapter.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = F850CF8D1F4B1C01004319A0 /* ZIKViewRouteAdapter.h */; };
+		F850CF961F4B214C004319A0 /* ZIKServiceRouteAdapter.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = F850CF911F4B1E52004319A0 /* ZIKServiceRouteAdapter.h */; };
 		F85F4D171F223F0F003106C3 /* ZIKViewRouter.m in Sources */ = {isa = PBXBuildFile; fileRef = F85F4D0A1F223F0F003106C3 /* ZIKViewRouter.m */; };
 		F85F4D181F223F0F003106C3 /* ZIKViewRouter.h in Headers */ = {isa = PBXBuildFile; fileRef = F85F4D0B1F223F0F003106C3 /* ZIKViewRouter.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		F85F4D191F223F0F003106C3 /* ZIKRouter.h in Headers */ = {isa = PBXBuildFile; fileRef = F85F4D0C1F223F0F003106C3 /* ZIKRouter.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -77,6 +83,8 @@
 			dstPath = include;
 			dstSubfolderSpec = 16;
 			files = (
+				F850CF951F4B214C004319A0 /* ZIKViewRouteAdapter.h in CopyFiles */,
+				F850CF961F4B214C004319A0 /* ZIKServiceRouteAdapter.h in CopyFiles */,
 				F876296A1F4B0E0500028BBF /* ZIKViewRoutable.h in CopyFiles */,
 				F876296B1F4B0E0500028BBF /* ZIKViewConfigRoutable.h in CopyFiles */,
 				F876296C1F4B0E0500028BBF /* ZIKServiceRoutable.h in CopyFiles */,
@@ -94,6 +102,10 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		F850CF8D1F4B1C01004319A0 /* ZIKViewRouteAdapter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ZIKViewRouteAdapter.h; sourceTree = "<group>"; };
+		F850CF8E1F4B1C01004319A0 /* ZIKViewRouteAdapter.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ZIKViewRouteAdapter.m; sourceTree = "<group>"; };
+		F850CF911F4B1E52004319A0 /* ZIKServiceRouteAdapter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ZIKServiceRouteAdapter.h; sourceTree = "<group>"; };
+		F850CF921F4B1E52004319A0 /* ZIKServiceRouteAdapter.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ZIKServiceRouteAdapter.m; sourceTree = "<group>"; };
 		F85F4CFF1F223EB0003106C3 /* ZIKRouter.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = ZIKRouter.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		F85F4D031F223EB0003106C3 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		F85F4D0A1F223F0F003106C3 /* ZIKViewRouter.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ZIKViewRouter.m; sourceTree = "<group>"; };
@@ -163,6 +175,8 @@
 				F85F4D131F223F0F003106C3 /* ZIKRouter+Private.h */,
 				F85F4D0B1F223F0F003106C3 /* ZIKViewRouter.h */,
 				F85F4D0A1F223F0F003106C3 /* ZIKViewRouter.m */,
+				F850CF8D1F4B1C01004319A0 /* ZIKViewRouteAdapter.h */,
+				F850CF8E1F4B1C01004319A0 /* ZIKViewRouteAdapter.m */,
 				F8B99A591F4ACD4D0063127F /* ZIKViewRoutable.h */,
 				F8B99A5B1F4ACE300063127F /* ZIKViewConfigRoutable.h */,
 				F85F4D0D1F223F0F003106C3 /* ZIKViewRouter+Private.h */,
@@ -172,6 +186,8 @@
 				F8B99A5F1F4ADB4A0063127F /* ZIKServiceConfigRoutable.h */,
 				F8FD8EB21F3AAEAB00D7EECB /* ZIKServiceRouter.h */,
 				F8FD8EB31F3AAEAB00D7EECB /* ZIKServiceRouter.m */,
+				F850CF911F4B1E52004319A0 /* ZIKServiceRouteAdapter.h */,
+				F850CF921F4B1E52004319A0 /* ZIKServiceRouteAdapter.m */,
 				F8FD8EC91F3B2D0D00D7EECB /* ZIKServiceRouter+Private.h */,
 				F85F4D0E1F223F0F003106C3 /* Additions */,
 				F85F4D031F223EB0003106C3 /* Info.plist */,
@@ -205,6 +221,8 @@
 				F8B99A5A1F4ACD4D0063127F /* ZIKViewRoutable.h in Headers */,
 				F8B99A5C1F4ACE300063127F /* ZIKViewConfigRoutable.h in Headers */,
 				F8B99A601F4ADB4A0063127F /* ZIKServiceConfigRoutable.h in Headers */,
+				F850CF8F1F4B1C01004319A0 /* ZIKViewRouteAdapter.h in Headers */,
+				F850CF931F4B1E52004319A0 /* ZIKServiceRouteAdapter.h in Headers */,
 				F85F4D221F223F0F003106C3 /* ZIKPresentationState.h in Headers */,
 				F85F4D1D1F223F0F003106C3 /* UIViewController+ZIKViewRouter.h in Headers */,
 				F85F4D1B1F223F0F003106C3 /* UIView+ZIKViewRouter.h in Headers */,
@@ -330,8 +348,10 @@
 				F85F4D1E1F223F0F003106C3 /* UIViewController+ZIKViewRouter.m in Sources */,
 				F8FD8EB51F3AAEAB00D7EECB /* ZIKServiceRouter.m in Sources */,
 				F85F4D201F223F0F003106C3 /* ZIKRouter.m in Sources */,
+				F850CF901F4B1C01004319A0 /* ZIKViewRouteAdapter.m in Sources */,
 				F85F4D211F223F0F003106C3 /* ZIKPresentationState.m in Sources */,
 				F85F4D171F223F0F003106C3 /* ZIKViewRouter.m in Sources */,
+				F850CF941F4B1E52004319A0 /* ZIKServiceRouteAdapter.m in Sources */,
 				F85F4D1C1F223F0F003106C3 /* UIView+ZIKViewRouter.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -465,7 +485,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				CODE_SIGN_IDENTITY = "";
-				CURRENT_PROJECT_VERSION = 0.5;
+				CURRENT_PROJECT_VERSION = 0.51;
 				DEFINES_MODULE = YES;
 				DEVELOPMENT_TEAM = "";
 				DYLIB_COMPATIBILITY_VERSION = 1;
@@ -487,7 +507,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				CODE_SIGN_IDENTITY = "";
-				CURRENT_PROJECT_VERSION = 0.5;
+				CURRENT_PROJECT_VERSION = 0.51;
 				DEFINES_MODULE = YES;
 				DEVELOPMENT_TEAM = "";
 				DYLIB_COMPATIBILITY_VERSION = 1;

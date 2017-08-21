@@ -330,7 +330,7 @@ static void _initializeZIKViewRouter(void) {
 #if ZIKVIEWROUTER_CHECK
             CFMutableSetRef views = (CFMutableSetRef)CFDictionaryGetValue(_check_routerToViewsMap, (__bridge const void *)(class));
             NSSet *viewSet = (__bridge NSSet *)(views);
-            NSCAssert2(viewSet.count > 0, @"This router class(%@) was not resgistered with any view class. Use ZIKViewRouter_registerView() to register view in Router(%@)'s +registerRoutableDestination.",class,class);
+            NSCAssert2(viewSet.count > 0 || class == NSClassFromString(@"ZIKViewRouteAdapter"), @"This router class(%@) was not resgistered with any view class. Use ZIKViewRouter_registerView() to register view in Router(%@)'s +registerRoutableDestination.",class,class);
 #endif
         }
 
