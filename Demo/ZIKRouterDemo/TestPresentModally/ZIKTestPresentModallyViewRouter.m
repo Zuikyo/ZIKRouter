@@ -9,9 +9,16 @@
 #import "ZIKTestPresentModallyViewRouter.h"
 #import "ZIKTestPresentModallyViewController.h"
 
-RegisterRoutableView(ZIKTestPresentModallyViewController, ZIKTestPresentModallyViewRouter)
+@interface ZIKTestPresentModallyViewController (ZIKTestPresentModallyViewRouter) <ZIKRoutableView>
+@end
+@implementation ZIKTestPresentModallyViewController (ZIKTestPresentModallyViewRouter)
+@end
 
 @implementation ZIKTestPresentModallyViewRouter
+
++ (void)registerRoutableDestination {
+    ZIKViewRouter_registerView([ZIKTestPresentModallyViewController class], self);
+}
 
 - (id)destinationWithConfiguration:(__kindof ZIKRouteConfiguration *)configuration {
     UIStoryboard *sb = [UIStoryboard storyboardWithName:@"Main" bundle:nil];

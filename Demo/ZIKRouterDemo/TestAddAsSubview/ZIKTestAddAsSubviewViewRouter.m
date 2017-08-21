@@ -9,9 +9,16 @@
 #import "ZIKTestAddAsSubviewViewRouter.h"
 #import "ZIKTestAddAsSubviewViewController.h"
 
-RegisterRoutableView(ZIKTestAddAsSubviewViewController, ZIKTestAddAsSubviewViewRouter)
+@interface ZIKTestAddAsSubviewViewController (ZIKTestAddAsSubviewViewRouter) <ZIKRoutableView>
+@end
+@implementation ZIKTestAddAsSubviewViewController (ZIKTestAddAsSubviewViewRouter)
+@end
 
 @implementation ZIKTestAddAsSubviewViewRouter
+
++ (void)registerRoutableDestination {
+    ZIKViewRouter_registerView([ZIKTestAddAsSubviewViewController class], self);
+}
 
 - (id)destinationWithConfiguration:(__kindof ZIKRouteConfiguration *)configuration {
     UIStoryboard *sb = [UIStoryboard storyboardWithName:@"Main" bundle:nil];

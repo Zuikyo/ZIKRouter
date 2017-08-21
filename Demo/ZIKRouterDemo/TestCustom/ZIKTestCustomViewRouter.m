@@ -9,9 +9,16 @@
 #import "ZIKTestCustomViewRouter.h"
 #import "ZIKTestCustomViewController.h"
 
-RegisterRoutableView(ZIKTestCustomViewController, ZIKTestCustomViewRouter)
+@interface ZIKTestCustomViewController (ZIKTestCustomViewRouter) <ZIKRoutableView>
+@end
+@implementation ZIKTestCustomViewController (ZIKTestCustomViewRouter)
+@end
 
 @implementation ZIKTestCustomViewRouter
+
++ (void)registerRoutableDestination {
+    ZIKViewRouter_registerView([ZIKTestCustomViewController class], self);
+}
 
 - (id)destinationWithConfiguration:(__kindof ZIKRouteConfiguration *)configuration {
     UIStoryboard *sb = [UIStoryboard storyboardWithName:@"Main" bundle:nil];

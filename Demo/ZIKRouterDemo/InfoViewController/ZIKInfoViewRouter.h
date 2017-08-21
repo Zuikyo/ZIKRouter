@@ -9,8 +9,6 @@
 @import ZIKRouter;
 #import "ZIKInfoViewProtocol.h"
 
-DeclareRoutableViewProtocol(ZIKInfoViewProtocol, ZIKInfoViewRouter)
-
 @interface ZIKInfoViewRouter : ZIKViewRouter <ZIKViewRouterProtocol>
 
 @end

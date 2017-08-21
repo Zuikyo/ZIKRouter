@@ -9,7 +9,6 @@
 @import ZIKRouter;
 #import "ZIKSimpleLabelProtocol.h"
 
-DeclareRoutableViewProtocol(ZIKSimpleLabelProtocol, ZIKSimpleLabelRouter)
 @interface ZIKSimpleLabelRouter : ZIKViewRouter <ZIKViewRouterProtocol>
 
 @end

@@ -10,13 +10,15 @@
 #import <objc/runtime.h>
 @import ZIKRouter.Private;
 
-RegisterRoutableView(UIAlertController, ZIKCompatibleAlertViewRouter)
-RegisterRoutableView(UIAlertView, ZIKCompatibleAlertViewRouter)
-RegisterRoutableViewConfigProtocol(ZIKCompatibleAlertConfigProtocol, ZIKCompatibleAlertViewRouter)
+
+@interface UIAlertController (ZIKSimpleLabelRouter) <ZIKRoutableView>
+@end
+@implementation UIAlertController (ZIKSimpleLabelRouter)
+@end
 
 #pragma mark Compatible UIAlertView
 
-@interface UIAlertView (ZIKCompatibleAlert)
+@interface UIAlertView (ZIKCompatibleAlert) <ZIKRoutableView>
 - (ZIKCompatibleAlertViewRouter *)ZIK_compatibleAlertRouter;
 - (void)setZIK_compatibleAlertRouter:(ZIKCompatibleAlertViewRouter *)router;
 @end
@@ -105,6 +107,12 @@ RegisterRoutableViewConfigProtocol(ZIKCompatibleAlertConfigProtocol, ZIKCompatib
 @implementation ZIKCompatibleAlertViewRouter
 
 #pragma clang diagnostic pop
+
++ (void)registerRoutableDestination {
+    ZIKViewRouter_registerView([UIAlertController class], self);
+    ZIKViewRouter_registerView([UIAlertView class], self);
+    ZIKViewRouter_registerConfigProtocol(@protocol(ZIKCompatibleAlertConfigProtocol), self);
+}
 
 - (id)destinationWithConfiguration:(ZIKCompatibleAlertViewConfiguration *)configuration {
     id destination;

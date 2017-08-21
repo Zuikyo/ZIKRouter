@@ -9,10 +9,17 @@
 #import "ZIKInfoViewRouter.h"
 #import "ZIKInfoViewController.h"
 
-RegisterRoutableViewForExclusiveRouter(ZIKInfoViewController, ZIKInfoViewRouter)
-RegisterRoutableViewProtocol(ZIKInfoViewProtocol, ZIKInfoViewRouter)
+@interface ZIKInfoViewController (ZIKInfoViewRouter) <ZIKRoutableView>
+@end
+@implementation ZIKInfoViewController (ZIKInfoViewRouter)
+@end
 
 @implementation ZIKInfoViewRouter
+
++ (void)registerRoutableDestination {
+    ZIKViewRouter_registerView([ZIKInfoViewController class], self);
+    ZIKViewRouter_registerViewProtocol(@protocol(ZIKInfoViewProtocol), self);
+}
 
 - (id)destinationWithConfiguration:(__kindof ZIKRouteConfiguration *)configuration {
     UIStoryboard *sb = [UIStoryboard storyboardWithName:@"Main" bundle:nil];

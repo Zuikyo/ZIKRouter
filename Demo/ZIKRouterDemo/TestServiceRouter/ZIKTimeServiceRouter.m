@@ -9,10 +9,17 @@
 #import "ZIKTimeServiceRouter.h"
 #import "ZIKTimeService.h"
 
-RegisterRoutableService(ZIKTimeService, ZIKTimeServiceRouter)
-RegisterRoutableServiceProtocol(ZIKTimeServiceInput, ZIKTimeServiceRouter)
+@interface ZIKTimeService (ZIKTimeServiceRouter) <ZIKRoutableService>
+@end
+@implementation ZIKTimeService (ZIKTimeServiceRouter)
+@end
 
 @implementation ZIKTimeServiceRouter
+
++ (void)registerRoutableDestination {
+    ZIKServiceRouter_registerService([ZIKTimeService class], self);
+    ZIKServiceRouter_registerServiceProtocol(@protocol(ZIKTimeServiceInput), self);
+}
 
 - (id)destinationWithConfiguration:(__kindof ZIKRouteConfiguration *)configuration {
     return [ZIKTimeService sharedInstance];

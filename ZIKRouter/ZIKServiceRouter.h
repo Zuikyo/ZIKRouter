@@ -7,12 +7,23 @@
 //
 
 #import "ZIKRouter.h"
+#import "ZIKServiceRoutable.h"
+#import "ZIKServiceConfigRoutable.h"
 
 NS_ASSUME_NONNULL_BEGIN
 
 extern NSString *const kZIKServiceRouterErrorDomain;
 
 @class ZIKServiceRouter, ZIKServiceRouteConfiguration;
+
+@protocol ZIKServiceRouterProtocol <NSObject>
+
++ (void)registerRoutableDestination;
+- (nullable id)destinationWithConfiguration:(__kindof ZIKServiceRouteConfiguration *)configuration;
+
+@end
+
+
 
 /**
  Error handler for all service routers, for debug and log.
@@ -44,7 +55,7 @@ typedef void(^ZIKServiceRouteGlobalErrorHandler)(__kindof ZIKServiceRouter * _Nu
  @note
  Default implement of -performXX will call routeCompletion synchronously, so the user can get service synchronously. If a service can only be generated asynchronously, Subclass router should override -performWithConfiguration:, and call -attachDestination: asynchronously.
  */
-@interface ZIKServiceRouter : ZIKRouter <ZIKRouterProtocol>
+@interface ZIKServiceRouter : ZIKRouter <ZIKServiceRouterProtocol>
 
 ///Covariant from superclass
 - (__kindof ZIKServiceRouteConfiguration *)configuration;
@@ -105,121 +116,8 @@ extern _Nullable Class ZIKServiceRouterForConfig(Protocol<ZIKRoutableServiceConf
 #define ZIKSERVICEROUTER_CHECK 0
 #endif
 
-///Quickly register a service class with a router class in your custom router's .m file. See ZIKServiceRouter_registerService().
-#define RegisterRoutableService(ServiceClass, ServiceRouterClass) \
-@interface ServiceClass (ServiceRouterClass) <ZIKRoutableService> \
-@end \
-@implementation ServiceClass (ServiceRouterClass) \
-+ (void)load { \
-ZIKServiceRouter_registerService(self, [ServiceRouterClass class]); \
-} \
-@end \
-
-///Quickly register a service class and a protocol with a exclusive router class in your custom router's .m file. See ZIKServiceRouter_registerServiceForExclusiveRouter().
-#define RegisterRoutableServiceForExclusiveRouter(ServiceClass, ServiceRouterClass) \
-@interface ServiceClass (ServiceRouterClass) <ZIKRoutableService> \
-@end \
-@implementation ServiceClass (ServiceRouterClass) \
-+ (void)load { \
-ZIKServiceRouter_registerServiceForExclusiveRouter(self, [ServiceRouterClass class]); \
-} \
-@end \
-
-#pragma mark Safety check version
-
-#if ZIKSERVICEROUTER_CHECK
-
-@protocol ZIKDeclareCheckServiceProtocol <NSObject>
-@end
-@protocol ZIKDeclareCheckServiceConfigProtocol <NSObject>
-@end
-
-///Declare a service protocol in router's header file registered by RegisterRoutableServiceProtocol. If a protocol is declared in a router's header, it's safe to use it with ZIKServiceRouterForService().
-#define DeclareRoutableServiceProtocol(UniqueServiceProtocolName, ServiceRouterClass) \
-@protocol UniqueServiceProtocolName;\
-@class ServiceRouterClass;\
-@protocol ZIKDeclareCheck_##UniqueServiceProtocolName##ServiceRouterClass <ZIKDeclareCheckServiceProtocol> \
-@property Protocol *UniqueServiceProtocolName; \
-@property Class ServiceRouterClass; \
-@end    \
-__attribute__((constructor)) static void ZIKDeclareCheck_##UniqueServiceProtocolName##ServiceRouterClass() {   \
-@protocol(ZIKDeclareCheck_##UniqueServiceProtocolName##ServiceRouterClass);   \
-}   \
-
-///Register a service protocol with a router class in your custom router's .m file. See ZIKServiceRouter_registerServiceProtocol(). There will be a build failure if duplicate protocol name was registered and an assert failure if router class is not registered.
-#define RegisterRoutableServiceProtocol(UniqueServiceProtocolName, ServiceRouterClass) \
-Protocol *kUniqueRoutableServiceProtocol_##UniqueServiceProtocolName;\
-@interface ServiceRouterClass (UniqueServiceProtocolName) \
-@end \
-@implementation ServiceRouterClass (UniqueServiceProtocolName) \
-+ (void)load { \
-NSAssert(@protocol(ZIKDeclareCheck_##UniqueServiceProtocolName##ServiceRouterClass), @"Protocol should be declared in header with DeclareRoutableServiceProtocol.");    \
-ZIKServiceRouter_registerServiceProtocol(@protocol(UniqueServiceProtocolName), [ServiceRouterClass class]); \
-} \
-@end \
-
-///Declare a config protocol in router's header file registered by RegisterRoutableServiceConfigProtocol. If a protocol is declared in a router's header, it's safe to use it with ZIKServiceRouterForConfig().
-#define DeclareRoutableServiceConfigProtocol(UniqueConfigProtocolName, ServiceRouterClass) \
-@protocol UniqueConfigProtocolName;\
-@class ServiceRouterClass;\
-@protocol ZIKDeclareCheck_##UniqueConfigProtocolName##ServiceRouterClass <ZIKDeclareCheckConfigProtocol> \
-@property Protocol *UniqueConfigProtocolName; \
-@property Class ServiceRouterClass; \
-@end    \
-__attribute__((constructor)) static void ZIKDeclareCheck_##UniqueConfigProtocolName##ServiceRouterClass() {   \
-@protocol(ZIKDeclareCheck_##UniqueConfigProtocolName##ServiceRouterClass);   \
-}   \
-
-///Register a config protocol conformed by router's default configuration with a router class in your custom router's .m file. See ZIKServiceRouter_registerConfigProtocol(). There will be a build failure if duplicate protocol name was registered and an assert failure if router class is not registered.
-#define RegisterRoutableServiceConfigProtocol(UniqueConfigProtocolName, ServiceRouterClass) \
-Protocol *kUniqueRoutableConfigProtocol_##UniqueConfigProtocolName;\
-@interface ServiceRouterClass (UniqueConfigProtocolName) \
-@end \
-@implementation ServiceRouterClass (UniqueConfigProtocolName) \
-+ (void)load { \
-NSAssert(@protocol(ZIKDeclareCheck_##UniqueConfigProtocolName##ServiceRouterClass), @"Protocol should be declared in header with DeclareRoutableServiceConfigProtocol.");    \
-ZIKServiceRouter_registerConfigProtocol(@protocol(UniqueConfigProtocolName), [ServiceRouterClass class]); \
-} \
-@end \
-
-#else
-
-#pragma mark Release version
-
-///Declare a service protocol in router's header file registered by RegisterRoutableServiceProtocol.
-#define DeclareRoutableServiceProtocol(UniqueServiceProtocolName, ServiceRouterClass) \
-@protocol UniqueServiceProtocolName;\
-@class ServiceRouterClass;\
-
-///Register a service protocol with a router class in your custom router's .m file. See ZIKServiceRouter_registerServiceProtocol().
-#define RegisterRoutableServiceProtocol(UniqueServiceProtocolName, ServiceRouterClass) \
-@interface ServiceRouterClass (UniqueServiceProtocolName) \
-@end \
-@implementation ServiceRouterClass (UniqueServiceProtocolName) \
-+ (void)load { \
-ZIKServiceRouter_registerServiceProtocol(@protocol(UniqueServiceProtocolName), [ServiceRouterClass class]); \
-} \
-@end \
-
-///Declare a config protocol in router's header file registered by RegisterRoutableServiceConfigProtocol.
-#define DeclareRoutableServiceConfigProtocol(UniqueConfigProtocolName, ServiceRouterClass) \
-@protocol UniqueConfigProtocolName;\
-@class ServiceRouterClass;\
-
-///Register a config protocol conformed by router's default configuration with a router class in your custom router's .m file. See ZIKServiceRouter_registerConfigProtocol().
-#define RegisterRoutableServiceConfigProtocol(UniqueConfigProtocolName, ServiceRouterClass) \
-@interface ServiceRouterClass (UniqueConfigProtocolName) \
-@end \
-@implementation ServiceRouterClass (UniqueConfigProtocolName) \
-+ (void)load { \
-ZIKServiceRouter_registerConfigProtocol(@protocol(UniqueConfigProtocolName), [ServiceRouterClass class]); \
-} \
-@end \
-
-#endif
-
 /**
- Register a service class with it's router's class. Always use macro RegisterRoutableService to quick register.
+ Register a service class with it's router's class.
  One router may manage multi services. You can register multi service classes to a same router class.
  
  @param serviceClass The service class managed by router
@@ -254,11 +152,6 @@ extern void ZIKServiceRouter_registerConfigProtocol(Protocol *configProtocol, Cl
 ///It's a mark for service classes with router. Don't use it in other place.
 @protocol ZIKRoutableService <NSObject>
 
-@end
-
-@protocol ZIKRoutableServiceDynamicGetter <NSObject>
-@end
-@protocol ZIKRoutableServiceConfigDynamicGetter <NSObject>
 @end
 
 NS_ASSUME_NONNULL_END

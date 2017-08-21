@@ -9,8 +9,16 @@
 #import "MasterViewRouter.h"
 #import "MasterViewController.h"
 
-RegisterRoutableView(MasterViewController, MasterViewRouter)
+@interface MasterViewController (MasterViewRouter) <ZIKRoutableView>
+@end
+@implementation MasterViewController (MasterViewRouter)
+@end
+
 @implementation MasterViewRouter
+
++ (void)registerRoutableDestination {
+    ZIKViewRouter_registerView([MasterViewController class], self);
+}
 
 - (id)destinationWithConfiguration:(__kindof ZIKRouteConfiguration *)configuration {
     UIStoryboard *sb = [UIStoryboard storyboardWithName:@"Main" bundle:nil];

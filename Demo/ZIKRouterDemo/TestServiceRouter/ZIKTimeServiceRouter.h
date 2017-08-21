@@ -8,7 +8,6 @@
 
 @import ZIKRouter;
 
-DeclareRoutableServiceProtocol(ZIKTimeServiceInput, ZIKTimeServiceRouter)
 @interface ZIKTimeServiceRouter : ZIKServiceRouter <ZIKRouterProtocol>
 
 @end

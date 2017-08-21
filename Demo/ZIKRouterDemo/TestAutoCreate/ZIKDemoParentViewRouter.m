@@ -9,8 +9,16 @@
 #import "ZIKDemoParentViewRouter.h"
 #import "ZIKDemoParentViewController.h"
 
-RegisterRoutableView(ZIKDemoParentViewController, ZIKDemoParentViewRouter)
+@interface ZIKDemoParentViewController (ZIKDemoParentViewRouter) <ZIKRoutableView>
+@end
+@implementation ZIKDemoParentViewController (ZIKDemoParentViewRouter)
+@end
+
 @implementation ZIKDemoParentViewRouter
+
++ (void)registerRoutableDestination {
+    ZIKViewRouter_registerView([ZIKDemoParentViewController class], self);
+}
 
 - (id)destinationWithConfiguration:(__kindof ZIKRouteConfiguration *)configuration {
     UIStoryboard *sb = [UIStoryboard storyboardWithName:@"Main" bundle:nil];

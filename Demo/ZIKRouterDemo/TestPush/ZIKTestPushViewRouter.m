@@ -9,9 +9,16 @@
 #import "ZIKTestPushViewRouter.h"
 #import "ZIKTestPushViewController.h"
 
-RegisterRoutableView(ZIKTestPushViewController, ZIKTestPushViewRouter)
+@interface ZIKTestPushViewController (ZIKTestPushViewRouter) <ZIKRoutableView>
+@end
+@implementation ZIKTestPushViewController (ZIKTestPushViewRouter)
+@end
 
 @implementation ZIKTestPushViewRouter
+
++ (void)registerRoutableDestination {
+    ZIKViewRouter_registerView([ZIKTestPushViewController class], self);
+}
 
 - (id)destinationWithConfiguration:(__kindof ZIKRouteConfiguration *)configuration {
     UIStoryboard *sb = [UIStoryboard storyboardWithName:@"Main" bundle:nil];

@@ -9,9 +9,16 @@
 #import "ZIKTestPerformSegueViewRouter.h"
 #import "ZIKTestPerformSegueViewController.h"
 
-RegisterRoutableView(ZIKTestPerformSegueViewController, ZIKTestPerformSegueViewRouter)
+@interface ZIKTestPerformSegueViewController (ZIKTestPerformSegueViewRouter) <ZIKRoutableView>
+@end
+@implementation ZIKTestPerformSegueViewController (ZIKTestPerformSegueViewRouter)
+@end
 
 @implementation ZIKTestPerformSegueViewRouter
+
++ (void)registerRoutableDestination {
+    ZIKViewRouter_registerView([ZIKTestPerformSegueViewController class], self);
+}
 
 - (id)destinationWithConfiguration:(__kindof ZIKRouteConfiguration *)configuration {
     UIStoryboard *sb = [UIStoryboard storyboardWithName:@"Main" bundle:nil];

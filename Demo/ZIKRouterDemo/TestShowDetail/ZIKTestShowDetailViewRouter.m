@@ -9,9 +9,16 @@
 #import "ZIKTestShowDetailViewRouter.h"
 #import "ZIKTestShowDetailViewController.h"
 
-RegisterRoutableView(ZIKTestShowDetailViewController, ZIKTestShowDetailViewRouter)
+@interface ZIKTestShowDetailViewController (ZIKTestShowDetailViewRouter) <ZIKRoutableView>
+@end
+@implementation ZIKTestShowDetailViewController (ZIKTestShowDetailViewRouter)
+@end
 
 @implementation ZIKTestShowDetailViewRouter
+
++ (void)registerRoutableDestination {
+    ZIKViewRouter_registerView([ZIKTestShowDetailViewController class], self);
+}
 
 - (id)destinationWithConfiguration:(__kindof ZIKRouteConfiguration *)configuration {
     UIStoryboard *sb = [UIStoryboard storyboardWithName:@"Main" bundle:nil];

@@ -9,9 +9,16 @@
 #import "ZIKTestPresentAsPopoverViewRouter.h"
 #import "ZIKTestPresentAsPopoverViewController.h"
 
-RegisterRoutableView(ZIKTestPresentAsPopoverViewController, ZIKTestPresentAsPopoverViewRouter)
+@interface ZIKTestPresentAsPopoverViewController (ZIKTestPresentAsPopoverViewRouter) <ZIKRoutableView>
+@end
+@implementation ZIKTestPresentAsPopoverViewController (ZIKTestPresentAsPopoverViewRouter)
+@end
 
 @implementation ZIKTestPresentAsPopoverViewRouter
+
++ (void)registerRoutableDestination {
+    ZIKViewRouter_registerView([ZIKTestPresentAsPopoverViewController class], self);
+}
 
 - (id)destinationWithConfiguration:(__kindof ZIKRouteConfiguration *)configuration {
     UIStoryboard *sb = [UIStoryboard storyboardWithName:@"Main" bundle:nil];

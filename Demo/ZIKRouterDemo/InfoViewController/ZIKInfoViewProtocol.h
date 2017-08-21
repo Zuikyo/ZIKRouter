@@ -7,6 +7,7 @@
 //
 
 #import <Foundation/Foundation.h>
+#import <ZIKRouter/ZIKViewRoutable.h>
 
 @protocol ZIKInfoViewDelegate <NSObject>
 
@@ -14,8 +15,8 @@
 
 @end
 
-#define _ZIKInfoViewProtocol_ (Protocol<ZIKRoutableViewDynamicGetter> *)@protocol(ZIKInfoViewProtocol)
-@protocol ZIKInfoViewProtocol <NSObject>
+#define _ZIKInfoViewProtocol_ (Protocol<ZIKViewRoutable> *)@protocol(ZIKInfoViewProtocol)
+@protocol ZIKInfoViewProtocol <ZIKViewRoutable>
 @property (nonatomic, copy) NSString *name;
 @property (nonatomic, assign) NSInteger age;
 @property (nonatomic, weak) id<ZIKInfoViewDelegate> delegate;
