@@ -32,7 +32,7 @@
     
     //Prepare master with it's router
     [MasterViewRouter prepareDestination:masterViewController configure:^(__kindof ZIKViewRouteConfiguration * _Nonnull config) {
-        config.routeType = ZIKViewRouteTypeGetDestination;
+        
     }];
     
     return YES;

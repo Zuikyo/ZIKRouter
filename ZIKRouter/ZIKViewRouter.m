@@ -985,10 +985,24 @@ _Nullable Class ZIKViewRouterForConfig(Protocol<ZIKViewConfigRoutable> *configPr
         NSAssert2(NO, @"Prepare for invalid destination (%@), this view is not registered with this router (%@)",destination,self);
         return nil;
     }
-    ZIKViewRouter *router = [[self alloc] initWithConfigure:configBuilder removeConfigure:removeConfigBuilder];
+    ZIKViewRouteConfiguration *configuration = [[self class] defaultRouteConfiguration];
+    configuration.routeType = ZIKViewRouteTypeGetDestination;
+    if (configBuilder) {
+        configBuilder(configuration);
+    }
+    ZIKViewRemoveConfiguration *removeConfiguration;
+    if (removeConfigBuilder) {
+        removeConfiguration = [self defaultRemoveConfiguration];
+        removeConfigBuilder(removeConfiguration);
+    }
+    ZIKViewRouter *router =  [[self alloc] initWithConfiguration:configuration removeConfiguration:removeConfiguration];
     [router attachDestination:destination];
     [router prepareForPerformRouteOnDestination:destination];
-    [(id)destination setZIK_routeTypeFromRouter:@(ZIKViewRouteTypeGetDestination)];
+    
+    NSNumber *routeType = [destination ZIK_routeTypeFromRouter];
+    if (routeType == nil) {
+        [(id)destination setZIK_routeTypeFromRouter:@(ZIKViewRouteTypeGetDestination)];
+    }
     return router;
 }
 
