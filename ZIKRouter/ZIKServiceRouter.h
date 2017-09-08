@@ -101,19 +101,16 @@ typedef NS_ENUM(NSInteger, ZIKServiceRouteError) {
 @property (nonatomic, copy, nullable) void(^routeCompletion)(id destination);
 @end
 
+extern _Nullable Class ZIKServiceRouterForService(Protocol<ZIKServiceRoutable> *serviceProtocol);
 
-@protocol ZIKRoutableServiceDynamicGetter, ZIKRoutableServiceConfigDynamicGetter;
-
-extern _Nullable Class ZIKServiceRouterForService(Protocol<ZIKRoutableServiceDynamicGetter> *serviceProtocol);
-
-extern _Nullable Class ZIKServiceRouterForConfig(Protocol<ZIKRoutableServiceConfigDynamicGetter> *configProtocol);
+extern _Nullable Class ZIKServiceRouterForConfig(Protocol<ZIKServiceConfigRoutable> *configProtocol);
 
 #pragma mark Router Register
 
 #ifdef DEBUG
-#define ZIKSERVICEROUTER_CHECK 1
+#define ZIKSERVICEROUTER_CHECK true
 #else
-#define ZIKSERVICEROUTER_CHECK 0
+#define ZIKSERVICEROUTER_CHECK false
 #endif
 
 /**

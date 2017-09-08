@@ -1,6 +1,6 @@
 # ZIKRouter
 
-一个用于模块间路由，基于接口进行依赖注入的Router。包括view router和service router。
+一个用于模块间路由，基于接口进行模块发现和依赖注入的Router。包括view router和service router。
 
 View router将UIKit中的所有界面跳转方式封装成一个统一的方法。
 
@@ -37,7 +37,7 @@ ZIKRouter是基于面向接口编程的思想进行设计的。调用者不必�
 
 ```
 ///editor模块的依赖声明
-@protocol NoteEditorProtocol <NSObject>
+@protocol NoteEditorProtocol <ZIKViewConfigRoutable>
 @property (nonatomic, weak) id<ZIKEditorDelegate> delegate;
 - (void)constructForCreatingNewNote;
 - (void)constructForEditingNote:(ZIKNoteModel *)note;
@@ -76,6 +76,30 @@ ZIKRouter是基于面向接口编程的思想进行设计的。调用者不必�
 
 @end
 ```
+in Swift:
+
+```
+class TestEditorViewController: UIViewController {
+    func showEditor() {
+        ZIKSViewRouterForView(NoteEditorProtocol.self)?.perform { config in
+            config.source = self
+            config.routeType = ZIKViewRouteType.push
+            config.constructForCreatingNewNote()
+            config.prepareForRoute = { [weak self] des in
+                let destination = des as! NoteEditorProtocol
+                //跳转前配置目的界面
+            }
+            config.routeCompletion = { [weak self] des in
+                let destination = des as! NoteEditorProtocol
+                //跳转结束处理
+            }
+            config.performerErrorHandler = { [weak self] (action, error) in
+                //跳转失败处理
+            }
+        }
+    }
+}
+```
 
 ### Service Router
 
@@ -83,7 +107,7 @@ ZIKRouter是基于面向接口编程的思想进行设计的。调用者不必�
 
 ```
 ///time service的接口
-@protocol ZIKTimeServiceInput <NSObject>
+@protocol ZIKTimeServiceInput <ZIKServiceRoutable>
 - (NSString *)currentTimeString;
 @end
 ```

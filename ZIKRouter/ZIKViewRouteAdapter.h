@@ -11,7 +11,7 @@
 NS_ASSUME_NONNULL_BEGIN
 
 
-///Subclass it and register protocols for other ZIKViewRouter in the subclass's +registerRoutableDestination with ZIKViewRouter_registerViewProtocol() or ZIKViewRouter_registerConfigProtocol().
+///Subclass it and register protocols for other ZIKViewRouter in the subclass's +registerRoutableDestination with ZIKViewRouter_registerViewProtocol() or ZIKViewRouter_registerConfigProtocol(). It's only for register protocol for other ZIKViewRouter in it's +registerRoutableDestination, don't use it's instance.
 @interface ZIKViewRouteAdapter : ZIKViewRouter <ZIKViewRouterProtocol>
 
 - (nullable instancetype)initWithConfiguration:(__kindof ZIKViewRouteConfiguration *)configuration
@@ -36,7 +36,7 @@ NS_ASSUME_NONNULL_BEGIN
                                           removeConfigure:(void(NS_NOESCAPE ^ _Nullable)( __kindof ZIKViewRemoveConfiguration *config))removeConfigBuilder NS_UNAVAILABLE;
 + (nullable __kindof ZIKViewRouter *)performOnDestination:(id)destination
                                                 configure:(void(NS_NOESCAPE ^)(__kindof ZIKViewRouteConfiguration *config))configBuilder NS_UNAVAILABLE;
-+ (__kindof ZIKViewRouter *)performOnDestination:(id)destination source:(id<ZIKViewRouteSource>)source routeType:(ZIKViewRouteType)routeType NS_UNAVAILABLE;
++ (__kindof ZIKViewRouter *)performOnDestination:(id)destination source:(nullable id<ZIKViewRouteSource>)source routeType:(ZIKViewRouteType)routeType NS_UNAVAILABLE;
 + (nullable __kindof ZIKViewRouter *)prepareDestination:(id)destination
                                               configure:(void(NS_NOESCAPE ^)(__kindof ZIKViewRouteConfiguration *config))configBuilder
                                         removeConfigure:(void(NS_NOESCAPE ^ _Nullable)( __kindof ZIKViewRemoveConfiguration *config))removeConfigBuilder NS_UNAVAILABLE;

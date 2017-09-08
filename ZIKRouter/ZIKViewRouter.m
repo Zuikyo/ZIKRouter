@@ -955,7 +955,7 @@ _Nullable Class ZIKViewRouterForConfig(Protocol<ZIKViewConfigRoutable> *configPr
     return [self performOnDestination:destination configure:configBuilder removeConfigure:nil];
 }
 
-+ (__kindof ZIKViewRouter *)performOnDestination:(id)destination source:(id<ZIKViewRouteSource>)source routeType:(ZIKViewRouteType)routeType {
++ (__kindof ZIKViewRouter *)performOnDestination:(id)destination source:(nullable id<ZIKViewRouteSource>)source routeType:(ZIKViewRouteType)routeType {
     return [self performOnDestination:destination configure:^(__kindof ZIKViewRouteConfiguration * _Nonnull config) {
         config.source = source;
         config.routeType = routeType;

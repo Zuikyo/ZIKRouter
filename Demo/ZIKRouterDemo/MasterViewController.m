@@ -20,6 +20,7 @@
 #import "ZIKTestGetDestinationViewRouter.h"
 #import "ZIKTestAutoCreateViewRouter.h"
 #import "ZIKTestServiceRouterViewRouter.h"
+#import "ZIKRouterDemo-Swift.h"
 
 typedef NS_ENUM(NSInteger,ZIKRouterTestType) {
     ZIKRouterTestTypePush,
@@ -33,7 +34,8 @@ typedef NS_ENUM(NSInteger,ZIKRouterTestType) {
     ZIKRouterTestTypeCustom,
     ZIKRouterTestTypeGetDestination,
     ZIKRouterTestTypeAutoCreate,
-    ZIKRouterTestTypeServiceRouter
+    ZIKRouterTestTypeServiceRouter,
+    ZIKRouterTestTypeSwiftSample
 };
 
 @interface MasterViewController () <UIViewControllerPreviewingDelegate>
@@ -74,7 +76,7 @@ typedef NS_ENUM(NSInteger,ZIKRouterTestType) {
 
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
-    return 12;
+    return 13;
 }
 
 
@@ -119,6 +121,9 @@ typedef NS_ENUM(NSInteger,ZIKRouterTestType) {
             break;
         case ZIKRouterTestTypeServiceRouter:
             name = @"Test ServiceRouter";
+            break;
+        case ZIKRouterTestTypeSwiftSample:
+            name = @"Swift Sample";
             break;
         default:
             name = @"undefined";
@@ -203,6 +208,11 @@ typedef NS_ENUM(NSInteger,ZIKRouterTestType) {
             
         case ZIKRouterTestTypeServiceRouter:
             routerClass = [ZIKTestServiceRouterViewRouter class];
+            break;
+            
+        case ZIKRouterTestTypeSwiftSample:
+//            routerClass = [SwiftSampleViewRouter class];
+            routerClass = ZIKViewRouterForView((Protocol<ZIKViewRoutable>*)@protocol(SwiftSampleViewProtocol));
             break;
     }
     return routerClass;

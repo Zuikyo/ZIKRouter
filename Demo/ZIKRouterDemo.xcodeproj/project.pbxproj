@@ -7,6 +7,9 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		F820BF931F628A9600D570CF /* SwiftSampleViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F820BF921F628A9600D570CF /* SwiftSampleViewController.swift */; };
+		F820BF951F628EF300D570CF /* SwiftSampleViewRouter.swift in Sources */ = {isa = PBXBuildFile; fileRef = F820BF941F628EF300D570CF /* SwiftSampleViewRouter.swift */; };
+		F820BF971F62A13A00D570CF /* ZIKRouterSwift.swift in Sources */ = {isa = PBXBuildFile; fileRef = F820BF961F62A13A00D570CF /* ZIKRouterSwift.swift */; };
 		F82ECABD1F17DC51007168AA /* ZIKCompatibleAlertViewRouter.m in Sources */ = {isa = PBXBuildFile; fileRef = F82ECA701F17DC51007168AA /* ZIKCompatibleAlertViewRouter.m */; };
 		F82ECABE1F17DC51007168AA /* ZIKSimpleLabel.m in Sources */ = {isa = PBXBuildFile; fileRef = F82ECA731F17DC51007168AA /* ZIKSimpleLabel.m */; };
 		F82ECABF1F17DC51007168AA /* ZIKSimpleLabelRouter.m in Sources */ = {isa = PBXBuildFile; fileRef = F82ECA761F17DC51007168AA /* ZIKSimpleLabelRouter.m */; };
@@ -92,6 +95,10 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		F820BF911F628A9600D570CF /* ZIKRouterDemo-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "ZIKRouterDemo-Bridging-Header.h"; sourceTree = "<group>"; };
+		F820BF921F628A9600D570CF /* SwiftSampleViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SwiftSampleViewController.swift; sourceTree = "<group>"; };
+		F820BF941F628EF300D570CF /* SwiftSampleViewRouter.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SwiftSampleViewRouter.swift; sourceTree = "<group>"; };
+		F820BF961F62A13A00D570CF /* ZIKRouterSwift.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ZIKRouterSwift.swift; sourceTree = "<group>"; };
 		F82ECA6E1F17DC51007168AA /* ZIKCompatibleAlertConfigProtocol.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ZIKCompatibleAlertConfigProtocol.h; sourceTree = "<group>"; };
 		F82ECA6F1F17DC51007168AA /* ZIKCompatibleAlertViewRouter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; lineEnding = 0; path = ZIKCompatibleAlertViewRouter.h; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objcpp; };
 		F82ECA701F17DC51007168AA /* ZIKCompatibleAlertViewRouter.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ZIKCompatibleAlertViewRouter.m; sourceTree = "<group>"; };
@@ -193,6 +200,17 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		F820BF8E1F628A5100D570CF /* SwiftSample */ = {
+			isa = PBXGroup;
+			children = (
+				F820BF961F62A13A00D570CF /* ZIKRouterSwift.swift */,
+				F820BF921F628A9600D570CF /* SwiftSampleViewController.swift */,
+				F820BF941F628EF300D570CF /* SwiftSampleViewRouter.swift */,
+				F820BF911F628A9600D570CF /* ZIKRouterDemo-Bridging-Header.h */,
+			);
+			path = SwiftSample;
+			sourceTree = "<group>";
+		};
 		F82ECA6D1F17DC51007168AA /* CompatibleAlertView */ = {
 			isa = PBXGroup;
 			children = (
@@ -410,6 +428,7 @@
 				F82ECA771F17DC51007168AA /* InfoViewController */,
 				F82ECA711F17DC51007168AA /* SimpleLabel */,
 				F82ECA6D1F17DC51007168AA /* CompatibleAlertView */,
+				F820BF8E1F628A5100D570CF /* SwiftSample */,
 				F84239D61F0CDE78000FEE5F /* Main.storyboard */,
 				F84239D91F0CDE78000FEE5F /* Assets.xcassets */,
 				F84239DB1F0CDE78000FEE5F /* LaunchScreen.storyboard */,
@@ -481,6 +500,7 @@
 				TargetAttributes = {
 					F84239C61F0CDE78000FEE5F = {
 						CreatedOnToolsVersion = 8.3.2;
+						LastSwiftMigration = 0830;
 						ProvisioningStyle = Automatic;
 					};
 				};
@@ -544,6 +564,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				F820BF971F62A13A00D570CF /* ZIKRouterSwift.swift in Sources */,
 				F82ECAC11F17DC51007168AA /* ZIKInfoViewRouter.m in Sources */,
 				F82ECAC91F17DC51007168AA /* ZIKTestCustomViewRouter.m in Sources */,
 				F8FD8EDB1F3B4EFA00D7EECB /* ZIKTestServiceRouterViewRouter.m in Sources */,
@@ -565,9 +586,11 @@
 				F82ECACF1F17DC51007168AA /* ZIKTestShowDetailViewRouter.m in Sources */,
 				F82ECAD81F17DC51007168AA /* ZIKTestPresentModallyViewRouter.m in Sources */,
 				F82ECACB1F17DC51007168AA /* ZIKTestAddAsSubviewViewRouter.m in Sources */,
+				F820BF951F628EF300D570CF /* SwiftSampleViewRouter.swift in Sources */,
 				F82ECAC81F17DC51007168AA /* ZIKTestCustomViewController.m in Sources */,
 				F82ECACC1F17DC51007168AA /* ZIKTestAddAsChildViewController.m in Sources */,
 				F82ECAD31F17DC51007168AA /* ZIKTestPerformSegueViewController.m in Sources */,
+				F820BF931F628A9600D570CF /* SwiftSampleViewController.swift in Sources */,
 				F84239D51F0CDE78000FEE5F /* DetailViewController.m in Sources */,
 				F82ECAD91F17DC51007168AA /* ZIKTestPushViewController.m in Sources */,
 				F82ECAC71F17DC51007168AA /* ZIKTestGetDestinationViewRouter.m in Sources */,
@@ -712,6 +735,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CLANG_ENABLE_MODULES = YES;
 				DEVELOPMENT_TEAM = "";
 				INFOPLIST_FILE = ZIKRouterDemo/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
@@ -720,6 +744,9 @@
 				OTHER_LDFLAGS = "-all_load";
 				PRODUCT_BUNDLE_IDENTIFIER = com.zuik.ZIKRouterDemo;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_OBJC_BRIDGING_HEADER = "ZIKRouterDemo/SwiftSample/ZIKRouterDemo-Bridging-Header.h";
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_VERSION = 3.0;
 			};
 			name = Debug;
 		};
@@ -727,6 +754,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CLANG_ENABLE_MODULES = YES;
 				DEVELOPMENT_TEAM = "";
 				INFOPLIST_FILE = ZIKRouterDemo/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
@@ -735,6 +763,8 @@
 				OTHER_LDFLAGS = "-all_load";
 				PRODUCT_BUNDLE_IDENTIFIER = com.zuik.ZIKRouterDemo;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_OBJC_BRIDGING_HEADER = "ZIKRouterDemo/SwiftSample/ZIKRouterDemo-Bridging-Header.h";
+				SWIFT_VERSION = 3.0;
 			};
 			name = Release;
 		};

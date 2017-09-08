@@ -677,6 +677,34 @@
             </objects>
             <point key="canvasLocation" x="1677.5999999999999" y="1741.9790104947529"/>
         </scene>
+        <!--Swift Sample View Controller-->
+        <scene sceneID="zx0-s0-dLc">
+            <objects>
+                <viewController storyboardIdentifier="SwiftSampleViewController" id="eYQ-z4-9Qd" customClass="SwiftSampleViewController" customModule="ZIKRouterDemo" customModuleProvider="target" sceneMemberID="viewController">
+                    <layoutGuides>
+                        <viewControllerLayoutGuide type="top" id="l6I-zh-A1s"/>
+                        <viewControllerLayoutGuide type="bottom" id="2p3-en-5QV"/>
+                    </layoutGuides>
+                    <view key="view" contentMode="scaleToFill" id="L6R-5K-27a">
+                        <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <subviews>
+                            <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="4NG-hL-RhW">
+                                <rect key="frame" x="151" y="318" width="72" height="30"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <state key="normal" title="test router"/>
+                                <connections>
+                                    <action selector="testViewRouter:" destination="eYQ-z4-9Qd" eventType="touchUpInside" id="eSd-QL-2aQ"/>
+                                </connections>
+                            </button>
+                        </subviews>
+                        <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                    </view>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="Uou-9d-MrT" userLabel="First Responder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="2385" y="2102"/>
+        </scene>
         <!--Demo Parent View Controller-->
         <scene sceneID="v5D-Nu-wDj">
             <objects>

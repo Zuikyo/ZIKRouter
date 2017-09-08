@@ -293,7 +293,7 @@ typedef void(^ZIKViewRouteGlobalErrorHandler)(__kindof ZIKViewRouter * _Nullable
                                           removeConfigure:(void(NS_NOESCAPE ^ _Nullable)( __kindof ZIKViewRemoveConfiguration *config))removeConfigBuilder;
 + (nullable __kindof ZIKViewRouter *)performOnDestination:(id)destination
                                                 configure:(void(NS_NOESCAPE ^)(__kindof ZIKViewRouteConfiguration *config))configBuilder;
-+ (__kindof ZIKViewRouter *)performOnDestination:(id)destination source:(id<ZIKViewRouteSource>)source routeType:(ZIKViewRouteType)routeType;
++ (__kindof ZIKViewRouter *)performOnDestination:(id)destination source:(nullable id<ZIKViewRouteSource>)source routeType:(ZIKViewRouteType)routeType;
 
 /**
  Prepare destination from external, then you can use the router to perform route.
@@ -425,7 +425,7 @@ typedef void(^ZIKViewRouteSegueConfiger)(NS_NOESCAPE ZIKViewRouteSegueConfigure)
  
  For ZIKViewRouteTypeGetDestination, source is not needed.
  */
-@property (nonatomic, weak) id<ZIKViewRouteSource> source;
+@property (nonatomic, weak, nullable) id<ZIKViewRouteSource> source;
 ///The style of route, default is ZIKViewRouteTypePresentModally. Subclass router may return other default value.
 @property (nonatomic, assign) ZIKViewRouteType routeType;
 ///For push/present, default is YES
@@ -573,9 +573,9 @@ typedef void(^ZIKViewRouteSegueConfiger)(NS_NOESCAPE ZIKViewRouteSegueConfigure)
          };
  }];
  @endcode
- See ZIKViewRouter_registerViewProtocol() for more info.
+ See ZIKViewRouter_registerViewProtocol() and ZIKViewRoutable for more info.
  
- It's safe to use protocols inheriting from ZIKViewRoutable and won't get nil. ZIKViewRouter will validate all ZIKViewRoutable protocols and registered protocols when app launch in DEBUG mode. In case someone passing an unexpected protocol, you can define a protocol like "#define _ZIKLoginViewProtocol_ (Protocol<ZIKViewRoutable> *)\@protocol(ZIKLoginViewProtocol)", and use the macro like ZIKViewRouterForView(_ZIKLoginViewProtocol_). Then if someone pass an undefined protocol, there will be a warning. Add "-Werror=incompatible-pointer-types" to "Build Settings->Other C Flags" to change build warning to build error.
+ In case someone passing an unexpected protocol, you can define a protocol like "#define _ZIKLoginViewProtocol_ (Protocol<ZIKViewRoutable> *)\@protocol(ZIKLoginViewProtocol)", and use the macro like ZIKViewRouterForView(_ZIKLoginViewProtocol_). Then if someone pass an undefined protocol, there will be a warning. Add "-Werror=incompatible-pointer-types" to "Build Settings->Other C Flags" to change build warning to build error.
  
  @param viewProtocol The protocol conformed by the view.
  @return A router class matched with the view. Return nil if protocol is nil or not declared. There will be an assert failure when result is nil.
@@ -629,9 +629,9 @@ extern _Nullable Class ZIKViewRouterForView(Protocol<ZIKViewRoutable> *viewProto
          config.account = @"my account";
  }];
  @endcode
- See ZIKViewRouter_registerConfigProtocol() for more info.
+ See ZIKViewRouter_registerConfigProtocol() and ZIKViewConfigRoutable for more info.
  
- It's safe to use protocols inheriting from ZIKViewConfigRoutable and won't get nil. ZIKViewRouter will validate all ZIKViewConfigRoutable protocols and registered protocols when app launch in DEBUG mode. In case someone passing a undeclared protocol, you can define a protocol like "#define _ZIKLoginConfigProtocol_ (Protocol<ZIKViewConfigRoutable> *)\@protocol(ZIKLoginConfigProtocol)", and use the macro like ZIKViewRouterForView(_ZIKLoginConfigProtocol_). Then if someone pass a undefined protocol, there will be a warning. Add "-Werror=incompatible-pointer-types" to "Build Settings->Other C Flags" to change build warning to build error.
+ In case someone passing a undeclared protocol, you can define a protocol like "#define _ZIKLoginConfigProtocol_ (Protocol<ZIKViewConfigRoutable> *)\@protocol(ZIKLoginConfigProtocol)", and use the macro like ZIKViewRouterForView(_ZIKLoginConfigProtocol_). Then if someone pass a undefined protocol, there will be a warning. Add "-Werror=incompatible-pointer-types" to "Build Settings->Other C Flags" to change build warning to build error.
 
  @param configProtocol The protocol conformed by defaultConfiguration of router
  @return A router class matched with the view. Return nil if protocol is nil or not declared. There will be an assert failure when result is nil.
@@ -643,9 +643,9 @@ extern _Nullable Class ZIKViewRouterForConfig(Protocol<ZIKViewConfigRoutable> *c
 #pragma mark Router Register
 
 #ifdef DEBUG
-#define ZIKVIEWROUTER_CHECK 1
+#define ZIKVIEWROUTER_CHECK true
 #else
-#define ZIKVIEWROUTER_CHECK 0
+#define ZIKVIEWROUTER_CHECK false
 #endif
 
 /**

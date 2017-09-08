@@ -1,5 +1,5 @@
 # ZIKRouter
-An interface-oriented iOS router for decoupling between modules, and injecting dependencies with protocol. 
+An interface-oriented iOS router for decoupling modules, discovering modules and injecting dependencies with protocol.
 
 The view router can perform all navigation types in UIKit through one method.
 
@@ -7,7 +7,7 @@ The service router can discover corresponding module with it's protocol.
 
 ---
 
-一个用于模块间路由，基于接口进行依赖注入的Router。包括view router和service router。
+一个用于模块间路由，基于接口进行模块发现和依赖注入的Router。包括view router和service router。
 
 View router将UIKit中的所有界面跳转方式封装成一个统一的方法。
 
@@ -48,7 +48,7 @@ Code for showing a view controller：
 
 ```
 ///editor view controller module's interface
-@protocol NoteEditorProtocol <NSObject>
+@protocol NoteEditorProtocol <ZIKViewRoutable>
 @property (nonatomic, weak) id<ZIKEditorDelegate> delegate;
 - (void)constructForCreatingNewNote;
 - (void)constructForEditingNote:(ZIKNoteModel *)note;
@@ -89,6 +89,30 @@ Code for showing a view controller：
 
 @end
 ```
+in Swift:
+
+```
+class TestEditorViewController: UIViewController {
+    func showEditor() {
+        ZIKSViewRouterForView(NoteEditorProtocol.self)?.perform { config in
+            config.source = self
+            config.routeType = ZIKViewRouteType.push
+            config.constructForCreatingNewNote()
+            config.prepareForRoute = { [weak self] des in
+                let destination = des as! NoteEditorProtocol
+                //Prepare the destination before transition
+            }
+            config.routeCompletion = { [weak self] des in
+                let destination = des as! NoteEditorProtocol
+                //Transition completes
+            }
+            config.performerErrorHandler = { [weak self] (action, error) in
+                //Transition is failed
+            }
+        }
+    }
+}
+```
 
 ### Service Router
 
@@ -96,7 +120,7 @@ Get a module and use:
 
 ```
 ///time service's interface
-@protocol ZIKTimeServiceInput <NSObject>
+@protocol ZIKTimeServiceInput <ZIKServiceRoutable>
 - (NSString *)currentTimeString;
 @end
 ```

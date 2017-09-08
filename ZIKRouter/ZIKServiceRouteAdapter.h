@@ -10,7 +10,7 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-///Subclass it and register protocols for other ZIKServiceRouter in the subclass's +registerRoutableDestination with ZIKServiceRouter_registerServiceProtocol() or ZIKServiceRouter_registerConfigProtocol().
+///Subclass it and register protocols for other ZIKServiceRouter in the subclass's +registerRoutableDestination with ZIKServiceRouter_registerServiceProtocol() or ZIKServiceRouter_registerConfigProtocol(). It's only for register protocol for other ZIKServiceRouter in it's +registerRoutableDestination, don't use it's instance.
 @interface ZIKServiceRouteAdapter : ZIKServiceRouter
 - (nullable instancetype)initWithConfiguration:(__kindof ZIKServiceRouteConfiguration *)configuration
                            removeConfiguration:(nullable __kindof ZIKRouteConfiguration *)removeConfiguration NS_UNAVAILABLE;
