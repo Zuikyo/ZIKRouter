@@ -77,6 +77,9 @@ void _initializeZIKServiceRouter() {
     }
 #if ZIKSERVICEROUTER_CHECK
     NSMutableArray *routableServices = [NSMutableArray array];
+    if (!_check_routerToServicesMap) {
+        _check_routerToServicesMap = CFDictionaryCreateMutable(kCFAllocatorDefault, 0, NULL, &kCFTypeDictionaryValueCallBacks);
+    }
 #endif
     ZIKRouter_enumerateClassList(^(__unsafe_unretained Class class) {
 #if ZIKSERVICEROUTER_CHECK

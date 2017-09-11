@@ -263,6 +263,9 @@ static void _initializeZIKViewRouter(void) {
     g_preparingUIViewRouters = [NSMutableArray array];
 #if ZIKVIEWROUTER_CHECK
     NSMutableArray *routableViews = [NSMutableArray array];
+    if (!_check_routerToViewsMap) {
+        _check_routerToViewsMap = CFDictionaryCreateMutable(kCFAllocatorDefault, 0, NULL, &kCFTypeDictionaryValueCallBacks);
+    }
 #endif
     
     Class ZIKViewRouterClass = [ZIKViewRouter class];
