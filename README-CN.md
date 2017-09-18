@@ -10,7 +10,7 @@ Service router用于模块寻找，通过protocol寻找对应的模块，并用p
 
 ## Features
 
-* 用protocol获取界面和模块
+* 用protocol注册、获取界面和模块
 * 用protocol配置模块的参数，基于接口进行模块调用，避免了直接获取对应实例进行参数赋值的耦合
 * 支持界面路由和任意模块的路由
 * 支持UIKit里的所有界面跳转方式（push、present modally、present as popover、segue、show、showDetail、addChildViewController、addSubview）以及自定义的展示方式，封装成一个统一的方法
@@ -44,7 +44,12 @@ ZIKRouter是基于面向接口编程的思想进行设计的。调用者不必�
 @end
 
 ```
-
+```
+@interface NoteEditorViewController <NoteEditorProtocol>
+@end
+@implementation NoteEditorViewController
+@end
+```
 ```
 
 @implementation TestEditorViewController
@@ -62,10 +67,10 @@ ZIKRouter是基于面向接口编程的思想进行设计的。调用者不必�
 	         //Router内部负责用获取到的参数初始化editor模块
 	         config.delegate = self;
 	         [config constructForCreatingNewNote];
-	         config.prepareForRoute = ^(id destination) {
-	             //跳转前配置目的界面
+	         config.prepareForRoute = ^(id<NoteEditorProtocol> destination) {
+	             //跳转前配置目的界面，destination就是NoteEditorViewController的实例
 	         };
-	         config.routeCompletion = ^(id destination) {
+	         config.routeCompletion = ^(id<NoteEditorProtocol> destination) {
 	             //跳转结束处理
 	         };
 	         config.performerErrorHandler = ^(SEL routeAction, NSError * error) {

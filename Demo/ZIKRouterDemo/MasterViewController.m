@@ -152,10 +152,7 @@ typedef NS_ENUM(NSInteger,ZIKRouterTestType) {
             break;
     }
     
-    [routerClass performWithConfigure:^(ZIKViewRouteConfiguration *config) {
-        config.source = self;
-        config.routeType = routeType;
-    }];
+    [routerClass performWithSource:self routeType:ZIKViewRouteTypePush];
 }
 
 - (Class)routerClassForIndexPath:(NSIndexPath *)indexPath {

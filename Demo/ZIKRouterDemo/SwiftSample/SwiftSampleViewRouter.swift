@@ -14,7 +14,7 @@ extension SwiftSampleViewController: ZIKRoutableView {
 }
 
 class SwiftSampleViewRouter: ZIKViewRouter {
-    override static func registerRoutableDestination() {
+    override class func registerRoutableDestination() {
         ZIKViewRouter_registerView(SwiftSampleViewController.self, self)
         ZIKViewRouter_registerViewProtocol(SwiftSampleViewProtocol.self, self)
     }

@@ -40,6 +40,10 @@
 		F82ECAD81F17DC51007168AA /* ZIKTestPresentModallyViewRouter.m in Sources */ = {isa = PBXBuildFile; fileRef = F82ECAB41F17DC51007168AA /* ZIKTestPresentModallyViewRouter.m */; };
 		F82ECAD91F17DC51007168AA /* ZIKTestPushViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = F82ECAB71F17DC51007168AA /* ZIKTestPushViewController.m */; };
 		F82ECADA1F17DC51007168AA /* ZIKTestPushViewRouter.m in Sources */ = {isa = PBXBuildFile; fileRef = F82ECAB91F17DC51007168AA /* ZIKTestPushViewRouter.m */; };
+		F833152D1F6FBE7900891004 /* ZIKTestServiceRouterViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = F83315251F6FBE7900891004 /* ZIKTestServiceRouterViewController.m */; };
+		F833152E1F6FBE7900891004 /* ZIKTestServiceRouterViewRouter.m in Sources */ = {isa = PBXBuildFile; fileRef = F83315271F6FBE7900891004 /* ZIKTestServiceRouterViewRouter.m */; };
+		F833152F1F6FBE7900891004 /* ZIKTimeService.m in Sources */ = {isa = PBXBuildFile; fileRef = F83315291F6FBE7900891004 /* ZIKTimeService.m */; };
+		F83315301F6FBE7900891004 /* ZIKTimeServiceRouter.m in Sources */ = {isa = PBXBuildFile; fileRef = F833152C1F6FBE7900891004 /* ZIKTimeServiceRouter.m */; };
 		F84239CC1F0CDE78000FEE5F /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = F84239CB1F0CDE78000FEE5F /* main.m */; };
 		F84239CF1F0CDE78000FEE5F /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = F84239CE1F0CDE78000FEE5F /* AppDelegate.m */; };
 		F84239D21F0CDE78000FEE5F /* MasterViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = F84239D11F0CDE78000FEE5F /* MasterViewController.m */; };
@@ -50,10 +54,6 @@
 		F85F4D471F2242C2003106C3 /* ZIKRouter.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F85F4D441F22424D003106C3 /* ZIKRouter.framework */; };
 		F85F4D491F22535D003106C3 /* ZIKRouter.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = F85F4D441F22424D003106C3 /* ZIKRouter.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		F8BCCB981F208D2B0051716B /* MasterViewRouter.m in Sources */ = {isa = PBXBuildFile; fileRef = F8BCCB971F208D2B0051716B /* MasterViewRouter.m */; };
-		F8FD8ED81F3B4EC200D7EECB /* ZIKTestServiceRouterViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = F8FD8ED71F3B4EC200D7EECB /* ZIKTestServiceRouterViewController.m */; };
-		F8FD8EDB1F3B4EFA00D7EECB /* ZIKTestServiceRouterViewRouter.m in Sources */ = {isa = PBXBuildFile; fileRef = F8FD8EDA1F3B4EFA00D7EECB /* ZIKTestServiceRouterViewRouter.m */; };
-		F8FD8EDE1F3B63F900D7EECB /* ZIKTimeService.m in Sources */ = {isa = PBXBuildFile; fileRef = F8FD8EDD1F3B63F900D7EECB /* ZIKTimeService.m */; };
-		F8FD8EE11F3B64DD00D7EECB /* ZIKTimeServiceRouter.m in Sources */ = {isa = PBXBuildFile; fileRef = F8FD8EE01F3B64DD00D7EECB /* ZIKTimeServiceRouter.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -162,6 +162,15 @@
 		F82ECAB71F17DC51007168AA /* ZIKTestPushViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; lineEnding = 0; path = ZIKTestPushViewController.m; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objc; };
 		F82ECAB81F17DC51007168AA /* ZIKTestPushViewRouter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ZIKTestPushViewRouter.h; sourceTree = "<group>"; };
 		F82ECAB91F17DC51007168AA /* ZIKTestPushViewRouter.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ZIKTestPushViewRouter.m; sourceTree = "<group>"; };
+		F83315241F6FBE7900891004 /* ZIKTestServiceRouterViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ZIKTestServiceRouterViewController.h; sourceTree = "<group>"; };
+		F83315251F6FBE7900891004 /* ZIKTestServiceRouterViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ZIKTestServiceRouterViewController.m; sourceTree = "<group>"; };
+		F83315261F6FBE7900891004 /* ZIKTestServiceRouterViewRouter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ZIKTestServiceRouterViewRouter.h; sourceTree = "<group>"; };
+		F83315271F6FBE7900891004 /* ZIKTestServiceRouterViewRouter.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ZIKTestServiceRouterViewRouter.m; sourceTree = "<group>"; };
+		F83315281F6FBE7900891004 /* ZIKTimeService.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ZIKTimeService.h; sourceTree = "<group>"; };
+		F83315291F6FBE7900891004 /* ZIKTimeService.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ZIKTimeService.m; sourceTree = "<group>"; };
+		F833152A1F6FBE7900891004 /* ZIKTimeServiceInput.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ZIKTimeServiceInput.h; sourceTree = "<group>"; };
+		F833152B1F6FBE7900891004 /* ZIKTimeServiceRouter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ZIKTimeServiceRouter.h; sourceTree = "<group>"; };
+		F833152C1F6FBE7900891004 /* ZIKTimeServiceRouter.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ZIKTimeServiceRouter.m; sourceTree = "<group>"; };
 		F84239C71F0CDE78000FEE5F /* ZIKRouterDemo.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = ZIKRouterDemo.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		F84239CB1F0CDE78000FEE5F /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
 		F84239CD1F0CDE78000FEE5F /* AppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
@@ -177,15 +186,6 @@
 		F85F4D3E1F22424C003106C3 /* ZIKRouter.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = ZIKRouter.xcodeproj; path = ../ZIKRouter.xcodeproj; sourceTree = "<group>"; };
 		F8BCCB961F208D2B0051716B /* MasterViewRouter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; lineEnding = 0; path = MasterViewRouter.h; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objcpp; };
 		F8BCCB971F208D2B0051716B /* MasterViewRouter.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MasterViewRouter.m; sourceTree = "<group>"; };
-		F8FD8ED61F3B4EC200D7EECB /* ZIKTestServiceRouterViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ZIKTestServiceRouterViewController.h; path = ZIKRouterDemo/TestServiceRouter/ZIKTestServiceRouterViewController.h; sourceTree = SOURCE_ROOT; };
-		F8FD8ED71F3B4EC200D7EECB /* ZIKTestServiceRouterViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = ZIKTestServiceRouterViewController.m; path = ZIKRouterDemo/TestServiceRouter/ZIKTestServiceRouterViewController.m; sourceTree = SOURCE_ROOT; };
-		F8FD8ED91F3B4EFA00D7EECB /* ZIKTestServiceRouterViewRouter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ZIKTestServiceRouterViewRouter.h; path = ZIKRouterDemo/TestServiceRouter/ZIKTestServiceRouterViewRouter.h; sourceTree = SOURCE_ROOT; };
-		F8FD8EDA1F3B4EFA00D7EECB /* ZIKTestServiceRouterViewRouter.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = ZIKTestServiceRouterViewRouter.m; path = ZIKRouterDemo/TestServiceRouter/ZIKTestServiceRouterViewRouter.m; sourceTree = SOURCE_ROOT; };
-		F8FD8EDC1F3B63F900D7EECB /* ZIKTimeService.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ZIKTimeService.h; path = ZIKRouterDemo/TestServiceRouter/ZIKTimeService.h; sourceTree = SOURCE_ROOT; };
-		F8FD8EDD1F3B63F900D7EECB /* ZIKTimeService.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = ZIKTimeService.m; path = ZIKRouterDemo/TestServiceRouter/ZIKTimeService.m; sourceTree = SOURCE_ROOT; };
-		F8FD8EDF1F3B64DD00D7EECB /* ZIKTimeServiceRouter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ZIKTimeServiceRouter.h; path = ZIKRouterDemo/TestServiceRouter/ZIKTimeServiceRouter.h; sourceTree = SOURCE_ROOT; };
-		F8FD8EE01F3B64DD00D7EECB /* ZIKTimeServiceRouter.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = ZIKTimeServiceRouter.m; path = ZIKRouterDemo/TestServiceRouter/ZIKTimeServiceRouter.m; sourceTree = SOURCE_ROOT; };
-		F8FD8EE21F3B650100D7EECB /* ZIKTimeServiceInput.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ZIKTimeServiceInput.h; path = ZIKRouterDemo/TestServiceRouter/ZIKTimeServiceInput.h; sourceTree = SOURCE_ROOT; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -372,17 +372,28 @@
 			path = TestPush;
 			sourceTree = "<group>";
 		};
-		F82ECADC1F17DCE7007168AA /* TestServiceRouter */ = {
+		F83315221F6FBE7900891004 /* TestServiceRouter */ = {
 			isa = PBXGroup;
 			children = (
-				F8FD8ED61F3B4EC200D7EECB /* ZIKTestServiceRouterViewController.h */,
-				F8FD8ED71F3B4EC200D7EECB /* ZIKTestServiceRouterViewController.m */,
-				F8FD8ED91F3B4EFA00D7EECB /* ZIKTestServiceRouterViewRouter.h */,
-				F8FD8EDA1F3B4EFA00D7EECB /* ZIKTestServiceRouterViewRouter.m */,
-				F8FD8EE41F3B696D00D7EECB /* TimeService */,
+				F83315241F6FBE7900891004 /* ZIKTestServiceRouterViewController.h */,
+				F83315251F6FBE7900891004 /* ZIKTestServiceRouterViewController.m */,
+				F83315261F6FBE7900891004 /* ZIKTestServiceRouterViewRouter.h */,
+				F83315271F6FBE7900891004 /* ZIKTestServiceRouterViewRouter.m */,
+				F83315311F6FBE9B00891004 /* TimeService */,
 			);
-			name = TestServiceRouter;
-			path = TestModuleRouter;
+			path = TestServiceRouter;
+			sourceTree = "<group>";
+		};
+		F83315311F6FBE9B00891004 /* TimeService */ = {
+			isa = PBXGroup;
+			children = (
+				F83315281F6FBE7900891004 /* ZIKTimeService.h */,
+				F83315291F6FBE7900891004 /* ZIKTimeService.m */,
+				F833152A1F6FBE7900891004 /* ZIKTimeServiceInput.h */,
+				F833152B1F6FBE7900891004 /* ZIKTimeServiceRouter.h */,
+				F833152C1F6FBE7900891004 /* ZIKTimeServiceRouter.m */,
+			);
+			path = TimeService;
 			sourceTree = "<group>";
 		};
 		F84239BE1F0CDE78000FEE5F = {
@@ -424,7 +435,7 @@
 				F82ECA8B1F17DC51007168AA /* TestCustom */,
 				F82ECA861F17DC51007168AA /* TestGetDestination */,
 				F82ECA7D1F17DC51007168AA /* TestAutoCreate */,
-				F82ECADC1F17DCE7007168AA /* TestServiceRouter */,
+				F83315221F6FBE7900891004 /* TestServiceRouter */,
 				F82ECA771F17DC51007168AA /* InfoViewController */,
 				F82ECA711F17DC51007168AA /* SimpleLabel */,
 				F82ECA6D1F17DC51007168AA /* CompatibleAlertView */,
@@ -453,18 +464,6 @@
 				F85F4D461F22424D003106C3 /* libZIKRouter.a */,
 			);
 			name = Products;
-			sourceTree = "<group>";
-		};
-		F8FD8EE41F3B696D00D7EECB /* TimeService */ = {
-			isa = PBXGroup;
-			children = (
-				F8FD8EE21F3B650100D7EECB /* ZIKTimeServiceInput.h */,
-				F8FD8EDC1F3B63F900D7EECB /* ZIKTimeService.h */,
-				F8FD8EDD1F3B63F900D7EECB /* ZIKTimeService.m */,
-				F8FD8EDF1F3B64DD00D7EECB /* ZIKTimeServiceRouter.h */,
-				F8FD8EE01F3B64DD00D7EECB /* ZIKTimeServiceRouter.m */,
-			);
-			name = TimeService;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -567,7 +566,6 @@
 				F820BF971F62A13A00D570CF /* ZIKRouterSwift.swift in Sources */,
 				F82ECAC11F17DC51007168AA /* ZIKInfoViewRouter.m in Sources */,
 				F82ECAC91F17DC51007168AA /* ZIKTestCustomViewRouter.m in Sources */,
-				F8FD8EDB1F3B4EFA00D7EECB /* ZIKTestServiceRouterViewRouter.m in Sources */,
 				F82ECADA1F17DC51007168AA /* ZIKTestPushViewRouter.m in Sources */,
 				F82ECAD01F17DC51007168AA /* ZIKTestShowViewController.m in Sources */,
 				F82ECAC41F17DC51007168AA /* ZIKTestAutoCreateViewController.m in Sources */,
@@ -579,12 +577,12 @@
 				F84239D21F0CDE78000FEE5F /* MasterViewController.m in Sources */,
 				F82ECAD61F17DC51007168AA /* ZIKTestPresentAsPopoverViewRouter.m in Sources */,
 				F82ECABD1F17DC51007168AA /* ZIKCompatibleAlertViewRouter.m in Sources */,
-				F8FD8ED81F3B4EC200D7EECB /* ZIKTestServiceRouterViewController.m in Sources */,
 				F84239CC1F0CDE78000FEE5F /* main.m in Sources */,
 				F82ECAD21F17DC51007168AA /* ZIKCustomTransitionSegue.m in Sources */,
 				F82ECACA1F17DC51007168AA /* ZIKTestAddAsSubviewViewController.m in Sources */,
 				F82ECACF1F17DC51007168AA /* ZIKTestShowDetailViewRouter.m in Sources */,
 				F82ECAD81F17DC51007168AA /* ZIKTestPresentModallyViewRouter.m in Sources */,
+				F833152F1F6FBE7900891004 /* ZIKTimeService.m in Sources */,
 				F82ECACB1F17DC51007168AA /* ZIKTestAddAsSubviewViewRouter.m in Sources */,
 				F820BF951F628EF300D570CF /* SwiftSampleViewRouter.swift in Sources */,
 				F82ECAC81F17DC51007168AA /* ZIKTestCustomViewController.m in Sources */,
@@ -596,16 +594,17 @@
 				F82ECAC71F17DC51007168AA /* ZIKTestGetDestinationViewRouter.m in Sources */,
 				F8BCCB981F208D2B0051716B /* MasterViewRouter.m in Sources */,
 				F82ECAC31F17DC51007168AA /* ZIKDemoParentViewRouter.m in Sources */,
-				F8FD8EE11F3B64DD00D7EECB /* ZIKTimeServiceRouter.m in Sources */,
 				F82ECAD71F17DC51007168AA /* ZIKTestPresentModallyViewController.m in Sources */,
+				F83315301F6FBE7900891004 /* ZIKTimeServiceRouter.m in Sources */,
 				F82ECACD1F17DC51007168AA /* ZIKTestAddAsChildViewRouter.m in Sources */,
 				F82ECAD41F17DC51007168AA /* ZIKTestPerformSegueViewRouter.m in Sources */,
 				F82ECACE1F17DC51007168AA /* ZIKTestShowDetailViewController.m in Sources */,
 				F82ECABF1F17DC51007168AA /* ZIKSimpleLabelRouter.m in Sources */,
 				F82ECAD51F17DC51007168AA /* ZIKTestPresentAsPopoverViewController.m in Sources */,
+				F833152D1F6FBE7900891004 /* ZIKTestServiceRouterViewController.m in Sources */,
 				F82ECABE1F17DC51007168AA /* ZIKSimpleLabel.m in Sources */,
+				F833152E1F6FBE7900891004 /* ZIKTestServiceRouterViewRouter.m in Sources */,
 				F82ECAD11F17DC51007168AA /* ZIKTestShowViewRouter.m in Sources */,
-				F8FD8EDE1F3B63F900D7EECB /* ZIKTimeService.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

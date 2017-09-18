@@ -9,6 +9,7 @@
 #import <Foundation/Foundation.h>
 #import <ZIKRouter/ZIKViewRoutable.h>
 
+@class UIViewController;
 @protocol ZIKInfoViewDelegate <NSObject>
 
 - (void)handleRemoveInfoViewController:(UIViewController *)infoViewController;
