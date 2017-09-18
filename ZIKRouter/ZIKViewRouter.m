@@ -1504,11 +1504,11 @@ _Nullable Class ZIKViewRouterForConfig(Protocol<ZIKViewConfigRoutable> *configPr
 
 - (void)prepareForPerformRouteOnDestination:(id)destination {
     ZIKViewRouteConfiguration *configuration = self._nocopy_configuration;
-    if (configuration.prepareForRoute) {
-        configuration.prepareForRoute(destination);
-    }
     if ([self respondsToSelector:@selector(prepareDestination:configuration:)]) {
         [self prepareDestination:destination configuration:configuration];
+    }
+    if (configuration.prepareForRoute) {
+        configuration.prepareForRoute(destination);
     }
     if ([self respondsToSelector:@selector(didFinishPrepareDestination:configuration:)]) {
         [self didFinishPrepareDestination:destination configuration:configuration];
