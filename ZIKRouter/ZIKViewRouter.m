@@ -2459,18 +2459,6 @@ destinationStateBeforeRoute:(ZIKPresentationState *)destinationStateBeforeRoute
 - (void)ZIKViewRouter_hook_didMoveToSuperview {
     UIView *destination = (UIView *)self;
     UIView *superview = destination.superview;
-    NSAssert2(({
-        bool valid = true;
-        if (superview != nil) {
-            UIViewController *vc = [destination ZIK_firstAvailableUIViewController];
-            UIViewController *parent = [superview ZIK_firstAvailableUIViewController];
-            if (vc != nil && parent != nil && vc != parent && ZIKRouter_classIsCustomClass([vc class]) == YES) {
-                valid = [parent.childViewControllers containsObject:vc];
-            }
-        }
-        valid;
-    }), @"Bad implementation when adding child view controller. Child view controller's view was added to parent view controller's view, but child view controller is not added as parent view controller's child by -addChildViewController:. Then child can't receive some UIKit events. Child:(%@), parent:(%@)",[destination ZIK_firstAvailableUIViewController],[superview ZIK_firstAvailableUIViewController]);
-    
     if ([self conformsToProtocol:@protocol(ZIKRoutableView)]) {
         if (!superview) {
             [[NSNotificationCenter defaultCenter] postNotificationName:kZIKViewRouteDidRemoveRouteNotification object:destination];
