@@ -22,7 +22,7 @@
 
 - (id)destinationWithConfiguration:(__kindof ZIKRouteConfiguration *)configuration {
     UIStoryboard *sb = [UIStoryboard storyboardWithName:@"Main" bundle:nil];
-    ZIKTestPushViewController *destination = [sb instantiateViewControllerWithIdentifier:@"testPush"];;
+    ZIKTestPushViewController *destination = [sb instantiateViewControllerWithIdentifier:@"testPush"];
     destination.title = @"Test Push";
     return destination;
 }

@@ -1638,7 +1638,7 @@ destinationStateBeforeRoute:(ZIKPresentationState *)destinationStateBeforeRoute
 
 - (void)removeRouteWithSuccessHandler:(void(^)(void))performerSuccessHandler
                    performerErrorHandler:(void(^)(SEL routeAction, NSError *error))performerErrorHandler {
-    void(^doRemoveRoute)() = ^ {
+    void(^doRemoveRoute)(void) = ^ {
         if (self.state != ZIKRouterStateRouted || !self._nocopy_configuration) {
             [self _o_callbackError_errorCode:ZIKViewRouteErrorActionFailed
                                 errorHandler:performerErrorHandler
@@ -2458,6 +2458,18 @@ destinationStateBeforeRoute:(ZIKPresentationState *)destinationStateBeforeRoute
 - (void)ZIKViewRouter_hook_didMoveToSuperview {
     UIView *destination = (UIView *)self;
     UIView *superview = destination.superview;
+    NSAssert2(({
+        bool valid = true;
+        if (superview != nil) {
+            UIViewController *vc = [destination ZIK_firstAvailableUIViewController];
+            UIViewController *parent = [superview ZIK_firstAvailableUIViewController];
+            if (vc != nil && parent != nil && vc != parent && ZIKClassIsCustomClass([vc class]) == YES) {
+                valid = [parent.childViewControllers containsObject:vc];
+            }
+        }
+        valid;
+    }), @"Bad implementation when adding child view controller. Child view controller's view was added to parent view controller's view, but child view controller is not added as parent view controller's child by -addChildViewController:. Then child can't receive some UIKit events. Child:(%@), parent:(%@)",[destination ZIK_firstAvailableUIViewController],[superview ZIK_firstAvailableUIViewController]);
+    
     if ([self conformsToProtocol:@protocol(ZIKRoutableView)]) {
         if (!superview) {
             [[NSNotificationCenter defaultCenter] postNotificationName:kZIKViewRouteDidRemoveRouteNotification object:destination];

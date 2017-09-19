@@ -78,7 +78,7 @@ typedef NS_ENUM(NSInteger, ZIKViewRouteRealType) {
     ZIKViewRouteRealTypeCustom
 };
 
-@class UIViewController,ZIKViewRoutePopoverConfiguration,ZIKViewRouteSegueConfiguration;
+@class ZIKViewRoutePopoverConfiguration,ZIKViewRouteSegueConfiguration;
 @protocol ZIKViewRouteSource,ZIKViewRouteContainer;
 typedef UIViewController<ZIKViewRouteContainer>*_Nonnull(^ZIKViewRouteContainerWrapper)(UIViewController *destination);
 typedef void(^ZIKViewRoutePopoverConfigure)(ZIKViewRoutePopoverConfiguration *popoverConfig);
