@@ -11,6 +11,7 @@
 #import "ZIKRouter.h"
 #import "ZIKViewRouter.h"
 #import "ZIKServiceRouter.h"
+#import "ZIKViewRouteConfiguration.h"
 #import "ZIKViewRouteAdapter.h"
 #import "ZIKServiceRouteAdapter.h"
 #import "ZIKViewRoutable.h"
