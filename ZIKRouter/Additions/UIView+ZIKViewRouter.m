@@ -9,22 +9,7 @@
 #import "UIView+ZIKViewRouter.h"
 #import "UIViewController+ZIKViewRouter.h"
 #import <objc/runtime.h>
-
-BOOL ZIKClassIsCustomClass(Class class) {
-    NSCParameterAssert(class);
-    if (!class) {
-        return NO;
-    }
-    static NSString *mainBundlePath;
-    static dispatch_once_t onceToken;
-    dispatch_once(&onceToken, ^{
-        mainBundlePath = [[NSBundle mainBundle] bundlePath];
-    });
-    if ([[[NSBundle bundleForClass:class] bundlePath] isEqualToString:mainBundlePath]) {
-        return YES;
-    }
-    return NO;
-}
+#import "ZIKRouterRuntimeHelper.h"
 
 @implementation UIView (ZIKViewRouter)
 
@@ -54,7 +39,7 @@ BOOL ZIKClassIsCustomClass(Class class) {
     if ([self isKindOfClass:[UIWindow class]]) {
         UIViewController *performer = [(UIWindow *)self rootViewController];
         if (![performer isKindOfClass:[UIApplication class]] &&
-            !ZIKClassIsCustomClass([performer class])) {
+            !ZIKRouter_classIsCustomClass([performer class])) {
             return nil;
         }
         return performer;
@@ -62,14 +47,14 @@ BOOL ZIKClassIsCustomClass(Class class) {
     
     UIResponder *nextResponder = [self nextResponder];
     if ([nextResponder isKindOfClass:[UIViewController class]]) {
-        if (ZIKClassIsCustomClass([nextResponder class])) {
+        if (ZIKRouter_classIsCustomClass([nextResponder class])) {
             return nextResponder;
         }
         
         UIViewController *parent = [(UIViewController *)nextResponder parentViewController];
         NSAssert(parent, @"view controller should have parent");
         while (parent &&
-               (!ZIKClassIsCustomClass([parent class]) ||
+               (!ZIKRouter_classIsCustomClass([parent class]) ||
                [parent isKindOfClass:[UITabBarController class]] ||
                [parent isKindOfClass:[UINavigationController class]] ||
                [parent isKindOfClass:[UISplitViewController class]])) {

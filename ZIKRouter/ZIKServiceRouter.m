@@ -10,6 +10,7 @@
 #import "ZIKRouter+Private.h"
 #import <objc/runtime.h>
 #import <UIKit/UIKit.h>
+#import "ZIKRouterRuntimeHelper.h"
 
 
 NSString *const kZIKServiceRouterErrorDomain = @"ZIKServiceRouterErrorDomain";

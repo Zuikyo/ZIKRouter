@@ -10,6 +10,7 @@
 #import "ZIKRouter+Private.h"
 #import "ZIKViewRouter+Private.h"
 #import <objc/runtime.h>
+#import "ZIKRouterRuntimeHelper.h"
 #import "UIViewController+ZIKViewRouter.h"
 #import "UIView+ZIKViewRouter.h"
 #import "ZIKPresentationState.h"
@@ -2185,7 +2186,7 @@ destinationStateBeforeRoute:(ZIKPresentationState *)destinationStateBeforeRoute
     if (removing) {
         [destination setZIK_removing:NO];
         [destination setZIK_routed:NO];
-    } else if (ZIKClassIsCustomClass([destination class])) {
+    } else if (ZIKRouter_classIsCustomClass([destination class])) {
         //Check unbalanced calls to begin/end appearance transitions
         UIViewController *node = destination;
         while (node) {
@@ -2463,7 +2464,7 @@ destinationStateBeforeRoute:(ZIKPresentationState *)destinationStateBeforeRoute
         if (superview != nil) {
             UIViewController *vc = [destination ZIK_firstAvailableUIViewController];
             UIViewController *parent = [superview ZIK_firstAvailableUIViewController];
-            if (vc != nil && parent != nil && vc != parent && ZIKClassIsCustomClass([vc class]) == YES) {
+            if (vc != nil && parent != nil && vc != parent && ZIKRouter_classIsCustomClass([vc class]) == YES) {
                 valid = [parent.childViewControllers containsObject:vc];
             }
         }
@@ -2545,7 +2546,7 @@ destinationStateBeforeRoute:(ZIKPresentationState *)destinationStateBeforeRoute
                                     [ZIKViewRouter _o_callbackError_invalidPerformerWithAction:@selector(performRoute) errorDescription:description];
                                     NSAssert(NO, description);
                                 }
-                                NSAssert(ZIKClassIsCustomClass(performer), @"performer should be a subclass of UIViewController in your project.");
+                                NSAssert(ZIKRouter_classIsCustomClass(performer), @"performer should be a subclass of UIViewController in your project.");
                             }
                         }
                         if (onScreen) {
@@ -2917,7 +2918,7 @@ destinationStateBeforeRoute:(ZIKPresentationState *)destinationStateBeforeRoute
         rootVCs = [(UISplitViewController *)vc viewControllers];
     }
     
-    if (ZIKClassIsCustomClass([vc class]) == NO) {
+    if (ZIKRouter_classIsCustomClass([vc class]) == NO) {
         isSystemViewController = YES;
     }
     if (isContainerVC) {

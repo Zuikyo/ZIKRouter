@@ -10,8 +10,6 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-extern BOOL ZIKClassIsCustomClass(Class class);
-
 @protocol ZIKViperView;
 @interface UIView (ZIKViewRouter)
 
