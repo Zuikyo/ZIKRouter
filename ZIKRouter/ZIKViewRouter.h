@@ -9,7 +9,6 @@
 #import <UIKit/UIKit.h>
 #import "ZIKRouter.h"
 #import "ZIKViewRouterProtocol.h"
-#import "ZIKViewRouteConfiguration.h"
 #import "ZIKViewRoutable.h"
 #import "ZIKViewConfigRoutable.h"
 
@@ -386,8 +385,5 @@ extern void ZIKViewRouter_registerConfigProtocol(Protocol *configProtocol, Class
 @protocol ZIKRoutableView <NSObject>
 
 @end
-
-extern NSArray<NSNumber *> *kDefaultRouteTypesForViewController;
-extern NSArray<NSNumber *> *kDefaultRouteTypesForView;
 
 NS_ASSUME_NONNULL_END

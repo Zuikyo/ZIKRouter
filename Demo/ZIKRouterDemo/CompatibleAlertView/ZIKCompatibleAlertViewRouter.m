@@ -209,8 +209,8 @@
     }
 }
 
-+ (NSArray<NSNumber *> *)supportedRouteTypes {
-    return @[@(ZIKViewRouteTypeCustom)];
++ (ZIKViewRouteTypeMask)supportedRouteTypes {
+    return ZIKViewRouteTypeMaskCustom;
 }
 
 + (__kindof ZIKViewRouteConfiguration *)defaultRouteConfiguration {

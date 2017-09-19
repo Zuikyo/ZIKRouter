@@ -7,6 +7,7 @@
 //
 
 #import <Foundation/Foundation.h>
+#import "ZIKViewRouteConfiguration.h"
 
 NS_ASSUME_NONNULL_BEGIN
 
@@ -61,7 +62,7 @@ NS_ASSUME_NONNULL_BEGIN
 - (void)didFinishPrepareDestination:(id)destination configuration:(__kindof ZIKViewRouteConfiguration *)configuration;
 
 ///Default is kDefaultRouteTypesForViewController for UIViewController type destination, if your destination is a UIView, override this and return kDefaultRouteTypesForView. Router can also limit the route type.
-+ (NSArray<NSNumber *> *)supportedRouteTypes;
++ (ZIKViewRouteTypeMask)supportedRouteTypes;
 ///You can do dependency injection by subclass ZIKViewRouteConfiguration, and add your custom property; Then you must override this to return a default instance of your subclass
 + (__kindof ZIKViewRouteConfiguration *)defaultRouteConfiguration;
 ///You can do dependency injection by subclass ZIKViewRemoveConfiguration, and add your custom property; Then you must override this to return a default instance of your subclass

@@ -18,9 +18,6 @@
 #import "UIStoryboardSegue+ZIKViewRouterPrivate.h"
 #import "ZIKViewRouteConfiguration+Private.h"
 
-NSArray<NSNumber *> *kDefaultRouteTypesForViewController;
-NSArray<NSNumber *> *kDefaultRouteTypesForView;
-
 NSString *const kZIKViewRouteWillPerformRouteNotification = @"kZIKViewRouteWillPerformRouteNotification";
 NSString *const kZIKViewRouteDidPerformRouteNotification = @"kZIKViewRouteDidPerformRouteNotification";
 NSString *const kZIKViewRouteWillRemoveRouteNotification = @"kZIKViewRouteWillRemoveRouteNotification";
@@ -97,20 +94,6 @@ static void _initializeZIKViewRouter(void) {
     if (!g_configProtocolToRouterMap) {
         g_configProtocolToRouterMap = CFDictionaryCreateMutable(kCFAllocatorDefault, 0, NULL, NULL);
     }
-    kDefaultRouteTypesForViewController = @[
-                                            @(ZIKViewRouteTypePush),
-                                            @(ZIKViewRouteTypePresentModally),
-                                            @(ZIKViewRouteTypePresentAsPopover),
-                                            @(ZIKViewRouteTypePerformSegue),
-                                            @(ZIKViewRouteTypeShow),
-                                            @(ZIKViewRouteTypeShowDetail),
-                                            @(ZIKViewRouteTypeAddAsChildViewController),
-                                            @(ZIKViewRouteTypeGetDestination)
-                                            ];
-    kDefaultRouteTypesForView = @[
-                                  @(ZIKViewRouteTypeAddAsSubview),
-                                  @(ZIKViewRouteTypeGetDestination)
-                                  ];
     g_globalErrorSema = dispatch_semaphore_create(1);
     
     g_preparingUIViewRouters = [NSMutableArray array];
@@ -493,8 +476,8 @@ _Nullable Class ZIKViewRouterForConfig(Protocol<ZIKViewConfigRoutable> *configPr
     if (self = [super initWithConfiguration:configuration removeConfiguration:removeConfiguration]) {
         if (![[self class] _o_validateRouteTypeInConfiguration:configuration]) {
             [self _o_callbackError_unsupportTypeWithAction:@selector(init)
-                                          errorDescription:@"%@ doesn't support routeType:%ld, supported types: %@",[self class],configuration.routeType,[[self class] supportedRouteTypes]];
-            NSAssert(NO, @"%@ doesn't support routeType:%ld, supported types: %@",[self class],(long)configuration.routeType,[[self class] supportedRouteTypes]);
+                                          errorDescription:@"%@ doesn't support routeType:%ld, supported types: %ld",[self class],configuration.routeType,[[self class] supportedRouteTypes]];
+            NSAssert(NO, @"%@ doesn't support routeType:%ld, supported types: %ld",[self class],(long)configuration.routeType,(long)[[self class] supportedRouteTypes]);
             return nil;
         } else if (![[self class] _o_validateRouteSourceNotMissedInConfiguration:configuration] ||
                    ![[self class] _o_validateRouteSourceClassInConfiguration:configuration]) {
@@ -593,8 +576,9 @@ _Nullable Class ZIKViewRouterForConfig(Protocol<ZIKViewConfigRoutable> *configPr
 }
 
 + (BOOL)supportRouteType:(ZIKViewRouteType)type {
-    NSArray<NSNumber *> *supportedRouteTypes = [self supportedRouteTypes];
-    if ([supportedRouteTypes containsObject:@(type)]) {
+    ZIKViewRouteTypeMask supportedRouteTypes = [self supportedRouteTypes];
+    ZIKViewRouteTypeMask mask = 1 << type;
+    if ((supportedRouteTypes & mask) == mask) {
         return YES;
     }
     return NO;
@@ -606,8 +590,8 @@ _Nullable Class ZIKViewRouterForConfig(Protocol<ZIKViewConfigRoutable> *configPr
     NSAssert2(NO, @"subclass(%@) must implement +registerRoutableDestination to register destination with %@",self,self);
 }
 
-+ (NSArray<NSNumber *> *)supportedRouteTypes {
-    return kDefaultRouteTypesForViewController;
++ (ZIKViewRouteTypeMask)supportedRouteTypes {
+    return ZIKViewRouteTypeMaskUIViewControllerDefault;
 }
 
 - (id)destinationWithConfiguration:(__kindof ZIKViewRouteConfiguration *)configuration {
@@ -3108,35 +3092,26 @@ destinationStateBeforeRoute:(ZIKPresentationState *)destinationStateBeforeRoute
 }
 
 + (BOOL)_o_validateSupportedRouteTypesForUIView {
-    NSMutableArray<NSNumber *> *supportedRouteTypes = [[self supportedRouteTypes] mutableCopy];
-    if (supportedRouteTypes.count == 0) {
-        return NO;
-    }
-    if ([supportedRouteTypes containsObject:@(ZIKViewRouteTypeCustom)]) {
+    ZIKViewRouteTypeMask supportedRouteTypes = [self supportedRouteTypes];
+    if ((supportedRouteTypes & ZIKViewRouteTypeMaskCustom) == ZIKViewRouteTypeMaskCustom) {
         if (![self instancesRespondToSelector:@selector(performCustomRouteOnDestination:fromSource:configuration:)]) {
             return NO;
         }
     }
-    [supportedRouteTypes removeObject:@(ZIKViewRouteTypeAddAsSubview)];
-    [supportedRouteTypes removeObject:@(ZIKViewRouteTypeGetDestination)];
-    [supportedRouteTypes removeObject:@(ZIKViewRouteTypeCustom)];
-    if (supportedRouteTypes.count > 0) {
+    if ((supportedRouteTypes & ZIKViewRouteTypeMaskAddAsSubview & ZIKViewRouteTypeMaskGetDestination & ZIKViewRouteTypeMaskCustom) != 0) {
         return NO;
     }
     return YES;
 }
 
 + (BOOL)_o_validateSupportedRouteTypesForUIViewController {
-    NSArray<NSNumber *> *supportedRouteTypes = [self supportedRouteTypes];
-    if (supportedRouteTypes.count == 0) {
-        return NO;
-    }
-    if ([supportedRouteTypes containsObject:@(ZIKViewRouteTypeCustom)]) {
+    ZIKViewRouteTypeMask supportedRouteTypes = [self supportedRouteTypes];
+    if ((supportedRouteTypes & ZIKViewRouteTypeMaskCustom) == ZIKViewRouteTypeMaskCustom) {
         if (![self instancesRespondToSelector:@selector(performCustomRouteOnDestination:fromSource:configuration:)]) {
             return NO;
         }
     }
-    if ([supportedRouteTypes containsObject:@(ZIKViewRouteTypeAddAsSubview)]) {
+    if ((supportedRouteTypes & ZIKViewRouteTypeMaskAddAsSubview) == ZIKViewRouteTypeMaskAddAsSubview) {
         return NO;
     }
     return YES;

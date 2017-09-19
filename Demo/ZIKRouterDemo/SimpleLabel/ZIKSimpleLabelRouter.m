@@ -38,8 +38,8 @@
     
 }
 
-+ (NSArray<NSNumber *> *)supportedRouteTypes {
-    return kDefaultRouteTypesForView;
++ (ZIKViewRouteTypeMask)supportedRouteTypes {
+    return ZIKViewRouteTypeMaskUIViewDefault;
 }
 
 + (void)router:(nullable ZIKViewRouter *)router willPerformRouteOnDestination:(id)destination fromSource:(id)source {

@@ -51,18 +51,18 @@ typedef NS_ENUM(NSInteger,ZIKViewRouteType) {
 };
 
 typedef NS_OPTIONS(NSInteger, ZIKViewRouteTypeMask) {
-    ZIKViewRouteTypeMaskPush,
-    ZIKViewRouteTypeMaskPresentModally,
-    ZIKViewRouteTypeMaskPresentAsPopover,
-    ZIKViewRouteTypeMaskPerformSegue,
-    ZIKViewRouteTypeMaskShow NS_ENUM_AVAILABLE_IOS(8_0),
-    ZIKViewRouteTypeMaskShowDetail NS_ENUM_AVAILABLE_IOS(8_0),
-    ZIKViewRouteTypeMaskAddAsChildViewController,
-    ZIKViewRouteTypeMaskAddAsSubview,
-    ZIKViewRouteTypeMaskCustom,
-    ZIKViewRouteTypeMaskGetDestination,
-    ZIKViewRouteTypeMaskUIViewControllerDefault = ZIKViewRouteTypeMaskPush | ZIKViewRouteTypeMaskPresentModally | ZIKViewRouteTypeMaskPresentAsPopover | ZIKViewRouteTypeMaskPerformSegue | ZIKViewRouteTypeMaskShow | ZIKViewRouteTypeMaskShowDetail | ZIKViewRouteTypeMaskAddAsChildViewController | ZIKViewRouteTypeMaskGetDestination,
-    ZIKViewRouteTypeMaskUIViewDefault = ZIKViewRouteTypeMaskAddAsSubview | ZIKViewRouteTypeMaskGetDestination
+    ZIKViewRouteTypeMaskPush                     = (1 << ZIKViewRouteTypePush),
+    ZIKViewRouteTypeMaskPresentModally           = (1 << ZIKViewRouteTypePresentModally),
+    ZIKViewRouteTypeMaskPresentAsPopover         = (1 << ZIKViewRouteTypePresentAsPopover),
+    ZIKViewRouteTypeMaskPerformSegue             = (1 << ZIKViewRouteTypePerformSegue),
+    ZIKViewRouteTypeMaskShow                     = (1 << ZIKViewRouteTypeShow),
+    ZIKViewRouteTypeMaskShowDetail               = (1 << ZIKViewRouteTypeShowDetail),
+    ZIKViewRouteTypeMaskAddAsChildViewController = (1 << ZIKViewRouteTypeAddAsChildViewController),
+    ZIKViewRouteTypeMaskAddAsSubview             = (1 << ZIKViewRouteTypeAddAsSubview),
+    ZIKViewRouteTypeMaskCustom                   = (1 << ZIKViewRouteTypeCustom),
+    ZIKViewRouteTypeMaskGetDestination           = (1 << ZIKViewRouteTypeGetDestination),
+    ZIKViewRouteTypeMaskUIViewControllerDefault  = (ZIKViewRouteTypeMaskPush | ZIKViewRouteTypeMaskPresentModally | ZIKViewRouteTypeMaskPresentAsPopover | ZIKViewRouteTypeMaskPerformSegue | ZIKViewRouteTypeMaskShow | ZIKViewRouteTypeMaskShowDetail | ZIKViewRouteTypeMaskAddAsChildViewController | ZIKViewRouteTypeMaskGetDestination),
+    ZIKViewRouteTypeMaskUIViewDefault            = (ZIKViewRouteTypeMaskAddAsSubview | ZIKViewRouteTypeMaskGetDestination)
 };
 
 ///Real route type performed for those adaptative types in ZIKViewRouteType
