@@ -23,7 +23,7 @@
 
 - (IBAction)show:(id)sender {
     __weak typeof(self) weakSelf = self;
-    self.infoViewRouter = [ZIKViewRouterForView(_ZIKInfoViewProtocol_)
+    self.infoViewRouter = [ZIKViewRouterForView(ZIKInfoViewProtocol_viewRoutable)
                            performWithConfigure:^(__kindof ZIKViewRouteConfiguration * _Nonnull config) {
                                config.source = self;
                                config.routeType = ZIKViewRouteTypeShow;

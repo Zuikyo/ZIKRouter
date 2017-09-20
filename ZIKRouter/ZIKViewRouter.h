@@ -267,12 +267,10 @@ typedef NS_ENUM(NSInteger, ZIKViewRouteError) {
  @endcode
  See ZIKViewRouter_registerViewProtocol() and ZIKViewRoutable for more info.
  
- In case someone passing an unexpected protocol, you can define a protocol like "#define _ZIKLoginViewProtocol_ (Protocol<ZIKViewRoutable> *)\@protocol(ZIKLoginViewProtocol)", and use the macro like ZIKViewRouterForView(_ZIKLoginViewProtocol_). Then if someone pass an undefined protocol, there will be a warning. Add "-Werror=incompatible-pointer-types" to "Build Settings->Other C Flags" to change build warning to build error.
- 
- @param viewProtocol The protocol conformed by the view.
+ @param viewProtocol The protocol conformed by the view. Should be a ZIKViewRoutable protocol when ZIKVIEWROUTER_CHECK is enabled. When ZIKVIEWROUTER_CHECK is disabled, the protocol doesn't need to inheriting from ZIKViewRoutable.
  @return A router class matched with the view. Return nil if protocol is nil or not declared. There will be an assert failure when result is nil.
  */
-extern _Nullable Class ZIKViewRouterForView(Protocol<ZIKViewRoutable> *viewProtocol);
+extern _Nullable Class ZIKViewRouterForView(Protocol *viewProtocol);
 
 /**
  Get the router class combined with a custom ZIKViewRouteConfiguration conforming to a unique protocol.
@@ -322,20 +320,18 @@ extern _Nullable Class ZIKViewRouterForView(Protocol<ZIKViewRoutable> *viewProto
  }];
  @endcode
  See ZIKViewRouter_registerConfigProtocol() and ZIKViewConfigRoutable for more info.
- 
- In case someone passing a undeclared protocol, you can define a protocol like "#define _ZIKLoginConfigProtocol_ (Protocol<ZIKViewConfigRoutable> *)\@protocol(ZIKLoginConfigProtocol)", and use the macro like ZIKViewRouterForView(_ZIKLoginConfigProtocol_). Then if someone pass a undefined protocol, there will be a warning. Add "-Werror=incompatible-pointer-types" to "Build Settings->Other C Flags" to change build warning to build error.
 
- @param configProtocol The protocol conformed by defaultConfiguration of router
+ @param configProtocol The protocol conformed by defaultConfiguration of router. Should be a ZIKViewConfigRoutable protocol when ZIKVIEWROUTER_CHECK is enabled. When ZIKVIEWROUTER_CHECK is disabled, the protocol doesn't need to inheriting from ZIKViewConfigRoutable.
  @return A router class matched with the view. Return nil if protocol is nil or not declared. There will be an assert failure when result is nil.
  */
-extern _Nullable Class ZIKViewRouterForConfig(Protocol<ZIKViewConfigRoutable> *configProtocol);
+extern _Nullable Class ZIKViewRouterForConfig(Protocol *configProtocol);
 
 #pragma mark Router Register
 
 #ifdef DEBUG
-#define ZIKVIEWROUTER_CHECK true
+#define ZIKVIEWROUTER_CHECK 1
 #else
-#define ZIKVIEWROUTER_CHECK false
+#define ZIKVIEWROUTER_CHECK 0
 #endif
 
 /**
@@ -364,7 +360,7 @@ extern void ZIKViewRouter_registerViewForExclusiveRouter(Class viewClass, Class 
  
  You can register your protocol and let the view conforms to the protocol in category in your interface adapter.
  
- @param viewProtocol The protocol conformed by view to identify the routerClass
+ @param viewProtocol The protocol conformed by view to identify the routerClass. Should be a ZIKViewRoutable protocol when ZIKVIEWROUTER_CHECK is enabled. When ZIKVIEWROUTER_CHECK is disabled, the protocol doesn't need to inheriting from ZIKViewRoutable.
  @param routerClass The router class to bind with view class
  */
 extern void ZIKViewRouter_registerViewProtocol(Protocol *viewProtocol, Class routerClass);
@@ -376,7 +372,7 @@ extern void ZIKViewRouter_registerViewProtocol(Protocol *viewProtocol, Class rou
  
   You can register your protocol and let the configuration conforms to the protocol in category in your interface adapter.
  
- @param configProtocol The protocol conformed by default configuration of the routerClass
+ @param configProtocol The protocol conformed by default configuration of the routerClass. Should be a ZIKViewConfigRoutable protocol when ZIKVIEWROUTER_CHECK is enabled. When ZIKVIEWROUTER_CHECK is disabled, the protocol doesn't need to inheriting from ZIKViewConfigRoutable.
  @param routerClass The router class to bind with view class
  */
 extern void ZIKViewRouter_registerConfigProtocol(Protocol *configProtocol, Class routerClass);

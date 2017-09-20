@@ -101,48 +101,62 @@ typedef NS_ENUM(NSInteger, ZIKServiceRouteError) {
 @property (nonatomic, copy, nullable) void(^routeCompletion)(id destination);
 @end
 
-extern _Nullable Class ZIKServiceRouterForService(Protocol<ZIKServiceRoutable> *serviceProtocol);
+#pragma mark Dynamic Discover
 
-extern _Nullable Class ZIKServiceRouterForConfig(Protocol<ZIKServiceConfigRoutable> *configProtocol);
+/**
+ Get the router class registered with a service class (a ZIKRoutableService) conforming to a unique protocol. Similar to ZIKViewRouterForView().
+ 
+ @param serviceProtocol The protocol conformed by the service. Should be a ZIKServiceRoutable protocol when ZIKSERVICEROUTER_CHECK is enabled. When ZIKSERVICEROUTER_CHECK is disabled, the protocol doesn't need to inheriting from ZIKServiceRoutable.
+ @return A router class matched with the service. Return nil if protocol is nil or not declared. There will be an assert failure when result is nil.
+ */
+extern _Nullable Class ZIKServiceRouterForService(Protocol *serviceProtocol);
+
+/**
+ Get the router class combined with a custom ZIKRouteConfiguration conforming to a unique protocol. Similar to ZIKViewRouterForConfig().
+
+ @param configProtocol The protocol conformed by defaultConfiguration of router. Should be a ZIKServiceConfigRoutable protocol when ZIKSERVICEROUTER_CHECK is enabled. When ZIKSERVICEROUTER_CHECK is disabled, the protocol doesn't need to inheriting from ZIKServiceConfigRoutable.
+ @return A router class matched with the service. Return nil if protocol is nil or not declared. There will be an assert failure when result is nil.
+ */
+extern _Nullable Class ZIKServiceRouterForConfig(Protocol *configProtocol);
 
 #pragma mark Router Register
 
 #ifdef DEBUG
-#define ZIKSERVICEROUTER_CHECK true
+#define ZIKSERVICEROUTER_CHECK 1
 #else
-#define ZIKSERVICEROUTER_CHECK false
+#define ZIKSERVICEROUTER_CHECK 0
 #endif
 
 /**
  Register a service class with it's router's class.
  One router may manage multi services. You can register multi service classes to a same router class.
  
- @param serviceClass The service class managed by router
- @param routerClass The router class to bind with service class
+ @param serviceClass The service class managed by router.
+ @param routerClass The router class to bind with service class.
  */
 extern void ZIKServiceRouter_registerService(Class serviceClass, Class routerClass);
 
 /**
  If the service will hold and use it's router, and the router has it's custom functions for this service, that means the service is coupled with the router. In this situation, you can use this function to combine serviceClass with a specific routerClass, then no other routerClass can be used for this serviceClass. If another routerClass try to register with the serviceClass, there will be an assert failure.
  
- @param serviceClass The service class requiring a specific router class
- @param routerClass The unique router class to bind with service class
+ @param serviceClass The service class requiring a specific router class.
+ @param routerClass The unique router class to bind with service class.
  */
 extern void ZIKServiceRouter_registerServiceForExclusiveRouter(Class serviceClass, Class routerClass);
 
 /**
  Register a service protocol that all services registered with the router conform to, then use ZIKServiceRouterForService() to get the router class.You can register your protocol and let the service conforms to the protocol in category in your interface adapter.
  
- @param serviceProtocol The protocol conformed by service to identify the routerClass
- @param routerClass The router class to bind with service class
+ @param serviceProtocol The protocol conformed by service to identify the routerClass. Should be a ZIKServiceRoutable protocol when ZIKSERVICEROUTER_CHECK is enabled. When ZIKSERVICEROUTER_CHECK is disabled, the protocol doesn't need to inheriting from ZIKServiceRoutable.
+ @param routerClass The router class to bind with service class.
  */
 extern void ZIKServiceRouter_registerServiceProtocol(Protocol *serviceProtocol, Class routerClass);
 
 /**
  Register a config protocol the router's default configuration conforms, then use ZIKServiceRouterForConfig() to get the router class.You can register your protocol and let the configuration conforms to the protocol in category in your interface adapter.
  
- @param configProtocol The protocol conformed by default configuration of the routerClass
- @param routerClass The router class to bind with service class
+ @param configProtocol The protocol conformed by default configuration of the routerClass. Should be a ZIKServiceConfigRoutable protocol when ZIKSERVICEROUTER_CHECK is enabled. When ZIKSERVICEROUTER_CHECK is disabled, the protocol doesn't need to inheriting from ZIKServiceConfigRoutable.
+ @param routerClass The router class to bind with service class.
  */
 extern void ZIKServiceRouter_registerConfigProtocol(Protocol *configProtocol, Class routerClass);
 

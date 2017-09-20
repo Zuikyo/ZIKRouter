@@ -22,7 +22,7 @@
 }
 
 - (IBAction)addAsSubview:(id)sender {
-    self.labelRouter = [ZIKViewRouterForView(_ZIKSimpleLabelProtocol_)
+    self.labelRouter = [ZIKViewRouterForView(ZIKSimpleLabelProtocol_viewRoutable)
                         performWithConfigure:^(__kindof ZIKViewRouteConfiguration * _Nonnull config) {
                             config.source = self.view;
                             config.routeType = ZIKViewRouteTypeAddAsSubview;
