@@ -3,7 +3,7 @@
 //  ZIKRouterDemo
 //
 //  Created by zuik on 2017/7/7.
-//  Copyright © 2017年 zuik. All rights reserved.
+//  Copyright © 2017 zuik. All rights reserved.
 //
 
 #import "ZIKTestAutoCreateViewController.h"
