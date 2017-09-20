@@ -16,6 +16,7 @@ Pod::Spec.new do |s|
   s.source       = { :git => "https://github.com/Zuikyo/ZIKRouter.git", :tag => "#{s.version}" }
 
   s.source_files  = "ZIKRouter/*.{h,m}", "ZIKRouter/Additions/*.{h,m}", "ZIKRouter/Framework/*.h", "ZIKRouter/Private/*.{h,m}"
+  s.public_header_files = "ZIKRouter/*.h", "ZIKRouter/Additions/*.h", "ZIKRouter/Framework/*.h"
   s.preserve_path = 'ZIKRouter/Framework/module.modulemap'
   s.module_map = 'ZIKRouter/Framework/module.modulemap'
 
