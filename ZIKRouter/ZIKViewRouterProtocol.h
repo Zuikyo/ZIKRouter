@@ -75,9 +75,9 @@ NS_ASSUME_NONNULL_BEGIN
 - (BOOL)canPerformCustomRoute;
 ///Whether can remove custom route on current source.
 - (BOOL)canRemoveCustomRoute;
-///Perform your custom route. You must maintain the router's state with methods in ZIKViewRouter+Private.h.
+///Perform your custom route. You must maintain the router's state with methods in ZIKViewRouterInternal.h.
 - (void)performCustomRouteOnDestination:(id)destination fromSource:(id)source configuration:(__kindof ZIKViewRouteConfiguration *)configuration;
-///Remove your custom route. You must maintain the router's state with methods in ZIKViewRouter+Private.h.
+///Remove your custom route. You must maintain the router's state with methods in ZIKViewRouterInternal.h.
 - (void)removeCustomRouteOnDestination:(id)destination fromSource:(id)source removeConfiguration:(__kindof ZIKViewRemoveConfiguration *)removeConfiguration configuration:(__kindof ZIKViewRouteConfiguration *)configuration;
 
 /**

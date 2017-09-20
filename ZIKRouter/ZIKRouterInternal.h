@@ -1,5 +1,5 @@
 //
-//  ZIKRouter_Private.h
+//  ZIKRouterInternal.h
 //  ZIKRouter
 //
 //  Created by zuik on 2017/5/24.

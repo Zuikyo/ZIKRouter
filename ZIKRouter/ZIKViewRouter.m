@@ -7,8 +7,8 @@
 //
 
 #import "ZIKViewRouter.h"
-#import "ZIKRouter+Private.h"
-#import "ZIKViewRouter+Private.h"
+#import "ZIKRouterInternal.h"
+#import "ZIKViewRouterInternal.h"
 #import <objc/runtime.h>
 #import "ZIKRouterRuntimeHelper.h"
 #import "UIViewController+ZIKViewRouter.h"

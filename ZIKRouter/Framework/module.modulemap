@@ -4,9 +4,9 @@ framework module ZIKRouter {
   export *
   module * { export * }
   
-  explicit module Private {
-      header "ZIKRouter+Private.h"
-      header "ZIKViewRouter+Private.h"
-      header "ZIKServiceRouter+Private.h"
+  explicit module Internal {
+      header "ZIKRouterInternal.h"
+      header "ZIKViewRouterInternal.h"
+      header "ZIKServiceRouterInternal.h"
   }
 }

@@ -8,8 +8,7 @@
 
 #import "ZIKCompatibleAlertViewRouter.h"
 #import <objc/runtime.h>
-@import ZIKRouter.Private;
-
+@import ZIKRouter.Internal;
 
 @interface UIAlertController (ZIKSimpleLabelRouter) <ZIKRoutableView>
 @end

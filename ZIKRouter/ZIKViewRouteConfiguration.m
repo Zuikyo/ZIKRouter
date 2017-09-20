@@ -7,9 +7,9 @@
 //
 
 #import "ZIKViewRouteConfiguration.h"
-#import "ZIKViewRouter+Private.h"
+#import "ZIKViewRouterInternal.h"
 #import "ZIKPresentationState.h"
-#import "ZIKRouter+Private.h"
+#import "ZIKRouterInternal.h"
 
 @interface ZIKViewRouter()
 + (void)_o_callbackGlobalErrorHandlerWithRouter:(__kindof ZIKViewRouter *)router action:(SEL)action error:(NSError *)error;

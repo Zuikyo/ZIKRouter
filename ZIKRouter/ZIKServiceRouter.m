@@ -7,7 +7,7 @@
 //
 
 #import "ZIKServiceRouter.h"
-#import "ZIKRouter+Private.h"
+#import "ZIKRouterInternal.h"
 #import <objc/runtime.h>
 #import <UIKit/UIKit.h>
 #import "ZIKRouterRuntimeHelper.h"
