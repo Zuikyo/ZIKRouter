@@ -16,7 +16,7 @@
 
 @end
 
-#define ZIKInfoViewProtocol_viewRoutable @protocol(ZIKInfoViewProtocol)
+#define ZIKInfoViewProtocol_routable @protocol(ZIKInfoViewProtocol)
 @protocol ZIKInfoViewProtocol <ZIKViewRoutable>
 @property (nonatomic, copy) NSString *name;
 @property (nonatomic, assign) NSInteger age;

@@ -3,3 +3,5 @@
 //
 
 #import "ZIKInfoViewProtocol.h"
+#import "ZIKCompatibleAlertConfigProtocol.h"
+#import "ZIKCompatibleAlertViewRouter.h"

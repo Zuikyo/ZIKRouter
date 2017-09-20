@@ -266,7 +266,7 @@ extern void ZIKServiceRouter_registerConfigProtocol(Protocol *configProtocol, Cl
 }
 
 
-_Nullable Class ZIKServiceRouterForService(Protocol<ZIKServiceRoutable> *serviceProtocol) {
+_Nullable Class ZIKServiceRouterForService(Protocol *serviceProtocol) {
     NSCParameterAssert(serviceProtocol);
     NSCAssert(g_serviceProtocolToRouterMap, @"Didn't register any protocol yet.");
     NSCAssert(_assert_isLoadFinished, @"Only get router after app did finish launch.");
@@ -297,7 +297,7 @@ _Nullable Class ZIKServiceRouterForService(Protocol<ZIKServiceRoutable> *service
     return nil;
 }
 
-_Nullable Class ZIKServiceRouterForConfig(Protocol<ZIKServiceConfigRoutable> *configProtocol) {
+_Nullable Class ZIKServiceRouterForConfig(Protocol *configProtocol) {
     NSCParameterAssert(configProtocol);
     NSCAssert(g_configProtocolToRouterMap, @"Didn't register any protocol yet.");
     NSCAssert(_assert_isLoadFinished, @"Only get router after app did finish launch.");

@@ -19,21 +19,8 @@ NS_ASSUME_NONNULL_BEGIN
 - (void)addDestructiveButtonTitle:(NSString *)destructiveButtonTitle handler:(void (^)(void))handler;
 @end
 
-@interface ZIKCompatibleAlertViewRouter : ZIKViewRouter <ZIKViewRouterProtocol>
-
-- (ZIKCompatibleAlertViewConfiguration *)configuration;
-
-- (nullable instancetype)initWithConfiguration:(ZIKCompatibleAlertViewConfiguration *)configuration
-                           removeConfiguration:(nullable ZIKCompatibleAlertViewConfiguration *)removeConfiguration;
-
-- (nullable instancetype)initWithConfigure:(void(^)(ZIKCompatibleAlertViewConfiguration *config))configBuilder
-                           removeConfigure:(void(^ _Nullable)(__kindof ZIKViewRemoveConfiguration *config))removeConfigBuilder;
-
+@interface ZIKCompatibleAlertViewRouter : ZIKViewRouter<ZIKViewRouteConfiguration<ZIKCompatibleAlertConfigProtocol> *, ZIKViewRemoveConfiguration *> <ZIKViewRouterProtocol>
 + (nullable __kindof ZIKViewRouter *)performWithSource:(id)source NS_UNAVAILABLE;
-
-+ (nullable __kindof ZIKViewRouter *)performWithConfigure:(void(^)(ZIKCompatibleAlertViewConfiguration *config))configBuilder;
-+ (nullable __kindof ZIKViewRouter *)performWithConfigure:(void(^)(ZIKCompatibleAlertViewConfiguration *config))configBuilder
-                                          removeConfigure:(void(^ _Nullable)( __kindof ZIKViewRemoveConfiguration * config))removeConfigBuilder;
 @end
 
 NS_ASSUME_NONNULL_END

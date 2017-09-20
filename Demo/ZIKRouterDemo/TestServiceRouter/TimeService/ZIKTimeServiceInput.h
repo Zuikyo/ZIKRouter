@@ -10,7 +10,7 @@
 #import <ZIKRouter/ZIKServiceRoutable.h>
 
 //If ZIKTimeServiceInput is not registered as routable protocol, remember to remove this macro
-#define _ZIKTimeServiceInput_ (Protocol<ZIKServiceRoutable> *)@protocol(ZIKTimeServiceInput)
+#define ZIKTimeServiceInput_routable @protocol(ZIKTimeServiceInput)
 
 @protocol ZIKTimeServiceInput <ZIKServiceRoutable>
 - (NSString *)currentTimeString;

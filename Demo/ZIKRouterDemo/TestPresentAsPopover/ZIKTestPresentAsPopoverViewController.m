@@ -23,7 +23,7 @@
 
 - (IBAction)presentAsPopover:(id)sender {
     __weak typeof(self) weakSelf = self;
-    self.infoViewRouter = [ZIKViewRouterForView(ZIKInfoViewProtocol_viewRoutable)
+    self.infoViewRouter = [ZIKViewRouterForView(ZIKInfoViewProtocol_routable)
                            performWithConfigure:^(ZIKViewRouteConfiguration *config) {
                                config.source = self;
                                config.routeType = ZIKViewRouteTypePresentAsPopover;
@@ -47,7 +47,7 @@
 }
 - (IBAction)presentAsPopoverAndDismiss:(id)sender {
     __weak typeof(self) weakSelf = self;
-    self.infoViewRouter = [ZIKViewRouterForView(ZIKInfoViewProtocol_viewRoutable)
+    self.infoViewRouter = [ZIKViewRouterForView(ZIKInfoViewProtocol_routable)
                            performWithConfigure:^(ZIKViewRouteConfiguration *config) {
                                config.source = self;
                                config.routeType = ZIKViewRouteTypePresentAsPopover;

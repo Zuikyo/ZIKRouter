@@ -21,14 +21,14 @@ NSString *kZIKRouterErrorDomain = @"kZIKRouterErrorDomain";
 @property (nonatomic, assign) ZIKRouterState state;
 @property (nonatomic, assign) ZIKRouterState preState;
 @property (nonatomic, strong, nullable) NSError *error;
-@property (nonatomic, copy) __kindof ZIKRouteConfiguration *configuration;
-@property (nonatomic, copy, nullable) __kindof ZIKRouteConfiguration *removeConfiguration;
+@property (nonatomic, copy) ZIKRouteConfiguration *configuration;
+@property (nonatomic, copy, nullable) ZIKRouteConfiguration *removeConfiguration;
 @property (nonatomic, weak) id destination;
 @end
 
 @implementation ZIKRouter
 
-- (instancetype)initWithConfiguration:(__kindof ZIKRouteConfiguration *)configuration removeConfiguration:(nullable __kindof ZIKRouteConfiguration *)removeConfiguration {
+- (instancetype)initWithConfiguration:(ZIKRouteConfiguration *)configuration removeConfiguration:(nullable ZIKRouteConfiguration *)removeConfiguration {
     NSParameterAssert(configuration);
     NSAssert([self conformsToProtocol:@protocol(ZIKRouterProtocol)], @"%@ not conforms to ZIKRouterProtocol",[self class]);
     
@@ -41,7 +41,7 @@ NSString *kZIKRouterErrorDomain = @"kZIKRouterErrorDomain";
     return self;
 }
 
-- (instancetype)initWithConfigure:(void(^)(__kindof ZIKRouteConfiguration * configuration))configBuilder removeConfigure:(void(^ _Nullable)( __kindof ZIKRouteConfiguration *configuration))removeConfigBuilder {
+- (instancetype)initWithConfigure:(void(^)(ZIKRouteConfiguration * configuration))configBuilder removeConfigure:(void(^ _Nullable)(ZIKRouteConfiguration *configuration))removeConfigBuilder {
     NSParameterAssert(configBuilder);
     ZIKRouteConfiguration *configuration = [[self class] defaultRouteConfiguration];
     if (configBuilder) {
@@ -98,7 +98,7 @@ NSString *kZIKRouterErrorDomain = @"kZIKRouterErrorDomain";
     [self performWithConfiguration:configuration];
 }
 
-- (void)performWithConfiguration:(__kindof ZIKRouteConfiguration *)configuration {
+- (void)performWithConfiguration:(ZIKRouteConfiguration *)configuration {
     NSParameterAssert(configuration);
     
     id destination = [self destinationWithConfiguration:configuration];
@@ -112,14 +112,14 @@ NSString *kZIKRouterErrorDomain = @"kZIKRouterErrorDomain";
     return router;
 }
 
-+ (__kindof ZIKRouter *)performWithConfigure:(void(^)(__kindof ZIKRouteConfiguration *configuration))configBuilder {
++ (__kindof ZIKRouter *)performWithConfigure:(void(^)(ZIKRouteConfiguration *configuration))configBuilder {
     NSParameterAssert(configBuilder);
     ZIKRouter *route = [[self alloc] initWithConfigure:configBuilder removeConfigure:nil];
     [route performRoute];
     return route;
 }
 
-+ (__kindof ZIKRouter *)performWithConfigure:(void(^)(__kindof ZIKRouteConfiguration *configuration))configBuilder removeConfigure:(void(^)( __kindof ZIKRouteConfiguration * configuration))removeConfigBuilder {
++ (__kindof ZIKRouter *)performWithConfigure:(void(^)(ZIKRouteConfiguration *configuration))configBuilder removeConfigure:(void(^)(ZIKRouteConfiguration * configuration))removeConfigBuilder {
     NSParameterAssert(configBuilder);
     ZIKRouter *route = [[self alloc] initWithConfigure:configBuilder removeConfigure:removeConfigBuilder];
     [route performRoute];
@@ -151,15 +151,15 @@ NSString *kZIKRouterErrorDomain = @"kZIKRouterErrorDomain";
 
 #pragma mark ZIKRouterProtocol
 
-- (void)performRouteOnDestination:(id)destination configuration:(__kindof ZIKRouteConfiguration *)configuration {
+- (void)performRouteOnDestination:(id)destination configuration:(ZIKRouteConfiguration *)configuration {
     NSAssert(NO, @"ZIKRouter: %@ not conforms to ZIKRouterProtocol!",[self class]);
 }
 
-- (void)removeDestination:(id)destination removeConfiguration:(__kindof ZIKRouteConfiguration *)removeConfiguration {
+- (void)removeDestination:(id)destination removeConfiguration:(ZIKRouteConfiguration *)removeConfiguration {
     NSAssert(NO, @"ZIKRouter: %@ not conforms to ZIKRouterProtocol!",[self class]);
 }
 
-- (id)destinationWithConfiguration:(__kindof ZIKRouteConfiguration *)configuration {
+- (id)destinationWithConfiguration:(ZIKRouteConfiguration *)configuration {
     NSAssert(NO, @"ZIKRouter: %@ not conforms to ZIKRouterProtocol!",[self class]);
     return nil;
 }
@@ -289,19 +289,19 @@ NSString *kZIKRouterErrorDomain = @"kZIKRouterErrorDomain";
 
 #pragma mark Getter/Setter
 
-- (__kindof ZIKRouteConfiguration*)configuration {
+- (ZIKRouteConfiguration*)configuration {
     return [_configuration copy];
 }
 
-- (__kindof ZIKRouteConfiguration*)_nocopy_configuration {
+- (ZIKRouteConfiguration*)_nocopy_configuration {
     return _configuration;
 }
 
-- (__kindof ZIKRouteConfiguration*)removeConfiguration {
+- (ZIKRouteConfiguration*)removeConfiguration {
     return [_removeConfiguration copy];
 }
 
-- (__kindof ZIKRouteConfiguration*)_nocopy_removeConfiguration {
+- (ZIKRouteConfiguration*)_nocopy_removeConfiguration {
     return _removeConfiguration;
 }
 

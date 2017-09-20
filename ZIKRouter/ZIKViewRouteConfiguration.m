@@ -142,7 +142,7 @@
 }
 
 - (NSString *)description {
-    NSString *description = [NSString stringWithFormat:@"source:%@, routeType:%@, animated:%d, handleExternalRoute:%d",self.source,[ZIKViewRouter descriptionOfRouteType:self.routeType],self.animated,self.handleExternalRoute];
+    NSString *description = [NSString stringWithFormat:@"%@: source:%@, routeType:%@, animated:%d, handleExternalRoute:%d",super.description,self.source,[ZIKViewRouter descriptionOfRouteType:self.routeType],self.animated,self.handleExternalRoute];
     if (self.segueConfiguration) {
         description = [description stringByAppendingFormat:@",segue config:(%@)",self.segueConfiguration.description];
     }

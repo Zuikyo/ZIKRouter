@@ -7,6 +7,8 @@
 //
 
 #import <UIKit/UIKit.h>
+@import ZIKRouter;
+#import "ZIKCompatibleAlertConfigProtocol.h"
 
 @interface ZIKTestCustomViewController : UIViewController
 

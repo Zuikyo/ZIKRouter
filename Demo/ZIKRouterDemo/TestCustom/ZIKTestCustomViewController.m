@@ -9,9 +9,10 @@
 #import "ZIKTestCustomViewController.h"
 @import ZIKRouter;
 #import "ZIKCompatibleAlertConfigProtocol.h"
+#import "ZIKCompatibleAlertViewRouter.h"
 
 @interface ZIKTestCustomViewController ()
-@property (nonatomic, strong) ZIKViewRouter *alertViewRouter;
+@property (nonatomic, strong) ZIKViewRouter<ZIKViewRouteConfiguration *, ZIKViewRemoveConfiguration*> *alertViewRouter;
 @end
 
 @implementation ZIKTestCustomViewController
@@ -21,7 +22,7 @@
     // Do any additional setup after loading the view.
 }
 - (IBAction)performCustomRoute:(id)sender {
-    self.alertViewRouter = [ZIKViewRouterForConfig(_ZIKCompatibleAlertConfigProtocol_)
+    self.alertViewRouter = [ZIKViewRouterForConfig(ZIKCompatibleAlertConfigProtocol_configRoutable)
                             performWithConfigure:^(ZIKViewRouteConfiguration<ZIKCompatibleAlertConfigProtocol> * _Nonnull config) {
                                 config.source = self;
                                 config.routeType = ZIKViewRouteTypeCustom;

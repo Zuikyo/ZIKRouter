@@ -44,22 +44,23 @@ typedef NS_ENUM(NSInteger, ZIKRouterState) {
 };
 
 ///Abstract class for router. A router for decoupling between modules, and injecting dependencies with protocol.
-@interface ZIKRouter : NSObject <ZIKRouterProtocol>
+@interface ZIKRouter<__covariant RouteConfiguration: ZIKRouteConfiguration *, __covariant RemoveConfiguration: ZIKRouteConfiguration *> : NSObject <ZIKRouterProtocol>
 ///State of route
 @property (nonatomic, readonly, assign) ZIKRouterState state;
 ///Configuration for performRoute; return copy of configuration, so modify this won't change the real configuration inside router
-@property (nonatomic, readonly, copy) __kindof ZIKRouteConfiguration *configuration;
+@property (nonatomic, readonly, copy) RouteConfiguration configuration;
 ///Configuration for removeRoute; return copy of configuration, so modify this won't change the real configuration inside router
-@property (nonatomic, readonly, copy ,nullable) __kindof ZIKRouteConfiguration *removeConfiguration;
+@property (nonatomic, readonly, copy ,nullable) RemoveConfiguration removeConfiguration;
 //Latest error when route action failed
 @property (nonatomic, readonly, strong, nullable) NSError *error;
 
-- (nullable instancetype)initWithConfiguration:(__kindof ZIKRouteConfiguration *)configuration
-                           removeConfiguration:(nullable __kindof ZIKRouteConfiguration *)removeConfiguration NS_DESIGNATED_INITIALIZER;
+- (nullable instancetype)initWithConfiguration:(RouteConfiguration)configuration
+                           removeConfiguration:(nullable RemoveConfiguration)removeConfiguration NS_DESIGNATED_INITIALIZER;
 ///Convenient method to create configuration in a builder block
-- (nullable instancetype)initWithConfigure:(void(NS_NOESCAPE ^)(__kindof ZIKRouteConfiguration *config))configBuilder
-                           removeConfigure:(void(NS_NOESCAPE ^ _Nullable)( __kindof ZIKRouteConfiguration *config))removeConfigBuilder;
+- (nullable instancetype)initWithConfigure:(void(NS_NOESCAPE ^)(RouteConfiguration config))configBuilder
+                           removeConfigure:(void(NS_NOESCAPE ^ _Nullable)(RemoveConfiguration config))removeConfigBuilder;
 - (instancetype)init NS_UNAVAILABLE;
++ (instancetype)new NS_UNAVAILABLE;
 
 - (BOOL)canPerform;
 ///Not thread safe
@@ -78,9 +79,9 @@ typedef NS_ENUM(NSInteger, ZIKRouterState) {
 ///If this route action doesn't need any argument, just perform directly
 + (nullable __kindof ZIKRouter *)performRoute;
 ///Set dependencies required by destination and perform route
-+ (nullable __kindof ZIKRouter *)performWithConfigure:(void(NS_NOESCAPE ^)(__kindof ZIKRouteConfiguration *config))configBuilder;
-+ (nullable __kindof ZIKRouter *)performWithConfigure:(void(NS_NOESCAPE ^)(__kindof ZIKRouteConfiguration *config))configBuilder
-                                      removeConfigure:(void(NS_NOESCAPE ^ _Nullable)(__kindof ZIKRouteConfiguration *config))removeConfigBuilder;
++ (nullable __kindof ZIKRouter *)performWithConfigure:(void(NS_NOESCAPE ^)(RouteConfiguration config))configBuilder;
++ (nullable __kindof ZIKRouter *)performWithConfigure:(void(NS_NOESCAPE ^)(RouteConfiguration config))configBuilder
+                                      removeConfigure:(void(NS_NOESCAPE ^ _Nullable)(RemoveConfiguration config))removeConfigBuilder;
 
 + (BOOL)completeSynchronously;
 + (NSString *)descriptionOfState:(ZIKRouterState)state;

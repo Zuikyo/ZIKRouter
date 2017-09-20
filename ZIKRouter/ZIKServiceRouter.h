@@ -23,7 +23,24 @@ extern NSString *const kZIKServiceRouterErrorDomain;
 
 @end
 
+@interface ZIKServiceRouteConfiguration : ZIKRouteConfiguration <NSCopying>
 
+/**
+ Prepare for performRoute, and config other dependency for destination here. Subclass can offer more specific info.
+ 
+ @note
+ Use weakSelf in prepareForRoute to avoid retain cycle.
+ */
+@property (nonatomic, copy, nullable) void(^prepareForRoute)(id destination);
+
+/**
+ Completion for performRoute. Default implemenation will call routeCompletion synchronously.
+ 
+ @note
+ Use weakSelf in routeCompletion to avoid retain cycle.
+ */
+@property (nonatomic, copy, nullable) void(^routeCompletion)(id destination);
+@end
 
 /**
  Error handler for all service routers, for debug and log.
@@ -55,7 +72,7 @@ typedef void(^ZIKServiceRouteGlobalErrorHandler)(__kindof ZIKServiceRouter * _Nu
  @note
  Default implement of -performXX will call routeCompletion synchronously, so the user can get service synchronously. If a service can only be generated asynchronously, Subclass router should override -performWithConfiguration:, and call -attachDestination: asynchronously.
  */
-@interface ZIKServiceRouter : ZIKRouter <ZIKServiceRouterProtocol>
+@interface ZIKServiceRouter<ServiceRouteConfiguration: ZIKServiceRouteConfiguration*, ServiceRemoveConfiguration: ZIKRouteConfiguration *> : ZIKRouter<ZIKServiceRouteConfiguration *, ZIKRouteConfiguration *> <ZIKServiceRouterProtocol>
 
 ///Covariant from superclass
 - (__kindof ZIKServiceRouteConfiguration *)configuration;
@@ -66,9 +83,9 @@ typedef void(^ZIKServiceRouteGlobalErrorHandler)(__kindof ZIKServiceRouter * _Nu
                            removeConfigure:(void(NS_NOESCAPE ^ _Nullable)(__kindof ZIKRouteConfiguration *config))removeConfigBuilder;
 
 ///Convenient method to perform route
-+ (nullable __kindof ZIKServiceRouter *)performWithConfigure:(void(NS_NOESCAPE ^)(__kindof ZIKServiceRouteConfiguration *config))configBuilder
-                                          removeConfigure:(void(NS_NOESCAPE ^ _Nullable)( __kindof ZIKRouteConfiguration *config))removeConfigBuilder;
-+ (nullable __kindof ZIKServiceRouter *)performWithConfigure:(void(NS_NOESCAPE ^)(__kindof ZIKServiceRouteConfiguration *config))configBuilder;
++ (nullable __kindof ZIKServiceRouter *)performWithConfigure:(void(NS_NOESCAPE ^)(ServiceRouteConfiguration config))configBuilder
+                                          removeConfigure:(void(NS_NOESCAPE ^ _Nullable)(ServiceRemoveConfiguration config))removeConfigBuilder;
++ (nullable __kindof ZIKServiceRouter *)performWithConfigure:(void(NS_NOESCAPE ^)(ServiceRouteConfiguration config))configBuilder;
 
 ///Default implemenation will call routeCompletion synchronously, so the user can get service synchronously. Subclass router may return NO if it's service can only be generated asynchronously.
 + (BOOL)completeSynchronously;
@@ -81,25 +98,6 @@ typedef NS_ENUM(NSInteger, ZIKServiceRouteError) {
     ZIKServiceRouteErrorInvaidProtocol,
     ZIKServiceRouteErrorServiceUnavailable
 };
-
-@interface ZIKServiceRouteConfiguration : ZIKRouteConfiguration <NSCopying>
-
-/**
- Prepare for performRoute, and config other dependency for destination here. Subclass can offer more specific info.
- 
- @note
- Use weakSelf in prepareForRoute to avoid retain cycle.
- */
-@property (nonatomic, copy, nullable) void(^prepareForRoute)(id destination);
-
-/**
- Completion for performRoute. Default implemenation will call routeCompletion synchronously.
- 
- @note
- Use weakSelf in routeCompletion to avoid retain cycle.
- */
-@property (nonatomic, copy, nullable) void(^routeCompletion)(id destination);
-@end
 
 #pragma mark Dynamic Discover
 

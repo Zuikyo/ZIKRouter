@@ -9,6 +9,7 @@
 #import "ZIKTestServiceRouterViewController.h"
 #import "ZIKTimeServiceInput.h"
 @import ZIKRouter;
+#import "ZIKTimeServiceRouter.h"
 
 @interface ZIKTestServiceRouterViewController ()
 @property (nonatomic, strong) id<ZIKTimeServiceInput> timeService;
@@ -30,9 +31,9 @@
 - (id<ZIKTimeServiceInput>)timeService {
     if (!_timeService) {
         __block id<ZIKTimeServiceInput> timeService;
-        NSAssert([ZIKServiceRouterForService(_ZIKTimeServiceInput_) completeSynchronously] == YES, @"We need to get service synchronously");
+        NSAssert([ZIKServiceRouterForService(ZIKTimeServiceInput_routable) completeSynchronously] == YES, @"We need to get service synchronously");
         
-        [ZIKServiceRouterForService(_ZIKTimeServiceInput_)
+        [ZIKServiceRouterForService(ZIKTimeServiceInput_routable)
          performWithConfigure:^(__kindof ZIKServiceRouteConfiguration * _Nonnull config) {
             config.prepareForRoute = ^(id<ZIKTimeServiceInput> destination) {
                 

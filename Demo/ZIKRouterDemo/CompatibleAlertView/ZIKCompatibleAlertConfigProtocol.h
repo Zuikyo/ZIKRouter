@@ -11,7 +11,7 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-#define _ZIKCompatibleAlertConfigProtocol_ (Protocol<ZIKViewConfigRoutable> *)@protocol(ZIKCompatibleAlertConfigProtocol)
+#define ZIKCompatibleAlertConfigProtocol_configRoutable @protocol(ZIKCompatibleAlertConfigProtocol)
 @protocol ZIKCompatibleAlertConfigProtocol <ZIKViewConfigRoutable>
 @property(nonatomic,copy) NSString *title;
 @property(nullable,nonatomic,copy) NSString *message;

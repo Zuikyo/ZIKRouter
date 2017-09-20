@@ -20,7 +20,7 @@
     [super viewDidLoad];
     
     __weak typeof(self) weakSelf = self;
-    self.infoViewRouter = [[ZIKViewRouterForView(ZIKInfoViewProtocol_viewRoutable) alloc]
+    self.infoViewRouter = [[ZIKViewRouterForView(ZIKInfoViewProtocol_routable) alloc]
                            initWithConfigure:^(__kindof ZIKViewRouteConfiguration * _Nonnull config) {
                                config.source = self;
                                config.routeType = ZIKViewRouteTypePush;

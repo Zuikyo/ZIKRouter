@@ -214,7 +214,9 @@
 }
 
 + (__kindof ZIKViewRouteConfiguration *)defaultRouteConfiguration {
-    return [ZIKCompatibleAlertViewConfiguration new];
+    ZIKCompatibleAlertViewConfiguration *config = [ZIKCompatibleAlertViewConfiguration new];
+    config.routeType = ZIKViewRouteTypeCustom;
+    return config;
 }
 
 #pragma mark UIAlertViewDelegate
