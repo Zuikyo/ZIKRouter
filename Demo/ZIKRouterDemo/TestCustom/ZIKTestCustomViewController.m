@@ -9,10 +9,9 @@
 #import "ZIKTestCustomViewController.h"
 @import ZIKRouter;
 #import "ZIKCompatibleAlertConfigProtocol.h"
-#import "ZIKCompatibleAlertViewRouter.h"
 
 @interface ZIKTestCustomViewController ()
-@property (nonatomic, strong) ZIKViewRouter<ZIKViewRouteConfiguration *, ZIKViewRemoveConfiguration*> *alertViewRouter;
+@property (nonatomic, strong) ZIKViewRouter<ZIKViewRouteConfiguration<ZIKCompatibleAlertConfigProtocol> *, ZIKViewRemoveConfiguration*> *alertViewRouter;
 @end
 
 @implementation ZIKTestCustomViewController
