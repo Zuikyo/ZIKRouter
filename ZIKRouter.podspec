@@ -1,7 +1,7 @@
 Pod::Spec.new do |s|
 
   s.name         = "ZIKRouter"
-  s.version      = "0.6.0"
+  s.version      = "0.6.1"
   s.summary      = "An iOS router for decoupling modules, discovering modules and injecting dependencies with protocol."
   s.description  = <<-DESC
                 An iOS router for decoupling modules, discovering modules and injecting dependencies with protocol, designed for VIPER. The view router can perform all navigation types in UIKit through one method. The service router can discover service with protocol.
