@@ -18,7 +18,7 @@ class SwiftSampleViewController: UIViewController, SwiftSampleViewProtocol, ZIKI
     var infoRouter: ZIKViewRouter<ZIKViewRouteConfiguration, ZIKViewRemoveConfiguration>?
     var alertRouter: ZIKViewRouter<ZIKViewRouteConfiguration & ZIKCompatibleAlertConfigProtocol, ZIKViewRemoveConfiguration>?
     
-    //If you don't want to use @objc protocol in Swift, you can't use ZIKSViewRouterForView() and ZIKSViewRouterForConfig(). Then you can inject alertRouterClass from outside, then use the router directly
+    //You can inject alertRouterClass from outside, then use the router directly
     var alertRouterClass: ZIKViewRouter<ZIKViewRouteConfiguration & ZIKCompatibleAlertConfigProtocol, ZIKViewRemoveConfiguration>.Type!
     
     @IBAction func testRouteForView(_ sender: Any) {

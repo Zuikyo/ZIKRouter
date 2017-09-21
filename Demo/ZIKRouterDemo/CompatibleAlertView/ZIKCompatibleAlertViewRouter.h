@@ -28,12 +28,15 @@ NS_ASSUME_NONNULL_BEGIN
  //ZIKCompatibleAlertViewRouter.Type is ZIKViewRouter<ZIKViewRouteConfiguration & ZIKCompatibleAlertConfigProtocol, ZIKViewRemoveConfiguration>.Type
  alertRouterClass = ZIKCompatibleAlertViewRouter.self
  @endcode
- If you wan't to use ZIKCompatibleAlertViewRouter more freely, you can remove `<ZIKCompatibleAlertConfigProtocol>` in ViewRouteConfiguration, and let user to specify the ViewRouteConfiguration when they use. But it's not that safe.
+ If you wan't to use ZIKCompatibleAlertViewRouter more freely, you can remove `<ZIKCompatibleAlertConfigProtocol>` in ViewRouteConfiguration, and let user to specify the ViewRouteConfiguration when they use. But it's not that safe:
  @code
  var alertRouterClass: ZIKViewRouter<ZIKViewRouteConfiguration & ZIKCompatibleAlertConfigProtocol, ZIKViewRemoveConfiguration>.Type?
  
  //This is allowed in Swift 4
  alertRouterClass = ZIKCompatibleAlertViewRouter.self
+ 
+ var routerClass: ZIKViewRouter<ZIKViewRouteConfiguration, ZIKViewRemoveConfiguration>.Type?
+ routerClass = ZIKCompatibleAlertViewRouter.self
  @endcode
  */
 @interface ZIKCompatibleAlertViewRouter<__covariant ViewRouteConfiguration: ZIKViewRouteConfiguration<ZIKCompatibleAlertConfigProtocol> *, __covariant ViewRemoveConfiguration: ZIKViewRemoveConfiguration *> : ZIKViewRouter<ViewRouteConfiguration, ViewRemoveConfiguration> <ZIKViewRouterProtocol>
