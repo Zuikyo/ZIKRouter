@@ -24,7 +24,7 @@
 - (IBAction)getDestinationAndPresent:(id)sender {
     __weak typeof(self) weakSelf = self;
     self.router = [ZIKViewRouterForView(ZIKInfoViewProtocol_routable)
-     performWithConfigure:^(__kindof ZIKViewRouteConfiguration * _Nonnull config) {
+     performWithConfigure:^(ZIKViewRouteConfiguration * _Nonnull config) {
          config.source = self;
          config.routeType = ZIKViewRouteTypeGetDestination;
          config.prepareForRoute = ^(id<ZIKInfoViewProtocol>  _Nonnull destination) {

@@ -758,10 +758,11 @@ _Nullable Class ZIKViewRouterForConfig(Protocol *configProtocol) {
 }
 
 + (__kindof ZIKViewRouter *)performWithSource:(id)source routeType:(ZIKViewRouteType)routeType {
-    return [self performWithConfigure:^(ZIKViewRouteConfiguration *config) {
+    return [self performWithConfigure:^(ZIKRouteConfiguration *configuration) {
+        ZIKViewRouteConfiguration *config = (ZIKViewRouteConfiguration *)configuration;
         config.source = source;
         config.routeType = routeType;
-    } removeConfigure:nil];
+    }];
 }
 
 + (nullable __kindof ZIKViewRouter *)performOnDestination:(id)destination
@@ -787,7 +788,7 @@ _Nullable Class ZIKViewRouterForConfig(Protocol *configProtocol) {
         NSAssert2(NO, @"Perform route on invalid destination (%@), this view is not registered with this router (%@)",destination,self);
         return nil;
     }
-    ZIKViewRouter *router = [[self alloc] initWithConfigure:configBuilder removeConfigure:removeConfigBuilder];
+    ZIKViewRouter *router = [[self alloc] initWithConfigure:(void(^)(ZIKRouteConfiguration *))configBuilder removeConfigure:(void(^)(ZIKRouteConfiguration *))removeConfigBuilder];
     NSAssert(router._nocopy_configuration.routeType != ZIKViewRouteTypeGetDestination, @"It's meaningless to get destination when you already offer a prepared destination.");
     [router attachDestination:destination];
     [router performRouteOnDestination:destination configuration:router._nocopy_configuration];

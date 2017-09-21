@@ -65,13 +65,11 @@ class SwiftSampleViewController: UIViewController, SwiftSampleViewProtocol, ZIKI
                 print("show custom alert failed: %@",error)
             }
         }
-        self.alertRouter = router as? ZIKViewRouter<ZIKViewRouteConfiguration & ZIKCompatibleAlertConfigProtocol, ZIKViewRemoveConfiguration>
+        self.alertRouter = (router as! ZIKViewRouter<ZIKViewRouteConfiguration & ZIKCompatibleAlertConfigProtocol, ZIKViewRemoveConfiguration>)
     }
     
     @IBAction func testInjectedRouter(_ sender: Any) {
-        let router: ZIKViewRouter<ZIKViewRouteConfiguration, ZIKViewRemoveConfiguration>?
-        
-        router = self.alertRouterClass.perform { config in
+        let router = self.alertRouterClass.perform { config in
             config.source = self
             config.title = "Compatible Alert"
             config.message = "Test custom route for alert with UIAlertView and UIAlertController"
@@ -88,7 +86,7 @@ class SwiftSampleViewController: UIViewController, SwiftSampleViewProtocol, ZIKI
                 print("show custom alert failed: %@",error)
             }
         }
-        self.alertRouter = router as? ZIKViewRouter<ZIKViewRouteConfiguration & ZIKCompatibleAlertConfigProtocol, ZIKViewRemoveConfiguration>
+        self.alertRouter = router
     }
 
     /*

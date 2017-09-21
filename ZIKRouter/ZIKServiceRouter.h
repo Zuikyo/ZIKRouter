@@ -75,20 +75,12 @@ typedef void(^ZIKServiceRouteGlobalErrorHandler)(__kindof ZIKServiceRouter * _Nu
  @note
  Default implement of -performXX will call routeCompletion synchronously, so the user can get service synchronously. If a service can only be generated asynchronously, Subclass router should override -performWithConfiguration:, and call -attachDestination: asynchronously.
  */
-@interface ZIKServiceRouter<ServiceRouteConfiguration: ZIKServiceRouteConfiguration*, ServiceRemoveConfiguration: ZIKRouteConfiguration *> : ZIKRouter<ZIKServiceRouteConfiguration *, ZIKRouteConfiguration *> <ZIKServiceRouterProtocol>
-
-///Covariant from superclass
-- (__kindof ZIKServiceRouteConfiguration *)configuration;
-
-- (nullable instancetype)initWithConfiguration:(__kindof ZIKServiceRouteConfiguration *)configuration
-                           removeConfiguration:(nullable __kindof ZIKRouteConfiguration *)removeConfiguration NS_DESIGNATED_INITIALIZER;
-- (nullable instancetype)initWithConfigure:(void(NS_NOESCAPE ^)(__kindof ZIKServiceRouteConfiguration *config))configBuilder
-                           removeConfigure:(void(NS_NOESCAPE ^ _Nullable)(__kindof ZIKRouteConfiguration *config))removeConfigBuilder;
+@interface ZIKServiceRouter<ServiceRouteConfiguration: ZIKServiceRouteConfiguration *, ServiceRemoveConfiguration: ZIKRouteConfiguration *> : ZIKRouter<ServiceRouteConfiguration, ServiceRemoveConfiguration, ZIKServiceRouter *> <ZIKServiceRouterProtocol>
 
 ///Convenient method to perform route
-+ (nullable __kindof ZIKServiceRouter *)performWithConfigure:(void(NS_NOESCAPE ^)(ServiceRouteConfiguration config))configBuilder
++ (nullable ZIKServiceRouter<ServiceRouteConfiguration, ServiceRemoveConfiguration> *)performWithConfigure:(void(NS_NOESCAPE ^)(ServiceRouteConfiguration config))configBuilder
                                           removeConfigure:(void(NS_NOESCAPE ^ _Nullable)(ServiceRemoveConfiguration config))removeConfigBuilder;
-+ (nullable __kindof ZIKServiceRouter *)performWithConfigure:(void(NS_NOESCAPE ^)(ServiceRouteConfiguration config))configBuilder;
++ (nullable ZIKServiceRouter<ServiceRouteConfiguration, ServiceRemoveConfiguration> *)performWithConfigure:(void(NS_NOESCAPE ^)(ServiceRouteConfiguration config))configBuilder;
 
 ///Default implemenation will call routeCompletion synchronously, so the user can get service synchronously. Subclass router may return NO if it's service can only be generated asynchronously.
 + (BOOL)completeSynchronously;

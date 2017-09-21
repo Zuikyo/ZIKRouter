@@ -31,7 +31,7 @@
     UIViewController *masterViewController = [[masterNavigationController viewControllers] firstObject];
     
     //Prepare master with it's router
-    [MasterViewRouter prepareDestination:masterViewController configure:^(__kindof ZIKViewRouteConfiguration * _Nonnull config) {
+    [MasterViewRouter prepareDestination:masterViewController configure:^(ZIKViewRouteConfiguration * _Nonnull config) {
         
     }];
     
