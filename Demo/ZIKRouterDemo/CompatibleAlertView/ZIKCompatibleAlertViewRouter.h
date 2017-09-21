@@ -19,7 +19,24 @@ NS_ASSUME_NONNULL_BEGIN
 - (void)addDestructiveButtonTitle:(NSString *)destructiveButtonTitle handler:(void (^)(void))handler;
 @end
 
-@interface ZIKCompatibleAlertViewRouter : ZIKViewRouter<ZIKViewRouteConfiguration<ZIKCompatibleAlertConfigProtocol> *, ZIKViewRemoveConfiguration *> <ZIKViewRouterProtocol>
+/**
+ In Swift 4, you can't cast router type like this:
+ @code
+ var alertRouterClass: ZIKViewRouter<ZIKViewRouteConfiguration, ZIKViewRemoveConfiguration>.Type?
+ 
+ //Swift 4 compiles with error, but in Swift 3, this is allowed.
+ //ZIKCompatibleAlertViewRouter.Type is ZIKViewRouter<ZIKViewRouteConfiguration & ZIKCompatibleAlertConfigProtocol, ZIKViewRemoveConfiguration>.Type
+ alertRouterClass = ZIKCompatibleAlertViewRouter.self
+ @endcode
+ If you wan't to use ZIKCompatibleAlertViewRouter more freely, you can remove `<ZIKCompatibleAlertConfigProtocol>` in ViewRouteConfiguration, and let user to specify the ViewRouteConfiguration when they use. But it's not that safe.
+ @code
+ var alertRouterClass: ZIKViewRouter<ZIKViewRouteConfiguration & ZIKCompatibleAlertConfigProtocol, ZIKViewRemoveConfiguration>.Type?
+ 
+ //This is allowed in Swift 4
+ alertRouterClass = ZIKCompatibleAlertViewRouter.self
+ @endcode
+ */
+@interface ZIKCompatibleAlertViewRouter<__covariant ViewRouteConfiguration: ZIKViewRouteConfiguration<ZIKCompatibleAlertConfigProtocol> *, __covariant ViewRemoveConfiguration: ZIKViewRemoveConfiguration *> : ZIKViewRouter<ViewRouteConfiguration, ViewRemoveConfiguration> <ZIKViewRouterProtocol>
 + (nullable __kindof ZIKViewRouter *)performWithSource:(id)source NS_UNAVAILABLE;
 @end
 

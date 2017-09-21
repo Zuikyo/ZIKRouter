@@ -44,7 +44,7 @@ class SwiftSampleViewController: UIViewController, SwiftSampleViewProtocol, ZIKI
         }
     }
     
-    @IBAction func testRouteForConfig(_ sender: Any) {        
+    @IBAction func testRouteForConfig(_ sender: Any) {
         let router: ZIKViewRouter<ZIKViewRouteConfiguration, ZIKViewRemoveConfiguration>?
         
         router = ZIKSViewRouterForConfig(ZIKCompatibleAlertConfigProtocol.self)?.perform { configuration in
