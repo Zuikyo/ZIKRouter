@@ -23,7 +23,7 @@ NS_ASSUME_NONNULL_BEGIN
 + (void)registerRoutableDestination;
 
 /**
- Create and initialize your destination with configuration.
+ Create your destination with configuration.
  
  @note
  Router with ZIKViewRouteTypePerformSegue route type won't invoke this method, because destination is created from storyboard.
@@ -32,7 +32,7 @@ NS_ASSUME_NONNULL_BEGIN
  
  This methods is only responsible for create the destination. The additional initialization should be in -prepareDestination:configuration:.
  
- @param configuration Configuration for route
+ @param configuration Configuration for route.
  @return A UIViewController or UIView, If the configuration is invalid, return nil to make this route failed.
  */
 - (nullable id<ZIKRoutableView>)destinationWithConfiguration:(__kindof ZIKViewRouteConfiguration *)configuration;
@@ -49,8 +49,8 @@ NS_ASSUME_NONNULL_BEGIN
  
  If you get a prepared destination by ZIKViewRouteTypeGetDestination or -prepareDestination:configure:removeConfigure:, this method will be called. When the destination is routed, this method will also be called, because the destination may be changed.
  
- @param destination The view to perform route
- @param configuration The config for route
+ @param destination The view to perform route.
+ @param configuration The configuration for route.
  */
 - (void)prepareDestination:(id)destination configuration:(__kindof ZIKViewRouteConfiguration *)configuration;
 
@@ -59,24 +59,24 @@ NS_ASSUME_NONNULL_BEGIN
  @warning
  when it's removed and routed again, it's alse treated as first appear, so this method may be called more than once.
  
- @param destination The view to perform route
- @param configuration The config for route
+ @param destination The view to perform route.
+ @param configuration The configuration for route.
  */
 - (void)didFinishPrepareDestination:(id)destination configuration:(__kindof ZIKViewRouteConfiguration *)configuration;
 
-///Default is kDefaultRouteTypesForViewController for UIViewController type destination, if your destination is a UIView, override this and return kDefaultRouteTypesForView. Router can also limit the route type.
+///Default is ZIKViewRouteTypeMaskUIViewControllerDefault for UIViewController type destination, if your destination is a UIView, override this and return ZIKViewRouteTypeMaskUIViewDefault. Router subclass can also limit the route type.
 + (ZIKViewRouteTypeMask)supportedRouteTypes;
-///You can do dependency injection by subclass ZIKViewRouteConfiguration, and add your custom property; Then you must override this to return a default instance of your subclass
+///You can do dependency injection by subclass ZIKViewRouteConfiguration, and add your custom property; Then you must override this to return a default instance of your subclass.
 + (__kindof ZIKViewRouteConfiguration *)defaultRouteConfiguration;
-///You can do dependency injection by subclass ZIKViewRemoveConfiguration, and add your custom property; Then you must override this to return a default instance of your subclass
+///You can do dependency injection by subclass ZIKViewRemoveConfiguration, and add your custom property; Then you must override this to return a default instance of your subclass.
 + (__kindof ZIKViewRemoveConfiguration *)defaultRemoveConfiguration;
 
 ///Custom route support
 ///Validate the configuration for your custom route.
 + (BOOL)validateCustomRouteConfiguration:(__kindof ZIKViewRouteConfiguration *)configuration removeConfiguration:(__kindof ZIKViewRemoveConfiguration *)removeConfiguration;
-///Whether can perform custom route on current source.
+///Whether the router can perform custom route now.
 - (BOOL)canPerformCustomRoute;
-///Whether can remove custom route on current source.
+///Whether the router can remove custom route now.
 - (BOOL)canRemoveCustomRoute;
 ///Perform your custom route. You must maintain the router's state with methods in ZIKViewRouterInternal.h.
 - (void)performCustomRouteOnDestination:(id)destination fromSource:(id)source configuration:(__kindof ZIKViewRouteConfiguration *)configuration;
@@ -100,7 +100,7 @@ NS_ASSUME_NONNULL_BEGIN
  For UIViewController routing from router or storyboard, invoked after destination is preapared and about to do route action.
  For UIViewController not routing from router, or routed by ZIKViewRouteTypeGetDestination or ZIKViewRouteTypeAddAsChildViewController then displayed manually, invoked in -viewWillAppear:. The parameter `router` is nil.
  For UIView routing by ZIKViewRouteTypeAddAsSubview type, invoked after destination is prepared and before -addSubview: is called.
- For UIView routing from xib or from manually addSubview: or routed by ZIKViewRouteTypeGetDestination, invoked after destination is prepared, and is about to be visible (moving to window), but not when -willMoveToSuperview:. Beacuse we need to auto create router and search performer in responder hierarchy, in some situation, the responder is only available when the UIView is on a window. See comments inside -ZIKViewRouter_hook_willMoveToSuperview: for more detial.
+ For UIView routing from xib or from manually addSubview: or routed by ZIKViewRouteTypeGetDestination, invoked after destination is prepared, and is about to be visible (moving to window), but not in -willMoveToSuperview:. Beacuse we need to auto create router and search performer in responder hierarchy. In some situation, the responder is only available when the UIView is on a window. See comments inside -ZIKViewRouter_hook_willMoveToSuperview: for more detial.
  */
 + (void)router:(nullable ZIKViewRouter *)router willPerformRouteOnDestination:(id)destination fromSource:(nullable id)source;
 
@@ -112,7 +112,7 @@ NS_ASSUME_NONNULL_BEGIN
  For UIViewController routing from router or storyboard, invoked after route animation is finished. See -routeCompletion.
  For UIViewController not routing from router, or routed by ZIKViewRouteTypeAddAsChildViewController or ZIKViewRouteTypeGetDestination then displayed manually, invoked in -viewDidAppear:. The parameter `router` is nil.
  For UIView routing by ZIKViewRouteTypeAddAsSubview type, invoked after -addSubview: is called.
- For UIView routing from xib or from manually addSubview: or routed by ZIKViewRouteTypeGetDestination, invoked after destination is visible (did move to window), but not when -didMoveToSuperview:. See comments inside -ZIKViewRouter_hook_willMoveToSuperview: for more detial.
+ For UIView routing from xib or from manually addSubview: or routed by ZIKViewRouteTypeGetDestination, invoked after destination is visible (did move to window), but not in -didMoveToSuperview:. See comments inside -ZIKViewRouter_hook_willMoveToSuperview: for more detial.
  */
 + (void)router:(nullable ZIKViewRouter *)router didPerformRouteOnDestination:(id)destination fromSource:(nullable id)source;
 
@@ -123,7 +123,7 @@ NS_ASSUME_NONNULL_BEGIN
  
  For UIViewController or UIView removing from router, invoked before remove route action is called.
  For UIViewController not removing from router, invoked in -viewWillDisappear:. The parameter `router` is nil.
- For UIView not removing from router, invoked in willMoveToSuperview:nil. The parameter `router` is nil.
+ For UIView not removing from router, invoked in -willMoveToSuperview:nil. The parameter `router` is nil.
  */
 + (void)router:(nullable ZIKViewRouter *)router willRemoveRouteOnDestination:(id)destination fromSource:(nullable id)source;
 
@@ -134,7 +134,7 @@ NS_ASSUME_NONNULL_BEGIN
  
  For UIViewController or UIView removing from router, invoked after remove route action is called.
  For UIViewController not removing from router, invoked in -viewDidDisappear:. The parameter `router` is nil.
- For UIView not removing from router, invoked in didMoveToSuperview:nil. The parameter `router` is nil. The source may be nil, bacause superview may be dealloced
+ For UIView not removing from router, invoked in -didMoveToSuperview:nil. The parameter `router` is nil. The source may be nil, bacause superview may be dealloced.
  */
 + (void)router:(nullable ZIKViewRouter *)router didRemoveRouteOnDestination:(id)destination fromSource:(nullable id)source;
 

@@ -11,8 +11,6 @@
 
 #import <Foundation/Foundation.h>
 
-///Protocol inheriting from ZIKViewConfigRoutable can be used to fetch view router with ZIKViewRouterForConfig()
-
 /**
  Protocol inheriting from ZIKViewConfigRoutable can be used to fetch view router with ZIKViewRouterForConfig()
  @discussion

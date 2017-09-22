@@ -13,10 +13,11 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-///expost APIs to subclass
+///Expost APIs to subclass
 @interface ZIKRouter ()
+///Previous state
 @property (nonatomic, readonly, assign) ZIKRouterState preState;
-///subclass can get the real configuration to avoid unnecessary copy
+///Subclass can get the real configuration to avoid unnecessary copy
 @property (nonatomic, readonly, copy) __kindof ZIKRouteConfiguration *_nocopy_configuration;
 @property (nonatomic, readonly, copy) __kindof ZIKRouteConfiguration *_nocopy_removeConfiguration;
 @property (nonatomic, readonly, weak) id destination;
@@ -30,6 +31,7 @@ NS_ASSUME_NONNULL_BEGIN
 ///Change state
 - (void)notifyRouteState:(ZIKRouterState)state;
 
+///Call providerSucessHandler and performerSuccessHandler
 - (void)notifySuccessWithAction:(SEL)routeAction;
 
 ///Call providerErrorHandler and performerErrorHandler

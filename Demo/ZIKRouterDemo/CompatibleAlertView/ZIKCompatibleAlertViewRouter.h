@@ -40,7 +40,7 @@ NS_ASSUME_NONNULL_BEGIN
  @endcode
  */
 @interface ZIKCompatibleAlertViewRouter<__covariant ViewRouteConfiguration: ZIKViewRouteConfiguration<ZIKCompatibleAlertConfigProtocol> *, __covariant ViewRemoveConfiguration: ZIKViewRemoveConfiguration *> : ZIKViewRouter<ViewRouteConfiguration, ViewRemoveConfiguration> <ZIKViewRouterProtocol>
-+ (nullable __kindof ZIKViewRouter *)performWithSource:(id)source NS_UNAVAILABLE;
++ (nullable ZIKViewRouter *)performWithSource:(nullable id)source routeType:(ZIKViewRouteType)routeType NS_UNAVAILABLE;
 @end
 
 NS_ASSUME_NONNULL_END

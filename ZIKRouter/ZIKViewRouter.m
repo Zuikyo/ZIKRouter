@@ -757,10 +757,12 @@ _Nullable Class ZIKViewRouterForConfig(Protocol *configProtocol) {
     }
 }
 
-+ (__kindof ZIKViewRouter *)performWithSource:(id)source routeType:(ZIKViewRouteType)routeType {
++ (__kindof ZIKViewRouter *)performWithSource:(nullable id)source routeType:(ZIKViewRouteType)routeType {
     return [self performWithConfigure:^(ZIKRouteConfiguration *configuration) {
         ZIKViewRouteConfiguration *config = (ZIKViewRouteConfiguration *)configuration;
-        config.source = source;
+        if (source) {
+            config.source = source;
+        }
         config.routeType = routeType;
     }];
 }
@@ -802,7 +804,9 @@ _Nullable Class ZIKViewRouterForConfig(Protocol *configProtocol) {
 
 + (__kindof ZIKViewRouter *)performOnDestination:(id)destination source:(nullable id<ZIKViewRouteSource>)source routeType:(ZIKViewRouteType)routeType {
     return [self performOnDestination:destination configure:^(__kindof ZIKViewRouteConfiguration * _Nonnull config) {
-        config.source = source;
+        if (source) {
+            config.source = source;
+        }
         config.routeType = routeType;
     } removeConfigure:nil];
 }
@@ -1642,7 +1646,7 @@ destinationStateBeforeRoute:(ZIKPresentationState *)destinationStateBeforeRoute
 }
 
 - (void)removeRouteWithSuccessHandler:(void(^)(void))performerSuccessHandler
-                   performerErrorHandler:(void(^)(SEL routeAction, NSError *error))performerErrorHandler {
+                performerErrorHandler:(void(^)(SEL routeAction, NSError *error))performerErrorHandler {
     void(^doRemoveRoute)(void) = ^ {
         if (self.state != ZIKRouterStateRouted || !self._nocopy_configuration) {
             [self _o_callbackError_errorCode:ZIKViewRouteErrorActionFailed

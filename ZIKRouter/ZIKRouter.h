@@ -24,13 +24,16 @@ NS_ASSUME_NONNULL_BEGIN
 - (void)performRouteOnDestination:(nullable id)destination configuration:(__kindof ZIKRouteConfiguration *)configuration;
 + (__kindof ZIKRouteConfiguration *)defaultRouteConfiguration;
 
+///Whether the router can perform route now
 - (BOOL)canPerform;
+///Whether the router can remove route now
 - (BOOL)canRemove;
-//If you can undo your route action, such as dismiss a routed view, do remove in this
+///If you can undo your route action, such as dismiss a routed view, do remove in this
 - (void)removeDestination:(id)destination removeConfiguration:(__kindof ZIKRouteConfiguration *)removeConfiguration;
 + (__kindof ZIKRouteConfiguration *)defaultRemoveConfiguration;
 
 @optional
+///Whether the route action is synchronously
 + (BOOL)completeSynchronously;
 - (NSString *)errorDomain;
 
@@ -46,15 +49,27 @@ typedef NS_ENUM(NSInteger, ZIKRouterState) {
     ZIKRouterStateRemoveFailed
 };
 
-///Abstract class for router. A router for decoupling between modules, and injecting dependencies with protocol.
-@interface ZIKRouter<__covariant RouteConfiguration: ZIKRouteConfiguration *, __covariant RemoveConfiguration: ZIKRouteConfiguration *, __covariant RouterType: id> : NSObject <ZIKRouterProtocol>
+/**
+ Abstract class for router. A router for decoupling between modules, and injecting dependencies with protocol.
+ @discussion
+ Features:
+ 
+ 1. Prepare the route with protocol in block, instead of directly configuring the destination (the source is coupled with the destination if you do this) or in delegate method (in -prepareForSegue:sender: you have to distinguish different destinations, and they're alse coupled with source).
+ 
+ 2. Find destination with registered protocol, decoupling the source with the destination class.
+ 
+ 3. Specify a router with generic and protocol, then you can hide subclass but still can get routers with different functions.
+ 
+ See sample code in ZIKServiceRouter and ZIKViewRouter for more detail.
+ */
+@interface ZIKRouter<__covariant RouteConfiguration: ZIKRouteConfiguration *, __covariant RemoveConfiguration: ZIKRouteConfiguration *, __covariant RouterType> : NSObject <ZIKRouterProtocol>
 ///State of route
 @property (nonatomic, readonly, assign) ZIKRouterState state;
-///Configuration for performRoute; return copy of configuration, so modify this won't change the real configuration inside router
+///Configuration for performRoute; Return copy of configuration, so modify this won't change the real configuration inside router
 @property (nonatomic, readonly, copy) RouteConfiguration configuration;
 ///Configuration for removeRoute; return copy of configuration, so modify this won't change the real configuration inside router
 @property (nonatomic, readonly, copy ,nullable) RemoveConfiguration removeConfiguration;
-//Latest error when route action failed
+///Latest error when route action failed
 @property (nonatomic, readonly, strong, nullable) NSError *error;
 
 - (nullable instancetype)initWithConfiguration:(RouteConfiguration)configuration
@@ -66,26 +81,27 @@ typedef NS_ENUM(NSInteger, ZIKRouterState) {
 + (instancetype)new NS_UNAVAILABLE;
 
 - (BOOL)canPerform;
-///Not thread safe
+///Perform route directly. Not thread safe
 - (void)performRoute;
-///Not thread safe
+///Perform with success handler and error handler. Not thread safe
 - (void)performRouteWithSuccessHandler:(void(^ __nullable)(void))performerSuccessHandler
-                    performerErrorHandler:(void(^ __nullable)(SEL routeAction, NSError *error))performerErrorHandler;
+                 performerErrorHandler:(void(^ __nullable)(SEL routeAction, NSError *error))performerErrorHandler;
 
 - (BOOL)canRemove;
 ///Not thread safe
 - (void)removeRoute;
-///Not thread safe
+///Remove with success handler and error handler. Not thread safe
 - (void)removeRouteWithSuccessHandler:(void(^ __nullable)(void))performerSuccessHandler
-                   performerErrorHandler:(void(^ __nullable)(SEL routeAction, NSError *error))performerErrorHandler;
+                performerErrorHandler:(void(^ __nullable)(SEL routeAction, NSError *error))performerErrorHandler;
 
-///If this route action doesn't need any argument, just perform directly
+///If this route action doesn't need any arguments, just perform directly
 + (nullable RouterType)performRoute;
 ///Set dependencies required by destination and perform route
 + (nullable RouterType)performWithConfigure:(void(NS_NOESCAPE ^)(RouteConfiguration config))configBuilder;
 + (nullable RouterType)performWithConfigure:(void(NS_NOESCAPE ^)(RouteConfiguration config))configBuilder
                                       removeConfigure:(void(NS_NOESCAPE ^ _Nullable)(RemoveConfiguration config))removeConfigBuilder;
 
+///Whether the route action is synchronously
 + (BOOL)completeSynchronously;
 + (NSString *)descriptionOfState:(ZIKRouterState)state;
 @end
@@ -116,7 +132,7 @@ typedef void(^ZIKRouteStateNotifier)(ZIKRouterState oldState, ZIKRouterState new
 @property (nonatomic, copy, nullable) void(^performerSuccessHandler)(void);
 
 /**
- Monitor state change
+ Monitor state
  @note
  Use weakSelf in stateNotifier to avoid retain cycle.
  */

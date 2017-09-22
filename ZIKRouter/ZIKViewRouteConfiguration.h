@@ -21,7 +21,7 @@ typedef NS_ENUM(NSInteger,ZIKViewRouteType) {
     ZIKViewRouteTypePush,
     ///Navigation using @code-[source presentViewController:animated:completion:]@endcode Source must be a UIViewController.
     ZIKViewRouteTypePresentModally,
-    ///Adaptative type. Popover for iPad, present modally for iPhone
+    ///Adaptative type. Popover for iPad, present modally for iPhone.
     ZIKViewRouteTypePresentAsPopover,
     ///Navigation using @code[source performSegueWithIdentifier:destination sender:sender]@endcode If segue's destination doesn't comform to ZIKRoutableView, just use ZIKViewRouter to perform the segue. If destination contains child view controllers, and childs conform to ZIKRoutableView, prepareForRoute and routeCompletion will be called repeatedly for each routable view.
     ZIKViewRouteTypePerformSegue,
@@ -89,7 +89,7 @@ typedef void(^ZIKViewRouteSegueConfigure)(ZIKViewRouteSegueConfiguration *segueC
 typedef void(^ZIKViewRoutePopoverConfiger)(NS_NOESCAPE ZIKViewRoutePopoverConfigure);
 typedef void(^ZIKViewRouteSegueConfiger)(NS_NOESCAPE ZIKViewRouteSegueConfigure);
 
-///Config of route. You can also use a subclass to add complex dependencies for destination. Your subclass must conforms to NSCopying.
+///Configuration of route. You can also use a subclass to add complex dependencies for destination. Your subclass must conforms to NSCopying, because the configuration need to be copied when routing.
 @interface ZIKViewRouteConfiguration : ZIKRouteConfiguration <NSCopying>
 
 /**
@@ -123,7 +123,7 @@ typedef void(^ZIKViewRouteSegueConfiger)(NS_NOESCAPE ZIKViewRouteSegueConfigure)
 @property (nonatomic, copy, nullable) ZIKViewRouteContainerWrapper containerWrapper;
 
 /**
- Prepare for performRoute, and config other dependency for destination here. Subclass can offer more specific info.
+ Prepare for performRoute, and config other dependencies for destination here. Subclass can offer more specific info.
  
  @discussion
  For ZIKViewRouteTypePush, ZIKViewRouteTypePresentModally,  ZIKViewRouteTypePresentAsPopover, ZIKViewRouteTypeShow, ZIKViewRouteTypeShowDetail, ZIKViewRouteTypeAddAsChildViewController, destination is a UIViewController.
@@ -176,14 +176,13 @@ typedef void(^ZIKViewRouteSegueConfiger)(NS_NOESCAPE ZIKViewRouteSegueConfigure)
 
 @interface ZIKViewRoutePopoverConfiguration : ZIKRouteConfiguration <NSCopying>
 
-///UIPopoverPresentationControllerDelegate for above iOS8, UIPopoverControllerDelegate for iOS7
+///UIPopoverPresentationControllerDelegate for iOS8 and above, UIPopoverControllerDelegate for iOS7
 @property (nonatomic, weak, nullable) id<UIPopoverPresentationControllerDelegate> delegate;
 @property (nonatomic, weak, nullable) UIBarButtonItem *barButtonItem;
 @property (nonatomic, weak, nullable) UIView *sourceView;
 @property (nonatomic, assign) CGRect sourceRect;
 @property (nonatomic, assign) UIPopoverArrowDirection permittedArrowDirections;
-
-@property (nonatomic, copy, nullable) NSArray<__kindof UIView *> *passthroughViews;//TODO:change strong reference to weak
+@property (nonatomic, copy, nullable) NSArray<__kindof UIView *> *passthroughViews;
 @property (nonatomic, copy, nullable) UIColor *backgroundColor NS_AVAILABLE_IOS(7_0);
 @property (nonatomic, assign) UIEdgeInsets popoverLayoutMargins;
 @property (nonatomic, strong, nullable) Class popoverBackgroundViewClass;
@@ -218,7 +217,7 @@ typedef void(^ZIKViewRouteSegueConfiger)(NS_NOESCAPE ZIKViewRouteSegueConfigure)
  If a UIViewController/UIView is routing from storyboard or a UIView is added by -addSubview:, the view will be detected, and a router will be created to prepare it. If the view need prepare, the router will search the performer of current route and call this method to prepare the destination.
  @note If a UIViewController is routing from manually code or is the initial view controller of app in storyboard (like directly use [performer.navigationController pushViewController:destination animated:YES]), the view will be detected, but won't create a router to search performer and prepare the destination, because we don't know which view controller is the performer calling -pushViewController:animated: (any child view controller in navigationController's stack can perform the route).
  
- @param destination The view will be routed. You can distinguish destinations with their view protocols.
+ @param destination The view to be routed. You can distinguish destinations with their view protocols.
  @param configuration Config for the route. You can distinguish destinations with their router's config protocols. You can modify this to prepare the route, but source, routeType, segueConfiguration, handleExternalRoute won't be modified even you change them.
  */
 - (void)prepareForDestinationRoutingFromExternal:(id)destination configuration:(__kindof ZIKViewRouteConfiguration *)configuration;

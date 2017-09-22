@@ -18,7 +18,6 @@ typedef NS_ENUM(NSInteger,ZIKViewRouteDetailType) {
     ZIKViewRouteDetailTypePush,
     ZIKViewRouteDetailTypePresentModally,
     ZIKViewRouteDetailTypePresentAsPopover,
-    ///@code[source addChildViewController:destination]@endcode
     ZIKViewRouteDetailTypeAddAsChildViewController,
     ZIKViewRouteDetailTypeChangeParentViewController,
     ZIKViewRouteDetailTypeRemoveFromParentViewController,

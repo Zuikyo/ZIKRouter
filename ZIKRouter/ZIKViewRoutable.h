@@ -19,8 +19,6 @@
  1. Checking declared protocol is correctly supported in it's view router
  
  It's safe to use protocols inheriting from ZIKViewRoutable with ZIKViewRouterForView() and won't get nil. ZIKViewRouter will validate all ZIKViewRoutable protocols and registered protocols when app launch and ZIKVIEWROUTER_CHECK is enbled. When ZIKVIEWROUTER_CHECK is disabled, the protocol doesn't need to inheriting from ZIKViewRoutable.
- 
- In Swift, you have to use @objc protocol for ZIKViewRouterForView() and other similar functions. If you don't want to use @objc protocol in Swift, you can get the router class by dependency injection.
  */
 @protocol ZIKViewRoutable <NSObject>
 
