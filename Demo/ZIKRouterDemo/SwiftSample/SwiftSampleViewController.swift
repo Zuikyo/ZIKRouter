@@ -24,7 +24,7 @@ class SwiftSampleViewController: UIViewController, SwiftSampleViewProtocol, ZIKI
     @IBAction func testRouteForView(_ sender: Any) {
         self.infoRouter = ZIKSViewRouterForView(ZIKInfoViewProtocol.self)?.perform { config in
             config.source = self
-            config.routeType = ZIKViewRouteType.push
+            config.routeType = ZIKViewRouteType.presentModally
             config.prepareForRoute = { [weak self] des in
                 let destination = des as! ZIKInfoViewProtocol
                 destination.delegate = self
