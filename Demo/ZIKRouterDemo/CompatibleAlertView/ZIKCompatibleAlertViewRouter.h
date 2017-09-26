@@ -20,23 +20,32 @@ NS_ASSUME_NONNULL_BEGIN
 @end
 
 /**
- In Swift 4, you can't cast router type like this:
+ In Swift, you can't cast router type like this:
  @code
- var alertRouterClass: ZIKViewRouter<ZIKViewRouteConfiguration, ZIKViewRemoveConfiguration>.Type?
+ let alertRouterClass: ZIKViewRouter<ZIKViewRouteConfiguration, ZIKViewRemoveConfiguration>.Type
  
- //Swift 4 compiles with error, but in Swift 3, this is allowed.
+ //Compiler error, bacause Swift doesn't support covariance for custom generic yet.
  //ZIKCompatibleAlertViewRouter.Type is ZIKViewRouter<ZIKViewRouteConfiguration & ZIKCompatibleAlertConfigProtocol, ZIKViewRemoveConfiguration>.Type
  alertRouterClass = ZIKCompatibleAlertViewRouter.self
  @endcode
+ 
+ Solution 1:
  If you wan't to use ZIKCompatibleAlertViewRouter more freely, you can remove `<ZIKCompatibleAlertConfigProtocol>` in ViewRouteConfiguration, and let user to specify the ViewRouteConfiguration when they use. But it's not that safe:
  @code
- var alertRouterClass: ZIKViewRouter<ZIKViewRouteConfiguration & ZIKCompatibleAlertConfigProtocol, ZIKViewRemoveConfiguration>.Type?
+ let alertRouterClass: ZIKViewRouter<ZIKViewRouteConfiguration & ZIKCompatibleAlertConfigProtocol, ZIKViewRemoveConfiguration>.Type
  
- //This is allowed in Swift 4
+ //This is allowed in Swift
  alertRouterClass = ZIKCompatibleAlertViewRouter.self
  
  var routerClass: ZIKViewRouter<ZIKViewRouteConfiguration, ZIKViewRemoveConfiguration>.Type?
  routerClass = ZIKCompatibleAlertViewRouter.self
+ @endcode
+ 
+ Solution 2:
+ If you want to keep `<ZIKCompatibleAlertConfigProtocol>`, you can cast ZIKCompatibleAlertViewRouter to ZIKViewRouter<ZIKViewRouteConfiguration, ZIKViewRemoveConfiguration>.Type with ZIKViewRouterForConfig():
+ @code
+ let routerClass: ZIKViewRouter<ZIKViewRouteConfiguration, ZIKViewRemoveConfiguration>.Type
+ routerClass = ZIKViewRouterForConfig(ZIKCompatibleAlertConfigProtocol.self) as! ZIKViewRouter<ZIKViewRouteConfiguration, ZIKViewRemoveConfiguration>.Type
  @endcode
  */
 @interface ZIKCompatibleAlertViewRouter<__covariant ViewRouteConfiguration: ZIKViewRouteConfiguration<ZIKCompatibleAlertConfigProtocol> *, __covariant ViewRemoveConfiguration: ZIKViewRemoveConfiguration *> : ZIKViewRouter<ViewRouteConfiguration, ViewRemoveConfiguration> <ZIKViewRouterProtocol>
