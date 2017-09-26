@@ -48,7 +48,7 @@ NS_ASSUME_NONNULL_BEGIN
  routerClass = ZIKViewRouterForConfig(ZIKCompatibleAlertConfigProtocol.self) as! ZIKViewRouter<ZIKViewRouteConfiguration, ZIKViewRemoveConfiguration>.Type
  @endcode
  */
-@interface ZIKCompatibleAlertViewRouter<__covariant ViewRouteConfiguration: ZIKViewRouteConfiguration<ZIKCompatibleAlertConfigProtocol> *, __covariant ViewRemoveConfiguration: ZIKViewRemoveConfiguration *> : ZIKViewRouter<ViewRouteConfiguration, ViewRemoveConfiguration> <ZIKViewRouterProtocol>
+@interface ZIKCompatibleAlertViewRouter<__covariant RouteConfig: ZIKViewRouteConfiguration<ZIKCompatibleAlertConfigProtocol> *, __covariant RemoveConfig: ZIKViewRemoveConfiguration *> : ZIKViewRouter<RouteConfig, RemoveConfig> <ZIKViewRouterProtocol>
 + (nullable ZIKViewRouter *)performWithSource:(nullable id)source routeType:(ZIKViewRouteType)routeType NS_UNAVAILABLE;
 @end
 
