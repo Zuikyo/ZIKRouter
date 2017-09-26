@@ -53,7 +53,7 @@ typedef void(^ZIKViewRouteGlobalErrorHandler)(__kindof ZIKViewRouter * _Nullable
  
  When Adding a registered UIView by code or xib, a router will be auto created. We search the view controller with custom class (not system class like native UINavigationController, or any container view controller) in it's responder hierarchy as the performer. If the registered UIView needs preparing, you have to add the view to a superview in a view controller before it removed from superview. There will be an assert failure if there is no view controller to prepare it (such as: 1. add it to a superview, and the superview is never added to a view controller; 2. add it to a UIWindow). If your custom class view use a routable view as it's subview, the custom view should use a router to add and prepare the routable view, then the routable view don't need to search performer because it already prepared.
  */
-@interface ZIKViewRouter<__covariant ViewRouteConfiguration: ZIKViewRouteConfiguration *, __covariant ViewRemoveConfiguration: ZIKViewRemoveConfiguration *> : ZIKRouter<ViewRouteConfiguration, ViewRemoveConfiguration, ZIKViewRouter *> <ZIKViewRouterProtocol>
+@interface ZIKViewRouter<__covariant RouteConfig: ZIKViewRouteConfiguration *, __covariant RemoveConfig: ZIKViewRemoveConfiguration *> : ZIKRouter<RouteConfig, RemoveConfig, ZIKViewRouter *> <ZIKViewRouterProtocol>
 
 ///If this router's view is a UIViewController routed from storyboard, or a UIView added as subview from xib or code, a router will be auto created to prepare the view, and the router's autoCreated is YES; But when a UIViewController is routed from code manually or is the initial view controller of app in storyboard, router won't be auto created because we can't find the performer to prepare the destination.
 @property (nonatomic, readonly, assign) BOOL autoCreated;
@@ -77,14 +77,14 @@ typedef void(^ZIKViewRouteGlobalErrorHandler)(__kindof ZIKViewRouter * _Nullable
  */
 - (BOOL)canPerform;
 
-+ (nullable ZIKViewRouter<ViewRouteConfiguration,ViewRemoveConfiguration> *)performRoute NS_UNAVAILABLE;
++ (nullable ZIKViewRouter<RouteConfig,RemoveConfig> *)performRoute NS_UNAVAILABLE;
 
 ///Convenient method to perform route
-+ (nullable ZIKViewRouter<ViewRouteConfiguration,ViewRemoveConfiguration> *)performWithConfigure:(void(NS_NOESCAPE ^)(ViewRouteConfiguration config))configBuilder
-                                                                                 removeConfigure:(void(NS_NOESCAPE ^ _Nullable)(ViewRemoveConfiguration config))removeConfigBuilder;
-+ (nullable ZIKViewRouter<ViewRouteConfiguration,ViewRemoveConfiguration> *)performWithConfigure:(void(NS_NOESCAPE ^)(ViewRouteConfiguration config))configBuilder;
++ (nullable ZIKViewRouter<RouteConfig,RemoveConfig> *)performWithConfigure:(void(NS_NOESCAPE ^)(RouteConfig config))configBuilder
+                                                           removeConfigure:(void(NS_NOESCAPE ^ _Nullable)(RemoveConfig config))removeConfigBuilder;
++ (nullable ZIKViewRouter<RouteConfig,RemoveConfig> *)performWithConfigure:(void(NS_NOESCAPE ^)(RouteConfig config))configBuilder;
 ///If this destination doesn't need any variable to initialize, just pass source and perform route.
-+ (nullable ZIKViewRouter<ViewRouteConfiguration,ViewRemoveConfiguration> *)performWithSource:(nullable id<ZIKViewRouteSource>)source routeType:(ZIKViewRouteType)routeType;
++ (nullable ZIKViewRouter<RouteConfig,RemoveConfig> *)performWithSource:(nullable id<ZIKViewRouteSource>)source routeType:(ZIKViewRouteType)routeType;
 
 /**
  Perform route on destination. If you get a prepared destination by ZIKViewRouteTypeGetDestination, you can use this method to perform route on the destination.
@@ -94,12 +94,12 @@ typedef void(^ZIKViewRouteGlobalErrorHandler)(__kindof ZIKViewRouter * _Nullable
  @param removeConfigBuilder Builder for config when remove route
  @return A router for the destination. If the destination is not registered with this router class, return nil and get assert failure.
  */
-+ (nullable ZIKViewRouter<ViewRouteConfiguration,ViewRemoveConfiguration> *)performOnDestination:(id)destination
-                                                                                       configure:(void(NS_NOESCAPE ^)(ViewRouteConfiguration config))configBuilder
-                                                                                 removeConfigure:(void(NS_NOESCAPE ^ _Nullable)(ViewRemoveConfiguration config))removeConfigBuilder;
-+ (nullable ZIKViewRouter<ViewRouteConfiguration,ViewRemoveConfiguration> *)performOnDestination:(id)destination
-                                                                                       configure:(void(NS_NOESCAPE ^)(ViewRouteConfiguration config))configBuilder;
-+ (nullable ZIKViewRouter<ViewRouteConfiguration,ViewRemoveConfiguration> *)performOnDestination:(id)destination source:(nullable id<ZIKViewRouteSource>)source routeType:(ZIKViewRouteType)routeType;
++ (nullable ZIKViewRouter<RouteConfig,RemoveConfig> *)performOnDestination:(id)destination
+                                                                 configure:(void(NS_NOESCAPE ^)(RouteConfig config))configBuilder
+                                                           removeConfigure:(void(NS_NOESCAPE ^ _Nullable)(RemoveConfig config))removeConfigBuilder;
++ (nullable ZIKViewRouter<RouteConfig,RemoveConfig> *)performOnDestination:(id)destination
+                                                                 configure:(void(NS_NOESCAPE ^)(RouteConfig config))configBuilder;
++ (nullable ZIKViewRouter<RouteConfig,RemoveConfig> *)performOnDestination:(id)destination source:(nullable id<ZIKViewRouteSource>)source routeType:(ZIKViewRouteType)routeType;
 
 /**
  Prepare destination from external, then you can use the router to perform route.
@@ -111,11 +111,11 @@ typedef void(^ZIKViewRouteGlobalErrorHandler)(__kindof ZIKViewRouter * _Nullable
  @param removeConfigBuilder Builder for config when remove route.
  @return A router for the destination. If the destination is not registered with this router class, return nil and get assert failure.
  */
-+ (nullable ZIKViewRouter<ViewRouteConfiguration,ViewRemoveConfiguration> *)prepareDestination:(id)destination
-                                                                                     configure:(void(NS_NOESCAPE ^)(ViewRouteConfiguration config))configBuilder
-                                                                               removeConfigure:(void(NS_NOESCAPE ^ _Nullable)(ViewRemoveConfiguration config))removeConfigBuilder;
-+ (nullable ZIKViewRouter<ViewRouteConfiguration,ViewRemoveConfiguration> *)prepareDestination:(id)destination
-                                                                                     configure:(void(NS_NOESCAPE ^)(ViewRouteConfiguration config))configBuilder;
++ (nullable ZIKViewRouter<RouteConfig,RemoveConfig> *)prepareDestination:(id)destination
+                                                               configure:(void(NS_NOESCAPE ^)(RouteConfig config))configBuilder
+                                                         removeConfigure:(void(NS_NOESCAPE ^ _Nullable)(RemoveConfig config))removeConfigBuilder;
++ (nullable ZIKViewRouter<RouteConfig,RemoveConfig> *)prepareDestination:(id)destination
+                                                               configure:(void(NS_NOESCAPE ^)(RouteConfig config))configBuilder;
 /**
  Whether can remove a performed view route. Always use it in main thread, bacause state may be changed in main thread after you check the state in child thread.
  @discussion
