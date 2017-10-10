@@ -74,28 +74,17 @@
                            }];
 }
 
-- (IBAction)performSegueForMultiRoutableDestinations:(id)sender {
-    __weak typeof(self) weakSelf = self;
-    //If destination doesn't comform to ZIKRoutableView, just use ZIKViewRouter to perform the segue. If destination contains child view controllers, and childs conform to ZIKRoutableView, prepareForRoute and routeCompletion will callback for multi times.
+- (IBAction)performSegueForUnroutableDestination:(id)sender {
+    //If destination doesn't comform to ZIKRoutableView, just use ZIKViewRouter to perform the segue.
     self.segueRouter = [ZIKViewRouter<ZIKViewRouteConfiguration *, ZIKViewRemoveConfiguration *>
                         performWithConfigure:^(ZIKViewRouteConfiguration * _Nonnull config) {
                             config.source = self;
                             config.routeType = ZIKViewRouteTypePerformSegue;
                             config.configureSegue(^(ZIKViewRouteSegueConfiguration * _Nonnull segueConfig) {
-                                segueConfig.identifier = @"showMultiRoutableDestinations";
+                                segueConfig.identifier = @"showUnroutableDestination";
                             });
                             config.prepareForRoute = ^(id _Nonnull destination) {
-                                if ([destination conformsToProtocol:@protocol(ZIKInfoViewProtocol)]) {
-                                    id<ZIKInfoViewProtocol> infoView = destination;
-                                    infoView.delegate = weakSelf;
-                                    infoView.name = @"Zuik";
-                                    infoView.age = 18;
-                                } else if ([destination conformsToProtocol:@protocol(ZIKSimpleLabelProtocol)]) {
-                                    id<ZIKSimpleLabelProtocol> simpleLabel = destination;
-                                    simpleLabel.text = @"multi routable destinations";
-                                } else {
-                                    NSLog(@"prepare for unroutable destination:%@",destination);
-                                }
+                                NSLog(@"prepare for unroutable destination:%@",destination);
                             };
                             config.routeCompletion = ^(id  _Nonnull destination) {
                                 NSLog(@"perform segue complete for destination:%@",destination);

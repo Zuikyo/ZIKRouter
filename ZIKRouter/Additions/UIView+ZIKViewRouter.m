@@ -55,7 +55,7 @@
         }
         
         UIViewController *parent = [(UIViewController *)nextResponder parentViewController];
-        NSAssert(parent, @"view controller should have parent");
+        NSAssert(parent, @"view controller should have parent. This UIView may be added to a system UIViewController's view, you should use a custom UIViewController and prepare this UIView inside the custom UIViewController.");
         while (parent &&
                (!ZIKRouter_classIsCustomClass([parent class]) ||
                [parent isKindOfClass:[UITabBarController class]] ||

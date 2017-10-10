@@ -23,7 +23,7 @@ typedef NS_ENUM(NSInteger,ZIKViewRouteType) {
     ZIKViewRouteTypePresentModally,
     ///Adaptative type. Popover for iPad, present modally for iPhone.
     ZIKViewRouteTypePresentAsPopover,
-    ///Navigation using @code[source performSegueWithIdentifier:destination sender:sender]@endcode If segue's destination doesn't comform to ZIKRoutableView, just use ZIKViewRouter to perform the segue. If destination contains child view controllers, and childs conform to ZIKRoutableView, prepareForRoute and routeCompletion will be called repeatedly for each routable view.
+    ///Navigation using @code[source performSegueWithIdentifier:destination sender:sender]@endcode If segue's destination doesn't comform to ZIKRoutableView, just use ZIKViewRouter to perform the segue.
     ZIKViewRouteTypePerformSegue,
     /**
      Adaptative type. Navigation using @code-[source showViewController:destination sender:sender]@endcode
@@ -132,7 +132,6 @@ typedef void(^ZIKViewRouteSegueConfiger)(NS_NOESCAPE ZIKViewRouteSegueConfigure)
  
  For ZIKViewRouteTypePerformSegue and ZIKViewRouteTypeCustom, destination is a UIViewController or UIView.
  
- For ZIKViewRouteTypePerformSegue, if destination contains child view controllers, and childs conform to ZIKRoutableView, prepareForRoute will alse be called for each childs.
  @note
  Use weakSelf in prepareForRoute to avoid retain cycle.
  */
@@ -147,8 +146,6 @@ typedef void(^ZIKViewRouteSegueConfiger)(NS_NOESCAPE ZIKViewRouteSegueConfigure)
  For ZIKViewRouteTypeAddAsSubview, destination is a UIView.
  
  For ZIKViewRouteTypePerformSegue and ZIKViewRouteTypeCustom, destination is a UIViewController or UIView.
- 
- For ZIKViewRouteTypePerformSegue, if destination contains child view controllers, and childs conform to ZIKRoutableView, routeCompletion will alse be called for each childs.
  
  @note
  Use weakSelf in routeCompletion to avoid retain cycle.

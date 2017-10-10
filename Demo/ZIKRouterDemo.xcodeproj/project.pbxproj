@@ -51,6 +51,7 @@
 		F84239D81F0CDE78000FEE5F /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = F84239D61F0CDE78000FEE5F /* Main.storyboard */; };
 		F84239DA1F0CDE78000FEE5F /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = F84239D91F0CDE78000FEE5F /* Assets.xcassets */; };
 		F84239DD1F0CDE78000FEE5F /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = F84239DB1F0CDE78000FEE5F /* LaunchScreen.storyboard */; };
+		F85283B21F8CF43F0093C812 /* ZIKUnroutableViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = F85283B11F8CF43F0093C812 /* ZIKUnroutableViewController.m */; };
 		F85F4D471F2242C2003106C3 /* ZIKRouter.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F85F4D441F22424D003106C3 /* ZIKRouter.framework */; };
 		F85F4D491F22535D003106C3 /* ZIKRouter.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = F85F4D441F22424D003106C3 /* ZIKRouter.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		F8BCCB981F208D2B0051716B /* MasterViewRouter.m in Sources */ = {isa = PBXBuildFile; fileRef = F8BCCB971F208D2B0051716B /* MasterViewRouter.m */; };
@@ -183,6 +184,8 @@
 		F84239D91F0CDE78000FEE5F /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		F84239DC1F0CDE78000FEE5F /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		F84239DE1F0CDE78000FEE5F /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		F85283B01F8CF43F0093C812 /* ZIKUnroutableViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ZIKUnroutableViewController.h; sourceTree = "<group>"; };
+		F85283B11F8CF43F0093C812 /* ZIKUnroutableViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ZIKUnroutableViewController.m; sourceTree = "<group>"; };
 		F85F4D3E1F22424C003106C3 /* ZIKRouter.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = ZIKRouter.xcodeproj; path = ../ZIKRouter.xcodeproj; sourceTree = "<group>"; };
 		F8BCCB961F208D2B0051716B /* MasterViewRouter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; lineEnding = 0; path = MasterViewRouter.h; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objcpp; };
 		F8BCCB971F208D2B0051716B /* MasterViewRouter.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MasterViewRouter.m; sourceTree = "<group>"; };
@@ -331,6 +334,8 @@
 			children = (
 				F82ECAA71F17DC51007168AA /* ZIKTestPerformSegueViewController.h */,
 				F82ECAA81F17DC51007168AA /* ZIKTestPerformSegueViewController.m */,
+				F85283B01F8CF43F0093C812 /* ZIKUnroutableViewController.h */,
+				F85283B11F8CF43F0093C812 /* ZIKUnroutableViewController.m */,
 				F82ECAA91F17DC51007168AA /* ZIKTestPerformSegueViewRouter.h */,
 				F82ECAAA1F17DC51007168AA /* ZIKTestPerformSegueViewRouter.m */,
 				F82ECAA51F17DC51007168AA /* ZIKCustomTransitionSegue.h */,
@@ -574,6 +579,7 @@
 				F82ECAC61F17DC51007168AA /* ZIKTestGetDestinationViewController.m in Sources */,
 				F82ECAC21F17DC51007168AA /* ZIKDemoParentViewController.m in Sources */,
 				F84239CF1F0CDE78000FEE5F /* AppDelegate.m in Sources */,
+				F85283B21F8CF43F0093C812 /* ZIKUnroutableViewController.m in Sources */,
 				F84239D21F0CDE78000FEE5F /* MasterViewController.m in Sources */,
 				F82ECAD61F17DC51007168AA /* ZIKTestPresentAsPopoverViewRouter.m in Sources */,
 				F82ECABD1F17DC51007168AA /* ZIKCompatibleAlertViewRouter.m in Sources */,

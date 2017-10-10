@@ -2697,10 +2697,9 @@ destinationStateBeforeRoute:(ZIKPresentationState *)destinationStateBeforeRoute
         
         [(UIViewController *)self setZIK_sourceViewRouter:nil];
         [source setZIK_sourceViewRouter:sourceRouter];//Set nil in -ZIKViewRouter_hook_seguePerform
-        [destination setZIK_sourceViewRouter:sourceRouter];
     }
     
-    NSMutableArray<ZIKViewRouter *> *destinationRouters;//routers for child view controllers conform to ZIKRoutableView in destination
+    NSMutableArray<ZIKViewRouter *> *destinationRouters;//routers for child view controllers conform to ZIKRoutableView in destination and the router performing this  segue
     NSMutableArray<UIViewController *> *routableViews;
     
     if (!isUnwindSegue) {
@@ -2746,13 +2745,12 @@ destinationStateBeforeRoute:(ZIKPresentationState *)destinationStateBeforeRoute
     [self ZIKViewRouter_hook_prepareForSegue:segue sender:sender];
     [(UIViewController *)self setZIK_currentClassCallingPrepareForSegue:nil];
     
-    void(^prepareForRouteInSourceRouter)(id destination);
-    if (sourceRouter) {
-        prepareForRouteInSourceRouter = sourceRouter._nocopy_configuration.prepareForRoute;
-    }
-    
     //Prepare for unwind destination or unroutable views
     if (sourceRouter && sourceRouter._nocopy_configuration.segueConfiguration.segueDestination == destination) {
+        void(^prepareForRouteInSourceRouter)(id destination);
+        if (sourceRouter) {
+            prepareForRouteInSourceRouter = sourceRouter._nocopy_configuration.prepareForRoute;
+        }
         if (isUnwindSegue) {
             if (prepareForRouteInSourceRouter) {
                 prepareForRouteInSourceRouter(destination);
@@ -2774,9 +2772,6 @@ destinationStateBeforeRoute:(ZIKPresentationState *)destinationStateBeforeRoute
         [router notifyRouteState:ZIKRouterStateRouting];
         if (sourceRouter) {
             //Segue is performed from a router
-            if (prepareForRouteInSourceRouter) {
-                prepareForRouteInSourceRouter(routableView);
-            }
             [router prepareForPerformRouteOnDestination:routableView];
         } else {
             //View controller is from storyboard, need to notify the performer of segue to config the destination
@@ -2806,27 +2801,24 @@ destinationStateBeforeRoute:(ZIKPresentationState *)destinationStateBeforeRoute
     
     UIViewController *destination = [(UIStoryboardSegue *)self destinationViewController];
     UIViewController *source = [(UIStoryboardSegue *)self sourceViewController];
-    ZIKViewRouter *sourceRouter = [source ZIK_sourceViewRouter];//Set in -ZIKViewRouter_hook_prepareForSegue:sender:
+    ZIKViewRouter *sourceRouter = [source ZIK_sourceViewRouter];//Was set in -ZIKViewRouter_hook_prepareForSegue:sender:
     NSArray<ZIKViewRouter *> *destinationRouters = [destination ZIK_destinationViewRouters];
     
     //Call original implementation of current class
     [self ZIKViewRouter_hook_seguePerform];
     [(UIStoryboardSegue *)self setZIK_currentClassCallingPerform:nil];
     
-    //If this is not a unwind route, and destination contains routable views (see ZIKViewRouter_hook_prepareForSegue:sender:)
     if (destinationRouters.count > 0) {
         [destination setZIK_destinationViewRouters:nil];
     }
     if (sourceRouter) {
         [source setZIK_sourceViewRouter:nil];
-        [destination setZIK_sourceViewRouter:nil];
     }
     
     id <UIViewControllerTransitionCoordinator> transitionCoordinator = [source ZIK_currentTransitionCoordinator];
     if (!transitionCoordinator) {
         transitionCoordinator = [destination ZIK_currentTransitionCoordinator];
     }
-    void(^routeCompletionInSourceRouter)(id destination);
     if (sourceRouter) {
         //Complete unwind route. Unwind route doesn't need to config destination
         if (sourceRouter.realRouteType == ZIKViewRouteRealTypeUnwind &&
@@ -2838,11 +2830,10 @@ destinationStateBeforeRoute:(ZIKPresentationState *)destinationStateBeforeRoute
             }];
             return;
         }
-        routeCompletionInSourceRouter = sourceRouter._nocopy_configuration.routeCompletion;
     }
     
     //Complete routable views
-    for (NSInteger idx = destinationRouters.count - 1; idx >= 0; idx--) {
+    for (NSInteger idx = 0; idx < destinationRouters.count; idx++) {
         ZIKViewRouter *router = [destinationRouters objectAtIndex:idx];
         UIViewController *routableView = router.destination;
         ZIKPresentationState *destinationStateBeforeRoute = router._nocopy_configuration.segueConfiguration.destinationStateBeforeRoute;
@@ -2860,9 +2851,6 @@ destinationStateBeforeRoute:(ZIKPresentationState *)destinationStateBeforeRoute
                                       if (routableView == sourceRouter.destination) {
                                           NSAssert(idx == 0, @"If destination is in destinationRouters, it should be at index 0.");
                                           NSAssert(router == sourceRouter, nil);
-                                      } else if (routeCompletionInSourceRouter) {
-                                          //Let performer prepare each routable views
-                                          routeCompletionInSourceRouter(routableView);
                                       }
                                   }
                                   [ZIKViewRouter AOP_notifyAll_router:router didPerformRouteOnDestination:routableView fromSource:source];

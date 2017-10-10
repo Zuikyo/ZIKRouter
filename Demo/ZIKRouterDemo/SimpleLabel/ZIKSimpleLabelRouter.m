@@ -28,7 +28,7 @@
 }
 
 + (BOOL)destinationPrepared:(ZIKSimpleLabel *)destination {
-    if (!destination.text) {
+    if (destination.text.length == 0) {
         return NO;
     }
     return YES;
