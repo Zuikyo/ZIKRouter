@@ -35,7 +35,7 @@ typedef void(^ZIKViewRouteGlobalErrorHandler)(__kindof ZIKViewRouter * _Nullable
  
  1. Support all route types in UIKit, and can remove the destination without using -popViewControllerAnimated:/-dismissViewControllerAnimated:completion:/removeFromParentViewController/removeFromSuperview in different sistuation. Router can choose the proper method. You can alse add custom route type.
  
- 2. Support storyboard. UIViewController and UIView from a segue can auto create it's registered router (but the initial view controller of app is exceptional, it's not from a segue).
+ 2. Support storyboard. UIViewController and UIView from a segue can auto create it's registered router.
  
  3. Enough error checking for route action.
  
@@ -55,7 +55,7 @@ typedef void(^ZIKViewRouteGlobalErrorHandler)(__kindof ZIKViewRouter * _Nullable
  */
 @interface ZIKViewRouter<__covariant RouteConfig: ZIKViewRouteConfiguration *, __covariant RemoveConfig: ZIKViewRemoveConfiguration *> : ZIKRouter<RouteConfig, RemoveConfig, ZIKViewRouter *> <ZIKViewRouterProtocol>
 
-///If this router's view is a UIViewController routed from storyboard, or a UIView added as subview from xib or code, a router will be auto created to prepare the view, and the router's autoCreated is YES; But when a UIViewController is routed from code manually or is the initial view controller of app in storyboard, router won't be auto created because we can't find the performer to prepare the destination.
+///If this router's view is a UIViewController routed from storyboard, or a UIView added as subview from xib or code, a router will be auto created to prepare the view, and the router's autoCreated is YES; But when a UIViewController is routed from code manually, router won't be auto created because we can't find the performer to prepare the destination.
 @property (nonatomic, readonly, assign) BOOL autoCreated;
 ///Whether current routing action is from router, or from external
 @property (nonatomic, readonly, assign) BOOL routingFromInternal;
@@ -102,9 +102,7 @@ typedef void(^ZIKViewRouteGlobalErrorHandler)(__kindof ZIKViewRouter * _Nullable
 + (nullable ZIKViewRouter<RouteConfig,RemoveConfig> *)performOnDestination:(id)destination source:(nullable id<ZIKViewRouteSource>)source routeType:(ZIKViewRouteType)routeType;
 
 /**
- Prepare destination from external, then you can use the router to perform route.
- @discussion
- The initial view controller of storyboard for launching app is not from segue, so you have to manually create it's router and use this method to prepare it. You can also use this to prepare other view create from external, use it like a builder.
+ Prepare destination from external, then you can use the router to perform route. You can also use this to prepare view created from external, use it like a builder.
 
  @param destination The destination to prepare. Destination must be registered with this router class.
  @param configBuilder Builder for config when perform route.
@@ -332,7 +330,7 @@ extern _Nullable Class ZIKViewRouterForConfig(Protocol *configProtocol);
 extern void ZIKViewRouter_registerView(Class viewClass, Class routerClass);
 
 /**
- If the view will hold and use it's router, and the router has it's custom functions for this view, that means the view is coupled with the router. In this situation, you can use this function to combine viewClass with a specific routerClass, then no other routerClass can be used for this viewClass. If another routerClass try to register with the viewClass, there will be an assert failure.
+ If the view will hold and use it's router, or you inject dependencies in the router, that means the view is coupled with the router. In this situation, you can use this function to combine viewClass with a specific routerClass, then no other routerClass can be used for this viewClass. If another routerClass try to register with the viewClass, there will be an assert failure.
  
  @param viewClass The view class requiring a specific router class
  @param routerClass The unique router class to bind with view class

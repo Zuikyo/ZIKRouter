@@ -18,22 +18,16 @@
 @implementation AppDelegate
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
-    [ZIKViewRouter setGlobalErrorHandler:^(ZIKViewRouter * _Nullable router, SEL  _Nonnull routeAction, NSError * _Nonnull error) {
-        NSLog(@"❌ZIKRouter Error: router's action (%@) catch error! code:%@, description: %@, router:(%@)", NSStringFromSelector(routeAction), @(error.code), error.localizedDescription,router);
+    [ZIKViewRouter setGlobalErrorHandler:^(ZIKViewRouter * _Nullable router,
+                                           SEL  _Nonnull routeAction,
+                                           NSError * _Nonnull error) {
+        NSLog(@"❌ZIKRouter Error: router's action (%@) catch error! code:%@, description: %@,\nrouter:(%@)", NSStringFromSelector(routeAction), @(error.code), error.localizedDescription,router);
     }];
     
     UISplitViewController *splitViewController = (UISplitViewController *)self.window.rootViewController;
     UINavigationController *navigationController = [splitViewController.viewControllers lastObject];
     navigationController.topViewController.navigationItem.leftBarButtonItem = splitViewController.displayModeButtonItem;
     splitViewController.delegate = self;
-    
-    UINavigationController *masterNavigationController = [splitViewController.viewControllers firstObject];
-    UIViewController *masterViewController = [[masterNavigationController viewControllers] firstObject];
-    
-    //Prepare master with it's router
-    [MasterViewRouter prepareDestination:masterViewController configure:^(ZIKViewRouteConfiguration * _Nonnull config) {
-        
-    }];
     
     return YES;
 }

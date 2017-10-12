@@ -146,6 +146,7 @@ static void _initializeZIKViewRouter(void) {
                                       ZIKViewRouterClass, @selector(ZIKViewRouter_hook_prepareForSegue:sender:));
     ZIKRouter_replaceMethodWithMethod(UIStoryboardSegueClass, @selector(perform),
                                       ZIKViewRouterClass, @selector(ZIKViewRouter_hook_seguePerform));
+    ZIKRouter_replaceMethodWithMethod([UIStoryboard class], @selector(instantiateInitialViewController), ZIKViewRouterClass, @selector(ZIKViewRouter_hook_instantiateInitialViewController));
     
     ZIKRouter_enumerateClassList(^(__unsafe_unretained Class class) {
         if (ZIKRouter_classIsSubclassOfClass(class, UIResponderClass)) {
@@ -2633,6 +2634,30 @@ destinationStateBeforeRoute:(ZIKPresentationState *)destinationStateBeforeRoute
     if (!routed && window) {
         [destination setZIK_routed:YES];
     }
+}
+
+- (nullable __kindof UIViewController *)ZIKViewRouter_hook_instantiateInitialViewController {
+    UIViewController *initialViewController = [self ZIKViewRouter_hook_instantiateInitialViewController];
+    
+    NSMutableArray<UIViewController *> *routableViews;
+    if ([initialViewController conformsToProtocol:@protocol(ZIKRoutableView)]) {
+        routableViews = [NSMutableArray arrayWithObject:initialViewController];
+    }
+    NSArray<UIViewController *> *childViews = [ZIKViewRouter routableViewsInContainerViewController:initialViewController];
+    if (childViews.count > 0) {
+        if (routableViews == nil) {
+            routableViews = [NSMutableArray array];
+        }
+        [routableViews addObjectsFromArray:childViews];
+    }
+    for (UIViewController *destination in routableViews) {
+        Class routerClass = ZIKViewRouterForRegisteredView([destination class]);
+        NSAssert([routerClass isSubclassOfClass:[ZIKViewRouter class]], @"Destination's view router should be subclass of ZIKViewRouter");
+        [routerClass prepareDestination:destination configure:^(ZIKViewRouteConfiguration * _Nonnull config) {
+            
+        }];
+    }
+    return initialViewController;
 }
 
 - (void)ZIKViewRouter_hook_prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender {

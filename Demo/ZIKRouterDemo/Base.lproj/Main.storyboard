@@ -775,7 +775,6 @@
                                 <rect key="frame" x="164" y="57" width="50" height="30"/>
                                 <constraints>
                                     <constraint firstAttribute="height" constant="30" id="DZI-Jt-WH9"/>
-                                    <constraint firstAttribute="width" constant="50" id="vPh-Qx-3kb"/>
                                 </constraints>
                                 <state key="normal" title="unwind"/>
                                 <connections>
@@ -783,9 +782,8 @@
                                 </connections>
                             </button>
                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="ZRr-YC-e08">
-                                <rect key="frame" x="129" y="262" width="130" height="30"/>
+                                <rect key="frame" x="131" y="262" width="128" height="30"/>
                                 <constraints>
-                                    <constraint firstAttribute="width" constant="130" id="GR9-2I-uHw"/>
                                     <constraint firstAttribute="height" constant="30" id="vdj-kf-b54"/>
                                 </constraints>
                                 <state key="normal" title="add child manually"/>
@@ -800,9 +798,9 @@
                             <constraint firstAttribute="trailingMargin" secondItem="FE3-wq-SRk" secondAttribute="trailing" constant="45" id="23O-a8-a6Z"/>
                             <constraint firstItem="FE3-wq-SRk" firstAttribute="leading" secondItem="zct-qZ-LZo" secondAttribute="leadingMargin" constant="58" id="4ia-Wj-Ek0"/>
                             <constraint firstItem="FE3-wq-SRk" firstAttribute="top" secondItem="M2q-4d-5vO" secondAttribute="bottom" constant="27" id="8WD-F2-R2F"/>
-                            <constraint firstItem="ZRr-YC-e08" firstAttribute="leading" secondItem="zct-qZ-LZo" secondAttribute="leadingMargin" constant="113" id="Q65-9O-6yJ"/>
+                            <constraint firstItem="ZRr-YC-e08" firstAttribute="leading" relation="greaterThanOrEqual" secondItem="zct-qZ-LZo" secondAttribute="leadingMargin" id="Q65-9O-6yJ"/>
                             <constraint firstItem="M2q-4d-5vO" firstAttribute="top" secondItem="BB1-9u-8oa" secondAttribute="bottom" constant="37" id="U8X-76-2zV"/>
-                            <constraint firstItem="M2q-4d-5vO" firstAttribute="leading" secondItem="zct-qZ-LZo" secondAttribute="leadingMargin" constant="148" id="ndo-lC-Pnh"/>
+                            <constraint firstItem="M2q-4d-5vO" firstAttribute="leading" relation="greaterThanOrEqual" secondItem="zct-qZ-LZo" secondAttribute="leadingMargin" id="ndo-lC-Pnh"/>
                             <constraint firstAttribute="trailingMargin" secondItem="M2q-4d-5vO" secondAttribute="trailing" constant="145" id="oIx-PE-iuD"/>
                             <constraint firstAttribute="trailingMargin" secondItem="ZRr-YC-e08" secondAttribute="trailing" constant="100" id="quz-es-i6o"/>
                         </constraints>
@@ -1129,8 +1127,6 @@
         <!--Info View Controller-->
         <scene sceneID="j59-qg-sW2">
             <objects>
-                <placeholder placeholderIdentifier="IBFirstResponder" id="zFL-4N-bWO" userLabel="First Responder" sceneMemberID="firstResponder"/>
-                <exit id="0xa-Qe-ifY" userLabel="Exit" sceneMemberID="exit"/>
                 <viewController id="u08-4W-TXs" customClass="ZIKInfoViewController" sceneMemberID="viewController">
                     <layoutGuides>
                         <viewControllerLayoutGuide type="top" id="sBi-0i-cqg"/>
@@ -1185,6 +1181,8 @@
                         <segue destination="0xa-Qe-ifY" kind="unwind" identifier="unwindToTestPerformSegue" unwindAction="unwindToTestPerformSegueViewController:" id="ADU-kX-fQa"/>
                     </connections>
                 </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="zFL-4N-bWO" userLabel="First Responder" sceneMemberID="firstResponder"/>
+                <exit id="0xa-Qe-ifY" userLabel="Exit" sceneMemberID="exit"/>
             </objects>
             <point key="canvasLocation" x="3918" y="-1013"/>
         </scene>
