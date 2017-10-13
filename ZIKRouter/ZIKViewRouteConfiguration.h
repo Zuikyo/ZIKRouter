@@ -11,7 +11,7 @@
 
 #import <Foundation/Foundation.h>
 #import <UIKit/UIKit.h>
-#import "ZIKRouter.h"
+#import "ZIKRouteConfiguration.h"
 
 NS_ASSUME_NONNULL_BEGIN
 
@@ -89,7 +89,7 @@ typedef void(^ZIKViewRouteSegueConfigure)(ZIKViewRouteSegueConfiguration *segueC
 typedef void(^ZIKViewRoutePopoverConfiger)(NS_NOESCAPE ZIKViewRoutePopoverConfigure);
 typedef void(^ZIKViewRouteSegueConfiger)(NS_NOESCAPE ZIKViewRouteSegueConfigure);
 
-///Configuration of route. You can also use a subclass to add complex dependencies for destination. Your subclass must conforms to NSCopying, because the configuration need to be copied when routing.
+///Configuration for view module. You can use a subclass to add complex dependencies for destination. The subclass must conforms to NSCopying, because the configuration need to be copied when routing.
 @interface ZIKViewRouteConfiguration : ZIKRouteConfiguration <NSCopying>
 
 /**

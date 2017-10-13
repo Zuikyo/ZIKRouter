@@ -11,8 +11,6 @@
 
 #import <Foundation/Foundation.h>
 
-///Protocol inheriting from ZIKServiceRoutable can be used to fetch service router with ZIKServiceRouterForService()
-
 /**
  Protocol inheriting from ZIKServiceRoutable can be used to fetch service router with ZIKServiceRouterForService()
  @discussion

@@ -14,10 +14,6 @@
 
 NSString *kZIKRouterErrorDomain = @"kZIKRouterErrorDomain";
 
-@interface ZIKRouteConfiguration ()
-
-@end
-
 @interface ZIKRouter () {
     dispatch_semaphore_t _stateSema;
 }
@@ -340,27 +336,6 @@ NSString *kZIKRouterErrorDomain = @"kZIKRouterErrorDomain";
 
 - (NSString *)description {
     return [NSString stringWithFormat:@"%@: state:%@, destinaton:%@, configuration:(%@)",[super description],[[self class] descriptionOfState:self.state],self.destination,self._nocopy_configuration];
-}
-
-@end
-
-@implementation ZIKRouteConfiguration
-
-- (instancetype)init {
-    if (self = [super init]) {
-        NSAssert(class_conformsToProtocol([self class], @protocol(NSCopying)), @"configuration must conforms to NSCopying, because it will be deep copied when router is initialized.");
-    }
-    return self;
-}
-
-- (id)copyWithZone:(nullable NSZone *)zone {
-    ZIKRouteConfiguration *config = [[self class] new];
-    config.providerErrorHandler = self.providerErrorHandler;
-    config.providerSuccessHandler = self.providerSuccessHandler;
-    config.performerErrorHandler = self.performerErrorHandler;
-    config.performerSuccessHandler = self.performerSuccessHandler;
-    config.stateNotifier = [self.stateNotifier copy];
-    return config;
 }
 
 @end

@@ -10,6 +10,7 @@
 //
 
 #import <Foundation/Foundation.h>
+#import "ZIKRouteConfiguration.h"
 
 NS_ASSUME_NONNULL_BEGIN
 
@@ -38,16 +39,6 @@ NS_ASSUME_NONNULL_BEGIN
 - (NSString *)errorDomain;
 
 @end
-
-typedef NS_ENUM(NSInteger, ZIKRouterState) {
-    ZIKRouterStateNotRoute,
-    ZIKRouterStateRouting,
-    ZIKRouterStateRouted,
-    ZIKRouterStateRouteFailed,
-    ZIKRouterStateRemoving,
-    ZIKRouterStateRemoved,
-    ZIKRouterStateRemoveFailed
-};
 
 /**
  Abstract class for router. A router for decoupling between modules, and injecting dependencies with protocol.
@@ -104,39 +95,6 @@ typedef NS_ENUM(NSInteger, ZIKRouterState) {
 ///Whether the route action is synchronously
 + (BOOL)completeSynchronously;
 + (NSString *)descriptionOfState:(ZIKRouterState)state;
-@end
-
-typedef void(^ZIKRouteErrorHandler)(SEL routeAction, NSError *error);
-typedef void(^ZIKRouteStateNotifier)(ZIKRouterState oldState, ZIKRouterState newState);
-
-///For config destination
-@interface ZIKRouteConfiguration : NSObject <NSCopying>
-
-/**
- Error handler for router's creater.
- @note
- Use weakSelf in providerErrorHandler to avoid retain cycle.
- */
-@property (nonatomic, copy, nullable) ZIKRouteErrorHandler providerErrorHandler;
-
-/**
- Success handler for router's creater.
- @note
- Use weakSelf in providerSuccessHandler to avoid retain cycle.
- */
-@property (nonatomic, copy, nullable) void(^providerSuccessHandler)(void);
-
-///Error handler for router's performer, will reset to nil after perform.
-@property (nonatomic, copy, nullable) ZIKRouteErrorHandler performerErrorHandler;
-///Success handler for router's performer, will reset to nil after perform.
-@property (nonatomic, copy, nullable) void(^performerSuccessHandler)(void);
-
-/**
- Monitor state
- @note
- Use weakSelf in stateNotifier to avoid retain cycle.
- */
-@property (nonatomic, copy, nullable) ZIKRouteStateNotifier stateNotifier;
 @end
 
 NS_ASSUME_NONNULL_END

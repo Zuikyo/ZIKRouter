@@ -15,7 +15,7 @@
 NS_ASSUME_NONNULL_BEGIN
 
 @protocol ZIKRoutableView;
-@class ZIKViewRouter,ZIKViewRouteConfiguration,ZIKViewRemoveConfiguration;
+@class ZIKViewRouter;
 ///Protocol for ZIKViewRouter's subclass.
 @protocol ZIKViewRouterProtocol <NSObject>
 

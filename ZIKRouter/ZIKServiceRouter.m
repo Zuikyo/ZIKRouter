@@ -15,7 +15,6 @@
 #import <UIKit/UIKit.h>
 #import "ZIKRouterRuntimeHelper.h"
 
-
 NSString *const kZIKServiceRouterErrorDomain = @"ZIKServiceRouterErrorDomain";
 
 static BOOL _assert_isLoadFinished = NO;
@@ -429,17 +428,6 @@ _Nullable Class ZIKServiceRouterForConfig(Protocol *configProtocol) {
     }
     
     dispatch_semaphore_signal(g_globalErrorSema);
-}
-
-@end
-
-@implementation ZIKServiceRouteConfiguration
-
-- (id)copyWithZone:(NSZone *)zone {
-    ZIKServiceRouteConfiguration *config = [super copyWithZone:zone];
-    config.prepareForRoute = self.prepareForRoute;
-    config.routeCompletion = self.routeCompletion;
-    return config;
 }
 
 @end

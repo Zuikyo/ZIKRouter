@@ -12,6 +12,7 @@
 #import "ZIKRouter.h"
 #import "ZIKServiceRoutable.h"
 #import "ZIKServiceConfigRoutable.h"
+#import "ZIKServiceRouteConfiguration.h"
 
 NS_ASSUME_NONNULL_BEGIN
 
@@ -24,25 +25,6 @@ extern NSString *const kZIKServiceRouterErrorDomain;
 + (void)registerRoutableDestination;
 - (nullable id)destinationWithConfiguration:(__kindof ZIKServiceRouteConfiguration *)configuration;
 
-@end
-
-@interface ZIKServiceRouteConfiguration : ZIKRouteConfiguration <NSCopying>
-
-/**
- Prepare for performRoute, and config other dependency for destination here. Subclass can offer more specific info.
- 
- @note
- Use weakSelf in prepareForRoute to avoid retain cycle.
- */
-@property (nonatomic, copy, nullable) void(^prepareForRoute)(id destination);
-
-/**
- Completion for performRoute. Default implemenation will call routeCompletion synchronously.
- 
- @note
- Use weakSelf in routeCompletion to avoid retain cycle.
- */
-@property (nonatomic, copy, nullable) void(^routeCompletion)(id destination);
 @end
 
 /**
