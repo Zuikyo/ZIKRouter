@@ -9,7 +9,6 @@
 #import "AppDelegate.h"
 #import "DetailViewController.h"
 @import ZIKRouter;
-#import "MasterViewRouter.h"
 
 @interface AppDelegate () <UISplitViewControllerDelegate>
 
