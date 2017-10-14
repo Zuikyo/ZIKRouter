@@ -688,7 +688,7 @@
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
                             <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="4NG-hL-RhW">
-                                <rect key="frame" x="125" y="318" width="125" height="30"/>
+                                <rect key="frame" x="125" y="113" width="125" height="30"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                 <state key="normal" title="test route for view"/>
                                 <connections>
@@ -696,7 +696,7 @@
                                 </connections>
                             </button>
                             <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="foN-d8-MjC">
-                                <rect key="frame" x="119" y="372" width="136" height="30"/>
+                                <rect key="frame" x="119" y="167" width="136" height="30"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                 <state key="normal" title="test route for config"/>
                                 <connections>
@@ -704,11 +704,19 @@
                                 </connections>
                             </button>
                             <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="9hQ-eX-jYZ">
-                                <rect key="frame" x="122" y="428" width="131" height="30"/>
+                                <rect key="frame" x="122" y="223" width="131" height="30"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                 <state key="normal" title="test injected router"/>
                                 <connections>
                                     <action selector="testInjectedRouter:" destination="eYQ-z4-9Qd" eventType="touchUpInside" id="gHj-zt-eTw"/>
+                                </connections>
+                            </button>
+                            <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="V1K-aa-eWy">
+                                <rect key="frame" x="98" y="277" width="179" height="30"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <state key="normal" title="test route for swift service"/>
+                                <connections>
+                                    <action selector="testRouteForSwiftService:" destination="eYQ-z4-9Qd" eventType="touchUpInside" id="Gi8-zW-8f4"/>
                                 </connections>
                             </button>
                         </subviews>

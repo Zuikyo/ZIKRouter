@@ -25,8 +25,8 @@ class SwiftSampleViewController: UIViewController, SwiftSampleViewProtocol, ZIKI
         self.infoRouter = ZIKSViewRouterForView(ZIKInfoViewProtocol.self)?.perform { config in
             config.source = self
             config.routeType = ZIKViewRouteType.presentModally
-            config.prepareForRoute = { [weak self] des in
-                let destination = des as! ZIKInfoViewProtocol
+            config.prepareForRoute = { [weak self] d in
+                let destination = d as! ZIKInfoViewProtocol
                 destination.delegate = self
                 destination.name = "zuik"
                 destination.age = 18
@@ -58,7 +58,7 @@ class SwiftSampleViewController: UIViewController, SwiftSampleViewProtocol, ZIKI
             config.addOtherButtonTitle("Hello", handler: {
                 print("Tap Hello alert")
             })
-            config.routeCompletion = { des in
+            config.routeCompletion = { d in
                 print("show custom alert complete")
             }
             config.performerErrorHandler = { (action, error) in
@@ -79,7 +79,7 @@ class SwiftSampleViewController: UIViewController, SwiftSampleViewProtocol, ZIKI
             config.addOtherButtonTitle("Hello", handler: {
                 print("Tap Hello alert")
             })
-            config.routeCompletion = { des in
+            config.routeCompletion = { d in
                 print("show custom alert complete")
             }
             config.performerErrorHandler = { (action, error) in
@@ -89,6 +89,14 @@ class SwiftSampleViewController: UIViewController, SwiftSampleViewProtocol, ZIKI
         self.alertRouter = router
     }
 
+    @IBAction func testRouteForSwiftService(_ sender: Any) {
+        ZIKSServiceRouterForService(SwiftServiceProtocol.self)?.perform { config in
+            config.routeCompletion = { d in
+                let destination = d as! SwiftServiceProtocol
+                destination.swiftFunction()
+            }
+        }
+    }
     /*
     // MARK: - Navigation
 

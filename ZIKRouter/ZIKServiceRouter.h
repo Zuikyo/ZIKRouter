@@ -155,7 +155,7 @@ extern void ZIKServiceRouter_registerServiceProtocol(Protocol *serviceProtocol, 
 extern void ZIKServiceRouter_registerConfigProtocol(Protocol *configProtocol, Class routerClass);
 
 ///It's a mark for service classes with router. Don't use it in other place.
-@protocol ZIKRoutableService <NSObject>
+@protocol ZIKRoutableService
 
 @end
 
