@@ -1349,11 +1349,13 @@ _Nullable Class ZIKViewRouterForConfig(Protocol *configProtocol) {
 
 - (void)prepareForPerformRouteOnDestination:(id)destination {
     ZIKViewRouteConfiguration *configuration = self._nocopy_configuration;
-    if ([self respondsToSelector:@selector(prepareDestination:configuration:)]) {
-        [self prepareDestination:destination configuration:configuration];
-    }
     if (configuration.prepareForRoute) {
         configuration.prepareForRoute(destination);
+    }
+    if ([self respondsToSelector:@selector(prepareDestination:configuration:)]) {
+        if (![[self class] destinationPrepared:destination]) {
+            [self prepareDestination:destination configuration:configuration];
+        }
     }
     if ([self respondsToSelector:@selector(didFinishPrepareDestination:configuration:)]) {
         [self didFinishPrepareDestination:destination configuration:configuration];
@@ -1951,8 +1953,10 @@ destinationStateBeforeRoute:(ZIKPresentationState *)destinationStateBeforeRoute
             if (configuration.handleExternalRoute) {
                 [self prepareForPerformRouteOnDestination:destination];
             } else {
-                [self prepareDestination:destination configuration:configuration];
-                [self didFinishPrepareDestination:destination configuration:configuration];
+                if (![[self class] destinationPrepared:destination]) {
+                    [self prepareDestination:destination configuration:configuration];
+                    [self didFinishPrepareDestination:destination configuration:configuration];
+                }
             }
         }
     }
@@ -3066,6 +3070,12 @@ destinationStateBeforeRoute:(ZIKPresentationState *)destinationStateBeforeRoute
         case ZIKViewRouteTypePerformSegue:
             NSAssert(!destination, @"ZIKViewRouteTypePerformSegue's destination should be created by UIKit automatically");
             return YES;
+            break;
+        
+        case ZIKViewRouteTypeGetDestination:
+            if ([destination isKindOfClass:[UIViewController class]] || [destination isKindOfClass:[UIView class]]) {
+                return YES;
+            }
             break;
             
         default:

@@ -22,7 +22,7 @@
 
 - (id)destinationWithConfiguration:(__kindof ZIKRouteConfiguration *)configuration {
     UIStoryboard *sb = [UIStoryboard storyboardWithName:@"Main" bundle:nil];
-    ZIKTestAutoCreateViewController *destination = [sb instantiateViewControllerWithIdentifier:@"testAutoCreate"];;
+    ZIKTestAutoCreateViewController *destination = [sb instantiateViewControllerWithIdentifier:@"testAutoCreate"];
     destination.title = @"Test AutoCreate";
     return destination;
 }

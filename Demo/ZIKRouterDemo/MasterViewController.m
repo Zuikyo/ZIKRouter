@@ -19,6 +19,7 @@
 #import "ZIKTestCustomViewRouter.h"
 #import "ZIKTestGetDestinationViewRouter.h"
 #import "ZIKTestAutoCreateViewRouter.h"
+#import "ZIKTestCircularDependenciesViewRouter.h"
 #import "ZIKTestServiceRouterViewRouter.h"
 #import "ZIKRouterDemo-Swift.h"
 
@@ -34,6 +35,7 @@ typedef NS_ENUM(NSInteger,ZIKRouterTestType) {
     ZIKRouterTestTypeCustom,
     ZIKRouterTestTypeGetDestination,
     ZIKRouterTestTypeAutoCreate,
+    ZIKRouterTestTypeCircularDependencies,
     ZIKRouterTestTypeServiceRouter,
     ZIKRouterTestTypeSwiftSample
 };
@@ -49,16 +51,9 @@ typedef NS_ENUM(NSInteger,ZIKRouterTestType) {
     [self registerForPreviewingWithDelegate:self sourceView:self.view];
 }
 
-
 - (void)viewWillAppear:(BOOL)animated {
     self.clearsSelectionOnViewWillAppear = self.splitViewController.isCollapsed;
     [super viewWillAppear:animated];
-}
-
-
-- (void)didReceiveMemoryWarning {
-    [super didReceiveMemoryWarning];
-    // Dispose of any resources that can be recreated.
 }
 
 #pragma mark - Segues
@@ -76,7 +71,7 @@ typedef NS_ENUM(NSInteger,ZIKRouterTestType) {
 
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
-    return 13;
+    return 14;
 }
 
 
@@ -118,6 +113,9 @@ typedef NS_ENUM(NSInteger,ZIKRouterTestType) {
             break;
         case ZIKRouterTestTypeAutoCreate:
             name = @"Test AutoCreate";
+            break;
+        case ZIKRouterTestTypeCircularDependencies:
+            name = @"Test CircularDependencies";
             break;
         case ZIKRouterTestTypeServiceRouter:
             name = @"Test ServiceRouter";
@@ -201,6 +199,10 @@ typedef NS_ENUM(NSInteger,ZIKRouterTestType) {
             
         case ZIKRouterTestTypeAutoCreate:
             routerClass = [ZIKTestAutoCreateViewRouter class];
+            break;
+            
+        case ZIKRouterTestTypeCircularDependencies:
+            routerClass = [ZIKTestCircularDependenciesViewRouter class];
             break;
             
         case ZIKRouterTestTypeServiceRouter:

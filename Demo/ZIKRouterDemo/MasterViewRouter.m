@@ -26,6 +26,13 @@
     return destination;
 }
 
++ (BOOL)destinationPrepared:(MasterViewController *)destination {
+    if ([destination.tableView.backgroundColor isEqual:[UIColor lightGrayColor]]) {
+        return YES;
+    }
+    return NO;
+}
+
 - (void)prepareDestination:(MasterViewController *)destination configuration:(__kindof ZIKViewRouteConfiguration *)configuration {
     destination.tableView.backgroundColor = [UIColor lightGrayColor];
 }

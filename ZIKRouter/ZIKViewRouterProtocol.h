@@ -39,13 +39,25 @@ NS_ASSUME_NONNULL_BEGIN
 
 @optional
 
-///Whether the destination is all configed. Destination created from external will use this method to determine whether the router have to search the performer to prepare itself.
+/**
+ Whether the destination is all configed.
+ @discussion
+ Destination created from external will use this method to determine whether the router have to search the performer to prepare itself.
+ 
+ @param destination The view to perform route.
+ @return If the destination is not prepared, return NO and router will call -prepareDestination:configuration: to prepare it. If return YES, -prepareDestination:configuration: won't be called. Default is YES.
+ */
 + (BOOL)destinationPrepared:(id)destination;
 
 /**
  Prepare the destination with the configuration when view is first appear. Unwind segue to destination won't call this method.
  @warning
- When it's removed and routed again, it's alse treated as first appear, so this method may be called more than once. You should check whether the destination is already prepared to avoid unnecessary preparation.
+ If a router(A) fetch destination(A)'s dependency destination(B) with another router(B) in -prepareDestination:configuration:, and the destination(A) is also the destination(B)'s dependency, so destination(B)'s router(B) will also fetch destination(A) with router(A) in it's -prepareDestination:configuration:. Then there will be an infinite recursion.
+ 
+ To void it, when router(A) fetch destination(B) in -prepareDestination:configuration:, router(A) must inject destination(A) to destination(B) in -prepareRoute block of router(B)'s config or use custom config property. And router(B) should check in +destinationPrepared: to avoid unnecessary preparation.
+ 
+ @note
+  When it's removed and routed again, it's alse treated as first appear, so this method may be called more than once. You should check whether the destination is already prepared in +destinationPrepared: to avoid unnecessary preparation.
  
  If you get a prepared destination by ZIKViewRouteTypeGetDestination or -prepareDestination:configure:removeConfigure:, this method will be called. When the destination is routed, this method will also be called, because the destination may be changed.
  
@@ -57,7 +69,7 @@ NS_ASSUME_NONNULL_BEGIN
 /**
  Called when view is first appear and preparation is finished. You can check whether destination is preapred correctly. Unwind segue to destination won't call this method.
  @warning
- when it's removed and routed again, it's alse treated as first appear, so this method may be called more than once.
+ when it's removed and routed again, it's alse treated as first appear, so this method may be called more than once. You should check whether the destination is already prepared in +destinationPrepared: to avoid unnecessary preparation..
  
  @param destination The view to perform route.
  @param configuration The configuration for route.
