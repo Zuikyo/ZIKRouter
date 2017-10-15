@@ -35,7 +35,7 @@ ZIKRouter是基于面向接口编程的思想进行设计的。调用者不必�
 
 界面跳转的代码如下：
 
-```
+```objectivec
 ///editor模块的依赖声明
 @protocol NoteEditorProtocol <ZIKViewConfigRoutable>
 @property (nonatomic, weak) id<ZIKEditorDelegate> delegate;
@@ -44,14 +44,13 @@ ZIKRouter是基于面向接口编程的思想进行设计的。调用者不必�
 @end
 
 ```
-```
+```objectivec
 @interface NoteEditorViewController <NoteEditorProtocol>
 @end
 @implementation NoteEditorViewController
 @end
 ```
-```
-
+```objectivec
 @implementation TestEditorViewController
 
 - (void)showEditor {
@@ -83,7 +82,7 @@ ZIKRouter是基于面向接口编程的思想进行设计的。调用者不必�
 ```
 in Swift:
 
-```
+```swift
 class TestEditorViewController: UIViewController {
     func showEditor() {
         ZIKSViewRouterForView(NoteEditorProtocol.self)?.perform { config in
@@ -110,14 +109,14 @@ class TestEditorViewController: UIViewController {
 
 任意模块获取和调用：
 
-```
+```objectivec
 ///time service的接口
 @protocol ZIKTimeServiceInput <ZIKServiceRoutable>
 - (NSString *)currentTimeString;
 @end
 ```
 
-```
+```objectivec
 @interface TestServiceViewController ()
 @property (weak, nonatomic) IBOutlet UILabel *timeLabel;
 @end
@@ -146,14 +145,14 @@ class TestEditorViewController: UIViewController {
 
 ### 为模块创建对应Router
 
-```
+```objectivec
 //MasterViewProtocol.h
 //声明Master界面的protocol已经被注册，可以用ZIKViewRouterForView()获取MasterViewRouter类
 @protocol MasterViewProtocol: ZIKViewRotable
 
 @end
 ```
-```
+```objectivec
 //MasterViewRouter.h
 @interface MasterViewRouter : ZIKViewRouter <ZIKViewRouterProtocol>
 @end
@@ -208,7 +207,7 @@ class TestEditorViewController: UIViewController {
 
 ### 使用Router
 
-```
+```objectivec
 //In some view controller
 
 @implementation TestViewController

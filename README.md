@@ -46,7 +46,7 @@ How it looks like in code?
 
 Code for showing a view controller：
 
-```
+```objectivec
 ///editor view controller module's interface
 @protocol NoteEditorProtocol <ZIKViewRoutable>
 @property (nonatomic, weak) id<ZIKEditorDelegate> delegate;
@@ -56,8 +56,7 @@ Code for showing a view controller：
 
 ```
 
-```
-
+```objectivec
 @implementation TestEditorViewController
 
 - (void)showEditor {
@@ -91,7 +90,7 @@ Code for showing a view controller：
 ```
 in Swift:
 
-```
+```swift
 class TestEditorViewController: UIViewController {
     func showEditor() {
         ZIKSViewRouterForView(NoteEditorProtocol.self)?.perform { config in
@@ -118,14 +117,14 @@ class TestEditorViewController: UIViewController {
 
 Get a module and use:
 
-```
+```objectivec
 ///time service's interface
 @protocol ZIKTimeServiceInput <ZIKServiceRoutable>
 - (NSString *)currentTimeString;
 @end
 ```
 
-```
+```objectivec
 @interface TestServiceViewController ()
 @property (weak, nonatomic) IBOutlet UILabel *timeLabel;
 @end
@@ -157,14 +156,14 @@ Get a module and use:
 
 Create a subclass of `ZIKViewRouter` for your module:
 
-```
+```objectivec
 //MasterViewProtocol.h
 //ZIKViewRotable declares that MasterViewProtocol can be used to get a router class by ZIKViewRouterForView()
 @protocol MasterViewProtocol: ZIKViewRotable
 
 @end
 ```
-```
+```objectivec
 //MasterViewRouter.h
 @interface MasterViewRouter : ZIKViewRouter <ZIKViewRouterProtocol>
 @end
@@ -218,7 +217,7 @@ Create a subclass of `ZIKViewRouter` for your module:
 
 ### Use the Router
 
-```
+```objectivec
 //In some view controller
 
 @implementation TestViewController
