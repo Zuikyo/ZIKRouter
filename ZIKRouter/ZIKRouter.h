@@ -90,7 +90,7 @@ NS_ASSUME_NONNULL_BEGIN
 ///Set dependencies required by destination and perform route
 + (nullable RouterType)performWithConfigure:(void(NS_NOESCAPE ^)(RouteConfig config))configBuilder;
 + (nullable RouterType)performWithConfigure:(void(NS_NOESCAPE ^)(RouteConfig config))configBuilder
-                                      removeConfigure:(void(NS_NOESCAPE ^ _Nullable)(RemoveConfig config))removeConfigBuilder;
+                            removeConfigure:(void(NS_NOESCAPE ^ _Nullable)(RemoveConfig config))removeConfigBuilder;
 
 ///Whether the route action is synchronously
 + (BOOL)completeSynchronously;

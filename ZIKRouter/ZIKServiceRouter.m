@@ -337,7 +337,7 @@ _Nullable Class ZIKServiceRouterForConfig(Protocol *configProtocol) {
     [self beginPerformRoute];
     
     if (!destination) {
-        [self endPerformRouteWithError:[[self class] errorWithCode:ZIKServiceRouteErrorServiceUnavailable localizedDescriptionFormat:@"Router(%@) returns nil for destination, maybe there is a bug in the router, or the configuration is invalid (%@)",self,configuration]];
+        [self endPerformRouteWithError:[[self class] errorWithCode:ZIKServiceRouteErrorServiceUnavailable localizedDescriptionFormat:@"Router(%@) returns nil for destination, you can't use this service now. Maybe your configuration is invalid (%@), or there is a bug in the router.",self,configuration]];
         return;
     }
     if (configuration.prepareForRoute) {

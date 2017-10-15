@@ -38,18 +38,19 @@
 }
 
 - (void)prepareDestination:(ZIKTestCircularDependenciesViewController *)destination configuration:(__kindof ZIKViewRouteConfiguration *)configuration {
-    [ZIKViewRouterForView(@protocol(ZIKChildViewProtocol)) performWithConfigure:^(ZIKViewRouteConfiguration * _Nonnull config) {
-        config.routeType = ZIKViewRouteTypeGetDestination;
-        
-        //The child may fetch parent in it's router, you must set child's parent to avoid infinite recursion
-        config.prepareForRoute = ^(id<ZIKChildViewProtocol> child) {
-            child.parent = destination;
-        };
-        config.routeCompletion = ^(id  _Nonnull child) {
-            destination.child = child;
-        };
-    }];
-    
+    if (destination.child == nil) {
+        [ZIKViewRouterForView(@protocol(ZIKChildViewProtocol)) performWithConfigure:^(ZIKViewRouteConfiguration * _Nonnull config) {
+            config.routeType = ZIKViewRouteTypeGetDestination;
+            
+            //The child may fetch parent in it's router, you must set child's parent to avoid infinite recursion
+            config.prepareForRoute = ^(id<ZIKChildViewProtocol> child) {
+                child.parent = destination;
+            };
+            config.routeCompletion = ^(id  _Nonnull child) {
+                destination.child = child;
+            };
+        }];
+    }
 }
 
 - (void)didFinishPrepareDestination:(id)destination configuration:(__kindof ZIKViewRouteConfiguration *)configuration {

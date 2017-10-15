@@ -752,7 +752,7 @@ _Nullable Class ZIKViewRouterForConfig(Protocol *configProtocol) {
         [super performWithConfiguration:configuration];
     } else {
         NSAssert(NO, @"%@ performRoute should only be called in main thread!",self);
-        dispatch_async(dispatch_get_main_queue(), ^{
+        dispatch_sync(dispatch_get_main_queue(), ^{
             [super performWithConfiguration:configuration];
         });
     }
@@ -1353,9 +1353,7 @@ _Nullable Class ZIKViewRouterForConfig(Protocol *configProtocol) {
         configuration.prepareForRoute(destination);
     }
     if ([self respondsToSelector:@selector(prepareDestination:configuration:)]) {
-        if (![[self class] destinationPrepared:destination]) {
-            [self prepareDestination:destination configuration:configuration];
-        }
+        [self prepareDestination:destination configuration:configuration];
     }
     if ([self respondsToSelector:@selector(didFinishPrepareDestination:configuration:)]) {
         [self didFinishPrepareDestination:destination configuration:configuration];
@@ -1953,10 +1951,8 @@ destinationStateBeforeRoute:(ZIKPresentationState *)destinationStateBeforeRoute
             if (configuration.handleExternalRoute) {
                 [self prepareForPerformRouteOnDestination:destination];
             } else {
-                if (![[self class] destinationPrepared:destination]) {
-                    [self prepareDestination:destination configuration:configuration];
-                    [self didFinishPrepareDestination:destination configuration:configuration];
-                }
+                [self prepareDestination:destination configuration:configuration];
+                [self didFinishPrepareDestination:destination configuration:configuration];
             }
         }
     }

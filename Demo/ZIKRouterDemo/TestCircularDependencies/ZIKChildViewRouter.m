@@ -38,15 +38,17 @@
 }
 
 - (void)prepareDestination:(ZIKChildViewController *)destination configuration:(__kindof ZIKViewRouteConfiguration *)configuration {
-    [ZIKViewRouterForView(@protocol(ZIKParentViewProtocol)) performWithConfigure:^(ZIKViewRouteConfiguration * _Nonnull config) {
-        config.routeType = ZIKViewRouteTypeGetDestination;
-        config.prepareForRoute = ^(id<ZIKParentViewProtocol> parent) {
-            parent.child = destination;
-        };
-        config.routeCompletion = ^(id  _Nonnull parent) {
-            destination.parent = parent;
-        };
-    }];
+    if (destination.parent == nil) {
+        [ZIKViewRouterForView(@protocol(ZIKParentViewProtocol)) performWithConfigure:^(ZIKViewRouteConfiguration * _Nonnull config) {
+            config.routeType = ZIKViewRouteTypeGetDestination;
+            config.prepareForRoute = ^(id<ZIKParentViewProtocol> parent) {
+                parent.child = destination;
+            };
+            config.routeCompletion = ^(id  _Nonnull parent) {
+                destination.parent = parent;
+            };
+        }];
+    }
 }
 
 - (void)didFinishPrepareDestination:(id)destination configuration:(__kindof ZIKViewRouteConfiguration *)configuration {

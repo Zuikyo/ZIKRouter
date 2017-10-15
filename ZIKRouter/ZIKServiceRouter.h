@@ -91,7 +91,9 @@ typedef void(^ZIKServiceRouteGlobalErrorHandler)(__kindof ZIKServiceRouter * _Nu
 @end
 
 typedef NS_ENUM(NSInteger, ZIKServiceRouteError) {
+    ///The protocol you use to fetch the router is not registered.
     ZIKServiceRouteErrorInvaidProtocol,
+    ///Router returns nil for destination, you can't use this service now. Maybe your configuration is invalid, or there is a bug in the router.
     ZIKServiceRouteErrorServiceUnavailable
 };
 
