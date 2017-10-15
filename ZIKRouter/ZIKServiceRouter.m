@@ -327,6 +327,17 @@ _Nullable Class ZIKServiceRouterForConfig(Protocol *configProtocol) {
     return nil;
 }
 
+- (void)performWithConfiguration:(__kindof ZIKServiceRouteConfiguration *)configuration {
+    [[self class] increaseRecursiveDepth];
+    if ([[self class] _o_validateInfiniteRecursion] == NO) {
+        [self _o_callbackError_infiniteRecursionWithAction:@selector(performRoute) errorDescription:@"Infinite recursion for performing route detected. Recursive call stack:\n%@",[NSThread callStackSymbols]];
+        [[self class] decreaseRecursiveDepth];
+        return;
+    }
+    [super performWithConfiguration:configuration];
+    [[self class] decreaseRecursiveDepth];
+}
+
 #pragma mark ZIKRouterProtocol
 
 + (void)registerRoutableDestination {
@@ -400,6 +411,16 @@ _Nullable Class ZIKServiceRouterForConfig(Protocol *configProtocol) {
     return YES;
 }
 
+#pragma mark Validate
+
++ (BOOL)_o_validateInfiniteRecursion {
+    NSUInteger maxRecursiveDepth = 200;
+    if ([self recursiveDepth] > maxRecursiveDepth) {
+        return NO;
+    }
+    return YES;
+}
+
 #pragma mark Error Handle
 
 + (void)setGlobalErrorHandler:(ZIKServiceRouteGlobalErrorHandler)globalErrorHandler {
@@ -428,6 +449,38 @@ _Nullable Class ZIKServiceRouterForConfig(Protocol *configProtocol) {
     }
     
     dispatch_semaphore_signal(g_globalErrorSema);
+}
+
+- (void)_o_callbackError_infiniteRecursionWithAction:(SEL)action errorDescription:(NSString *)format ,... {
+    va_list argList;
+    va_start(argList, format);
+    NSString *description = [[NSString alloc] initWithFormat:format arguments:argList];
+    va_end(argList);
+    [self _o_callbackErrorWithAction:action error:[[self class] errorWithCode:ZIKServiceRouteErrorInfiniteRecursion localizedDescription:description]];
+}
+
+#pragma mark Getter/Setter
+
++ (NSUInteger)recursiveDepth {
+    NSNumber *depth = objc_getAssociatedObject(self, @"ZIKServiceRouter_recursiveDepth");
+    if ([depth isKindOfClass:[NSNumber class]]) {
+        return [depth unsignedIntegerValue];
+    }
+    return 0;
+}
+
++ (void)setRecursiveDepth:(NSUInteger)depth {
+    objc_setAssociatedObject(self, @"ZIKServiceRouter_recursiveDepth", @(depth), OBJC_ASSOCIATION_RETAIN_NONATOMIC);
+}
+
++ (void)increaseRecursiveDepth {
+    NSUInteger depth = [self recursiveDepth];
+    [self setRecursiveDepth:++depth];
+}
+
++ (void)decreaseRecursiveDepth {
+    NSUInteger depth = [self recursiveDepth];
+    [self setRecursiveDepth:--depth];
 }
 
 @end

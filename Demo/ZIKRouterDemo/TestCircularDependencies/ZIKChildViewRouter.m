@@ -38,6 +38,7 @@
 }
 
 - (void)prepareDestination:(ZIKChildViewController *)destination configuration:(__kindof ZIKViewRouteConfiguration *)configuration {
+    //Must check to avoid unnecessary preparation
     if (destination.parent == nil) {
         [ZIKViewRouterForView(@protocol(ZIKParentViewProtocol)) performWithConfigure:^(ZIKViewRouteConfiguration * _Nonnull config) {
             config.routeType = ZIKViewRouteTypeGetDestination;

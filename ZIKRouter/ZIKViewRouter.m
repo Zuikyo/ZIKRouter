@@ -742,18 +742,26 @@ _Nullable Class ZIKViewRouterForConfig(Protocol *configProtocol) {
 - (void)performWithConfiguration:(__kindof ZIKViewRouteConfiguration *)configuration {
     NSParameterAssert(configuration);
     NSAssert([[[self class] defaultRouteConfiguration] isKindOfClass:[configuration class]], @"When using custom configuration class，you must override +defaultRouteConfiguration to return your custom configuration instance.");
-    
+    [[self class] increaseRecursiveDepth];
+    if ([[self class] _o_validateInfiniteRecursion] == NO) {
+        [self _o_callbackError_infiniteRecursionWithAction:@selector(performRoute) errorDescription:@"Infinite recursion for performing route detected, see -prepareDestination:configuration: for more detail. Recursive call stack:\n%@",[NSThread callStackSymbols]];
+        [[self class] decreaseRecursiveDepth];
+        return;
+    }
     if (configuration.routeType == ZIKViewRouteTypePerformSegue) {
         [self performRouteOnDestination:nil configuration:configuration];
+        [[self class] decreaseRecursiveDepth];
         return;
     }
     
     if ([NSThread isMainThread]) {
         [super performWithConfiguration:configuration];
+        [[self class] decreaseRecursiveDepth];
     } else {
         NSAssert(NO, @"%@ performRoute should only be called in main thread!",self);
         dispatch_sync(dispatch_get_main_queue(), ^{
             [super performWithConfiguration:configuration];
+            [[self class] decreaseRecursiveDepth];
         });
     }
 }
@@ -3147,6 +3155,14 @@ destinationStateBeforeRoute:(ZIKPresentationState *)destinationStateBeforeRoute
     return YES;
 }
 
++ (BOOL)_o_validateInfiniteRecursion {
+    NSUInteger maxRecursiveDepth = 200;
+    if ([self recursiveDepth] > maxRecursiveDepth) {
+        return NO;
+    }
+    return YES;
+}
+
 #pragma mark Error Handle
 
 + (NSString *)errorDomain {
@@ -3280,10 +3296,40 @@ destinationStateBeforeRoute:(ZIKPresentationState *)destinationStateBeforeRoute
     [self _o_callbackErrorWithAction:action error:[[self class] errorWithCode:ZIKViewRouteErrorOverRoute localizedDescription:description]];
 }
 
+- (void)_o_callbackError_infiniteRecursionWithAction:(SEL)action errorDescription:(NSString *)format ,... {
+    va_list argList;
+    va_start(argList, format);
+    NSString *description = [[NSString alloc] initWithFormat:format arguments:argList];
+    va_end(argList);
+    [self _o_callbackErrorWithAction:action error:[[self class] errorWithCode:ZIKViewRouteErrorInfiniteRecursion localizedDescription:description]];
+}
+
 #pragma mark Getter/Setter
 
 - (BOOL)autoCreated {
     return self._nocopy_configuration.autoCreated;
+}
+
++ (NSUInteger)recursiveDepth {
+    NSNumber *depth = objc_getAssociatedObject(self, @"ZIKViewRouter_recursiveDepth");
+    if ([depth isKindOfClass:[NSNumber class]]) {
+        return [depth unsignedIntegerValue];
+    }
+    return 0;
+}
+
++ (void)setRecursiveDepth:(NSUInteger)depth {
+    objc_setAssociatedObject(self, @"ZIKViewRouter_recursiveDepth", @(depth), OBJC_ASSOCIATION_RETAIN_NONATOMIC);
+}
+
++ (void)increaseRecursiveDepth {
+    NSUInteger depth = [self recursiveDepth];
+    [self setRecursiveDepth:++depth];
+}
+
++ (void)decreaseRecursiveDepth {
+    NSUInteger depth = [self recursiveDepth];
+    [self setRecursiveDepth:--depth];
 }
 
 #pragma mark Debug

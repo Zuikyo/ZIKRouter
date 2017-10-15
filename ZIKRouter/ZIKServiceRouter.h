@@ -22,7 +22,10 @@ extern NSString *const kZIKServiceRouterErrorDomain;
 
 @protocol ZIKServiceRouterProtocol <NSObject>
 
+///Register the destination class with those ZIKServiceRouter_registerXXX functions. ZIKServiceRouter will call this method at startup. If a router was not registered with any service class, there'll be an assert failure.
 + (void)registerRoutableDestination;
+
+///Create and initialize destination with configuration.
 - (nullable id)destinationWithConfiguration:(__kindof ZIKServiceRouteConfiguration *)configuration;
 
 @end
@@ -94,7 +97,9 @@ typedef NS_ENUM(NSInteger, ZIKServiceRouteError) {
     ///The protocol you use to fetch the router is not registered.
     ZIKServiceRouteErrorInvaidProtocol,
     ///Router returns nil for destination, you can't use this service now. Maybe your configuration is invalid, or there is a bug in the router.
-    ZIKServiceRouteErrorServiceUnavailable
+    ZIKServiceRouteErrorServiceUnavailable,
+    ///Infinite recursion for performing route detected. See ZIKViewRouterProtocol's -prepareDestination:configuration: for more detail.
+    ZIKServiceRouteErrorInfiniteRecursion
 };
 
 #pragma mark Dynamic Discover
