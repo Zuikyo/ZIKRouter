@@ -17,8 +17,8 @@
 @implementation ZIKSimpleLabelRouter
 
 + (void)registerRoutableDestination {
-    ZIKViewRouter_registerView([ZIKSimpleLabel class], self);
-    ZIKViewRouter_registerViewProtocol(@protocol(ZIKSimpleLabelProtocol), self);
+    [self registerView:[ZIKSimpleLabel class]];
+    [self registerViewProtocol:@protocol(ZIKSimpleLabelProtocol)];
 }
 
 - (id)destinationWithConfiguration:(__kindof ZIKRouteConfiguration *)configuration {

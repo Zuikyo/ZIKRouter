@@ -15,8 +15,8 @@ extension SwiftService: ZIKRoutableService {
 
 class SwiftServiceRouter: ZIKServiceRouter<ZIKServiceRouteConfiguration, ZIKRouteConfiguration> {
     override class func registerRoutableDestination() {
-        ZIKServiceRouter_registerService(SwiftService.self, self)
-        ZIKServiceRouter_registerServiceProtocol(SwiftServiceProtocol.self, self)
+        registerService(SwiftService.self)
+        registerServiceProtocol(SwiftServiceProtocol.self)
     }
     override func destination(with configuration: ZIKRouteConfiguration) -> Any {
         return SwiftService()

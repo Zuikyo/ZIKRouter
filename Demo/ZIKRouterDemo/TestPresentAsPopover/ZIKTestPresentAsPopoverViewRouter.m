@@ -17,7 +17,7 @@
 @implementation ZIKTestPresentAsPopoverViewRouter
 
 + (void)registerRoutableDestination {
-    ZIKViewRouter_registerView([ZIKTestPresentAsPopoverViewController class], self);
+    [self registerView:[ZIKTestPresentAsPopoverViewController class]];
 }
 
 - (id)destinationWithConfiguration:(__kindof ZIKRouteConfiguration *)configuration {

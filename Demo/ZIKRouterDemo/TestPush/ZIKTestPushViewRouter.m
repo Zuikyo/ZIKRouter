@@ -17,7 +17,7 @@
 @implementation ZIKTestPushViewRouter
 
 + (void)registerRoutableDestination {
-    ZIKViewRouter_registerView([ZIKTestPushViewController class], self);
+    [self registerView:[ZIKTestPushViewController class]];
 }
 
 - (id)destinationWithConfiguration:(__kindof ZIKRouteConfiguration *)configuration {

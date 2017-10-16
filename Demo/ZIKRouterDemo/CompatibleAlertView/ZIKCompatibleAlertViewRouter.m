@@ -108,9 +108,9 @@
 #pragma clang diagnostic pop
 
 + (void)registerRoutableDestination {
-    ZIKViewRouter_registerView([UIAlertController class], self);
-    ZIKViewRouter_registerView([UIAlertView class], self);
-    ZIKViewRouter_registerConfigProtocol(@protocol(ZIKCompatibleAlertConfigProtocol), self);
+    [self registerView:[UIAlertController class]];
+    [self registerView:[UIAlertView class]];
+    [self registerConfigProtocol:@protocol(ZIKCompatibleAlertConfigProtocol)];
 }
 
 - (id)destinationWithConfiguration:(ZIKCompatibleAlertViewConfiguration *)configuration {

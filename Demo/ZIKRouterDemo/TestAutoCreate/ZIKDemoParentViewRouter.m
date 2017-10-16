@@ -17,7 +17,7 @@
 @implementation ZIKDemoParentViewRouter
 
 + (void)registerRoutableDestination {
-    ZIKViewRouter_registerView([ZIKDemoParentViewController class], self);
+    [self registerView:[ZIKDemoParentViewController class]];
 }
 
 - (id)destinationWithConfiguration:(__kindof ZIKRouteConfiguration *)configuration {

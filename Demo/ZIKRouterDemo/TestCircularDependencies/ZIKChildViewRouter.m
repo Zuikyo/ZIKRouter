@@ -19,8 +19,8 @@
 @implementation ZIKChildViewRouter
 
 + (void)registerRoutableDestination {
-    ZIKViewRouter_registerView([ZIKChildViewController class], self);
-    ZIKViewRouter_registerViewProtocol(@protocol(ZIKChildViewProtocol), self);
+    [self registerView:[ZIKChildViewController class]];
+    [self registerViewProtocol:@protocol(ZIKChildViewProtocol)];
 }
 
 - (id)destinationWithConfiguration:(__kindof ZIKRouteConfiguration *)configuration {

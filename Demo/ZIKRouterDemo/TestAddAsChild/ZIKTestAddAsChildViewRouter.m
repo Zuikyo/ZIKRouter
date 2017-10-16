@@ -17,7 +17,7 @@
 @implementation ZIKTestAddAsChildViewRouter
 
 + (void)registerRoutableDestination {
-    ZIKViewRouter_registerView([ZIKTestAddAsChildViewController class], self);
+    [self registerView:[ZIKTestAddAsChildViewController class]];
 }
 
 - (id)destinationWithConfiguration:(__kindof ZIKRouteConfiguration *)configuration {

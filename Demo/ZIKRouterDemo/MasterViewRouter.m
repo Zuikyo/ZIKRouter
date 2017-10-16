@@ -17,7 +17,7 @@
 @implementation MasterViewRouter
 
 + (void)registerRoutableDestination {
-    ZIKViewRouter_registerView([MasterViewController class], self);
+    [self registerView:[MasterViewController class]];
 }
 
 - (id)destinationWithConfiguration:(__kindof ZIKRouteConfiguration *)configuration {

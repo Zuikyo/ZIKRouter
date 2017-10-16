@@ -17,7 +17,7 @@
 @implementation ZIKTestAddAsSubviewViewRouter
 
 + (void)registerRoutableDestination {
-    ZIKViewRouter_registerView([ZIKTestAddAsSubviewViewController class], self);
+    [self registerView:[ZIKTestAddAsSubviewViewController class]];
 }
 
 - (id)destinationWithConfiguration:(__kindof ZIKRouteConfiguration *)configuration {

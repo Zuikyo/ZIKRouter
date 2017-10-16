@@ -17,6 +17,12 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
+#ifdef DEBUG
+#define ZIKVIEWROUTER_CHECK 1
+#else
+#define ZIKVIEWROUTER_CHECK 0
+#endif
+
 /**
  Error handler for all view router, for debugging and log.
  @discussion
@@ -86,7 +92,8 @@ typedef void(^ZIKViewRouteGlobalErrorHandler)(__kindof ZIKViewRouter * _Nullable
 ///If this destination doesn't need any variable to initialize, just pass source and perform route.
 + (nullable ZIKViewRouter<RouteConfig,RemoveConfig> *)performWithSource:(nullable id<ZIKViewRouteSource>)source routeType:(ZIKViewRouteType)routeType;
 
-+ (nullable id)instantiateDestinationForConfigure:(void(NS_NOESCAPE ^)(ZIKViewRouteConfiguration *config))configBuilder;
+///Asynchronous get destination with ZIKViewRouteTypeGetDestination.
++ (nullable id)destinationWithPreparation:(void(^ _Nullable)(id destination))prepare;
 
 /**
  Perform route on destination. If you get a prepared destination by ZIKViewRouteTypeGetDestination, you can use this method to perform route on the destination.
@@ -147,6 +154,47 @@ typedef void(^ZIKViewRouteGlobalErrorHandler)(__kindof ZIKViewRouter * _Nullable
 
 ///Set error callback for all view router instance. Use this to debug and log
 + (void)setGlobalErrorHandler:(ZIKViewRouteGlobalErrorHandler)globalErrorHandler;
+
+#pragma mark Router Register
+
+/**
+ Register a viewClass with it's router's class, so we can create the router of a view when view is not created from router(UIViewController from storyboard or UIView added with -addSubview:, can't detect UIViewController displayed from code because we can't get the performer vc), and require the performer to config the view, and get AOP notified for some route actions.
+ @note
+ One view may be registered with multi routers, when view is routed from storyboard or -addSubview:, a router will be auto created from one of the registered router classes randomly. If you want to use a certain router, see ZIKViewRouter_registerViewForExclusiveRouter().
+ One router may manage multi views. You can register multi view classes to a same router class.
+ 
+ @param viewClass The view class managed by router
+ */
++ (void)registerView:(Class)viewClass;
+
+/**
+ If the view will hold and use it's router, or you inject dependencies in the router, that means the view is coupled with the router. In this situation, you can use this function to combine viewClass with a specific routerClass, then no other routerClass can be used for this viewClass. If another routerClass try to register with the viewClass, there will be an assert failure.
+ 
+ @param viewClass The view class requiring a specific router class
+ */
++ (void)registerExclusiveView:(Class)viewClass;
+
+/**
+ Register a view protocol that all views registered with the router conform to, then use ZIKViewRouterForView() to get the router class.
+ @discussion
+ If there're multi router classes for same view, and those routers is designed for preparing different part of the view when perform route (for example, a router is for presenting actionsheet style for UIAlertController, another router is for presenting alert style for UIAlertController), then each router has to register a unique protocol for the view and get the right router class with their protocol, or just import the router class your want to use directly.
+ 
+ You can register your protocol and let the view conforms to the protocol in category in your interface adapter.
+ 
+ @param viewProtocol The protocol conformed by view to identify the routerClass. Should be a ZIKViewRoutable protocol when ZIKVIEWROUTER_CHECK is enabled. When ZIKVIEWROUTER_CHECK is disabled, the protocol doesn't need to inheriting from ZIKViewRoutable.
+ */
++ (void)registerViewProtocol:(Protocol *)viewProtocol;
+
+/**
+ Register a config protocol the router's default configuration conforms, then use ZIKViewRouterForConfig() to get the router class.
+ @discussion
+ If there're multi router classes for same view, and those routers provide different functions and use their subclass of ZIKViewRouteConfiguration (for example, your add a third-party library to your project, the library has a router for quickly presenting a UIAlertController, and in your project, there's a router for integrating UIAlertView and UIAlertController), then each router has to register a unique protocol for their configurations and get the right router class with this protocol, or just import the router class your want to use directly.
+ 
+ You can register your protocol and let the configuration conforms to the protocol in category in your interface adapter.
+ 
+ @param configProtocol The protocol conformed by default configuration of the routerClass. Should be a ZIKViewConfigRoutable protocol when ZIKVIEWROUTER_CHECK is enabled. When ZIKVIEWROUTER_CHECK is disabled, the protocol doesn't need to inheriting from ZIKViewConfigRoutable.
+ */
++ (void)registerConfigProtocol:(Protocol *)configProtocol;
 @end
 
 #pragma mark Error Handle
@@ -304,55 +352,16 @@ extern _Nullable Class ZIKViewRouterForView(Protocol *viewProtocol);
  */
 extern _Nullable Class ZIKViewRouterForConfig(Protocol *configProtocol);
 
-#pragma mark Router Register
-
-#ifdef DEBUG
-#define ZIKVIEWROUTER_CHECK 1
-#else
-#define ZIKVIEWROUTER_CHECK 0
-#endif
-
-/**
- Register a viewClass with it's router's class, so we can create the router of a view when view is not created from router(UIViewController from storyboard or UIView added with -addSubview:, can't detect UIViewController displayed from code because we can't get the performer vc), and require the performer to config the view, and get AOP notified for some route actions.
- @note
- One view may be registered with multi routers, when view is routed from storyboard or -addSubview:, a router will be auto created from one of the registered router classes randomly. If you want to use a certain router, see ZIKViewRouter_registerViewForExclusiveRouter().
- One router may manage multi views. You can register multi view classes to a same router class.
- 
- @param viewClass The view class managed by router
- @param routerClass The router class to bind with view class
- */
+API_DEPRECATED_WITH_REPLACEMENT("+[ZIKViewRouter registerView:]",ios(7.0,7.0))
 extern void ZIKViewRouter_registerView(Class viewClass, Class routerClass);
 
-/**
- If the view will hold and use it's router, or you inject dependencies in the router, that means the view is coupled with the router. In this situation, you can use this function to combine viewClass with a specific routerClass, then no other routerClass can be used for this viewClass. If another routerClass try to register with the viewClass, there will be an assert failure.
- 
- @param viewClass The view class requiring a specific router class
- @param routerClass The unique router class to bind with view class
- */
+API_DEPRECATED_WITH_REPLACEMENT("+[ZIKViewRouter registerExclusiveView:]",ios(7.0,7.0))
 extern void ZIKViewRouter_registerViewForExclusiveRouter(Class viewClass, Class routerClass);
 
-/**
- Register a view protocol that all views registered with the router conform to, then use ZIKViewRouterForView() to get the router class.
- @discussion
- If there're multi router classes for same view, and those routers is designed for preparing different part of the view when perform route (for example, a router is for presenting actionsheet style for UIAlertController, another router is for presenting alert style for UIAlertController), then each router has to register a unique protocol for the view and get the right router class with their protocol, or just import the router class your want to use directly.
- 
- You can register your protocol and let the view conforms to the protocol in category in your interface adapter.
- 
- @param viewProtocol The protocol conformed by view to identify the routerClass. Should be a ZIKViewRoutable protocol when ZIKVIEWROUTER_CHECK is enabled. When ZIKVIEWROUTER_CHECK is disabled, the protocol doesn't need to inheriting from ZIKViewRoutable.
- @param routerClass The router class to bind with view class
- */
+API_DEPRECATED_WITH_REPLACEMENT("+[ZIKViewRouter registerViewProtocol:]",ios(7.0,7.0))
 extern void ZIKViewRouter_registerViewProtocol(Protocol *viewProtocol, Class routerClass);
 
-/**
- Register a config protocol the router's default configuration conforms, then use ZIKViewRouterForConfig() to get the router class.
- @discussion
- If there're multi router classes for same view, and those routers provide different functions and use their subclass of ZIKViewRouteConfiguration (for example, your add a third-party library to your project, the library has a router for quickly presenting a UIAlertController, and in your project, there's a router for integrating UIAlertView and UIAlertController), then each router has to register a unique protocol for their configurations and get the right router class with this protocol, or just import the router class your want to use directly.
- 
-  You can register your protocol and let the configuration conforms to the protocol in category in your interface adapter.
- 
- @param configProtocol The protocol conformed by default configuration of the routerClass. Should be a ZIKViewConfigRoutable protocol when ZIKVIEWROUTER_CHECK is enabled. When ZIKVIEWROUTER_CHECK is disabled, the protocol doesn't need to inheriting from ZIKViewConfigRoutable.
- @param routerClass The router class to bind with view class
- */
+API_DEPRECATED_WITH_REPLACEMENT("+[ZIKViewRouter registerConfig:]",ios(7.0,7.0))
 extern void ZIKViewRouter_registerConfigProtocol(Protocol *configProtocol, Class routerClass);
 
 ///If a UIViewController or UIView conforms to ZIKRoutableView, means there is a router class for it. Don't use it in other place.

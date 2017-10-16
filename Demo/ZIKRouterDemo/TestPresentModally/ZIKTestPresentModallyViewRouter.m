@@ -17,7 +17,7 @@
 @implementation ZIKTestPresentModallyViewRouter
 
 + (void)registerRoutableDestination {
-    ZIKViewRouter_registerView([ZIKTestPresentModallyViewController class], self);
+    [self registerView:[ZIKTestPresentModallyViewController class]];
 }
 
 - (id)destinationWithConfiguration:(__kindof ZIKRouteConfiguration *)configuration {

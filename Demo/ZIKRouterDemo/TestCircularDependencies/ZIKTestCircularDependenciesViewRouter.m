@@ -19,8 +19,8 @@
 @implementation ZIKTestCircularDependenciesViewRouter
 
 + (void)registerRoutableDestination {
-    ZIKViewRouter_registerView([ZIKTestCircularDependenciesViewController class], self);
-    ZIKViewRouter_registerViewProtocol(@protocol(ZIKParentViewProtocol), self);
+    [self registerView:[ZIKTestCircularDependenciesViewController class]];
+    [self registerViewProtocol:@protocol(ZIKParentViewProtocol)];
 }
 
 - (id)destinationWithConfiguration:(__kindof ZIKRouteConfiguration *)configuration {

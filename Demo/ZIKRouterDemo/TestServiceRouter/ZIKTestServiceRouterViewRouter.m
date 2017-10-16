@@ -17,7 +17,7 @@
 @implementation ZIKTestServiceRouterViewRouter
 
 + (void)registerRoutableDestination {
-    ZIKViewRouter_registerView([ZIKTestServiceRouterViewController class], self);
+    [self registerView:[ZIKTestServiceRouterViewController class]];
 }
 
 - (id)destinationWithConfiguration:(__kindof ZIKRouteConfiguration *)configuration {

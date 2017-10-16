@@ -17,7 +17,7 @@
 @implementation ZIKTestPerformSegueViewRouter
 
 + (void)registerRoutableDestination {
-    ZIKViewRouter_registerView([ZIKTestPerformSegueViewController class], self);
+    [self registerView:[ZIKTestPerformSegueViewController class]];
 }
 
 - (id)destinationWithConfiguration:(__kindof ZIKRouteConfiguration *)configuration {
