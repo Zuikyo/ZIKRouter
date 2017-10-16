@@ -267,7 +267,9 @@ extern void ZIKServiceRouter_registerConfigProtocol(Protocol *configProtocol, Cl
     CFDictionarySetValue(g_configProtocolToRouterMap, (__bridge const void *)(configProtocol), (__bridge const void *)(routerClass));
 }
 
-
+_Nullable Class _Swift_ZIKServiceRouterForService(id serviceProtocol) {
+    return ZIKServiceRouterForService(serviceProtocol);
+}
 _Nullable Class ZIKServiceRouterForService(Protocol *serviceProtocol) {
     NSCParameterAssert(serviceProtocol);
     NSCAssert(g_serviceProtocolToRouterMap, @"Didn't register any protocol yet.");

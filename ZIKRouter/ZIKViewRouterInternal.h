@@ -38,4 +38,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 @end
 
+extern void _Swift_ZIKViewRouter_registerViewProtocol(id viewProtocol, Class routerClass);
+extern _Nullable Class _Swift_ZIKViewRouterForView(id viewProtocol);
+
 NS_ASSUME_NONNULL_END

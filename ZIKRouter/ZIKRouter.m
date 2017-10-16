@@ -113,16 +113,16 @@ NSString *kZIKRouterErrorDomain = @"kZIKRouterErrorDomain";
 
 + (__kindof ZIKRouter *)performWithConfigure:(void(^)(ZIKRouteConfiguration *configuration))configBuilder {
     NSParameterAssert(configBuilder);
-    ZIKRouter *route = [[self alloc] initWithConfigure:configBuilder removeConfigure:nil];
-    [route performRoute];
-    return route;
+    ZIKRouter *router = [[self alloc] initWithConfigure:configBuilder removeConfigure:nil];
+    [router performRoute];
+    return router;
 }
 
 + (__kindof ZIKRouter *)performWithConfigure:(void(^)(ZIKRouteConfiguration *configuration))configBuilder removeConfigure:(void(^)(ZIKRouteConfiguration * configuration))removeConfigBuilder {
     NSParameterAssert(configBuilder);
-    ZIKRouter *route = [[self alloc] initWithConfigure:configBuilder removeConfigure:removeConfigBuilder];
-    [route performRoute];
-    return route;
+    ZIKRouter *router = [[self alloc] initWithConfigure:configBuilder removeConfigure:removeConfigBuilder];
+    [router performRoute];
+    return router;
 }
 
 - (BOOL)canRemove {

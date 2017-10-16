@@ -22,7 +22,13 @@ class SwiftSampleViewController: UIViewController, SwiftSampleViewProtocol, ZIKI
     var alertRouterClass: ZIKViewRouter<ZIKViewRouteConfiguration & ZIKCompatibleAlertConfigProtocol, ZIKViewRemoveConfiguration>.Type!
     
     @IBAction func testRouteForView(_ sender: Any) {
-        self.infoRouter = ZIKSViewRouterForView(ZIKInfoViewProtocol.self)?.perform { config in
+        let destination = DynamicRouter.instantiateView(for: SwiftSampleViewProtocol.self, preparation: {[weak self] (destination) in
+//            destination.delegate = self
+//            destination.name = "zuik"
+//            destination.age = 18
+        })
+        
+        self.infoRouter = DynamicRouter.router(forView: ZIKInfoViewProtocol.self)?.perform { config in
             config.source = self
             config.routeType = ZIKViewRouteType.presentModally
             config.prepareForRoute = { [weak self] d in

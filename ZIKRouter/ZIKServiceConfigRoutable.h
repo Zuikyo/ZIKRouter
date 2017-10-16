@@ -20,6 +20,6 @@
  
  It's safe to use protocols inheriting from ZIKServiceConfigRoutable with ZIKServiceRouterForConfig() and won't get nil. ZIKServiceRouter will validate all ZIKServiceConfigRoutable protocols and registered protocols when app launchs and ZIKSERVICEROUTER_CHECK is enbled. When ZIKSERVICEROUTER_CHECK is disabled, the protocol doesn't need to inheriting from ZIKServiceConfigRoutable.
  */
-@protocol ZIKServiceConfigRoutable <NSObject>
+@protocol ZIKServiceConfigRoutable
 
 @end

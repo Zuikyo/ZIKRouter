@@ -254,6 +254,10 @@ void ZIKViewRouter_registerView(Class viewClass, Class routerClass) {
 #endif
 }
 
+void _Swift_ZIKViewRouter_registerViewProtocol(id viewProtocol, Class routerClass) {
+    ZIKViewRouter_registerViewProtocol(viewProtocol, routerClass);
+}
+
 void ZIKViewRouter_registerViewProtocol(Protocol *viewProtocol, Class routerClass) {
     NSCParameterAssert([routerClass isSubclassOfClass:[ZIKViewRouter class]]);
     NSCAssert(!_assert_isLoadFinished, @"Only register in +registerRoutableDestination.");
@@ -411,6 +415,10 @@ static _Nullable Class ZIKViewRouterForRegisteredView(Class viewClass) {
         return routerClass;
     }
     return nil;
+}
+
+_Nullable Class _Swift_ZIKViewRouterForView(id viewProtocol) {
+    return ZIKViewRouterForView(viewProtocol);
 }
 
 _Nullable Class ZIKViewRouterForView(Protocol *viewProtocol) {
@@ -629,6 +637,29 @@ _Nullable Class ZIKViewRouterForConfig(Protocol *configProtocol) {
 
 + (BOOL)completeSynchronously {
     return YES;
+}
+
+#pragma mark Convenient method
+
++ (nullable id)instantiateDestinationForConfigure:(void(NS_NOESCAPE ^)(ZIKViewRouteConfiguration *config))configBuilder {
+    NSAssert(self != [ZIKViewRouter class], @"Only get destination from router subclass");
+    NSAssert1([self completeSynchronously] == YES, @"The router (%@) should return the destination Synchronously when use +destinationForConfigure",self);
+    ZIKViewRouter *router = [[self alloc] initWithConfigure:(void(^)(ZIKRouteConfiguration *))configBuilder removeConfigure:nil];
+    router._nocopy_configuration.routeType = ZIKViewRouteTypeGetDestination;
+    [router performRoute];
+    return router.destination;
+}
+
++ (nullable id)instantiateDestinationForProtocol:(Protocol *)viewProtocol configure:(void(NS_NOESCAPE ^)(ZIKViewRouteConfiguration *config))configBuilder {
+    Class routerClass = ZIKViewRouterForView(viewProtocol);
+    NSAssert1([routerClass completeSynchronously] == YES, @"The router (%@) should return the destination Synchronously when use +destinationForConfigure",self);
+    if (routerClass) {
+        ZIKViewRouter *router = [[routerClass alloc] initWithConfigure:(void(^)(ZIKRouteConfiguration *))configBuilder removeConfigure:nil];
+        router._nocopy_configuration.routeType = ZIKViewRouteTypeGetDestination;
+        [router performRoute];
+        return router.destination;
+    }
+    return nil;
 }
 
 #pragma mark Perform Route

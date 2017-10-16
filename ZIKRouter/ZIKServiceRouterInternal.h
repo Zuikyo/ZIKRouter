@@ -11,6 +11,8 @@
 
 #import "ZIKServiceRouter.h"
 
+NS_ASSUME_NONNULL_BEGIN
+
 @interface ZIKServiceRouter ()
 @property (nonatomic, readonly, copy) __kindof ZIKServiceRouteConfiguration *_nocopy_configuration;
 
@@ -29,3 +31,7 @@
 ///Call it when route remove failed.
 - (void)endRemoveRouteWithError:(NSError *)error;
 @end
+
+extern _Nullable Class _Swift_ZIKServiceRouterForService(id serviceProtocol);
+
+NS_ASSUME_NONNULL_END

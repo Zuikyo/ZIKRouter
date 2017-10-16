@@ -20,6 +20,6 @@
  
  It's safe to use protocols inheriting from ZIKViewRoutable with ZIKViewRouterForView() and won't get nil. ZIKViewRouter will validate all ZIKViewRoutable protocols and registered protocols when app launchs and ZIKVIEWROUTER_CHECK is enbled. When ZIKVIEWROUTER_CHECK is disabled, the protocol doesn't need to inheriting from ZIKViewRoutable.
  */
-@protocol ZIKViewRoutable <NSObject>
+@protocol ZIKViewRoutable
 
 @end

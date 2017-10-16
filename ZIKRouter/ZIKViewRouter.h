@@ -86,6 +86,8 @@ typedef void(^ZIKViewRouteGlobalErrorHandler)(__kindof ZIKViewRouter * _Nullable
 ///If this destination doesn't need any variable to initialize, just pass source and perform route.
 + (nullable ZIKViewRouter<RouteConfig,RemoveConfig> *)performWithSource:(nullable id<ZIKViewRouteSource>)source routeType:(ZIKViewRouteType)routeType;
 
++ (nullable id)instantiateDestinationForConfigure:(void(NS_NOESCAPE ^)(ZIKViewRouteConfiguration *config))configBuilder;
+
 /**
  Perform route on destination. If you get a prepared destination by ZIKViewRouteTypeGetDestination, you can use this method to perform route on the destination.
 
