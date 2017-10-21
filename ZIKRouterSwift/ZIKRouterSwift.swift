@@ -6,7 +6,6 @@
 //  Copyright © 2017 zuik. All rights reserved.
 //
 
-import Foundation
 import ZIKRouter.Internal
 import ZIKRouter.Private
 
