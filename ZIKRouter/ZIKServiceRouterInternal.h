@@ -30,8 +30,7 @@ NS_ASSUME_NONNULL_BEGIN
 - (void)endRemoveRouteWithSuccessOnDestination:(id)destination;
 ///Call it when route remove failed.
 - (void)endRemoveRouteWithError:(NSError *)error;
-@end
 
-extern _Nullable Class _Swift_ZIKServiceRouterForService(id serviceProtocol);
+@end
 
 NS_ASSUME_NONNULL_END

@@ -37,7 +37,6 @@ static CFMutableDictionaryRef g_viewToDefaultRouterMap;
 static CFMutableDictionaryRef g_viewToExclusiveRouterMap;
 #if ZIKVIEWROUTER_CHECK
 static CFMutableDictionaryRef _check_routerToViewsMap;
-static NSArray<Class> *g_routableViews;
 #endif
 
 static ZIKViewRouteGlobalErrorHandler g_globalErrorHandler;
@@ -102,7 +101,7 @@ static void _initializeZIKViewRouter(void) {
     
     g_preparingUIViewRouters = [NSMutableArray array];
 #if ZIKVIEWROUTER_CHECK
-    NSMutableArray *routableViews = [NSMutableArray array];
+    NSMutableSet *routableViews = [NSMutableSet set];
     if (!_check_routerToViewsMap) {
         _check_routerToViewsMap = CFDictionaryCreateMutable(kCFAllocatorDefault, 0, NULL, &kCFTypeDictionaryValueCallBacks);
     }
@@ -150,12 +149,12 @@ static void _initializeZIKViewRouter(void) {
     
     ZIKRouter_enumerateClassList(^(__unsafe_unretained Class class) {
         if (ZIKRouter_classIsSubclassOfClass(class, UIResponderClass)) {
+#if ZIKVIEWROUTER_CHECK
             if (class_conformsToProtocol(class, @protocol(ZIKRoutableView))) {
                 NSCAssert([class isSubclassOfClass:[UIView class]] || [class isSubclassOfClass:UIViewControllerClass], @"ZIKRoutableView only suppourt UIView and UIViewController");
-#if ZIKVIEWROUTER_CHECK
                 [routableViews addObject:class];
-#endif
             }
+#endif
             if (ZIKRouter_classIsSubclassOfClass(class, UIViewControllerClass)) {
                 //hook all UIViewController's -prepareForSegue:sender:
                 ZIKRouter_replaceMethodWithMethod(class, @selector(prepareForSegue:sender:),
@@ -181,7 +180,9 @@ static void _initializeZIKViewRouter(void) {
     });
     
 #if ZIKVIEWROUTER_CHECK
-    g_routableViews = routableViews;
+    for (Class viewClass in routableViews) {
+        NSCAssert1(CFDictionaryGetValue(g_viewToDefaultRouterMap, (__bridge const void *)(viewClass)) != NULL, @"Routable view(%@) is not registered with any view router.",viewClass);
+    }
     ZIKRouter_enumerateProtocolList(^(Protocol *protocol) {
         if (protocol_conformsToProtocol(protocol, @protocol(ZIKViewRoutable)) &&
             protocol != @protocol(ZIKViewRoutable)) {
@@ -208,6 +209,10 @@ static void _initializeZIKViewRouter(void) {
 }
 
 #pragma mark Dynamic Discover
+
++ (BOOL)_isLoadFinished {
+    return _assert_isLoadFinished;
+}
 
 + (void)registerView:(Class)viewClass {
     Class routerClass = self;
@@ -335,7 +340,7 @@ static void _initializeZIKViewRouter(void) {
 + (void)registerConfigProtocol:(Protocol *)configProtocol {
     Class routerClass = self;
     NSParameterAssert([routerClass isSubclassOfClass:[ZIKViewRouter class]]);
-    NSAssert([[routerClass defaultRouteConfiguration] conformsToProtocol:configProtocol], @"configProtocol should be conformed by this router's defaultRouteConfiguration.");
+    NSAssert2([[routerClass defaultRouteConfiguration] conformsToProtocol:configProtocol], @"configProtocol(%@) should be conformed by this router(%@)'s defaultRouteConfiguration.",NSStringFromProtocol(configProtocol),self);
     NSAssert(!_assert_isLoadFinished, @"Only register in +registerRoutableDestination.");
     NSAssert([NSThread isMainThread], @"Call in main thread for thread safety.");
 #if ZIKVIEWROUTER_CHECK
@@ -398,10 +403,6 @@ void ZIKViewRouter_registerView(Class viewClass, Class routerClass) {
     }
     CFSetAddValue(views, (__bridge const void *)(viewClass));
 #endif
-}
-
-void _Swift_ZIKViewRouter_registerViewProtocol(id viewProtocol, Class routerClass) {
-    ZIKViewRouter_registerViewProtocol(viewProtocol, routerClass);
 }
 
 void ZIKViewRouter_registerViewProtocol(Protocol *viewProtocol, Class routerClass) {
@@ -509,7 +510,8 @@ void EnumerateRoutersForViewClass(Class viewClass,void(^handler)(Class routerCla
     }
     Class UIViewControllerSuperclass = [UIViewController superclass];
     while (viewClass != UIViewControllerSuperclass) {
-        if (class_conformsToProtocol(viewClass, @protocol(ZIKRoutableView))) {
+        
+        if ([viewClass conformsToProtocol:@protocol(ZIKRoutableView)]) {
             CFMutableSetRef routers = (CFMutableSetRef)CFDictionaryGetValue(g_viewToRoutersMap, (__bridge const void *)(viewClass));
             NSSet *routerClasses = (__bridge NSSet *)(routers);
             for (Class class in routerClasses) {
@@ -517,6 +519,8 @@ void EnumerateRoutersForViewClass(Class viewClass,void(^handler)(Class routerCla
                     handler(class);
                 }
             }
+        } else {
+            break;
         }
         viewClass = class_getSuperclass(viewClass);
     }
@@ -534,32 +538,20 @@ static _Nullable Class ZIKViewRouterForRegisteredView(Class viewClass) {
             g_viewToDefaultRouterMap = CFDictionaryCreateMutable(kCFAllocatorDefault, 0, NULL, NULL);
         }
     });
-    if (viewClass) {
-        while (viewClass && !class_conformsToProtocol(viewClass, @protocol(ZIKRoutableView))) {
-            viewClass = class_getSuperclass(viewClass);
+    
+    while (viewClass) {
+        if (![viewClass conformsToProtocol:@protocol(ZIKRoutableView)]) {
+            break;
         }
         Class routerClass = CFDictionaryGetValue(g_viewToDefaultRouterMap, (__bridge const void *)(viewClass));
-        NSCAssert(!routerClass || [routerClass isSubclassOfClass:[ZIKViewRouter class]],@"routerClass should be ZIKViewRouter's subclass.");
-        
-        if (!routerClass) {
-            //this protocol is not registered
-            CFSetRef routers = CFDictionaryGetValue(g_viewToRoutersMap, (__bridge const void *)(viewClass));
-            NSCAssert(routers, @"Didn't register any routerClass for viewClass.");
-            NSCAssert(CFSetGetCount(routers) == 1, @"There are multi routers for this view class, you have to use ZIKViewRouterRegisterViewWithViewProtocol() to register different protocol for each router.");
-            if (!routers) {
-                return nil;
-            }
-            //Get random one, and add to default map
-            routerClass = [(__bridge NSSet *)routers anyObject];
-            NSCAssert(routerClass, @"Didn't register default routerClass and any other routerClass for viewClass.");
-            NSCAssert([routerClass isSubclassOfClass:[ZIKViewRouter class]],@"routerClass should be ZIKViewRouter's subclass.");
-            if (routerClass) {
-                CFDictionarySetValue(g_viewToDefaultRouterMap, (__bridge const void *)(viewClass), (__bridge const void *)(routerClass));
-                return routerClass;
-            }
+        if (routerClass) {
+            return routerClass;
+        } else {
+            viewClass = class_getSuperclass(viewClass);
         }
-        return routerClass;
     }
+    
+    NSCAssert1(NO, @"Didn't register any routerClass for viewClass (%@).",viewClass);
     return nil;
 }
 
@@ -567,14 +559,14 @@ _Nullable Class _Swift_ZIKViewRouterForView(id viewProtocol) {
     return ZIKViewRouterForView(viewProtocol);
 }
 
+_Nullable Class _Swift_ZIKViewRouterForConfig(id configProtocol) {
+    return ZIKViewRouterForConfig(configProtocol);
+}
+
 _Nullable Class ZIKViewRouterForView(Protocol *viewProtocol) {
     NSCParameterAssert(viewProtocol);
     NSCAssert(g_viewProtocolToRouterMap, @"Didn't register any protocol yet.");
     NSCAssert(_assert_isLoadFinished, @"Only get router after app did finish launch.");
-#if ZIKVIEWROUTER_CHECK
-    NSCAssert(g_routableViews, @"g_routableViews should be initialized.");
-    NSCAssert(ZIKRouter_subclassesComformToProtocol(g_routableViews, viewProtocol).count <= 1, @"More than one view class conforms to this protocol, please use a unique protocol only conformed by the view class you want to fetch.");
-#endif
     
     static dispatch_once_t onceToken;
     dispatch_once(&onceToken, ^{

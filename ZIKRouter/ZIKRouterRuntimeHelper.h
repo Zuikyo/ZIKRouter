@@ -61,8 +61,7 @@ extern void ZIKRouter_enumerateProtocolList(void(^handler)(Protocol *protocol));
 ///Check if a class is a subclass of another class
 extern bool ZIKRouter_classIsSubclassOfClass(Class class, Class parentClass);
 
-///Get classes conforming to a protocol
-extern NSArray *ZIKRouter_subclassesComformToProtocol(NSArray<Class> *classes, Protocol *protocol);
-
 ///Check if a class is from Apple's system framework, or from your project.
 extern bool ZIKRouter_classIsCustomClass(Class class);
+
+extern bool ZIKRouter_isObjcProtocol(id protocol);

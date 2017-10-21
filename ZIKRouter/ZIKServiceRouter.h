@@ -169,7 +169,7 @@ extern void ZIKServiceRouter_registerServiceProtocol(Protocol *serviceProtocol, 
 API_DEPRECATED_WITH_REPLACEMENT("+[ZIKViewRouter registerConfigProtocol:]",ios(7.0,7.0))
 extern void ZIKServiceRouter_registerConfigProtocol(Protocol *configProtocol, Class routerClass);
 
-///It's a mark for service classes with router. Don't use it in other place.
+///If a class conforms to ZIKRoutableService, there must be a router for it and it's subclass. Don't use it in other place.
 @protocol ZIKRoutableService
 
 @end

@@ -8,6 +8,7 @@
 
 import Foundation
 import ZIKRouter
+import ZIKRouterSwift
 
 //Declare SwiftService is routable
 extension SwiftService: ZIKRoutableService {
@@ -16,7 +17,7 @@ extension SwiftService: ZIKRoutableService {
 class SwiftServiceRouter: ZIKServiceRouter<ZIKServiceRouteConfiguration, ZIKRouteConfiguration> {
     override class func registerRoutableDestination() {
         registerService(SwiftService.self)
-        registerServiceProtocol(SwiftServiceProtocol.self)
+        Router.registerServiceProtocol(SwiftServiceInput.self, router: self)
     }
     override func destination(with configuration: ZIKRouteConfiguration) -> Any {
         return SwiftService()

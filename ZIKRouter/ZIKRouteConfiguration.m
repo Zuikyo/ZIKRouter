@@ -13,7 +13,8 @@
 
 - (instancetype)init {
     if (self = [super init]) {
-        NSAssert(class_conformsToProtocol([self class], @protocol(NSCopying)), @"configuration must conforms to NSCopying, because it will be deep copied when router is initialized.");
+        NSAssert(class_conformsToProtocol([self class], @protocol(NSCopying)) || [NSStringFromClass([self class]) containsString:@"."], @"configuration must conforms to NSCopying, because it will be deep copied when router is initialized.");
+        
     }
     return self;
 }

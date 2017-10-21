@@ -8,16 +8,33 @@
 
 import UIKit
 import ZIKRouter
+import ZIKRouterSwift
 
 //Declare SwiftSampleViewController is routable
 extension SwiftSampleViewController: ZIKRoutableView {
 }
 
-class SwiftSampleViewRouter: ZIKViewRouter<ZIKViewRouteConfiguration, ZIKViewRemoveConfiguration> {
+protocol SwiftSampleViewConfig {
+    
+}
+
+class SwiftSampleViewConfiguration: ZIKViewRouteConfiguration, SwiftSampleViewConfig {
+    override func copy(with zone: NSZone? = nil) -> Any {
+        return super.copy(with: zone)
+    }
+}
+
+class SwiftSampleViewRouter: ZIKViewRouter<SwiftSampleViewConfiguration, ZIKViewRemoveConfiguration> {
     override class func registerRoutableDestination() {
         registerView(SwiftSampleViewController.self)
         registerViewProtocol(SwiftSampleViewProtocol.self)
+        Router.registerViewConfig(SwiftSampleViewConfig.self, router: self)
     }
+    
+    override class func defaultRouteConfiguration() -> ZIKViewRouteConfiguration {
+        return SwiftSampleViewConfiguration()
+    }
+    
     override func destination(with configuration: ZIKViewRouteConfiguration) -> ZIKRoutableView? {
         let sb = UIStoryboard.init(name: "Main", bundle: nil)
         let destination = sb.instantiateViewController(withIdentifier: "SwiftSampleViewController") as! SwiftSampleViewController

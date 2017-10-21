@@ -208,18 +208,6 @@ bool ZIKRouter_classIsSubclassOfClass(Class class, Class parentClass) {
     return true;
 }
 
-NSArray *ZIKRouter_subclassesComformToProtocol(NSArray<Class> *classes, Protocol *protocol) {
-    NSCParameterAssert(classes);
-    NSCParameterAssert(protocol);
-    NSMutableArray *result = [NSMutableArray array];
-    for (Class class in classes) {
-        if (class_conformsToProtocol(class, protocol)) {
-            [result addObject:class];
-        }
-    }
-    return result;
-}
-
 bool ZIKRouter_classIsCustomClass(Class class) {
     NSCParameterAssert(class);
     if (!class) {
@@ -231,6 +219,13 @@ bool ZIKRouter_classIsCustomClass(Class class) {
         mainBundlePath = [[NSBundle mainBundle] bundlePath];
     });
     if ([[[NSBundle bundleForClass:class] bundlePath] isEqualToString:mainBundlePath]) {
+        return true;
+    }
+    return false;
+}
+
+bool ZIKRouter_isObjcProtocol(id protocol) {
+    if ([[protocol class] isEqual:NSClassFromString(@"Protocol")]) {
         return true;
     }
     return false;

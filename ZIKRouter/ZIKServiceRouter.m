@@ -26,7 +26,6 @@ static CFMutableDictionaryRef g_serviceToDefaultRouterMap;
 static CFMutableDictionaryRef g_serviceToExclusiveRouterMap;
 #if ZIKSERVICEROUTER_CHECK
 static CFMutableDictionaryRef _check_routerToServicesMap;
-static NSArray<Class> *g_routableServices;
 #endif
 
 static ZIKServiceRouteGlobalErrorHandler g_globalErrorHandler;
@@ -79,7 +78,7 @@ void _initializeZIKServiceRouter() {
         g_configProtocolToRouterMap = CFDictionaryCreateMutable(kCFAllocatorDefault, 0, NULL, NULL);
     }
 #if ZIKSERVICEROUTER_CHECK
-    NSMutableArray *routableServices = [NSMutableArray array];
+    NSMutableSet *routableServices = [NSMutableSet set];
     if (!_check_routerToServicesMap) {
         _check_routerToServicesMap = CFDictionaryCreateMutable(kCFAllocatorDefault, 0, NULL, &kCFTypeDictionaryValueCallBacks);
     }
@@ -105,8 +104,9 @@ void _initializeZIKServiceRouter() {
         }
     });
 #if ZIKSERVICEROUTER_CHECK
-    g_routableServices = routableServices;
-    
+    for (Class serviceClass in routableServices) {
+        NSCAssert1(CFDictionaryGetValue(g_serviceToDefaultRouterMap, (__bridge const void *)(serviceClass)) != NULL, @"Routable service(%@) is not registered with any service router.",serviceClass);
+    }
     ZIKRouter_enumerateProtocolList(^(Protocol *protocol) {
         if (protocol_conformsToProtocol(protocol, @protocol(ZIKServiceRoutable)) &&
             protocol != @protocol(ZIKServiceRoutable)) {
@@ -133,6 +133,10 @@ void _initializeZIKServiceRouter() {
 }
 
 #pragma mark Dynamic Discover
+
++ (BOOL)_isLoadFinished {
+    return _assert_isLoadFinished;
+}
 
 + (void)registerService:(Class)serviceClass {
     Class routerClass = self;
@@ -407,14 +411,15 @@ extern void ZIKServiceRouter_registerConfigProtocol(Protocol *configProtocol, Cl
 _Nullable Class _Swift_ZIKServiceRouterForService(id serviceProtocol) {
     return ZIKServiceRouterForService(serviceProtocol);
 }
+
+extern _Nullable Class _Swift_ZIKServiceRouterForConfig(id configProtocol) {
+    return ZIKServiceRouterForConfig(configProtocol);
+}
+
 _Nullable Class ZIKServiceRouterForService(Protocol *serviceProtocol) {
     NSCParameterAssert(serviceProtocol);
     NSCAssert(g_serviceProtocolToRouterMap, @"Didn't register any protocol yet.");
     NSCAssert(_assert_isLoadFinished, @"Only get router after app did finish launch.");
-#if ZIKSERVICEROUTER_CHECK
-    NSCAssert(g_routableServices, @"g_routableServices should be initialized.");
-    NSCAssert(ZIKRouter_subclassesComformToProtocol(g_routableServices, serviceProtocol).count <= 1, @"More than one service class conforms to this protocol, please use a unique protocol only conformed by the service class you want to fetch.");
-#endif
     
     static dispatch_once_t onceToken;
     dispatch_once(&onceToken, ^{

@@ -8,14 +8,16 @@
 
 import Foundation
 import ZIKRouter
+import ZIKRouterSwift
 
-@objc protocol SwiftServiceProtocol {
+protocol SwiftServiceInput {
     func swiftFunction()
 }
-class SwiftService: SwiftServiceProtocol {
+class SwiftService: SwiftServiceInput {
     func swiftFunction() {
         print("this is a swift function")
-        ZIKSViewRouterForConfig(ZIKCompatibleAlertConfigProtocol.self)?.perform { configuration in
+        
+        Router.router(forViewConfig: ZIKCompatibleAlertConfigProtocol.self)?.perform { configuration in
             let config = configuration as! ZIKViewRouteConfiguration & ZIKCompatibleAlertConfigProtocol
             config.source = UIApplication.shared.keyWindow?.rootViewController
             config.title = "SwiftService"
