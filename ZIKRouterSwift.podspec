@@ -10,13 +10,12 @@ Pod::Spec.new do |s|
   s.license      = "MIT"
   s.author             = { "Zuikyo" => "zuilongzhizhu@gmail.com" }
 
-  s.platform     = :ios, "7.0"
-  s.ios.deployment_target = "7.0"
+  s.platform     = :ios, "8.0"
+  s.ios.deployment_target = "8.0"
 
   s.source       = { :git => "https://github.com/Zuikyo/ZIKRouter.git", :tag => "swift-#{s.version}" }
 
   s.source_files  = "ZIKRouterSwift/*.swift"
-  s.public_header_files = "ZIKRouterSwift/*.h"
 
   s.requires_arc = true
 
