@@ -209,8 +209,6 @@
 				F833153C1F6FCC3E00891004 /* UIStoryboardSegue+ZIKViewRouterPrivate.h */,
 				F833153D1F6FCC3E00891004 /* UIStoryboardSegue+ZIKViewRouterPrivate.m */,
 				F83315441F6FE0FA00891004 /* ZIKViewRouteConfiguration+Private.h */,
-				F8611F6C1F9B8E3C008F35DC /* ZIKViewRouterPrivate.h */,
-				F8611F6E1F9B8EBB008F35DC /* ZIKServiceRouterPrivate.h */,
 			);
 			path = Private;
 			sourceTree = "<group>";
@@ -247,6 +245,7 @@
 				F83315401F6FE03900891004 /* ZIKViewRouteConfiguration.h */,
 				F83315411F6FE03900891004 /* ZIKViewRouteConfiguration.m */,
 				F85F4D0D1F223F0F003106C3 /* ZIKViewRouterInternal.h */,
+				F8611F6C1F9B8E3C008F35DC /* ZIKViewRouterPrivate.h */,
 				F8B99A591F4ACD4D0063127F /* ZIKViewRoutable.h */,
 				F8B99A5B1F4ACE300063127F /* ZIKViewConfigRoutable.h */,
 				F850CF8D1F4B1C01004319A0 /* ZIKViewRouteAdapter.h */,
@@ -258,6 +257,7 @@
 				F85A69981F90E79B00F33285 /* ZIKServiceRouteConfiguration.h */,
 				F85A69991F90E79B00F33285 /* ZIKServiceRouteConfiguration.m */,
 				F8FD8EC91F3B2D0D00D7EECB /* ZIKServiceRouterInternal.h */,
+				F8611F6E1F9B8EBB008F35DC /* ZIKServiceRouterPrivate.h */,
 				F8B99A5D1F4ADB350063127F /* ZIKServiceRoutable.h */,
 				F8B99A5F1F4ADB4A0063127F /* ZIKServiceConfigRoutable.h */,
 				F850CF911F4B1E52004319A0 /* ZIKServiceRouteAdapter.h */,
@@ -423,7 +423,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "# Sets the target folders and the final framework product.\n# If target name is not equal to project name, you should manually set FMKNAME.\nFMK_NAME=${PROJECT_NAME}\n\n# Install dir will be the final output to the framework.\n# The following line create it in the root folder of the current project.\nINSTALL_DIR=${SRCROOT}/Products/${FMK_NAME}.framework\n\n# Working dir will be deleted after the framework creation.\nWRK_DIR=build\nDEVICE_DIR=${WRK_DIR}/Release-iphoneos/${FMK_NAME}.framework\nSIMULATOR_DIR=${WRK_DIR}/Release-iphonesimulator/${FMK_NAME}.framework\n\n# -configuration ${CONFIGURATION}\n# Clean and Building both architectures.\nxcodebuild -configuration \"Release\" -target \"${FMK_NAME}\" -sdk iphoneos -arch armv7 -arch armv7s -arch arm64 clean build\nxcodebuild -configuration \"Release\" -target \"${FMK_NAME}\" -sdk iphonesimulator -arch i386 -arch x86_64 clean build\n\n# Cleaning the oldest.\nif [ -d \"${INSTALL_DIR}\" ]\nthen\nrm -rf \"${INSTALL_DIR}\"\nfi\n\nmkdir -p \"${INSTALL_DIR}\"\n\ncp -R \"${DEVICE_DIR}/\" \"${INSTALL_DIR}/\"\n\n# Uses the Lipo Tool to merge both binary files (i386 + armv6/armv7) into one Universal final product.\nlipo -create \"${DEVICE_DIR}/${FMK_NAME}\" \"${SIMULATOR_DIR}/${FMK_NAME}\" -output \"${INSTALL_DIR}/${FMK_NAME}\"\n\nrm -r \"${WRK_DIR}\"\n\nopen \"${SRCROOT}/Products/\"";
+			shellScript = "# Sets the target folders and the final framework product.\n# If target name is not equal to project name, you should manually set FMKNAME.\nFMK_NAME=${PROJECT_NAME}\n\n# Install dir will be the final output to the framework.\n# The following line create it in the root folder of the current project.\nINSTALL_DIR=${SRCROOT}/Products/${FMK_NAME}.framework\n\n# Working dir will be deleted after the framework creation.\nWRK_DIR=build\nDEVICE_DIR=${WRK_DIR}/Release-iphoneos/${FMK_NAME}.framework\nSIMULATOR_DIR=${WRK_DIR}/Release-iphonesimulator/${FMK_NAME}.framework\n\n# -configuration ${CONFIGURATION}\n# Clean and Building both architectures.\nxcodebuild -project \"${PROJECT_NAME}.xcodeproj\" -configuration \"Release\" -target \"${FMK_NAME}\" -sdk iphoneos -arch armv7 -arch armv7s -arch arm64 clean build\nxcodebuild -project \"${PROJECT_NAME}.xcodeproj\" -configuration \"Release\" -target \"${FMK_NAME}\" -sdk iphonesimulator -arch i386 -arch x86_64 clean build\n\n# Cleaning the oldest.\nif [ -d \"${INSTALL_DIR}\" ]\nthen\nrm -rf \"${INSTALL_DIR}\"\nfi\n\nmkdir -p \"${INSTALL_DIR}\"\n\ncp -R \"${DEVICE_DIR}/\" \"${INSTALL_DIR}/\"\n\n# Uses the Lipo Tool to merge both binary files (i386 + armv6/armv7) into one Universal final product.\nlipo -create \"${DEVICE_DIR}/${FMK_NAME}\" \"${SIMULATOR_DIR}/${FMK_NAME}\" -output \"${INSTALL_DIR}/${FMK_NAME}\"\n\nrm -r \"${WRK_DIR}\"\n\nopen \"${SRCROOT}/Products/\"";
 		};
 /* End PBXShellScriptBuildPhase section */
 
