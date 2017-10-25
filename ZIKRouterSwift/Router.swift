@@ -30,63 +30,67 @@ public class Router {
     
     /// Register pure Swift protocol for view with a ZIKViewRouter subclass
     ///
-    /// This function is only for pure Swift protocol. If you want to register objc protocol, use +[ZIKViewRouter registerViewProtocol:].
+    /// - Note: This function is only for pure Swift protocol. If you want to register objc protocol, use +[ZIKViewRouter registerViewProtocol:].
     ///
-    /// In Swift we won't check whether the view protocol you register is conformed by the view of the router, unless we instantiate the destination everytime. You are responsible for checking the protocol.
+    /// In Swift we won't check whether the view protocol you register is conformed by the view of the router, unless we instantiate the destination everytime. You are responsible for checking the protocol. If you need to check, use +[ZIKViewRouter registerViewProtocol:] with objc protocol.
     ///
     /// - Parameters:
     ///   - viewProtocol: The protocol conformed by the view of the router
     ///   - router: The subclass of ZIKViewRouter
-    public static func registerViewProtocol(_ viewProtocol: Any.Type, router: AnyClass) {
+    public static func register(viewProtocol: Any.Type, router: AnyClass) {
         assert(ZIKViewRouter._isLoadFinished() == false, "Can't register after app did finish launch. Only register in registerRoutableDestination().")
         assert((ZIKRouter_isObjcProtocol(viewProtocol)) == false, "This function is only for pure Swift protocol, \(viewProtocol) is objc protocol. Use +[ZIKViewRouter registerViewProtocol:] to register objc protocol.")
         assert(ZIKRouter_classIsSubclassOfClass(router, ZIKViewRouter.self), "This router must be subclass of ZIKViewRouter")
+        assert(viewProtocolContainer[RouteKey(key:String(describing:viewProtocol))] == nil, "view protocol (\(viewProtocol)) was already registered with router (\(String(describing: viewProtocolContainer[RouteKey(key:String(describing:viewProtocol))]))).")
         viewProtocolContainer[RouteKey(key:String(describing:viewProtocol))] = (router as! ZIKViewRouter<ZIKViewRouteConfiguration, ZIKViewRemoveConfiguration>.Type)
     }
     
     /// Register pure Swift protocol for your custom configuration with a ZIKViewRouter subclass
     ///
-    /// This function is only for pure Swift protocol. If you want to register objc protocol, use +[ZIKViewRouter registerConfigProtocol:].
+    /// - Note: This function is only for pure Swift protocol. If you want to register objc protocol, use +[ZIKViewRouter registerConfigProtocol:].
     ///
     /// - Parameters:
     ///   - configProtocol: The protocol conformed by the custom configuration of the router
     ///   - router: The subclass of ZIKViewRouter
-    public static func registerViewConfig<Config>(_ configProtocol: Config.Type, router: AnyClass) {
+    public static func register<Config>(viewConfig configProtocol: Config.Type, router: AnyClass) {
         assert(ZIKViewRouter._isLoadFinished() == false, "Can't register after app did finish launch. Only register in registerRoutableDestination().")
         assert((ZIKRouter_isObjcProtocol(configProtocol)) == false, "This function is only for pure Swift protocol, \(configProtocol) is objc protocol. Use +[ZIKViewRouter registerConfigProtocol:] to register objc protocol.")
         assert(ZIKRouter_classIsSubclassOfClass(router, ZIKViewRouter.self), "This router must be subclass of ZIKViewRouter")
         assert((router as! ZIKViewRouter.Type).defaultRouteConfiguration() is Config, "The router (\(router))'s default configuration must conform to the config protocol (\(configProtocol)) to register.")
+        assert(viewConfigContainer[RouteKey(key:String(describing:configProtocol))] == nil, "view config protocol (\(configProtocol)) was already registered with router (\(String(describing: viewConfigContainer[RouteKey(key:String(describing:configProtocol))]))).")
         viewConfigContainer[RouteKey(key:String(describing:configProtocol))] = (router as! ZIKViewRouter.Type)
     }
     
     /// Register pure Swift protocol for your service with a ZIKServiceRouter subclass
     ///
-    /// This function is only for pure Swift protocol. If you want to register objc protocol, use +[ZIKServiceRouter registerServiceProtocol:].
+    /// - Note: This function is only for pure Swift protocol. If you want to register objc protocol, use +[ZIKServiceRouter registerServiceProtocol:].
     ///
-    /// In Swift we won't check whether the service protocol you register is conformed by the service of the router, unless we instantiate the destination everytime. You are responsible for checking the protocol.
+    /// In Swift we won't check whether the service protocol you register is conformed by the service of the router, unless we instantiate the destination everytime. You are responsible for checking the protocol. If you need to check, use +[ZIKServiceRouter registerServiceProtocol:] with objc protocol.
     ///
     /// - Parameters:
     ///   - viewProtocol: The protocol conformed by the custom configuration of the router
     ///   - router: The subclass of ZIKServiceRouter
-    public static func registerServiceProtocol(_ serviceProtocol: Any.Type, router: AnyClass) {
+    public static func register(serviceProtocol: Any.Type, router: AnyClass) {
         assert(ZIKServiceRouter._isLoadFinished() == false, "Can't register after app did finish launch. Only register in registerRoutableDestination().")
         assert((ZIKRouter_isObjcProtocol(serviceProtocol)) == false, "This function is only for pure Swift protocol, \(serviceProtocol) is objc protocol. Use +[ZIKServiceRouter registerServiceProtocol:] to register objc protocol.")
         assert(ZIKRouter_classIsSubclassOfClass(router, ZIKServiceRouter.self), "This router must be subclass of ZIKServiceRouter")
+        assert(serviceProtocolContainer[RouteKey(key:String(describing:serviceProtocol))] == nil, "service protocol (\(serviceProtocol)) was already registered with router (\(String(describing: serviceProtocolContainer[RouteKey(key:String(describing:serviceProtocol))]))).")
         serviceProtocolContainer[RouteKey(key:String(describing:serviceProtocol))] = (router as! ZIKServiceRouter.Type)
     }
     
     /// Register pure Swift protocol for your custom configuration with a ZIKServiceRouter subclass
     ///
-    /// This function is only for pure Swift protocol. If you want to register objc protocol, use +[ZIKServiceRouter registerConfigProtocol:].
+    /// - Note: This function is only for pure Swift protocol. If you want to register objc protocol, use +[ZIKServiceRouter registerConfigProtocol:].
     ///
     /// - Parameters:
     ///   - configProtocol: The protocol conformed by the custom configuration of the router
     ///   - router: The subclass of ZIKServiceRouter
-    public static func registerServiceConfig<Config>(_ configProtocol: Config.Type, router: AnyClass) {
+    public static func register<Config>(serviceConfig configProtocol: Config.Type, router: AnyClass) {
         assert(ZIKServiceRouter._isLoadFinished() == false, "Can't register after app did finish launch. Only register in registerRoutableDestination().")
         assert((ZIKRouter_isObjcProtocol(configProtocol)) == false, "This function is only for pure Swift protocol, \(configProtocol) is objc protocol. Use +[ZIKServiceRouter registerConfigProtocol:] to register objc protocol.")
         assert(ZIKRouter_classIsSubclassOfClass(router, ZIKServiceRouter.self), "This router must be subclass of ZIKServiceRouter")
         assert((router as! ZIKServiceRouter.Type).defaultRouteConfiguration() is Config, "The router (\(router))'s default configuration must conform to the config protocol (\(configProtocol)) to register.")
+        assert(serviceConfigContainer[RouteKey(key:String(describing:configProtocol))] == nil, "service config protocol (\(configProtocol)) was already registered with router (\(String(describing: serviceConfigContainer[RouteKey(key:String(describing:configProtocol))]))).")
         serviceConfigContainer[RouteKey(key:String(describing:configProtocol))] = (router as! ZIKServiceRouter.Type)
     }
     

@@ -11,11 +11,11 @@ import ZIKRouter
 import ZIKRouterSwift
 
 ///Mark the protocol routable 
-@objc protocol SwiftSampleViewProtocol: ZIKViewRoutable {
+@objc protocol SwiftSampleViewInput: ZIKViewRoutable {
     
 }
 
-class SwiftSampleViewController: UIViewController, SwiftSampleViewProtocol, ZIKInfoViewDelegate {
+class SwiftSampleViewController: UIViewController, SwiftSampleViewInput, ZIKInfoViewDelegate {
     var infoRouter: ZIKViewRouter<ZIKViewRouteConfiguration, ZIKViewRemoveConfiguration>?
     var alertRouter: ZIKViewRouter<ZIKViewRouteConfiguration & ZIKCompatibleAlertConfigProtocol, ZIKViewRemoveConfiguration>?
     
@@ -49,7 +49,9 @@ class SwiftSampleViewController: UIViewController, SwiftSampleViewProtocol, ZIKI
         let router: ZIKViewRouter<ZIKViewRouteConfiguration, ZIKViewRemoveConfiguration>?
         
         router = Router.router(forViewConfig: ZIKCompatibleAlertConfigProtocol.self)?.perform { configuration in
-            let config = configuration as! ZIKViewRouteConfiguration & ZIKCompatibleAlertConfigProtocol
+            guard let config = configuration as? ZIKViewRouteConfiguration & ZIKCompatibleAlertConfigProtocol else {
+                return
+            }
             config.source = self
             config.title = "Compatible Alert"
             config.message = "Test custom route for alert with UIAlertView and UIAlertController"
