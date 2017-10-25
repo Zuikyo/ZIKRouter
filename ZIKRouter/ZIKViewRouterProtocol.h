@@ -19,7 +19,7 @@ NS_ASSUME_NONNULL_BEGIN
 ///Protocol for ZIKViewRouter's subclass.
 @protocol ZIKViewRouterProtocol <NSObject>
 
-///Register the destination class with those ZIKViewRouter_registerXXX functions. ZIKViewRouter will call this method at startup. If a router was not registered with any view class, there'll be an assert failure.
+///Register the destination class with those +registerXXX: methods. ZIKViewRouter will call this method at startup. If a router was not registered with any view class, there'll be an assert failure.
 + (void)registerRoutableDestination;
 
 /**

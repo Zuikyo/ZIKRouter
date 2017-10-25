@@ -160,7 +160,7 @@ typedef void(^ZIKViewRouteGlobalErrorHandler)(__kindof ZIKViewRouter * _Nullable
 /**
  Register a viewClass with it's router's class, so we can create the router of a view when view is not created from router(UIViewController from storyboard or UIView added with -addSubview:, can't detect UIViewController displayed from code because we can't get the performer vc), and require the performer to config the view, and get AOP notified for some route actions.
  @note
- One view may be registered with multi routers, when view is routed from storyboard or -addSubview:, a router will be auto created from one of the registered router classes randomly. If you want to use a certain router, see ZIKViewRouter_registerViewForExclusiveRouter().
+ One view may be registered with multi routers, when view is routed from storyboard or -addSubview:, a router will be auto created from one of the registered router classes randomly. If you want to use a certain router, see +registerExclusiveView:.
  One router may manage multi views. You can register multi view classes to a same router class.
  
  @param viewClass The view class managed by router
@@ -254,7 +254,7 @@ typedef NS_ENUM(NSInteger, ZIKViewRouteError) {
 /**
  Get the router class registered with a view (a ZIKRoutableView) conforming to a unique protocol.
  @discussion
- This function is for decoupling route behavior with router class. If a view conforms to a protocol for configuring it's dependencies, and the protocol is only used by this view, you can use ZIKViewRouter_registerViewProtocol() to register the protocol, then you don't need to import the router's header when performing route.
+ This function is for decoupling route behavior with router class. If a view conforms to a protocol for configuring it's dependencies, and the protocol is only used by this view, you can use +registerViewProtocol: to register the protocol, then you don't need to import the router's header when performing route.
  @code
  //ZIKLoginViewProtocol
  @protocol ZIKLoginViewProtocol <ZIKViewRoutable>
@@ -275,8 +275,8 @@ typedef NS_ENUM(NSInteger, ZIKViewRouteError) {
  
  @implementation ZIKLoginViewRouter
  + (void)registerRoutableDestination {
-    ZIKViewRouter_registerView([ZIKLoginViewController class], self);
-    ZIKViewRouter_registerViewProtocol(@protocol(ZIKLoginViewProtocol), self);
+     [self registerView:[ZIKLoginViewController class]];
+     [self registerViewProtocol:@protocol(ZIKLoginViewProtocol)];
  }
  @end
  
@@ -289,7 +289,7 @@ typedef NS_ENUM(NSInteger, ZIKViewRouteError) {
          };
  }];
  @endcode
- See ZIKViewRouter_registerViewProtocol() and ZIKViewRoutable for more info.
+ See +registerViewProtocol: and ZIKViewRoutable for more info.
  
  @param viewProtocol The protocol conformed by the view. Should be a ZIKViewRoutable protocol when ZIKVIEWROUTER_CHECK is enabled. When ZIKVIEWROUTER_CHECK is disabled, the protocol doesn't need to inherit from ZIKViewRoutable.
  @return A router class matched with the view. Return nil if protocol is nil or not registered. There will be an assert failure when result is nil.
@@ -299,7 +299,7 @@ extern _Nullable Class ZIKViewRouterForView(Protocol *viewProtocol);
 /**
  Get the router class combined with a custom ZIKViewRouteConfiguration conforming to a unique protocol.
  @discussion
- Similar to ZIKViewRouterForView(), this function is for decoupling route behavior with router class. If configurations of a module can't be set directly with a protocol the view conforms, you can use a custom ZIKViewRouteConfiguration to config these configurations. Use ZIKViewRouter_registerConfigProtocol() to register the protocol, then you don't need to import the router's header when performing route.
+ Similar to ZIKViewRouterForView(), this function is for decoupling route behavior with router class. If configurations of a module can't be set directly with a protocol the view conforms, you can use a custom ZIKViewRouteConfiguration to config these configurations. Use +registerConfigProtocol: to register the protocol, then you don't need to import the router's header when performing route.
  @code
  //ZIKLoginViewProtocol
  @protocol ZIKLoginViewConfigProtocol <ZIKViewConfigRoutable>
@@ -326,8 +326,8 @@ extern _Nullable Class ZIKViewRouterForView(Protocol *viewProtocol);
  @end
  @implementation ZIKLoginViewRouter
  + (void)registerRoutableDestination {
-    ZIKViewRouter_registerView([ZIKLoginViewController class], self);
-    ZIKViewRouter_registerConfigProtocol(@protocol(ZIKLoginViewConfigProtocol), self);
+    [self registerView:[ZIKLoginViewController class]];
+    [self registerConfigProtocol:@protocol(ZIKLoginViewConfigProtocol)];
  }
  - (id)destinationWithConfiguration:(ZIKLoginViewConfiguration *)configuration {
      ZIKLoginViewController *destination = [ZIKLoginViewController new];
@@ -345,7 +345,7 @@ extern _Nullable Class ZIKViewRouterForView(Protocol *viewProtocol);
          config.account = @"my account";
  }];
  @endcode
- See ZIKViewRouter_registerConfigProtocol() and ZIKViewConfigRoutable for more info.
+ See +registerConfigProtocol: and ZIKViewConfigRoutable for more info.
  
  @param configProtocol The protocol conformed by defaultConfiguration of router. Should be a ZIKViewConfigRoutable protocol when ZIKVIEWROUTER_CHECK is enabled. When ZIKVIEWROUTER_CHECK is disabled, the protocol doesn't need to inherit from ZIKViewConfigRoutable.
  @return A router class matched with the view. Return nil if protocol is nil or not registered. There will be an assert failure when result is nil.

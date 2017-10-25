@@ -173,7 +173,7 @@ static void _initializeZIKViewRouter(void) {
 #if ZIKVIEWROUTER_CHECK
             CFMutableSetRef views = (CFMutableSetRef)CFDictionaryGetValue(_check_routerToViewsMap, (__bridge const void *)(class));
             NSSet *viewSet = (__bridge NSSet *)(views);
-            NSCAssert2(viewSet.count > 0 || ZIKRouter_classIsSubclassOfClass(class, NSClassFromString(@"ZIKViewRouteAdapter")) || class == NSClassFromString(@"ZIKViewRouteAdapter"), @"This router class(%@) was not resgistered with any view class. Use ZIKViewRouter_registerView() to register view in Router(%@)'s +registerRoutableDestination.",class,class);
+            NSCAssert3(viewSet.count > 0 || ZIKRouter_classIsSubclassOfClass(class, NSClassFromString(@"ZIKViewRouteAdapter")) || class == NSClassFromString(@"ZIKViewRouteAdapter"), @"This router class(%@) was not resgistered with any view class. Use +[%@ registerView:] to register view in Router(%@)'s +registerRoutableDestination.",class,class,class);
 #endif
         }
 
@@ -287,7 +287,7 @@ static void _initializeZIKViewRouter(void) {
 #endif
     });
     NSCAssert(!CFDictionaryGetValue(g_viewToExclusiveRouterMap, (__bridge const void *)(viewClass)), @"There is already a registered exclusive router for this viewClass, you can only specific one exclusive router for each viewClass. Choose the one used inside view.");
-    NSCAssert(!CFDictionaryGetValue(g_viewToDefaultRouterMap, (__bridge const void *)(viewClass)), @"ViewClass already registered with another router by ZIKViewRouter_registerView(), check and remove them. You shall only use the exclusive router for this viewClass.");
+    NSCAssert(!CFDictionaryGetValue(g_viewToDefaultRouterMap, (__bridge const void *)(viewClass)), @"ViewClass already registered with another router, check and remove them. You shall only use the exclusive router for this viewClass.");
     NSCAssert(!CFDictionaryContainsKey(g_viewToRoutersMap, (__bridge const void *)(viewClass)) ||
               (CFDictionaryContainsKey(g_viewToRoutersMap, (__bridge const void *)(viewClass)) &&
                !CFSetContainsValue(
@@ -474,7 +474,7 @@ void ZIKViewRouter_registerViewForExclusiveRouter(Class viewClass, Class routerC
 #endif
     });
     NSCAssert(!CFDictionaryGetValue(g_viewToExclusiveRouterMap, (__bridge const void *)(viewClass)), @"There is already a registered exclusive router for this viewClass, you can only specific one exclusive router for each viewClass. Choose the one used inside view.");
-    NSCAssert(!CFDictionaryGetValue(g_viewToDefaultRouterMap, (__bridge const void *)(viewClass)), @"ViewClass already registered with another router by ZIKViewRouter_registerView(), check and remove them. You shall only use the exclusive router for this viewClass.");
+    NSCAssert(!CFDictionaryGetValue(g_viewToDefaultRouterMap, (__bridge const void *)(viewClass)), @"ViewClass already registered with another router, check and remove them. You shall only use the exclusive router for this viewClass.");
     NSCAssert(!CFDictionaryContainsKey(g_viewToRoutersMap, (__bridge const void *)(viewClass)) ||
               (CFDictionaryContainsKey(g_viewToRoutersMap, (__bridge const void *)(viewClass)) &&
                !CFSetContainsValue(
