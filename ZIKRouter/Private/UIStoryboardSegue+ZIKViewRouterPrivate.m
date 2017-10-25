@@ -13,10 +13,10 @@
 #import <objc/runtime.h>
 
 @implementation UIStoryboardSegue (ZIKViewRouterPrivate)
-- (nullable Class)ZIK_currentClassCallingPerform {
-    return objc_getAssociatedObject(self, "ZIK_CurrentClassCallingPerform");
+- (nullable Class)zix_currentClassCallingPerform {
+    return objc_getAssociatedObject(self, "zix_currentClassCallingPerform");
 }
-- (void)setZIK_currentClassCallingPerform:(nullable Class)vcClass {
-    objc_setAssociatedObject(self, "ZIK_CurrentClassCallingPerform", vcClass, OBJC_ASSOCIATION_RETAIN);
+- (void)setZix_currentClassCallingPerform:(nullable Class)vcClass {
+    objc_setAssociatedObject(self, "zix_currentClassCallingPerform", vcClass, OBJC_ASSOCIATION_RETAIN);
 }
 @end

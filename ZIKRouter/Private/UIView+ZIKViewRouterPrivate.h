@@ -14,17 +14,17 @@
 NS_ASSUME_NONNULL_BEGIN
 
 @interface UIView ()
-- (void)setZIK_routed:(BOOL)routed;
+- (void)setZix_routed:(BOOL)routed;
 @end
 
 @class ZIKViewRouter;
 @interface UIView (ZIKViewRouterPrivate)
 ///Temporary bind auto created router to a UIView when it's not addSubView: by router. Reset to nil when view is removed.
-- (__kindof ZIKViewRouter *)ZIK_destinationViewRouter;
-- (void)setZIK_destinationViewRouter:(nullable ZIKViewRouter *)viewRouter;
+- (__kindof ZIKViewRouter *)zix_destinationViewRouter;
+- (void)setZix_destinationViewRouter:(nullable ZIKViewRouter *)viewRouter;
 ///Route type when view is routed from a router, will reset to nil when view is removed
-- (nullable NSNumber *)ZIK_routeTypeFromRouter;
-- (void)setZIK_routeTypeFromRouter:(nullable NSNumber *)routeType;
+- (nullable NSNumber *)zix_routeTypeFromRouter;
+- (void)setZix_routeTypeFromRouter:(nullable NSNumber *)routeType;
 @end
 
 NS_ASSUME_NONNULL_END

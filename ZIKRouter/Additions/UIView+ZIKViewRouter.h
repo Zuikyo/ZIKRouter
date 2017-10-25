@@ -21,14 +21,14 @@ NS_ASSUME_NONNULL_BEGIN
  @discussion
  If a UIView is adding to superview, -willMoveToSuperview:newSuperview will be called, newSuperview is not nil. If a UIView is removing from superview, -willMoveToSuperview:nil will be called.
  
- If view is first appear, ZIK_routed will be NO in -willMoveToSuperview:, -didMoveToSuperview, -willMoveToWindow:, -didMoveToWindow (before [super didMoveToWindow], after [super didMoveToWindow], it's YES). If view is removing from superview, ZIK_routed will be NO in -willMoveToSuperview: and -didMoveToSuperview, but it's still YES in -willMoveToWindow: and -didMoveToWindow. When a UIView has appeared once, that means it's routed, ZIK_routed is YES.
+ If view is first appear, zix_routed will be NO in -willMoveToSuperview:, -didMoveToSuperview, -willMoveToWindow:, -didMoveToWindow (before [super didMoveToWindow], after [super didMoveToWindow], it's YES). If view is removing from superview, zix_routed will be NO in -willMoveToSuperview: and -didMoveToSuperview, but it's still YES in -willMoveToWindow: and -didMoveToWindow. When a UIView has appeared once, that means it's routed, zix_routed is YES.
 
  @return If the UIView is already routed, return YES, otherwise return NO
  */
-- (BOOL)ZIK_routed;
+@property (nonatomic, readonly) BOOL zix_routed;
 
 ///Get the UIViewController containing the view. Only available in and after -willMoveToWindow:.
-- (nullable UIViewController *)ZIK_firstAvailableUIViewController;
+- (nullable UIViewController *)zix_firstAvailableUIViewController;
 
 
 /**
@@ -37,7 +37,7 @@ NS_ASSUME_NONNULL_BEGIN
  A performer must be a UIViewController or UIView, and is custom class, rather than classes from system's frameworks. Search the UIViewController and UIView in nextResponder and parentViewController/superview 's nextResponder.
  @return a UIViewController or UIView who add this view as it's subview. return nil when this view is not in any superview or view controller of custom class
  */
-- (nullable id)ZIK_routePerformer;
+- (nullable id)zix_routePerformer;
 @end
 
 NS_ASSUME_NONNULL_END

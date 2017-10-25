@@ -17,25 +17,25 @@
 
 @implementation UIViewController (ZIKViewRouter)
 
-- (BOOL)ZIK_routed {
-    NSNumber *result = objc_getAssociatedObject(self, "ZIK_routed");
+- (BOOL)zix_routed {
+    NSNumber *result = objc_getAssociatedObject(self, "zix_routed");
     return [result boolValue];
 }
 
-- (void)setZIK_routed:(BOOL)routed {
-    objc_setAssociatedObject(self, "ZIK_routed", @(routed), OBJC_ASSOCIATION_RETAIN);
+- (void)setZix_routed:(BOOL)routed {
+    objc_setAssociatedObject(self, "zix_routed", @(routed), OBJC_ASSOCIATION_RETAIN);
 }
 
-- (BOOL)ZIK_removing {
-    NSNumber *result = objc_getAssociatedObject(self, "ZIK_removing");
+- (BOOL)zix_removing {
+    NSNumber *result = objc_getAssociatedObject(self, "zix_removing");
     return [result boolValue];
 }
 
-- (void)setZIK_removing:(BOOL)removing {
-    objc_setAssociatedObject(self, "ZIK_removing", @(removing), OBJC_ASSOCIATION_RETAIN);
+- (void)setZix_removing:(BOOL)removing {
+    objc_setAssociatedObject(self, "zix_removing", @(removing), OBJC_ASSOCIATION_RETAIN);
 }
 
-- (BOOL)ZIK_isAppRootViewController {
+- (BOOL)zix_isAppRootViewController {
     Class UIApplication = NSClassFromString(@"UIApplication");
     id sharedApplication = [UIApplication performSelector:@selector(sharedApplication)];
     id appDelegate = [sharedApplication performSelector:@selector(delegate)];
@@ -54,7 +54,7 @@
     return NO;
 }
 
-- (BOOL)ZIK_isRootViewControllerInContainer {
+- (BOOL)zix_isRootViewControllerInContainer {
     if (self.navigationController) {
         return self.navigationController.viewControllers.firstObject == self;
     } else if (self.tabBarController) {
@@ -65,11 +65,11 @@
     return NO;
 }
 
-- (ZIKPresentationState *)ZIK_presentationState {
+- (ZIKPresentationState *)zix_presentationState {
     return [[ZIKPresentationState alloc] initFromViewController:self];;
 }
 
-//- (ZIKViewRouteType)ZIK_routeType {
+//- (ZIKViewRouteType)zix_routeType {
 //    ZIKViewRouteType routeType = ZIKViewRouteTypeCustom;
 //    
 //    UINavigationController *navigationController = self.navigationController;
@@ -137,45 +137,45 @@
 
 //+ (void)load {
 //    ZIKRouter_replaceMethodWithMethod(self, @selector(presentViewController:animated:completion:),
-//                            self, @selector(ZIK_presentViewController:animated:completion:));
+//                            self, @selector(zix_presentViewController:animated:completion:));
 //
 //    ZIKRouter_replaceMethodWithMethod(self, @selector(presentModalViewController:animated:),
-//                            self, @selector(ZIK_presentModalViewController:animated:));
+//                            self, @selector(zix_presentModalViewController:animated:));
 //}
 //
-//- (void)ZIK_presentViewController:(UIViewController *)viewControllerToPresent animated:(BOOL)flag completion:(void (^)(void))completion {
-//    [viewControllerToPresent ZIK_setRealPresentingViewController:self];
-//    [self ZIK_presentViewController:viewControllerToPresent animated:flag completion:completion];
+//- (void)zix_presentViewController:(UIViewController *)viewControllerToPresent animated:(BOOL)flag completion:(void (^)(void))completion {
+//    [viewControllerToPresent zix_setRealPresentingViewController:self];
+//    [self zix_presentViewController:viewControllerToPresent animated:flag completion:completion];
 //}
 //
-//- (void)ZIK_presentModalViewController:(UIViewController *)modalViewController animated:(BOOL)animated {
-//    [modalViewController ZIK_setRealPresentingViewController:self];
-//    [self ZIK_presentModalViewController:modalViewController animated:animated];
+//- (void)zix_presentModalViewController:(UIViewController *)modalViewController animated:(BOOL)animated {
+//    [modalViewController zix_setRealPresentingViewController:self];
+//    [self zix_presentModalViewController:modalViewController animated:animated];
 //}
 //
-//- (nullable UIViewController *)ZIK_realPresentingViewController {
+//- (nullable UIViewController *)zix_realPresentingViewController {
 //    NSPointerArray *weakContainer = objc_getAssociatedObject(self, "zik_realPresentingViewController");
 //    return [weakContainer pointerAtIndex:0];
 //}
 //
-//- (void)ZIK_setRealPresentingViewController:(UIViewController *)vc {
+//- (void)zix_setRealPresentingViewController:(UIViewController *)vc {
 //    NSPointerArray *weakContainer = [NSPointerArray weakObjectsPointerArray];
 //    [weakContainer addPointer:(__bridge void * _Nullable)(vc)];
 //    objc_setAssociatedObject(self, "zik_realPresentingViewController", weakContainer, OBJC_ASSOCIATION_RETAIN_NONATOMIC);
 //}
 
-//- (nullable UIViewController *)ZIK_routeSource {
+//- (nullable UIViewController *)zix_routeSource {
 //    UINavigationController *navigationController = self.navigationController;
 //    if (navigationController) {
 //        NSUInteger indexInStack = [navigationController.viewControllers indexOfObject:self];
 //        if (indexInStack == 0) {
-//            return [navigationController ZIK_routeSource];
+//            return [navigationController zix_routeSource];
 //        } else if (indexInStack == NSNotFound) {
 //            NSAssert(self.parentViewController != navigationController, @"logically, this view controller should be a child of a view controller in navigation stack");
 //
 //            UIViewController *parent = self.parentViewController;
 //            while (parent) {
-//                if (![[parent class] ZIK_isSystemClass]) {
+//                if (![[parent class] zix_isSystemClass]) {
 //                    return self.parentViewController;
 //                } else {
 //                    parent = parent.parentViewController;
@@ -187,9 +187,9 @@
 //        }
 //    }
 //
-//    UIViewController *realPresentingViewController = [self ZIK_realPresentingViewController];
+//    UIViewController *realPresentingViewController = [self zix_realPresentingViewController];
 //    if (realPresentingViewController) {
-//        NSAssert(![[realPresentingViewController class] ZIK_isSystemClass], @"presentingViewController should be a custom class");
+//        NSAssert(![[realPresentingViewController class] zix_isSystemClass], @"presentingViewController should be a custom class");
 //
 //        return realPresentingViewController;
 //    }
@@ -207,7 +207,7 @@
 //                self.parentViewController != self.navigationController) {
 //                UIViewController *parent = self.parentViewController;
 //                while (parent) {
-//                    if (![[parent class] ZIK_isSystemClass]) {
+//                    if (![[parent class] zix_isSystemClass]) {
 //                        return self.parentViewController;
 //                    } else {
 //                        parent = parent.parentViewController;
@@ -221,7 +221,7 @@
 //    if (self.parentViewController) {
 //        UIViewController *parent = self.parentViewController;
 //        while (parent) {
-//            if (![[parent class] ZIK_isSystemClass]) {
+//            if (![[parent class] zix_isSystemClass]) {
 //                return self.parentViewController;
 //            } else {
 //                parent = parent.parentViewController;

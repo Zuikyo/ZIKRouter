@@ -14,28 +14,28 @@
 NS_ASSUME_NONNULL_BEGIN
 
 @interface UIViewController ()
-- (void)setZIK_routed:(BOOL)routed;
-- (void)setZIK_removing:(BOOL)removing;
+- (void)setZix_routed:(BOOL)routed;
+- (void)setZix_removing:(BOOL)removing;
 @end
 
 @class ZIKViewRouter;
 @interface UIViewController (ZIKViewRouterPrivate)
 ///Route type when view is routed from a router. Reset to nil when view is removed.
-- (nullable NSNumber *)ZIK_routeTypeFromRouter;
-- (void)setZIK_routeTypeFromRouter:(nullable NSNumber *)routeType;
+- (nullable NSNumber *)zix_routeTypeFromRouter;
+- (void)setZix_routeTypeFromRouter:(nullable NSNumber *)routeType;
 ///Temporary bind auto created routers to a segue destination for routable views in destination. Reset to nil when segue is performed.
-- (nullable NSArray<ZIKViewRouter *> *)ZIK_destinationViewRouters;
-- (void)setZIK_destinationViewRouters:(nullable NSArray<ZIKViewRouter *> *)viewRouters;
+- (nullable NSArray<ZIKViewRouter *> *)zix_destinationViewRouters;
+- (void)setZix_destinationViewRouters:(nullable NSArray<ZIKViewRouter *> *)viewRouters;
 ///Temporary bind a router to a UIViewController when performing segue from the router. Reset to nil when segue is performed.
-- (__kindof ZIKViewRouter *)ZIK_sourceViewRouter;
-- (void)setZIK_sourceViewRouter:(nullable __kindof ZIKViewRouter *)viewRouter;
-- (nullable Class)ZIK_currentClassCallingPrepareForSegue;
-- (void)setZIK_currentClassCallingPrepareForSegue:(nullable Class)vcClass;
-- (UIViewController *)ZIK_parentMovingTo;
-- (void)setZIK_parentMovingTo:(nullable UIViewController *)parentMovingTo;
-- (nullable UIViewController *)ZIK_parentRemovingFrom;
-- (void)setZIK_parentRemovingFrom:(nullable UIViewController *)parentRemovingFrom;
-- (nullable id<UIViewControllerTransitionCoordinator>)ZIK_currentTransitionCoordinator;
+- (__kindof ZIKViewRouter *)zix_sourceViewRouter;
+- (void)setZix_sourceViewRouter:(nullable __kindof ZIKViewRouter *)viewRouter;
+- (nullable Class)zix_currentClassCallingPrepareForSegue;
+- (void)setZix_currentClassCallingPrepareForSegue:(nullable Class)vcClass;
+- (UIViewController *)zix_parentMovingTo;
+- (void)setZix_parentMovingTo:(nullable UIViewController *)parentMovingTo;
+- (nullable UIViewController *)zix_parentRemovingFrom;
+- (void)setZix_parentRemovingFrom:(nullable UIViewController *)parentRemovingFrom;
+- (nullable id<UIViewControllerTransitionCoordinator>)zix_currentTransitionCoordinator;
 @end
 
 NS_ASSUME_NONNULL_END

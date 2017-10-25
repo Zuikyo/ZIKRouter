@@ -16,27 +16,27 @@
 
 @implementation UIView (ZIKViewRouter)
 
-- (BOOL)ZIK_routed {
-    NSNumber *result = objc_getAssociatedObject(self, "ZIK_routed");
+- (BOOL)zix_routed {
+    NSNumber *result = objc_getAssociatedObject(self, "zix_routed");
     return [result boolValue];
 }
-- (void)setZIK_routed:(BOOL)routed {
-    objc_setAssociatedObject(self, "ZIK_routed", @(routed), OBJC_ASSOCIATION_RETAIN);
+- (void)setZix_routed:(BOOL)routed {
+    objc_setAssociatedObject(self, "zix_routed", @(routed), OBJC_ASSOCIATION_RETAIN);
 }
 
 ///https://stackoverflow.com/a/3732812/6380485
-- (nullable UIViewController *)ZIK_firstAvailableUIViewController {
+- (nullable UIViewController *)zix_firstAvailableUIViewController {
     id nextResponder = [self nextResponder];
     if ([nextResponder isKindOfClass:[UIViewController class]]) {
         return nextResponder;
     } else if ([nextResponder isKindOfClass:[UIView class]]) {
-        return [nextResponder ZIK_firstAvailableUIViewController];
+        return [nextResponder zix_firstAvailableUIViewController];
     } else {
         return nil;
     }
 }
 
-- (nullable id)ZIK_routePerformer {
+- (nullable id)zix_routePerformer {
     NSAssert(self.nextResponder || [self isKindOfClass:[UIWindow class]], @"View is not in any view hierarchy.");
     
     if ([self isKindOfClass:[UIWindow class]]) {
@@ -65,7 +65,7 @@
         }
         return parent;
     } else if ([nextResponder isKindOfClass:[UIView class]]) {
-        return [(UIView *)nextResponder ZIK_routePerformer];
+        return [(UIView *)nextResponder zix_routePerformer];
     } else {
         return nil;
     }

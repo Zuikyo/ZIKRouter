@@ -14,8 +14,8 @@
 NS_ASSUME_NONNULL_BEGIN
 
 @interface UIStoryboardSegue (ZIKViewRouterPrivate)
-- (nullable Class)ZIK_currentClassCallingPerform;
-- (void)setZIK_currentClassCallingPerform:(nullable Class)vcClass;
+- (nullable Class)zix_currentClassCallingPerform;
+- (void)setZix_currentClassCallingPerform:(nullable Class)vcClass;
 @end
 
 NS_ASSUME_NONNULL_END

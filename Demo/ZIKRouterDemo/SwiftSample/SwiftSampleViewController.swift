@@ -27,7 +27,9 @@ class SwiftSampleViewController: UIViewController, SwiftSampleViewProtocol, ZIKI
             config.source = self
             config.routeType = ZIKViewRouteType.presentModally
             config.prepareForRoute = { [weak self] d in
-                let destination = d as! ZIKInfoViewProtocol
+                guard let destination = d as? ZIKInfoViewProtocol else {
+                    return
+                }
                 destination.delegate = self
                 destination.name = "zuik"
                 destination.age = 18

@@ -18,18 +18,18 @@
 #pragma mark Compatible UIAlertView
 
 @interface UIAlertView (ZIKCompatibleAlert) <ZIKRoutableView>
-- (ZIKCompatibleAlertViewRouter *)ZIK_compatibleAlertRouter;
-- (void)setZIK_compatibleAlertRouter:(ZIKCompatibleAlertViewRouter *)router;
+- (ZIKCompatibleAlertViewRouter *)zix_compatibleAlertRouter;
+- (void)setZix_compatibleAlertRouter:(ZIKCompatibleAlertViewRouter *)router;
 @end
 
 @implementation UIAlertView (ZIKCompatibleAlert)
 
-- (ZIKCompatibleAlertViewRouter *)ZIK_compatibleAlertRouter {
-    return objc_getAssociatedObject(self, "ZIK_compatibleAlertRouter");
+- (ZIKCompatibleAlertViewRouter *)zix_compatibleAlertRouter {
+    return objc_getAssociatedObject(self, "zix_compatibleAlertRouter");
 }
 
-- (void)setZIK_compatibleAlertRouter:(ZIKCompatibleAlertViewRouter *)router {
-    objc_setAssociatedObject(self, "ZIK_compatibleAlertRouter", router, OBJC_ASSOCIATION_RETAIN_NONATOMIC);
+- (void)setZix_compatibleAlertRouter:(ZIKCompatibleAlertViewRouter *)router {
+    objc_setAssociatedObject(self, "zix_compatibleAlertRouter", router, OBJC_ASSOCIATION_RETAIN_NONATOMIC);
 }
 
 @end
@@ -145,7 +145,7 @@
             ZIKCompatibleAlertViewAction *action = [actions objectAtIndex:idx];
             [alertView addButtonWithTitle:action.title];
         }
-        [alertView setZIK_compatibleAlertRouter:self];
+        [alertView setZix_compatibleAlertRouter:self];
         destination = alertView;
     }
     
@@ -221,7 +221,7 @@
 #pragma mark UIAlertViewDelegate
 
 - (void)alertView:(UIAlertView *)alertView clickedButtonAtIndex:(NSInteger)buttonIndex {
-    ZIKCompatibleAlertViewRouter *router = [alertView ZIK_compatibleAlertRouter];
+    ZIKCompatibleAlertViewRouter *router = [alertView zix_compatibleAlertRouter];
     NSAssert(router && [router isKindOfClass:[self class]], nil);
     NSArray<ZIKCompatibleAlertViewAction *> *actions = [router._nocopy_configuration actions];
     NSParameterAssert(buttonIndex <= actions.count - 1);
@@ -232,7 +232,7 @@
     }
 }
 - (void)didPresentAlertView:(UIAlertView *)alertView {
-    ZIKViewRouter *router = [alertView ZIK_compatibleAlertRouter];
+    ZIKViewRouter *router = [alertView zix_compatibleAlertRouter];
     NSAssert(router && [router isKindOfClass:[self class]], nil);
     if (router.state == ZIKRouterStateRouting) {
         [router endPerformRouteWithSuccess];
@@ -240,7 +240,7 @@
 }
 
 - (void)alertView:(UIAlertView *)alertView didDismissWithButtonIndex:(NSInteger)buttonIndex {
-    ZIKViewRouter *router = [alertView ZIK_compatibleAlertRouter];
+    ZIKViewRouter *router = [alertView zix_compatibleAlertRouter];
     NSAssert(router && [router isKindOfClass:[self class]], nil);
     if (router.routingFromInternal) {
         if (router.state == ZIKRouterStateRemoving) {

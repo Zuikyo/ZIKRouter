@@ -16,21 +16,21 @@
 @implementation UIView (ZIKViewRouterPrivate)
 
 ///Temporary bind auto created router to a UIView when it's not addSubView: by router. Reset to nil when view is removed.
-- (__kindof ZIKViewRouter *)ZIK_destinationViewRouter {
-    return objc_getAssociatedObject(self, "ZIK_destinationViewRouter");
+- (__kindof ZIKViewRouter *)zix_destinationViewRouter {
+    return objc_getAssociatedObject(self, "zix_destinationViewRouter");
 }
-- (void)setZIK_destinationViewRouter:(nullable ZIKViewRouter *)viewRouter {
-    objc_setAssociatedObject(self, "ZIK_destinationViewRouter", viewRouter, OBJC_ASSOCIATION_RETAIN);
+- (void)setZix_destinationViewRouter:(nullable ZIKViewRouter *)viewRouter {
+    objc_setAssociatedObject(self, "zix_destinationViewRouter", viewRouter, OBJC_ASSOCIATION_RETAIN);
 }
 ///Route type when view is routed from a router, will reset to nil when view is removed
-- (nullable NSNumber *)ZIK_routeTypeFromRouter {
-    NSNumber *result = objc_getAssociatedObject(self, "ZIK_routeTypeFromRouter");
+- (nullable NSNumber *)zix_routeTypeFromRouter {
+    NSNumber *result = objc_getAssociatedObject(self, "zix_routeTypeFromRouter");
     return result;
 }
-- (void)setZIK_routeTypeFromRouter:(nullable NSNumber *)routeType {
+- (void)setZix_routeTypeFromRouter:(nullable NSNumber *)routeType {
     NSParameterAssert(!routeType ||
                       [routeType integerValue] <= ZIKViewRouteTypeGetDestination);
-    objc_setAssociatedObject(self, "ZIK_routeTypeFromRouter", routeType, OBJC_ASSOCIATION_RETAIN);
+    objc_setAssociatedObject(self, "zix_routeTypeFromRouter", routeType, OBJC_ASSOCIATION_RETAIN);
 }
 
 @end

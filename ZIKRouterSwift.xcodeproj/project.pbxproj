@@ -8,7 +8,9 @@
 
 /* Begin PBXBuildFile section */
 		F82F40D71F94D96000246596 /* ZIKRouterSwift.h in Headers */ = {isa = PBXBuildFile; fileRef = F82F40D51F94D96000246596 /* ZIKRouterSwift.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		F82F40DE1F94D99F00246596 /* ZIKRouterSwift.swift in Sources */ = {isa = PBXBuildFile; fileRef = F82F40DD1F94D99F00246596 /* ZIKRouterSwift.swift */; };
+		F82F40DE1F94D99F00246596 /* Router.swift in Sources */ = {isa = PBXBuildFile; fileRef = F82F40DD1F94D99F00246596 /* Router.swift */; };
+		F8E3FF471F9E16D200167057 /* ViewExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = F8E3FF461F9E16D200167057 /* ViewExtension.swift */; };
+		F8E3FF491F9EE1EA00167057 /* Namespace.swift in Sources */ = {isa = PBXBuildFile; fileRef = F8E3FF481F9EE1EA00167057 /* Namespace.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -39,8 +41,10 @@
 		F82F40D21F94D96000246596 /* ZIKRouterSwift.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = ZIKRouterSwift.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		F82F40D51F94D96000246596 /* ZIKRouterSwift.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ZIKRouterSwift.h; sourceTree = "<group>"; };
 		F82F40D61F94D96000246596 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		F82F40DD1F94D99F00246596 /* ZIKRouterSwift.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ZIKRouterSwift.swift; sourceTree = "<group>"; };
+		F82F40DD1F94D99F00246596 /* Router.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Router.swift; sourceTree = "<group>"; };
 		F82F40DF1F94D9AD00246596 /* ZIKRouter.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; path = ZIKRouter.xcodeproj; sourceTree = "<group>"; };
+		F8E3FF461F9E16D200167057 /* ViewExtension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewExtension.swift; sourceTree = "<group>"; };
+		F8E3FF481F9EE1EA00167057 /* Namespace.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Namespace.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -76,7 +80,9 @@
 			children = (
 				F82F40D51F94D96000246596 /* ZIKRouterSwift.h */,
 				F82F40D61F94D96000246596 /* Info.plist */,
-				F82F40DD1F94D99F00246596 /* ZIKRouterSwift.swift */,
+				F82F40DD1F94D99F00246596 /* Router.swift */,
+				F8E3FF461F9E16D200167057 /* ViewExtension.swift */,
+				F8E3FF481F9EE1EA00167057 /* Namespace.swift */,
 			);
 			path = ZIKRouterSwift;
 			sourceTree = "<group>";
@@ -194,7 +200,9 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				F82F40DE1F94D99F00246596 /* ZIKRouterSwift.swift in Sources */,
+				F8E3FF471F9E16D200167057 /* ViewExtension.swift in Sources */,
+				F8E3FF491F9EE1EA00167057 /* Namespace.swift in Sources */,
+				F82F40DE1F94D99F00246596 /* Router.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

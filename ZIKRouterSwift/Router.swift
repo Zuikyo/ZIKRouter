@@ -1,5 +1,5 @@
 //
-//  ZIKRouterSwift.swift
+//  Router.swift
 //  ZIKRouterSwift
 //
 //  Created by zuik on 2017/10/16.
@@ -18,7 +18,6 @@ internal struct RouteKey: Hashable {
         return lhs.key == rhs.key
     }
 }
-
 
 /// Router for pure Swift protocol and some convenient methods for ZIKRouter.
 public class Router {
@@ -150,7 +149,11 @@ public class Router {
     ///   - option: Options for view route
     ///   - prepare: Prepare the destination with the protocol
     /// - Returns: The view router
-    public static func perform<Destination>(forViewProtocol viewProtocol:Destination.Type, routeOption option: (ZIKViewRouteConfiguration) -> Swift.Void, preparation prepare: ((Destination?) -> Swift.Void)? = nil) -> ZIKViewRouter<ZIKViewRouteConfiguration, ZIKViewRemoveConfiguration>? {
+    public static func perform<Destination>(
+        forViewProtocol viewProtocol:Destination.Type,
+        routeOption option: (ZIKViewRouteConfiguration) -> Swift.Void,
+        preparation prepare: ((Destination?) -> Swift.Void)? = nil
+        ) -> ZIKViewRouter<ZIKViewRouteConfiguration, ZIKViewRemoveConfiguration>? {
         return self.router(forViewProtocol: viewProtocol)?.perform(configure: { (config) in
             option(config)
             config.prepareForRoute = { d in
@@ -166,7 +169,11 @@ public class Router {
     ///   - option: Options for view route
     ///   - prepare: Prepare the module with the protocol
     /// - Returns: The view router
-    public static func perform<Config>(forViewConfig configProtocol:Config.Type, routeOption option: (ZIKViewRouteConfiguration) -> Swift.Void, preparation prepare: ((Config?) -> Swift.Void)? = nil) -> ZIKViewRouter<ZIKViewRouteConfiguration, ZIKViewRemoveConfiguration>? {
+    public static func perform<Config>(
+        forViewConfig configProtocol:Config.Type,
+        routeOption option: (ZIKViewRouteConfiguration) -> Swift.Void,
+        preparation prepare: ((Config?) -> Swift.Void)? = nil
+        ) -> ZIKViewRouter<ZIKViewRouteConfiguration, ZIKViewRemoveConfiguration>? {
         return self.router(forViewConfig: configProtocol)?.perform(configure: { (config) in
             option(config)
             prepare?(config as? Config)
@@ -181,7 +188,10 @@ public class Router {
     ///   - viewProtocol: The view protocol registered with a view router
     ///   - prepare: Prepare the destination with the protocol
     /// - Returns: The view destination
-    public static func destination<Destination>(forViewProtocol viewProtocol:Destination.Type, preparation prepare: ((Destination?) -> Swift.Void)? = nil) -> Destination? {
+    public static func destination<Destination>(
+        forViewProtocol viewProtocol:Destination.Type,
+        preparation prepare: ((Destination?) -> Swift.Void)? = nil
+        ) -> Destination? {
         var destination: Destination?
         let routerClass = self.router(forViewProtocol: viewProtocol)
         assert((routerClass?.completeSynchronously())!,"router class (\(String(describing: routerClass))) can't get destination synchronously")
@@ -204,7 +214,10 @@ public class Router {
     ///   - configProtocol: The config protocol registered with a view router
     ///   - prepare: Prepare the module with the protocol
     /// - Returns: The view destination
-    public static func destination<Config>(forViewConfig configProtocol:Config.Type, preparation prepare: ((Config?) -> Swift.Void)? = nil) -> Any? {
+    public static func destination<Config>(
+        forViewConfig configProtocol:Config.Type,
+        preparation prepare: ((Config?) -> Swift.Void)? = nil
+        ) -> Any? {
         var destination: Any?
         let routerClass = self.router(forViewConfig: configProtocol)
         assert((routerClass?.completeSynchronously())!,"router class (\(String(describing: routerClass))) can't get destination synchronously")
@@ -226,7 +239,10 @@ public class Router {
     ///   - serviceProtocol: The service protocol registered with a service router
     ///   - prepare: Prepare the destination with the protocol
     /// - Returns: The service destination
-    public static func destination<Destination>(forServiceProtocol serviceProtocol:Destination.Type, preparation prepare: ((Destination?) -> Swift.Void)? = nil) -> Destination? {
+    public static func destination<Destination>(
+        forServiceProtocol serviceProtocol:Destination.Type,
+        preparation prepare: ((Destination?) -> Swift.Void)? = nil
+        ) -> Destination? {
         var destination: Destination?
         let routerClass = self.router(forServiceProtocol: serviceProtocol)
         assert((routerClass?.completeSynchronously())!,"router class (\(String(describing: routerClass))) can't get destination synchronously")
@@ -247,7 +263,10 @@ public class Router {
     ///   - configProtocol: The config protocol registered with a service router
     ///   - prepare: Prepare the module with the protocol
     /// - Returns: The service destination
-    public static func destination<Config>(forServiceConfig configProtocol:Config.Type, preparation prepare: ((Config?) -> Swift.Void)? = nil) -> Any? {
+    public static func destination<Config>(
+        forServiceConfig configProtocol:Config.Type,
+        preparation prepare: ((Config?) -> Swift.Void)? = nil
+        ) -> Any? {
         var destination: Any?
         let routerClass = self.router(forServiceConfig: configProtocol)
         assert((routerClass?.completeSynchronously())!,"router class (\(String(describing: routerClass))) can't get destination synchronously")
