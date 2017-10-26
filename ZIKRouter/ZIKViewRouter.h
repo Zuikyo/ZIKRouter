@@ -56,7 +56,7 @@ typedef void(^ZIKViewRouteGlobalErrorHandler)(__kindof ZIKViewRouter * _Nullable
  
  About auto create:
  
- When a UIViewController conforms to ZIKRoutableView, and is routing from storyboard segue or from -instantiateInitialViewController, a router will be auto created to prepare the UIViewController. If the destination needs preparing, the segue's performer is responsible for preparing in delegate method -prepareForDestinationRoutingFromExternal:configuration:. But if a UIViewController is routed from code manually, ZIKViewRouter won't auto create router, only get AOP notify, because we can't find the performer to prepare the destination. So you should avoid route the UIViewController instance from code manually, if you use a router as a dependency injector for preparing the UIViewController. You can check whether the destination is prepared properly in those AOP delegate methods.
+ When a UIViewController conforms to ZIKRoutableView, and is routing from storyboard segue or from -instantiateInitialViewController, a router will be auto created to prepare the UIViewController. If the destination needs preparing, the segue's performer is responsible for preparing in delegate method -prepareDestinationFromExternal:configuration:. But if a UIViewController is routed from code manually, ZIKViewRouter won't auto create router, only get AOP notify, because we can't find the performer to prepare the destination. So you should avoid route the UIViewController instance from code manually, if you use a router as a dependency injector for preparing the UIViewController. You can check whether the destination is prepared properly in those AOP delegate methods.
  
  When Adding a registered UIView by code or xib, a router will be auto created. We search the view controller with custom class (not system class like native UINavigationController, or any container view controller) in it's responder hierarchy as the performer. If the registered UIView needs preparing, you have to add the view to a superview in a view controller before it removed from superview. There will be an assert failure if there is no view controller to prepare it (such as: 1. add it to a superview, and the superview is never added to a view controller; 2. add it to a UIWindow). If your custom class view use a routable view as it's subview, the custom view should use a router to add and prepare the routable view, then the routable view don't need to search performer because it's already prepared.
  */
@@ -123,9 +123,9 @@ typedef void(^ZIKViewRouteGlobalErrorHandler)(__kindof ZIKViewRouter * _Nullable
  */
 + (nullable ZIKViewRouter<RouteConfig,RemoveConfig> *)prepareDestination:(id)destination
                                                                configure:(void(NS_NOESCAPE ^)(RouteConfig config))configBuilder
-                                                         removeConfigure:(void(NS_NOESCAPE ^ _Nullable)(RemoveConfig config))removeConfigBuilder;
+removeConfigure:(void(NS_NOESCAPE ^ _Nullable)(RemoveConfig config))removeConfigBuilder NS_SWIFT_NAME(prepare(destination:configure:removeConfigure:));
 + (nullable ZIKViewRouter<RouteConfig,RemoveConfig> *)prepareDestination:(id)destination
-                                                               configure:(void(NS_NOESCAPE ^)(RouteConfig config))configBuilder;
+                                                               configure:(void(NS_NOESCAPE ^)(RouteConfig config))configBuilder NS_SWIFT_NAME(prepare(destination:configure:));
 /**
  Whether can remove a performed view route. Always use it in main thread, bacause state may be changed in main thread after you check the state in child thread.
  @discussion
@@ -206,7 +206,7 @@ extern NSString *const kZIKViewRouteErrorDomain;
 
 ///Errors for callback in ZIKRouteErrorHandler and ZIKViewRouteGlobalErrorHandler
 typedef NS_ENUM(NSInteger, ZIKViewRouteError) {
-    ///Bad implementation in code. When adding a UIView or UIViewController conforms to ZIKRoutableView in xib or storyboard, and it need preparing, you have to implement -prepareForDestinationRoutingFromExternal:configuration: in the view or view controller which added it. There will be an assert failure for debugging.
+    ///Bad implementation in code. When adding a UIView or UIViewController conforms to ZIKRoutableView in xib or storyboard, and it need preparing, you have to implement -prepareDestinationFromExternal:configuration: in the view or view controller which added it. There will be an assert failure for debugging.
     ZIKViewRouteErrorInvalidPerformer,
     ///If you use ZIKViewRouterForView() or ZIKViewRouterForConfig() to fetch router with protocol, the protocol must be declared. There will be an assert failure for debugging.
     ZIKViewRouteErrorInvalidProtocol,

@@ -1483,7 +1483,7 @@ _Nullable Class ZIKViewRouterForConfig(Protocol *configProtocol) {
     return container;
 }
 
-+ (void)_o_prepareForDestinationRoutingFromExternal:(id)destination router:(ZIKViewRouter *)router performer:(nullable id)performer {
++ (void)_o_prepareDestinationFromExternal:(id)destination router:(ZIKViewRouter *)router performer:(nullable id)performer {
     NSParameterAssert(destination);
     NSParameterAssert(router);
     
@@ -1494,13 +1494,13 @@ _Nullable Class ZIKViewRouterForConfig(Protocol *configProtocol) {
             NSAssert(NO, description);
         }
         
-        if ([performer respondsToSelector:@selector(prepareForDestinationRoutingFromExternal:configuration:)]) {
+        if ([performer respondsToSelector:@selector(prepareDestinationFromExternal:configuration:)]) {
             ZIKViewRouteConfiguration *config = router._nocopy_configuration;
             id source = config.source;
             ZIKViewRouteType routeType = config.routeType;
             ZIKViewRouteSegueConfiguration *segueConfig = config.segueConfiguration;
             BOOL handleExternalRoute = config.handleExternalRoute;
-            [performer prepareForDestinationRoutingFromExternal:destination configuration:config];
+            [performer prepareDestinationFromExternal:destination configuration:config];
             if (config.source != source) {
                 config.source = source;
             }
@@ -1514,8 +1514,8 @@ _Nullable Class ZIKViewRouterForConfig(Protocol *configProtocol) {
                 config.handleExternalRoute = handleExternalRoute;
             }
         } else {
-            [router _o_callbackError_invalidSourceWithAction:@selector(performRoute) errorDescription:@"Destination %@ 's performer :%@ missed -prepareForDestinationRoutingFromExternal:configuration: to config destination.",destination, performer];
-            NSAssert(NO, @"Destination %@ 's performer :%@ missed -prepareForDestinationRoutingFromExternal:configuration: to config destination.",destination, performer);
+            [router _o_callbackError_invalidSourceWithAction:@selector(performRoute) errorDescription:@"Destination %@ 's performer :%@ missed -prepareDestinationFromExternal:configuration: to config destination.",destination, performer];
+            NSAssert(NO, @"Destination %@ 's performer :%@ missed -prepareDestinationFromExternal:configuration: to config destination.",destination, performer);
         }
     }
     
@@ -2413,7 +2413,7 @@ destinationStateBeforeRoute:(ZIKPresentationState *)destinationStateBeforeRoute
             NSAssert([destination isKindOfClass:[UIView class]], @"Only UIView destination need fix.");
             id performer = [destination zix_routePerformer];
             if (performer) {
-                [ZIKViewRouter _o_prepareForDestinationRoutingFromExternal:destination router:router performer:performer];
+                [ZIKViewRouter _o_prepareDestinationFromExternal:destination router:router performer:performer];
                 router.prepared = YES;
                 if (!preparedRouters) {
                     preparedRouters = [NSMutableArray array];
@@ -2603,7 +2603,7 @@ destinationStateBeforeRoute:(ZIKPresentationState *)destinationStateBeforeRoute
                 [destination setZix_destinationViewRouter:destinationRouter];
                 if (needPrepare) {
                     if (performer) {
-                        [ZIKViewRouter _o_prepareForDestinationRoutingFromExternal:destination router:destinationRouter performer:performer];
+                        [ZIKViewRouter _o_prepareDestinationFromExternal:destination router:destinationRouter performer:performer];
                         destinationRouter.prepared = YES;
                     } else {
                         if (!newSuperview.window && ![newSuperview isKindOfClass:[UIWindow class]]) {
@@ -2721,7 +2721,7 @@ destinationStateBeforeRoute:(ZIKPresentationState *)destinationStateBeforeRoute
                         }
                         if (onScreen) {
                             if (needPrepare) {
-                                [ZIKViewRouter _o_prepareForDestinationRoutingFromExternal:destination router:destinationRouter performer:performer];
+                                [ZIKViewRouter _o_prepareDestinationFromExternal:destination router:destinationRouter performer:performer];
                             } else {
                                 [destinationRouter prepareDestination:destination configuration:destinationRouter._nocopy_configuration];
                                 [destinationRouter didFinishPrepareDestination:destination configuration:destinationRouter._nocopy_configuration];
@@ -2770,7 +2770,7 @@ destinationStateBeforeRoute:(ZIKPresentationState *)destinationStateBeforeRoute
                         [g_preparingUIViewRouters removeObject:destinationRouter];
                         id performer = [destination zix_routePerformer];
                         if (performer) {
-                            [ZIKViewRouter _o_prepareForDestinationRoutingFromExternal:destination router:destinationRouter performer:performer];
+                            [ZIKViewRouter _o_prepareDestinationFromExternal:destination router:destinationRouter performer:performer];
                             router.prepared = YES;
                             
                         } else {
@@ -2976,7 +2976,7 @@ destinationStateBeforeRoute:(ZIKPresentationState *)destinationStateBeforeRoute
             [router prepareForPerformRouteOnDestination:routableView];
         } else {
             //View controller is from storyboard, need to notify the performer of segue to config the destination
-            [ZIKViewRouter _o_prepareForDestinationRoutingFromExternal:routableView router:router performer:(UIViewController *)self];
+            [ZIKViewRouter _o_prepareDestinationFromExternal:routableView router:router performer:(UIViewController *)self];
         }
         [ZIKViewRouter AOP_notifyAll_router:router willPerformRouteOnDestination:routableView fromSource:source];
     }

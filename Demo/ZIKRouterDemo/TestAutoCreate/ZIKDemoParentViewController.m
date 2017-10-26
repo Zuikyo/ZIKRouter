@@ -167,7 +167,7 @@
     [infoViewController removeFromParentViewController];
 }
 
-- (void)prepareForDestinationRoutingFromExternal:(id)destination configuration:(__kindof ZIKViewRouteConfiguration *)configuration {
+- (void)prepareDestinationFromExternal:(id)destination configuration:(__kindof ZIKViewRouteConfiguration *)configuration {
     if ([destination conformsToProtocol:@protocol(ZIKInfoViewProtocol)]) {
         id<ZIKInfoViewProtocol> infoView = destination;
         infoView.name = @"Zuik";
