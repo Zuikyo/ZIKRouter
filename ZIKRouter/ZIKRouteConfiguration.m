@@ -9,6 +9,11 @@
 #import "ZIKRouteConfiguration.h"
 #import <objc/runtime.h>
 
+@interface ZIKRouteConfiguration ()
+@property (nonatomic, copy, nullable) ZIKRouteErrorHandler performerErrorHandler;
+@property (nonatomic, copy, nullable) void(^performerSuccessHandler)(void);
+@end
+
 @implementation ZIKRouteConfiguration
 
 - (instancetype)init {
@@ -21,8 +26,8 @@
 
 - (id)copyWithZone:(nullable NSZone *)zone {
     ZIKRouteConfiguration *config = [[self class] new];
-    config.providerErrorHandler = self.providerErrorHandler;
-    config.providerSuccessHandler = self.providerSuccessHandler;
+    config.errorHandler = self.errorHandler;
+    config.successHandler = self.successHandler;
     config.performerErrorHandler = self.performerErrorHandler;
     config.performerSuccessHandler = self.performerSuccessHandler;
     config.stateNotifier = [self.stateNotifier copy];

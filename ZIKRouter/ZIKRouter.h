@@ -76,14 +76,14 @@ NS_ASSUME_NONNULL_BEGIN
 - (void)performRoute;
 ///Perform with success handler and error handler. Not thread safe
 - (void)performRouteWithSuccessHandler:(void(^ __nullable)(void))performerSuccessHandler
-                 performerErrorHandler:(void(^ __nullable)(SEL routeAction, NSError *error))performerErrorHandler;
+                          errorHandler:(void(^ __nullable)(SEL routeAction, NSError *error))performerErrorHandler;
 
 - (BOOL)canRemove;
 ///Not thread safe
 - (void)removeRoute;
 ///Remove with success handler and error handler. Not thread safe
 - (void)removeRouteWithSuccessHandler:(void(^ __nullable)(void))performerSuccessHandler
-                performerErrorHandler:(void(^ __nullable)(SEL routeAction, NSError *error))performerErrorHandler;
+                         errorHandler:(void(^ __nullable)(SEL routeAction, NSError *error))performerErrorHandler;
 
 ///If this route action doesn't need any arguments, just perform directly
 + (nullable RouterType)performRoute;

@@ -34,7 +34,7 @@ NS_ASSUME_NONNULL_BEGIN
 ///Call providerSucessHandler and performerSuccessHandler
 - (void)notifySuccessWithAction:(SEL)routeAction;
 
-///Call providerErrorHandler and performerErrorHandler
+///Call errorHandler and performerErrorHandler
 - (void)notifyError:(NSError *)error routeAction:(SEL)routeAction;
 
 + (NSError *)errorWithCode:(NSInteger)code userInfo:(nullable NSDictionary *)userInfo;

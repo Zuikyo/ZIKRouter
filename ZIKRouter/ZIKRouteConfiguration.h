@@ -27,23 +27,18 @@ typedef void(^ZIKRouteStateNotifier)(ZIKRouterState oldState, ZIKRouterState new
 @interface ZIKRouteConfiguration : NSObject <NSCopying>
 
 /**
- Error handler for router's creater.
+ Error handler for router's provider.
  @note
- Use weakSelf in providerErrorHandler to avoid retain cycle.
+ Use weakSelf in errorHandler to avoid retain cycle.
  */
-@property (nonatomic, copy, nullable) ZIKRouteErrorHandler providerErrorHandler;
+@property (nonatomic, copy, nullable) ZIKRouteErrorHandler errorHandler;
 
 /**
- Success handler for router's creater.
+ Success handler for router's provider.
  @note
- Use weakSelf in providerSuccessHandler to avoid retain cycle.
+ Use weakSelf in successHandler to avoid retain cycle.
  */
-@property (nonatomic, copy, nullable) void(^providerSuccessHandler)(void);
-
-///Error handler for router's performer, will reset to nil after perform.
-@property (nonatomic, copy, nullable) ZIKRouteErrorHandler performerErrorHandler;
-///Success handler for router's performer, will reset to nil after perform.
-@property (nonatomic, copy, nullable) void(^performerSuccessHandler)(void);
+@property (nonatomic, copy, nullable) void(^successHandler)(void);
 
 /**
  Monitor state

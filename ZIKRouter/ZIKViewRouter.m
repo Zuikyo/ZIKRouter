@@ -986,7 +986,7 @@ _Nullable Class ZIKViewRouterForConfig(Protocol *configProtocol) {
 
 ///override superclass
 - (void)performRouteWithSuccessHandler:(void(^)(void))performerSuccessHandler
-                 performerErrorHandler:(void(^)(SEL routeAction, NSError *error))performerErrorHandler {
+                          errorHandler:(void(^)(SEL routeAction, NSError *error))performerErrorHandler {
     ZIKRouterState state = self.state;
     if (state == ZIKRouterStateRouting) {
         [self _o_callbackError_errorCode:ZIKViewRouteErrorOverRoute
@@ -1005,7 +1005,7 @@ _Nullable Class ZIKViewRouterForConfig(Protocol *configProtocol) {
                         errorDescription:@"%@ 's state is removing, can't perform route again",self];
         return;
     }
-    [super performRouteWithSuccessHandler:performerSuccessHandler performerErrorHandler:performerErrorHandler];
+    [super performRouteWithSuccessHandler:performerSuccessHandler errorHandler:performerErrorHandler];
 }
 
 ///override superclass
@@ -1820,7 +1820,7 @@ destinationStateBeforeRoute:(ZIKPresentationState *)destinationStateBeforeRoute
 }
 
 - (void)removeRouteWithSuccessHandler:(void(^)(void))performerSuccessHandler
-                performerErrorHandler:(void(^)(SEL routeAction, NSError *error))performerErrorHandler {
+                         errorHandler:(void(^)(SEL routeAction, NSError *error))performerErrorHandler {
     void(^doRemoveRoute)(void) = ^ {
         if (self.state != ZIKRouterStateRouted || !self._nocopy_configuration) {
             [self _o_callbackError_errorCode:ZIKViewRouteErrorActionFailed
@@ -1840,7 +1840,7 @@ destinationStateBeforeRoute:(ZIKPresentationState *)destinationStateBeforeRoute
             return;
         }
         
-        [super removeRouteWithSuccessHandler:performerSuccessHandler performerErrorHandler:performerErrorHandler];
+        [super removeRouteWithSuccessHandler:performerSuccessHandler errorHandler:performerErrorHandler];
     };
     
     if ([NSThread isMainThread]) {

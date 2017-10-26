@@ -45,7 +45,7 @@
                                        [destination didMoveToParentViewController:weakSelf];
                                    }];
                                };
-                               config.providerErrorHandler = ^(SEL  _Nonnull routeAction, NSError * _Nonnull error) {
+                               config.errorHandler = ^(SEL  _Nonnull routeAction, NSError * _Nonnull error) {
                                    NSLog(@"addChildViewController failed: %@",error);
                                };
                            }];
@@ -58,7 +58,7 @@
     }
     [self.infoViewRouter removeRouteWithSuccessHandler:^{
         NSLog(@"remove success");
-    } performerErrorHandler:^(SEL  _Nonnull routeAction, NSError * _Nonnull error) {
+    } errorHandler:^(SEL  _Nonnull routeAction, NSError * _Nonnull error) {
         NSLog(@"remove failed,error:%@",error);
     }];
 }

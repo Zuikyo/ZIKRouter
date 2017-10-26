@@ -57,7 +57,7 @@ class SwiftSampleViewController: UIViewController, SwiftSampleViewInput, ZIKInfo
     func handleRemoveInfoViewController(_ infoViewController: UIViewController!) {
         self.infoRouter?.removeRoute(successHandler: {
             print("remove success")
-        }, performerErrorHandler: { (action, error) in
+        }, errorHandler: { (action, error) in
             print("remove failed,error:%@",error)
         })
     }
@@ -85,7 +85,7 @@ class SwiftSampleViewController: UIViewController, SwiftSampleViewInput, ZIKInfo
             config.routeCompletion = { d in
                 print("show custom alert complete")
             }
-            config.performerErrorHandler = { (action, error) in
+            config.errorHandler = { (action, error) in
                 print("show custom alert failed: %@",error)
             }
         }
@@ -100,7 +100,7 @@ class SwiftSampleViewController: UIViewController, SwiftSampleViewInput, ZIKInfo
                 config.routeCompletion = { d in
                     print("show custom alert complete")
                 }
-                config.performerErrorHandler = { (action, error) in
+                config.errorHandler = { (action, error) in
                     print("show custom alert failed: %@",error)
                 }
         }, preparation: { (config) in
@@ -131,7 +131,7 @@ class SwiftSampleViewController: UIViewController, SwiftSampleViewInput, ZIKInfo
             config.routeCompletion = { d in
                 print("show custom alert complete")
             }
-            config.performerErrorHandler = { (action, error) in
+            config.errorHandler = { (action, error) in
                 print("show custom alert failed: %@",error)
             }
         }

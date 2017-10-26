@@ -46,7 +46,7 @@
                                config.routeCompletion = ^(id  _Nonnull destination) {
                                    NSLog(@"show detail complete");
                                };
-                               config.providerErrorHandler = ^(SEL  _Nonnull routeAction, NSError * _Nonnull error) {
+                               config.errorHandler = ^(SEL  _Nonnull routeAction, NSError * _Nonnull error) {
                                    NSLog(@"show detail failed: %@",error);
                                };
                            }];
@@ -59,7 +59,7 @@
     }
     [self.infoViewRouter removeRouteWithSuccessHandler:^{
         NSLog(@"remove success");
-    } performerErrorHandler:^(SEL  _Nonnull routeAction, NSError * _Nonnull error) {
+    } errorHandler:^(SEL  _Nonnull routeAction, NSError * _Nonnull error) {
         NSLog(@"remove failed,error:%@",error);
     }];
 }

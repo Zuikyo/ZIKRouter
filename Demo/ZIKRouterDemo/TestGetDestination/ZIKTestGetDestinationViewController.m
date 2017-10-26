@@ -40,10 +40,10 @@
                  }];
              }
          };
-         config.providerSuccessHandler = ^{
+         config.successHandler = ^{
              NSLog(@"get destination success");
          };
-         config.providerErrorHandler = ^(SEL  _Nonnull routeAction, NSError * _Nonnull error) {
+         config.errorHandler = ^(SEL  _Nonnull routeAction, NSError * _Nonnull error) {
              NSLog(@"get destination by router failed: %@",error);
          };
          //Set handleExternalRoute to YES will let router call routeCompletion when destination is dispalyed, be cautious.

@@ -166,7 +166,7 @@ typedef void(^ZIKViewRouteSegueConfiger)(NS_NOESCAPE ZIKViewRouteSegueConfigure)
 @property (nonatomic, readonly, strong, nullable) ZIKViewRoutePopoverConfiguration *popoverConfiguration;
 @property (nonatomic, readonly, strong, nullable) ZIKViewRouteSegueConfiguration *segueConfiguration;
 
-///When set to YES and the router still exists, if the same destination instance is routed again from external, prepareForRoute, routeCompletion, providerSuccessHandler, providerErrorHandler will be called
+///When set to YES and the router still exists, if the same destination instance is routed again from external, prepareForRoute, routeCompletion, successHandler, errorHandler will be called
 @property (nonatomic, assign) BOOL handleExternalRoute;
 
 @end
@@ -202,7 +202,7 @@ typedef void(^ZIKViewRouteSegueConfiger)(NS_NOESCAPE ZIKViewRouteSegueConfigure)
  */
 @property (nonatomic, copy, nullable) void(^removeCompletion)(void);
 
-///When set to YES and the router still exists, if the same destination instance is removed from external, removeCompletion, providerSuccessHandler, providerErrorHandler will be called
+///When set to YES and the router still exists, if the same destination instance is removed from external, removeCompletion, successHandler, errorHandler will be called
 @property (nonatomic, assign) BOOL handleExternalRoute;
 @end
 

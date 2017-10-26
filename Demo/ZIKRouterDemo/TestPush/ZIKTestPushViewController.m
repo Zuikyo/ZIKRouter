@@ -25,7 +25,7 @@
                                config.source = self;
                                config.routeType = ZIKViewRouteTypePush;
                                
-                               //prepareForRoute is hold in configuration, should be careful about retain cycle if this view controller will hold the router. Same with routeCompletion, providerSuccessHandler, providerErrorHandler, stateNotifier.
+                               //prepareForRoute is hold in configuration, should be careful about retain cycle if this view controller will hold the router. Same with routeCompletion, successHandler, errorHandler, stateNotifier.
                                config.prepareForRoute = ^(UIViewController<ZIKInfoViewProtocol> *destination) {
                                    NSLog(@"provider: prepare destination");
                                    destination.name = @"Zuik";
@@ -35,10 +35,10 @@
                                config.routeCompletion = ^(UIViewController<ZIKInfoViewProtocol> *destination) {
                                    NSLog(@"provider: push complete");
                                };
-                               config.providerSuccessHandler = ^{
+                               config.successHandler = ^{
                                    NSLog(@"provider: push success");
                                };
-                               config.providerErrorHandler = ^(SEL  _Nonnull routeAction, NSError * _Nonnull error) {
+                               config.errorHandler = ^(SEL  _Nonnull routeAction, NSError * _Nonnull error) {
                                    NSLog(@"provider: push failed: %@",error);
                                };
                                config.stateNotifier = ^(ZIKRouterState oldState, ZIKRouterState newState) {
@@ -47,10 +47,10 @@
                                config.handleExternalRoute = YES;
                            }
                            removeConfigure:^(__kindof ZIKViewRemoveConfiguration * _Nonnull config) {
-                               config.providerSuccessHandler = ^{
+                               config.successHandler = ^{
                                    NSLog(@"provider: pop success");
                                };
-                               config.providerErrorHandler = ^(SEL  _Nonnull routeAction, NSError * _Nonnull error) {
+                               config.errorHandler = ^(SEL  _Nonnull routeAction, NSError * _Nonnull error) {
                                    NSLog(@"provider: pop failed: %@",error);
                                };
                                config.handleExternalRoute = YES;
@@ -63,7 +63,7 @@
     }
     [self.infoViewRouter performRouteWithSuccessHandler:^{
         NSLog(@"performer: push success");
-    } performerErrorHandler:^(SEL  _Nonnull routeAction, NSError * _Nonnull error) {
+    } errorHandler:^(SEL  _Nonnull routeAction, NSError * _Nonnull error) {
         NSLog(@"performer: push failed: %@",error);
     }];
 }
@@ -74,7 +74,7 @@
     }
     [self.infoViewRouter performRouteWithSuccessHandler:^{
         NSLog(@"performer: push success");
-    } performerErrorHandler:^(SEL  _Nonnull routeAction, NSError * _Nonnull error) {
+    } errorHandler:^(SEL  _Nonnull routeAction, NSError * _Nonnull error) {
         NSLog(@"performer: push failed: %@",error);
     }];
     
@@ -90,7 +90,7 @@
     }
     [self.infoViewRouter removeRouteWithSuccessHandler:^{
         NSLog(@"performer: pop success");
-    } performerErrorHandler:^(SEL  _Nonnull routeAction, NSError * _Nonnull error) {
+    } errorHandler:^(SEL  _Nonnull routeAction, NSError * _Nonnull error) {
         NSLog(@"performer: pop failed,error:%@",error);
     }];
 }

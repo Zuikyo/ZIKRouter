@@ -36,18 +36,18 @@
                                    destination.age = 18;
                                    destination.delegate = weakSelf;
                                };
-                               config.providerSuccessHandler = ^{
+                               config.successHandler = ^{
                                    NSLog(@"provider: present modally success");
                                };
-                               config.providerErrorHandler = ^(SEL  _Nonnull routeAction, NSError * _Nonnull error) {
+                               config.errorHandler = ^(SEL  _Nonnull routeAction, NSError * _Nonnull error) {
                                    NSLog(@"provider: present modally failed: %@",error);
                                };
                            }
                            removeConfigure:^(ZIKViewRemoveConfiguration * _Nonnull config) {
-                               config.providerSuccessHandler = ^{
+                               config.successHandler = ^{
                                    NSLog(@"provider: dismiss success");
                                };
-                               config.providerErrorHandler = ^(SEL  _Nonnull routeAction, NSError * _Nonnull error) {
+                               config.errorHandler = ^(SEL  _Nonnull routeAction, NSError * _Nonnull error) {
                                    NSLog(@"provider: dismiss failed: %@",error);
                                };
                            }];
@@ -61,7 +61,7 @@
     //perform the router
     [self.infoViewRouter performRouteWithSuccessHandler:^{
         NSLog(@"performer: present modally success");
-    } performerErrorHandler:^(SEL  _Nonnull routeAction, NSError * _Nonnull error) {
+    } errorHandler:^(SEL  _Nonnull routeAction, NSError * _Nonnull error) {
         NSLog(@"performer: present modally failed: %@",error);
     }];
 }
@@ -85,7 +85,7 @@
     }
     [self.infoViewRouter removeRouteWithSuccessHandler:^{
         NSLog(@"performer: dismiss success");
-    } performerErrorHandler:^(SEL  _Nonnull routeAction, NSError * _Nonnull error) {
+    } errorHandler:^(SEL  _Nonnull routeAction, NSError * _Nonnull error) {
         NSLog(@"performer: dismiss failed,error:%@",error);
     }];
 }
