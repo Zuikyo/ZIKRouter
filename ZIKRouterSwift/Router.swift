@@ -192,7 +192,7 @@ public class Router {
     ///   - viewProtocol: The view protocol registered with a view router
     ///   - prepare: Prepare the destination with the protocol
     /// - Returns: The view destination
-    public static func destination<Destination>(
+    public static func makeDestination<Destination>(
         forViewProtocol viewProtocol:Destination.Type,
         preparation prepare: ((Destination?) -> Swift.Void)? = nil
         ) -> Destination? {
@@ -206,6 +206,7 @@ public class Router {
                 prepare?(destination)
             }
             config.routeCompletion = { d in
+                assert(d is Destination,"Bad implementation in router(\(String(describing: routerClass))), destination(\(type(of: d))) is not \(Destination.self) type.")
                 destination = d as? Destination
             }
         })
@@ -218,7 +219,7 @@ public class Router {
     ///   - configProtocol: The config protocol registered with a view router
     ///   - prepare: Prepare the module with the protocol
     /// - Returns: The view destination
-    public static func destination<Config>(
+    public static func makeDestination<Config>(
         forViewConfig configProtocol:Config.Type,
         preparation prepare: ((Config?) -> Swift.Void)? = nil
         ) -> Any? {
@@ -243,7 +244,7 @@ public class Router {
     ///   - serviceProtocol: The service protocol registered with a service router
     ///   - prepare: Prepare the destination with the protocol
     /// - Returns: The service destination
-    public static func destination<Destination>(
+    public static func makeDestination<Destination>(
         forServiceProtocol serviceProtocol:Destination.Type,
         preparation prepare: ((Destination?) -> Swift.Void)? = nil
         ) -> Destination? {
@@ -255,6 +256,7 @@ public class Router {
                 prepare?(d as? Destination)
             }
             config.routeCompletion = { d in
+                assert(d is Destination,"Bad implementation in router(\(String(describing: routerClass))), destination(\(type(of: d))) is not \(Destination.self) type.")
                 destination = d as? Destination
             }
         })
@@ -267,7 +269,7 @@ public class Router {
     ///   - configProtocol: The config protocol registered with a service router
     ///   - prepare: Prepare the module with the protocol
     /// - Returns: The service destination
-    public static func destination<Config>(
+    public static func makeDestination<Config>(
         forServiceConfig configProtocol:Config.Type,
         preparation prepare: ((Config?) -> Swift.Void)? = nil
         ) -> Any? {

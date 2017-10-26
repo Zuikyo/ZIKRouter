@@ -30,19 +30,8 @@
 
 - (id<ZIKTimeServiceInput>)timeService {
     if (!_timeService) {
-        __block id<ZIKTimeServiceInput> timeService;
         NSAssert([ZIKServiceRouterForService(ZIKTimeServiceInput_routable) completeSynchronously] == YES, @"We need to get service synchronously");
-        
-        [ZIKServiceRouterForService(ZIKTimeServiceInput_routable)
-         performWithConfigure:^(__kindof ZIKServiceRouteConfiguration * _Nonnull config) {
-            config.prepareForRoute = ^(id<ZIKTimeServiceInput> destination) {
-                
-            };
-            config.routeCompletion = ^(id<ZIKTimeServiceInput> destination) {
-                timeService = destination;
-            };
-        }];
-        NSAssert(timeService, nil);
+        id<ZIKTimeServiceInput> timeService = [ZIKServiceRouterForService(ZIKTimeServiceInput_routable) makeDestination];
         _timeService = timeService;
     }
     return _timeService;

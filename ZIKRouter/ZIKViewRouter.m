@@ -777,9 +777,9 @@ _Nullable Class ZIKViewRouterForConfig(Protocol *configProtocol) {
     return YES;
 }
 
-#pragma mark Convenient method
+#pragma mark Convenient Methods
 
-+ (nullable id)destinationWithPreparation:(void(^ _Nullable)(id destination))prepare {
++ (nullable id)makeDestinationWithPreparation:(void(^ _Nullable)(id destination))prepare {
     NSAssert(self != [ZIKViewRouter class], @"Only get destination from router subclass");
     NSAssert1([self completeSynchronously] == YES, @"The router (%@) should return the destination Synchronously when use +destinationForConfigure",self);
     ZIKViewRouter *router = [[self alloc] initWithConfigure:(void(^)(ZIKRouteConfiguration*))^(ZIKViewRouteConfiguration * _Nonnull config) {
@@ -792,6 +792,10 @@ _Nullable Class ZIKViewRouterForConfig(Protocol *configProtocol) {
     } removeConfigure:nil];
     [router performRoute];
     return router.destination;
+}
+
++ (nullable id)makeDestination {
+    return [self makeDestinationWithPreparation:nil];
 }
 
 + (__kindof ZIKViewRouter *)performWithSource:(nullable id)source routeType:(ZIKViewRouteType)routeType {
@@ -1843,7 +1847,7 @@ destinationStateBeforeRoute:(ZIKPresentationState *)destinationStateBeforeRoute
         doRemoveRoute();
     } else {
         NSAssert(NO, @"%@ removeRoute should only be called in main thread!",self);
-        dispatch_async(dispatch_get_main_queue(), ^{
+        dispatch_sync(dispatch_get_main_queue(), ^{
             doRemoveRoute();
         });
     }

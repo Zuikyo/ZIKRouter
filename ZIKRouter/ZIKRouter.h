@@ -41,7 +41,7 @@ NS_ASSUME_NONNULL_BEGIN
 @end
 
 /**
- Abstract class for router. A router for decoupling between modules, and injecting dependencies with protocol.
+ Abstract superclass for router. A router for decoupling between modules, and injecting dependencies with protocol.
  @discussion
  Features:
  

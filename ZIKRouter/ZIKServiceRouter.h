@@ -22,7 +22,7 @@ extern NSString *const kZIKServiceRouterErrorDomain;
 
 @protocol ZIKServiceRouterProtocol <NSObject>
 
-///Register the destination class with those ZIKServiceRouter_registerXXX functions. ZIKServiceRouter will call this method at startup. If a router was not registered with any service class, there'll be an assert failure.
+///Register the destination class with those +registerXXX: methods. ZIKServiceRouter will call this method at startup. If a router was not registered with any service class, there'll be an assert failure.
 + (void)registerRoutableDestination;
 
 ///Create and initialize destination with configuration.
@@ -48,7 +48,7 @@ extern NSString *const kZIKServiceRouterErrorDomain;
 typedef void(^ZIKServiceRouteGlobalErrorHandler)(__kindof ZIKServiceRouter * _Nullable router, SEL routeAction, NSError *error);
 
 /**
- Service router for discovering service and injecting dependencies. Subclass it and implement ZIKRouterProtocol to make router of your service.
+ Abstract superclass of service router for discovering service and injecting dependencies. Subclass it and implement ZIKServiceRouterProtocol to make router of your service.
  
  @code
  __block id<ZIKLoginServiceInput> loginService;
@@ -91,6 +91,11 @@ typedef void(^ZIKServiceRouteGlobalErrorHandler)(__kindof ZIKServiceRouter * _Nu
 + (nullable ZIKServiceRouter<ServiceRouteConfig, ServiceRemoveConfig> *)performWithConfigure:(void(NS_NOESCAPE ^)(ServiceRouteConfig config))configBuilder
                                                                              removeConfigure:(void(NS_NOESCAPE ^ _Nullable)(ServiceRemoveConfig config))removeConfigBuilder;
 + (nullable ZIKServiceRouter<ServiceRouteConfig, ServiceRemoveConfig> *)performWithConfigure:(void(NS_NOESCAPE ^)(ServiceRouteConfig config))configBuilder;
+
+///Asynchronous get destination
++ (nullable id)makeDestinationWithPreparation:(void(^ _Nullable)(id destination))prepare;
+///Asynchronous get destination
++ (nullable id)makeDestination;
 
 ///Default implemenation of -performXX will call routeCompletion synchronously, so the user can get service synchronously. Subclass router may return NO if it's service can only be generated asynchronously.
 + (BOOL)completeSynchronously;
