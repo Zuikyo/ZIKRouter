@@ -23,19 +23,18 @@ NS_ASSUME_NONNULL_BEGIN
  
  If view is first appear, zix_routed will be NO in -willMoveToSuperview:, -didMoveToSuperview, -willMoveToWindow:, -didMoveToWindow (before [super didMoveToWindow], after [super didMoveToWindow], it's YES). If view is removing from superview, zix_routed will be NO in -willMoveToSuperview: and -didMoveToSuperview, but it's still YES in -willMoveToWindow: and -didMoveToWindow. When a UIView has appeared once, that means it's routed, zix_routed is YES.
 
- @return If the UIView is already routed, return YES, otherwise return NO
+ @return If the UIView is already routed, return YES, otherwise return NO.
  */
 @property (nonatomic, readonly) BOOL zix_routed;
 
 ///Get the UIViewController containing the view. Only available in and after -willMoveToWindow:.
 - (nullable UIViewController *)zix_firstAvailableUIViewController;
 
-
 /**
- Get the performer UIViewController or UIView who routed this view. Only available in and after -willMoveToWindow:.
+ Get the performer UIViewController who routed this view. Only available in and after -willMoveToWindow:.
  @discussion
- A performer must be a UIViewController or UIView, and is custom class, rather than classes from system's frameworks. Search the UIViewController and UIView in nextResponder and parentViewController/superview 's nextResponder.
- @return a UIViewController or UIView who add this view as it's subview. return nil when this view is not in any superview or view controller of custom class
+ A performer must be a UIViewController, and is custom class, rather than classes from system's frameworks. Search the UIViewController and UIView in nextResponder and parentViewController/superview 's nextResponder.
+ @return a UIViewController who add this view as it's subview. return nil when this view is not in any superview or view controller of custom class.
  */
 - (nullable id)zix_routePerformer;
 @end

@@ -39,7 +39,7 @@ typedef NS_ENUM(NSInteger,ZIKViewRouteDetailType) {
 
 ///State that describes the presentation of a view controller. It's for analyzing the view controller's real route style. Store address pointer by number.
 @interface ZIKPresentationState : NSObject
-///the view controller's address
+///the view controller's address.
 @property (nonatomic, readonly, strong, nullable) NSNumber *viewController;
 @property (nonatomic, readonly, strong, nullable) NSNumber *presentingViewController;
 @property (nonatomic, readonly, assign) BOOL isModalPresentationPopover;

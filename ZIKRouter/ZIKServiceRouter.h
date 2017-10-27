@@ -22,7 +22,7 @@ extern NSString *const kZIKServiceRouterErrorDomain;
 
 @protocol ZIKServiceRouterProtocol <NSObject>
 
-///Register the destination class with those +registerXXX: methods. ZIKServiceRouter will call this method at startup. If a router was not registered with any service class, there'll be an assert failure.
+///Register the destination class with those +registerXXX: methods. ZIKServiceRouter will call this method before app did finish launch. If a router was not registered with any service class, there'll be an assert failure.
 + (void)registerRoutableDestination;
 
 ///Create and initialize destination with configuration.

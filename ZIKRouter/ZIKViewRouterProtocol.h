@@ -19,7 +19,7 @@ NS_ASSUME_NONNULL_BEGIN
 ///Protocol for ZIKViewRouter's subclass.
 @protocol ZIKViewRouterProtocol <NSObject>
 
-///Register the destination class with those +registerXXX: methods. ZIKViewRouter will call this method at startup. If a router was not registered with any view class, there'll be an assert failure.
+///Register the destination class with those +registerXXX: methods. ZIKViewRouter will call this method before app did finish launch. If a router was not registered with any view class, there'll be an assert failure.
 + (void)registerRoutableDestination;
 
 /**
@@ -40,9 +40,9 @@ NS_ASSUME_NONNULL_BEGIN
 @optional
 
 /**
- Whether the destination is all configed.
+ Whether the destination is all configured.
  @discussion
- Destination created from external will use this method to determine whether the router have to search the performer to prepare itself.
+ Destination created from external will use this method to determine whether the router have to search the performer to prepare itself by invoking performer's -prepareDestinationFromExternal:configuration:.
  
  @param destination The view to perform route.
  @return If the destination is not prepared, return NO. Default is YES.
@@ -50,14 +50,14 @@ NS_ASSUME_NONNULL_BEGIN
 + (BOOL)destinationPrepared:(id)destination;
 
 /**
- Prepare the destination with the configuration when view is first appear. Unwind segue to destination won't call this method.
+ Prepare the destination with the configuration when view first appears. Unwind segue to destination won't call this method.
  @warning
- If a router(A) fetch destination(A)'s dependency destination(B) with another router(B) in -prepareDestination:configuration:, and the destination(A) is also the destination(B)'s dependency, so destination(B)'s router(B) will also fetch destination(A) with router(A) in it's -prepareDestination:configuration:. Then there will be an infinite recursion.
+ If a router(A) fetch destination(A)'s dependency destination(B) with another router(B) in router(A)'s -prepareDestination:configuration:, and the destination(A) is also the destination(B)'s dependency, so destination(B)'s router(B) will also fetch destination(A) with router(A) in it's -prepareDestination:configuration:. Then there will be an infinite recursion.
  
  To void it, when router(A) fetch destination(B) in -prepareDestination:configuration:, router(A) must inject destination(A) to destination(B) in -prepareRoute block of router(B)'s config or use custom config property. And router(B) should check in -prepareDestination:configuration: to avoid unnecessary preparation to fetch destination(A) again.
  
  @note
-  When it's removed and routed again, it's alse treated as first appear, so this method may be called more than once. You should check whether the destination is already prepared to avoid unnecessary preparation.
+  When it's removed and routed again, it's alse treated as first appearance, so this method may be called more than once. You should check whether the destination is already prepared to avoid unnecessary preparation.
  
  If you get a prepared destination by ZIKViewRouteTypeGetDestination or -prepareDestination:configure:removeConfigure:, this method will be called. When the destination is routed, this method will also be called, because the destination may be changed.
  
@@ -67,9 +67,9 @@ NS_ASSUME_NONNULL_BEGIN
 - (void)prepareDestination:(id)destination configuration:(__kindof ZIKViewRouteConfiguration *)configuration;
 
 /**
- Called when view is first appear and preparation is finished. You can check whether destination is preapred correctly. Unwind segue to destination won't call this method.
+ Called when view first appears and it's preparation is finished. You can check whether destination is preapred correctly. Unwind segue to destination won't call this method.
  @warning
- when it's removed and routed again, it's alse treated as first appear, so this method may be called more than once. You should check whether the destination is already prepared to avoid unnecessary preparation..
+ when it's removed and routed again, it's alse treated as first appearance, so this method may be called more than once. You should check whether the destination is already prepared to avoid unnecessary preparation.
  
  @param destination The view to perform route.
  @param configuration The configuration for route.
@@ -84,16 +84,16 @@ NS_ASSUME_NONNULL_BEGIN
 + (__kindof ZIKViewRemoveConfiguration *)defaultRemoveConfiguration;
 
 ///Custom route support
-///Validate the configuration for your custom route.
+///Validate the configuration for your custom route. If return NO, current perform action will be failed.
 + (BOOL)validateCustomRouteConfiguration:(__kindof ZIKViewRouteConfiguration *)configuration removeConfiguration:(__kindof ZIKViewRemoveConfiguration *)removeConfiguration;
 ///Whether the router can perform custom route now.
 - (BOOL)canPerformCustomRoute;
 ///Whether the router can remove custom route now.
 - (BOOL)canRemoveCustomRoute;
 ///Perform your custom route. You must maintain the router's state with methods in ZIKViewRouterInternal.h.
-- (void)performCustomRouteOnDestination:(id)destination fromSource:(id)source configuration:(__kindof ZIKViewRouteConfiguration *)configuration;
+- (void)performCustomRouteOnDestination:(id)destination fromSource:(nullable id)source configuration:(__kindof ZIKViewRouteConfiguration *)configuration;
 ///Remove your custom route. You must maintain the router's state with methods in ZIKViewRouterInternal.h.
-- (void)removeCustomRouteOnDestination:(id)destination fromSource:(id)source removeConfiguration:(__kindof ZIKViewRemoveConfiguration *)removeConfiguration configuration:(__kindof ZIKViewRouteConfiguration *)configuration;
+- (void)removeCustomRouteOnDestination:(id)destination fromSource:(nullable id)source removeConfiguration:(__kindof ZIKViewRemoveConfiguration *)removeConfiguration configuration:(__kindof ZIKViewRouteConfiguration *)configuration;
 
 /**
  AOP support.

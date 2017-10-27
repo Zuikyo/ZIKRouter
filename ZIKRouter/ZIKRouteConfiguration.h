@@ -23,7 +23,7 @@ typedef NS_ENUM(NSInteger, ZIKRouterState) {
 typedef void(^ZIKRouteErrorHandler)(SEL routeAction, NSError *error);
 typedef void(^ZIKRouteStateNotifier)(ZIKRouterState oldState, ZIKRouterState newState);
 
-///Configuration for destination module. You can use a subclass to add complex dependencies for destination. The subclass must conforms to NSCopying, because the configuration need to be copied when routing.
+///Configuration for destination module. You can use a subclass to add complex dependencies for destination. The subclass must conforms to NSCopying, because the configuration will be copied.
 @interface ZIKRouteConfiguration : NSObject <NSCopying>
 
 /**

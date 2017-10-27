@@ -10,17 +10,17 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-///Private methods
+///Private methods.
 @interface ZIKServiceRouter ()
 
-///Is registration all finished
+///Is registration all finished.
 + (BOOL)_isLoadFinished;
 
 @end
 
-///Private method for ZIKRouterSwift
+///Private method for ZIKRouterSwift.
 extern _Nullable Class _Swift_ZIKServiceRouterForService(id serviceProtocol);
-///Private method for ZIKRouterSwift
+///Private method for ZIKRouterSwift.
 extern _Nullable Class _Swift_ZIKServiceRouterForConfig(id configProtocol);
 
 NS_ASSUME_NONNULL_END

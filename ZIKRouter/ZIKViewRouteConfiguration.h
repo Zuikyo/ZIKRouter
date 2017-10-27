@@ -15,7 +15,7 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-///Route type for view
+///Route types for view.
 typedef NS_ENUM(NSInteger,ZIKViewRouteType) {
     ///Navigation using @code-[source pushViewController:animated:]@endcode Source must be a UIViewController.
     ZIKViewRouteTypePush,

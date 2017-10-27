@@ -69,8 +69,8 @@ NSString *kZIKRouterErrorDomain = @"kZIKRouterErrorDomain";
     self.preState = oldState;
     self.state = state;
     
-    if (self._nocopy_configuration.stateNotifier) {
-        self._nocopy_configuration.stateNotifier(oldState, state);
+    if (self.original_configuration.stateNotifier) {
+        self.original_configuration.stateNotifier(oldState, state);
     }
     
     dispatch_semaphore_signal(_stateSema);
@@ -81,14 +81,14 @@ NSString *kZIKRouterErrorDomain = @"kZIKRouterErrorDomain";
 }
 
 - (void)performRoute {
-    [self performRouteWithSuccessHandler:self._nocopy_configuration.performerSuccessHandler
-                            errorHandler:self._nocopy_configuration.performerErrorHandler];
+    [self performRouteWithSuccessHandler:self.original_configuration.performerSuccessHandler
+                            errorHandler:self.original_configuration.performerErrorHandler];
 }
 
 - (void)performRouteWithSuccessHandler:(void(^)(void))performerSuccessHandler
                           errorHandler:(void(^)(SEL routeAction, NSError *error))performerErrorHandler {
-    NSAssert(self._nocopy_configuration, @"router must has configuration");
-    ZIKRouteConfiguration *configuration = self._nocopy_configuration;
+    NSAssert(self.original_configuration, @"router must has configuration");
+    ZIKRouteConfiguration *configuration = self.original_configuration;
     if (performerSuccessHandler) {
         configuration.performerSuccessHandler = performerSuccessHandler;
     }
@@ -136,7 +136,7 @@ NSString *kZIKRouterErrorDomain = @"kZIKRouterErrorDomain";
 
 - (void)removeRouteWithSuccessHandler:(void(^)(void))performerSuccessHandler
                          errorHandler:(void(^)(SEL routeAction, NSError *error))performerErrorHandler {
-    ZIKRouteConfiguration *configuration = self._nocopy_removeConfiguration;
+    ZIKRouteConfiguration *configuration = self.original_removeConfiguration;
     if (!configuration) {
         configuration = [[self class] defaultRemoveConfiguration];
     }
@@ -215,11 +215,11 @@ NSString *kZIKRouterErrorDomain = @"kZIKRouterErrorDomain";
     NSParameterAssert(routeAction);
     ZIKRouteConfiguration *configuration;
     if (routeAction == @selector(performRoute)) {
-        configuration = self._nocopy_configuration;
+        configuration = self.original_configuration;
     } else if (routeAction == @selector(removeRoute)) {
-        configuration = self._nocopy_removeConfiguration;
+        configuration = self.original_removeConfiguration;
     } else {
-        configuration = self._nocopy_configuration;
+        configuration = self.original_configuration;
     }
     
     if (configuration.successHandler) {
@@ -231,14 +231,14 @@ NSString *kZIKRouterErrorDomain = @"kZIKRouterErrorDomain";
     NSParameterAssert(error);
     NSParameterAssert(routeAction);
     self.error = error;
-    if (!self._nocopy_configuration.errorHandler) {
+    if (!self.original_configuration.errorHandler) {
         return;
     }
     if ([NSThread isMainThread]) {
-        self._nocopy_configuration.errorHandler(routeAction, error);
+        self.original_configuration.errorHandler(routeAction, error);
     } else {
         dispatch_async(dispatch_get_main_queue(), ^{
-            self._nocopy_configuration.errorHandler(routeAction, error);
+            self.original_configuration.errorHandler(routeAction, error);
         });
     }
 }
@@ -248,11 +248,11 @@ NSString *kZIKRouterErrorDomain = @"kZIKRouterErrorDomain";
     
     ZIKRouteConfiguration *configuration;
     if (routeAction == @selector(performRoute)) {
-        configuration = self._nocopy_configuration;
+        configuration = self.original_configuration;
     } else if (routeAction == @selector(removeRoute)) {
-        configuration = self._nocopy_removeConfiguration;
+        configuration = self.original_removeConfiguration;
     } else {
-        configuration = self._nocopy_configuration;
+        configuration = self.original_configuration;
     }
     
     if (configuration.performerSuccessHandler) {
@@ -271,11 +271,11 @@ NSString *kZIKRouterErrorDomain = @"kZIKRouterErrorDomain";
     self.error = error;
     ZIKRouteConfiguration *configuration;
     if (routeAction == @selector(performRoute)) {
-        configuration = self._nocopy_configuration;
+        configuration = self.original_configuration;
     } else if (routeAction == @selector(removeRoute)) {
-        configuration = self._nocopy_removeConfiguration;
+        configuration = self.original_removeConfiguration;
     } else {
-        configuration = self._nocopy_configuration;
+        configuration = self.original_configuration;
     }
     
     if (configuration.performerErrorHandler) {
@@ -293,7 +293,7 @@ NSString *kZIKRouterErrorDomain = @"kZIKRouterErrorDomain";
     return [_configuration copy];
 }
 
-- (ZIKRouteConfiguration*)_nocopy_configuration {
+- (ZIKRouteConfiguration*)original_configuration {
     return _configuration;
 }
 
@@ -301,7 +301,7 @@ NSString *kZIKRouterErrorDomain = @"kZIKRouterErrorDomain";
     return [_removeConfiguration copy];
 }
 
-- (ZIKRouteConfiguration*)_nocopy_removeConfiguration {
+- (ZIKRouteConfiguration*)original_removeConfiguration {
     return _removeConfiguration;
 }
 
@@ -336,7 +336,7 @@ NSString *kZIKRouterErrorDomain = @"kZIKRouterErrorDomain";
 }
 
 - (NSString *)description {
-    return [NSString stringWithFormat:@"%@: state:%@, destinaton:%@, configuration:(%@)",[super description],[[self class] descriptionOfState:self.state],self.destination,self._nocopy_configuration];
+    return [NSString stringWithFormat:@"%@: state:%@, destinaton:%@, configuration:(%@)",[super description],[[self class] descriptionOfState:self.state],self.destination,self.original_configuration];
 }
 
 @end

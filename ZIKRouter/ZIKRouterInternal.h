@@ -13,28 +13,28 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-///Expost APIs to subclass
+///Internal methods for subclass.
 @interface ZIKRouter ()
-///Previous state
+///Previous state.
 @property (nonatomic, readonly, assign) ZIKRouterState preState;
-///Subclass can get the real configuration to avoid unnecessary copy
-@property (nonatomic, readonly, copy) __kindof ZIKRouteConfiguration *_nocopy_configuration;
-@property (nonatomic, readonly, copy) __kindof ZIKRouteConfiguration *_nocopy_removeConfiguration;
+///Subclass can get the real configuration to avoid unnecessary copy.
+@property (nonatomic, readonly, copy) __kindof ZIKRouteConfiguration *original_configuration;
+@property (nonatomic, readonly, copy) __kindof ZIKRouteConfiguration *original_removeConfiguration;
 @property (nonatomic, readonly, weak) id destination;
 
-//Attach a destination not created from router
+//Attach a destination not created from router.
 - (void)attachDestination:(id)destination;
 
-///If a router need to perform on a specific thread, override -performWithConfiguration: and call [super performWithConfiguration:configuration] in that thread
+///If a router need to perform on a specific thread, override -performWithConfiguration: and call [super performWithConfiguration:configuration] in that thread.
 - (void)performWithConfiguration:(__kindof ZIKRouteConfiguration *)configuration;
 
-///Change state
+///Change state.
 - (void)notifyRouteState:(ZIKRouterState)state;
 
-///Call providerSucessHandler and performerSuccessHandler
+///Call sucessHandler and performerSuccessHandler.
 - (void)notifySuccessWithAction:(SEL)routeAction;
 
-///Call errorHandler and performerErrorHandler
+///Call errorHandler and performerErrorHandler.
 - (void)notifyError:(NSError *)error routeAction:(SEL)routeAction;
 
 + (NSError *)errorWithCode:(NSInteger)code userInfo:(nullable NSDictionary *)userInfo;

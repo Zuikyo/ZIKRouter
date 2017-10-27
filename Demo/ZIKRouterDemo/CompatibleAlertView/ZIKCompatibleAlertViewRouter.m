@@ -164,7 +164,7 @@
 }
 
 - (BOOL)canPerformCustomRoute {
-    UIViewController *source = (UIViewController *)self._nocopy_configuration.source;
+    UIViewController *source = (UIViewController *)self.original_configuration.source;
     if (!source) {
         return NO;
     }
@@ -223,7 +223,7 @@
 - (void)alertView:(UIAlertView *)alertView clickedButtonAtIndex:(NSInteger)buttonIndex {
     ZIKCompatibleAlertViewRouter *router = [alertView zix_compatibleAlertRouter];
     NSAssert(router && [router isKindOfClass:[self class]], nil);
-    NSArray<ZIKCompatibleAlertViewAction *> *actions = [router._nocopy_configuration actions];
+    NSArray<ZIKCompatibleAlertViewAction *> *actions = [router.original_configuration actions];
     NSParameterAssert(buttonIndex <= actions.count - 1);
     
     ZIKCompatibleAlertViewAction *action = [actions objectAtIndex:buttonIndex];
@@ -244,7 +244,7 @@
     NSAssert(router && [router isKindOfClass:[self class]], nil);
     if (router.routingFromInternal) {
         if (router.state == ZIKRouterStateRemoving) {
-            [router endRemoveRouteWithSuccessOnDestination:alertView fromSource:router._nocopy_configuration.source];
+            [router endRemoveRouteWithSuccessOnDestination:alertView fromSource:router.original_configuration.source];
         }
     } else {
         [router notifyRouteState:ZIKRouterStateRemoved];
