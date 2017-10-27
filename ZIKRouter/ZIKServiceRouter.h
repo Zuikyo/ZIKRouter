@@ -145,24 +145,6 @@ typedef NS_ENUM(NSInteger, ZIKServiceRouteError) {
     ZIKServiceRouteErrorInfiniteRecursion
 };
 
-#pragma mark Dynamic Discover
-
-/**
- Get the router class registered with a service class (a ZIKRoutableService) conforming to a unique protocol. Similar to ZIKViewRouterForView().
- 
- @param serviceProtocol The protocol conformed by the service. Should be a ZIKServiceRoutable protocol when ZIKSERVICEROUTER_CHECK is enabled. When ZIKSERVICEROUTER_CHECK is disabled, the protocol doesn't need to inheriting from ZIKServiceRoutable.
- @return A router class matched with the service. Return nil if protocol is nil or not declared. There will be an assert failure when result is nil.
- */
-extern _Nullable Class ZIKServiceRouterForService(Protocol *serviceProtocol);
-
-/**
- Get the router class combined with a custom ZIKRouteConfiguration conforming to a unique protocol. Similar to ZIKViewRouterForConfig().
-
- @param configProtocol The protocol conformed by defaultConfiguration of router. Should be a ZIKServiceConfigRoutable protocol when ZIKSERVICEROUTER_CHECK is enabled. When ZIKSERVICEROUTER_CHECK is disabled, the protocol doesn't need to inheriting from ZIKServiceConfigRoutable.
- @return A router class matched with the service. Return nil if protocol is nil or not declared. There will be an assert failure when result is nil.
- */
-extern _Nullable Class ZIKServiceRouterForConfig(Protocol *configProtocol);
-
 API_DEPRECATED_WITH_REPLACEMENT("+[ZIKViewRouter registerService:]",ios(7.0,7.0))
 extern void ZIKServiceRouter_registerService(Class serviceClass, Class routerClass);
 
