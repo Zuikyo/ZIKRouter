@@ -30,6 +30,7 @@ extern NSString *const kZIKServiceRouterErrorDomain;
 
 @end
 
+///Enble this to check if all routers and routable protocols are properly implemented.
 #ifdef DEBUG
 #define ZIKSERVICEROUTER_CHECK 1
 #else
@@ -48,8 +49,8 @@ extern NSString *const kZIKServiceRouterErrorDomain;
 typedef void(^ZIKServiceRouteGlobalErrorHandler)(__kindof ZIKServiceRouter * _Nullable router, SEL routeAction, NSError *error);
 
 /**
- Abstract superclass of service router for discovering service and injecting dependencies. Subclass it and implement ZIKServiceRouterProtocol to make router of your service.
- 
+ Abstract superclass of service router for discovering service and injecting dependencies with registered protocol. Subclass it and implement ZIKServiceRouterProtocol to make router of your service.
+ @discussion 
  @code
  __block id<ZIKLoginServiceInput> loginService;
  [ZIKServiceRouterForService(@protocol(ZIKLoginServiceInput))

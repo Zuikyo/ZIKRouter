@@ -13,12 +13,15 @@ import ZIKRouterSwift
 protocol SwiftServiceInput {
     func swiftFunction()
 }
+
 class SwiftService: SwiftServiceInput {
     func swiftFunction() {
         print("this is a swift function")
         
         Router.router(forViewConfig: ZIKCompatibleAlertConfigProtocol.self)?.perform { configuration in
-            let config = configuration as! ZIKViewRouteConfiguration & ZIKCompatibleAlertConfigProtocol
+            guard let config = configuration as? ZIKViewRouteConfiguration & ZIKCompatibleAlertConfigProtocol else {
+                return
+            }
             config.source = UIApplication.shared.keyWindow?.rootViewController
             config.title = "SwiftService"
             config.message = "This is a swift service"

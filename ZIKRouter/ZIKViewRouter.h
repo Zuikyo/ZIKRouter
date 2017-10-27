@@ -17,6 +17,7 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
+///Enble this to check if all routers and routable protocols are properly implemented.
 #ifdef DEBUG
 #define ZIKVIEWROUTER_CHECK 1
 #else
@@ -40,13 +41,15 @@ typedef void(^ZIKViewRouteGlobalErrorHandler)(__kindof ZIKViewRouter * _Nullable
  @discussion
  Features:
  
- 1. Support all route types in UIKit, and can remove the destination without using -popViewControllerAnimated:/-dismissViewControllerAnimated:completion:/removeFromParentViewController/removeFromSuperview in different sistuation. Router can choose the proper method. You can alse add custom route type.
+ 1. Find destination with registered protocol, decoupling the source with the destination class.
  
- 2. Support storyboard. UIViewController and UIView from a segue can auto create it's registered router.
+ 2. Support all route types in UIKit, and can remove the destination without using -popViewControllerAnimated:/-dismissViewControllerAnimated:completion:/removeFromParentViewController/removeFromSuperview in different sistuation. Router can choose the proper method. You can alse add custom route type.
  
- 3. Enough error checking for route action.
+ 3. Support storyboard. UIViewController and UIView from a segue can auto create it's registered router.
  
- 4. AOP support for destination's route action.
+ 4. Enough error checking for route action.
+ 
+ 5. AOP support for destination's route action.
  
  Method swizzle declaration:
  

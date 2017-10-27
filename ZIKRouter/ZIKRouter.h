@@ -49,9 +49,7 @@ NS_ASSUME_NONNULL_BEGIN
  
  1. Prepare the route with protocol in block, instead of directly configuring the destination (the source is coupled with the destination if you do this) or in delegate method (in -prepareForSegue:sender: you have to distinguish different destinations, and they're alse coupled with source).
  
- 2. Find destination with registered protocol, decoupling the source with the destination class.
- 
- 3. Specify a router with generic and protocol, then you can hide subclass but still can get routers with different functions.
+ 2. Specify a router with generic and protocol, then you can hide subclass but still can get routers with different functions.
  
  See sample code in ZIKServiceRouter and ZIKViewRouter for more detail.
  */
