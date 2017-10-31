@@ -22,11 +22,11 @@
 #import "UIStoryboardSegue+ZIKViewRouterPrivate.h"
 #import "ZIKViewRouteConfiguration+Private.h"
 
-NSString *const kZIKViewRouteWillPerformRouteNotification = @"kZIKViewRouteWillPerformRouteNotification";
-NSString *const kZIKViewRouteDidPerformRouteNotification = @"kZIKViewRouteDidPerformRouteNotification";
-NSString *const kZIKViewRouteWillRemoveRouteNotification = @"kZIKViewRouteWillRemoveRouteNotification";
-NSString *const kZIKViewRouteDidRemoveRouteNotification = @"kZIKViewRouteDidRemoveRouteNotification";
-NSString *const kZIKViewRouteRemoveRouteCanceledNotification = @"kZIKViewRouteRemoveRouteCanceledNotification";
+NSNotificationName kZIKViewRouteWillPerformRouteNotification = @"kZIKViewRouteWillPerformRouteNotification";
+NSNotificationName kZIKViewRouteDidPerformRouteNotification = @"kZIKViewRouteDidPerformRouteNotification";
+NSNotificationName kZIKViewRouteWillRemoveRouteNotification = @"kZIKViewRouteWillRemoveRouteNotification";
+NSNotificationName kZIKViewRouteDidRemoveRouteNotification = @"kZIKViewRouteDidRemoveRouteNotification";
+NSNotificationName kZIKViewRouteRemoveRouteCanceledNotification = @"kZIKViewRouteRemoveRouteCanceledNotification";
 NSString *const kZIKViewRouteErrorDomain = @"kZIKViewRouteErrorDomain";
 
 static BOOL _assert_isLoadFinished = NO;
@@ -74,10 +74,12 @@ static NSMutableArray *g_preparingUIViewRouters;
 }
 
 + (void)setup {
-    static dispatch_once_t onceToken;
-    dispatch_once(&onceToken, ^{
+    NSAssert([NSThread isMainThread], @"Setup in main thread");
+    static BOOL onceToken = NO;
+    if (onceToken == NO) {
+        onceToken = YES;
         _initializeZIKViewRouter();
-    });
+    }
 }
 
 + (void)ZIKViewRouter_hook_setDelegate:(id<UIApplicationDelegate>)delegate {
@@ -204,7 +206,6 @@ static void _initializeZIKViewRouter(void) {
         }
     });
 #endif
-    
     _assert_isLoadFinished = YES;
 }
 

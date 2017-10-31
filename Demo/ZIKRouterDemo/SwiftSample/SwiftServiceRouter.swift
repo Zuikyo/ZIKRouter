@@ -19,7 +19,7 @@ class SwiftServiceRouter: ZIKServiceRouter<ZIKServiceRouteConfiguration, ZIKRout
         registerService(SwiftService.self)
         Router.register(serviceProtocol: SwiftServiceInput.self, router: self)
     }
-    override func destination(with configuration: ZIKRouteConfiguration) -> Any {
+    override func destination(with configuration: ZIKServiceRouteConfiguration) -> ZIKRoutableService? {
         return SwiftService()
     }
 }

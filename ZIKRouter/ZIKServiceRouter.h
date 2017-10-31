@@ -18,6 +18,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 extern NSString *const kZIKServiceRouterErrorDomain;
 
+@protocol ZIKRoutableService;
 @class ZIKServiceRouter, ZIKServiceRouteConfiguration;
 
 @protocol ZIKServiceRouterProtocol <NSObject>
@@ -26,7 +27,7 @@ extern NSString *const kZIKServiceRouterErrorDomain;
 + (void)registerRoutableDestination;
 
 ///Create and initialize destination with configuration.
-- (nullable id)destinationWithConfiguration:(__kindof ZIKServiceRouteConfiguration *)configuration;
+- (nullable id<ZIKRoutableService>)destinationWithConfiguration:(__kindof ZIKServiceRouteConfiguration *)configuration;
 
 @end
 
@@ -50,7 +51,7 @@ typedef void(^ZIKServiceRouteGlobalErrorHandler)(__kindof ZIKServiceRouter * _Nu
 
 /**
  Abstract superclass of service router for discovering service and injecting dependencies with registered protocol. Subclass it and implement ZIKServiceRouterProtocol to make router of your service.
- @discussion 
+ 
  @code
  __block id<ZIKLoginServiceInput> loginService;
  [ZIKServiceRouterForService(@protocol(ZIKLoginServiceInput))
