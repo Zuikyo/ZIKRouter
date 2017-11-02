@@ -18,6 +18,9 @@ class SwiftServiceRouter: ZIKServiceRouter<ZIKServiceRouteConfiguration, ZIKRout
     override class func registerRoutableDestination() {
         registerService(SwiftService.self)
         Router.register(serviceProtocol: SwiftServiceInput.self, router: self)
+        if _swift_typeConformsToProtocol(SwiftService.self, SwiftServiceInput.self) == false {
+            fatalError()
+        }
     }
     override func destination(with configuration: ZIKServiceRouteConfiguration) -> ZIKRoutableService? {
         return SwiftService()

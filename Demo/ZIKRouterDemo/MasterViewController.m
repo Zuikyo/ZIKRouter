@@ -48,7 +48,9 @@ typedef NS_ENUM(NSInteger,ZIKRouterTestType) {
 
 - (void)viewDidLoad {
     [super viewDidLoad];
-    [self registerForPreviewingWithDelegate:self sourceView:self.view];
+    if ([self respondsToSelector:@selector(registerForPreviewingWithDelegate:sourceView:)]) {
+        [self registerForPreviewingWithDelegate:self sourceView:self.view];
+    }
 }
 
 - (void)viewWillAppear:(BOOL)animated {
