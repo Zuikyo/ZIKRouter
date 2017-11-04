@@ -18,10 +18,10 @@ class SwiftService: SwiftServiceInput {
     func swiftFunction() {
         print("this is a swift function")
         _ = Router.perform(forViewConfig: ZIKCompatibleAlertConfigProtocol.self,
-                           routeOption: { (config) in
+                           routeConfig: { config in
                             config.source = UIApplication.shared.keyWindow?.rootViewController
         },
-                           preparation: ({ (config) in
+                           preparation: ({ config in
                             config?.title = "SwiftService"
                             config?.message = "This is a swift service"
                             config?.addCancelButtonTitle("Cancel", handler: {

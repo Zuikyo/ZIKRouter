@@ -42,16 +42,16 @@ class SwiftSampleViewRouter: ZIKViewRouter<SwiftSampleViewConfiguration, ZIKView
         return destination
     }
     override static func destinationPrepared(_ destination: Any) -> Bool {
-        if let des = destination as? SwiftSampleViewController {
-            if (des.alertRouterClass != nil) {
+        if let dest = destination as? SwiftSampleViewController {
+            if (dest.alertRouterClass != nil) {
                 return true
             }
         }
         return false
     }
     override func prepareDestination(_ destination: Any, configuration: ZIKViewRouteConfiguration) {
-        if let des = destination as? SwiftSampleViewController {
-            des.alertRouterClass = ZIKViewRouterForConfig(ZIKCompatibleAlertConfigProtocol.self) as! ZIKViewRouter<ZIKViewRouteConfiguration & ZIKCompatibleAlertConfigProtocol, ZIKViewRemoveConfiguration>.Type
+        if let dest = destination as? SwiftSampleViewController {
+            dest.alertRouterClass = ZIKViewRouterForConfig(ZIKCompatibleAlertConfigProtocol.self) as! ZIKViewRouter<ZIKViewRouteConfiguration & ZIKCompatibleAlertConfigProtocol, ZIKViewRemoveConfiguration>.Type
         }
     }
 }
