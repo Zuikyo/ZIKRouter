@@ -13,40 +13,7 @@
 import ZIKRouter.Internal
 import ZIKRouter.Private
 
-private class InternalViewRouterValidater: ZIKViewRouteAdapter {
-    static var observer: Any?
-    override class func registerRoutableDestination() {
-        observer = NotificationCenter.default.addObserver(forName: Notification.Name.zikViewRouterRegisterComplete, object: nil, queue: OperationQueue.main) { _ in
-            NotificationCenter.default.removeObserver(observer!)
-            validateViewRouters()
-        }
-    }
-    class func validateViewRouters() {
-        for (routeKey, routerClass) in Router.viewProtocolContainer {
-            let viewProtocol = routeKey.type
-            assert(routerClass.validateRegisteredViewClasses({return _swift_typeConformsToProtocol($0, viewProtocol)}) == nil,
-                   "Registered view class(\(String(describing: routerClass.validateRegisteredViewClasses{return _swift_typeConformsToProtocol($0, viewProtocol)}!))) for router \(routerClass) should conform to protocol \(viewProtocol)")
-        }
-    }
-}
-
-private class InternalServiceRouterValidater: ZIKServiceRouteAdapter {
-    static var observer: Any?
-    override class func registerRoutableDestination() {
-        observer = NotificationCenter.default.addObserver(forName: Notification.Name.zikServiceRouterRegisterComplete, object: nil, queue: OperationQueue.main) { _ in
-            NotificationCenter.default.removeObserver(observer!)
-            validateServiceRouters()
-        }
-    }
-    class func validateServiceRouters() {
-        for (routeKey, routerClass) in Router.serviceProtocolContainer {
-            let serviceProtocol = routeKey.type
-            assert(routerClass.validateRegisteredServiceClasses({return _swift_typeConformsToProtocol($0, serviceProtocol)}) == nil,
-                   "Registered service class(\(String(describing: routerClass.validateRegisteredServiceClasses{return _swift_typeConformsToProtocol($0, serviceProtocol)}!))) for router \(routerClass) should conform to protocol \(serviceProtocol)")
-        }
-    }
-}
-
+///Key of registered protocol.
 internal struct RouteKey<Protocol>: Hashable {
     let type: Protocol
     private let key: String
@@ -136,8 +103,10 @@ public class Router {
         assert(serviceConfigContainer[RouteKey(type:configProtocol)] == nil, "service config protocol (\(configProtocol)) was already registered with router (\(String(describing: serviceConfigContainer[RouteKey(type:configProtocol)]))).")
         serviceConfigContainer[RouteKey(type:configProtocol)] = (router as! ZIKServiceRouter.Type)
     }
-    
-    // MARK: Router Discover
+}
+
+// MARK: Router Discover
+extension Router {
     
     /// Get view router class for registered view protocol.
     ///
@@ -186,8 +155,10 @@ public class Router {
         }
         return routerClass
     }
-    
-    // MARK: Convenient - Perform
+}
+
+// MARK: Convenient - Perform
+extension Router {
     
     /// Perform route with view protocol and prepare the destination with the protocol.
     ///
@@ -226,8 +197,10 @@ public class Router {
             prepare?(config as? Config)
         })
     }
-    
-    // MARK: Convenient - Destination
+}
+
+// MARK: Convenient - Destination
+extension Router {
     
     /// Get view destination conforming the view protocol.
     ///
@@ -328,5 +301,41 @@ public class Router {
             }
         })
         return destination
+    }
+}
+
+///Make sure registered view class conforms to registered view protocol.
+private class InternalViewRouterValidater: ZIKViewRouteAdapter {
+    static var observer: Any?
+    override class func registerRoutableDestination() {
+        observer = NotificationCenter.default.addObserver(forName: Notification.Name.zikViewRouterRegisterComplete, object: nil, queue: OperationQueue.main) { _ in
+            NotificationCenter.default.removeObserver(observer!)
+            validateViewRouters()
+        }
+    }
+    class func validateViewRouters() {
+        for (routeKey, routerClass) in Router.viewProtocolContainer {
+            let viewProtocol = routeKey.type
+            assert(routerClass.validateRegisteredViewClasses({return _swift_typeConformsToProtocol($0, viewProtocol)}) == nil,
+                   "Registered view class(\(String(describing: routerClass.validateRegisteredViewClasses{return _swift_typeConformsToProtocol($0, viewProtocol)}!))) for router \(routerClass) should conform to protocol \(viewProtocol)")
+        }
+    }
+}
+
+///Make sure registered service class conforms to registered service protocol.
+private class InternalServiceRouterValidater: ZIKServiceRouteAdapter {
+    static var observer: Any?
+    override class func registerRoutableDestination() {
+        observer = NotificationCenter.default.addObserver(forName: Notification.Name.zikServiceRouterRegisterComplete, object: nil, queue: OperationQueue.main) { _ in
+            NotificationCenter.default.removeObserver(observer!)
+            validateServiceRouters()
+        }
+    }
+    class func validateServiceRouters() {
+        for (routeKey, routerClass) in Router.serviceProtocolContainer {
+            let serviceProtocol = routeKey.type
+            assert(routerClass.validateRegisteredServiceClasses({return _swift_typeConformsToProtocol($0, serviceProtocol)}) == nil,
+                   "Registered service class(\(String(describing: routerClass.validateRegisteredServiceClasses{return _swift_typeConformsToProtocol($0, serviceProtocol)}!))) for router \(routerClass) should conform to protocol \(serviceProtocol)")
+        }
     }
 }
