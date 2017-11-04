@@ -229,10 +229,7 @@ bool ZIKRouter_classIsCustomClass(Class aClass) {
 }
 
 bool ZIKRouter_isObjcProtocol(id protocol) {
-    if ([[protocol class] isEqual:NSClassFromString(@"Protocol")]) {
-        return true;
-    }
-    return false;
+    return [protocol isKindOfClass:NSClassFromString(@"Protocol")];
 }
 
 static long baseAddressForImage(const char *imagePath) {

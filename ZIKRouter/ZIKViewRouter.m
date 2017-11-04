@@ -341,6 +341,11 @@ static void _initializeZIKViewRouter(void) {
 #endif
 }
 
++ (void)_swift_registerViewProtocol:(id)viewProtocol {
+    NSCParameterAssert(ZIKRouter_isObjcProtocol(viewProtocol));
+    [self registerViewProtocol:viewProtocol];
+}
+
 + (void)registerViewProtocol:(Protocol *)viewProtocol {
     Class routerClass = self;
     NSParameterAssert([routerClass isSubclassOfClass:[ZIKViewRouter class]]);
@@ -361,6 +366,11 @@ static void _initializeZIKViewRouter(void) {
               , @"Protocol already registered by another router, viewProtocol should only be used by this routerClass.");
     
     CFDictionarySetValue(g_viewProtocolToRouterMap, (__bridge const void *)(viewProtocol), (__bridge const void *)(routerClass));
+}
+
++ (void)_swift_registerConfigProtocol:(id)configProtocol {
+    NSCParameterAssert(ZIKRouter_isObjcProtocol(configProtocol));
+    [self registerConfigProtocol:configProtocol];
 }
 
 + (void)registerConfigProtocol:(Protocol *)configProtocol {
@@ -581,11 +591,11 @@ static _Nullable Class ZIKViewRouterForRegisteredView(Class viewClass) {
     return nil;
 }
 
-_Nullable Class _Swift_ZIKViewRouterForView(id viewProtocol) {
+_Nullable Class _swift_ZIKViewRouterForView(id viewProtocol) {
     return ZIKViewRouterForView(viewProtocol);
 }
 
-_Nullable Class _Swift_ZIKViewRouterForConfig(id configProtocol) {
+_Nullable Class _swift_ZIKViewRouterForConfig(id configProtocol) {
     return ZIKViewRouterForConfig(configProtocol);
 }
 

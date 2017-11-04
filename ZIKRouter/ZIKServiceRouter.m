@@ -258,6 +258,11 @@ void _initializeZIKServiceRouter() {
 #endif
 }
 
++ (void)_swift_registerServiceProtocol:(id)serviceProtocol {
+    NSCParameterAssert(ZIKRouter_isObjcProtocol(serviceProtocol));
+    [self registerServiceProtocol:serviceProtocol];
+}
+
 + (void)registerServiceProtocol:(Protocol *)serviceProtocol {
     Class routerClass = self;
     NSParameterAssert([routerClass isSubclassOfClass:[ZIKServiceRouter class]]);
@@ -275,6 +280,11 @@ void _initializeZIKServiceRouter() {
               , @"Protocol already registered by another router, serviceProtocol should only be used by this routerClass.");
     
     CFDictionarySetValue(g_serviceProtocolToRouterMap, (__bridge const void *)(serviceProtocol), (__bridge const void *)(routerClass));
+}
+
++ (void)_swift_registerConfigProtocol:(id)configProtocol {
+    NSCParameterAssert(ZIKRouter_isObjcProtocol(configProtocol));
+    [self registerConfigProtocol:configProtocol];
 }
 
 + (void)registerConfigProtocol:(Protocol *)configProtocol {
@@ -430,11 +440,11 @@ extern void ZIKServiceRouter_registerConfigProtocol(Protocol *configProtocol, Cl
     CFDictionarySetValue(g_configProtocolToRouterMap, (__bridge const void *)(configProtocol), (__bridge const void *)(routerClass));
 }
 
-_Nullable Class _Swift_ZIKServiceRouterForService(id serviceProtocol) {
+_Nullable Class _swift_ZIKServiceRouterForService(id serviceProtocol) {
     return ZIKServiceRouterForService(serviceProtocol);
 }
 
-extern _Nullable Class _Swift_ZIKServiceRouterForConfig(id configProtocol) {
+extern _Nullable Class _swift_ZIKServiceRouterForConfig(id configProtocol) {
     return ZIKServiceRouterForConfig(configProtocol);
 }
 

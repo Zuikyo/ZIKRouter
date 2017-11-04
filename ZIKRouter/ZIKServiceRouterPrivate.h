@@ -25,11 +25,15 @@ typedef  BOOL(^ZIKServiceClassValidater)(Class serviceClass);
 ///Validate all registered service classes of this router class, return the class when the validater return false. Only available when ZIKSERVICEROUTER_CHECK is true.
 + (_Nullable Class)validateRegisteredServiceClasses:(ZIKServiceClassValidater)handler;
 
++ (void)_swift_registerServiceProtocol:(id)serviceProtocol;
+
++ (void)_swift_registerConfigProtocol:(id)configProtocol;
+
 @end
 
 ///Private method for ZIKRouterSwift.
-extern _Nullable Class _Swift_ZIKServiceRouterForService(id serviceProtocol);
+extern _Nullable Class _swift_ZIKServiceRouterForService(id serviceProtocol);
 ///Private method for ZIKRouterSwift.
-extern _Nullable Class _Swift_ZIKServiceRouterForConfig(id configProtocol);
+extern _Nullable Class _swift_ZIKServiceRouterForConfig(id configProtocol);
 
 NS_ASSUME_NONNULL_END
