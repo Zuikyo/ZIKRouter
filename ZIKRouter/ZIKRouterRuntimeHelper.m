@@ -13,7 +13,6 @@
 #import <objc/runtime.h>
 #import <dlfcn.h>
 #include <mach-o/dyld.h>
-#import "SwiftHelper.h"
 
 bool ZIKRouter_replaceMethodWithMethod(Class originalClass, SEL originalSelector, Class swizzledClass, SEL swizzledSelector) {
     NSCParameterAssert(originalClass);
@@ -608,17 +607,6 @@ bool _swift_typeConformsToProtocol(id swiftType, id swiftProtocol) {
     }
 #pragma clang diagnostic push
 #pragma clang diagnostic ignored "-Warc-performSelector-leaks"
-    void* swiftProtocolMetadata;
-    void* swiftProtocolOpaqueValue;
-    if ([swiftProtocol isKindOfClass:_SwiftValueClass]) {
-        NSCAssert([swiftProtocol respondsToSelector:NSSelectorFromString(_swiftValueString)], @"Swift value doesn't have method, the API may be changed in libswiftCore.dylib.");
-        swiftProtocolOpaqueValue = (__bridge void *)[swiftProtocol performSelector:NSSelectorFromString(_swiftValueString)];
-        swiftProtocolMetadata = dereferencedPointer(swiftProtocolOpaqueValue);
-    } else {
-        swiftProtocolMetadata = (__bridge void *)(swiftProtocol);
-        swiftProtocolOpaqueValue = (__bridge void *)(swiftProtocol);
-    }
-    
     void* swiftTypeOpaqueValue;
     void* swiftTypeMetadata;
     if ([swiftType isKindOfClass:SwiftObjectClass]) {
@@ -627,12 +615,24 @@ bool _swift_typeConformsToProtocol(id swiftType, id swiftProtocol) {
         swiftTypeOpaqueValue = (__bridge void *)(swiftType);
     } else if ([swiftType isKindOfClass:_SwiftValueClass]) {
         //swift struct or swift enum
+        NSCAssert2([swiftType respondsToSelector:NSSelectorFromString(_swiftValueString)], @"Swift value(%@) doesn't have method(%@), the API may be changed in libswiftCore.dylib.",swiftType,_swiftValueString);
         swiftTypeOpaqueValue = (__bridge void *)[swiftType performSelector:NSSelectorFromString(_swiftValueString)];
         swiftTypeMetadata = dereferencedPointer(swiftTypeOpaqueValue);
     } else {
         //objc class or objc protocol
         swiftTypeMetadata = (__bridge void *)(swiftType);
         swiftTypeOpaqueValue = (__bridge void *)(swiftType);
+    }
+    
+    void* swiftProtocolOpaqueValue;
+    void* swiftProtocolMetadata;
+    if ([swiftProtocol isKindOfClass:_SwiftValueClass]) {
+        NSCAssert2([swiftProtocol respondsToSelector:NSSelectorFromString(_swiftValueString)], @"Swift value(%@) doesn't have method(%@), the API may be changed in libswiftCore.dylib.",swiftProtocol,_swiftValueString);
+        swiftProtocolOpaqueValue = (__bridge void *)[swiftProtocol performSelector:NSSelectorFromString(_swiftValueString)];
+        swiftProtocolMetadata = dereferencedPointer(swiftProtocolOpaqueValue);
+    } else {
+        swiftProtocolMetadata = (__bridge void *)(swiftProtocol);
+        swiftProtocolOpaqueValue = (__bridge void *)(swiftProtocol);
     }
 #pragma clang diagnostic pop
     bool result = _conformsToProtocols(swiftTypeOpaqueValue, swiftTypeMetadata, swiftProtocolMetadata, NULL);

@@ -15,7 +15,11 @@ import ZIKRouterSwift
     
 }
 
-class SwiftSampleViewController: UIViewController, SwiftSampleViewInput, ZIKInfoViewDelegate {
+protocol PureSwiftSampleViewInput {
+    
+}
+
+class SwiftSampleViewController: UIViewController,PureSwiftSampleViewInput, SwiftSampleViewInput, ZIKInfoViewDelegate {
     var infoRouter: ZIKViewRouter<ZIKViewRouteConfiguration, ZIKViewRemoveConfiguration>?
     var alertRouter: ZIKViewRouter<ZIKViewRouteConfiguration & ZIKCompatibleAlertConfigProtocol, ZIKViewRemoveConfiguration>?
     

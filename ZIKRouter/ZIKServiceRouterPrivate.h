@@ -13,11 +13,17 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
+extern NSNotificationName kZIKServiceRouterRegisterCompleteNotification;
+typedef  BOOL(^ZIKServiceClassValidater)(Class serviceClass);
+
 ///Private methods.
 @interface ZIKServiceRouter ()
 
 ///Is registration all finished.
 + (BOOL)_isLoadFinished;
+
+///Validate all registered service classes of this router class, return the class when the validater return false. Only available when ZIKSERVICEROUTER_CHECK is true.
++ (_Nullable Class)validateRegisteredServiceClasses:(ZIKServiceClassValidater)handler;
 
 @end
 

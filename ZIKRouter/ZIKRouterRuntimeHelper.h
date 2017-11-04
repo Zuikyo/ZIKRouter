@@ -80,7 +80,7 @@ extern bool ZIKRouter_isObjcProtocol(id protocol);
  
  If you need to support fat binary, set SWIFT_CONFORMSTOPROTOCOLS_ADDRESS_ARMV7 and SWIFT_CONFORMSTOPROTOCOLS_ADDRESS_ARMV7S. `nm -a libswiftCore.dylib` will dump symbols for armv7 and armv7s, like: `0038f644 t __ZL20_conformsToProtocolsPKN5swift11OpaqueValueEPKNS_14TargetMetadataINS_9InProcessEEEPKNS_29TargetExistentialTypeMetadataIS4_EEPPKNS_12WitnessTableE`. you need to add 0x1 for the symbol's address for armv7 and armv7s, so the final value to set is 0038f645). If the address you set is invaid, there will be an assert failure.
  
- @param swiftType Any types, can be type of swift class, objc class, swift struct, swift enum, objc protocol. But can't be swift protocol.
+ @param swiftType Any type of swift class, objc class, swift struct, swift enum, objc protocol. But can't be swift protocol.
  @param swiftProtocol The protocol to check, can be swift protocol or objc protocol.
  @return True if the type conforms to the protocol.
  */
