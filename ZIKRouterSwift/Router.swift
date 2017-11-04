@@ -192,7 +192,7 @@ extension Router {
     public static func perform<Config>(
         forViewConfig configProtocol:Config.Type,
         routeConfig configure: (ZIKViewRouteConfiguration) -> Swift.Void,
-        preparation prepare: ((Config?) -> Swift.Void)? = nil
+        preparation prepare: ((Config) -> Swift.Void)? = nil
         ) -> ZIKViewRouter<ZIKViewRouteConfiguration, ZIKViewRemoveConfiguration>? {
         return router(forViewConfig: configProtocol)?.perform(configure: { config in
             configure(config)

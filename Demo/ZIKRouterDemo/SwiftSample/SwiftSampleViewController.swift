@@ -108,12 +108,12 @@ class SwiftSampleViewController: UIViewController,PureSwiftSampleViewInput, Swif
                     print("show custom alert failed: %@",error)
                 }
         }, preparation: { config in
-            config?.title = "Compatible Alert"
-            config?.message = "Test custom route for alert with UIAlertView and UIAlertController"
-            config?.addCancelButtonTitle("Cancel", handler: {
+            config.title = "Compatible Alert"
+            config.message = "Test custom route for alert with UIAlertView and UIAlertController"
+            config.addCancelButtonTitle("Cancel", handler: {
                 print("Tap cancel alert")
             })
-            config?.addOtherButtonTitle("Hello", handler: {
+            config.addOtherButtonTitle("Hello", handler: {
                 print("Tap Hello alert")
             })
             

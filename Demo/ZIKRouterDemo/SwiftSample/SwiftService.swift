@@ -22,12 +22,12 @@ class SwiftService: SwiftServiceInput {
                             config.source = UIApplication.shared.keyWindow?.rootViewController
         },
                            preparation: ({ config in
-                            config?.title = "SwiftService"
-                            config?.message = "This is a swift service"
-                            config?.addCancelButtonTitle("Cancel", handler: {
+                            config.title = "SwiftService"
+                            config.message = "This is a swift service"
+                            config.addCancelButtonTitle("Cancel", handler: {
                                 print("Tap cancel alert")
                             })
-                            config?.addOtherButtonTitle("OK", handler: {
+                            config.addOtherButtonTitle("OK", handler: {
                                 print("Tap OK alert")
                             })
                            }))
