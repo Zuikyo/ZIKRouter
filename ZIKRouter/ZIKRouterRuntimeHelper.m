@@ -13,6 +13,7 @@
 #import <objc/runtime.h>
 #import <dlfcn.h>
 #include <mach-o/dyld.h>
+#import "SwiftHelper.h"
 
 bool ZIKRouter_replaceMethodWithMethod(Class originalClass, SEL originalSelector, Class swizzledClass, SEL swizzledSelector) {
     NSCParameterAssert(originalClass);
@@ -169,7 +170,7 @@ IMP ZIKRouter_replaceMethodWithMethodAndGetOriginalImp(Class originalClass, SEL 
     }
 }
 
-void ZIKRouter_enumerateClassList(void(^handler)(Class class)) {
+void ZIKRouter_enumerateClassList(void(^handler)(Class aClass)) {
     NSCParameterAssert(handler);
     int numClasses = objc_getClassList(NULL, 0);
     Class *classes = NULL;
@@ -178,9 +179,9 @@ void ZIKRouter_enumerateClassList(void(^handler)(Class class)) {
     numClasses = objc_getClassList(classes, numClasses);
     
     for (NSInteger i = 0; i < numClasses; i++) {
-        Class class = classes[i];
-        if (class) {
-            handler(class);
+        Class aClass = classes[i];
+        if (aClass) {
+            handler(aClass);
         }
     }
     
@@ -198,10 +199,10 @@ void ZIKRouter_enumerateProtocolList(void(^handler)(Protocol *protocol)) {
     free(protocols);
 }
 
-bool ZIKRouter_classIsSubclassOfClass(Class class, Class parentClass) {
-    NSCParameterAssert(class);
+bool ZIKRouter_classIsSubclassOfClass(Class aClass, Class parentClass) {
+    NSCParameterAssert(aClass);
     NSCParameterAssert(parentClass);
-    Class superClass = class;
+    Class superClass = aClass;
     do {
         superClass = class_getSuperclass(superClass);
     } while (superClass && superClass != parentClass);
@@ -212,9 +213,9 @@ bool ZIKRouter_classIsSubclassOfClass(Class class, Class parentClass) {
     return true;
 }
 
-bool ZIKRouter_classIsCustomClass(Class class) {
-    NSCParameterAssert(class);
-    if (!class) {
+bool ZIKRouter_classIsCustomClass(Class aClass) {
+    NSCParameterAssert(aClass);
+    if (!aClass) {
         return false;
     }
     static NSString *mainBundlePath;
@@ -222,7 +223,7 @@ bool ZIKRouter_classIsCustomClass(Class class) {
     dispatch_once(&onceToken, ^{
         mainBundlePath = [[NSBundle mainBundle] bundlePath];
     });
-    if ([[[NSBundle bundleForClass:class] bundlePath] isEqualToString:mainBundlePath]) {
+    if ([[[NSBundle bundleForClass:aClass] bundlePath] isEqualToString:mainBundlePath]) {
         return true;
     }
     return false;
@@ -271,7 +272,7 @@ static long baseAddressForImage(const char *imagePath) {
     if (dlinfo.dli_fname == NULL ||
         (dlinfo.dli_fname != NULL &&
          strlen(dlinfo.dli_fname) > 0 &&
-         strcmp(dlinfo.dli_fname, libFileName) == 0)) {
+         strcmp(dlinfo.dli_fname, libFileName) != 0)) {
 //        NSCAssert2(NO, @"Invalid address(0x%lx) to fetch function pointer in library file(%s). Address may be too large. Remove SWIFT_CONFORMSTOPROTOCOLS_ADDRESS and let ZIKRouter auto search.",address,libFileName);
         return NULL;
     }
@@ -523,7 +524,7 @@ static bool(*swift_conformsToProtocols())(void *, void *, void *, void *) {
         NSString *addressString = [[[NSProcessInfo processInfo] environment] objectForKey:@"SWIFT_CONFORMSTOPROTOCOLS_ADDRESS"];
         long address;
         if (addressString == nil) {
-            NSLog(@"\n⏳⏳⏳⏳⏳⏳⏳⏳⏳⏳⏳⏳\nZIKRouter:: _swift_typeConformsToProtocol():\nEnvironment variable SWIFT_CONFORMSTOPROTOCOLS_ADDRESS was not found.\nStart searching function pointer for\n`bool _conformsToProtocols(const OpaqueValue *value, const Metadata *type, const ExistentialTypeMetadata *existentialType, const WitnessTable **conformances)` in libswiftCore.dylib to validate swift type in debug mode.\nThis may be a heavy operation...\nWhen the search completes, you can set environment variable SWIFT_CONFORMSTOPROTOCOLS_ADDRESS.\n\n");
+            NSLog(@"\n⏳⏳⏳⏳⏳⏳⏳⏳\nZIKRouter:: _swift_typeConformsToProtocol():\nEnvironment variable SWIFT_CONFORMSTOPROTOCOLS_ADDRESS was not found.\nStart searching function pointer for\n`bool _conformsToProtocols(const OpaqueValue *value, const Metadata *type, const ExistentialTypeMetadata *existentialType, const WitnessTable **conformances)` in libswiftCore.dylib to validate swift type.\nThis may costs 0.8 second...\n");
             _conformsToProtocols = fuzzySearchFunctionPointerBySymbol(libswiftCorePath.UTF8String, "_conformsToProtocols");
             address = (long)_conformsToProtocols;
             NSLog(@"\n✅ZIKRouter: function pointer 0x%lx is found for `_conformsToProtocols`.\nIf the searching cost too many times, set 0x%lx as environment variable SWIFT_CONFORMSTOPROTOCOLS_ADDRESS to avoid search function pointer again for later run.\n\n",address,address - baseAddressForImage(libswiftCorePath.UTF8String));
@@ -570,7 +571,12 @@ static bool(*swift_conformsToProtocols())(void *, void *, void *, void *) {
         }
     });
     
-    return _conformsToProtocols;
+    return (bool(*)(void *, void *, void *, void *))_conformsToProtocols;
+}
+
+static void *dereferencedPointer(void *pointer) {
+    void **deref = pointer;
+    return *deref;
 }
 
 bool _swift_typeConformsToProtocol(id swiftType, id swiftProtocol) {
@@ -578,12 +584,17 @@ bool _swift_typeConformsToProtocol(id swiftType, id swiftProtocol) {
     NSString *_SwiftValueString = [NSString stringWithCString:(char[]){0x5f,0x53,0x77,0x69,0x66,0x74,0x56,0x61,0x6c,0x75,0x65,'\0'} encoding:NSASCIIStringEncoding];
     NSString *SwiftObjectString = [NSString stringWithCString:(char[]){0x53,0x77,0x69,0x66,0x74,0x4f,0x62,0x6a,0x65,0x63,0x74,'\0'} encoding:NSASCIIStringEncoding];
     NSString *_swiftValueString = [NSString stringWithCString:(char[]){0x5f,0x73,0x77,0x69,0x66,0x74,0x56,0x61,0x6c,0x75,0x65,'\0'} encoding:NSASCIIStringEncoding];
-    NSString *_swiftTypeMetadataString = [NSString stringWithCString:(char[]){0x5f,0x73,0x77,0x69,0x66,0x74,0x54,0x79,0x70,0x65,0x4d,0x65,0x74,0x61,0x64,0x61,0x74,0x61,'\0'} encoding:NSASCIIStringEncoding];
     
     Class _SwiftValueClass = NSClassFromString(_SwiftValueString);
     Class SwiftObjectClass = NSClassFromString(SwiftObjectString);
     BOOL isSwiftType = [swiftType isKindOfClass:SwiftObjectClass] || [swiftType isKindOfClass:_SwiftValueClass];
     BOOL isSwiftProtocol = [swiftProtocol isKindOfClass:SwiftObjectClass] || [swiftProtocol isKindOfClass:_SwiftValueClass];
+    if ([swiftType isKindOfClass:NSClassFromString(@"Protocol")]) {
+        if (isSwiftProtocol) {
+            return NO;
+        }
+        isSwiftType = YES;
+    }
     NSCParameterAssert(isSwiftType || [swiftType isKindOfClass:[NSObject class]]);
     NSCParameterAssert(isSwiftProtocol || [swiftProtocol isKindOfClass:NSClassFromString(@"Protocol")]);
     
@@ -595,25 +606,35 @@ bool _swift_typeConformsToProtocol(id swiftType, id swiftProtocol) {
     if (_conformsToProtocols == NULL) {
         return false;
     }
-    void* swiftProtocolMetadata;
-    void* swiftProtocolValue;
-    if ([swiftProtocol isKindOfClass:_SwiftValueClass]) {
 #pragma clang diagnostic push
 #pragma clang diagnostic ignored "-Warc-performSelector-leaks"
-        NSCAssert([swiftProtocol respondsToSelector:NSSelectorFromString(_swiftTypeMetadataString)], @"Swift value doesn't have method, the API may be changed in libswiftCore.dylib.");
+    void* swiftProtocolMetadata;
+    void* swiftProtocolOpaqueValue;
+    if ([swiftProtocol isKindOfClass:_SwiftValueClass]) {
         NSCAssert([swiftProtocol respondsToSelector:NSSelectorFromString(_swiftValueString)], @"Swift value doesn't have method, the API may be changed in libswiftCore.dylib.");
-        swiftProtocolMetadata = (__bridge void *)[swiftProtocol performSelector:NSSelectorFromString(_swiftTypeMetadataString)];
-        swiftProtocolValue = (__bridge void *)[swiftProtocol performSelector:NSSelectorFromString(_swiftValueString)];
-#pragma clang diagnostic pop
+        swiftProtocolOpaqueValue = (__bridge void *)[swiftProtocol performSelector:NSSelectorFromString(_swiftValueString)];
+        swiftProtocolMetadata = dereferencedPointer(swiftProtocolOpaqueValue);
     } else {
         swiftProtocolMetadata = (__bridge void *)(swiftProtocol);
-        swiftProtocolValue = (__bridge void *)(swiftProtocol);
+        swiftProtocolOpaqueValue = (__bridge void *)(swiftProtocol);
     }
     
     void* swiftTypeOpaqueValue;
     void* swiftTypeMetadata;
-    swiftTypeOpaqueValue = (__bridge void *)(swiftType);
-    swiftTypeMetadata = (__bridge void *)(swiftType);
+    if ([swiftType isKindOfClass:SwiftObjectClass]) {
+        //swift class
+        swiftTypeMetadata = (__bridge void *)(swiftType);
+        swiftTypeOpaqueValue = (__bridge void *)(swiftType);
+    } else if ([swiftType isKindOfClass:_SwiftValueClass]) {
+        //swift struct or swift enum
+        swiftTypeOpaqueValue = (__bridge void *)[swiftType performSelector:NSSelectorFromString(_swiftValueString)];
+        swiftTypeMetadata = dereferencedPointer(swiftTypeOpaqueValue);
+    } else {
+        //objc class or objc protocol
+        swiftTypeMetadata = (__bridge void *)(swiftType);
+        swiftTypeOpaqueValue = (__bridge void *)(swiftType);
+    }
+#pragma clang diagnostic pop
     bool result = _conformsToProtocols(swiftTypeOpaqueValue, swiftTypeMetadata, swiftProtocolMetadata, NULL);
     return result;
 }

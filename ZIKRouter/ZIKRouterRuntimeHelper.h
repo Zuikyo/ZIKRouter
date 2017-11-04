@@ -53,16 +53,16 @@ extern IMP ZIKRouter_replaceMethodWithMethodAndGetOriginalImp(Class originalClas
                                                               Class swizzledClass, SEL swizzledSelector);
 
 ///Enumerate all classes
-extern void ZIKRouter_enumerateClassList(void(^handler)(Class class));
+extern void ZIKRouter_enumerateClassList(void(^handler)(Class aClass));
 
 ///Enumerate all protocols
 extern void ZIKRouter_enumerateProtocolList(void(^handler)(Protocol *protocol));
 
 ///Check whether a class is a subclass of another class
-extern bool ZIKRouter_classIsSubclassOfClass(Class class, Class parentClass);
+extern bool ZIKRouter_classIsSubclassOfClass(Class aClass, Class parentClass);
 
 ///Check whether a class is from Apple's system framework, or from your project.
-extern bool ZIKRouter_classIsCustomClass(Class class);
+extern bool ZIKRouter_classIsCustomClass(Class aClass);
 
 ///Check whether an object is an objc protocol.
 extern bool ZIKRouter_isObjcProtocol(id protocol);
@@ -70,19 +70,21 @@ extern bool ZIKRouter_isObjcProtocol(id protocol);
 /**
  Check whether a swift type conforms to a protocol, working like class_conformsToProtocol() in objective-C.
  @warning
- This function is for debugging and not recommanded to use in release mode. It need to search a function pointer in libswiftCore.dylib at first call, and it may take some times:
+ This function is for debugging assertion and not recommanded to use in release mode. It need to search a private function pointer in libswiftCore.dylib at first call, and it may take some times:
  `bool _conformsToProtocols(const OpaqueValue *value, const Metadata *type, const ExistentialTypeMetadata *existentialType, const WitnessTable **conformances)`. See `https://github.com/apple/swift/blob/master/stdlib/public/runtime/Casting.cpp`.
  
+ This private function may change in later version of swift, so this function may not work then.
+ 
  @note
- It use fuzzySearchFunctionPointerBySymbol() to get function pointer of `_conformsToProtocols` and store the pointer. It seems like the address is always the same in a same build configuration of swift version and cpu arch. If the searching cost too many times, you can set the address as environment variable `SWIFT_CONFORMSTOPROTOCOLS_ADDRESS`, then we don't have to search agian in next running. You can also use `nm -a libswiftCore.dylib` to dump symbols.
+ It costs about 0.8 second to get function pointer of `_conformsToProtocols` by fuzzySearchFunctionPointerBySymbol() and store the pointer. It seems like the address is always the same in a same build configuration of swift version and cpu arch. If you think the searching costs too many times, you can set the address as environment variable `SWIFT_CONFORMSTOPROTOCOLS_ADDRESS`, then we don't have to search agian in next running. You can also use `nm -a libswiftCore.dylib` to dump symbols.
  
  If you need to support fat binary, set SWIFT_CONFORMSTOPROTOCOLS_ADDRESS_ARMV7 and SWIFT_CONFORMSTOPROTOCOLS_ADDRESS_ARMV7S. `nm -a libswiftCore.dylib` will dump symbols for armv7 and armv7s, like: `0038f644 t __ZL20_conformsToProtocolsPKN5swift11OpaqueValueEPKNS_14TargetMetadataINS_9InProcessEEEPKNS_29TargetExistentialTypeMetadataIS4_EEPPKNS_12WitnessTableE`. you need to add 0x1 for the symbol's address for armv7 and armv7s, so the final value to set is 0038f645). If the address you set is invaid, there will be an assert failure.
  
- @param swiftType Any type.
- @param swiftProtocol The protocol to check.
+ @param swiftType Any types, can be type of swift class, objc class, swift struct, swift enum, objc protocol. But can't be swift protocol.
+ @param swiftProtocol The protocol to check, can be swift protocol or objc protocol.
  @return True if the type conforms to the protocol.
  */
-bool _swift_typeConformsToProtocol(id swiftType, id swiftProtocol);
+extern bool _swift_typeConformsToProtocol(id swiftType, id swiftProtocol);
 
 /**
  Search function pointer in loaded library file which it's symbol contains the fuzzyFunctionSymbol. You can get static function's function pointer which not supported by dlsym().
@@ -95,10 +97,10 @@ bool _swift_typeConformsToProtocol(id swiftType, id swiftProtocol);
  @param fuzzyFunctionSymbol The symbol to search.
  @return The first found function pointer which it's symbol contains fuzzyFunctionSymbol. Return NULL when not found.
  */
-void* fuzzySearchFunctionPointerBySymbol(const char *libFileName, const char *fuzzyFunctionSymbol);
+extern void* fuzzySearchFunctionPointerBySymbol(const char *libFileName, const char *fuzzyFunctionSymbol);
 
-///Async version of fuzzySearchFunctionPointerBySymbol. If the library is large, this may reduce the cost of time.
-void asyncFuzzySearchFunctionPointerBySymbol(const char *libFileName, const char *fuzzyFunctionSymbol, void(^completion)(void *functionPointer));
+///Async version of fuzzySearchFunctionPointerBySymbol(). If the library is large, this may reduce the cost of time.
+extern void asyncFuzzySearchFunctionPointerBySymbol(const char *libFileName, const char *fuzzyFunctionSymbol, void(^completion)(void *functionPointer));
 
 /**
  Search function pointer in loaded library file which it's symbol exact matchs the functionSymbol. You can get static function's function pointer which not supported by dlsym().
@@ -111,7 +113,7 @@ void asyncFuzzySearchFunctionPointerBySymbol(const char *libFileName, const char
  @param functionSymbol The symbol to match.
  @return The founded function pointer exact matching the functionSymbol. Return NULL when not found.
  */
-void* searchFunctionPointerBySymbol(const char *libFileName, const char *functionSymbol);
+extern void* searchFunctionPointerBySymbol(const char *libFileName, const char *functionSymbol);
 
-///Async version of searchFunctionPointerBySymbol. If the library is large, this may reduce the cost of time.
-void asyncSearchFunctionPointerBySymbol(const char *libFileName, const char *fuzzyFunctionSymbol, void(^completion)(void *functionPointer));
+///Async version of searchFunctionPointerBySymbol(). If the library is large, this may reduce the cost of time.
+extern void asyncSearchFunctionPointerBySymbol(const char *libFileName, const char *fuzzyFunctionSymbol, void(^completion)(void *functionPointer));
