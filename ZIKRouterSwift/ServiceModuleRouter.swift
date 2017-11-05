@@ -1,6 +1,6 @@
 //
 //  ServiceModuleRouter.swift
-//  ZIKRouterSwift
+//  ZRouter
 //
 //  Created by zuik on 2017/11/5.
 //  Copyright © 2017 zuik. All rights reserved.
@@ -12,7 +12,7 @@
 import Foundation
 import ZIKRouter
 
-///Type safety service module router for declared service module config protocol. See `ViewRoute` to learn how to declare a routable protocol.
+///Type safe service module router for declared service module config protocol. Generic parameter `Module` is the config protocol of the module. See `ViewRoute` to learn how to declare a routable protocol.
 open class ServiceModuleRouter<Module> {
     
 }

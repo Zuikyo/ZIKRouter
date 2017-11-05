@@ -43,7 +43,7 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
-		F82F40D21F94D96000246596 /* ZIKRouterSwift.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = ZIKRouterSwift.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		F82F40D21F94D96000246596 /* ZRouter.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = ZRouter.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		F82F40D51F94D96000246596 /* ZIKRouterSwift.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ZIKRouterSwift.h; sourceTree = "<group>"; };
 		F82F40D61F94D96000246596 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		F82F40DD1F94D99F00246596 /* Router.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Router.swift; sourceTree = "<group>"; };
@@ -80,7 +80,7 @@
 		F82F40D31F94D96000246596 /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				F82F40D21F94D96000246596 /* ZIKRouterSwift.framework */,
+				F82F40D21F94D96000246596 /* ZRouter.framework */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -125,9 +125,9 @@
 /* End PBXHeadersBuildPhase section */
 
 /* Begin PBXNativeTarget section */
-		F82F40D11F94D96000246596 /* ZIKRouterSwift */ = {
+		F82F40D11F94D96000246596 /* ZRouter */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = F82F40DA1F94D96000246596 /* Build configuration list for PBXNativeTarget "ZIKRouterSwift" */;
+			buildConfigurationList = F82F40DA1F94D96000246596 /* Build configuration list for PBXNativeTarget "ZRouter" */;
 			buildPhases = (
 				F82F40CD1F94D96000246596 /* Sources */,
 				F82F40CE1F94D96000246596 /* Frameworks */,
@@ -139,9 +139,9 @@
 			dependencies = (
 				F82F40F31F94D9C900246596 /* PBXTargetDependency */,
 			);
-			name = ZIKRouterSwift;
+			name = ZRouter;
 			productName = ZIKRouterSwift;
-			productReference = F82F40D21F94D96000246596 /* ZIKRouterSwift.framework */;
+			productReference = F82F40D21F94D96000246596 /* ZRouter.framework */;
 			productType = "com.apple.product-type.framework";
 		};
 /* End PBXNativeTarget section */
@@ -160,7 +160,7 @@
 					};
 				};
 			};
-			buildConfigurationList = F82F40CC1F94D96000246596 /* Build configuration list for PBXProject "ZIKRouterSwift" */;
+			buildConfigurationList = F82F40CC1F94D96000246596 /* Build configuration list for PBXProject "ZRouter" */;
 			compatibilityVersion = "Xcode 8.0";
 			developmentRegion = en;
 			hasScannedForEncodings = 0;
@@ -178,7 +178,7 @@
 			);
 			projectRoot = "";
 			targets = (
-				F82F40D11F94D96000246596 /* ZIKRouterSwift */,
+				F82F40D11F94D96000246596 /* ZRouter */,
 			);
 		};
 /* End PBXProject section */
@@ -363,10 +363,10 @@
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
-				INFOPLIST_FILE = ZIKRouterSwift/Info.plist;
+				INFOPLIST_FILE = ZRouter/Info.plist;
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
-				PRODUCT_BUNDLE_IDENTIFIER = com.zuik..ZIKRouterSwift;
+				PRODUCT_BUNDLE_IDENTIFIER = com.zuik.ZRouter;
 				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SKIP_INSTALL = YES;
@@ -389,10 +389,10 @@
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
-				INFOPLIST_FILE = ZIKRouterSwift/Info.plist;
+				INFOPLIST_FILE = ZRouter/Info.plist;
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
-				PRODUCT_BUNDLE_IDENTIFIER = com.zuik..ZIKRouterSwift;
+				PRODUCT_BUNDLE_IDENTIFIER = com.zuik.ZRouter;
 				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SKIP_INSTALL = YES;
@@ -404,7 +404,7 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
-		F82F40CC1F94D96000246596 /* Build configuration list for PBXProject "ZIKRouterSwift" */ = {
+		F82F40CC1F94D96000246596 /* Build configuration list for PBXProject "ZRouter" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				F82F40D81F94D96000246596 /* Debug */,
@@ -413,7 +413,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		F82F40DA1F94D96000246596 /* Build configuration list for PBXNativeTarget "ZIKRouterSwift" */ = {
+		F82F40DA1F94D96000246596 /* Build configuration list for PBXNativeTarget "ZRouter" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				F82F40DB1F94D96000246596 /* Debug */,

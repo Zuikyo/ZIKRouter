@@ -31,9 +31,9 @@ typedef  BOOL(^ZIKServiceClassValidater)(Class serviceClass);
 
 @end
 
-///Private method for ZIKRouterSwift.
+///Private method for ZRouter.
 extern _Nullable Class _swift_ZIKServiceRouterForService(id serviceProtocol);
-///Private method for ZIKRouterSwift.
+///Private method for ZRouter.
 extern _Nullable Class _swift_ZIKServiceRouterForConfig(id configProtocol);
 
 NS_ASSUME_NONNULL_END

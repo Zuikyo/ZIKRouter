@@ -1,6 +1,6 @@
 //
 //  Alias.swift
-//  ZIKRouterSwift
+//  ZRouter
 //
 //  Created by zuik on 2017/11/5.
 //  Copyright © 2017 zuik. All rights reserved.

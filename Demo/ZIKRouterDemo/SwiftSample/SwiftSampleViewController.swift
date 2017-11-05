@@ -8,7 +8,7 @@
 
 import UIKit
 import ZIKRouter
-import ZIKRouterSwift
+import ZRouter
 
 ///Mark the protocol routable 
 @objc public protocol SwiftSampleViewInput: ZIKViewRoutable {

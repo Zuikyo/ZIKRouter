@@ -8,7 +8,7 @@
 
 import UIKit
 import ZIKRouter
-import ZIKRouterSwift
+import ZRouter
 
 //Declare SwiftSampleViewController is routable
 extension SwiftSampleViewController: ZIKRoutableView {

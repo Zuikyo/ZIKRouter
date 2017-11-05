@@ -8,7 +8,7 @@
 
 import Foundation
 import ZIKRouter
-import ZIKRouterSwift
+import ZRouter
 
 //Declare SwiftService is routable
 extension SwiftService: ZIKRoutableService {

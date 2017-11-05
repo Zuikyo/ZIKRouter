@@ -8,7 +8,7 @@
 
 import Foundation
 import ZIKRouter
-import ZIKRouterSwift
+import ZRouter
 
 protocol SwiftServiceInput {
     func swiftFunction()

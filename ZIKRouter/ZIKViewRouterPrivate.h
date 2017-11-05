@@ -31,9 +31,9 @@ typedef  BOOL(^ZIKViewClassValidater)(Class viewClass);
 
 @end
 
-///Private method for ZIKRouterSwift.
+///Private method for ZRouter.
 extern _Nullable Class _swift_ZIKViewRouterForView(id viewProtocol);
-///Private method for ZIKRouterSwift.
+///Private method for ZRouter.
 extern _Nullable Class _swift_ZIKViewRouterForConfig(id configProtocol);
 
 NS_ASSUME_NONNULL_END
