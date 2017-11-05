@@ -82,13 +82,13 @@
 			isa = PBXGroup;
 			children = (
 				F872F4F01FAF5BD500297A1D /* Alias.swift */,
-				F872F4F31FAF5BD500297A1D /* Namespace.swift */,
 				F872F4F11FAF5BD500297A1D /* Router.swift */,
-				F872F4EC1FAF5BD500297A1D /* ServiceModuleRouter.swift */,
-				F872F4F21FAF5BD500297A1D /* ServiceRouter.swift */,
-				F872F4EE1FAF5BD500297A1D /* ViewExtension.swift */,
-				F872F4EF1FAF5BD500297A1D /* ViewModuleRouter.swift */,
 				F872F4ED1FAF5BD500297A1D /* ViewRouter.swift */,
+				F872F4EF1FAF5BD500297A1D /* ViewModuleRouter.swift */,
+				F872F4F21FAF5BD500297A1D /* ServiceRouter.swift */,
+				F872F4EC1FAF5BD500297A1D /* ServiceModuleRouter.swift */,
+				F872F4EE1FAF5BD500297A1D /* ViewExtension.swift */,
+				F872F4F31FAF5BD500297A1D /* Namespace.swift */,
 				F872F4E41FAF5BB200297A1D /* ZRouter.h */,
 				F872F4E51FAF5BB200297A1D /* Info.plist */,
 			);

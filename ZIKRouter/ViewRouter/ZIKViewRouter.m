@@ -3243,7 +3243,7 @@ destinationStateBeforeRoute:(ZIKPresentationState *)destinationStateBeforeRoute
     [super notifyError:error routeAction:routeAction];
 }
 
-+ (void)_callbackGlobalErrorHandlerWithRouter:(__kindof ZIKViewRouter *)router action:(SEL)action error:(NSError *)error {
++ (void)_callbackGlobalErrorHandlerWithRouter:(nullable __kindof ZIKViewRouter *)router action:(SEL)action error:(NSError *)error {
     dispatch_semaphore_wait(g_globalErrorSema, DISPATCH_TIME_FOREVER);
     
     ZIKViewRouteGlobalErrorHandler errorHandler = g_globalErrorHandler;

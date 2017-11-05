@@ -118,6 +118,13 @@ extension Router {
         if routerClass == nil && ZIKRouter_isObjcProtocol(viewProtocol) {
             routerClass = _swift_ZIKViewRouterForView(viewProtocol) as? ZIKViewRouter.Type
         }
+        if routerClass == nil && !ZIKRouter_isObjcProtocol(viewProtocol) {
+            ZIKViewRouter._callbackGlobalErrorHandler(with: nil,
+                                                      action: #selector(DefaultViewRouter.init(configuration:remove:)),
+                                                      error: ZIKViewRouter.error(withCode:ZIKViewRouteError.invalidProtocol.rawValue,
+                                                      localizedDescription:"Swift view protocol (\(viewProtocol)) was not registered with any view router."))
+            assertionFailure("Swift view protocol (\(viewProtocol)) was not registered with any view router.")
+        }
         return routerClass
     }
     
@@ -129,6 +136,13 @@ extension Router {
         var routerClass = viewConfigContainer[_RouteKey(type:configProtocol)]
         if routerClass == nil && ZIKRouter_isObjcProtocol(configProtocol) {
             routerClass = _swift_ZIKViewRouterForModule(configProtocol) as? ZIKViewRouter.Type
+        }
+        if routerClass == nil && !ZIKRouter_isObjcProtocol(configProtocol) {
+            ZIKViewRouter._callbackGlobalErrorHandler(with: nil,
+                                                      action: #selector(DefaultViewRouter.init(configuration:remove:)),
+                                                      error: ZIKViewRouter.error(withCode:ZIKViewRouteError.invalidProtocol.rawValue,
+                                                                                 localizedDescription:"Swift module config protocol (\(configProtocol)) was not registered with any view router."))
+            assertionFailure("Swift module config protocol (\(configProtocol)) was not registered with any view router.")
         }
         return routerClass
     }
@@ -142,6 +156,13 @@ extension Router {
         if routerClass == nil && ZIKRouter_isObjcProtocol(serviceProtocol) {
             routerClass = _swift_ZIKServiceRouterForService(serviceProtocol) as? ZIKServiceRouter.Type
         }
+        if routerClass == nil && !ZIKRouter_isObjcProtocol(serviceProtocol) {
+            ZIKViewRouter._callbackGlobalErrorHandler(with: nil,
+                                                      action: #selector(DefaultViewRouter.init(configuration:remove:)),
+                                                      error: ZIKViewRouter.error(withCode:ZIKViewRouteError.invalidProtocol.rawValue,
+                                                                                 localizedDescription:"Swift service protocol (\(serviceProtocol)) was not registered with any service router."))
+            assertionFailure("Swift service protocol (\(serviceProtocol)) was not registered with any service router.")
+        }
         return routerClass
     }
     
@@ -153,6 +174,13 @@ extension Router {
         var routerClass = serviceConfigContainer[_RouteKey(type:configProtocol)]
         if routerClass == nil && ZIKRouter_isObjcProtocol(configProtocol) {
             routerClass = _swift_ZIKServiceRouterForModule(configProtocol) as? ZIKServiceRouter.Type
+        }
+        if routerClass == nil && !ZIKRouter_isObjcProtocol(configProtocol) {
+            ZIKViewRouter._callbackGlobalErrorHandler(with: nil,
+                                                      action: #selector(DefaultViewRouter.init(configuration:remove:)),
+                                                      error: ZIKViewRouter.error(withCode:ZIKViewRouteError.invalidProtocol.rawValue,
+                                                                                 localizedDescription:"Swift module config protocol (\(configProtocol)) was not registered with any service router."))
+            assertionFailure("Swift module config protocol (\(configProtocol)) was not registered with any service router.")
         }
         return routerClass
     }

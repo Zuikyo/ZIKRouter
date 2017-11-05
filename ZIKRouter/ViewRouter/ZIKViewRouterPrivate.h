@@ -25,6 +25,8 @@ typedef  BOOL(^ZIKViewClassValidater)(Class viewClass);
 ///Validate all registered view classes of this router class, return the class when the validater return false. Only available when ZIKVIEWROUTER_CHECK is true.
 + (_Nullable Class)validateRegisteredViewClasses:(ZIKViewClassValidater)handler;
 
++ (void)_callbackGlobalErrorHandlerWithRouter:(nullable __kindof ZIKViewRouter *)router action:(SEL)action error:(NSError *)error;
+
 + (void)_swift_registerViewProtocol:(id)viewProtocol;
 
 + (void)_swift_registerConfigProtocol:(id)configProtocol;
