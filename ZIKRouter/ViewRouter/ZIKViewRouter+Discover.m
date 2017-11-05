@@ -10,18 +10,19 @@
 //
 
 #import "ZIKViewRouter+Discover.h"
+#import "ZIKViewRouterPrivate.h"
 
 @implementation ZIKViewRouter (Discover)
 
 + (Class(^)(Protocol *))forView {
     return ^(Protocol *viewProtocol) {
-        return ZIKViewRouterForView(viewProtocol);
+        return _ZIKViewRouterForView(viewProtocol);
     };
 }
 
 + (Class(^)(Protocol *))forModule {
     return ^(Protocol *configProtocol) {
-        return ZIKViewRouterForConfig(configProtocol);
+        return _ZIKViewRouterForModule(configProtocol);
     };
 }
 

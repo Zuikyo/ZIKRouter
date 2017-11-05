@@ -10,18 +10,19 @@
 //
 
 #import "ZIKServiceRouter+Discover.h"
+#import "ZIKServiceRouterPrivate.h"
 
 @implementation ZIKServiceRouter (Discover)
 
 + (Class(^)(Protocol *))forService {
     return ^(Protocol *serviceProtocol) {
-        return ZIKServiceRouterForService(serviceProtocol);
+        return _ZIKServiceRouterForService(serviceProtocol);
     };
 }
 
 + (Class(^)(Protocol *))forModule {
     return ^(Protocol *configProtocol) {
-        return ZIKServiceRouterForConfig(configProtocol);
+        return _ZIKServiceRouterForModule(configProtocol);
     };
 }
 

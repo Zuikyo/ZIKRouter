@@ -146,18 +146,6 @@ typedef NS_ENUM(NSInteger, ZIKServiceRouteError) {
     ZIKServiceRouteErrorInfiniteRecursion
 };
 
-API_DEPRECATED_WITH_REPLACEMENT("+[ZIKViewRouter registerService:]",ios(7.0,7.0))
-extern void ZIKServiceRouter_registerService(Class serviceClass, Class routerClass);
-
-API_DEPRECATED_WITH_REPLACEMENT("+[ZIKViewRouter registerExclusiveService:]",ios(7.0,7.0))
-extern void ZIKServiceRouter_registerServiceForExclusiveRouter(Class serviceClass, Class routerClass);
-
-API_DEPRECATED_WITH_REPLACEMENT("+[ZIKViewRouter registerServiceProtocol:]",ios(7.0,7.0))
-extern void ZIKServiceRouter_registerServiceProtocol(Protocol *serviceProtocol, Class routerClass);
-
-API_DEPRECATED_WITH_REPLACEMENT("+[ZIKViewRouter registerConfigProtocol:]",ios(7.0,7.0))
-extern void ZIKServiceRouter_registerConfigProtocol(Protocol *configProtocol, Class routerClass);
-
 ///If a class conforms to ZIKRoutableService, there must be a router for it and it's subclass. Don't use it in other place.
 @protocol ZIKRoutableService
 

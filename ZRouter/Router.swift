@@ -128,7 +128,7 @@ extension Router {
     public static func router(forViewModule configProtocol:Any.Type) -> DefaultViewRouter.Type? {
         var routerClass = viewConfigContainer[_RouteKey(type:configProtocol)]
         if routerClass == nil && ZIKRouter_isObjcProtocol(configProtocol) {
-            routerClass = _swift_ZIKViewRouterForConfig(configProtocol) as? ZIKViewRouter.Type
+            routerClass = _swift_ZIKViewRouterForModule(configProtocol) as? ZIKViewRouter.Type
         }
         return routerClass
     }
@@ -152,7 +152,7 @@ extension Router {
     public static func router(forServiceModule configProtocol:Any.Type) -> DefaultServiceRouter.Type? {
         var routerClass = serviceConfigContainer[_RouteKey(type:configProtocol)]
         if routerClass == nil && ZIKRouter_isObjcProtocol(configProtocol) {
-            routerClass = _swift_ZIKServiceRouterForConfig(configProtocol) as? ZIKServiceRouter.Type
+            routerClass = _swift_ZIKServiceRouterForModule(configProtocol) as? ZIKServiceRouter.Type
         }
         return routerClass
     }

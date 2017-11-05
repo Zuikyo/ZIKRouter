@@ -255,18 +255,6 @@ typedef NS_ENUM(NSInteger, ZIKViewRouteError) {
     ZIKViewRouteErrorInfiniteRecursion
 };
 
-API_DEPRECATED_WITH_REPLACEMENT("+[ZIKViewRouter registerView:]",ios(7.0,7.0))
-extern void ZIKViewRouter_registerView(Class viewClass, Class routerClass);
-
-API_DEPRECATED_WITH_REPLACEMENT("+[ZIKViewRouter registerExclusiveView:]",ios(7.0,7.0))
-extern void ZIKViewRouter_registerViewForExclusiveRouter(Class viewClass, Class routerClass);
-
-API_DEPRECATED_WITH_REPLACEMENT("+[ZIKViewRouter registerViewProtocol:]",ios(7.0,7.0))
-extern void ZIKViewRouter_registerViewProtocol(Protocol *viewProtocol, Class routerClass);
-
-API_DEPRECATED_WITH_REPLACEMENT("+[ZIKViewRouter registerConfig:]",ios(7.0,7.0))
-extern void ZIKViewRouter_registerConfigProtocol(Protocol *configProtocol, Class routerClass);
-
 ///If a UIViewController or UIView conforms to ZIKRoutableView, there must be a router for it and it's subclass. Don't use it in other place.
 @protocol ZIKRoutableView <NSObject>
 
