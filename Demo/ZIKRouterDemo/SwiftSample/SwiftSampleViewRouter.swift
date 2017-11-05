@@ -29,7 +29,7 @@ class SwiftSampleViewRouter: ZIKViewRouter<SwiftSampleViewConfiguration, ZIKView
         registerView(SwiftSampleViewController.self)
         registerViewProtocol(SwiftSampleViewInput.self)
         Router.register(viewProtocol: PureSwiftSampleViewInput.self, router: self)
-        Router.register(viewConfig: SwiftSampleViewConfig.self, router: self)
+        Router.register(viewModule: SwiftSampleViewConfig.self, router: self)
     }
     
     override class func defaultRouteConfiguration() -> ZIKViewRouteConfiguration {
@@ -53,5 +53,23 @@ class SwiftSampleViewRouter: ZIKViewRouter<SwiftSampleViewConfiguration, ZIKView
         if let dest = destination as? SwiftSampleViewController {
             dest.alertRouterClass = ZIKViewRouterForConfig(ZIKCompatibleAlertConfigProtocol.self) as! ZIKViewRouter<ZIKViewRouteConfiguration & ZIKCompatibleAlertConfigProtocol, ZIKViewRemoveConfiguration>.Type
         }
+    }
+}
+
+extension ViewRouter where Destination == SwiftSampleViewInput {
+    static var route: ViewRoute<SwiftSampleViewInput>.Type {
+        return ViewRoute<SwiftSampleViewInput>.self
+    }
+}
+
+extension ViewRouter where Destination == PureSwiftSampleViewInput {
+    static var route: ViewRoute<PureSwiftSampleViewInput>.Type {
+        return ViewRoute<PureSwiftSampleViewInput>.self
+    }
+}
+
+extension ViewModuleRouter where Module == SwiftSampleViewConfig {
+    static var route: ViewRoute<SwiftSampleViewConfig>.Type {
+        return ViewRoute<SwiftSampleViewConfig>.self
     }
 }

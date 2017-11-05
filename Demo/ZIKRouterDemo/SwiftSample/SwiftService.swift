@@ -17,19 +17,19 @@ protocol SwiftServiceInput {
 class SwiftService: SwiftServiceInput {
     func swiftFunction() {
         print("this is a swift function")
-        _ = Router.perform(forViewConfig: ZIKCompatibleAlertConfigProtocol.self,
-                           routeConfig: { config in
-                            config.source = UIApplication.shared.keyWindow?.rootViewController
-        },
-                           preparation: ({ config in
-                            config.title = "SwiftService"
-                            config.message = "This is a swift service"
-                            config.addCancelButtonTitle("Cancel", handler: {
-                                print("Tap cancel alert")
-                            })
-                            config.addOtherButtonTitle("OK", handler: {
-                                print("Tap OK alert")
-                            })
-                           }))
+        _ = ViewModuleRouter<ZIKCompatibleAlertConfigProtocol>.route
+            .perform(routeConfig: { config in
+                config.source = UIApplication.shared.keyWindow?.rootViewController
+                config.routeType = ViewRouteType.custom
+            }, preparation: { module in
+                module.title = "SwiftService"
+                module.message = "This is a swift service"
+                module.addCancelButtonTitle("Cancel", handler: {
+                    print("Tap cancel alert")
+                })
+                module.addOtherButtonTitle("OK", handler: {
+                    print("Tap OK alert")
+                })
+            })
     }
 }

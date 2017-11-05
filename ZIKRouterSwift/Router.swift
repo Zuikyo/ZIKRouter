@@ -31,10 +31,10 @@ internal struct _RouteKey<Protocol>: Hashable {
 
 ///Router for pure Swift protocol and some swifty convenient methods for ZIKRouter.
 public class Router {
-    fileprivate static var viewProtocolContainer = [_RouteKey<Any>: ZIKViewRouter<ZIKViewRouteConfiguration, ZIKViewRemoveConfiguration>.Type]()
-    fileprivate static var viewConfigContainer = [_RouteKey<Any>: ZIKViewRouter<ZIKViewRouteConfiguration, ZIKViewRemoveConfiguration>.Type]()
-    fileprivate static var serviceProtocolContainer = [_RouteKey<Any>: ZIKServiceRouter<ZIKServiceRouteConfiguration, ZIKRouteConfiguration>.Type]()
-    fileprivate static var serviceConfigContainer = [_RouteKey<Any>: ZIKServiceRouter<ZIKServiceRouteConfiguration, ZIKRouteConfiguration>.Type]()
+    fileprivate static var viewProtocolContainer = [_RouteKey<Any>: DefaultViewRouter.Type]()
+    fileprivate static var viewConfigContainer = [_RouteKey<Any>: DefaultViewRouter.Type]()
+    fileprivate static var serviceProtocolContainer = [_RouteKey<Any>: DefaultServiceRouter.Type]()
+    fileprivate static var serviceConfigContainer = [_RouteKey<Any>: DefaultServiceRouter.Type]()
     
     // MARK: Register
     
@@ -51,7 +51,8 @@ public class Router {
             return
         }
         assert(viewProtocolContainer[_RouteKey(type:viewProtocol)] == nil, "view protocol (\(viewProtocol)) was already registered with router (\(String(describing: viewProtocolContainer[_RouteKey(type:viewProtocol)]))).")
-        viewProtocolContainer[_RouteKey(type:viewProtocol)] = (router as! ZIKViewRouter<ZIKViewRouteConfiguration, ZIKViewRemoveConfiguration>.Type)
+        
+        viewProtocolContainer[_RouteKey(type:viewProtocol)] = (router as! ZIKViewRouter.Type)
     }
     
     /// Register pure Swift protocol or objc protocol for your custom configuration with a ZIKViewRouter subclass. Router will check whether the registered config protocol is conformed by the defaultRouteConfiguration of the router.
@@ -59,14 +60,14 @@ public class Router {
     /// - Parameters:
     ///   - configProtocol: The protocol conformed by the custom configuration of the router. Can be pure Swift protocol or objc protocol.
     ///   - router: The subclass of ZIKViewRouter.
-    public static func register<Config>(viewConfig configProtocol: Config.Type, router: AnyClass) {
+    public static func register<ModuleConfig>(viewModule configProtocol: ModuleConfig.Type, router: AnyClass) {
         assert(ZIKViewRouter._isLoadFinished() == false, "Can't register after app did finish launch. Only register in registerRoutableDestination().")
         assert(ZIKRouter_classIsSubclassOfClass(router, ZIKViewRouter.self), "This router must be subclass of ZIKViewRouter")
         if ZIKRouter_isObjcProtocol(configProtocol) {
             (router as! ZIKViewRouter.Type)._swift_registerConfigProtocol(configProtocol)
             return
         }
-        assert((router as! ZIKViewRouter.Type).defaultRouteConfiguration() is Config, "The router (\(router))'s default configuration must conform to the config protocol (\(configProtocol)) to register.")
+        assert((router as! ZIKViewRouter.Type).defaultRouteConfiguration() is ModuleConfig, "The router (\(router))'s default configuration must conform to the config protocol (\(configProtocol)) to register.")
         assert(viewConfigContainer[_RouteKey(type:configProtocol)] == nil, "view config protocol (\(configProtocol)) was already registered with router (\(String(describing: viewConfigContainer[_RouteKey(type:configProtocol)]))).")
         viewConfigContainer[_RouteKey(type:configProtocol)] = (router as! ZIKViewRouter.Type)
     }
@@ -92,14 +93,14 @@ public class Router {
     /// - Parameters:
     ///   - configProtocol: The protocol conformed by the custom configuration of the router. Can be pure Swift protocol or objc protocol.
     ///   - router: The subclass of ZIKServiceRouter.
-    public static func register<Config>(serviceConfig configProtocol: Config.Type, router: AnyClass) {
+    public static func register<ModuleConfig>(serviceModule configProtocol: ModuleConfig.Type, router: AnyClass) {
         assert(ZIKServiceRouter._isLoadFinished() == false, "Can't register after app did finish launch. Only register in registerRoutableDestination().")
         assert(ZIKRouter_classIsSubclassOfClass(router, ZIKServiceRouter.self), "This router must be subclass of ZIKServiceRouter")
         if ZIKRouter_isObjcProtocol(configProtocol) {
             (router as! ZIKServiceRouter.Type)._swift_registerConfigProtocol(configProtocol)
             return
         }
-        assert((router as! ZIKServiceRouter.Type).defaultRouteConfiguration() is Config, "The router (\(router))'s default configuration must conform to the config protocol (\(configProtocol)) to register.")
+        assert((router as! ZIKServiceRouter.Type).defaultRouteConfiguration() is ModuleConfig, "The router (\(router))'s default configuration must conform to the config protocol (\(configProtocol)) to register.")
         assert(serviceConfigContainer[_RouteKey(type:configProtocol)] == nil, "service config protocol (\(configProtocol)) was already registered with router (\(String(describing: serviceConfigContainer[_RouteKey(type:configProtocol)]))).")
         serviceConfigContainer[_RouteKey(type:configProtocol)] = (router as! ZIKServiceRouter.Type)
     }
@@ -112,7 +113,7 @@ extension Router {
     ///
     /// - Parameter viewProtocol: The view protocol registered with a view router. Support objc protocol and pure Swift protocol.
     /// - Returns: The view router class for the view protocol.
-    public static func router(forViewProtocol viewProtocol:Any.Type) -> ZIKViewRouter<ZIKViewRouteConfiguration, ZIKViewRemoveConfiguration>.Type? {
+    public static func router(forViewProtocol viewProtocol:Any.Type) -> DefaultViewRouter.Type? {
         var routerClass = viewProtocolContainer[_RouteKey(type:viewProtocol)]
         if routerClass == nil && ZIKRouter_isObjcProtocol(viewProtocol) {
             routerClass = _swift_ZIKViewRouterForView(viewProtocol) as? ZIKViewRouter.Type
@@ -124,7 +125,7 @@ extension Router {
     ///
     /// - Parameter configProtocol: The cconfg protocol registered with a view router. Support objc protocol and pure Swift protocol.
     /// - Returns: The view router class for the config protocol.
-    public static func router(forViewConfig configProtocol:Any.Type) -> ZIKViewRouter<ZIKViewRouteConfiguration, ZIKViewRemoveConfiguration>.Type? {
+    public static func router(forViewModule configProtocol:Any.Type) -> DefaultViewRouter.Type? {
         var routerClass = viewConfigContainer[_RouteKey(type:configProtocol)]
         if routerClass == nil && ZIKRouter_isObjcProtocol(configProtocol) {
             routerClass = _swift_ZIKViewRouterForConfig(configProtocol) as? ZIKViewRouter.Type
@@ -136,10 +137,10 @@ extension Router {
     ///
     /// - Parameter serviceProtocol: The service protocol registered with a service router. Support objc protocol and pure Swift protocol.
     /// - Returns: The view router class for the service protocol.
-    public static func router(forServiceProtocol serviceProtocol: Any.Type) -> ZIKServiceRouter<ZIKServiceRouteConfiguration, ZIKRouteConfiguration>.Type? {
+    public static func router(forServiceProtocol serviceProtocol: Any.Type) -> DefaultServiceRouter.Type? {
         var routerClass = serviceProtocolContainer[_RouteKey(type:serviceProtocol)]
         if routerClass == nil && ZIKRouter_isObjcProtocol(serviceProtocol) {
-            routerClass = _swift_ZIKServiceRouterForService(serviceProtocol) as? ZIKServiceRouter<ZIKServiceRouteConfiguration, ZIKRouteConfiguration>.Type
+            routerClass = _swift_ZIKServiceRouterForService(serviceProtocol) as? ZIKServiceRouter.Type
         }
         return routerClass
     }
@@ -148,7 +149,7 @@ extension Router {
     ///
     /// - Parameter configProtocol: The cconfg protocol registered with a service router. Support objc protocol and pure Swift protocol.
     /// - Returns: The service router class for the config protocol.
-    public static func router(forServiceConfig configProtocol:Any.Type) -> ZIKServiceRouter<ZIKServiceRouteConfiguration, ZIKRouteConfiguration>.Type? {
+    public static func router(forServiceModule configProtocol:Any.Type) -> DefaultServiceRouter.Type? {
         var routerClass = serviceConfigContainer[_RouteKey(type:configProtocol)]
         if routerClass == nil && ZIKRouter_isObjcProtocol(configProtocol) {
             routerClass = _swift_ZIKServiceRouterForConfig(configProtocol) as? ZIKServiceRouter.Type
@@ -167,11 +168,11 @@ extension Router {
     ///   - configure: Configure the configuration for view route.
     ///   - prepare: Prepare the destination with the protocol.
     /// - Returns: The view router.
-    public static func perform<Destination>(
+    internal static func perform<Destination>(
         forViewProtocol viewProtocol:Destination.Type,
-        routeConfig configure: (ZIKViewRouteConfiguration) -> Swift.Void,
+        routeConfig configure: (ViewRouteConfig) -> Swift.Void,
         preparation prepare: ((Destination) -> Swift.Void)? = nil
-        ) -> ZIKViewRouter<ZIKViewRouteConfiguration, ZIKViewRemoveConfiguration>? {
+        ) -> DefaultViewRouter? {
         return router(forViewProtocol: viewProtocol)?.perform(configure: { config in
             configure(config)
             config.prepareForRoute = { d in
@@ -189,14 +190,56 @@ extension Router {
     ///   - configure: Configure the configuration for view route.
     ///   - prepare: Prepare the module with the protocol.
     /// - Returns: The view router.
-    public static func perform<Config>(
-        forViewConfig configProtocol:Config.Type,
-        routeConfig configure: (ZIKViewRouteConfiguration) -> Swift.Void,
+    internal static func perform<Config>(
+        forViewModule configProtocol:Config.Type,
+        routeConfig configure: (ViewRouteConfig) -> Swift.Void,
         preparation prepare: ((Config) -> Swift.Void)? = nil
-        ) -> ZIKViewRouter<ZIKViewRouteConfiguration, ZIKViewRemoveConfiguration>? {
-        return router(forViewConfig: configProtocol)?.perform(configure: { config in
+        ) -> DefaultViewRouter? {
+        return router(forViewModule: configProtocol)?.perform(configure: { config in
             configure(config)
             if let configuration = config as? Config {
+                prepare?(configuration)
+            }
+        })
+    }
+    
+    /// Perform route with service protocol and prepare the destination with the protocol.
+    ///
+    /// - Parameters:
+    ///   - serviceProtocol: The service protocol registered with a service router.
+    ///   - configure: Configure the configuration for service route.
+    ///   - prepare: Prepare the destination with the protocol.
+    /// - Returns: The service router.
+    internal static func perform<Destination>(
+        forServiceProtocol serviceProtocol:Destination.Type,
+        routeConfig configure: (ServiceRouteConfig) -> Swift.Void,
+        preparation prepare: ((Destination) -> Swift.Void)? = nil
+        ) -> DefaultServiceRouter? {
+        return router(forServiceProtocol: serviceProtocol)?.perform(configure: { config in
+            configure(config)
+            config.prepareForRoute = { d in
+                if let destination = d as? Destination {
+                    prepare?(destination)
+                }
+            }
+        })
+    }
+    
+    /// Perform route with service module config protocol and prepare the module with the protocol.
+    ///
+    /// - Parameters:
+    ///   - configProtocol: The module config protocol registered with a service router.
+    ///   - configure: Configure the configuration for service route.
+    ///   - prepare: Prepare the module with the protocol.
+    /// - Returns: The service router.
+    internal static func perform<Module>(
+        forServiceModule configProtocol:Module.Type,
+        routeConfig configure: (ServiceRouteConfig) -> Swift.Void,
+        preparation prepare: ((Module) -> Swift.Void)? = nil
+        ) -> DefaultServiceRouter? {
+        return router(forServiceModule: configProtocol)?.perform(configure: { config in
+            configure(config)
+            if let configuration = config as? Module {
                 prepare?(configuration)
             }
         })
@@ -212,7 +255,7 @@ extension Router {
     ///   - viewProtocol: The view protocol registered with a view router.
     ///   - prepare: Prepare the destination with the protocol.
     /// - Returns: The view destination.
-    public static func makeDestination<Destination>(
+    internal static func makeDestination<Destination>(
         forViewProtocol viewProtocol:Destination.Type,
         preparation prepare: ((Destination) -> Swift.Void)? = nil
         ) -> Destination? {
@@ -220,7 +263,7 @@ extension Router {
         let routerClass = router(forViewProtocol: viewProtocol)
         assert((routerClass?.completeSynchronously())!,"router class (\(String(describing: routerClass))) can't get destination synchronously.")
         routerClass?.perform(configure: { config in
-            config.routeType = ZIKViewRouteType.getDestination
+            config.routeType = ViewRouteType.getDestination
             config.prepareForRoute = { d in
                 if let destination = d as? Destination {
                     prepare?(destination)
@@ -240,17 +283,17 @@ extension Router {
     ///   - configProtocol: The config protocol registered with a view router.
     ///   - prepare: Prepare the module with the protocol.
     /// - Returns: The view destination.
-    public static func makeDestination<Config>(
-        forViewConfig configProtocol:Config.Type,
-        preparation prepare: ((Config) -> Swift.Void)? = nil
+    internal static func makeDestination<Module>(
+        forViewModule configProtocol:Module.Type,
+        preparation prepare: ((Module) -> Swift.Void)? = nil
         ) -> Any? {
         var destination: Any?
-        let routerClass = router(forViewConfig: configProtocol)
+        let routerClass = router(forViewModule: configProtocol)
         assert((routerClass?.completeSynchronously())!,"router class (\(String(describing: routerClass))) can't get destination synchronously")
         routerClass?.perform(configure: { config in
-            config.routeType = ZIKViewRouteType.getDestination
-            if config is Config {
-                prepare?(config as! Config)
+            config.routeType = ViewRouteType.getDestination
+            if config is Module {
+                prepare?(config as! Module)
             }
             config.routeCompletion = { d in
                 destination = d
@@ -265,7 +308,7 @@ extension Router {
     ///   - serviceProtocol: The service protocol registered with a service router.
     ///   - prepare: Prepare the destination with the protocol.
     /// - Returns: The service destination.
-    public static func makeDestination<Destination>(
+    internal static func makeDestination<Destination>(
         forServiceProtocol serviceProtocol:Destination.Type,
         preparation prepare: ((Destination) -> Swift.Void)? = nil
         ) -> Destination? {
@@ -292,12 +335,12 @@ extension Router {
     ///   - configProtocol: The config protocol registered with a service router.
     ///   - prepare: Prepare the module with the protocol.
     /// - Returns: The service destination.
-    public static func makeDestination<Config>(
-        forServiceConfig configProtocol:Config.Type,
+    internal static func makeDestination<Config>(
+        forServiceModule configProtocol:Config.Type,
         preparation prepare: ((Config) -> Swift.Void)? = nil
         ) -> Any? {
         var destination: Any?
-        let routerClass = router(forServiceConfig: configProtocol)
+        let routerClass = router(forServiceModule: configProtocol)
         assert((routerClass?.completeSynchronously())!,"router class (\(String(describing: routerClass))) can't get destination synchronously")
         routerClass?.perform(configure: { config in
             if config is Config {

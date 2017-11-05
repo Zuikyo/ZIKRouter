@@ -13,6 +13,12 @@ import ZIKRouterSwift
 //Declare SwiftService is routable
 extension SwiftService: ZIKRoutableService {
 }
+//Declare SwiftServiceInput is routable
+extension ServiceRouter where Destination == SwiftServiceInput {
+    static var route: ServiceRoute<SwiftServiceInput>.Type {
+        return ServiceRoute<SwiftServiceInput>.self
+    }
+}
 
 class SwiftServiceRouter: ZIKServiceRouter<ZIKServiceRouteConfiguration, ZIKRouteConfiguration> {
     override class func registerRoutableDestination() {
