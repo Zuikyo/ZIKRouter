@@ -70,7 +70,7 @@ extern _Nullable Class ZIKViewRouterForView(Protocol *viewProtocol);
  Similar to ZIKViewRouterForView(), this function is for decoupling route behavior with router class. If configurations of a module can't be set directly with a protocol the view conforms, you can use a custom ZIKViewRouteConfiguration to config these configurations. Use +registerModuleProtocol: to register the protocol, then you don't need to import the router's header when performing route.
  @code
  //ZIKLoginViewProtocol
- @protocol ZIKLoginViewConfigProtocol <ZIKViewConfigRoutable>
+ @protocol ZIKLoginViewConfigProtocol <ZIKViewModuleRoutable>
  @property (nonatomic, copy) NSString *account;
  @end
  
@@ -113,9 +113,9 @@ extern _Nullable Class ZIKViewRouterForView(Protocol *viewProtocol);
  config.account = @"my account";
  }];
  @endcode
- See +registerModuleProtocol: and ZIKViewConfigRoutable for more info.
+ See +registerModuleProtocol: and ZIKViewModuleRoutable for more info.
  
- @param configProtocol The protocol conformed by defaultConfiguration of router. Should be a ZIKViewConfigRoutable protocol when ZIKVIEWROUTER_CHECK is enabled. When ZIKVIEWROUTER_CHECK is disabled, the protocol doesn't need to inherit from ZIKViewConfigRoutable.
+ @param configProtocol The protocol conformed by defaultConfiguration of router. Should be a ZIKViewModuleRoutable protocol when ZIKVIEWROUTER_CHECK is enabled. When ZIKVIEWROUTER_CHECK is disabled, the protocol doesn't need to inherit from ZIKViewModuleRoutable.
  @return A router class matched with the view. Return nil if protocol is nil or not registered. There will be an assert failure when result is nil.
  */
 extern _Nullable Class ZIKViewRouterForConfig(Protocol *configProtocol);

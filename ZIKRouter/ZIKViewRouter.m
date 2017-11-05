@@ -199,8 +199,8 @@ static void _initializeZIKViewRouter(void) {
             for (Class viewClass in views) {
                 NSCAssert3([viewClass conformsToProtocol:protocol], @"Router(%@)'s viewClass(%@) should conform to registered protocol(%@)",routerClass, viewClass, NSStringFromProtocol(protocol));
             }
-        } else if (protocol_conformsToProtocol(protocol, @protocol(ZIKViewConfigRoutable)) &&
-                   protocol != @protocol(ZIKViewConfigRoutable)) {
+        } else if (protocol_conformsToProtocol(protocol, @protocol(ZIKViewModuleRoutable)) &&
+                   protocol != @protocol(ZIKViewModuleRoutable)) {
             Class routerClass = (Class)CFDictionaryGetValue(g_configProtocolToRouterMap, (__bridge const void *)(protocol));
             NSCAssert1(routerClass, @"Declared routable config protocol(%@) is not registered with any router class!",NSStringFromProtocol(protocol));
             ZIKViewRouteConfiguration *config = [routerClass defaultRouteConfiguration];
@@ -380,7 +380,7 @@ static void _initializeZIKViewRouter(void) {
     NSAssert(!_isLoadFinished, @"Only register in +registerRoutableDestination.");
     NSAssert([NSThread isMainThread], @"Call in main thread for thread safety.");
 #if ZIKVIEWROUTER_CHECK
-    NSAssert1(protocol_conformsToProtocol(configProtocol, @protocol(ZIKViewConfigRoutable)), @"%@ should conforms to ZIKViewConfigRoutable in DEBUG mode for safety checking", NSStringFromProtocol(configProtocol));
+    NSAssert1(protocol_conformsToProtocol(configProtocol, @protocol(ZIKViewModuleRoutable)), @"%@ should conforms to ZIKViewModuleRoutable in DEBUG mode for safety checking", NSStringFromProtocol(configProtocol));
 #endif
     
     static dispatch_once_t onceToken;
@@ -468,7 +468,7 @@ void ZIKViewRouter_registerConfigProtocol(Protocol *configProtocol, Class router
     NSCAssert(!_isLoadFinished, @"Only register in +registerRoutableDestination.");
     NSCAssert([NSThread isMainThread], @"Call in main thread for thread safety.");
 #if ZIKVIEWROUTER_CHECK
-    NSCAssert1(protocol_conformsToProtocol(configProtocol, @protocol(ZIKViewConfigRoutable)), @"%@ should conforms to ZIKViewConfigRoutable in DEBUG mode for safety checking", NSStringFromProtocol(configProtocol));
+    NSCAssert1(protocol_conformsToProtocol(configProtocol, @protocol(ZIKViewModuleRoutable)), @"%@ should conforms to ZIKViewModuleRoutable in DEBUG mode for safety checking", NSStringFromProtocol(configProtocol));
 #endif
     
     static dispatch_once_t onceToken;

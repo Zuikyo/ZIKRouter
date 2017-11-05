@@ -28,7 +28,7 @@ extern _Nullable Class ZIKServiceRouterForService(Protocol *serviceProtocol);
 /**
  Get the router class combined with a custom ZIKRouteConfiguration conforming to a unique protocol. Similar to ZIKViewRouterForConfig().
  
- @param configProtocol The protocol conformed by defaultConfiguration of router. Should be a ZIKServiceConfigRoutable protocol when ZIKSERVICEROUTER_CHECK is enabled. When ZIKSERVICEROUTER_CHECK is disabled, the protocol doesn't need to inheriting from ZIKServiceConfigRoutable.
+ @param configProtocol The protocol conformed by defaultConfiguration of router. Should be a ZIKServiceModuleRoutable protocol when ZIKSERVICEROUTER_CHECK is enabled. When ZIKSERVICEROUTER_CHECK is disabled, the protocol doesn't need to inheriting from ZIKServiceModuleRoutable.
  @return A router class matched with the service. Return nil if protocol is nil or not declared. There will be an assert failure when result is nil.
  */
 extern _Nullable Class ZIKServiceRouterForConfig(Protocol *configProtocol);

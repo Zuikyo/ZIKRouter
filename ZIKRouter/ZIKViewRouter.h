@@ -13,7 +13,7 @@
 #import "ZIKViewRouterProtocol.h"
 #import "ZIKViewRouteConfiguration.h"
 #import "ZIKViewRoutable.h"
-#import "ZIKViewConfigRoutable.h"
+#import "ZIKViewModuleRoutable.h"
 
 NS_ASSUME_NONNULL_BEGIN
 
@@ -198,7 +198,7 @@ removeConfigure:(void(NS_NOESCAPE ^ _Nullable)(RemoveConfig config))removeConfig
  
  You can register your protocol and let the configuration conforms to the protocol in category in your interface adapter.
  
- @param configProtocol The protocol conformed by default configuration of the routerClass. Should be a ZIKViewConfigRoutable protocol when ZIKVIEWROUTER_CHECK is enabled. When ZIKVIEWROUTER_CHECK is disabled, the protocol doesn't need to inheriting from ZIKViewConfigRoutable.
+ @param configProtocol The protocol conformed by default configuration of the routerClass. Should be a ZIKViewModuleRoutable protocol when ZIKVIEWROUTER_CHECK is enabled. When ZIKVIEWROUTER_CHECK is disabled, the protocol doesn't need to inheriting from ZIKViewModuleRoutable.
  */
 + (void)registerModuleProtocol:(Protocol *)configProtocol;
 @end

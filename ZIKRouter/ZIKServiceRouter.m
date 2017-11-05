@@ -121,8 +121,8 @@ void _initializeZIKServiceRouter() {
             for (Class serviceClass in services) {
                 NSCAssert3([serviceClass conformsToProtocol:protocol], @"Router(%@)'s serviceClass(%@) should conform to registered protocol(%@)",routerClass, serviceClass, NSStringFromProtocol(protocol));
             }
-        } else if (protocol_conformsToProtocol(protocol, @protocol(ZIKServiceConfigRoutable)) &&
-                   protocol != @protocol(ZIKServiceConfigRoutable)) {
+        } else if (protocol_conformsToProtocol(protocol, @protocol(ZIKServiceModuleRoutable)) &&
+                   protocol != @protocol(ZIKServiceModuleRoutable)) {
             Class routerClass = (Class)CFDictionaryGetValue(g_configProtocolToRouterMap, (__bridge const void *)(protocol));
             NSCAssert1(routerClass, @"Declared service config protocol(%@) is not registered with any router class!",NSStringFromProtocol(protocol));
             ZIKRouteConfiguration *config = [routerClass defaultRouteConfiguration];

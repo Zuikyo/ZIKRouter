@@ -46,6 +46,13 @@ extension ViewModuleRoutable {
     }
 }
 
+///All objc protocols inherited from ZIKViewModuleRoutable are routable.
+extension ViewModuleRouter where Module: ZIKViewModuleRoutable {
+    static var route: ViewModuleRoute<Module>.Type {
+        return ViewModuleRoute<Module>.self
+    }
+}
+
 ///Wrapper router for routable view module protocol.
 ///SeeAlso: `ViewRoute`.
 public struct ViewModuleRoute<ViewModule>: ViewModuleRoutable {

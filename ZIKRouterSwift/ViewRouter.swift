@@ -46,6 +46,13 @@ extension ViewRoutable {
     }
 }
 
+///All objc protocols inherited from ZIKViewRoutable are routable.
+extension ViewRouter where Destination: ZIKViewRoutable {
+    static var route: ViewRoute<Destination>.Type {
+        return ViewRoute<Destination>.self
+    }
+}
+
 /// Wrapper router for routable protocol. Only declared protocol can be used with ViewRouter:
 /// ```
 ///protocol MyViewInput {

@@ -46,6 +46,13 @@ extension ServiceRoutable {
     }
 }
 
+///All objc protocols inherited from ZIKServiceRoutable are routable.
+extension ServiceRouter where Destination: ZIKServiceRoutable {
+    static var route: ServiceRoute<Destination>.Type {
+        return ServiceRoute<Destination>.self
+    }
+}
+
 ///Wrapper router for routable service protocol.
 ///SeeAlso: `ViewRoute`.
 public struct ServiceRoute<Service>: ServiceRoutable {

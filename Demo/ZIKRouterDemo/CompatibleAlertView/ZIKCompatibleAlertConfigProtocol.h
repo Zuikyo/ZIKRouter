@@ -7,12 +7,12 @@
 //
 
 #import <Foundation/Foundation.h>
-#import <ZIKRouter/ZIKViewConfigRoutable.h>
+#import <ZIKRouter/ZIKViewModuleRoutable.h>
 
 NS_ASSUME_NONNULL_BEGIN
 
 #define ZIKCompatibleAlertConfigProtocol_configRoutable @protocol(ZIKCompatibleAlertConfigProtocol)
-@protocol ZIKCompatibleAlertConfigProtocol <ZIKViewConfigRoutable>
+@protocol ZIKCompatibleAlertConfigProtocol <ZIKViewModuleRoutable>
 @property(nonatomic,copy) NSString *title;
 @property(nullable,nonatomic,copy) NSString *message;
 - (void)addCancelButtonTitle:(NSString *)cancelButtonTitle handler:(void (^__nullable)(void))handler;

@@ -11,7 +11,7 @@
 
 #import "ZIKRouter.h"
 #import "ZIKServiceRoutable.h"
-#import "ZIKServiceConfigRoutable.h"
+#import "ZIKServiceModuleRoutable.h"
 #import "ZIKServiceRouteConfiguration.h"
 
 NS_ASSUME_NONNULL_BEGIN
@@ -132,7 +132,7 @@ typedef void(^ZIKServiceRouteGlobalErrorHandler)(__kindof ZIKServiceRouter * _Nu
 /**
  Register a module config protocol the router's default configuration conforms, then use ZIKServiceRouterForConfig() to get the router class.You can register your protocol and let the configuration conforms to the protocol in category in your interface adapter.
  
- @param configProtocol The protocol conformed by default configuration of the routerClass. Should be a ZIKServiceConfigRoutable protocol when ZIKSERVICEROUTER_CHECK is enabled. When ZIKSERVICEROUTER_CHECK is disabled, the protocol doesn't need to inheriting from ZIKServiceConfigRoutable.
+ @param configProtocol The protocol conformed by default configuration of the routerClass. Should be a ZIKServiceModuleRoutable protocol when ZIKSERVICEROUTER_CHECK is enabled. When ZIKSERVICEROUTER_CHECK is disabled, the protocol doesn't need to inheriting from ZIKServiceModuleRoutable.
  */
 + (void)registerModuleProtocol:(Protocol *)configProtocol;
 @end
