@@ -21,7 +21,7 @@ public protocol ViewRoutable {
     associatedtype Destination
 }
 
-extension ViewRoutable {
+public extension ViewRoutable {
     
     /// Perform route with view protocol and prepare the destination with the protocol.
     ///
@@ -47,8 +47,8 @@ extension ViewRoutable {
 }
 
 ///All objc protocols inherited from ZIKViewRoutable are routable.
-extension ViewRouter where Destination: ZIKViewRoutable {
-    static var route: ViewRoute<Destination>.Type {
+public extension ViewRouter where Destination: ZIKViewRoutable {
+    public static var route: ViewRoute<Destination>.Type {
         return ViewRoute<Destination>.self
     }
 }

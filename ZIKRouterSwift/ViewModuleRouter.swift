@@ -21,7 +21,7 @@ public protocol ViewModuleRoutable {
     associatedtype Module
 }
 
-extension ViewModuleRoutable {
+public extension ViewModuleRoutable {
     
     /// Perform route with view module config protocol and prepare the module with the protocol.
     ///
@@ -47,8 +47,8 @@ extension ViewModuleRoutable {
 }
 
 ///All objc protocols inherited from ZIKViewModuleRoutable are routable.
-extension ViewModuleRouter where Module: ZIKViewModuleRoutable {
-    static var route: ViewModuleRoute<Module>.Type {
+public extension ViewModuleRouter where Module: ZIKViewModuleRoutable {
+    public static var route: ViewModuleRoute<Module>.Type {
         return ViewModuleRoute<Module>.self
     }
 }

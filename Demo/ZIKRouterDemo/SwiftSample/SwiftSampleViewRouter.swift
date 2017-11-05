@@ -69,7 +69,8 @@ extension ViewRouter where Destination == PureSwiftSampleViewInput {
 }
 
 extension ViewModuleRouter where Module == SwiftSampleViewConfig {
-    static var route: ViewRoute<SwiftSampleViewConfig>.Type {
-        return ViewRoute<SwiftSampleViewConfig>.self
+    static var route: ViewModuleRoute<SwiftSampleViewConfig>.Type {
+        return ViewModuleRoute<SwiftSampleViewConfig>.self
     }
 }
+

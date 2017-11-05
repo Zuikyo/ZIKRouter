@@ -21,7 +21,7 @@ public protocol ServiceRoutable {
     associatedtype Destination
 }
 
-extension ServiceRoutable {
+public extension ServiceRoutable {
     
     /// Perform route with service protocol and prepare the destination with the protocol.
     ///
@@ -47,8 +47,8 @@ extension ServiceRoutable {
 }
 
 ///All objc protocols inherited from ZIKServiceRoutable are routable.
-extension ServiceRouter where Destination: ZIKServiceRoutable {
-    static var route: ServiceRoute<Destination>.Type {
+public extension ServiceRouter where Destination: ZIKServiceRoutable {
+    public static var route: ServiceRoute<Destination>.Type {
         return ServiceRoute<Destination>.self
     }
 }
