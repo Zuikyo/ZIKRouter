@@ -21,7 +21,7 @@
     // Do any additional setup after loading the view.
 }
 - (IBAction)performCustomRoute:(id)sender {
-    self.alertViewRouter = [ZIKViewRouterForConfig(ZIKCompatibleAlertConfigProtocol_configRoutable)
+    self.alertViewRouter = [ZIKViewRouter.forModule(ZIKCompatibleAlertConfigProtocol_configRoutable)
                             performWithConfigure:^(ZIKViewRouteConfiguration<ZIKCompatibleAlertConfigProtocol> * _Nonnull config) {
                                 config.source = self;
                                 config.routeType = ZIKViewRouteTypeCustom;
