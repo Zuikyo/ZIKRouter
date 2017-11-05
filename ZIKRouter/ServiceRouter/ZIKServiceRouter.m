@@ -460,8 +460,8 @@ _Nullable Class ZIKServiceRouterForService(Protocol *serviceProtocol) {
         }
     });
     if (!serviceProtocol) {
-//        [ZIKServiceRouter _o_callbackError_invalidProtocolWithAction:@selector(init) errorDescription:@"ZIKServiceRouterForService() serviceProtocol is nil"];
-        NSCAssert1(NO, @"ZIKServiceRouterForService() serviceProtocol is nil. callStackSymbols: %@",[NSThread callStackSymbols]);
+//        [ZIKServiceRouter _o_callbackError_invalidProtocolWithAction:@selector(init) errorDescription:@"ZIKServiceRouter.forService() serviceProtocol is nil"];
+        NSCAssert1(NO, @"ZIKServiceRouter.forService() serviceProtocol is nil. callStackSymbols: %@",[NSThread callStackSymbols]);
         return nil;
     }
     
@@ -487,8 +487,8 @@ _Nullable Class ZIKServiceRouterForConfig(Protocol *configProtocol) {
         }
     });
     if (!configProtocol) {
-//        [ZIKServiceRouter _o_callbackError_invalidProtocolWithAction:@selector(init) errorDescription:@"ZIKServiceRouterForConfig() configProtocol is nil"];
-        NSCAssert1(NO, @"ZIKServiceRouterForConfig() configProtocol is nil. callStackSymbols: %@",[NSThread callStackSymbols]);
+//        [ZIKServiceRouter _o_callbackError_invalidProtocolWithAction:@selector(init) errorDescription:@"ZIKServiceRouter.forModule() configProtocol is nil"];
+        NSCAssert1(NO, @"ZIKServiceRouter.forModule() configProtocol is nil. callStackSymbols: %@",[NSThread callStackSymbols]);
         return nil;
     }
     

@@ -181,7 +181,7 @@ removeConfigure:(void(NS_NOESCAPE ^ _Nullable)(RemoveConfig config))removeConfig
 + (void)registerExclusiveView:(Class)viewClass;
 
 /**
- Register a view protocol that all views registered with the router conform to, then use ZIKViewRouterForView() to get the router class.
+ Register a view protocol that all views registered with the router conform to, then use ZIKViewRouter.forView() to get the router class.
  @discussion
  If there're multi router classes for same view, and those routers is designed for preparing different part of the view when perform route (for example, a router is for presenting actionsheet style for UIAlertController, another router is for presenting alert style for UIAlertController), then each router has to register a unique protocol for the view and get the right router class with their protocol, or just import the router class your want to use directly.
  
@@ -192,7 +192,7 @@ removeConfigure:(void(NS_NOESCAPE ^ _Nullable)(RemoveConfig config))removeConfig
 + (void)registerViewProtocol:(Protocol *)viewProtocol;
 
 /**
- Register a module config protocol the router's default configuration conforms, then use ZIKViewRouterForConfig() to get the router class.
+ Register a module config protocol the router's default configuration conforms, then use ZIKViewRouter.forModule() to get the router class.
  @discussion
  If there're multi router classes for same view, and those routers provide different functions and use their subclass of ZIKViewRouteConfiguration (for example, your add a third-party library to your project, the library has a router for quickly presenting a UIAlertController, and in your project, there's a router for integrating UIAlertView and UIAlertController), then each router has to register a unique protocol for their configurations and get the right router class with this protocol, or just import the router class your want to use directly.
  
@@ -211,7 +211,7 @@ extern NSString *const kZIKViewRouteErrorDomain;
 typedef NS_ENUM(NSInteger, ZIKViewRouteError) {
     ///Bad implementation in code. When adding a UIView or UIViewController conforms to ZIKRoutableView in xib or storyboard, and it need preparing, you have to implement -prepareDestinationFromExternal:configuration: in the view or view controller which added it. There will be an assert failure for debugging.
     ZIKViewRouteErrorInvalidPerformer,
-    ///If you use ZIKViewRouterForView() or ZIKViewRouterForConfig() to fetch router with protocol, the protocol must be declared. There will be an assert failure for debugging.
+    ///If you use ZIKViewRouter.forView() or ZIKViewRouter.forModule() to fetch router with protocol, the protocol must be declared. There will be an assert failure for debugging.
     ZIKViewRouteErrorInvalidProtocol,
     ///Configuration missed some required values, or some values were conflict. There will be an assert failure for debugging.
     ZIKViewRouteErrorInvalidConfiguration,

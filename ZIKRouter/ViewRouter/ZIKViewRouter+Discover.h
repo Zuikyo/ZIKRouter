@@ -5,6 +5,9 @@
 //  Created by zuik on 2017/10/27.
 //  Copyright © 2017 zuik. All rights reserved.
 //
+//  This source code is licensed under the MIT-style license found in the
+//  LICENSE file in the root directory of this source tree.
+//
 
 #import "ZIKViewRouter.h"
 
@@ -12,9 +15,9 @@ NS_ASSUME_NONNULL_BEGIN
 
 @interface ZIKViewRouter (Discover)
 
-///Get the view router class registered with a view (a ZIKRoutableView) conforming to a unique protocol. See ZIKViewRouterForView() for more detail.
+///Get the view router class registered with a view (a ZIKRoutableView) conforming to a unique protocol. See ZIKViewRouter.forView() for more detail.
 @property (nonatomic,class,readonly) Class (^forView)(Protocol *viewProtocol);
-///Get the view router class combined with a custom ZIKViewRouteConfiguration conforming to a unique protocol. See ZIKViewRouterForConfig() for more detail.
+///Get the view router class combined with a custom ZIKViewRouteConfiguration conforming to a unique protocol. See ZIKViewRouter.forModule() for more detail.
 @property (nonatomic,class,readonly) Class (^forModule)(Protocol *configProtocol);
 
 @end
@@ -49,7 +52,7 @@ NS_ASSUME_NONNULL_BEGIN
  @end
  
  //Get ZIKLoginViewRouter and perform route
- [ZIKViewRouterForView(@protocol(ZIKLoginViewProtocol))
+ [ZIKViewRouter.forView(@protocol(ZIKLoginViewProtocol))
  performWithConfigure:^(ZIKViewRouteConfiguration *config) {
  config.source = self;
  config.prepareForRoute = ^(id<ZIKLoginViewProtocol> destination) {
@@ -107,7 +110,7 @@ extern _Nullable Class ZIKViewRouterForView(Protocol *viewProtocol);
  @end
  
  //Get ZIKLoginViewRouter and perform route
- [ZIKViewRouterForConfig(@protocol(ZIKLoginViewConfigProtocol))
+ [ZIKViewRouter.forModule(@protocol(ZIKLoginViewConfigProtocol))
  performWithConfigure:^(ZIKViewRouteConfiguration<ZIKLoginViewConfigProtocol> *config) {
  config.source = self;
  config.account = @"my account";

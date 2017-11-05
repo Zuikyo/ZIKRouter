@@ -611,7 +611,7 @@ _Nullable Class ZIKViewRouterForView(Protocol *viewProtocol) {
         }
     });
     if (!viewProtocol) {
-        [ZIKViewRouter _o_callbackError_invalidProtocolWithAction:@selector(init) errorDescription:@"ZIKViewRouterForView() viewProtocol is nil"];
+        [ZIKViewRouter _o_callbackError_invalidProtocolWithAction:@selector(init) errorDescription:@"ZIKViewRouter.forView() viewProtocol is nil"];
         return nil;
     }
     
@@ -637,7 +637,7 @@ _Nullable Class ZIKViewRouterForConfig(Protocol *configProtocol) {
         }
     });
     if (!configProtocol) {
-        [ZIKViewRouter _o_callbackError_invalidProtocolWithAction:@selector(init) errorDescription:@"ZIKViewRouterForConfig() configProtocol is nil"];
+        [ZIKViewRouter _o_callbackError_invalidProtocolWithAction:@selector(init) errorDescription:@"ZIKViewRouter.forModule() configProtocol is nil"];
         return nil;
     }
     

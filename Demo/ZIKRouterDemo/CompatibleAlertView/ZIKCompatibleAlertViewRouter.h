@@ -42,10 +42,10 @@ NS_ASSUME_NONNULL_BEGIN
  @endcode
  
  Solution 2:
- If you want to keep `<ZIKCompatibleAlertConfigProtocol>`, you can cast ZIKCompatibleAlertViewRouter to ZIKViewRouter<ZIKViewRouteConfiguration, ZIKViewRemoveConfiguration>.Type with ZIKViewRouterForConfig():
+ If you want to keep `<ZIKCompatibleAlertConfigProtocol>`, you can cast ZIKCompatibleAlertViewRouter to ZIKViewRouter<ZIKViewRouteConfiguration, ZIKViewRemoveConfiguration>.Type with ZIKViewRouter.forModule():
  @code
  let routerClass: ZIKViewRouter<ZIKViewRouteConfiguration, ZIKViewRemoveConfiguration>.Type
- routerClass = ZIKViewRouterForConfig(ZIKCompatibleAlertConfigProtocol.self) as! ZIKViewRouter<ZIKViewRouteConfiguration, ZIKViewRemoveConfiguration>.Type
+ routerClass = ZIKViewRouter.forModule(ZIKCompatibleAlertConfigProtocol.self) as! ZIKViewRouter<ZIKViewRouteConfiguration, ZIKViewRemoveConfiguration>.Type
  @endcode
  */
 @interface ZIKCompatibleAlertViewRouter<__covariant RouteConfig: ZIKViewRouteConfiguration<ZIKCompatibleAlertConfigProtocol> *, __covariant RemoveConfig: ZIKViewRemoveConfiguration *> : ZIKViewRouter<RouteConfig, RemoveConfig> <ZIKViewRouterProtocol>
