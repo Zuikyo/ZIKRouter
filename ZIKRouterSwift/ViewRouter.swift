@@ -53,42 +53,45 @@ public extension ViewRouter where Destination: ZIKViewRoutable {
     }
 }
 
-/// Wrapper router for routable protocol. Only declared protocol can be used with ViewRouter:
-/// ```
-///protocol MyViewInput {
-///}
-///class MyViewController: UIViewController, MyViewInput {
-///}
-///
-/////Declare `MyViewInput` is routable in MyViewController's view router
-///extension ViewRouter where Destination == MyViewInput {
-///    //Be careful, don't use a wrong struct
-///    static var route: ViewRoute<MyViewInput>.Type {
-///        return ViewRoute<MyViewInput>.self
-///    }
-///}
-///
-/////Use `MyViewInput` to perform route to MyViewController
-///class TestViewController: UIViewController {
-///    func presentMyView() {
-///        ViewRouter<MyViewInput>.route
-///            .perform(routeConfig: { config in
-///                config.source = self
-///                config.routeType = ViewRouteType.presentModally
-///            }, preparation: { (destination) in
-///                //destination is inferred as MyViewInput
-///            })
-///    }
-///}
-///```
-///Then if you pass an undeclared protocol to ViewRouter, there will be compiler error.
-///
-///We have to use a wrapper just because Swift extension doesn't support inheritance clause with constraints:
-///```
-//////When someday Swift support this, we can declare in a simpler way.
-///extension ViewRouter: ViewRoutable where Destination == MyViewInput {
-///}
-///```
+/** Wrapper router for routable protocol. Only declared protocol can be used with ViewRouter:
+```
+protocol AlertViewInput {
+    var alertTitle: String {get set}
+}
+class AlertViewController: UIViewController, AlertViewInput {
+}
+
+//Declare `AlertViewInput` is routable in AlertViewController's view router
+extension ViewRouter where Destination == AlertViewInput {
+    //Be careful, don't declare a wrong type
+    static var route: ViewRoute<AlertViewInput>.Type {
+    return ViewRoute<AlertViewInput>.self
+    }
+}
+
+//Use `AlertViewInput` to perform route to AlertViewController
+class TestViewController: UIViewController {
+    func presentAlertView() {
+        ViewRouter<AlertViewInput>.route
+            .perform(routeConfig: { config in
+                config.source = self
+                config.routeType = ViewRouteType.presentModally
+            }, preparation: { (destination) in
+                //destination is inferred as AlertViewInput
+                destination.alertTitle = "test alert"
+            })
+    }
+}
+```
+Then if you pass an undeclared protocol to ViewRouter, there will be compiler error.
+
+We have to use a wrapper just because Swift extension doesn't support inheritance clause with constraints:
+```
+When someday Swift support this, we can declare in a simpler and safer way.
+extension ViewRouter: ViewRoutable where Destination == AlertViewInput {
+}
+```
+ */
 public struct ViewRoute<View>: ViewRoutable {
     public typealias Destination = View
 }
