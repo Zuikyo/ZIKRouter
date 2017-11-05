@@ -110,7 +110,7 @@
 + (void)registerRoutableDestination {
     [self registerView:[UIAlertController class]];
     [self registerView:[UIAlertView class]];
-    [self registerConfigProtocol:@protocol(ZIKCompatibleAlertConfigProtocol)];
+    [self registerModuleProtocol:@protocol(ZIKCompatibleAlertConfigProtocol)];
 }
 
 - (id)destinationWithConfiguration:(ZIKCompatibleAlertViewConfiguration *)configuration {

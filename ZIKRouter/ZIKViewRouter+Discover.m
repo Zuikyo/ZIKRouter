@@ -16,7 +16,7 @@
     };
 }
 
-+ (Class(^)(Protocol *))forConfig {
++ (Class(^)(Protocol *))forModule {
     return ^(Protocol *configProtocol) {
         return ZIKViewRouterForConfig(configProtocol);
     };

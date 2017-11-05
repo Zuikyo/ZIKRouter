@@ -130,11 +130,11 @@ typedef void(^ZIKServiceRouteGlobalErrorHandler)(__kindof ZIKServiceRouter * _Nu
 + (void)registerServiceProtocol:(Protocol *)serviceProtocol;
 
 /**
- Register a config protocol the router's default configuration conforms, then use ZIKServiceRouterForConfig() to get the router class.You can register your protocol and let the configuration conforms to the protocol in category in your interface adapter.
+ Register a module config protocol the router's default configuration conforms, then use ZIKServiceRouterForConfig() to get the router class.You can register your protocol and let the configuration conforms to the protocol in category in your interface adapter.
  
  @param configProtocol The protocol conformed by default configuration of the routerClass. Should be a ZIKServiceConfigRoutable protocol when ZIKSERVICEROUTER_CHECK is enabled. When ZIKSERVICEROUTER_CHECK is disabled, the protocol doesn't need to inheriting from ZIKServiceConfigRoutable.
  */
-+ (void)registerConfigProtocol:(Protocol *)configProtocol;
++ (void)registerModuleProtocol:(Protocol *)configProtocol;
 @end
 
 typedef NS_ENUM(NSInteger, ZIKServiceRouteError) {

@@ -13,7 +13,7 @@ NS_ASSUME_NONNULL_BEGIN
 @interface ZIKServiceRouter (Discover)
 
 @property (nonatomic,class,readonly) Class (^forService)(Protocol *serviceProtocol);
-@property (nonatomic,class,readonly) Class (^forConfig)(Protocol *configProtocol);
+@property (nonatomic,class,readonly) Class (^forModule)(Protocol *configProtocol);
 
 @end
 

@@ -284,10 +284,10 @@ void _initializeZIKServiceRouter() {
 
 + (void)_swift_registerConfigProtocol:(id)configProtocol {
     NSCParameterAssert(ZIKRouter_isObjcProtocol(configProtocol));
-    [self registerConfigProtocol:configProtocol];
+    [self registerModuleProtocol:configProtocol];
 }
 
-+ (void)registerConfigProtocol:(Protocol *)configProtocol {
++ (void)registerModuleProtocol:(Protocol *)configProtocol {
     Class routerClass = self;
     NSParameterAssert([routerClass isSubclassOfClass:[ZIKServiceRouter class]]);
     NSAssert([[routerClass defaultRouteConfiguration] conformsToProtocol:configProtocol], @"configProtocol should be conformed by this router's defaultRouteConfiguration.");
