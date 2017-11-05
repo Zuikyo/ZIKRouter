@@ -27,7 +27,7 @@ NS_ASSUME_NONNULL_BEGIN
 - (void)endPerformRouteWithError:(NSError *)error;
 
 ///If your custom route type is performing a segue, use this to perform the segue, don't need to use -beginPerformRoute and -endPerformRouteWithSuccess. `Source` is the view controller to perform the segue.
-- (void)_o_performSegueWithIdentifier:(NSString *)identifier fromSource:(UIViewController *)source sender:(nullable id)sender;
+- (void)_performSegueWithIdentifier:(NSString *)identifier fromSource:(UIViewController *)source sender:(nullable id)sender;
 
 ///Call it when route will remove.
 - (void)beginRemoveRouteFromSource:(id)source;

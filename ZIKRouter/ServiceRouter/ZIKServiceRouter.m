@@ -460,7 +460,7 @@ _Nullable Class ZIKServiceRouterForService(Protocol *serviceProtocol) {
         }
     });
     if (!serviceProtocol) {
-//        [ZIKServiceRouter _o_callbackError_invalidProtocolWithAction:@selector(init) errorDescription:@"ZIKServiceRouter.forService() serviceProtocol is nil"];
+//        [ZIKServiceRouter _callbackError_invalidProtocolWithAction:@selector(init) errorDescription:@"ZIKServiceRouter.forService() serviceProtocol is nil"];
         NSCAssert1(NO, @"ZIKServiceRouter.forService() serviceProtocol is nil. callStackSymbols: %@",[NSThread callStackSymbols]);
         return nil;
     }
@@ -469,7 +469,7 @@ _Nullable Class ZIKServiceRouterForService(Protocol *serviceProtocol) {
     if (routerClass) {
         return routerClass;
     }
-//    [ZIKServiceRouter _o_callbackError_invalidProtocolWithAction:@selector(init)
+//    [ZIKServiceRouter _callbackError_invalidProtocolWithAction:@selector(init)
 //                                             errorDescription:@"Didn't find service router for service protocol: %@, this protocol was not registered.",serviceProtocol];
     NSCAssert1(NO, @"Didn't find service router for service protocol: %@, this protocol was not registered.",serviceProtocol);
     return nil;
@@ -487,7 +487,7 @@ _Nullable Class ZIKServiceRouterForConfig(Protocol *configProtocol) {
         }
     });
     if (!configProtocol) {
-//        [ZIKServiceRouter _o_callbackError_invalidProtocolWithAction:@selector(init) errorDescription:@"ZIKServiceRouter.forModule() configProtocol is nil"];
+//        [ZIKServiceRouter _callbackError_invalidProtocolWithAction:@selector(init) errorDescription:@"ZIKServiceRouter.forModule() configProtocol is nil"];
         NSCAssert1(NO, @"ZIKServiceRouter.forModule() configProtocol is nil. callStackSymbols: %@",[NSThread callStackSymbols]);
         return nil;
     }
@@ -497,7 +497,7 @@ _Nullable Class ZIKServiceRouterForConfig(Protocol *configProtocol) {
         return routerClass;
     }
     
-//    [ZIKServiceRouter _o_callbackError_invalidProtocolWithAction:@selector(init)
+//    [ZIKServiceRouter _callbackError_invalidProtocolWithAction:@selector(init)
 //                                             errorDescription:@"Didn't find service router for config protocol: %@, this protocol was not registered.",configProtocol];
     NSCAssert1(NO, @"Didn't find service router for config protocol: %@, this protocol was not registered.",configProtocol);
     return nil;
@@ -505,8 +505,8 @@ _Nullable Class ZIKServiceRouterForConfig(Protocol *configProtocol) {
 
 - (void)performWithConfiguration:(__kindof ZIKServiceRouteConfiguration *)configuration {
     [[self class] increaseRecursiveDepth];
-    if ([[self class] _o_validateInfiniteRecursion] == NO) {
-        [self _o_callbackError_infiniteRecursionWithAction:@selector(performRoute) errorDescription:@"Infinite recursion for performing route detected. Recursive call stack:\n%@",[NSThread callStackSymbols]];
+    if ([[self class] _validateInfiniteRecursion] == NO) {
+        [self _callbackError_infiniteRecursionWithAction:@selector(performRoute) errorDescription:@"Infinite recursion for performing route detected. Recursive call stack:\n%@",[NSThread callStackSymbols]];
         [[self class] decreaseRecursiveDepth];
         return;
     }
@@ -610,7 +610,7 @@ _Nullable Class ZIKServiceRouterForConfig(Protocol *configProtocol) {
 
 #pragma mark Validate
 
-+ (BOOL)_o_validateInfiniteRecursion {
++ (BOOL)_validateInfiniteRecursion {
     NSUInteger maxRecursiveDepth = 200;
     if ([self recursiveDepth] > maxRecursiveDepth) {
         return NO;
@@ -628,12 +628,12 @@ _Nullable Class ZIKServiceRouterForConfig(Protocol *configProtocol) {
     dispatch_semaphore_signal(g_globalErrorSema);
 }
 
-- (void)_o_callbackErrorWithAction:(SEL)routeAction error:(NSError *)error {
-    [[self class] _o_callbackGlobalErrorHandlerWithRouter:self action:routeAction error:error];
+- (void)_callbackErrorWithAction:(SEL)routeAction error:(NSError *)error {
+    [[self class] _callbackGlobalErrorHandlerWithRouter:self action:routeAction error:error];
     [super notifyError:error routeAction:routeAction];
 }
 
-+ (void)_o_callbackGlobalErrorHandlerWithRouter:(__kindof ZIKServiceRouter *)router action:(SEL)action error:(NSError *)error {
++ (void)_callbackGlobalErrorHandlerWithRouter:(__kindof ZIKServiceRouter *)router action:(SEL)action error:(NSError *)error {
     dispatch_semaphore_wait(g_globalErrorSema, DISPATCH_TIME_FOREVER);
     
     ZIKServiceRouteGlobalErrorHandler errorHandler = g_globalErrorHandler;
@@ -648,12 +648,12 @@ _Nullable Class ZIKServiceRouterForConfig(Protocol *configProtocol) {
     dispatch_semaphore_signal(g_globalErrorSema);
 }
 
-- (void)_o_callbackError_infiniteRecursionWithAction:(SEL)action errorDescription:(NSString *)format ,... {
+- (void)_callbackError_infiniteRecursionWithAction:(SEL)action errorDescription:(NSString *)format ,... {
     va_list argList;
     va_start(argList, format);
     NSString *description = [[NSString alloc] initWithFormat:format arguments:argList];
     va_end(argList);
-    [self _o_callbackErrorWithAction:action error:[[self class] errorWithCode:ZIKServiceRouteErrorInfiniteRecursion localizedDescription:description]];
+    [self _callbackErrorWithAction:action error:[[self class] errorWithCode:ZIKServiceRouteErrorInfiniteRecursion localizedDescription:description]];
 }
 
 #pragma mark Getter/Setter
