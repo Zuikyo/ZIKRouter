@@ -43,7 +43,7 @@ public class Registry {
     /// - Parameters:
     ///   - viewProtocol: The protocol conformed by the view of the router. Can be pure Swift protocol or objc protocol.
     ///   - router: The subclass of ZIKViewRouter.
-    public static func register(viewProtocol: Any.Type, router: AnyClass) {
+    public static func register(viewProtocol: Any.Type, forRouter router: AnyClass) {
         assert(ZIKViewRouter._isLoadFinished() == false, "Can't register after app did finish launch. Only register in registerRoutableDestination().")
         assert(ZIKRouter_classIsSubclassOfClass(router, ZIKViewRouter.self), "This router must be subclass of ZIKViewRouter")
         if ZIKRouter_isObjcProtocol(viewProtocol) {
@@ -60,7 +60,7 @@ public class Registry {
     /// - Parameters:
     ///   - configProtocol: The protocol conformed by the custom configuration of the router. Can be pure Swift protocol or objc protocol.
     ///   - router: The subclass of ZIKViewRouter.
-    public static func register<ModuleConfig>(viewModule configProtocol: ModuleConfig.Type, router: AnyClass) {
+    public static func register<ModuleConfig>(viewModule configProtocol: ModuleConfig.Type, forRouter router: AnyClass) {
         assert(ZIKViewRouter._isLoadFinished() == false, "Can't register after app did finish launch. Only register in registerRoutableDestination().")
         assert(ZIKRouter_classIsSubclassOfClass(router, ZIKViewRouter.self), "This router must be subclass of ZIKViewRouter")
         if ZIKRouter_isObjcProtocol(configProtocol) {
@@ -77,7 +77,7 @@ public class Registry {
     /// - Parameters:
     ///   - viewProtocol: The protocol conformed by the custom configuration of the router. Can be pure Swift protocol or objc protocol.
     ///   - router: The subclass of ZIKServiceRouter.
-    public static func register(serviceProtocol: Any.Type, router: AnyClass) {
+    public static func register(serviceProtocol: Any.Type, forRouter router: AnyClass) {
         assert(ZIKServiceRouter._isLoadFinished() == false, "Can't register after app did finish launch. Only register in registerRoutableDestination().")
         assert(ZIKRouter_classIsSubclassOfClass(router, ZIKServiceRouter.self), "This router must be subclass of ZIKServiceRouter")
         if ZIKRouter_isObjcProtocol(serviceProtocol) {
@@ -93,7 +93,7 @@ public class Registry {
     /// - Parameters:
     ///   - configProtocol: The protocol conformed by the custom configuration of the router. Can be pure Swift protocol or objc protocol.
     ///   - router: The subclass of ZIKServiceRouter.
-    public static func register<ModuleConfig>(serviceModule configProtocol: ModuleConfig.Type, router: AnyClass) {
+    public static func register<ModuleConfig>(serviceModule configProtocol: ModuleConfig.Type, forRouter router: AnyClass) {
         assert(ZIKServiceRouter._isLoadFinished() == false, "Can't register after app did finish launch. Only register in registerRoutableDestination().")
         assert(ZIKRouter_classIsSubclassOfClass(router, ZIKServiceRouter.self), "This router must be subclass of ZIKServiceRouter")
         if ZIKRouter_isObjcProtocol(configProtocol) {
@@ -113,7 +113,7 @@ extension Registry {
     ///
     /// - Parameter viewProtocol: The view protocol conformed by the view registered with a view router. Support objc protocol and pure Swift protocol.
     /// - Returns: The view router class for the view protocol.
-    public static func forView(_ viewProtocol:Any.Type) -> DefaultViewRouter.Type? {
+    public static func router(forView viewProtocol:Any.Type) -> DefaultViewRouter.Type? {
         var routerClass = viewProtocolContainer[_RouteKey(type:viewProtocol)]
         if routerClass == nil && ZIKRouter_isObjcProtocol(viewProtocol) {
             routerClass = _swift_ZIKViewRouterForView(viewProtocol) as? ZIKViewRouter.Type
@@ -132,7 +132,7 @@ extension Registry {
     ///
     /// - Parameter configProtocol: The cconfg protocol registered with a view router. Support objc protocol and pure Swift protocol.
     /// - Returns: The view router class for the config protocol.
-    public static func forViewModule(_ configProtocol:Any.Type) -> DefaultViewRouter.Type? {
+    public static func router(forViewModule configProtocol:Any.Type) -> DefaultViewRouter.Type? {
         var routerClass = viewConfigContainer[_RouteKey(type:configProtocol)]
         if routerClass == nil && ZIKRouter_isObjcProtocol(configProtocol) {
             routerClass = _swift_ZIKViewRouterForModule(configProtocol) as? ZIKViewRouter.Type
@@ -151,7 +151,7 @@ extension Registry {
     ///
     /// - Parameter serviceProtocol: The service protocol conformed by the service registered with a service router. Support objc protocol and pure Swift protocol.
     /// - Returns: The view router class for the service protocol.
-    public static func forService(_ serviceProtocol: Any.Type) -> DefaultServiceRouter.Type? {
+    public static func router(forService serviceProtocol: Any.Type) -> DefaultServiceRouter.Type? {
         var routerClass = serviceProtocolContainer[_RouteKey(type:serviceProtocol)]
         if routerClass == nil && ZIKRouter_isObjcProtocol(serviceProtocol) {
             routerClass = _swift_ZIKServiceRouterForService(serviceProtocol) as? ZIKServiceRouter.Type
@@ -170,7 +170,7 @@ extension Registry {
     ///
     /// - Parameter configProtocol: The cconfg protocol registered with a service router. Support objc protocol and pure Swift protocol.
     /// - Returns: The service router class for the config protocol.
-    public static func forServiceModule(_ configProtocol:Any.Type) -> DefaultServiceRouter.Type? {
+    public static func router(forServiceModule configProtocol:Any.Type) -> DefaultServiceRouter.Type? {
         var routerClass = serviceConfigContainer[_RouteKey(type:configProtocol)]
         if routerClass == nil && ZIKRouter_isObjcProtocol(configProtocol) {
             routerClass = _swift_ZIKServiceRouterForModule(configProtocol) as? ZIKServiceRouter.Type
@@ -201,7 +201,7 @@ extension Registry {
         routeConfig configure: (ViewRouteConfig) -> Swift.Void,
         preparation prepare: ((Destination) -> Swift.Void)? = nil
         ) -> DefaultViewRouter? {
-        return Registry.forView(viewProtocol)?.perform(configure: { config in
+        return Registry.router(forView: viewProtocol)?.perform(configure: { config in
             configure(config)
             config.prepareForRoute = { d in
                 if let destination = d as? Destination {
@@ -223,7 +223,7 @@ extension Registry {
         routeConfig configure: (ViewRouteConfig) -> Swift.Void,
         preparation prepare: ((Config) -> Swift.Void)? = nil
         ) -> DefaultViewRouter? {
-        return Registry.forViewModule(configProtocol)?.perform(configure: { config in
+        return Registry.router(forViewModule: configProtocol)?.perform(configure: { config in
             configure(config)
             if let configuration = config as? Config {
                 prepare?(configuration)
@@ -243,7 +243,7 @@ extension Registry {
         routeConfig configure: (ServiceRouteConfig) -> Swift.Void,
         preparation prepare: ((Destination) -> Swift.Void)? = nil
         ) -> DefaultServiceRouter? {
-        return Registry.forService(serviceProtocol)?.perform(configure: { config in
+        return Registry.router(forService: serviceProtocol)?.perform(configure: { config in
             configure(config)
             config.prepareForRoute = { d in
                 if let destination = d as? Destination {
@@ -265,7 +265,7 @@ extension Registry {
         routeConfig configure: (ServiceRouteConfig) -> Swift.Void,
         preparation prepare: ((Module) -> Swift.Void)? = nil
         ) -> DefaultServiceRouter? {
-        return Registry.forServiceModule(configProtocol)?.perform(configure: { config in
+        return Registry.router(forServiceModule: configProtocol)?.perform(configure: { config in
             configure(config)
             if let configuration = config as? Module {
                 prepare?(configuration)
@@ -288,7 +288,7 @@ extension Registry {
         preparation prepare: ((Destination) -> Swift.Void)? = nil
         ) -> Destination? {
         var destination: Destination?
-        let routerClass = Registry.forView(viewProtocol)
+        let routerClass = Registry.router(forView: viewProtocol)
         assert((routerClass?.completeSynchronously())!,"router class (\(String(describing: routerClass))) can't get destination synchronously.")
         routerClass?.perform(configure: { config in
             config.routeType = ViewRouteType.getDestination
@@ -316,7 +316,7 @@ extension Registry {
         preparation prepare: ((Module) -> Swift.Void)? = nil
         ) -> Any? {
         var destination: Any?
-        let routerClass = Registry.forViewModule(configProtocol)
+        let routerClass = Registry.router(forViewModule: configProtocol)
         assert((routerClass?.completeSynchronously())!,"router class (\(String(describing: routerClass))) can't get destination synchronously")
         routerClass?.perform(configure: { config in
             config.routeType = ViewRouteType.getDestination
@@ -341,7 +341,7 @@ extension Registry {
         preparation prepare: ((Destination) -> Swift.Void)? = nil
         ) -> Destination? {
         var destination: Destination?
-        let routerClass = Registry.forService(serviceProtocol)
+        let routerClass = Registry.router(forService: serviceProtocol)
         assert((routerClass?.completeSynchronously())!,"router class (\(String(describing: routerClass))) can't get destination synchronously")
         routerClass?.perform(configure: { config in
             config.prepareForRoute = { d in
@@ -368,7 +368,7 @@ extension Registry {
         preparation prepare: ((Config) -> Swift.Void)? = nil
         ) -> Any? {
         var destination: Any?
-        let routerClass = Registry.forServiceModule(configProtocol)
+        let routerClass = Registry.router(forServiceModule: configProtocol)
         assert((routerClass?.completeSynchronously())!,"router class (\(String(describing: routerClass))) can't get destination synchronously")
         routerClass?.perform(configure: { config in
             if config is Config {
