@@ -14,8 +14,6 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-@class ZIKRouteConfiguration;
-
 ///Methods for ZIKRouter subclass
 @protocol ZIKRouterProtocol <NSObject>
 @required

@@ -11,6 +11,7 @@
 
 #import <Foundation/Foundation.h>
 #import <UIKit/UIKit.h>
+#import "ZIKRouterAlias.h"
 #import "ZIKRouter.h"
 #import "ZIKRouteConfiguration.h"
 #import "ZIKViewRouterProtocol.h"

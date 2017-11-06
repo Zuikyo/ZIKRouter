@@ -14,13 +14,22 @@ import ZIKRouter
 
 extension UIViewController: NamespaceWrappable { }
 public extension TypeWrapperProtocol where WrappedType: UIViewController {
+    
+    ///See zix_routed
     public var routed: Bool {
         return wrappedValue.zix_routed
+    }
+    
+    ///See zix_removing
+    public var removing: Bool {
+        return wrappedValue.zix_removing
     }
 }
 
 extension UIView: NamespaceWrappable { }
 public extension TypeWrapperProtocol where WrappedType: UIView {
+    
+    ///See zix_routed
     public var routed: Bool {
         return wrappedValue.zix_routed
     }

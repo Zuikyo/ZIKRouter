@@ -13,15 +13,17 @@ import Foundation
 import ZIKRouter
 
 ///Type safe service module router for declared service module config protocol. Generic parameter `Module` is the config protocol of the module. See `ViewRoute` to learn how to declare a routable protocol.
+///
+///When the service module contains not only a single service class, but also other internal services, and you can't prepare the module with a simple service protocol, then you need a moudle config protocol.
 open class ServiceModuleRouter<Module> {
     
 }
 
-public protocol ServiceModuleRoutable {
+public protocol ServiceModuleRoutePerformer {
     associatedtype Module
 }
 
-public extension ServiceModuleRoutable {
+public extension ServiceModuleRoutePerformer {
     
     /// Perform route with service module config protocol and prepare the module with the protocol.
     ///
@@ -55,6 +57,6 @@ public extension ViewModuleRouter where Module: ZIKServiceModuleRoutable {
 
 ///Wrapper router for routable service module protocol.
 ///SeeAlso: `ViewRoute`.
-public struct ServiceModuleRoute<ServiceModule>: ServiceModuleRoutable {
+public struct ServiceModuleRoute<ServiceModule>: ServiceModuleRoutePerformer {
     public typealias Module = ServiceModule
 }

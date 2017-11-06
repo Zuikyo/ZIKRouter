@@ -12,7 +12,7 @@
 #import <Foundation/Foundation.h>
 
 /**
- Protocol inheriting from ZIKViewModuleRoutable can be used to fetch view router with ZIKViewRouter.forModule().
+ Protocols inheriting from ZIKViewModuleRoutable can be used to fetch view router with ZIKViewRouter.forModule().
  @discussion
  ZIKViewModuleRoutable is for:
  1. Let module declare routable protocol in header as the module's provided interface

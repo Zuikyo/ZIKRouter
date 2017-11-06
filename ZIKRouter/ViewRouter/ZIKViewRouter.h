@@ -187,18 +187,20 @@ removeConfigure:(void(NS_NOESCAPE ^ _Nullable)(RemoveConfig config))removeConfig
  
  You can register your protocol and let the view conforms to the protocol in category in your interface adapter.
  
- @param viewProtocol The protocol conformed by view to identify the routerClass. Should be a ZIKViewRoutable protocol when ZIKVIEWROUTER_CHECK is enabled. When ZIKVIEWROUTER_CHECK is disabled, the protocol doesn't need to inheriting from ZIKViewRoutable.
+ @param viewProtocol The protocol conformed by view to identify the routerClass. Should inherit from ZIKViewRoutable when ZIKVIEWROUTER_CHECK is enabled. When ZIKVIEWROUTER_CHECK is disabled, the protocol doesn't need to inheriting from ZIKViewRoutable.
  */
 + (void)registerViewProtocol:(Protocol *)viewProtocol;
 
 /**
  Register a module config protocol the router's default configuration conforms, then use ZIKViewRouter.forModule() to get the router class.
+ 
+ When the view module contains not only a single UIViewController, but also other internal services, and you can't prepare the module with a simple view protocol, then you need a moudle config protocol.
  @discussion
  If there're multi router classes for same view, and those routers provide different functions and use their subclass of ZIKViewRouteConfiguration (for example, your add a third-party library to your project, the library has a router for quickly presenting a UIAlertController, and in your project, there's a router for integrating UIAlertView and UIAlertController), then each router has to register a unique protocol for their configurations and get the right router class with this protocol, or just import the router class your want to use directly.
  
  You can register your protocol and let the configuration conforms to the protocol in category in your interface adapter.
  
- @param configProtocol The protocol conformed by default configuration of the routerClass. Should be a ZIKViewModuleRoutable protocol when ZIKVIEWROUTER_CHECK is enabled. When ZIKVIEWROUTER_CHECK is disabled, the protocol doesn't need to inheriting from ZIKViewModuleRoutable.
+ @param configProtocol The protocol conformed by default configuration of the routerClass. Should inherit from ZIKViewModuleRoutable when ZIKVIEWROUTER_CHECK is enabled. When ZIKVIEWROUTER_CHECK is disabled, the protocol doesn't need to inheriting from ZIKViewModuleRoutable.
  */
 + (void)registerModuleProtocol:(Protocol *)configProtocol;
 @end

@@ -12,7 +12,7 @@
 #import <Foundation/Foundation.h>
 
 /**
- Protocol inheriting from ZIKServiceModuleRoutable can be used to fetch service router with ZIKServiceRouter.forModule().
+ Protocols inheriting from ZIKServiceModuleRoutable can be used to fetch service router with ZIKServiceRouter.forModule().
  @discussion
  ZIKServiceModuleRoutable is for:
  1. Let module declare routable protocol in header as the module's provided interface

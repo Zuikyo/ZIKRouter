@@ -12,16 +12,16 @@
 import Foundation
 import ZIKRouter
 
-///Type safe view router for declared view protocol. Generic parameter `Destination` is the protocol conformed by the destination. See `ViewRoute` to learn how to declare a routable protocol.
+///Type safe view router for declared view protocol. Generic parameter `Destination` is the protocol conformed by the view. See `ViewRoute` to learn how to declare a routable protocol.
 open class ViewRouter<Destination> {
     
 }
 
-public protocol ViewRoutable {
+public protocol ViewRoutePerformer {
     associatedtype Destination
 }
 
-public extension ViewRoutable {
+public extension ViewRoutePerformer {
     
     /// Perform route with view protocol and prepare the destination with the protocol.
     ///
@@ -53,7 +53,8 @@ public extension ViewRouter where Destination: ZIKViewRoutable {
     }
 }
 
-/** Wrapper router for routable protocol. Only declared protocol can be used with ViewRouter:
+/**
+ Wrapper router for routable protocol. Only declared protocol can be used with ViewRouter:
 ```
 protocol AlertViewInput {
     var alertTitle: String {get set}
@@ -65,7 +66,7 @@ class AlertViewController: UIViewController, AlertViewInput {
 extension ViewRouter where Destination == AlertViewInput {
     //Be careful, don't declare a wrong type
     static var route: ViewRoute<AlertViewInput>.Type {
-    return ViewRoute<AlertViewInput>.self
+        return ViewRoute<AlertViewInput>.self
     }
 }
 
@@ -83,7 +84,7 @@ class TestViewController: UIViewController {
     }
 }
 ```
-Then if you pass an undeclared protocol to ViewRouter, there will be compiler error.
+Then if you pass an undeclared protocol to ViewRouter, there will be a compiler error (Ambiguous reference to member 'route').
 
 We have to use a wrapper just because Swift extension doesn't support inheritance clause with constraints:
 ```
@@ -92,6 +93,6 @@ extension ViewRouter: ViewRoutable where Destination == AlertViewInput {
 }
 ```
  */
-public struct ViewRoute<View>: ViewRoutable {
+public struct ViewRoute<View>: ViewRoutePerformer {
     public typealias Destination = View
 }

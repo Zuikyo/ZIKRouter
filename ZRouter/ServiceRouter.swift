@@ -12,16 +12,16 @@
 import Foundation
 import ZIKRouter
 
-///Type safe service router for declared service protocol. Generic parameter `Destination` is the protocol conformed by the destination. See `ViewRoute` to learn how to declare a routable protocol.
+///Type safe service router for declared service protocol. Generic parameter `Destination` is the protocol conformed by the service. See `ViewRoute` to learn how to declare a routable protocol.
 open class ServiceRouter<Destination> {
     
 }
 
-public protocol ServiceRoutable {
+public protocol ServiceRoutePerformer {
     associatedtype Destination
 }
 
-public extension ServiceRoutable {
+public extension ServiceRoutePerformer {
     
     /// Perform route with service protocol and prepare the destination with the protocol.
     ///
@@ -55,6 +55,6 @@ public extension ServiceRouter where Destination: ZIKServiceRoutable {
 
 ///Wrapper router for routable service protocol.
 ///SeeAlso: `ViewRoute`.
-public struct ServiceRoute<Service>: ServiceRoutable {
+public struct ServiceRoute<Service>: ServiceRoutePerformer {
     public typealias Destination = Service
 }

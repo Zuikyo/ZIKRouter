@@ -33,6 +33,13 @@
 			remoteGlobalIDString = F85F4D271F2240D2003106C3;
 			remoteInfo = libZIKRouter;
 		};
+		F8C0D10A1FAF89E2003D3B3B /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = F872F4FC1FAF5C6E00297A1D /* ZIKRouter.xcodeproj */;
+			proxyType = 1;
+			remoteGlobalIDString = F85F4CFE1F223EB0003106C3;
+			remoteInfo = ZIKRouter;
+		};
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
@@ -130,6 +137,7 @@
 			buildRules = (
 			);
 			dependencies = (
+				F8C0D10B1FAF89E2003D3B3B /* PBXTargetDependency */,
 			);
 			name = ZRouter;
 			productName = ZRouter;
@@ -219,6 +227,14 @@
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		F8C0D10B1FAF89E2003D3B3B /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			name = ZIKRouter;
+			targetProxy = F8C0D10A1FAF89E2003D3B3B /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
 
 /* Begin XCBuildConfiguration section */
 		F872F4E71FAF5BB200297A1D /* Debug */ = {

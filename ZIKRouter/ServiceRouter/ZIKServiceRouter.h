@@ -125,14 +125,16 @@ typedef void(^ZIKServiceRouteGlobalErrorHandler)(__kindof ZIKServiceRouter * _Nu
 /**
  Register a service protocol that all services registered with the router conform to, then use ZIKServiceRouter.forService() to get the router class.You can register your protocol and let the service conforms to the protocol in category in your interface adapter.
  
- @param serviceProtocol The protocol conformed by service to identify the routerClass. Should be a ZIKServiceRoutable protocol when ZIKSERVICEROUTER_CHECK is enabled. When ZIKSERVICEROUTER_CHECK is disabled, the protocol doesn't need to inheriting from ZIKServiceRoutable.
+ @param serviceProtocol The protocol conformed by service to identify the routerClass. Should inherit from ZIKServiceRoutable when ZIKSERVICEROUTER_CHECK is enabled. When ZIKSERVICEROUTER_CHECK is disabled, the protocol doesn't need to inheriting from ZIKServiceRoutable.
  */
 + (void)registerServiceProtocol:(Protocol *)serviceProtocol;
 
 /**
- Register a module config protocol the router's default configuration conforms, then use ZIKServiceRouter.forModule() to get the router class.You can register your protocol and let the configuration conforms to the protocol in category in your interface adapter.
+ Register a module config protocol the router's default configuration conforms, then use ZIKServiceRouter.forModule() to get the router class. You can register your protocol and let the configuration conforms to the protocol in category in your interface adapter.
  
- @param configProtocol The protocol conformed by default configuration of the routerClass. Should be a ZIKServiceModuleRoutable protocol when ZIKSERVICEROUTER_CHECK is enabled. When ZIKSERVICEROUTER_CHECK is disabled, the protocol doesn't need to inheriting from ZIKServiceModuleRoutable.
+ When the service module contains not only a single service class, but also other internal services, and you can't prepare the module with a simple service protocol, then you need a moudle config protocol.
+ 
+ @param configProtocol The protocol conformed by default configuration of the routerClass. Should inherit from ZIKServiceModuleRoutable when ZIKSERVICEROUTER_CHECK is enabled. When ZIKSERVICEROUTER_CHECK is disabled, the protocol doesn't need to inheriting from ZIKServiceModuleRoutable.
  */
 + (void)registerModuleProtocol:(Protocol *)configProtocol;
 @end

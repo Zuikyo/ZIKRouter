@@ -13,15 +13,17 @@ import Foundation
 import ZIKRouter
 
 ///Type safe view module router for declared view module config protocol. Generic parameter `Module` is the config protocol of the module. See `ViewRoute` to learn how to declare a routable protocol.
+///
+///When the view module contains not only a single UIViewController, but also other internal services, and you can't prepare the module with a simple view protocol, then you need a moudle config protocol.
 open class ViewModuleRouter<Module> {
     
 }
 
-public protocol ViewModuleRoutable {
+public protocol ViewModuleRoutePerformer {
     associatedtype Module
 }
 
-public extension ViewModuleRoutable {
+public extension ViewModuleRoutePerformer {
     
     /// Perform route with view module config protocol and prepare the module with the protocol.
     ///
@@ -55,6 +57,6 @@ public extension ViewModuleRouter where Module: ZIKViewModuleRoutable {
 
 ///Wrapper router for routable view module protocol.
 ///SeeAlso: `ViewRoute`.
-public struct ViewModuleRoute<ViewModule>: ViewModuleRoutable {
+public struct ViewModuleRoute<ViewModule>: ViewModuleRoutePerformer {
     public typealias Module = ViewModule
 }

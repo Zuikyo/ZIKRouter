@@ -76,7 +76,7 @@
 
 - (IBAction)performSegueForUnroutableDestination:(id)sender {
     //If destination doesn't comform to ZIKRoutableView, just use ZIKViewRouter to perform the segue.
-    self.segueRouter = [ZIKViewRouter<ZIKViewRouteConfiguration *, ZIKViewRemoveConfiguration *>
+    self.segueRouter = [ZIKDefaultViewRouter
                         performWithConfigure:^(ZIKViewRouteConfiguration * _Nonnull config) {
                             config.source = self;
                             config.routeType = ZIKViewRouteTypePerformSegue;
