@@ -97,7 +97,7 @@
 			isa = PBXContainerItemProxy;
 			containerPortal = F872F4B61FAF58CD00297A1D /* ZRouter.xcodeproj */;
 			proxyType = 1;
-			remoteGlobalIDString = F82F40D11F94D96000246596;
+			remoteGlobalIDString = F872F4E01FAF5BB200297A1D;
 			remoteInfo = ZRouter;
 		};
 /* End PBXContainerItemProxy section */

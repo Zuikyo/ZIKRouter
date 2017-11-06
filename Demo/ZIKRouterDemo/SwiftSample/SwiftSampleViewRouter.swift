@@ -10,26 +10,24 @@ import UIKit
 import ZIKRouter
 import ZRouter
 
-//Declare SwiftSampleViewController is routable
-extension SwiftSampleViewController: ZIKRoutableView {
-}
-
 protocol SwiftSampleViewConfig {
     
 }
 
+//Custom configuration of this router.
 class SwiftSampleViewConfiguration: ZIKViewRouteConfiguration, SwiftSampleViewConfig {
     override func copy(with zone: NSZone? = nil) -> Any {
         return super.copy(with: zone)
     }
 }
 
+//Router for SwiftSampleViewController.
 class SwiftSampleViewRouter: ZIKViewRouter<SwiftSampleViewConfiguration, ZIKViewRemoveConfiguration> {
     override class func registerRoutableDestination() {
         registerView(SwiftSampleViewController.self)
         registerViewProtocol(SwiftSampleViewInput.self)
-        Registry.register(viewProtocol: PureSwiftSampleViewInput.self, forRouter: self)
-        Registry.register(viewModule: SwiftSampleViewConfig.self, forRouter: self)
+        Registry.register(RoutableView<PureSwiftSampleViewInput>(), forRouter: self)
+        Registry.register(RoutableViewModule<SwiftSampleViewConfig>(), forRouter: self)
     }
     
     override class func defaultRouteConfiguration() -> ZIKViewRouteConfiguration {
@@ -51,26 +49,26 @@ class SwiftSampleViewRouter: ZIKViewRouter<SwiftSampleViewConfiguration, ZIKView
     }
     override func prepareDestination(_ destination: Any, configuration: ZIKViewRouteConfiguration) {
         if let dest = destination as? SwiftSampleViewController {
-            dest.alertRouterClass = Registry.router(forViewModule: ZIKCompatibleAlertConfigProtocol.self)! as AnyClass as! ZIKViewRouter<ZIKViewRouteConfiguration & ZIKCompatibleAlertConfigProtocol, ZIKViewRemoveConfiguration>.Type
+            dest.alertRouterClass = Registry.router(for: RoutableViewModule<ZIKCompatibleAlertConfigProtocol>())! as AnyClass as! ConfigurableViewRouter<ViewRouteConfig & ZIKCompatibleAlertConfigProtocol>.Type
         }
     }
 }
 
-extension ViewRouter where Destination == SwiftSampleViewInput {
-    static var route: ViewRoute<SwiftSampleViewInput>.Type {
-        return ViewRoute<SwiftSampleViewInput>.self
-    }
+// MARK: Declare Routable
+
+//Declare SwiftSampleViewController is routable
+extension SwiftSampleViewController: ZIKRoutableView {
 }
 
-extension ViewRouter where Destination == PureSwiftSampleViewInput {
-    static var route: ViewRoute<PureSwiftSampleViewInput>.Type {
-        return ViewRoute<PureSwiftSampleViewInput>.self
-    }
+//Declare PureSwiftSampleViewInput is routable
+extension RoutableView where Protocol == PureSwiftSampleViewInput {
+    init() { }
 }
-
-extension ViewModuleRouter where Module == SwiftSampleViewConfig {
-    static var route: ViewModuleRoute<SwiftSampleViewConfig>.Type {
-        return ViewModuleRoute<SwiftSampleViewConfig>.self
-    }
+//Declare PureSwiftSampleViewInput is routable
+extension RoutableView where Protocol == PureSwiftSampleViewInput2 {
+    init() { }
 }
-
+//Declare SwiftSampleViewConfig is routable
+extension RoutableViewModule where Protocol == SwiftSampleViewConfig {
+    init() { }
+}

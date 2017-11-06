@@ -13,21 +13,21 @@ import ZIKRouter.Internal
 import ZIKRouter.Private
 
 ///Router with type safe convenient methods for ZIKRouter.
-internal class Router {
+public class Router {
     
     /// Perform route with view protocol and prepare the destination with the protocol.
     ///
     /// - Parameters:
-    ///   - viewProtocol: The view protocol registered with a view router.
+    ///   - routableView: A routable entry carrying a view protocol.
     ///   - configure: Configure the configuration for view route.
     ///   - prepare: Prepare the destination with the protocol.
     /// - Returns: The view router.
-    internal static func perform<Destination>(
-        forViewProtocol viewProtocol:Destination.Type,
+    public static func perform<Destination>(
+        for routableView: RoutableView<Destination>,
         routeConfig configure: (ViewRouteConfig) -> Swift.Void,
         preparation prepare: ((Destination) -> Swift.Void)? = nil
         ) -> DefaultViewRouter? {
-        return Registry.router(forView: viewProtocol)?.perform(configure: { config in
+        return Registry.router(for: routableView)?.perform(configure: { config in
             configure(config)
             config.prepareForRoute = { d in
                 if let destination = d as? Destination {
@@ -40,18 +40,18 @@ internal class Router {
     /// Perform route with view config protocol and prepare the module with the protocol.
     ///
     /// - Parameters:
-    ///   - configProtocol: The config protocol registered with a view router.
+    ///   - routableViewModule: A routabe entry carrying a view module config protocol.
     ///   - configure: Configure the configuration for view route.
     ///   - prepare: Prepare the module with the protocol.
     /// - Returns: The view router.
-    internal static func perform<Config>(
-        forViewModule configProtocol:Config.Type,
+    public static func perform<Module>(
+        for routableViewModule: RoutableViewModule<Module>,
         routeConfig configure: (ViewRouteConfig) -> Swift.Void,
-        preparation prepare: ((Config) -> Swift.Void)? = nil
+        preparation prepare: ((Module) -> Swift.Void)? = nil
         ) -> DefaultViewRouter? {
-        return Registry.router(forViewModule: configProtocol)?.perform(configure: { config in
+        return Registry.router(for: routableViewModule)?.perform(configure: { config in
             configure(config)
-            if let configuration = config as? Config {
+            if let configuration = config as? Module {
                 prepare?(configuration)
             }
         })
@@ -60,16 +60,16 @@ internal class Router {
     /// Perform route with service protocol and prepare the destination with the protocol.
     ///
     /// - Parameters:
-    ///   - serviceProtocol: The service protocol registered with a service router.
+    ///   - routableService: A routabe entry carrying a service protocol.
     ///   - configure: Configure the configuration for service route.
     ///   - prepare: Prepare the destination with the protocol.
     /// - Returns: The service router.
-    internal static func perform<Destination>(
-        forServiceProtocol serviceProtocol:Destination.Type,
+    public static func perform<Destination>(
+        for routableService: RoutableService<Destination>,
         routeConfig configure: (ServiceRouteConfig) -> Swift.Void,
         preparation prepare: ((Destination) -> Swift.Void)? = nil
         ) -> DefaultServiceRouter? {
-        return Registry.router(forService: serviceProtocol)?.perform(configure: { config in
+        return Registry.router(for: routableService)?.perform(configure: { config in
             configure(config)
             config.prepareForRoute = { d in
                 if let destination = d as? Destination {
@@ -82,16 +82,16 @@ internal class Router {
     /// Perform route with service module config protocol and prepare the module with the protocol.
     ///
     /// - Parameters:
-    ///   - configProtocol: The module config protocol registered with a service router.
+    ///   - routableServiceModule: A routabe entry carrying a module config protocol.
     ///   - configure: Configure the configuration for service route.
     ///   - prepare: Prepare the module with the protocol.
     /// - Returns: The service router.
-    internal static func perform<Module>(
-        forServiceModule configProtocol:Module.Type,
+    public static func perform<Module>(
+        for routableServiceModule: RoutableServiceModule<Module>,
         routeConfig configure: (ServiceRouteConfig) -> Swift.Void,
         preparation prepare: ((Module) -> Swift.Void)? = nil
         ) -> DefaultServiceRouter? {
-        return Registry.router(forServiceModule: configProtocol)?.perform(configure: { config in
+        return Registry.router(for: routableServiceModule)?.perform(configure: { config in
             configure(config)
             if let configuration = config as? Module {
                 prepare?(configuration)
@@ -106,15 +106,15 @@ extension Router {
     /// Get view destination conforming the view protocol.
     ///
     /// - Parameters:
-    ///   - viewProtocol: The view protocol registered with a view router.
+    ///   - routableView: A routabe entry carrying a view protocol.
     ///   - prepare: Prepare the destination with the protocol.
     /// - Returns: The view destination.
-    internal static func makeDestination<Destination>(
-        forViewProtocol viewProtocol:Destination.Type,
+    public static func makeDestination<Destination>(
+        for routableView: RoutableView<Destination>,
         preparation prepare: ((Destination) -> Swift.Void)? = nil
         ) -> Destination? {
         var destination: Destination?
-        let routerClass = Registry.router(forView: viewProtocol)
+        let routerClass = Registry.router(for: routableView)
         assert((routerClass?.completeSynchronously())!,"router class (\(String(describing: routerClass))) can't get destination synchronously.")
         routerClass?.perform(configure: { config in
             config.routeType = ViewRouteType.getDestination
@@ -134,15 +134,15 @@ extension Router {
     /// Get view destination with view config protocol.
     ///
     /// - Parameters:
-    ///   - configProtocol: The config protocol registered with a view router.
+    ///   - routableViewModule: A routabe entry carrying a view module config protocol.
     ///   - prepare: Prepare the module with the protocol.
     /// - Returns: The view destination.
-    internal static func makeDestination<Module>(
-        forViewModule configProtocol:Module.Type,
+    public static func makeDestination<Module>(
+        for routableViewModule: RoutableViewModule<Module>,
         preparation prepare: ((Module) -> Swift.Void)? = nil
         ) -> Any? {
         var destination: Any?
-        let routerClass = Registry.router(forViewModule: configProtocol)
+        let routerClass = Registry.router(for: routableViewModule)
         assert((routerClass?.completeSynchronously())!,"router class (\(String(describing: routerClass))) can't get destination synchronously")
         routerClass?.perform(configure: { config in
             config.routeType = ViewRouteType.getDestination
@@ -159,15 +159,15 @@ extension Router {
     /// Get service destination conforming the service protocol.
     ///
     /// - Parameters:
-    ///   - serviceProtocol: The service protocol registered with a service router.
+    ///   - routableService: A routabe entry carrying a service protocol.
     ///   - prepare: Prepare the destination with the protocol.
     /// - Returns: The service destination.
-    internal static func makeDestination<Destination>(
-        forServiceProtocol serviceProtocol:Destination.Type,
+    public static func makeDestination<Destination>(
+        for routableService: RoutableService<Destination>,
         preparation prepare: ((Destination) -> Swift.Void)? = nil
         ) -> Destination? {
         var destination: Destination?
-        let routerClass = Registry.router(forService: serviceProtocol)
+        let routerClass = Registry.router(for: routableService)
         assert((routerClass?.completeSynchronously())!,"router class (\(String(describing: routerClass))) can't get destination synchronously")
         routerClass?.perform(configure: { config in
             config.prepareForRoute = { d in
@@ -186,15 +186,15 @@ extension Router {
     /// Get service destination with service config protocol.
     ///
     /// - Parameters:
-    ///   - configProtocol: The config protocol registered with a service router.
+    ///   - routableServiceModule: A routabe entry carrying a service module config protocol.
     ///   - prepare: Prepare the module with the protocol.
     /// - Returns: The service destination.
-    internal static func makeDestination<Config>(
-        forServiceModule configProtocol:Config.Type,
+    public static func makeDestination<Config>(
+        for routableServiceModule: RoutableServiceModule<Config>,
         preparation prepare: ((Config) -> Swift.Void)? = nil
         ) -> Any? {
         var destination: Any?
-        let routerClass = Registry.router(forServiceModule: configProtocol)
+        let routerClass = Registry.router(for: routableServiceModule)
         assert((routerClass?.completeSynchronously())!,"router class (\(String(describing: routerClass))) can't get destination synchronously")
         routerClass?.perform(configure: { config in
             if config is Config {

@@ -18,8 +18,11 @@ import ZRouter
 protocol PureSwiftSampleViewInput {
     
 }
+protocol PureSwiftSampleViewInput2 {
+    
+}
 
-class SwiftSampleViewController: UIViewController,PureSwiftSampleViewInput, SwiftSampleViewInput, ZIKInfoViewDelegate {
+class SwiftSampleViewController: UIViewController,PureSwiftSampleViewInput, PureSwiftSampleViewInput2, SwiftSampleViewInput, ZIKInfoViewDelegate {
     var infoRouter: DefaultViewRouter?
     var alertRouter: ConfigurableViewRouter<ViewRouteConfig & ZIKCompatibleAlertConfigProtocol>?
     
@@ -31,11 +34,13 @@ class SwiftSampleViewController: UIViewController,PureSwiftSampleViewInput, Swif
     }
     
     func testSwiftyRouteForView() {
-        infoRouter = ViewRouter<ZIKInfoViewProtocol>.route
-            .perform(routeConfig: { config in
+        infoRouter = Router.perform(
+            for: RoutableView<ZIKInfoViewProtocol>(),
+            routeConfig: { config in
                 config.source = self
                 config.routeType = ViewRouteType.presentModally
-            }, preparation: { [weak self] destination in
+        },
+            preparation: { [weak self] destination in
                 destination.delegate = self
                 destination.name = "zuik"
                 destination.age = 18
@@ -43,7 +48,7 @@ class SwiftSampleViewController: UIViewController,PureSwiftSampleViewInput, Swif
     }
     
     func testRouteForView() {
-        infoRouter = Registry.router(forView: ZIKInfoViewProtocol.self)?.perform { config in
+        infoRouter = Registry.router(for: RoutableView<ZIKInfoViewProtocol>())?.perform { config in
             config.source = self
             config.routeType = ViewRouteType.presentModally
             config.prepareForRoute = { [weak self] d in
@@ -70,8 +75,9 @@ class SwiftSampleViewController: UIViewController,PureSwiftSampleViewInput, Swif
     }
     
     func testSwiftyRouteForConfig() {
-        let router = ViewModuleRouter<ZIKCompatibleAlertConfigProtocol>.route
-            .perform(routeConfig: { config in
+        let router = Router.perform(
+            for: RoutableViewModule<ZIKCompatibleAlertConfigProtocol>(),
+            routeConfig: { config in
                 config.source = self
                 config.routeCompletion = { d in
                     print("show custom alert complete")
@@ -79,7 +85,8 @@ class SwiftSampleViewController: UIViewController,PureSwiftSampleViewInput, Swif
                 config.errorHandler = { (action, error) in
                     print("show custom alert failed: %@",error)
                 }
-            }, preparation: { module in
+        },
+            preparation: ({ module in
                 module.title = "Compatible Alert"
                 module.message = "Test custom route for alert with UIAlertView and UIAlertController"
                 module.addCancelButtonTitle("Cancel", handler: {
@@ -88,13 +95,13 @@ class SwiftSampleViewController: UIViewController,PureSwiftSampleViewInput, Swif
                 module.addOtherButtonTitle("Hello", handler: {
                     print("Tap Hello alert")
                 })
-            })
+            }))
         alertRouter = (router as! ConfigurableViewRouter<ViewRouteConfig & ZIKCompatibleAlertConfigProtocol>)
     }
     
     func testRouteForConfig() {
         let router: DefaultViewRouter?
-        router = Registry.router(forViewModule: ZIKCompatibleAlertConfigProtocol.self)?.perform { configuration in
+        router = Registry.router(for: RoutableViewModule<ZIKCompatibleAlertConfigProtocol>())?.perform { configuration in
             guard let config = configuration as? ViewRouteConfig & ZIKCompatibleAlertConfigProtocol else {
                 return
             }
@@ -139,7 +146,7 @@ class SwiftSampleViewController: UIViewController,PureSwiftSampleViewInput, Swif
     }
 
     @IBAction func testRouteForSwiftService(_ sender: Any) {
-        let service = ServiceRouter<SwiftServiceInput>.route.makeDestination()
+        let service = Router.makeDestination(for: RoutableService<SwiftServiceInput>())
         service?.swiftFunction()
     }
     /*

@@ -10,22 +10,25 @@ import Foundation
 import ZIKRouter
 import ZRouter
 
-//Declare SwiftService is routable
-extension SwiftService: ZIKRoutableService {
-}
-//Declare SwiftServiceInput is routable
-extension ServiceRouter where Destination == SwiftServiceInput {
-    static var route: ServiceRoute<SwiftServiceInput>.Type {
-        return ServiceRoute<SwiftServiceInput>.self
-    }
-}
-
 class SwiftServiceRouter: ZIKServiceRouter<ZIKServiceRouteConfiguration, ZIKRouteConfiguration> {
     override class func registerRoutableDestination() {
         registerService(SwiftService.self)
-        Registry.register(serviceProtocol: SwiftServiceInput.self, forRouter: self)
+        Registry.register(RoutableService<SwiftServiceInput>(), forRouter: self)
     }
     override func destination(with configuration: ZIKServiceRouteConfiguration) -> ZIKRoutableService? {
         return SwiftService()
     }
+}
+
+// MARK: Declare Routable
+
+//Declare SwiftService is routable
+extension SwiftService: ZIKRoutableService {
+}
+//Declare SwiftServiceInput is routable
+extension RoutableService where Protocol == SwiftServiceInput {
+    init() { }
+}
+extension RoutableService where Protocol == SwiftServiceInput2 {
+    init() { }
 }
