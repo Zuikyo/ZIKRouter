@@ -13,6 +13,7 @@
 #import "ZIKViewRouterInternal.h"
 #import "ZIKPresentationState.h"
 #import "ZIKRouterInternal.h"
+#import "ZIKViewRouteError.h"
 
 @interface ZIKViewRouter()
 + (void)_callbackGlobalErrorHandlerWithRouter:(__kindof ZIKViewRouter *)router action:(SEL)action error:(NSError *)error;

@@ -13,6 +13,7 @@
 #import "ZIKRouterInternal.h"
 #import "ZIKViewRouterInternal.h"
 #import "ZIKViewRouterPrivate.h"
+#import "ZIKViewRouteError.h"
 #import <objc/runtime.h>
 #import "ZIKRouterRuntimeHelper.h"
 #import "UIViewController+ZIKViewRouter.h"
@@ -29,7 +30,6 @@ NSNotificationName kZIKViewRouteDidPerformRouteNotification = @"kZIKViewRouteDid
 NSNotificationName kZIKViewRouteWillRemoveRouteNotification = @"kZIKViewRouteWillRemoveRouteNotification";
 NSNotificationName kZIKViewRouteDidRemoveRouteNotification = @"kZIKViewRouteDidRemoveRouteNotification";
 NSNotificationName kZIKViewRouteRemoveRouteCanceledNotification = @"kZIKViewRouteRemoveRouteCanceledNotification";
-NSString *const kZIKViewRouteErrorDomain = @"kZIKViewRouteErrorDomain";
 
 static BOOL _isLoadFinished = NO;
 static CFMutableDictionaryRef g_viewProtocolToRouterMap;

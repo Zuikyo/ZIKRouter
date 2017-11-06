@@ -18,6 +18,7 @@
 #import "ZIKViewRouter.h"
 #import "ZIKViewRouter+Discover.h"
 #import "ZIKViewRouteConfiguration.h"
+#import "ZIKViewRouteError.h"
 #import "ZIKServiceRouter.h"
 #import "ZIKServiceRouter+Discover.h"
 #import "ZIKServiceRouteConfiguration.h"
