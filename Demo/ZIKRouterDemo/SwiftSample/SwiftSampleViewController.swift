@@ -43,7 +43,7 @@ class SwiftSampleViewController: UIViewController,PureSwiftSampleViewInput, Swif
     }
     
     func testRouteForView() {
-        infoRouter = Router.router(forViewProtocol: ZIKInfoViewProtocol.self)?.perform { config in
+        infoRouter = Registry.router(forView: ZIKInfoViewProtocol.self)?.perform { config in
             config.source = self
             config.routeType = ViewRouteType.presentModally
             config.prepareForRoute = { [weak self] d in
@@ -94,7 +94,7 @@ class SwiftSampleViewController: UIViewController,PureSwiftSampleViewInput, Swif
     
     func testRouteForConfig() {
         let router: DefaultViewRouter?
-        router = Router.router(forViewModule: ZIKCompatibleAlertConfigProtocol.self)?.perform { configuration in
+        router = Registry.router(forViewModule: ZIKCompatibleAlertConfigProtocol.self)?.perform { configuration in
             guard let config = configuration as? ViewRouteConfig & ZIKCompatibleAlertConfigProtocol else {
                 return
             }

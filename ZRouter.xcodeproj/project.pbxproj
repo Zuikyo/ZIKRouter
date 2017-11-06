@@ -13,9 +13,10 @@
 		F872F4F61FAF5BD600297A1D /* ViewExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = F872F4EE1FAF5BD500297A1D /* ViewExtension.swift */; };
 		F872F4F71FAF5BD600297A1D /* ViewModuleRouter.swift in Sources */ = {isa = PBXBuildFile; fileRef = F872F4EF1FAF5BD500297A1D /* ViewModuleRouter.swift */; };
 		F872F4F81FAF5BD600297A1D /* Alias.swift in Sources */ = {isa = PBXBuildFile; fileRef = F872F4F01FAF5BD500297A1D /* Alias.swift */; };
-		F872F4F91FAF5BD600297A1D /* Router.swift in Sources */ = {isa = PBXBuildFile; fileRef = F872F4F11FAF5BD500297A1D /* Router.swift */; };
+		F872F4F91FAF5BD600297A1D /* Registry.swift in Sources */ = {isa = PBXBuildFile; fileRef = F872F4F11FAF5BD500297A1D /* Registry.swift */; };
 		F872F4FA1FAF5BD600297A1D /* ServiceRouter.swift in Sources */ = {isa = PBXBuildFile; fileRef = F872F4F21FAF5BD500297A1D /* ServiceRouter.swift */; };
 		F872F4FB1FAF5BD600297A1D /* Namespace.swift in Sources */ = {isa = PBXBuildFile; fileRef = F872F4F31FAF5BD500297A1D /* Namespace.swift */; };
+		F8C0D1161FB034B5003D3B3B /* Router.swift in Sources */ = {isa = PBXBuildFile; fileRef = F8C0D1151FB034B5003D3B3B /* Router.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -51,10 +52,11 @@
 		F872F4EE1FAF5BD500297A1D /* ViewExtension.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ViewExtension.swift; sourceTree = "<group>"; };
 		F872F4EF1FAF5BD500297A1D /* ViewModuleRouter.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ViewModuleRouter.swift; sourceTree = "<group>"; };
 		F872F4F01FAF5BD500297A1D /* Alias.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Alias.swift; sourceTree = "<group>"; };
-		F872F4F11FAF5BD500297A1D /* Router.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Router.swift; sourceTree = "<group>"; };
+		F872F4F11FAF5BD500297A1D /* Registry.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Registry.swift; sourceTree = "<group>"; };
 		F872F4F21FAF5BD500297A1D /* ServiceRouter.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ServiceRouter.swift; sourceTree = "<group>"; };
 		F872F4F31FAF5BD500297A1D /* Namespace.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Namespace.swift; sourceTree = "<group>"; };
 		F872F4FC1FAF5C6E00297A1D /* ZIKRouter.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; path = ZIKRouter.xcodeproj; sourceTree = "<group>"; };
+		F8C0D1151FB034B5003D3B3B /* Router.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Router.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -89,7 +91,8 @@
 			isa = PBXGroup;
 			children = (
 				F872F4F01FAF5BD500297A1D /* Alias.swift */,
-				F872F4F11FAF5BD500297A1D /* Router.swift */,
+				F872F4F11FAF5BD500297A1D /* Registry.swift */,
+				F8C0D1151FB034B5003D3B3B /* Router.swift */,
 				F872F4ED1FAF5BD500297A1D /* ViewRouter.swift */,
 				F872F4EF1FAF5BD500297A1D /* ViewModuleRouter.swift */,
 				F872F4F21FAF5BD500297A1D /* ServiceRouter.swift */,
@@ -219,8 +222,9 @@
 				F872F4F41FAF5BD600297A1D /* ServiceModuleRouter.swift in Sources */,
 				F872F4FA1FAF5BD600297A1D /* ServiceRouter.swift in Sources */,
 				F872F4F51FAF5BD600297A1D /* ViewRouter.swift in Sources */,
+				F8C0D1161FB034B5003D3B3B /* Router.swift in Sources */,
 				F872F4F71FAF5BD600297A1D /* ViewModuleRouter.swift in Sources */,
-				F872F4F91FAF5BD600297A1D /* Router.swift in Sources */,
+				F872F4F91FAF5BD600297A1D /* Registry.swift in Sources */,
 				F872F4F81FAF5BD600297A1D /* Alias.swift in Sources */,
 				F872F4FB1FAF5BD600297A1D /* Namespace.swift in Sources */,
 			);
