@@ -10,7 +10,7 @@ import UIKit
 import ZIKRouter
 import ZRouter
 
-///Mark the protocol routable 
+///The protocol is routable in both Swift and objc.
 @objc public protocol SwiftSampleViewInput: ZIKViewRoutable {
     
 }
@@ -22,7 +22,8 @@ protocol PureSwiftSampleViewInput2 {
     
 }
 
-class SwiftSampleViewController: UIViewController,PureSwiftSampleViewInput, PureSwiftSampleViewInput2, SwiftSampleViewInput, ZIKInfoViewDelegate {
+// Show how ZIKRouter working in a swifty way.
+class SwiftSampleViewController: UIViewController, PureSwiftSampleViewInput, PureSwiftSampleViewInput2, SwiftSampleViewInput, ZIKInfoViewDelegate {
     var infoRouter: DefaultViewRouter?
     var alertRouter: ConfigurableViewRouter<ViewRouteConfig & ZIKCompatibleAlertConfigProtocol>?
     
@@ -30,10 +31,6 @@ class SwiftSampleViewController: UIViewController,PureSwiftSampleViewInput, Pure
     var alertRouterClass: ConfigurableViewRouter<ViewRouteConfig & ZIKCompatibleAlertConfigProtocol>.Type!
     
     @IBAction func testRouteForView(_ sender: Any) {
-        testSwiftyRouteForView()
-    }
-    
-    func testSwiftyRouteForView() {
         infoRouter = Router.perform(
             for: RoutableView<ZIKInfoViewProtocol>(),
             routeConfig: { config in
@@ -44,22 +41,7 @@ class SwiftSampleViewController: UIViewController,PureSwiftSampleViewInput, Pure
                 destination.delegate = self
                 destination.name = "zuik"
                 destination.age = 18
-            })
-    }
-    
-    func testRouteForView() {
-        infoRouter = Registry.router(for: RoutableView<ZIKInfoViewProtocol>())?.perform { config in
-            config.source = self
-            config.routeType = ViewRouteType.presentModally
-            config.prepareForRoute = { [weak self] d in
-                guard let destination = d as? ZIKInfoViewProtocol else {
-                    return
-                }
-                destination.delegate = self
-                destination.name = "zuik"
-                destination.age = 18
-            }
-        }
+        })
     }
     
     func handleRemoveInfoViewController(_ infoViewController: UIViewController!) {
@@ -71,10 +53,6 @@ class SwiftSampleViewController: UIViewController,PureSwiftSampleViewInput, Pure
     }
     
     @IBAction func testRouteForConfig(_ sender: Any) {
-        testSwiftyRouteForConfig()
-    }
-    
-    func testSwiftyRouteForConfig() {
         let router = Router.perform(
             for: RoutableViewModule<ZIKCompatibleAlertConfigProtocol>(),
             routeConfig: { config in
@@ -96,31 +74,6 @@ class SwiftSampleViewController: UIViewController,PureSwiftSampleViewInput, Pure
                     print("Tap Hello alert")
                 })
             }))
-        alertRouter = (router as! ConfigurableViewRouter<ViewRouteConfig & ZIKCompatibleAlertConfigProtocol>)
-    }
-    
-    func testRouteForConfig() {
-        let router: DefaultViewRouter?
-        router = Registry.router(for: RoutableViewModule<ZIKCompatibleAlertConfigProtocol>())?.perform { configuration in
-            guard let config = configuration as? ViewRouteConfig & ZIKCompatibleAlertConfigProtocol else {
-                return
-            }
-            config.source = self
-            config.title = "Compatible Alert"
-            config.message = "Test custom route for alert with UIAlertView and UIAlertController"
-            config.addCancelButtonTitle("Cancel", handler: {
-                print("Tap cancel alert")
-            })
-            config.addOtherButtonTitle("Hello", handler: {
-                print("Tap Hello alert")
-            })
-            config.routeCompletion = { d in
-                print("show custom alert complete")
-            }
-            config.errorHandler = { (action, error) in
-                print("show custom alert failed: %@",error)
-            }
-        }
         alertRouter = (router as! ConfigurableViewRouter<ViewRouteConfig & ZIKCompatibleAlertConfigProtocol>)
     }
     

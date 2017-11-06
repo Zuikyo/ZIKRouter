@@ -220,10 +220,10 @@ static void _initializeZIKViewRouter(void) {
 
 
 + (_Nullable Class)validateRegisteredViewClasses:(ZIKViewClassValidater)handler {
-#if ZIKSERVICEROUTER_CHECK
+#if ZIKVIEWROUTER_CHECK
     Class routerClass = self;
     CFMutableSetRef views = (CFMutableSetRef)CFDictionaryGetValue(_check_routerToViewsMap, (__bridge const void *)(routerClass));
-    Class badClass = nil;
+    __block Class badClass = nil;
     [(__bridge NSSet *)(views) enumerateObjectsUsingBlock:^(Class  _Nonnull viewClass, BOOL * _Nonnull stop) {
         if (handler) {
             if (!handler(viewClass)) {
@@ -469,7 +469,7 @@ _Nullable Class _ZIKViewRouterForView(Protocol *viewProtocol) {
         }
     });
     if (!viewProtocol) {
-        [ZIKViewRouter _callbackError_invalidProtocolWithAction:@selector(init) errorDescription:@"ZIKViewRouter.forView() viewProtocol is nil"];
+        [ZIKViewRouter _callbackError_invalidProtocolWithAction:@selector(forView) errorDescription:@"ZIKViewRouter.forView() viewProtocol is nil"];
         return nil;
     }
     
@@ -477,7 +477,7 @@ _Nullable Class _ZIKViewRouterForView(Protocol *viewProtocol) {
     if (routerClass) {
         return routerClass;
     }
-    [ZIKViewRouter _callbackError_invalidProtocolWithAction:@selector(init)
+    [ZIKViewRouter _callbackError_invalidProtocolWithAction:@selector(forView)
                                              errorDescription:@"Didn't find view router for view protocol: %@, this protocol was not registered.",viewProtocol];
     NSCAssert1(NO, @"Didn't find view router for view protocol: %@, this protocol was not registered.",viewProtocol);
     return nil;
@@ -495,7 +495,7 @@ _Nullable Class _ZIKViewRouterForModule(Protocol *configProtocol) {
         }
     });
     if (!configProtocol) {
-        [ZIKViewRouter _callbackError_invalidProtocolWithAction:@selector(init) errorDescription:@"ZIKViewRouter.forModule() configProtocol is nil"];
+        [ZIKViewRouter _callbackError_invalidProtocolWithAction:@selector(forModule) errorDescription:@"ZIKViewRouter.forModule() configProtocol is nil"];
         return nil;
     }
     
@@ -504,7 +504,7 @@ _Nullable Class _ZIKViewRouterForModule(Protocol *configProtocol) {
         return routerClass;
     }
     
-    [ZIKViewRouter _callbackError_invalidProtocolWithAction:@selector(init)
+    [ZIKViewRouter _callbackError_invalidProtocolWithAction:@selector(forModule)
                                              errorDescription:@"Didn't find view router for config protocol: %@, this protocol was not registered.",configProtocol];
     NSCAssert1(NO, @"Didn't find view router for config protocol: %@, this protocol was not registered.",configProtocol);
     return nil;
@@ -721,7 +721,7 @@ _Nullable Class _ZIKViewRouterForModule(Protocol *configProtocol) {
         }
     }
     if (!valid) {
-        [[self class] _callbackGlobalErrorHandlerWithRouter:nil action:@selector(init) error:[[self class] errorWithCode:ZIKViewRouteErrorInvalidConfiguration localizedDescription:[NSString stringWithFormat:@"Perform route on invalid destination (%@), this view is not registered with this router (%@)",destination,self]]];
+        [[self class] _callbackGlobalErrorHandlerWithRouter:nil action:@selector(performOnDestination:configure:removeConfigure:) error:[[self class] errorWithCode:ZIKViewRouteErrorInvalidConfiguration localizedDescription:[NSString stringWithFormat:@"Perform route on invalid destination (%@), this view is not registered with this router (%@)",destination,self]]];
         NSAssert2(NO, @"Perform route on invalid destination (%@), this view is not registered with this router (%@)",destination,self);
         return nil;
     }
@@ -750,7 +750,7 @@ _Nullable Class _ZIKViewRouterForModule(Protocol *configProtocol) {
                                               configure:(void(NS_NOESCAPE ^)(ZIKViewRouteConfiguration *config))configBuilder
                                         removeConfigure:(void(NS_NOESCAPE ^ _Nullable)(ZIKViewRemoveConfiguration *config))removeConfigBuilder {
     if (![destination conformsToProtocol:@protocol(ZIKRoutableView)]) {
-        [[self class] _callbackGlobalErrorHandlerWithRouter:nil action:@selector(init) error:[[self class] errorWithCode:ZIKViewRouteErrorInvalidConfiguration localizedDescription:[NSString stringWithFormat:@"Prepare for invalid destination: (%@)",destination]]];
+        [[self class] _callbackGlobalErrorHandlerWithRouter:nil action:@selector(prepareDestination:configure:removeConfigure:) error:[[self class] errorWithCode:ZIKViewRouteErrorInvalidConfiguration localizedDescription:[NSString stringWithFormat:@"Prepare for invalid destination: (%@)",destination]]];
         NSAssert1(NO, @"Prepare for invalid destination: (%@)",destination);
         return nil;
     }
@@ -765,7 +765,7 @@ _Nullable Class _ZIKViewRouterForModule(Protocol *configProtocol) {
         }
     }
     if (!valid) {
-        [[self class] _callbackGlobalErrorHandlerWithRouter:nil action:@selector(init) error:[[self class] errorWithCode:ZIKViewRouteErrorInvalidConfiguration localizedDescription:[NSString stringWithFormat:@"Prepare for invalid destination (%@), this view is not registered with this router (%@)",destination,self]]];
+        [[self class] _callbackGlobalErrorHandlerWithRouter:nil action:@selector(prepareDestination:configure:removeConfigure:) error:[[self class] errorWithCode:ZIKViewRouteErrorInvalidConfiguration localizedDescription:[NSString stringWithFormat:@"Prepare for invalid destination (%@), this view is not registered with this router (%@)",destination,self]]];
         NSAssert2(NO, @"Prepare for invalid destination (%@), this view is not registered with this router (%@)",destination,self);
         return nil;
     }

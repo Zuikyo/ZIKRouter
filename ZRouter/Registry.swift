@@ -207,7 +207,7 @@ private class _ViewRouterValidater: ZIKViewRouteAdapter {
         for (routeKey, routerClass) in Registry.viewProtocolContainer {
             let viewProtocol = routeKey.type
             assert(routerClass.validateRegisteredViewClasses({return _swift_typeConformsToProtocol($0, viewProtocol)}) == nil,
-                   "Registered view class(\(String(describing: routerClass.validateRegisteredViewClasses{return _swift_typeConformsToProtocol($0, viewProtocol)}!))) for router \(routerClass) should conform to protocol \(viewProtocol)")
+                   "Registered view class(\(String(describing: routerClass.validateRegisteredViewClasses{return _swift_typeConformsToProtocol($0, viewProtocol)}!))) for router \(routerClass) should conform to registered view protocol \(viewProtocol).")
         }
     }
 }

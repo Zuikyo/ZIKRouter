@@ -27,11 +27,11 @@ NS_ASSUME_NONNULL_BEGIN
 /**
  Error handler for all view router, for debugging and log.
  @discussion
- Actions: init, performRoute, removeRoute, configureSegue
+ Actions: init, performRoute, removeRoute, forView, forModule, configureSegue, performOnDestination:configure:removeConfigure:, prepareDestination:configure:removeConfigure:.
 
- @param router The router where error happens
- @param routeAction The action where error happens
- @param error Error in kZIKViewRouteErrorDomain or domain from subclass router, see ZIKViewRouteError for detail
+ @param router The router where error happens.
+ @param routeAction The action where error happens.
+ @param error Error in kZIKViewRouteErrorDomain or domain from subclass router, see ZIKViewRouteError for detail.
  */
 typedef void(^ZIKViewRouteGlobalErrorHandler)(__kindof ZIKViewRouter * _Nullable router, SEL routeAction, NSError *error);
 
@@ -55,7 +55,7 @@ typedef void(^ZIKViewRouteGlobalErrorHandler)(__kindof ZIKViewRouter * _Nullable
  
  What did ZIKViewRouter hooked: -willMoveToParentViewController:, -didMoveToParentViewController:, -viewWillAppear:, -viewDidAppear:, -viewWillDisappear:, -viewDidDisappear:, -viewDidLoad, -willMoveToSuperview:, -didMoveToSuperview, -willMoveToWindow:, -didMoveToWindow, all UIViewControllers' -prepareForSegue:sender:, all UIStoryboardSegues' -perform.
  
- ZIKViewRouter hooks these methods for AOP. -willMoveToSuperview, -willMoveToWindow:, -prepareForSegue:sender: will detect if the view is registered with a router, and auto create a router if it's not routed from it's router.
+ ZIKViewRouter hooks these methods for AOP. In -willMoveToSuperview, -willMoveToWindow:, -prepareForSegue:sender:, it detects if the view is registered with a router, and auto create a router if it's not routed from it's router.
  
  About auto create:
  
