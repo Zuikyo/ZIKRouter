@@ -141,6 +141,7 @@ typedef void(^ZIKViewRouteGlobalErrorHandler)(__kindof ZIKViewRouter * _Nullable
 + (nullable ZIKViewRouter<RouteConfig,RemoveConfig> *)prepareDestination:(id)destination
                                                                configure:(void(NS_NOESCAPE ^)(RouteConfig config))configBuilder
 removeConfigure:(void(NS_NOESCAPE ^ _Nullable)(RemoveConfig config))removeConfigBuilder NS_SWIFT_NAME(prepare(destination:configure:removeConfigure:));
+
 + (nullable ZIKViewRouter<RouteConfig,RemoveConfig> *)prepareDestination:(id)destination
                                                                configure:(void(NS_NOESCAPE ^)(RouteConfig config))configBuilder NS_SWIFT_NAME(prepare(destination:configure:));
 @end

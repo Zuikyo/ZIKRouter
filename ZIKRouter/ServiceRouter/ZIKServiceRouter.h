@@ -89,23 +89,37 @@ typedef void(^ZIKServiceRouteGlobalErrorHandler)(__kindof ZIKServiceRouter * _Nu
  */
 @interface ZIKServiceRouter<ServiceRouteConfig: ZIKServiceRouteConfiguration *, ServiceRemoveConfig: ZIKRouteConfiguration *> : ZIKRouter<ServiceRouteConfig, ServiceRemoveConfig, ZIKServiceRouter *> <ZIKServiceRouterProtocol>
 
+@end
+
+@interface ZIKServiceRouter<ServiceRouteConfig: ZIKServiceRouteConfiguration *, ServiceRemoveConfig: ZIKRouteConfiguration *> (Perform)
+
 ///Convenient method to perform route
 + (nullable ZIKServiceRouter<ServiceRouteConfig, ServiceRemoveConfig> *)performWithConfigure:(void(NS_NOESCAPE ^)(ServiceRouteConfig config))configBuilder
                                                                              removeConfigure:(void(NS_NOESCAPE ^ _Nullable)(ServiceRemoveConfig config))removeConfigBuilder;
 + (nullable ZIKServiceRouter<ServiceRouteConfig, ServiceRemoveConfig> *)performWithConfigure:(void(NS_NOESCAPE ^)(ServiceRouteConfig config))configBuilder;
+
+///Default implemenation of -performXX will call routeCompletion synchronously, so the user can get service synchronously. Subclass router may return NO if it's service can only be generated asynchronously.
++ (BOOL)completeSynchronously;
+
+@end
+
+@interface ZIKServiceRouter (Factory)
 
 ///Asynchronous get destination
 + (nullable id)makeDestinationWithPreparation:(void(^ _Nullable)(id destination))prepare;
 ///Asynchronous get destination
 + (nullable id)makeDestination;
 
-///Default implemenation of -performXX will call routeCompletion synchronously, so the user can get service synchronously. Subclass router may return NO if it's service can only be generated asynchronously.
-+ (BOOL)completeSynchronously;
+@end
+
+@interface ZIKServiceRouter (ErrorHandle)
 
 ///Set error callback for all service router instance. Use this to debug and log
 + (void)setGlobalErrorHandler:(ZIKServiceRouteGlobalErrorHandler)globalErrorHandler;
 
-#pragma mark Router Register
+@end
+
+@interface ZIKServiceRouter (Register)
 
 /**
  Register a service class with it's router's class.
@@ -137,6 +151,28 @@ typedef void(^ZIKServiceRouteGlobalErrorHandler)(__kindof ZIKServiceRouter * _Nu
  @param configProtocol The protocol conformed by default configuration of the routerClass. Should inherit from ZIKServiceModuleRoutable when ZIKSERVICEROUTER_CHECK is enabled. When ZIKSERVICEROUTER_CHECK is disabled, the protocol doesn't need to inheriting from ZIKServiceModuleRoutable.
  */
 + (void)registerModuleProtocol:(Protocol *)configProtocol;
+
+@end
+
+@interface ZIKServiceRouter (Discover)
+
+/**
+ Get the router class registered with a service protocol.
+ 
+ The parameter serviceProtocol of the block is: the protocol conformed by the service. Should be a ZIKServiceRoutable protocol when ZIKSERVICEROUTER_CHECK is enabled. When ZIKSERVICEROUTER_CHECK is disabled, the protocol doesn't need to inheriting from ZIKServiceRoutable.
+ 
+ The return Class of the block is: a router class matched with the service. Return nil if protocol is nil or not declared. There will be an assert failure when result is nil.
+ */
+@property (nonatomic,class,readonly) Class _Nullable (^forService)(Protocol *serviceProtocol);
+
+/**
+ Get the router class combined with a custom ZIKRouteConfiguration conforming to a unique protocol.
+ 
+ The parameter configProtocol of the block is: the protocol conformed by defaultConfiguration of router. Should be a ZIKServiceModuleRoutable protocol when ZIKSERVICEROUTER_CHECK is enabled. When ZIKSERVICEROUTER_CHECK is disabled, the protocol doesn't need to inheriting from ZIKServiceModuleRoutable.
+ The return Class of the block is: a router class matched with the service. Return nil if protocol is nil or not declared. There will be an assert failure when result is nil.
+ */
+@property (nonatomic,class,readonly) Class _Nullable (^forModule)(Protocol *configProtocol);
+
 @end
 
 typedef NS_ENUM(NSInteger, ZIKServiceRouteError) {

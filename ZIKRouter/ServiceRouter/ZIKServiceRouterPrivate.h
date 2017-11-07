@@ -17,7 +17,7 @@ extern NSNotificationName kZIKServiceRouterRegisterCompleteNotification;
 typedef  BOOL(^ZIKServiceClassValidater)(Class serviceClass);
 
 ///Private methods.
-@interface ZIKServiceRouter ()
+@interface ZIKServiceRouter (Private)
 
 ///Is registration all finished.
 + (BOOL)_isLoadFinished;

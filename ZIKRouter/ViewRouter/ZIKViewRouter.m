@@ -1140,7 +1140,6 @@ destinationStateBeforeRoute:(ZIKPresentationState *)destinationStateBeforeRoute
             NSLog(@"⚠️Warning: segue(%@) 's destination(%@)'s state was not changed after perform route from source: %@. current state: %@. You may override %@'s -showViewController:sender:/-showDetailViewController:sender:/-presentViewController:animated:completion:/-pushViewController:animated: or use a custom segue, but didn't perform real presentation, or your presentation was async.",self,destination,source,destinationStateAfterRoute,source);
         } else {
             ZIKViewRouteDetailType routeType = [ZIKPresentationState detailRouteTypeFromStateBeforeRoute:destinationStateBeforeRoute stateAfterRoute:destinationStateAfterRoute];
-            NSLog(@"Debug: detail route type from source:%@ to destination:%@ is %@",source,destination,[ZIKPresentationState descriptionOfType:routeType]);
             router.realRouteType = [[router class] _realRouteTypeFromDetailType:routeType];
         }
         if (completion) {
