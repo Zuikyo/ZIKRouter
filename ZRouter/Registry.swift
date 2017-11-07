@@ -260,9 +260,11 @@ internal extension Registry {
 private class _ViewRouterValidater: ZIKViewRouteAdapter {
     static var observer: Any?
     override class func registerRoutableDestination() {
-        observer = NotificationCenter.default.addObserver(forName: Notification.Name.zikViewRouterRegisterComplete, object: nil, queue: OperationQueue.main) { _ in
-            NotificationCenter.default.removeObserver(observer!)
-            validateViewRouters()
+        if shouldCheckViewRouter {
+            observer = NotificationCenter.default.addObserver(forName: Notification.Name.zikViewRouterRegisterComplete, object: nil, queue: OperationQueue.main) { _ in
+                NotificationCenter.default.removeObserver(observer!)
+                validateViewRouters()
+            }
         }
     }
     class func validateViewRouters() {
@@ -278,9 +280,11 @@ private class _ViewRouterValidater: ZIKViewRouteAdapter {
 private class _ServiceRouterValidater: ZIKServiceRouteAdapter {
     static var observer: Any?
     override class func registerRoutableDestination() {
-        observer = NotificationCenter.default.addObserver(forName: Notification.Name.zikServiceRouterRegisterComplete, object: nil, queue: OperationQueue.main) { _ in
-            NotificationCenter.default.removeObserver(observer!)
-            validateServiceRouters()
+        if shouldCheckServiceRouter {
+            observer = NotificationCenter.default.addObserver(forName: Notification.Name.zikServiceRouterRegisterComplete, object: nil, queue: OperationQueue.main) { _ in
+                NotificationCenter.default.removeObserver(observer!)
+                validateServiceRouters()
+            }
         }
     }
     class func validateServiceRouters() {
