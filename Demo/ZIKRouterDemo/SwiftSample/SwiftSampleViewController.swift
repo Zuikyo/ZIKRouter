@@ -76,24 +76,24 @@ class SwiftSampleViewController: UIViewController, PureSwiftSampleViewInput, Pur
     }
     
     @IBAction func testInjectedRouter(_ sender: Any) {
-        let router = alertRouterClass
-            .perform(from: self,
-                     configuring: ({ (config) in
-                        config.title = "Compatible Alert"
-                        config.message = "Test custom route for alert with UIAlertView and UIAlertController"
-                        config.addCancelButtonTitle("Cancel", handler: {
-                            print("Tap cancel alert")
-                        })
-                        config.addOtherButtonTitle("Hello", handler: {
-                            print("Tap Hello alert")
-                        })
-                        config.routeCompletion = { d in
-                            print("show custom alert complete")
-                        }
-                        config.errorHandler = { (action, error) in
-                            print("show custom alert failed: %@",error)
-                        }
-                     }))
+        let router = alertRouterClass.perform(
+            from: self,
+            configuring: { config in
+                config.title = "Compatible Alert"
+                config.message = "Test custom route for alert with UIAlertView and UIAlertController"
+                config.addCancelButtonTitle("Cancel", handler: {
+                    print("Tap cancel alert")
+                })
+                config.addOtherButtonTitle("Hello", handler: {
+                    print("Tap Hello alert")
+                })
+                config.routeCompletion = { d in
+                    print("show custom alert complete")
+                }
+                config.errorHandler = { (action, error) in
+                    print("show custom alert failed: %@",error)
+                }
+            })
         alertRouter = router
     }
 

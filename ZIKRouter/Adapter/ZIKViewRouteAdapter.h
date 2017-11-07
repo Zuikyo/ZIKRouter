@@ -39,11 +39,15 @@ NS_ASSUME_NONNULL_BEGIN
                                               removing:(void(NS_NOESCAPE ^ _Nullable)(__kindof ZIKViewRemoveConfiguration *config))removeConfigBuilder NS_UNAVAILABLE;
 + (nullable __kindof ZIKViewRouter *)performFromSource:(nullable id<ZIKViewRouteSource>)source routeType:(ZIKViewRouteType)routeType NS_UNAVAILABLE;
 + (nullable __kindof ZIKViewRouter *)performOnDestination:(id)destination
+                                               fromSource:(nullable id<ZIKViewRouteSource>)source
                                               configuring:(void(NS_NOESCAPE ^)(__kindof ZIKViewRouteConfiguration *config))configBuilder
                                                  removing:(void(NS_NOESCAPE ^ _Nullable)(__kindof ZIKViewRemoveConfiguration *config))removeConfigBuilder NS_UNAVAILABLE;
 + (nullable __kindof ZIKViewRouter *)performOnDestination:(id)destination
+                                               fromSource:(nullable id<ZIKViewRouteSource>)source
                                               configuring:(void(NS_NOESCAPE ^)(__kindof ZIKViewRouteConfiguration *config))configBuilder NS_UNAVAILABLE;
-+ (__kindof ZIKViewRouter *)performOnDestination:(id)destination source:(nullable id<ZIKViewRouteSource>)source routeType:(ZIKViewRouteType)routeType NS_UNAVAILABLE;
++ (__kindof ZIKViewRouter *)performOnDestination:(id)destination
+                                      fromSource:(nullable id<ZIKViewRouteSource>)source
+                                       routeType:(ZIKViewRouteType)routeType NS_UNAVAILABLE;
 + (nullable __kindof ZIKViewRouter *)prepareDestination:(id)destination
                                             configuring:(void(NS_NOESCAPE ^)(__kindof ZIKViewRouteConfiguration *config))configBuilder
                                         removing:(void(NS_NOESCAPE ^ _Nullable)(__kindof ZIKViewRemoveConfiguration *config))removeConfigBuilder NS_UNAVAILABLE;

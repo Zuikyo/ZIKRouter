@@ -29,7 +29,7 @@ NS_ASSUME_NONNULL_BEGIN
  @note
  Router with ZIKViewRouteTypePerformSegue route type won't invoke this method, because destination is created from storyboard.
  
- Router created with -performOnDestination:configuring:removing: won't invoke this method.
+ Router created with -performOnDestination:fromSource:configuring:removing: won't invoke this method.
  
  This methods is only responsible for create the destination. The additional initialization should be in -prepareDestination:configuration:.
  

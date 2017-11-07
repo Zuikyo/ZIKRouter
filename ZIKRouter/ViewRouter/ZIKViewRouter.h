@@ -27,7 +27,7 @@ NS_ASSUME_NONNULL_BEGIN
 /**
  Error handler for all view router, for debugging and log.
  @discussion
- Actions: init, performRoute, removeRoute, forView, forModule, configureSegue, performOnDestination:configuring:removing:, prepareDestination:configuring:removing:.
+ Actions: init, performRoute, removeRoute, toView, toModule, configureSegue, performOnDestination:fromSource:configuring:removing:, prepareDestination:configuring:removing:.
 
  @param router The router where error happens.
  @param routeAction The action where error happens.
@@ -142,11 +142,15 @@ typedef void(^ZIKViewRouteGlobalErrorHandler)(__kindof ZIKViewRouter * _Nullable
  @return A router for the destination. If the destination is not registered with this router class, return nil and get assert failure.
  */
 + (nullable ZIKViewRouter<RouteConfig,RemoveConfig> *)performOnDestination:(id)destination
+                                                                fromSource:(nullable id<ZIKViewRouteSource>)source
                                                                configuring:(void(NS_NOESCAPE ^)(RouteConfig config))configBuilder
                                                                   removing:(void(NS_NOESCAPE ^ _Nullable)(RemoveConfig config))removeConfigBuilder;
 + (nullable ZIKViewRouter<RouteConfig,RemoveConfig> *)performOnDestination:(id)destination
+                                                                fromSource:(nullable id<ZIKViewRouteSource>)source
                                                                configuring:(void(NS_NOESCAPE ^)(RouteConfig config))configBuilder;
-+ (nullable ZIKViewRouter<RouteConfig,RemoveConfig> *)performOnDestination:(id)destination source:(nullable id<ZIKViewRouteSource>)source routeType:(ZIKViewRouteType)routeType;
++ (nullable ZIKViewRouter<RouteConfig,RemoveConfig> *)performOnDestination:(id)destination
+                                                                fromSource:(nullable id<ZIKViewRouteSource>)source
+                                                                 routeType:(ZIKViewRouteType)routeType;
 
 @end
 
