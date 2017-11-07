@@ -29,7 +29,7 @@ internal struct _RouteKey<Protocol>: Hashable {
     }
 }
 
-///Router for registering pure Swift protocol and discovering ZIKRouter subclass. It's not for performing route.
+///Registry for registering pure Swift protocol and discovering ZIKRouter subclass.
 public class Registry {
     internal static var viewProtocolContainer = [_RouteKey<Any>: DefaultViewRouter.Type]()
     internal static var viewConfigContainer = [_RouteKey<Any>: DefaultViewRouter.Type]()
@@ -207,7 +207,7 @@ private class _ViewRouterValidater: ZIKViewRouteAdapter {
         for (routeKey, routerClass) in Registry.viewProtocolContainer {
             let viewProtocol = routeKey.type
             assert(routerClass.validateRegisteredViewClasses({return _swift_typeConformsToProtocol($0, viewProtocol)}) == nil,
-                   "Registered view class(\(String(describing: routerClass.validateRegisteredViewClasses{return _swift_typeConformsToProtocol($0, viewProtocol)}!))) for router \(routerClass) should conform to registered view protocol \(viewProtocol).")
+                   "Registered view class (\(String(describing: routerClass.validateRegisteredViewClasses{return _swift_typeConformsToProtocol($0, viewProtocol)}!))) for router (\(routerClass)) should conform to registered view protocol (\(viewProtocol)).")
         }
     }
 }
@@ -225,7 +225,7 @@ private class _ServiceRouterValidater: ZIKServiceRouteAdapter {
         for (routeKey, routerClass) in Registry.serviceProtocolContainer {
             let serviceProtocol = routeKey.type
             assert(routerClass.validateRegisteredServiceClasses({return _swift_typeConformsToProtocol($0, serviceProtocol)}) == nil,
-                   "Registered service class(\(String(describing: routerClass.validateRegisteredServiceClasses{return _swift_typeConformsToProtocol($0, serviceProtocol)}!))) for router \(routerClass) should conform to protocol \(serviceProtocol)")
+                   "Registered service class (\(String(describing: routerClass.validateRegisteredServiceClasses{return _swift_typeConformsToProtocol($0, serviceProtocol)}!))) for router (\(routerClass)) should conform to service protocol (\(serviceProtocol)).")
         }
     }
 }
