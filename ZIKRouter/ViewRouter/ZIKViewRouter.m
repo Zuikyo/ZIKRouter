@@ -164,7 +164,27 @@ static void _initializeZIKViewRouter(void) {
                                               ZIKViewRouterClass, @selector(ZIKViewRouter_hook_seguePerform));
         } else if (ZIKRouter_classIsSubclassOfClass(class, ZIKViewRouterClass)) {
             IMP registerIMP = class_getMethodImplementation(objc_getMetaClass(class_getName(class)), @selector(registerRoutableDestination));
-            NSCAssert2(registerIMP, @"Router(%@) must implement +registerRoutableDestination to register destination with %@",class,class);
+            NSCAssert1(({
+                BOOL valid = YES;
+                Class superClass = class_getSuperclass(class);
+                if (superClass == ZIKViewRouterClass || ZIKRouter_classIsSubclassOfClass(superClass, ZIKViewRouterClass)) {
+                    IMP superClassIMP = class_getMethodImplementation(objc_getMetaClass(class_getName(superClass)), @selector(registerRoutableDestination));
+                    valid = (registerIMP != superClassIMP);
+                }
+                valid;
+            }), @"Router(%@) must override +registerRoutableDestination to register destination.",class);
+            NSCAssert1(({
+                BOOL valid = YES;
+                if (!ZIKRouter_classIsSubclassOfClass(class, NSClassFromString(@"ZIKViewRouteAdapter"))) {
+                    IMP destinationIMP = class_getMethodImplementation(objc_getMetaClass(class_getName(class)), @selector(destinationWithConfiguration:));
+                    Class superClass = class_getSuperclass(class);
+                    if (superClass == ZIKViewRouterClass || ZIKRouter_classIsSubclassOfClass(superClass, ZIKViewRouterClass)) {
+                        IMP superClassIMP = class_getMethodImplementation(objc_getMetaClass(class_getName(superClass)), @selector(destinationWithConfiguration:));
+                        valid = (destinationIMP != superClassIMP);
+                    }
+                }
+                valid;
+            }), @"Router(%@) must override -destinationWithConfiguration: to return destination.",class);
             void(*registerFunc)(Class, SEL) = (void(*)(Class,SEL))registerIMP;
             if (registerFunc) {
                 registerFunc(class,@selector(registerRoutableDestination));
@@ -428,7 +448,7 @@ _Nullable Class _ZIKViewRouterToModule(Protocol *configProtocol) {
 #pragma mark ZIKViewRouterProtocol
 
 + (void)registerRoutableDestination {
-    NSAssert2(NO, @"subclass(%@) must implement +registerRoutableDestination to register destination with %@",self,self);
+    NSAssert2(NO, @"subclass(%@) must override +registerRoutableDestination to register destination with %@",self,self);
 }
 
 + (ZIKViewRouteTypeMask)supportedRouteTypes {
@@ -436,7 +456,7 @@ _Nullable Class _ZIKViewRouterToModule(Protocol *configProtocol) {
 }
 
 - (id)destinationWithConfiguration:(__kindof ZIKViewRouteConfiguration *)configuration {
-    NSAssert(NO, @"Router: %@ not conforms to ZIKViewRouterProtocol！",[self class]);
+    NSAssert(NO, @"Router: %@ must override -destinationWithConfiguration: to return the destination！",[self class]);
     return nil;
 }
 

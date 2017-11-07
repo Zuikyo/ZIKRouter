@@ -85,15 +85,36 @@ void _initializeZIKServiceRouter() {
         _check_routerToServicesMap = CFDictionaryCreateMutable(kCFAllocatorDefault, 0, NULL, &kCFTypeDictionaryValueCallBacks);
     }
 #endif
+    Class ZIKServiceRouterClass = [ZIKServiceRouter class];
     ZIKRouter_enumerateClassList(^(__unsafe_unretained Class class) {
 #if ZIKSERVICEROUTER_CHECK
         if (class_conformsToProtocol(class, @protocol(ZIKRoutableService))) {
             [routableServices addObject:class];
         }
 #endif
-        if (ZIKRouter_classIsSubclassOfClass(class, [ZIKServiceRouter class])) {
+        if (ZIKRouter_classIsSubclassOfClass(class, ZIKServiceRouterClass)) {
             IMP registerIMP = class_getMethodImplementation(objc_getMetaClass(class_getName(class)), @selector(registerRoutableDestination));
-            NSCAssert2(registerIMP, @"Router(%@) must implement +registerRoutableDestination to register destination with %@",class,class);
+            NSCAssert1(({
+                BOOL valid = YES;
+                Class superClass = class_getSuperclass(class);
+                if (superClass == ZIKServiceRouterClass || ZIKRouter_classIsSubclassOfClass(superClass, ZIKServiceRouterClass)) {
+                    IMP superClassIMP = class_getMethodImplementation(objc_getMetaClass(class_getName(superClass)), @selector(registerRoutableDestination));
+                    valid = (registerIMP != superClassIMP);
+                }
+                valid;
+            }), @"Router(%@) must override +registerRoutableDestination to register destination.",class);
+            NSCAssert1(({
+                BOOL valid = YES;
+                if (!ZIKRouter_classIsSubclassOfClass(class, NSClassFromString(@"ZIKServiceRouteAdapter"))) {
+                    IMP destinationIMP = class_getMethodImplementation(objc_getMetaClass(class_getName(class)), @selector(destinationWithConfiguration:));
+                    Class superClass = class_getSuperclass(class);
+                    if (superClass == ZIKServiceRouterClass || ZIKRouter_classIsSubclassOfClass(superClass, ZIKServiceRouterClass)) {
+                        IMP superClassIMP = class_getMethodImplementation(objc_getMetaClass(class_getName(superClass)), @selector(destinationWithConfiguration:));
+                        valid = (destinationIMP != superClassIMP);
+                    }
+                }
+                valid;
+            }), @"Router(%@) must override -destinationWithConfiguration: to return destination.",class);
             void(*registerFunc)(Class, SEL) = (void(*)(Class,SEL))registerIMP;
             if (registerFunc) {
                 registerFunc(class,@selector(registerRoutableDestination));
