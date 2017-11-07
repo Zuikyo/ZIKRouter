@@ -39,6 +39,7 @@ static CFMutableDictionaryRef g_viewToDefaultRouterMap;
 static CFMutableDictionaryRef g_viewToExclusiveRouterMap;
 #if ZIKVIEWROUTER_CHECK
 static CFMutableDictionaryRef _check_routerToViewsMap;
+static CFMutableDictionaryRef _check_routerToViewProtocolsMap;
 #endif
 
 static ZIKViewRouteGlobalErrorHandler g_globalErrorHandler;
@@ -632,7 +633,9 @@ _Nullable Class _ZIKViewRouterToModule(Protocol *configProtocol) {
         NSAssert(NO, @"Bad impletment in destinationWithConfiguration: of router: %@, invalid destination: %@ !",[self class],destination);
         return;
     }
-    
+#if ZIKVIEWROUTER_CHECK
+    [self _validateDestinationConformance:destination];
+#endif
     if (![[self class] _validateRouteSourceNotMissedInConfiguration:configuration]) {
         [self notifyRouteState:ZIKRouterStateRouteFailed];
         [self _callbackError_invalidSourceWithAction:@selector(performRoute)
@@ -2776,6 +2779,22 @@ destinationStateBeforeRoute:(ZIKPresentationState *)destinationStateBeforeRoute
     return YES;
 }
 
+- (BOOL)_validateDestinationConformance:(id)destination {
+#if ZIKVIEWROUTER_CHECK
+    Class routerClass = [self class];
+    CFMutableSetRef viewProtocols = (CFMutableSetRef)CFDictionaryGetValue(_check_routerToViewProtocolsMap, (__bridge const void *)(routerClass));
+    if (viewProtocols != NULL) {
+        for (Protocol *viewProtocol in (__bridge NSSet*)viewProtocols) {
+            if (!class_conformsToProtocol([destination class], viewProtocol)) {
+                NSAssert(NO, @"Bad implementation in router (%@)'s -destinationWithConfiguration:. The destiantion (%@) doesn't conforms to registered view protocol (%@).",routerClass, destination, NSStringFromProtocol(viewProtocol));
+                return NO;
+            }
+        }
+    }
+#endif
+    return YES;
+}
+
 + (BOOL)_validateSegueInConfiguration:(ZIKViewRouteConfiguration *)configuration {
     if (!configuration.segueConfiguration.identifier && !configuration.autoCreated) {
         return NO;
@@ -3437,12 +3456,25 @@ destinationStateBeforeRoute:(ZIKPresentationState *)destinationStateBeforeRoute
         if (!g_viewProtocolToRouterMap) {
             g_viewProtocolToRouterMap = CFDictionaryCreateMutable(kCFAllocatorDefault, 0, NULL, NULL);
         }
+#if ZIKVIEWROUTER_CHECK
+        if (!_check_routerToViewProtocolsMap) {
+            _check_routerToViewProtocolsMap = CFDictionaryCreateMutable(kCFAllocatorDefault, 0, NULL, NULL);
+        }
+#endif
     });
     NSAssert(!CFDictionaryGetValue(g_viewProtocolToRouterMap, (__bridge const void *)(viewProtocol)) ||
              (Class)CFDictionaryGetValue(g_viewProtocolToRouterMap, (__bridge const void *)(viewProtocol)) == routerClass
              , @"Protocol already registered by another router, viewProtocol should only be used by this routerClass.");
     
     CFDictionarySetValue(g_viewProtocolToRouterMap, (__bridge const void *)(viewProtocol), (__bridge const void *)(routerClass));
+#if ZIKVIEWROUTER_CHECK
+    CFMutableSetRef viewProtocols = (CFMutableSetRef)CFDictionaryGetValue(_check_routerToViewProtocolsMap, (__bridge const void *)(routerClass));
+    if (viewProtocols == NULL) {
+        viewProtocols = CFSetCreateMutable(kCFAllocatorDefault, 0, NULL);
+        CFDictionarySetValue(_check_routerToViewProtocolsMap, (__bridge const void *)(routerClass), viewProtocols);
+    }
+    CFSetAddValue(viewProtocols, (__bridge const void *)(viewProtocol));
+#endif
 }
 
 + (void)registerModuleProtocol:(Protocol *)configProtocol {
@@ -3501,6 +3533,14 @@ destinationStateBeforeRoute:(ZIKPresentationState *)destinationStateBeforeRoute
     }
     
     dispatch_semaphore_signal(g_globalErrorSema);
+}
+
++ (BOOL)shouldCheckImplementation {
+#if ZIKVIEWROUTER_CHECK
+    return YES;
+#else
+    return NO;
+#endif
 }
 
 + (BOOL)_isLoadFinished {

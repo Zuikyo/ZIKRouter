@@ -17,7 +17,7 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-///Enble this to check if all routers and routable protocols are properly implemented.
+///Enble this to check whether all routers and routable protocols are properly implemented.
 #ifdef DEBUG
 #define ZIKVIEWROUTER_CHECK 1
 #else

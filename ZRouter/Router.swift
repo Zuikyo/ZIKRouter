@@ -29,7 +29,8 @@ public class Router {
         configuring configure: (ViewRouteConfig) -> Swift.Void,
         preparation prepare: ((Destination) -> Swift.Void)? = nil
         ) -> DefaultViewRouter? {
-        return Registry.router(to: routableView)?.perform(configuring: { config in
+        var destination: Any?
+        let r = Registry.router(to: routableView)?.perform(configuring: { config in
             configure(config)
             if source != nil {
                 config.source = source
@@ -38,8 +39,13 @@ public class Router {
                 if let destination = d as? Destination {
                     prepare?(destination)
                 }
+                destination = d
             }
         })
+        if shouldCheckViewRouter && destination != nil {
+            _ = Registry.validateConformance(destination: destination!, inViewRouter: r!)
+        }
+        return r
     }
     
     /// Perform route with view config protocol and prepare the module with the protocol.
@@ -76,17 +82,23 @@ public class Router {
     /// - Returns: The service router.
     public static func perform<Destination>(
         to routableService: RoutableService<Destination>,
-        configuring configure: (ServiceRouteConfig) -> Swift.Void,
+        configuring configure: ((ServiceRouteConfig) -> Swift.Void)? = nil,
         preparation prepare: ((Destination) -> Swift.Void)? = nil
         ) -> DefaultServiceRouter? {
-        return Registry.router(to: routableService)?.perform(configuring: { config in
-            configure(config)
+        var destination: Any?
+        let r = Registry.router(to: routableService)?.perform(configuring: { config in
+            configure?(config)
             config.prepareForRoute = { d in
                 if let destination = d as? Destination {
                     prepare?(destination)
                 }
+                destination = d
             }
         })
+        if shouldCheckServiceRouter && destination != nil {
+            _ = Registry.validateConformance(destination: destination!, inServiceRouter: r!)
+        }
+        return r
     }
     
     /// Perform route with service module config protocol and prepare the module with the protocol.
@@ -98,11 +110,11 @@ public class Router {
     /// - Returns: The service router.
     public static func perform<Module>(
         to routableServiceModule: RoutableServiceModule<Module>,
-        configuring configure: (ServiceRouteConfig) -> Swift.Void,
+        configuring configure: ((ServiceRouteConfig) -> Swift.Void)? = nil,
         preparation prepare: ((Module) -> Swift.Void)? = nil
         ) -> DefaultServiceRouter? {
         return Registry.router(to: routableServiceModule)?.perform(configuring: { config in
-            configure(config)
+            configure?(config)
             if let configuration = config as? Module {
                 prepare?(configuration)
             }

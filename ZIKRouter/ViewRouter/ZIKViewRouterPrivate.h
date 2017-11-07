@@ -19,6 +19,8 @@ typedef  BOOL(^ZIKViewClassValidater)(Class viewClass);
 ///Private methods.
 @interface ZIKViewRouter (Private)
 
++ (BOOL)shouldCheckImplementation;
+
 ///Is auto registration all finished.
 + (BOOL)_isLoadFinished;
 

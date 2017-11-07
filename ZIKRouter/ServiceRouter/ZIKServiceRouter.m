@@ -28,6 +28,7 @@ static CFMutableDictionaryRef g_serviceToDefaultRouterMap;
 static CFMutableDictionaryRef g_serviceToExclusiveRouterMap;
 #if ZIKSERVICEROUTER_CHECK
 static CFMutableDictionaryRef _check_routerToServicesMap;
+static CFMutableDictionaryRef _check_routerToServiceProtocolsMap;
 #endif
 
 static ZIKServiceRouteGlobalErrorHandler g_globalErrorHandler;
@@ -235,6 +236,9 @@ _Nullable Class _ZIKServiceRouterToModule(Protocol *configProtocol) {
         [self endPerformRouteWithError:[[self class] errorWithCode:ZIKServiceRouteErrorServiceUnavailable localizedDescriptionFormat:@"Router(%@) returns nil for destination, you can't use this service now. Maybe your configuration is invalid (%@), or there is a bug in the router.",self,configuration]];
         return;
     }
+#if ZIKSERVICEROUTER_CHECK
+    [self _validateDestinationConformance:destination];
+#endif
     if (configuration.prepareForRoute) {
         configuration.prepareForRoute(destination);
     }
@@ -296,6 +300,22 @@ _Nullable Class _ZIKServiceRouterToModule(Protocol *configProtocol) {
 }
 
 #pragma mark Validate
+
+- (BOOL)_validateDestinationConformance:(id)destination {
+#if ZIKSERVICEROUTER_CHECK
+    Class routerClass = [self class];
+    CFMutableSetRef serviceProtocols = (CFMutableSetRef)CFDictionaryGetValue(_check_routerToServiceProtocolsMap, (__bridge const void *)(routerClass));
+    if (serviceProtocols != NULL) {
+        for (Protocol *serviceProtocol in (__bridge NSSet*)serviceProtocols) {
+            if (!class_conformsToProtocol([destination class], serviceProtocol)) {
+                NSAssert(NO, @"Bad implementation in router (%@)'s -destinationWithConfiguration:. The destiantion (%@) doesn't conforms to registered service protocol (%@).",routerClass, destination, NSStringFromProtocol(serviceProtocol));
+                return NO;
+            }
+        }
+    }
+#endif
+    return YES;
+}
 
 + (BOOL)_validateInfiniteRecursion {
     NSUInteger maxRecursiveDepth = 200;
@@ -503,12 +523,25 @@ _Nullable Class _ZIKServiceRouterToModule(Protocol *configProtocol) {
         if (!g_serviceProtocolToRouterMap) {
             g_serviceProtocolToRouterMap = CFDictionaryCreateMutable(kCFAllocatorDefault, 0, NULL, NULL);
         }
+#if ZIKSERVICEROUTER_CHECK
+        if (!_check_routerToServiceProtocolsMap) {
+            _check_routerToServiceProtocolsMap = CFDictionaryCreateMutable(kCFAllocatorDefault, 0, NULL, NULL);
+        }
+#endif
     });
     NSAssert(!CFDictionaryGetValue(g_serviceProtocolToRouterMap, (__bridge const void *)(serviceProtocol)) ||
              (Class)CFDictionaryGetValue(g_serviceProtocolToRouterMap, (__bridge const void *)(serviceProtocol)) == routerClass
              , @"Protocol already registered by another router, serviceProtocol should only be used by this routerClass.");
     
     CFDictionarySetValue(g_serviceProtocolToRouterMap, (__bridge const void *)(serviceProtocol), (__bridge const void *)(routerClass));
+#if ZIKSERVICEROUTER_CHECK
+    CFMutableSetRef serviceProtocols = (CFMutableSetRef)CFDictionaryGetValue(_check_routerToServiceProtocolsMap, (__bridge const void *)(routerClass));
+    if (serviceProtocols == NULL) {
+        serviceProtocols = CFSetCreateMutable(kCFAllocatorDefault, 0, NULL);
+        CFDictionarySetValue(_check_routerToServiceProtocolsMap, (__bridge const void *)(routerClass), serviceProtocols);
+    }
+    CFSetAddValue(serviceProtocols, (__bridge const void *)(serviceProtocol));
+#endif
 }
 
 + (void)registerModuleProtocol:(Protocol *)configProtocol {
@@ -558,6 +591,14 @@ extern _Nullable Class _swift_ZIKServiceRouterToModule(id configProtocol) {
 @end
 
 @implementation ZIKServiceRouter (Private)
+
++ (BOOL)shouldCheckImplementation {
+#if ZIKSERVICEROUTER_CHECK
+    return YES;
+#else
+    return NO;
+#endif
+}
 
 + (BOOL)_isLoadFinished {
     return _isLoadFinished;

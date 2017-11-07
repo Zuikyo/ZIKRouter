@@ -19,6 +19,8 @@ typedef  BOOL(^ZIKServiceClassValidater)(Class serviceClass);
 ///Private methods.
 @interface ZIKServiceRouter (Private)
 
++ (BOOL)shouldCheckImplementation;
+
 ///Is registration all finished.
 + (BOOL)_isLoadFinished;
 
