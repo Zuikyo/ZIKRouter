@@ -110,8 +110,8 @@ public class Router {
     }
 }
 
-// MARK: Make Destination
-extension Router {
+// MARK: Factory
+public extension Router {
     
     /// Get view destination conforming the view protocol.
     ///
