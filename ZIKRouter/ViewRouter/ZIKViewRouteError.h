@@ -17,7 +17,7 @@ extern NSString *const kZIKViewRouteErrorDomain;
 typedef NS_ENUM(NSInteger, ZIKViewRouteError) {
     ///Bad implementation in code. When adding a UIView or UIViewController conforms to ZIKRoutableView in xib or storyboard, and it need preparing, you have to implement -prepareDestinationFromExternal:configuration: in the view or view controller which added it. There will be an assert failure for debugging.
     ZIKViewRouteErrorInvalidPerformer,
-    ///If you use ZIKViewRouter.forView() or ZIKViewRouter.forModule() to fetch router with protocol, the protocol must be declared. There will be an assert failure for debugging.
+    ///If you use ZIKViewRouter.toView() or ZIKViewRouter.toModule() to fetch router with protocol, the protocol must be declared. There will be an assert failure for debugging.
     ZIKViewRouteErrorInvalidProtocol,
     ///Configuration missed some required values, or some values were conflict. There will be an assert failure for debugging.
     ZIKViewRouteErrorInvalidConfiguration,

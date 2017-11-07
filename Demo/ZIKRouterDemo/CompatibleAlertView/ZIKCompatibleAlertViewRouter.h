@@ -42,14 +42,14 @@ NS_ASSUME_NONNULL_BEGIN
  @endcode
  
  Solution 2:
- If you want to keep `<ZIKCompatibleAlertConfigProtocol>`, you can cast ZIKCompatibleAlertViewRouter to ZIKViewRouter<ZIKViewRouteConfiguration, ZIKViewRemoveConfiguration>.Type with ZIKViewRouter.forModule():
+ If you want to keep `<ZIKCompatibleAlertConfigProtocol>`, you can cast ZIKCompatibleAlertViewRouter to ZIKViewRouter<ZIKViewRouteConfiguration, ZIKViewRemoveConfiguration>.Type with ZIKViewRouter.toModule():
  @code
  let routerClass: ZIKViewRouter<ZIKViewRouteConfiguration, ZIKViewRemoveConfiguration>.Type
- routerClass = ZIKViewRouter.forModule(ZIKCompatibleAlertConfigProtocol.self) as! ZIKViewRouter<ZIKViewRouteConfiguration, ZIKViewRemoveConfiguration>.Type
+ routerClass = ZIKViewRouter.toModule(ZIKCompatibleAlertConfigProtocol.self) as! ZIKViewRouter<ZIKViewRouteConfiguration, ZIKViewRemoveConfiguration>.Type
  @endcode
  */
 @interface ZIKCompatibleAlertViewRouter<__covariant RouteConfig: ZIKViewRouteConfiguration<ZIKCompatibleAlertConfigProtocol> *, __covariant RemoveConfig: ZIKViewRemoveConfiguration *> : ZIKViewRouter<RouteConfig, RemoveConfig> <ZIKViewRouterProtocol>
-+ (nullable ZIKViewRouter *)performWithSource:(nullable id)source routeType:(ZIKViewRouteType)routeType NS_UNAVAILABLE;
++ (nullable ZIKViewRouter *)performFromSource:(nullable id)source routeType:(ZIKViewRouteType)routeType NS_UNAVAILABLE;
 @end
 
 NS_ASSUME_NONNULL_END

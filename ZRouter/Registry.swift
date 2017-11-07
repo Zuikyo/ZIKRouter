@@ -117,11 +117,11 @@ extension Registry {
     ///
     /// - Parameter routableView: A routabe entry carrying a view protocol conformed by the view registered with a view router. Support objc protocol and pure Swift protocol.
     /// - Returns: The view router class for the view protocol.
-    public static func router<Protocol>(for routableView: RoutableView<Protocol>) -> DefaultViewRouter.Type? {
+    public static func router<Protocol>(to routableView: RoutableView<Protocol>) -> DefaultViewRouter.Type? {
         let viewProtocol = Protocol.self
         var routerClass = viewProtocolContainer[_RouteKey(type:viewProtocol)]
         if routerClass == nil && ZIKRouter_isObjcProtocol(viewProtocol) {
-            routerClass = _swift_ZIKViewRouterForView(viewProtocol) as? ZIKViewRouter.Type
+            routerClass = _swift_ZIKViewRouterToView(viewProtocol) as? ZIKViewRouter.Type
         }
         if routerClass == nil && !ZIKRouter_isObjcProtocol(viewProtocol) {
             ZIKViewRouter._callbackGlobalErrorHandler(with: nil,
@@ -137,11 +137,11 @@ extension Registry {
     ///
     /// - Parameter routableViewModule: A routabe entry carrying a view module config protocol registered with a view router. Support objc protocol and pure Swift protocol.
     /// - Returns: The view router class for the config protocol.
-    public static func router<Protocol>(for routableViewModule: RoutableViewModule<Protocol>) -> DefaultViewRouter.Type? {
+    public static func router<Protocol>(to routableViewModule: RoutableViewModule<Protocol>) -> DefaultViewRouter.Type? {
         let configProtocol = Protocol.self
         var routerClass = viewConfigContainer[_RouteKey(type:configProtocol)]
         if routerClass == nil && ZIKRouter_isObjcProtocol(configProtocol) {
-            routerClass = _swift_ZIKViewRouterForModule(configProtocol) as? ZIKViewRouter.Type
+            routerClass = _swift_ZIKViewRouterToModule(configProtocol) as? ZIKViewRouter.Type
         }
         if routerClass == nil && !ZIKRouter_isObjcProtocol(configProtocol) {
             ZIKViewRouter._callbackGlobalErrorHandler(with: nil,
@@ -157,11 +157,11 @@ extension Registry {
     ///
     /// - Parameter routableService: A routabe entry carrying a service protocol conformed by the service registered with a service router. Support objc protocol and pure Swift protocol.
     /// - Returns: The view router class for the service protocol.
-    public static func router<Protocol>(for routableService: RoutableService<Protocol>) -> DefaultServiceRouter.Type? {
+    public static func router<Protocol>(to routableService: RoutableService<Protocol>) -> DefaultServiceRouter.Type? {
         let serviceProtocol = Protocol.self
         var routerClass = serviceProtocolContainer[_RouteKey(type:serviceProtocol)]
         if routerClass == nil && ZIKRouter_isObjcProtocol(serviceProtocol) {
-            routerClass = _swift_ZIKServiceRouterForService(serviceProtocol) as? ZIKServiceRouter.Type
+            routerClass = _swift_ZIKServiceRouterToService(serviceProtocol) as? ZIKServiceRouter.Type
         }
         if routerClass == nil && !ZIKRouter_isObjcProtocol(serviceProtocol) {
             ZIKViewRouter._callbackGlobalErrorHandler(with: nil,
@@ -177,11 +177,11 @@ extension Registry {
     ///
     /// - Parameter routableServiceModule: A routabe entry carrying a cconfg protocol registered with a service router. Support objc protocol and pure Swift protocol.
     /// - Returns: The service router class for the config protocol.
-    public static func router<Protocol>(for routableServiceModule: RoutableServiceModule<Protocol>) -> DefaultServiceRouter.Type? {
+    public static func router<Protocol>(to routableServiceModule: RoutableServiceModule<Protocol>) -> DefaultServiceRouter.Type? {
         let configProtocol = Protocol.self
         var routerClass = serviceConfigContainer[_RouteKey(type:configProtocol)]
         if routerClass == nil && ZIKRouter_isObjcProtocol(configProtocol) {
-            routerClass = _swift_ZIKServiceRouterForModule(configProtocol) as? ZIKServiceRouter.Type
+            routerClass = _swift_ZIKServiceRouterToModule(configProtocol) as? ZIKServiceRouter.Type
         }
         if routerClass == nil && !ZIKRouter_isObjcProtocol(configProtocol) {
             ZIKViewRouter._callbackGlobalErrorHandler(with: nil,

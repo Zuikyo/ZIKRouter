@@ -93,7 +93,7 @@ typedef void(^ZIKViewRouteSegueConfiger)(NS_NOESCAPE ZIKViewRouteSegueConfigure)
 @interface ZIKViewRouteConfiguration : ZIKRouteConfiguration <NSCopying>
 
 /**
- Source ViewController or View for route
+ Source ViewController or View for route.
  @discussion
  For ZIKViewRouteTypePush, ZIKViewRouteTypePresentModally, ZIKViewRouteTypePresentAsPopover, ZIKViewRouteTypePerformSegue,ZIKViewRouteTypeShow,ZIKViewRouteTypeShowDetail,ZIKViewRouteTypeAddAsChildViewController, source must be a UIViewController.
  

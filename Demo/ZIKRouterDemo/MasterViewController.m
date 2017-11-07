@@ -152,7 +152,7 @@ typedef NS_ENUM(NSInteger,ZIKRouterTestType) {
             break;
     }
     
-    [routerClass performWithSource:self routeType:routeType];
+    [routerClass performFromSource:self routeType:routeType];
 }
 
 - (Class)routerClassForIndexPath:(NSIndexPath *)indexPath {
@@ -213,7 +213,7 @@ typedef NS_ENUM(NSInteger,ZIKRouterTestType) {
             
         case ZIKRouterTestTypeSwiftSample:
 //            routerClass = [SwiftSampleViewRouter class];
-            routerClass = ZIKViewRouter.forView(@protocol(SwiftSampleViewInput));
+            routerClass = ZIKViewRouter.toView(@protocol(SwiftSampleViewInput));
             break;
     }
     return routerClass;

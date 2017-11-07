@@ -135,7 +135,7 @@ void _initializeZIKServiceRouter() {
     [[NSNotificationCenter defaultCenter] postNotificationName:kZIKServiceRouterRegisterCompleteNotification object:nil];
 }
 
-_Nullable Class _ZIKServiceRouterForService(Protocol *serviceProtocol) {
+_Nullable Class _ZIKServiceRouterToService(Protocol *serviceProtocol) {
     NSCParameterAssert(serviceProtocol);
     NSCAssert(g_serviceProtocolToRouterMap, @"Didn't register any protocol yet.");
     NSCAssert(_isLoadFinished, @"Only get router after app did finish launch.");
@@ -147,8 +147,8 @@ _Nullable Class _ZIKServiceRouterForService(Protocol *serviceProtocol) {
         }
     });
     if (!serviceProtocol) {
-//        [ZIKServiceRouter _callbackError_invalidProtocolWithAction:@selector(init) errorDescription:@"ZIKServiceRouter.forService() serviceProtocol is nil"];
-        NSCAssert1(NO, @"ZIKServiceRouter.forService() serviceProtocol is nil. callStackSymbols: %@",[NSThread callStackSymbols]);
+//        [ZIKServiceRouter _callbackError_invalidProtocolWithAction:@selector(init) errorDescription:@"ZIKServiceRouter.toService() serviceProtocol is nil"];
+        NSCAssert1(NO, @"ZIKServiceRouter.toService() serviceProtocol is nil. callStackSymbols: %@",[NSThread callStackSymbols]);
         return nil;
     }
     
@@ -162,7 +162,7 @@ _Nullable Class _ZIKServiceRouterForService(Protocol *serviceProtocol) {
     return nil;
 }
 
-_Nullable Class _ZIKServiceRouterForModule(Protocol *configProtocol) {
+_Nullable Class _ZIKServiceRouterToModule(Protocol *configProtocol) {
     NSCParameterAssert(configProtocol);
     NSCAssert(g_configProtocolToRouterMap, @"Didn't register any protocol yet.");
     NSCAssert(_isLoadFinished, @"Only get router after app did finish launch.");
@@ -174,8 +174,8 @@ _Nullable Class _ZIKServiceRouterForModule(Protocol *configProtocol) {
         }
     });
     if (!configProtocol) {
-//        [ZIKServiceRouter _callbackError_invalidProtocolWithAction:@selector(init) errorDescription:@"ZIKServiceRouter.forModule() configProtocol is nil"];
-        NSCAssert1(NO, @"ZIKServiceRouter.forModule() configProtocol is nil. callStackSymbols: %@",[NSThread callStackSymbols]);
+//        [ZIKServiceRouter _callbackError_invalidProtocolWithAction:@selector(init) errorDescription:@"ZIKServiceRouter.toModule() configProtocol is nil"];
+        NSCAssert1(NO, @"ZIKServiceRouter.toModule() configProtocol is nil. callStackSymbols: %@",[NSThread callStackSymbols]);
         return nil;
     }
     
@@ -510,27 +510,27 @@ _Nullable Class _ZIKServiceRouterForModule(Protocol *configProtocol) {
     CFDictionarySetValue(g_configProtocolToRouterMap, (__bridge const void *)(configProtocol), (__bridge const void *)(routerClass));
 }
 
-_Nullable Class _swift_ZIKServiceRouterForService(id serviceProtocol) {
-    return _ZIKServiceRouterForService(serviceProtocol);
+_Nullable Class _swift_ZIKServiceRouterToService(id serviceProtocol) {
+    return _ZIKServiceRouterToService(serviceProtocol);
 }
 
-extern _Nullable Class _swift_ZIKServiceRouterForModule(id configProtocol) {
-    return _ZIKServiceRouterForModule(configProtocol);
+extern _Nullable Class _swift_ZIKServiceRouterToModule(id configProtocol) {
+    return _ZIKServiceRouterToModule(configProtocol);
 }
 
 @end
 
 @implementation ZIKServiceRouter (Discover)
 
-+ (Class(^)(Protocol *))forService {
++ (Class(^)(Protocol *))toService {
     return ^(Protocol *serviceProtocol) {
-        return _ZIKServiceRouterForService(serviceProtocol);
+        return _ZIKServiceRouterToService(serviceProtocol);
     };
 }
 
-+ (Class(^)(Protocol *))forModule {
++ (Class(^)(Protocol *))toModule {
     return ^(Protocol *configProtocol) {
-        return _ZIKServiceRouterForModule(configProtocol);
+        return _ZIKServiceRouterToModule(configProtocol);
     };
 }
 

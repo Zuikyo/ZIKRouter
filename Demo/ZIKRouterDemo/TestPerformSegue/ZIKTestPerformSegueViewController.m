@@ -30,7 +30,7 @@
 
 - (IBAction)performSegue:(id)sender {
     __weak typeof(self) weakSelf = self;
-    self.segueRouter = [ZIKViewRouter.forView(ZIKInfoViewProtocol_routable)
+    self.segueRouter = [ZIKViewRouter.toView(ZIKInfoViewProtocol_routable)
                            performWithConfigure:^(ZIKViewRouteConfiguration * _Nonnull config) {
                                config.source = self;
                                config.routeType = ZIKViewRouteTypePerformSegue;
@@ -53,7 +53,7 @@
 
 - (IBAction)performCustomSegue:(id)sender {
     __weak typeof(self) weakSelf = self;
-    self.segueRouter = [ZIKViewRouter.forView(ZIKInfoViewProtocol_routable)
+    self.segueRouter = [ZIKViewRouter.toView(ZIKInfoViewProtocol_routable)
                            performWithConfigure:^(ZIKViewRouteConfiguration * _Nonnull config) {
                                config.source = self;
                                config.routeType = ZIKViewRouteTypePerformSegue;
@@ -77,8 +77,8 @@
 - (IBAction)performSegueForUnroutableDestination:(id)sender {
     //If destination doesn't comform to ZIKRoutableView, just use ZIKViewRouter to perform the segue.
     self.segueRouter = [ZIKDefaultViewRouter
-                        performWithConfigure:^(ZIKViewRouteConfiguration * _Nonnull config) {
-                            config.source = self;
+                        performFromSource:self
+                        configure:^(ZIKViewRouteConfig * _Nonnull config) {
                             config.routeType = ZIKViewRouteTypePerformSegue;
                             config.configureSegue(^(ZIKViewRouteSegueConfiguration * _Nonnull segueConfig) {
                                 segueConfig.identifier = @"showUnroutableDestination";
@@ -111,23 +111,23 @@
 - (void)perfromUnwindSegueToTestPerformSegueVCFromInfoVC:(UIViewController *)infoViewController {
     //unwind segue from ZIKInfoViewController to ZIKTestPerformSegueViewController is define in ZIKInfoViewController, and should be used inside ZIKInfoViewController, this code is just for test
     [ZIKTestPerformSegueViewRouter
-     performWithConfigure:^(ZIKViewRouteConfiguration * _Nonnull config) {
-        config.source = infoViewController;
-        config.routeType = ZIKViewRouteTypePerformSegue;
-        config.configureSegue(^(ZIKViewRouteSegueConfiguration * _Nonnull segueConfig) {
-            segueConfig.identifier = @"unwindToTestPerformSegue";
-        });
-        config.prepareForRoute = ^(UIViewController * _Nonnull destination) {
-            NSLog(@"change destination's background color when unwind to destination:(%@)",destination);
-            destination.view.backgroundColor = [UIColor yellowColor];
-        };
-        config.routeCompletion = ^(id  _Nonnull destination) {
-            NSLog(@"perform unwind segue to ZIKTestPerformSegueViewController complete");
-        };
-        config.errorHandler = ^(SEL  _Nonnull routeAction, NSError * _Nonnull error) {
-            NSLog(@"perform unwind segue to ZIKTestPerformSegueViewController failed: %@",error);
-        };
-    }];
+     performFromSource:infoViewController
+     configure:^(ZIKViewRouteConfiguration * _Nonnull config) {
+         config.routeType = ZIKViewRouteTypePerformSegue;
+         config.configureSegue(^(ZIKViewRouteSegueConfiguration * _Nonnull segueConfig) {
+             segueConfig.identifier = @"unwindToTestPerformSegue";
+         });
+         config.prepareForRoute = ^(UIViewController * _Nonnull destination) {
+             NSLog(@"change destination's background color when unwind to destination:(%@)",destination);
+             destination.view.backgroundColor = [UIColor yellowColor];
+         };
+         config.routeCompletion = ^(id  _Nonnull destination) {
+             NSLog(@"perform unwind segue to ZIKTestPerformSegueViewController complete");
+         };
+         config.errorHandler = ^(SEL  _Nonnull routeAction, NSError * _Nonnull error) {
+             NSLog(@"perform unwind segue to ZIKTestPerformSegueViewController failed: %@",error);
+         };
+     }];
 }
 
 - (void)handleRemoveInfoViewController:(UIViewController *)infoViewController {

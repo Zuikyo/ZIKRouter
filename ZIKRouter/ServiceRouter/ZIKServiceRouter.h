@@ -54,7 +54,7 @@ typedef void(^ZIKServiceRouteGlobalErrorHandler)(__kindof ZIKServiceRouter * _Nu
  
  @code
  __block id<ZIKLoginServiceInput> loginService;
- [ZIKServiceRouter.forService(@protocol(ZIKLoginServiceInput))
+ [ZIKServiceRouter.toService(@protocol(ZIKLoginServiceInput))
      performWithConfigure:^(ZIKServiceRouteConfiguration *config) {
          config.prepareForRoute = ^(id<ZIKLoginServiceInput> destination) {
              //Prepare service
@@ -137,14 +137,14 @@ typedef void(^ZIKServiceRouteGlobalErrorHandler)(__kindof ZIKServiceRouter * _Nu
 + (void)registerExclusiveService:(Class)serviceClass;
 
 /**
- Register a service protocol that all services registered with the router conform to, then use ZIKServiceRouter.forService() to get the router class.You can register your protocol and let the service conforms to the protocol in category in your interface adapter.
+ Register a service protocol that all services registered with the router conform to, then use ZIKServiceRouter.toService() to get the router class.You can register your protocol and let the service conforms to the protocol in category in your interface adapter.
  
  @param serviceProtocol The protocol conformed by service to identify the routerClass. Should inherit from ZIKServiceRoutable when ZIKSERVICEROUTER_CHECK is enabled. When ZIKSERVICEROUTER_CHECK is disabled, the protocol doesn't need to inheriting from ZIKServiceRoutable.
  */
 + (void)registerServiceProtocol:(Protocol *)serviceProtocol;
 
 /**
- Register a module config protocol the router's default configuration conforms, then use ZIKServiceRouter.forModule() to get the router class. You can register your protocol and let the configuration conforms to the protocol in category in your interface adapter.
+ Register a module config protocol the router's default configuration conforms, then use ZIKServiceRouter.toModule() to get the router class. You can register your protocol and let the configuration conforms to the protocol in category in your interface adapter.
  
  When the service module contains not only a single service class, but also other internal services, and you can't prepare the module with a simple service protocol, then you need a moudle config protocol.
  
@@ -163,7 +163,7 @@ typedef void(^ZIKServiceRouteGlobalErrorHandler)(__kindof ZIKServiceRouter * _Nu
  
  The return Class of the block is: a router class matched with the service. Return nil if protocol is nil or not declared. There will be an assert failure when result is nil.
  */
-@property (nonatomic,class,readonly) Class _Nullable (^forService)(Protocol *serviceProtocol);
+@property (nonatomic,class,readonly) Class _Nullable (^toService)(Protocol *serviceProtocol);
 
 /**
  Get the router class combined with a custom ZIKRouteConfiguration conforming to a unique protocol.
@@ -171,7 +171,7 @@ typedef void(^ZIKServiceRouteGlobalErrorHandler)(__kindof ZIKServiceRouter * _Nu
  The parameter configProtocol of the block is: the protocol conformed by defaultConfiguration of router. Should be a ZIKServiceModuleRoutable protocol when ZIKSERVICEROUTER_CHECK is enabled. When ZIKSERVICEROUTER_CHECK is disabled, the protocol doesn't need to inheriting from ZIKServiceModuleRoutable.
  The return Class of the block is: a router class matched with the service. Return nil if protocol is nil or not declared. There will be an assert failure when result is nil.
  */
-@property (nonatomic,class,readonly) Class _Nullable (^forModule)(Protocol *configProtocol);
+@property (nonatomic,class,readonly) Class _Nullable (^toModule)(Protocol *configProtocol);
 
 @end
 

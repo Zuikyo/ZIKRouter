@@ -40,7 +40,9 @@
 - (void)prepareDestination:(ZIKTestCircularDependenciesViewController *)destination configuration:(__kindof ZIKViewRouteConfiguration *)configuration {
     //Must check to avoid unnecessary preparation
     if (destination.child == nil) {
-        [ZIKViewRouter.forView(@protocol(ZIKChildViewProtocol)) performWithConfigure:^(ZIKViewRouteConfiguration * _Nonnull config) {
+        [ZIKViewRouter.toView(@protocol(ZIKChildViewProtocol))
+         performFromSource:nil
+         configure:^(ZIKViewRouteConfiguration * _Nonnull config) {
             config.routeType = ZIKViewRouteTypeGetDestination;
             
             //The child may fetch parent in it's router, you must set child's parent to avoid infinite recursion

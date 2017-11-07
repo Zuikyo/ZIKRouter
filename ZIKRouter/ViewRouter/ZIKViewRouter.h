@@ -94,13 +94,34 @@ typedef void(^ZIKViewRouteGlobalErrorHandler)(__kindof ZIKViewRouter * _Nullable
 + (BOOL)supportRouteType:(ZIKViewRouteType)type;
 
 + (nullable ZIKViewRouter<RouteConfig,RemoveConfig> *)performRoute NS_UNAVAILABLE;
-
-///Convenient method to perform route
 + (nullable ZIKViewRouter<RouteConfig,RemoveConfig> *)performWithConfigure:(void(NS_NOESCAPE ^)(RouteConfig config))configBuilder
-                                                           removeConfigure:(void(NS_NOESCAPE ^ _Nullable)(RemoveConfig config))removeConfigBuilder;
-+ (nullable ZIKViewRouter<RouteConfig,RemoveConfig> *)performWithConfigure:(void(NS_NOESCAPE ^)(RouteConfig config))configBuilder;
+                                                           removeConfigure:(void(NS_NOESCAPE ^ _Nullable)(RemoveConfig config))removeConfigBuilder NS_UNAVAILABLE;
++ (nullable ZIKViewRouter<RouteConfig,RemoveConfig> *)performWithConfigure:(void(NS_NOESCAPE ^)(RouteConfig config))configBuilder NS_UNAVAILABLE;
+
+
+/**
+ Perform route from source view to destination view.
+
+ @param source Source UIViewController or UIView. See ZIKViewRouteConfiguration's source.
+ @param configBuilder Build the configuration in the block.
+ @return The view router for this route.
+ */
++ (nullable ZIKViewRouter<RouteConfig,RemoveConfig> *)performFromSource:(nullable id<ZIKViewRouteSource>)source configure:(void(NS_NOESCAPE ^)(RouteConfig config))configBuilder;
+
+/**
+ Perform route from source view to destination view, and config the remove route.
+
+ @param source Source UIViewController or UIView. See ZIKViewRouteConfiguration's source.
+ @param configBuilder Build the configuration in the block.
+ @param removeConfigBuilder Build the remove configuration in the block.
+ @return The view router for this route.
+ */
++ (nullable ZIKViewRouter<RouteConfig,RemoveConfig> *)performFromSource:(nullable id<ZIKViewRouteSource>)source
+                                                              configure:(void(NS_NOESCAPE ^)(RouteConfig config))configBuilder
+                                                        removeConfigure:(void(NS_NOESCAPE ^ _Nullable)(RemoveConfig config))removeConfigBuilder;
+
 ///If this destination doesn't need any variable to initialize, just pass source and perform route.
-+ (nullable ZIKViewRouter<RouteConfig,RemoveConfig> *)performWithSource:(nullable id<ZIKViewRouteSource>)source routeType:(ZIKViewRouteType)routeType;
++ (nullable ZIKViewRouter<RouteConfig,RemoveConfig> *)performFromSource:(nullable id<ZIKViewRouteSource>)source routeType:(ZIKViewRouteType)routeType;
 @end
 
 @interface ZIKViewRouter (Factory)
@@ -201,7 +222,7 @@ removeConfigure:(void(NS_NOESCAPE ^ _Nullable)(RemoveConfig config))removeConfig
 + (void)registerExclusiveView:(Class)viewClass;
 
 /**
- Register a view protocol that all views registered with the router conform to, then use ZIKViewRouter.forView() to get the router class.
+ Register a view protocol that all views registered with the router conform to, then use ZIKViewRouter.toView() to get the router class.
  @discussion
  If there're multi router classes for same view, and those routers is designed for preparing different part of the view when perform route (for example, a router is for presenting actionsheet style for UIAlertController, another router is for presenting alert style for UIAlertController), then each router has to register a unique protocol for the view and get the right router class with their protocol, or just import the router class your want to use directly.
  
@@ -212,7 +233,7 @@ removeConfigure:(void(NS_NOESCAPE ^ _Nullable)(RemoveConfig config))removeConfig
 + (void)registerViewProtocol:(Protocol *)viewProtocol;
 
 /**
- Register a module config protocol the router's default configuration conforms, then use ZIKViewRouter.forModule() to get the router class.
+ Register a module config protocol the router's default configuration conforms, then use ZIKViewRouter.toModule() to get the router class.
  
  When the view module contains not only a single UIViewController, but also other internal services, and you can't prepare the module with a simple view protocol, then you need a moudle config protocol.
  @discussion
@@ -261,7 +282,7 @@ removeConfigure:(void(NS_NOESCAPE ^ _Nullable)(RemoveConfig config))removeConfig
  @end
  
  //Get ZIKLoginViewRouter and perform route
- [ZIKViewRouter.forView(@protocol(ZIKLoginViewProtocol))
+ [ZIKViewRouter.toView(@protocol(ZIKLoginViewProtocol))
      performWithConfigure:^(ZIKViewRouteConfiguration *config) {
          config.source = self;
          config.prepareForRoute = ^(id<ZIKLoginViewProtocol> destination) {
@@ -271,7 +292,7 @@ removeConfigure:(void(NS_NOESCAPE ^ _Nullable)(RemoveConfig config))removeConfig
  @endcode
  See +registerViewProtocol: and ZIKViewRoutable for more info.
  */
-@property (nonatomic,class,readonly) Class _Nullable (^forView)(Protocol *viewProtocol);
+@property (nonatomic,class,readonly) Class _Nullable (^toView)(Protocol *viewProtocol);
 
 /**
  Get the view router class combined with a custom ZIKViewRouteConfiguration conforming to a module config protocol.
@@ -280,7 +301,7 @@ removeConfigure:(void(NS_NOESCAPE ^ _Nullable)(RemoveConfig config))removeConfig
  
  The return Class of the block is: a router class matched with the view. Return nil if protocol is nil or not registered. There will be an assert failure when result is nil.
  @discussion
- Similar to ZIKViewRouter.forView(), this function is for decoupling route behavior with router class. If configurations of a module can't be set directly with a protocol the view conforms, you can use a custom ZIKViewRouteConfiguration to config these configurations. Use +registerModuleProtocol: to register the protocol, then you don't need to import the router's header when performing route.
+ Similar to ZIKViewRouter.toView(), this function is for decoupling route behavior with router class. If configurations of a module can't be set directly with a protocol the view conforms, you can use a custom ZIKViewRouteConfiguration to config these configurations. Use +registerModuleProtocol: to register the protocol, then you don't need to import the router's header when performing route.
  @code
  //ZIKLoginViewProtocol
  @protocol ZIKLoginViewConfigProtocol <ZIKViewModuleRoutable>
@@ -320,7 +341,7 @@ removeConfigure:(void(NS_NOESCAPE ^ _Nullable)(RemoveConfig config))removeConfig
  @end
  
  //Get ZIKLoginViewRouter and perform route
- [ZIKViewRouter.forModule(@protocol(ZIKLoginViewConfigProtocol))
+ [ZIKViewRouter.toModule(@protocol(ZIKLoginViewConfigProtocol))
      performWithConfigure:^(ZIKViewRouteConfiguration<ZIKLoginViewConfigProtocol> *config) {
          config.source = self;
          config.account = @"my account";
@@ -328,7 +349,7 @@ removeConfigure:(void(NS_NOESCAPE ^ _Nullable)(RemoveConfig config))removeConfig
  @endcode
  See +registerModuleProtocol: and ZIKViewModuleRoutable for more info.
  */
-@property (nonatomic,class,readonly) Class _Nullable (^forModule)(Protocol *configProtocol);
+@property (nonatomic,class,readonly) Class _Nullable (^toModule)(Protocol *configProtocol);
 
 @end
 

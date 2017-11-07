@@ -32,11 +32,9 @@ class SwiftSampleViewController: UIViewController, PureSwiftSampleViewInput, Pur
     
     @IBAction func testRouteForView(_ sender: Any) {
         infoRouter = Router.perform(
-            for: RoutableView<ZIKInfoViewProtocol>(),
-            routeConfig: { config in
-                config.source = self
-                config.routeType = ViewRouteType.presentModally
-        },
+            to: RoutableView<ZIKInfoViewProtocol>(),
+            from: self,
+            config: { $0.routeType = ViewRouteType.presentModally },
             preparation: { [weak self] destination in
                 destination.delegate = self
                 destination.name = "zuik"
@@ -54,9 +52,9 @@ class SwiftSampleViewController: UIViewController, PureSwiftSampleViewInput, Pur
     
     @IBAction func testRouteForConfig(_ sender: Any) {
         let router = Router.perform(
-            for: RoutableViewModule<ZIKCompatibleAlertConfigProtocol>(),
-            routeConfig: { config in
-                config.source = self
+            to: RoutableViewModule<ZIKCompatibleAlertConfigProtocol>(),
+            from: self,
+            config: { config in
                 config.routeCompletion = { d in
                     print("show custom alert complete")
                 }
@@ -78,28 +76,29 @@ class SwiftSampleViewController: UIViewController, PureSwiftSampleViewInput, Pur
     }
     
     @IBAction func testInjectedRouter(_ sender: Any) {
-        let router = self.alertRouterClass.perform { config in
-            config.source = self
-            config.title = "Compatible Alert"
-            config.message = "Test custom route for alert with UIAlertView and UIAlertController"
-            config.addCancelButtonTitle("Cancel", handler: {
-                print("Tap cancel alert")
-            })
-            config.addOtherButtonTitle("Hello", handler: {
-                print("Tap Hello alert")
-            })
-            config.routeCompletion = { d in
-                print("show custom alert complete")
-            }
-            config.errorHandler = { (action, error) in
-                print("show custom alert failed: %@",error)
-            }
-        }
+        let router = alertRouterClass
+            .perform(from: self,
+                     configure: ({ (config) in
+                        config.title = "Compatible Alert"
+                        config.message = "Test custom route for alert with UIAlertView and UIAlertController"
+                        config.addCancelButtonTitle("Cancel", handler: {
+                            print("Tap cancel alert")
+                        })
+                        config.addOtherButtonTitle("Hello", handler: {
+                            print("Tap Hello alert")
+                        })
+                        config.routeCompletion = { d in
+                            print("show custom alert complete")
+                        }
+                        config.errorHandler = { (action, error) in
+                            print("show custom alert failed: %@",error)
+                        }
+                     }))
         alertRouter = router
     }
 
     @IBAction func testRouteForSwiftService(_ sender: Any) {
-        let service = Router.makeDestination(for: RoutableService<SwiftServiceInput>())
+        let service = Router.makeDestination(to: RoutableService<SwiftServiceInput>())
         service?.swiftFunction()
     }
     /*

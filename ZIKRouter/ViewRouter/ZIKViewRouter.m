@@ -55,12 +55,12 @@ static NSMutableArray *g_preparingUIViewRouters;
 @property (nonatomic, strong, nullable) ZIKViewRouter *retainedSelf;
 @end
 
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wincomplete-implementation"
+//#pragma clang diagnostic push
+//#pragma clang diagnostic ignored "-Wincomplete-implementation"
 
 @implementation ZIKViewRouter
 
-#pragma clang diagnostic pop
+//#pragma clang diagnostic pop
 
 @dynamic configuration;
 @dynamic original_configuration;
@@ -238,7 +238,7 @@ void EnumerateRoutersForViewClass(Class viewClass,void(^handler)(Class routerCla
     }
 }
 
-static _Nullable Class ZIKViewRouterForRegisteredView(Class viewClass) {
+static _Nullable Class ZIKViewRouterToRegisteredView(Class viewClass) {
     NSCParameterAssert([viewClass isSubclassOfClass:[UIView class]] ||
                        [viewClass isSubclassOfClass:[UIViewController class]]);
     NSCParameterAssert([viewClass conformsToProtocol:@protocol(ZIKRoutableView)]);
@@ -267,7 +267,7 @@ static _Nullable Class ZIKViewRouterForRegisteredView(Class viewClass) {
     return nil;
 }
 
-_Nullable Class _ZIKViewRouterForView(Protocol *viewProtocol) {
+_Nullable Class _ZIKViewRouterToView(Protocol *viewProtocol) {
     NSCParameterAssert(viewProtocol);
     NSCAssert(g_viewProtocolToRouterMap, @"Didn't register any protocol yet.");
     NSCAssert(_isLoadFinished, @"Only get router after app did finish launch.");
@@ -279,7 +279,7 @@ _Nullable Class _ZIKViewRouterForView(Protocol *viewProtocol) {
         }
     });
     if (!viewProtocol) {
-        [ZIKViewRouter _callbackError_invalidProtocolWithAction:@selector(forView) errorDescription:@"ZIKViewRouter.forView() viewProtocol is nil"];
+        [ZIKViewRouter _callbackError_invalidProtocolWithAction:@selector(toView) errorDescription:@"ZIKViewRouter.toView() viewProtocol is nil"];
         return nil;
     }
     
@@ -287,13 +287,13 @@ _Nullable Class _ZIKViewRouterForView(Protocol *viewProtocol) {
     if (routerClass) {
         return routerClass;
     }
-    [ZIKViewRouter _callbackError_invalidProtocolWithAction:@selector(forView)
+    [ZIKViewRouter _callbackError_invalidProtocolWithAction:@selector(toView)
                                              errorDescription:@"Didn't find view router for view protocol: %@, this protocol was not registered.",viewProtocol];
     NSCAssert1(NO, @"Didn't find view router for view protocol: %@, this protocol was not registered.",viewProtocol);
     return nil;
 }
 
-_Nullable Class _ZIKViewRouterForModule(Protocol *configProtocol) {
+_Nullable Class _ZIKViewRouterToModule(Protocol *configProtocol) {
     NSCParameterAssert(configProtocol);
     NSCAssert(g_configProtocolToRouterMap, @"Didn't register any protocol yet.");
     NSCAssert(_isLoadFinished, @"Only get router after app did finish launch.");
@@ -305,7 +305,7 @@ _Nullable Class _ZIKViewRouterForModule(Protocol *configProtocol) {
         }
     });
     if (!configProtocol) {
-        [ZIKViewRouter _callbackError_invalidProtocolWithAction:@selector(forModule) errorDescription:@"ZIKViewRouter.forModule() configProtocol is nil"];
+        [ZIKViewRouter _callbackError_invalidProtocolWithAction:@selector(toModule) errorDescription:@"ZIKViewRouter.toModule() configProtocol is nil"];
         return nil;
     }
     
@@ -314,7 +314,7 @@ _Nullable Class _ZIKViewRouterForModule(Protocol *configProtocol) {
         return routerClass;
     }
     
-    [ZIKViewRouter _callbackError_invalidProtocolWithAction:@selector(forModule)
+    [ZIKViewRouter _callbackError_invalidProtocolWithAction:@selector(toModule)
                                              errorDescription:@"Didn't find view router for config protocol: %@, this protocol was not registered.",configProtocol];
     NSCAssert1(NO, @"Didn't find view router for config protocol: %@, this protocol was not registered.",configProtocol);
     return nil;
@@ -430,15 +430,6 @@ _Nullable Class _ZIKViewRouterForModule(Protocol *configProtocol) {
     [super notifyRouteState:state];
 }
 
-+ (BOOL)supportRouteType:(ZIKViewRouteType)type {
-    ZIKViewRouteTypeMask supportedRouteTypes = [self supportedRouteTypes];
-    ZIKViewRouteTypeMask mask = 1 << type;
-    if ((supportedRouteTypes & mask) == mask) {
-        return YES;
-    }
-    return NO;
-}
-
 #pragma mark ZIKViewRouterProtocol
 
 + (void)registerRoutableDestination {
@@ -481,23 +472,7 @@ _Nullable Class _ZIKViewRouterForModule(Protocol *configProtocol) {
     return YES;
 }
 
-#pragma mark Convenient Methods
-
-+ (__kindof ZIKViewRouter *)performWithSource:(nullable id)source routeType:(ZIKViewRouteType)routeType {
-    return [self performWithConfigure:^(ZIKRouteConfiguration *configuration) {
-        ZIKViewRouteConfiguration *config = (ZIKViewRouteConfiguration *)configuration;
-        if (source) {
-            config.source = source;
-        }
-        config.routeType = routeType;
-    }];
-}
-
 #pragma mark Perform Route
-
-- (BOOL)canPerform {
-    return [self _canPerformWithErrorMessage:NULL];
-}
 
 - (BOOL)canPerformCustomRoute {
     return NO;
@@ -2167,7 +2142,7 @@ destinationStateBeforeRoute:(ZIKPresentationState *)destinationStateBeforeRoute
             NSNumber *routeTypeFromRouter = [destination zix_routeTypeFromRouter];
             if (!routeTypeFromRouter) {
                 //Not routing from router
-                Class routerClass = ZIKViewRouterForRegisteredView([destination class]);
+                Class routerClass = ZIKViewRouterToRegisteredView([destination class]);
                 NSAssert([routerClass isSubclassOfClass:[ZIKViewRouter class]], @"Router should be subclass of ZIKViewRouter.");
                 NSAssert([routerClass _validateSupportedRouteTypesForUIView], @"Router for UIView only suppourts ZIKViewRouteTypeAddAsSubview, ZIKViewRouteTypeGetDestination and ZIKViewRouteTypeCustom, override +supportedRouteTypes in your router.");
                 
@@ -2271,7 +2246,7 @@ destinationStateBeforeRoute:(ZIKPresentationState *)destinationStateBeforeRoute
                 
                 //Was added to a superview when superview was not on screen, and it's displayed now.
                 if (destination.superview) {
-                    Class routerClass = ZIKViewRouterForRegisteredView([destination class]);
+                    Class routerClass = ZIKViewRouterToRegisteredView([destination class]);
                     NSAssert([routerClass isSubclassOfClass:[ZIKViewRouter class]], @"Router should be subclass of ZIKViewRouter.");
                     NSAssert([routerClass _validateSupportedRouteTypesForUIView], @"Router for UIView only suppourts ZIKViewRouteTypeAddAsSubview, ZIKViewRouteTypeGetDestination and ZIKViewRouteTypeCustom, override +supportedRouteTypes in your router.");
                     
@@ -2416,7 +2391,7 @@ destinationStateBeforeRoute:(ZIKPresentationState *)destinationStateBeforeRoute
         [routableViews addObjectsFromArray:childViews];
     }
     for (UIViewController *destination in routableViews) {
-        Class routerClass = ZIKViewRouterForRegisteredView([destination class]);
+        Class routerClass = ZIKViewRouterToRegisteredView([destination class]);
         NSAssert([routerClass isSubclassOfClass:[ZIKViewRouter class]], @"Destination's view router should be subclass of ZIKViewRouter");
         [routerClass prepareDestination:destination configure:^(ZIKViewRouteConfiguration * _Nonnull config) {
             
@@ -2516,7 +2491,7 @@ destinationStateBeforeRoute:(ZIKPresentationState *)destinationStateBeforeRoute
         //Generate router for each routable view
         if (routableViews.count > 0) {
             for (UIViewController *routableView in routableViews) {
-                Class routerClass = ZIKViewRouterForRegisteredView([routableView class]);
+                Class routerClass = ZIKViewRouterToRegisteredView([routableView class]);
                 NSAssert([routerClass isSubclassOfClass:[ZIKViewRouter class]], @"Destination's view router should be subclass of ZIKViewRouter");
                 ZIKViewRouter *destinationRouter = [routerClass routerFromSegueIdentifier:segue.identifier sender:sender destination:routableView source:(UIViewController *)self];
                 destinationRouter.routingFromInternal = YES;
@@ -3151,6 +3126,57 @@ destinationStateBeforeRoute:(ZIKPresentationState *)destinationStateBeforeRoute
 
 @end
 
+@implementation ZIKViewRouter (Perform)
+
+- (BOOL)canPerform {
+    return [self _canPerformWithErrorMessage:NULL];
+}
+
++ (BOOL)supportRouteType:(ZIKViewRouteType)type {
+    ZIKViewRouteTypeMask supportedRouteTypes = [self supportedRouteTypes];
+    ZIKViewRouteTypeMask mask = 1 << type;
+    if ((supportedRouteTypes & mask) == mask) {
+        return YES;
+    }
+    return NO;
+}
+
++ (nullable __kindof ZIKViewRouter *)performFromSource:(nullable id<ZIKViewRouteSource>)source configure:(void(NS_NOESCAPE ^)(ZIKViewRouteConfiguration *config))configBuilder {
+    return [super performWithConfigure:^(ZIKViewRouteConfiguration * _Nonnull config) {
+        if (configBuilder) {
+            configBuilder(config);
+        }
+        if (source) {
+            config.source = source;
+        }
+    }];
+}
+
++ (nullable __kindof ZIKViewRouter *)performFromSource:(nullable id<ZIKViewRouteSource>)source
+                                             configure:(void(NS_NOESCAPE ^)(ZIKViewRouteConfiguration *config))configBuilder
+                                       removeConfigure:(void(NS_NOESCAPE ^ _Nullable)(ZIKViewRemoveConfiguration *config))removeConfigBuilder {
+    return [super performWithConfigure:^(ZIKViewRouteConfiguration * _Nonnull config) {
+        if (configBuilder) {
+            configBuilder(config);
+        }
+        if (source) {
+            config.source = source;
+        }
+    } removeConfigure:removeConfigBuilder];
+}
+
++ (__kindof ZIKViewRouter *)performFromSource:(nullable id)source routeType:(ZIKViewRouteType)routeType {
+    return [super performWithConfigure:^(ZIKRouteConfiguration *configuration) {
+        ZIKViewRouteConfiguration *config = (ZIKViewRouteConfiguration *)configuration;
+        if (source) {
+            config.source = source;
+        }
+        config.routeType = routeType;
+    }];
+}
+
+@end
+
 @implementation ZIKViewRouter (Factory)
 
 + (nullable id)makeDestinationWithPreparation:(void(^ _Nullable)(id destination))prepare {
@@ -3427,15 +3453,15 @@ destinationStateBeforeRoute:(ZIKPresentationState *)destinationStateBeforeRoute
 
 @implementation ZIKViewRouter (Discover)
 
-+ (Class(^)(Protocol *))forView {
++ (Class(^)(Protocol *))toView {
     return ^(Protocol *viewProtocol) {
-        return _ZIKViewRouterForView(viewProtocol);
+        return _ZIKViewRouterToView(viewProtocol);
     };
 }
 
-+ (Class(^)(Protocol *))forModule {
++ (Class(^)(Protocol *))toModule {
     return ^(Protocol *configProtocol) {
-        return _ZIKViewRouterForModule(configProtocol);
+        return _ZIKViewRouterToModule(configProtocol);
     };
 }
 
@@ -3492,12 +3518,12 @@ destinationStateBeforeRoute:(ZIKPresentationState *)destinationStateBeforeRoute
 #endif
 }
 
-_Nullable Class _swift_ZIKViewRouterForView(id viewProtocol) {
-    return _ZIKViewRouterForView(viewProtocol);
+_Nullable Class _swift_ZIKViewRouterToView(id viewProtocol) {
+    return _ZIKViewRouterToView(viewProtocol);
 }
 
-_Nullable Class _swift_ZIKViewRouterForModule(id configProtocol) {
-    return _ZIKViewRouterForModule(configProtocol);
+_Nullable Class _swift_ZIKViewRouterToModule(id configProtocol) {
+    return _ZIKViewRouterToModule(configProtocol);
 }
 
 @end

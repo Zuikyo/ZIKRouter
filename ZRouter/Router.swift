@@ -19,16 +19,21 @@ public class Router {
     ///
     /// - Parameters:
     ///   - routableView: A routable entry carrying a view protocol.
+    ///   - source: Source UIViewController or UIView. See ZIKViewRouteConfiguration's source.
     ///   - configure: Configure the configuration for view route.
     ///   - prepare: Prepare the destination with the protocol.
     /// - Returns: The view router.
     public static func perform<Destination>(
-        for routableView: RoutableView<Destination>,
-        routeConfig configure: (ViewRouteConfig) -> Swift.Void,
+        to routableView: RoutableView<Destination>,
+        from source: ZIKViewRouteSource?,
+        config configure: (ViewRouteConfig) -> Swift.Void,
         preparation prepare: ((Destination) -> Swift.Void)? = nil
         ) -> DefaultViewRouter? {
-        return Registry.router(for: routableView)?.perform(configure: { config in
+        return Registry.router(to: routableView)?.perform(configure: { config in
             configure(config)
+            if source != nil {
+                config.source = source
+            }
             config.prepareForRoute = { d in
                 if let destination = d as? Destination {
                     prepare?(destination)
@@ -41,16 +46,21 @@ public class Router {
     ///
     /// - Parameters:
     ///   - routableViewModule: A routabe entry carrying a view module config protocol.
+    ///   - source: Source UIViewController or UIView. See ZIKViewRouteConfiguration's source.
     ///   - configure: Configure the configuration for view route.
     ///   - prepare: Prepare the module with the protocol.
     /// - Returns: The view router.
     public static func perform<Module>(
-        for routableViewModule: RoutableViewModule<Module>,
-        routeConfig configure: (ViewRouteConfig) -> Swift.Void,
+        to routableViewModule: RoutableViewModule<Module>,
+        from source: ZIKViewRouteSource?,
+        config configure: (ViewRouteConfig) -> Swift.Void,
         preparation prepare: ((Module) -> Swift.Void)? = nil
         ) -> DefaultViewRouter? {
-        return Registry.router(for: routableViewModule)?.perform(configure: { config in
+        return Registry.router(to: routableViewModule)?.perform(configure: { config in
             configure(config)
+            if source != nil {
+                config.source = source
+            }
             if let configuration = config as? Module {
                 prepare?(configuration)
             }
@@ -65,11 +75,11 @@ public class Router {
     ///   - prepare: Prepare the destination with the protocol.
     /// - Returns: The service router.
     public static func perform<Destination>(
-        for routableService: RoutableService<Destination>,
-        routeConfig configure: (ServiceRouteConfig) -> Swift.Void,
+        to routableService: RoutableService<Destination>,
+        config configure: (ServiceRouteConfig) -> Swift.Void,
         preparation prepare: ((Destination) -> Swift.Void)? = nil
         ) -> DefaultServiceRouter? {
-        return Registry.router(for: routableService)?.perform(configure: { config in
+        return Registry.router(to: routableService)?.perform(configure: { config in
             configure(config)
             config.prepareForRoute = { d in
                 if let destination = d as? Destination {
@@ -87,11 +97,11 @@ public class Router {
     ///   - prepare: Prepare the module with the protocol.
     /// - Returns: The service router.
     public static func perform<Module>(
-        for routableServiceModule: RoutableServiceModule<Module>,
-        routeConfig configure: (ServiceRouteConfig) -> Swift.Void,
+        to routableServiceModule: RoutableServiceModule<Module>,
+        config configure: (ServiceRouteConfig) -> Swift.Void,
         preparation prepare: ((Module) -> Swift.Void)? = nil
         ) -> DefaultServiceRouter? {
-        return Registry.router(for: routableServiceModule)?.perform(configure: { config in
+        return Registry.router(to: routableServiceModule)?.perform(configure: { config in
             configure(config)
             if let configuration = config as? Module {
                 prepare?(configuration)
@@ -110,11 +120,11 @@ extension Router {
     ///   - prepare: Prepare the destination with the protocol.
     /// - Returns: The view destination.
     public static func makeDestination<Destination>(
-        for routableView: RoutableView<Destination>,
+        to routableView: RoutableView<Destination>,
         preparation prepare: ((Destination) -> Swift.Void)? = nil
         ) -> Destination? {
         var destination: Destination?
-        let routerClass = Registry.router(for: routableView)
+        let routerClass = Registry.router(to: routableView)
         assert((routerClass?.completeSynchronously())!,"router class (\(String(describing: routerClass))) can't get destination synchronously.")
         routerClass?.perform(configure: { config in
             config.routeType = ViewRouteType.getDestination
@@ -138,11 +148,11 @@ extension Router {
     ///   - prepare: Prepare the module with the protocol.
     /// - Returns: The view destination.
     public static func makeDestination<Module>(
-        for routableViewModule: RoutableViewModule<Module>,
+        to routableViewModule: RoutableViewModule<Module>,
         preparation prepare: ((Module) -> Swift.Void)? = nil
         ) -> Any? {
         var destination: Any?
-        let routerClass = Registry.router(for: routableViewModule)
+        let routerClass = Registry.router(to: routableViewModule)
         assert((routerClass?.completeSynchronously())!,"router class (\(String(describing: routerClass))) can't get destination synchronously")
         routerClass?.perform(configure: { config in
             config.routeType = ViewRouteType.getDestination
@@ -163,11 +173,11 @@ extension Router {
     ///   - prepare: Prepare the destination with the protocol.
     /// - Returns: The service destination.
     public static func makeDestination<Destination>(
-        for routableService: RoutableService<Destination>,
+        to routableService: RoutableService<Destination>,
         preparation prepare: ((Destination) -> Swift.Void)? = nil
         ) -> Destination? {
         var destination: Destination?
-        let routerClass = Registry.router(for: routableService)
+        let routerClass = Registry.router(to: routableService)
         assert((routerClass?.completeSynchronously())!,"router class (\(String(describing: routerClass))) can't get destination synchronously")
         routerClass?.perform(configure: { config in
             config.prepareForRoute = { d in
@@ -190,11 +200,11 @@ extension Router {
     ///   - prepare: Prepare the module with the protocol.
     /// - Returns: The service destination.
     public static func makeDestination<Config>(
-        for routableServiceModule: RoutableServiceModule<Config>,
+        to routableServiceModule: RoutableServiceModule<Config>,
         preparation prepare: ((Config) -> Swift.Void)? = nil
         ) -> Any? {
         var destination: Any?
-        let routerClass = Registry.router(for: routableServiceModule)
+        let routerClass = Registry.router(to: routableServiceModule)
         assert((routerClass?.completeSynchronously())!,"router class (\(String(describing: routerClass))) can't get destination synchronously")
         routerClass?.perform(configure: { config in
             if config is Config {

@@ -22,8 +22,9 @@ class SwiftService: SwiftServiceInput, SwiftServiceInput2 {
     func swiftFunction() {
         print("this is a swift function")
         _ = Router.perform(
-            for: RoutableViewModule<ZIKCompatibleAlertConfigProtocol>(),
-            routeConfig: { config in
+            to: RoutableViewModule<ZIKCompatibleAlertConfigProtocol>(),
+            from: UIApplication.shared.keyWindow?.rootViewController,
+            config: { config in
                 config.source = UIApplication.shared.keyWindow?.rootViewController
                 config.routeType = ViewRouteType.custom
         },
@@ -36,6 +37,6 @@ class SwiftService: SwiftServiceInput, SwiftServiceInput2 {
                 module.addOtherButtonTitle("OK", handler: {
                     print("Tap OK alert")
                 })
-            })
+        })
     }
 }
