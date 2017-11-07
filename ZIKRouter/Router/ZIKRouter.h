@@ -64,8 +64,8 @@ NS_ASSUME_NONNULL_BEGIN
 - (nullable instancetype)initWithConfiguration:(RouteConfig)configuration
                            removeConfiguration:(nullable RemoveConfig)removeConfiguration NS_DESIGNATED_INITIALIZER;
 ///Convenient method to create configuration in a builder block.
-- (nullable instancetype)initWithConfigure:(void(NS_NOESCAPE ^)(RouteConfig config))configBuilder
-                           removeConfigure:(void(NS_NOESCAPE ^ _Nullable)(RemoveConfig config))removeConfigBuilder;
+- (nullable instancetype)initWithConfiguring:(void(NS_NOESCAPE ^)(RouteConfig config))configBuilder
+                                    removing:(void(NS_NOESCAPE ^ _Nullable)(RemoveConfig config))removeConfigBuilder;
 - (instancetype)init NS_UNAVAILABLE;
 + (instancetype)new NS_UNAVAILABLE;
 
@@ -86,10 +86,10 @@ NS_ASSUME_NONNULL_BEGIN
 ///If this route action doesn't need any arguments, just perform directly.
 + (nullable RouterType)performRoute;
 ///Set dependencies required by destination and perform route.
-+ (nullable RouterType)performWithConfigure:(void(NS_NOESCAPE ^)(RouteConfig config))configBuilder;
++ (nullable RouterType)performWithConfiguring:(void(NS_NOESCAPE ^)(RouteConfig config))configBuilder;
 ///Set dependencies required by destination and perform route, and you can remove the route with remove configuration later.
-+ (nullable RouterType)performWithConfigure:(void(NS_NOESCAPE ^)(RouteConfig config))configBuilder
-                            removeConfigure:(void(NS_NOESCAPE ^ _Nullable)(RemoveConfig config))removeConfigBuilder;
++ (nullable RouterType)performWithConfiguring:(void(NS_NOESCAPE ^)(RouteConfig config))configBuilder
+                                     removing:(void(NS_NOESCAPE ^ _Nullable)(RemoveConfig config))removeConfigBuilder;
 
 ///Whether the route action is synchronously.
 + (BOOL)completeSynchronously;

@@ -224,7 +224,7 @@ typedef NS_ENUM(NSInteger,ZIKRouterTestType) {
     NSIndexPath *indexPath = [self.tableView indexPathForRowAtPoint:location];
     Class routerClass = [self routerClassForIndexPath:indexPath];
     
-    [routerClass performWithConfigure:^(ZIKViewRouteConfiguration *config) {
+    [routerClass performWithConfiguring:^(ZIKViewRouteConfiguration *config) {
         config.source = self;
         config.routeType = ZIKViewRouteTypeGetDestination;
         config.routeCompletion = ^(id  _Nonnull destination) {

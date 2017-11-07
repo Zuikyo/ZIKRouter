@@ -22,7 +22,7 @@
 }
 - (IBAction)performCustomRoute:(id)sender {
     self.alertViewRouter = [ZIKViewRouter.toModule(ZIKCompatibleAlertConfigProtocol_configRoutable)
-                            performWithConfigure:^(ZIKViewRouteConfiguration<ZIKCompatibleAlertConfigProtocol> * _Nonnull config) {
+                            performWithConfiguring:^(ZIKViewRouteConfiguration<ZIKCompatibleAlertConfigProtocol> * _Nonnull config) {
                                 config.source = self;
                                 config.routeType = ZIKViewRouteTypeCustom;
                                 config.title = @"Compatible Alert";

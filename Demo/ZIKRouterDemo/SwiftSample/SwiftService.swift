@@ -24,7 +24,7 @@ class SwiftService: SwiftServiceInput, SwiftServiceInput2 {
         _ = Router.perform(
             to: RoutableViewModule<ZIKCompatibleAlertConfigProtocol>(),
             from: UIApplication.shared.keyWindow?.rootViewController,
-            config: { config in
+            configuring: { config in
                 config.source = UIApplication.shared.keyWindow?.rootViewController
                 config.routeType = ViewRouteType.custom
         },

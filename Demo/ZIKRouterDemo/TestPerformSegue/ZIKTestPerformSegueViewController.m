@@ -31,7 +31,7 @@
 - (IBAction)performSegue:(id)sender {
     __weak typeof(self) weakSelf = self;
     self.segueRouter = [ZIKViewRouter.toView(ZIKInfoViewProtocol_routable)
-                           performWithConfigure:^(ZIKViewRouteConfiguration * _Nonnull config) {
+                           performWithConfiguring:^(ZIKViewRouteConfiguration * _Nonnull config) {
                                config.source = self;
                                config.routeType = ZIKViewRouteTypePerformSegue;
                                config.configureSegue(^(ZIKViewRouteSegueConfiguration * _Nonnull segueConfig) {
@@ -54,7 +54,7 @@
 - (IBAction)performCustomSegue:(id)sender {
     __weak typeof(self) weakSelf = self;
     self.segueRouter = [ZIKViewRouter.toView(ZIKInfoViewProtocol_routable)
-                           performWithConfigure:^(ZIKViewRouteConfiguration * _Nonnull config) {
+                           performWithConfiguring:^(ZIKViewRouteConfiguration * _Nonnull config) {
                                config.source = self;
                                config.routeType = ZIKViewRouteTypePerformSegue;
                                config.configureSegue(^(ZIKViewRouteSegueConfiguration * _Nonnull segueConfig) {
@@ -78,7 +78,7 @@
     //If destination doesn't comform to ZIKRoutableView, just use ZIKViewRouter to perform the segue.
     self.segueRouter = [ZIKDefaultViewRouter
                         performFromSource:self
-                        configure:^(ZIKViewRouteConfig * _Nonnull config) {
+                        configuring:^(ZIKViewRouteConfig * _Nonnull config) {
                             config.routeType = ZIKViewRouteTypePerformSegue;
                             config.configureSegue(^(ZIKViewRouteSegueConfiguration * _Nonnull segueConfig) {
                                 segueConfig.identifier = @"showUnroutableDestination";
@@ -112,7 +112,7 @@
     //unwind segue from ZIKInfoViewController to ZIKTestPerformSegueViewController is define in ZIKInfoViewController, and should be used inside ZIKInfoViewController, this code is just for test
     [ZIKTestPerformSegueViewRouter
      performFromSource:infoViewController
-     configure:^(ZIKViewRouteConfiguration * _Nonnull config) {
+     configuring:^(ZIKViewRouteConfiguration * _Nonnull config) {
          config.routeType = ZIKViewRouteTypePerformSegue;
          config.configureSegue(^(ZIKViewRouteSegueConfiguration * _Nonnull segueConfig) {
              segueConfig.identifier = @"unwindToTestPerformSegue";

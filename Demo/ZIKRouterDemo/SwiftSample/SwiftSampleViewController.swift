@@ -34,7 +34,7 @@ class SwiftSampleViewController: UIViewController, PureSwiftSampleViewInput, Pur
         infoRouter = Router.perform(
             to: RoutableView<ZIKInfoViewProtocol>(),
             from: self,
-            config: { $0.routeType = ViewRouteType.presentModally },
+            configuring: { $0.routeType = ViewRouteType.presentModally },
             preparation: { [weak self] destination in
                 destination.delegate = self
                 destination.name = "zuik"
@@ -54,7 +54,7 @@ class SwiftSampleViewController: UIViewController, PureSwiftSampleViewInput, Pur
         let router = Router.perform(
             to: RoutableViewModule<ZIKCompatibleAlertConfigProtocol>(),
             from: self,
-            config: { config in
+            configuring: { config in
                 config.routeCompletion = { d in
                     print("show custom alert complete")
                 }
@@ -78,7 +78,7 @@ class SwiftSampleViewController: UIViewController, PureSwiftSampleViewInput, Pur
     @IBAction func testInjectedRouter(_ sender: Any) {
         let router = alertRouterClass
             .perform(from: self,
-                     configure: ({ (config) in
+                     configuring: ({ (config) in
                         config.title = "Compatible Alert"
                         config.message = "Test custom route for alert with UIAlertView and UIAlertController"
                         config.addCancelButtonTitle("Cancel", handler: {

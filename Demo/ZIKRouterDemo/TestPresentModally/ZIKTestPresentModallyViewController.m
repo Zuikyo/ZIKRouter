@@ -23,7 +23,7 @@
     __weak typeof(self) weakSelf = self;
     //provide the router
     self.infoViewRouter = [[ZIKViewRouter.toView(ZIKInfoViewProtocol_routable) alloc]
-                           initWithConfigure:^(ZIKViewRouteConfiguration * _Nonnull config) {
+                           initWithConfiguring:^(ZIKViewRouteConfiguration * _Nonnull config) {
                                config.source = self;
                                config.routeType = ZIKViewRouteTypePresentModally;
                                config.containerWrapper = ^UIViewController<ZIKViewRouteContainer> * _Nonnull(UIViewController * _Nonnull destination) {
@@ -43,7 +43,7 @@
                                    NSLog(@"provider: present modally failed: %@",error);
                                };
                            }
-                           removeConfigure:^(ZIKViewRemoveConfiguration * _Nonnull config) {
+                           removing:^(ZIKViewRemoveConfiguration * _Nonnull config) {
                                config.successHandler = ^{
                                    NSLog(@"provider: dismiss success");
                                };

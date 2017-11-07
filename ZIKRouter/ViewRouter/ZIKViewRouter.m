@@ -55,12 +55,7 @@ static NSMutableArray *g_preparingUIViewRouters;
 @property (nonatomic, strong, nullable) ZIKViewRouter *retainedSelf;
 @end
 
-//#pragma clang diagnostic push
-//#pragma clang diagnostic ignored "-Wincomplete-implementation"
-
 @implementation ZIKViewRouter
-
-//#pragma clang diagnostic pop
 
 @dynamic configuration;
 @dynamic original_configuration;
@@ -2393,7 +2388,7 @@ destinationStateBeforeRoute:(ZIKPresentationState *)destinationStateBeforeRoute
     for (UIViewController *destination in routableViews) {
         Class routerClass = ZIKViewRouterToRegisteredView([destination class]);
         NSAssert([routerClass isSubclassOfClass:[ZIKViewRouter class]], @"Destination's view router should be subclass of ZIKViewRouter");
-        [routerClass prepareDestination:destination configure:^(ZIKViewRouteConfiguration * _Nonnull config) {
+        [routerClass prepareDestination:destination configuring:^(ZIKViewRouteConfiguration * _Nonnull config) {
             
         }];
     }
@@ -3141,8 +3136,8 @@ destinationStateBeforeRoute:(ZIKPresentationState *)destinationStateBeforeRoute
     return NO;
 }
 
-+ (nullable __kindof ZIKViewRouter *)performFromSource:(nullable id<ZIKViewRouteSource>)source configure:(void(NS_NOESCAPE ^)(ZIKViewRouteConfiguration *config))configBuilder {
-    return [super performWithConfigure:^(ZIKViewRouteConfiguration * _Nonnull config) {
++ (nullable __kindof ZIKViewRouter *)performFromSource:(nullable id<ZIKViewRouteSource>)source configuring:(void(NS_NOESCAPE ^)(ZIKViewRouteConfiguration *config))configBuilder {
+    return [super performWithConfiguring:^(ZIKViewRouteConfiguration * _Nonnull config) {
         if (configBuilder) {
             configBuilder(config);
         }
@@ -3153,20 +3148,20 @@ destinationStateBeforeRoute:(ZIKPresentationState *)destinationStateBeforeRoute
 }
 
 + (nullable __kindof ZIKViewRouter *)performFromSource:(nullable id<ZIKViewRouteSource>)source
-                                             configure:(void(NS_NOESCAPE ^)(ZIKViewRouteConfiguration *config))configBuilder
-                                       removeConfigure:(void(NS_NOESCAPE ^ _Nullable)(ZIKViewRemoveConfiguration *config))removeConfigBuilder {
-    return [super performWithConfigure:^(ZIKViewRouteConfiguration * _Nonnull config) {
+                                           configuring:(void(NS_NOESCAPE ^)(ZIKViewRouteConfiguration *config))configBuilder
+                                              removing:(void(NS_NOESCAPE ^ _Nullable)(ZIKViewRemoveConfiguration *config))removeConfigBuilder {
+    return [super performWithConfiguring:^(ZIKViewRouteConfiguration * _Nonnull config) {
         if (configBuilder) {
             configBuilder(config);
         }
         if (source) {
             config.source = source;
         }
-    } removeConfigure:removeConfigBuilder];
+    } removing:removeConfigBuilder];
 }
 
 + (__kindof ZIKViewRouter *)performFromSource:(nullable id)source routeType:(ZIKViewRouteType)routeType {
-    return [super performWithConfigure:^(ZIKRouteConfiguration *configuration) {
+    return [super performWithConfiguring:^(ZIKRouteConfiguration *configuration) {
         ZIKViewRouteConfiguration *config = (ZIKViewRouteConfiguration *)configuration;
         if (source) {
             config.source = source;
@@ -3182,14 +3177,14 @@ destinationStateBeforeRoute:(ZIKPresentationState *)destinationStateBeforeRoute
 + (nullable id)makeDestinationWithPreparation:(void(^ _Nullable)(id destination))prepare {
     NSAssert(self != [ZIKViewRouter class], @"Only get destination from router subclass");
     NSAssert1([self completeSynchronously] == YES, @"The router (%@) should return the destination Synchronously when use +destinationForConfigure",self);
-    ZIKViewRouter *router = [[self alloc] initWithConfigure:(void(^)(ZIKRouteConfiguration*))^(ZIKViewRouteConfiguration * _Nonnull config) {
+    ZIKViewRouter *router = [[self alloc] initWithConfiguring:(void(^)(ZIKRouteConfiguration*))^(ZIKViewRouteConfiguration * _Nonnull config) {
         config.routeType = ZIKViewRouteTypeGetDestination;
         if (prepare) {
             config.prepareForRoute = ^(id  _Nonnull destination) {
                 prepare(destination);
             };
         }
-    } removeConfigure:nil];
+    } removing:nil];
     [router performRoute];
     return router.destination;
 }
@@ -3203,8 +3198,8 @@ destinationStateBeforeRoute:(ZIKPresentationState *)destinationStateBeforeRoute
 @implementation ZIKViewRouter (PerformOnDestination)
 
 + (nullable __kindof ZIKViewRouter *)performOnDestination:(id)destination
-                                                configure:(void(NS_NOESCAPE ^)(ZIKViewRouteConfiguration *config))configBuilder
-                                          removeConfigure:(void(NS_NOESCAPE ^ _Nullable)(ZIKViewRemoveConfiguration *config))removeConfigBuilder {
+                                              configuring:(void(NS_NOESCAPE ^)(ZIKViewRouteConfiguration *config))configBuilder
+                                                 removing:(void(NS_NOESCAPE ^ _Nullable)(ZIKViewRemoveConfiguration *config))removeConfigBuilder {
     if (![destination conformsToProtocol:@protocol(ZIKRoutableView)]) {
         [[self class] _callbackGlobalErrorHandlerWithRouter:nil action:@selector(init) error:[[self class] errorWithCode:ZIKViewRouteErrorInvalidConfiguration localizedDescription:[NSString stringWithFormat:@"Perform route on invalid destination: (%@)",destination]]];
         NSAssert1(NO, @"Perform route on invalid destination: (%@)",destination);
@@ -3221,11 +3216,11 @@ destinationStateBeforeRoute:(ZIKPresentationState *)destinationStateBeforeRoute
         }
     }
     if (!valid) {
-        [[self class] _callbackGlobalErrorHandlerWithRouter:nil action:@selector(performOnDestination:configure:removeConfigure:) error:[[self class] errorWithCode:ZIKViewRouteErrorInvalidConfiguration localizedDescription:[NSString stringWithFormat:@"Perform route on invalid destination (%@), this view is not registered with this router (%@)",destination,self]]];
+        [[self class] _callbackGlobalErrorHandlerWithRouter:nil action:@selector(performOnDestination:configuring:removing:) error:[[self class] errorWithCode:ZIKViewRouteErrorInvalidConfiguration localizedDescription:[NSString stringWithFormat:@"Perform route on invalid destination (%@), this view is not registered with this router (%@)",destination,self]]];
         NSAssert2(NO, @"Perform route on invalid destination (%@), this view is not registered with this router (%@)",destination,self);
         return nil;
     }
-    ZIKViewRouter *router = [[self alloc] initWithConfigure:(void(^)(ZIKRouteConfiguration *))configBuilder removeConfigure:(void(^)(ZIKRouteConfiguration *))removeConfigBuilder];
+    ZIKViewRouter *router = [[self alloc] initWithConfiguring:(void(^)(ZIKRouteConfiguration *))configBuilder removing:(void(^)(ZIKRouteConfiguration *))removeConfigBuilder];
     NSAssert(router.original_configuration.routeType != ZIKViewRouteTypeGetDestination, @"It's meaningless to get destination when you already offer a prepared destination.");
     [router attachDestination:destination];
     [router performRouteOnDestination:destination configuration:router.original_configuration];
@@ -3233,17 +3228,17 @@ destinationStateBeforeRoute:(ZIKPresentationState *)destinationStateBeforeRoute
 }
 
 + (nullable __kindof ZIKViewRouter *)performOnDestination:(id)destination
-                                                configure:(void(NS_NOESCAPE ^)(ZIKViewRouteConfiguration *config))configBuilder {
-    return [self performOnDestination:destination configure:configBuilder removeConfigure:nil];
+                                              configuring:(void(NS_NOESCAPE ^)(ZIKViewRouteConfiguration *config))configBuilder {
+    return [self performOnDestination:destination configuring:configBuilder removing:nil];
 }
 
 + (__kindof ZIKViewRouter *)performOnDestination:(id)destination source:(nullable id<ZIKViewRouteSource>)source routeType:(ZIKViewRouteType)routeType {
-    return [self performOnDestination:destination configure:^(__kindof ZIKViewRouteConfiguration * _Nonnull config) {
+    return [self performOnDestination:destination configuring:^(__kindof ZIKViewRouteConfiguration * _Nonnull config) {
         if (source) {
             config.source = source;
         }
         config.routeType = routeType;
-    } removeConfigure:nil];
+    } removing:nil];
 }
 
 @end
@@ -3251,10 +3246,10 @@ destinationStateBeforeRoute:(ZIKPresentationState *)destinationStateBeforeRoute
 @implementation ZIKViewRouter (Prepare)
 
 + (nullable __kindof ZIKViewRouter *)prepareDestination:(id)destination
-                                              configure:(void(NS_NOESCAPE ^)(ZIKViewRouteConfiguration *config))configBuilder
-                                        removeConfigure:(void(NS_NOESCAPE ^ _Nullable)(ZIKViewRemoveConfiguration *config))removeConfigBuilder {
+                                            configuring:(void(NS_NOESCAPE ^)(ZIKViewRouteConfiguration *config))configBuilder
+                                               removing:(void(NS_NOESCAPE ^ _Nullable)(ZIKViewRemoveConfiguration *config))removeConfigBuilder {
     if (![destination conformsToProtocol:@protocol(ZIKRoutableView)]) {
-        [[self class] _callbackGlobalErrorHandlerWithRouter:nil action:@selector(prepareDestination:configure:removeConfigure:) error:[[self class] errorWithCode:ZIKViewRouteErrorInvalidConfiguration localizedDescription:[NSString stringWithFormat:@"Prepare for invalid destination: (%@)",destination]]];
+        [[self class] _callbackGlobalErrorHandlerWithRouter:nil action:@selector(prepareDestination:configuring:removing:) error:[[self class] errorWithCode:ZIKViewRouteErrorInvalidConfiguration localizedDescription:[NSString stringWithFormat:@"Prepare for invalid destination: (%@)",destination]]];
         NSAssert1(NO, @"Prepare for invalid destination: (%@)",destination);
         return nil;
     }
@@ -3269,7 +3264,7 @@ destinationStateBeforeRoute:(ZIKPresentationState *)destinationStateBeforeRoute
         }
     }
     if (!valid) {
-        [[self class] _callbackGlobalErrorHandlerWithRouter:nil action:@selector(prepareDestination:configure:removeConfigure:) error:[[self class] errorWithCode:ZIKViewRouteErrorInvalidConfiguration localizedDescription:[NSString stringWithFormat:@"Prepare for invalid destination (%@), this view is not registered with this router (%@)",destination,self]]];
+        [[self class] _callbackGlobalErrorHandlerWithRouter:nil action:@selector(prepareDestination:configuring:removing:) error:[[self class] errorWithCode:ZIKViewRouteErrorInvalidConfiguration localizedDescription:[NSString stringWithFormat:@"Prepare for invalid destination (%@), this view is not registered with this router (%@)",destination,self]]];
         NSAssert2(NO, @"Prepare for invalid destination (%@), this view is not registered with this router (%@)",destination,self);
         return nil;
     }
@@ -3295,8 +3290,8 @@ destinationStateBeforeRoute:(ZIKPresentationState *)destinationStateBeforeRoute
 }
 
 + (nullable __kindof ZIKViewRouter *)prepareDestination:(id)destination
-                                              configure:(void(NS_NOESCAPE ^)(ZIKViewRouteConfiguration *config))configBuilder {
-    return [self prepareDestination:destination configure:configBuilder removeConfigure:nil];
+                                            configuring:(void(NS_NOESCAPE ^)(ZIKViewRouteConfiguration *config))configBuilder {
+    return [self prepareDestination:destination configuring:configBuilder removing:nil];
 }
 
 @end

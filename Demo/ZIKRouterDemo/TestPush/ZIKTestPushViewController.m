@@ -21,7 +21,7 @@
     
     __weak typeof(self) weakSelf = self;
     self.infoViewRouter = [[ZIKViewRouter.toView(ZIKInfoViewProtocol_routable) alloc]
-                           initWithConfigure:^(ZIKViewRouteConfiguration * _Nonnull config) {
+                           initWithConfiguring:^(ZIKViewRouteConfiguration * _Nonnull config) {
                                config.source = self;
                                config.routeType = ZIKViewRouteTypePush;
                                
@@ -46,7 +46,7 @@
                                };
                                config.handleExternalRoute = YES;
                            }
-                           removeConfigure:^(__kindof ZIKViewRemoveConfiguration * _Nonnull config) {
+                           removing:^(__kindof ZIKViewRemoveConfiguration * _Nonnull config) {
                                config.successHandler = ^{
                                    NSLog(@"provider: pop success");
                                };

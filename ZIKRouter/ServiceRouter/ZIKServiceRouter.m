@@ -37,13 +37,13 @@ static dispatch_semaphore_t g_globalErrorSema;
 
 @end
 
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wincomplete-implementation" 
-#pragma clang diagnostic ignored "-Wobjc-designated-initializers"
+//#pragma clang diagnostic push
+//#pragma clang diagnostic ignored "-Wincomplete-implementation"
+//#pragma clang diagnostic ignored "-Wobjc-designated-initializers"
 
 @implementation ZIKServiceRouter
 
-#pragma clang diagnostic pop
+//#pragma clang diagnostic pop
 
 + (void)load {
     static dispatch_once_t onceToken;
@@ -353,13 +353,13 @@ _Nullable Class _ZIKServiceRouterToModule(Protocol *configProtocol) {
 + (nullable id)makeDestinationWithPreparation:(void(^ _Nullable)(id destination))prepare {
     NSAssert(self != [ZIKServiceRouter class], @"Only get destination from router subclass");
     NSAssert1([self completeSynchronously] == YES, @"The router (%@) should return the destination Synchronously when use +destinationForConfigure",self);
-    ZIKServiceRouter *router = [[self alloc] initWithConfigure:(void(^)(ZIKRouteConfiguration*))^(ZIKServiceRouteConfiguration * _Nonnull config) {
+    ZIKServiceRouter *router = [[self alloc] initWithConfiguring:(void(^)(ZIKRouteConfiguration*))^(ZIKServiceRouteConfiguration * _Nonnull config) {
         if (prepare) {
             config.prepareForRoute = ^(id  _Nonnull destination) {
                 prepare(destination);
             };
         }
-    } removeConfigure:nil];
+    } removing:nil];
     [router performRoute];
     id destination = router.destination;
     return destination;

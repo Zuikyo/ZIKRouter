@@ -27,7 +27,7 @@ NS_ASSUME_NONNULL_BEGIN
 /**
  Error handler for all view router, for debugging and log.
  @discussion
- Actions: init, performRoute, removeRoute, forView, forModule, configureSegue, performOnDestination:configure:removeConfigure:, prepareDestination:configure:removeConfigure:.
+ Actions: init, performRoute, removeRoute, forView, forModule, configureSegue, performOnDestination:configuring:removing:, prepareDestination:configuring:removing:.
 
  @param router The router where error happens.
  @param routeAction The action where error happens.
@@ -94,9 +94,9 @@ typedef void(^ZIKViewRouteGlobalErrorHandler)(__kindof ZIKViewRouter * _Nullable
 + (BOOL)supportRouteType:(ZIKViewRouteType)type;
 
 + (nullable ZIKViewRouter<RouteConfig,RemoveConfig> *)performRoute NS_UNAVAILABLE;
-+ (nullable ZIKViewRouter<RouteConfig,RemoveConfig> *)performWithConfigure:(void(NS_NOESCAPE ^)(RouteConfig config))configBuilder
-                                                           removeConfigure:(void(NS_NOESCAPE ^ _Nullable)(RemoveConfig config))removeConfigBuilder NS_UNAVAILABLE;
-+ (nullable ZIKViewRouter<RouteConfig,RemoveConfig> *)performWithConfigure:(void(NS_NOESCAPE ^)(RouteConfig config))configBuilder NS_UNAVAILABLE;
++ (nullable ZIKViewRouter<RouteConfig,RemoveConfig> *)performWithConfiguring:(void(NS_NOESCAPE ^)(RouteConfig config))configBuilder
+                                                                    removing:(void(NS_NOESCAPE ^ _Nullable)(RemoveConfig config))removeConfigBuilder NS_UNAVAILABLE;
++ (nullable ZIKViewRouter<RouteConfig,RemoveConfig> *)performWithConfiguring:(void(NS_NOESCAPE ^)(RouteConfig config))configBuilder NS_UNAVAILABLE;
 
 
 /**
@@ -106,7 +106,7 @@ typedef void(^ZIKViewRouteGlobalErrorHandler)(__kindof ZIKViewRouter * _Nullable
  @param configBuilder Build the configuration in the block.
  @return The view router for this route.
  */
-+ (nullable ZIKViewRouter<RouteConfig,RemoveConfig> *)performFromSource:(nullable id<ZIKViewRouteSource>)source configure:(void(NS_NOESCAPE ^)(RouteConfig config))configBuilder;
++ (nullable ZIKViewRouter<RouteConfig,RemoveConfig> *)performFromSource:(nullable id<ZIKViewRouteSource>)source configuring:(void(NS_NOESCAPE ^)(RouteConfig config))configBuilder;
 
 /**
  Perform route from source view to destination view, and config the remove route.
@@ -117,8 +117,8 @@ typedef void(^ZIKViewRouteGlobalErrorHandler)(__kindof ZIKViewRouter * _Nullable
  @return The view router for this route.
  */
 + (nullable ZIKViewRouter<RouteConfig,RemoveConfig> *)performFromSource:(nullable id<ZIKViewRouteSource>)source
-                                                              configure:(void(NS_NOESCAPE ^)(RouteConfig config))configBuilder
-                                                        removeConfigure:(void(NS_NOESCAPE ^ _Nullable)(RemoveConfig config))removeConfigBuilder;
+                                                            configuring:(void(NS_NOESCAPE ^)(RouteConfig config))configBuilder
+                                                               removing:(void(NS_NOESCAPE ^ _Nullable)(RemoveConfig config))removeConfigBuilder;
 
 ///If this destination doesn't need any variable to initialize, just pass source and perform route.
 + (nullable ZIKViewRouter<RouteConfig,RemoveConfig> *)performFromSource:(nullable id<ZIKViewRouteSource>)source routeType:(ZIKViewRouteType)routeType;
@@ -142,10 +142,10 @@ typedef void(^ZIKViewRouteGlobalErrorHandler)(__kindof ZIKViewRouter * _Nullable
  @return A router for the destination. If the destination is not registered with this router class, return nil and get assert failure.
  */
 + (nullable ZIKViewRouter<RouteConfig,RemoveConfig> *)performOnDestination:(id)destination
-                                                                 configure:(void(NS_NOESCAPE ^)(RouteConfig config))configBuilder
-                                                           removeConfigure:(void(NS_NOESCAPE ^ _Nullable)(RemoveConfig config))removeConfigBuilder;
+                                                               configuring:(void(NS_NOESCAPE ^)(RouteConfig config))configBuilder
+                                                                  removing:(void(NS_NOESCAPE ^ _Nullable)(RemoveConfig config))removeConfigBuilder;
 + (nullable ZIKViewRouter<RouteConfig,RemoveConfig> *)performOnDestination:(id)destination
-                                                                 configure:(void(NS_NOESCAPE ^)(RouteConfig config))configBuilder;
+                                                               configuring:(void(NS_NOESCAPE ^)(RouteConfig config))configBuilder;
 + (nullable ZIKViewRouter<RouteConfig,RemoveConfig> *)performOnDestination:(id)destination source:(nullable id<ZIKViewRouteSource>)source routeType:(ZIKViewRouteType)routeType;
 
 @end
@@ -160,11 +160,11 @@ typedef void(^ZIKViewRouteGlobalErrorHandler)(__kindof ZIKViewRouter * _Nullable
  @return A router for the destination. If the destination is not registered with this router class, return nil and get assert failure.
  */
 + (nullable ZIKViewRouter<RouteConfig,RemoveConfig> *)prepareDestination:(id)destination
-                                                               configure:(void(NS_NOESCAPE ^)(RouteConfig config))configBuilder
-removeConfigure:(void(NS_NOESCAPE ^ _Nullable)(RemoveConfig config))removeConfigBuilder NS_SWIFT_NAME(prepare(destination:configure:removeConfigure:));
+                                                             configuring:(void(NS_NOESCAPE ^)(RouteConfig config))configBuilder
+                                                                removing:(void(NS_NOESCAPE ^ _Nullable)(RemoveConfig config))removeConfigBuilder NS_SWIFT_NAME(prepare(destination:configuring:removing:));
 
 + (nullable ZIKViewRouter<RouteConfig,RemoveConfig> *)prepareDestination:(id)destination
-                                                               configure:(void(NS_NOESCAPE ^)(RouteConfig config))configBuilder NS_SWIFT_NAME(prepare(destination:configure:));
+                                                             configuring:(void(NS_NOESCAPE ^)(RouteConfig config))configBuilder NS_SWIFT_NAME(prepare(destination:configuring:));
 @end
 
 @interface ZIKViewRouter (Remove)
@@ -283,7 +283,7 @@ removeConfigure:(void(NS_NOESCAPE ^ _Nullable)(RemoveConfig config))removeConfig
  
  //Get ZIKLoginViewRouter and perform route
  [ZIKViewRouter.toView(@protocol(ZIKLoginViewProtocol))
-     performWithConfigure:^(ZIKViewRouteConfiguration *config) {
+     performWithConfiguring:^(ZIKViewRouteConfiguration *config) {
          config.source = self;
          config.prepareForRoute = ^(id<ZIKLoginViewProtocol> destination) {
              destination.account = @"my account";
@@ -342,7 +342,7 @@ removeConfigure:(void(NS_NOESCAPE ^ _Nullable)(RemoveConfig config))removeConfig
  
  //Get ZIKLoginViewRouter and perform route
  [ZIKViewRouter.toModule(@protocol(ZIKLoginViewConfigProtocol))
-     performWithConfigure:^(ZIKViewRouteConfiguration<ZIKLoginViewConfigProtocol> *config) {
+     performWithConfiguring:^(ZIKViewRouteConfiguration<ZIKLoginViewConfigProtocol> *config) {
          config.source = self;
          config.account = @"my account";
  }];

@@ -29,7 +29,7 @@ NS_ASSUME_NONNULL_BEGIN
  @note
  Router with ZIKViewRouteTypePerformSegue route type won't invoke this method, because destination is created from storyboard.
  
- Router created with -performOnDestination:configure:removeConfigure: won't invoke this method.
+ Router created with -performOnDestination:configuring:removing: won't invoke this method.
  
  This methods is only responsible for create the destination. The additional initialization should be in -prepareDestination:configuration:.
  
@@ -60,7 +60,7 @@ NS_ASSUME_NONNULL_BEGIN
  @note
   When it's removed and routed again, it's alse treated as first appearance, so this method may be called more than once. You should check whether the destination is already prepared to avoid unnecessary preparation.
  
- If you get a prepared destination by ZIKViewRouteTypeGetDestination or -prepareDestination:configure:removeConfigure:, this method will be called. When the destination is routed, this method will also be called, because the destination may be changed.
+ If you get a prepared destination by ZIKViewRouteTypeGetDestination or -prepareDestination:configuring:removing:, this method will be called. When the destination is routed, this method will also be called, because the destination may be changed.
  
  @param destination The view to perform route.
  @param configuration The configuration for route.

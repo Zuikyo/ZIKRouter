@@ -42,7 +42,7 @@
     if (destination.child == nil) {
         [ZIKViewRouter.toView(@protocol(ZIKChildViewProtocol))
          performFromSource:nil
-         configure:^(ZIKViewRouteConfiguration * _Nonnull config) {
+         configuring:^(ZIKViewRouteConfiguration * _Nonnull config) {
             config.routeType = ZIKViewRouteTypeGetDestination;
             
             //The child may fetch parent in it's router, you must set child's parent to avoid infinite recursion
