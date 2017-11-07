@@ -105,11 +105,11 @@ void _initializeZIKServiceRouter() {
             }), @"Router(%@) must override +registerRoutableDestination to register destination.",class);
             NSCAssert1(({
                 BOOL valid = YES;
-                if (!ZIKRouter_classIsSubclassOfClass(class, NSClassFromString(@"ZIKServiceRouteAdapter"))) {
-                    IMP destinationIMP = class_getMethodImplementation(objc_getMetaClass(class_getName(class)), @selector(destinationWithConfiguration:));
+                if (class != NSClassFromString(@"ZIKServiceRouteAdapter") && !ZIKRouter_classIsSubclassOfClass(class, NSClassFromString(@"ZIKServiceRouteAdapter"))) {
+                    IMP destinationIMP = class_getMethodImplementation(class, @selector(destinationWithConfiguration:));
                     Class superClass = class_getSuperclass(class);
                     if (superClass == ZIKServiceRouterClass || ZIKRouter_classIsSubclassOfClass(superClass, ZIKServiceRouterClass)) {
-                        IMP superClassIMP = class_getMethodImplementation(objc_getMetaClass(class_getName(superClass)), @selector(destinationWithConfiguration:));
+                        IMP superClassIMP = class_getMethodImplementation(superClass, @selector(destinationWithConfiguration:));
                         valid = (destinationIMP != superClassIMP);
                     }
                 }
