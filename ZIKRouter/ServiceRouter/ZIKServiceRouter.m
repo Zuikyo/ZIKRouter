@@ -38,13 +38,7 @@ static dispatch_semaphore_t g_globalErrorSema;
 
 @end
 
-//#pragma clang diagnostic push
-//#pragma clang diagnostic ignored "-Wincomplete-implementation"
-//#pragma clang diagnostic ignored "-Wobjc-designated-initializers"
-
 @implementation ZIKServiceRouter
-
-//#pragma clang diagnostic pop
 
 + (void)load {
     static dispatch_once_t onceToken;
@@ -226,7 +220,7 @@ _Nullable Class _ZIKServiceRouterToModule(Protocol *configProtocol) {
 #pragma mark ZIKRouterProtocol
 
 + (void)registerRoutableDestination {
-    NSAssert2(NO, @"subclass(%@) must implement +registerRoutableDestination to register destination with %@",self,self);
+    NSAssert1(NO, @"subclass(%@) must override +registerRoutableDestination to register destination.",self);
 }
 
 - (void)performRouteOnDestination:(id)destination configuration:(__kindof ZIKServiceRouteConfiguration *)configuration {

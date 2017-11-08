@@ -22,7 +22,7 @@ NS_ASSUME_NONNULL_BEGIN
 - (void)beginPerformRoute;
 ///Call it when route is successfully performed.
 - (void)endPerformRouteWithSuccess;
-///Call it when route performancer failed.
+///Call it when route perform failed.
 - (void)endPerformRouteWithError:(NSError *)error;
 
 ///Call it when route will remove.

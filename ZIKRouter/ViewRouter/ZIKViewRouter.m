@@ -449,7 +449,7 @@ _Nullable Class _ZIKViewRouterToModule(Protocol *configProtocol) {
 #pragma mark ZIKViewRouterProtocol
 
 + (void)registerRoutableDestination {
-    NSAssert2(NO, @"subclass(%@) must override +registerRoutableDestination to register destination with %@",self,self);
+    NSAssert1(NO, @"subclass(%@) must override +registerRoutableDestination to register destination.",self);
 }
 
 + (ZIKViewRouteTypeMask)supportedRouteTypes {

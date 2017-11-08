@@ -10,6 +10,7 @@
 //
 
 #import "ZIKRouter.h"
+#import "ZIKServiceRouterProtocol.h"
 #import "ZIKServiceRoutable.h"
 #import "ZIKServiceModuleRoutable.h"
 #import "ZIKServiceRouteConfiguration.h"
@@ -18,26 +19,14 @@ NS_ASSUME_NONNULL_BEGIN
 
 extern NSString *const kZIKServiceRouterErrorDomain;
 
-@protocol ZIKRoutableService;
-@class ZIKServiceRouter, ZIKServiceRouteConfiguration;
-
-@protocol ZIKServiceRouterProtocol <NSObject>
-
-///Register the destination class with those +registerXXX: methods. ZIKServiceRouter will call this method before app did finish launch. If a router was not registered with any service class, there'll be an assert failure.
-+ (void)registerRoutableDestination;
-
-///Create and initialize destination with configuration.
-- (nullable id<ZIKRoutableService>)destinationWithConfiguration:(__kindof ZIKServiceRouteConfiguration *)configuration;
-
-@end
-
-///Enble this to check if all routers and routable protocols are properly implemented.
+///Enble this to check whether all routers and routable protocols are properly implemented.
 #ifdef DEBUG
 #define ZIKSERVICEROUTER_CHECK 1
 #else
 #define ZIKSERVICEROUTER_CHECK 0
 #endif
 
+@class ZIKServiceRouter;
 /**
  Error handler for all service routers, for debug and log.
  @discussion

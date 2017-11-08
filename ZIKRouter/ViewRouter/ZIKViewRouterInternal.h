@@ -23,7 +23,7 @@ NS_ASSUME_NONNULL_BEGIN
 - (void)beginPerformRoute;
 ///Call it when route is successfully performed.
 - (void)endPerformRouteWithSuccess;
-///Call it when route performancer failed.
+///Call it when route perform failed.
 - (void)endPerformRouteWithError:(NSError *)error;
 
 ///If your custom route type is performing a segue, use this to perform the segue, don't need to use -beginPerformRoute and -endPerformRouteWithSuccess. `Source` is the view controller to perform the segue.
