@@ -75,6 +75,32 @@ class SwiftSampleViewController: UIViewController, PureSwiftSampleViewInput, Pur
         alertRouter = (router as! ConfigurableViewRouter<ViewRouteConfig & ZIKCompatibleAlertConfigProtocol>)
     }
     
+    @IBAction func testSwitchableRoute(_ sender: Any) {
+        var switchableView: SwitchableView
+        let viewType = arc4random() % 2
+        switch viewType {
+        case 0:
+            switchableView = SwitchableView(RoutableView<ZIKInfoViewProtocol>())
+        default:
+            switchableView = SwitchableView(RoutableView<SwiftSampleViewInput>())
+        }
+        infoRouter = Registry.router(to: switchableView)?
+            .perform(from: self,
+                     configuring: { config in
+                        config.routeType = ViewRouteType.push
+                        config.prepareDestination = { [weak self] dest in
+                            switch dest {
+                            case is ZIKInfoViewProtocol:
+                                (dest as! ZIKInfoViewProtocol).delegate = self
+                            case is SwiftSampleViewInput:
+                                break
+                            default:
+                                break
+                            }
+                        }
+            })
+    }
+    
     @IBAction func testInjectedRouter(_ sender: Any) {
         let router = alertRouterClass.perform(
             from: self,
