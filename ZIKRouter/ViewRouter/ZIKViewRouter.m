@@ -634,7 +634,9 @@ _Nullable Class _ZIKViewRouterToModule(Protocol *configProtocol) {
         return;
     }
 #if ZIKVIEWROUTER_CHECK
-    [self _validateDestinationConformance:destination];
+    if ([[self class] _validateDestinationShouldExistInConfiguration:configuration]) {
+        [self _validateDestinationConformance:destination];
+    }
 #endif
     if (![[self class] _validateRouteSourceNotMissedInConfiguration:configuration]) {
         [self notifyRouteState:ZIKRouterStateRouteFailed];
@@ -907,6 +909,11 @@ _Nullable Class _ZIKViewRouterToModule(Protocol *configProtocol) {
         self.routingFromInternal = NO;
         return;
     }
+#if ZIKVIEWROUTER_CHECK
+    if ([self class] != [ZIKViewRouter class]) {
+        [self _validateDestinationConformance:destination];
+    }
+#endif
     NSParameterAssert([destination isKindOfClass:[UIViewController class]]);
     NSParameterAssert([source isKindOfClass:[UIViewController class]]);
     NSAssert(![source zix_sourceViewRouter], @"Didn't set sourceViewRouter to nil in -ZIKViewRouter_hook_prepareForSegue:sender:, router will not be dealloced before source was dealloced");
@@ -1109,8 +1116,8 @@ _Nullable Class _ZIKViewRouterToModule(Protocol *configProtocol) {
 
 - (void)prepareForPerformRouteOnDestination:(id)destination {
     ZIKViewRouteConfiguration *configuration = self.original_configuration;
-    if (configuration.prepareForRoute) {
-        configuration.prepareForRoute(destination);
+    if (configuration.prepareDestination) {
+        configuration.prepareDestination(destination);
     }
     if ([self respondsToSelector:@selector(prepareDestination:configuration:)]) {
         [self prepareDestination:destination configuration:configuration];
@@ -2532,19 +2539,19 @@ destinationStateBeforeRoute:(ZIKPresentationState *)destinationStateBeforeRoute
     
     //Prepare for unwind destination or unroutable views
     if (sourceRouter && sourceRouter.original_configuration.segueConfiguration.segueDestination == destination) {
-        void(^prepareForRouteInSourceRouter)(id destination);
+        void(^prepareDestinationInSourceRouter)(id destination);
         if (sourceRouter) {
-            prepareForRouteInSourceRouter = sourceRouter.original_configuration.prepareForRoute;
+            prepareDestinationInSourceRouter = sourceRouter.original_configuration.prepareDestination;
         }
         if (isUnwindSegue) {
-            if (prepareForRouteInSourceRouter) {
-                prepareForRouteInSourceRouter(destination);
+            if (prepareDestinationInSourceRouter) {
+                prepareDestinationInSourceRouter(destination);
             }
             return;
         }
         if (![destination conformsToProtocol:@protocol(ZIKRoutableView)]) {
-            if (prepareForRouteInSourceRouter) {
-                prepareForRouteInSourceRouter(destination);
+            if (prepareDestinationInSourceRouter) {
+                prepareDestinationInSourceRouter(destination);
             }
         }
     }
@@ -3219,7 +3226,7 @@ destinationStateBeforeRoute:(ZIKPresentationState *)destinationStateBeforeRoute
     ZIKViewRouter *router = [[self alloc] initWithConfiguring:(void(^)(ZIKRouteConfiguration*))^(ZIKViewRouteConfiguration * _Nonnull config) {
         config.routeType = ZIKViewRouteTypeGetDestination;
         if (prepare) {
-            config.prepareForRoute = ^(id  _Nonnull destination) {
+            config.prepareDestination = ^(id  _Nonnull destination) {
                 prepare(destination);
             };
         }
@@ -3520,21 +3527,6 @@ destinationStateBeforeRoute:(ZIKPresentationState *)destinationStateBeforeRoute
 
 @implementation ZIKViewRouter (Private)
 
-+ (void)_callbackGlobalErrorHandlerWithRouter:(nullable __kindof ZIKViewRouter *)router action:(SEL)action error:(NSError *)error {
-    dispatch_semaphore_wait(g_globalErrorSema, DISPATCH_TIME_FOREVER);
-    
-    ZIKViewRouteGlobalErrorHandler errorHandler = g_globalErrorHandler;
-    if (errorHandler) {
-        errorHandler(router, action, error);
-    } else {
-#ifdef DEBUG
-        NSLog(@"❌ZIKViewRouter Error: router's action (%@) catch error: (%@),\nrouter:(%@)", NSStringFromSelector(action), error,router);
-#endif
-    }
-    
-    dispatch_semaphore_signal(g_globalErrorSema);
-}
-
 + (BOOL)shouldCheckImplementation {
 #if ZIKVIEWROUTER_CHECK
     return YES;
@@ -3575,6 +3567,21 @@ destinationStateBeforeRoute:(ZIKPresentationState *)destinationStateBeforeRoute
 #else
     return nil;
 #endif
+}
+
++ (void)_callbackGlobalErrorHandlerWithRouter:(nullable __kindof ZIKViewRouter *)router action:(SEL)action error:(NSError *)error {
+    dispatch_semaphore_wait(g_globalErrorSema, DISPATCH_TIME_FOREVER);
+    
+    ZIKViewRouteGlobalErrorHandler errorHandler = g_globalErrorHandler;
+    if (errorHandler) {
+        errorHandler(router, action, error);
+    } else {
+#ifdef DEBUG
+        NSLog(@"❌ZIKViewRouter Error: router's action (%@) catch error: (%@),\nrouter:(%@)", NSStringFromSelector(action), error,router);
+#endif
+    }
+    
+    dispatch_semaphore_signal(g_globalErrorSema);
 }
 
 _Nullable Class _swift_ZIKViewRouterToView(id viewProtocol) {

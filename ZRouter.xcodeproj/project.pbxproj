@@ -14,6 +14,7 @@
 		F872F4FB1FAF5BD600297A1D /* Namespace.swift in Sources */ = {isa = PBXBuildFile; fileRef = F872F4F31FAF5BD500297A1D /* Namespace.swift */; };
 		F8C0D1161FB034B5003D3B3B /* Router.swift in Sources */ = {isa = PBXBuildFile; fileRef = F8C0D1151FB034B5003D3B3B /* Router.swift */; };
 		F8C0D11E1FB04E06003D3B3B /* Routable.swift in Sources */ = {isa = PBXBuildFile; fileRef = F8C0D11D1FB04E06003D3B3B /* Routable.swift */; };
+		F8EF733C1FB4C4550040008C /* Switchable.swift in Sources */ = {isa = PBXBuildFile; fileRef = F8EF733B1FB4C4550040008C /* Switchable.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -51,6 +52,7 @@
 		F872F4FC1FAF5C6E00297A1D /* ZIKRouter.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; path = ZIKRouter.xcodeproj; sourceTree = "<group>"; };
 		F8C0D1151FB034B5003D3B3B /* Router.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Router.swift; sourceTree = "<group>"; };
 		F8C0D11D1FB04E06003D3B3B /* Routable.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Routable.swift; sourceTree = "<group>"; };
+		F8EF733B1FB4C4550040008C /* Switchable.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Switchable.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -88,6 +90,7 @@
 				F872F4F11FAF5BD500297A1D /* Registry.swift */,
 				F8C0D1151FB034B5003D3B3B /* Router.swift */,
 				F8C0D11D1FB04E06003D3B3B /* Routable.swift */,
+				F8EF733B1FB4C4550040008C /* Switchable.swift */,
 				F872F4EE1FAF5BD500297A1D /* ViewExtension.swift */,
 				F872F4F31FAF5BD500297A1D /* Namespace.swift */,
 				F872F4E41FAF5BB200297A1D /* ZRouter.h */,
@@ -214,6 +217,7 @@
 				F872F4F91FAF5BD600297A1D /* Registry.swift in Sources */,
 				F872F4F81FAF5BD600297A1D /* Alias.swift in Sources */,
 				F872F4FB1FAF5BD600297A1D /* Namespace.swift in Sources */,
+				F8EF733C1FB4C4550040008C /* Switchable.swift in Sources */,
 				F8C0D11E1FB04E06003D3B3B /* Routable.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

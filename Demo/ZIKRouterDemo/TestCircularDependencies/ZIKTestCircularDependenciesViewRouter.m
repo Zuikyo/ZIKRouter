@@ -46,7 +46,7 @@
             config.routeType = ZIKViewRouteTypeGetDestination;
             
             //The child may fetch parent in it's router, you must set child's parent to avoid infinite recursion
-            config.prepareForRoute = ^(id<ZIKChildViewProtocol> child) {
+            config.prepareDestination = ^(id<ZIKChildViewProtocol> child) {
                 child.parent = destination;
             };
             config.routeCompletion = ^(id  _Nonnull child) {

@@ -27,7 +27,7 @@
                            performWithConfiguring:^(ZIKViewRouteConfiguration * _Nonnull config) {
                                config.source = self;
                                config.routeType = ZIKViewRouteTypeAddAsChildViewController;
-                               config.prepareForRoute = ^(id<ZIKInfoViewProtocol>  _Nonnull destination) {
+                               config.prepareDestination = ^(id<ZIKInfoViewProtocol>  _Nonnull destination) {
                                    destination.delegate = weakSelf;
                                    destination.name = @"Zuik";
                                    destination.age = 18;

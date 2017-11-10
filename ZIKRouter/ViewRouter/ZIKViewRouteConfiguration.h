@@ -43,7 +43,7 @@ typedef NS_ENUM(NSInteger,ZIKViewRouteType) {
      Without a container, present modally.
      */
     ZIKViewRouteTypeShowDetail NS_ENUM_AVAILABLE_IOS(8_0),
-    ///Get destination viewController and do @code[source addChildViewController:destination]@endcode; You need to get destination in routeCompletion, and add it's view to your view hierarchy; source must be a UIViewController.
+    ///Get destination viewController and do @code[source addChildViewController:destination]@endcode; You need to get destination in routeCompletion, and add it's view to your view hierarchy, and call [destination didMoveToParentViewController:source]; source must be a UIViewController.
     ZIKViewRouteTypeAddAsChildViewController,
     ///Get your custom UIView and do @code[source addSubview:destination]@endcode; source must be a UIView.
     ZIKViewRouteTypeAddAsSubview,
@@ -123,19 +123,19 @@ typedef void(^ZIKViewRouteSegueConfiger)(NS_NOESCAPE ZIKViewRouteSegueConfigure)
 @property (nonatomic, copy, nullable) ZIKViewRouteContainerWrapper containerWrapper;
 
 /**
- Prepare for performRoute, and config other dependencies for destination here. Subclass can offer more specific info.
+ Prepare for performRoute, and config other dependencies for destination here.
  
  @discussion
- For ZIKViewRouteTypePush, ZIKViewRouteTypePresentModally,  ZIKViewRouteTypePresentAsPopover, ZIKViewRouteTypeShow, ZIKViewRouteTypeShowDetail, ZIKViewRouteTypeAddAsChildViewController, destination is a UIViewController.
+ For ZIKViewRouteTypePush, ZIKViewRouteTypePresentModally,  ZIKViewRouteTypePresentAsPopover, ZIKViewRouteTypePerformSegue, ZIKViewRouteTypeShow, ZIKViewRouteTypeShowDetail, ZIKViewRouteTypeAddAsChildViewController, destination is a UIViewController.
  
  For ZIKViewRouteTypeAddAsSubview, destination is a UIView.
  
- For ZIKViewRouteTypePerformSegue and ZIKViewRouteTypeCustom, destination is a UIViewController or UIView.
+ For ZIKViewRouteTypeCustom, destination is a UIViewController or UIView.
  
  @note
- Use weakSelf in prepareForRoute to avoid retain cycle.
+ Use weakSelf in prepareDestination to avoid retain cycle.
  */
-@property (nonatomic, copy, nullable) void(^prepareForRoute)(id destination);
+@property (nonatomic, copy, nullable) void(^prepareDestination)(id destination);
 
 /**
  Completion for performRoute.
@@ -166,7 +166,7 @@ typedef void(^ZIKViewRouteSegueConfiger)(NS_NOESCAPE ZIKViewRouteSegueConfigure)
 @property (nonatomic, readonly, strong, nullable) ZIKViewRoutePopoverConfiguration *popoverConfiguration;
 @property (nonatomic, readonly, strong, nullable) ZIKViewRouteSegueConfiguration *segueConfiguration;
 
-///When set to YES and the router still exists, if the same destination instance is routed again from external, prepareForRoute, routeCompletion, successHandler, errorHandler will be called
+///When set to YES and the router still exists, if the same destination instance is routed again from external, prepareDestination, routeCompletion, successHandler, errorHandler will be called
 @property (nonatomic, assign) BOOL handleExternalRoute;
 
 @end

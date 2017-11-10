@@ -31,7 +31,7 @@
                                    return container;
                                };
                                
-                               config.prepareForRoute = ^(UIViewController<ZIKInfoViewProtocol> *destination) {
+                               config.prepareDestination = ^(UIViewController<ZIKInfoViewProtocol> *destination) {
                                    destination.name = @"Zuik";
                                    destination.age = 18;
                                    destination.delegate = weakSelf;

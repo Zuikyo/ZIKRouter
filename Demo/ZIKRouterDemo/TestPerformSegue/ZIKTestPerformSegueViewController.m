@@ -37,7 +37,7 @@
                                config.configureSegue(^(ZIKViewRouteSegueConfiguration * _Nonnull segueConfig) {
                                    segueConfig.identifier = @"presentInfo";
                                });
-                               config.prepareForRoute = ^(id<ZIKInfoViewProtocol>  _Nonnull destination) {
+                               config.prepareDestination = ^(id<ZIKInfoViewProtocol>  _Nonnull destination) {
                                    destination.delegate = weakSelf;
                                    destination.name = @"Zuik";
                                    destination.age = 18;
@@ -60,7 +60,7 @@
                                config.configureSegue(^(ZIKViewRouteSegueConfiguration * _Nonnull segueConfig) {
                                    segueConfig.identifier = @"customSegue";
                                });
-                               config.prepareForRoute = ^(id<ZIKInfoViewProtocol>  _Nonnull destination) {
+                               config.prepareDestination = ^(id<ZIKInfoViewProtocol>  _Nonnull destination) {
                                    destination.delegate = weakSelf;
                                    destination.name = @"Zuik";
                                    destination.age = 18;
@@ -83,7 +83,7 @@
                             config.configureSegue(^(ZIKViewRouteSegueConfiguration * _Nonnull segueConfig) {
                                 segueConfig.identifier = @"showUnroutableDestination";
                             });
-                            config.prepareForRoute = ^(id _Nonnull destination) {
+                            config.prepareDestination = ^(id _Nonnull destination) {
                                 NSLog(@"prepare for unroutable destination:%@",destination);
                             };
                             config.routeCompletion = ^(id  _Nonnull destination) {
@@ -117,7 +117,7 @@
          config.configureSegue(^(ZIKViewRouteSegueConfiguration * _Nonnull segueConfig) {
              segueConfig.identifier = @"unwindToTestPerformSegue";
          });
-         config.prepareForRoute = ^(UIViewController * _Nonnull destination) {
+         config.prepareDestination = ^(UIViewController * _Nonnull destination) {
              NSLog(@"change destination's background color when unwind to destination:(%@)",destination);
              destination.view.backgroundColor = [UIColor yellowColor];
          };

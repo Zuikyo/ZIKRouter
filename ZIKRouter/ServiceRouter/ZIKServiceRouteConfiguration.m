@@ -15,7 +15,7 @@
 
 - (id)copyWithZone:(NSZone *)zone {
     ZIKServiceRouteConfiguration *config = [super copyWithZone:zone];
-    config.prepareForRoute = self.prepareForRoute;
+    config.prepareDestination = self.prepareDestination;
     config.routeCompletion = self.routeCompletion;
     return config;
 }

@@ -43,7 +43,7 @@
         [ZIKViewRouter.toView(@protocol(ZIKParentViewProtocol))
          performFromSource:nil
          configuring:^(ZIKViewRouteConfiguration * _Nonnull config) {
-             config.prepareForRoute = ^(id<ZIKParentViewProtocol> parent) {
+             config.prepareDestination = ^(id<ZIKParentViewProtocol> parent) {
                  parent.child = destination;
              };
              config.routeCompletion = ^(id  _Nonnull parent) {

@@ -32,7 +32,7 @@
                                    popoverConfig.sourceView = sender;
                                    popoverConfig.sourceRect = CGRectMake(0, 0, 50, 10);
                                });
-                               config.prepareForRoute = ^(UIViewController<ZIKInfoViewProtocol> *destination) {
+                               config.prepareDestination = ^(UIViewController<ZIKInfoViewProtocol> *destination) {
                                    destination.name = @"Zuik";
                                    destination.age = 18;
                                    destination.delegate = weakSelf;
@@ -56,7 +56,7 @@
                                    popoverConfig.sourceView = sender;
                                    popoverConfig.sourceRect = CGRectMake(0, 0, 50, 10);
                                });
-                               config.prepareForRoute = ^(UIViewController<ZIKInfoViewProtocol> *destination) {
+                               config.prepareDestination = ^(UIViewController<ZIKInfoViewProtocol> *destination) {
                                    destination.name = @"Zuik";
                                    destination.age = 18;
                                    destination.delegate = weakSelf;

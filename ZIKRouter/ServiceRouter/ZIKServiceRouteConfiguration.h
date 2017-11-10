@@ -20,9 +20,9 @@ NS_ASSUME_NONNULL_BEGIN
  Prepare for performRoute, and config other dependency for destination here. Subclass can offer more specific info.
  
  @note
- Use weakSelf in prepareForRoute to avoid retain cycle.
+ Use weakSelf in prepareDestination to avoid retain cycle.
  */
-@property (nonatomic, copy, nullable) void(^prepareForRoute)(id destination);
+@property (nonatomic, copy, nullable) void(^prepareDestination)(id destination);
 
 /**
  Completion for performRoute. Default implemenation will call routeCompletion synchronously.

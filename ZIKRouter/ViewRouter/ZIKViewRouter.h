@@ -289,7 +289,7 @@ typedef void(^ZIKViewRouteGlobalErrorHandler)(__kindof ZIKViewRouter * _Nullable
  [ZIKViewRouter.toView(@protocol(ZIKLoginViewProtocol))
      performWithConfiguring:^(ZIKViewRouteConfiguration *config) {
          config.source = self;
-         config.prepareForRoute = ^(id<ZIKLoginViewProtocol> destination) {
+         config.prepareDestination = ^(id<ZIKLoginViewProtocol> destination) {
              destination.account = @"my account";
          };
  }];

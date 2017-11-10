@@ -25,8 +25,8 @@
                                config.source = self;
                                config.routeType = ZIKViewRouteTypePush;
                                
-                               //prepareForRoute is hold in configuration, should be careful about retain cycle if this view controller will hold the router. Same with routeCompletion, successHandler, errorHandler, stateNotifier.
-                               config.prepareForRoute = ^(UIViewController<ZIKInfoViewProtocol> *destination) {
+                               //prepareDestination is hold in configuration, should be careful about retain cycle if this view controller will hold the router. Same with routeCompletion, successHandler, errorHandler, stateNotifier.
+                               config.prepareDestination = ^(UIViewController<ZIKInfoViewProtocol> *destination) {
                                    NSLog(@"provider: prepare destination");
                                    destination.name = @"Zuik";
                                    destination.age = 18;

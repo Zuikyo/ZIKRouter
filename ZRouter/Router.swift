@@ -35,9 +35,9 @@ public class Router {
             if source != nil {
                 config.source = source
             }
-            config.prepareForRoute = { d in
-                if let destination = d as? Destination {
-                    prepare?(destination)
+            config.prepareDestination = { d in
+                if let dest = d as? Destination {
+                    prepare?(dest)
                 }
                 destination = d
             }
@@ -88,9 +88,9 @@ public class Router {
         var destination: Any?
         let r = Registry.router(to: routableService)?.perform(configuring: { config in
             configure?(config)
-            config.prepareForRoute = { d in
-                if let destination = d as? Destination {
-                    prepare?(destination)
+            config.prepareDestination = { d in
+                if let dest = d as? Destination {
+                    prepare?(dest)
                 }
                 destination = d
             }
@@ -140,7 +140,7 @@ public extension Router {
         assert((routerClass?.completeSynchronously())!,"router class (\(String(describing: routerClass))) can't get destination synchronously.")
         routerClass?.perform(configuring: { config in
             config.routeType = ViewRouteType.getDestination
-            config.prepareForRoute = { d in
+            config.prepareDestination = { d in
                 if let destination = d as? Destination {
                     prepare?(destination)
                 }
@@ -192,7 +192,7 @@ public extension Router {
         let routerClass = Registry.router(to: routableService)
         assert((routerClass?.completeSynchronously())!,"router class (\(String(describing: routerClass))) can't get destination synchronously")
         routerClass?.perform(configuring: { config in
-            config.prepareForRoute = { d in
+            config.prepareDestination = { d in
                 if let destination = d as? Destination {
                     prepare?(destination)
                 }

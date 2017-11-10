@@ -576,11 +576,22 @@ static void *dereferencedPointer(void *pointer) {
 }
 
 bool _swift_typeConformsToProtocol(id swiftType, id swiftProtocol) {
-    //Encrypted string
-    NSString *_SwiftValueString = [NSString stringWithCString:(char[]){0x5f,0x53,0x77,0x69,0x66,0x74,0x56,0x61,0x6c,0x75,0x65,'\0'} encoding:NSASCIIStringEncoding];
-    NSString *SwiftObjectString = [NSString stringWithCString:(char[]){0x53,0x77,0x69,0x66,0x74,0x4f,0x62,0x6a,0x65,0x63,0x74,'\0'} encoding:NSASCIIStringEncoding];
-    NSString *_swiftValueString = [NSString stringWithCString:(char[]){0x5f,0x73,0x77,0x69,0x66,0x74,0x56,0x61,0x6c,0x75,0x65,'\0'} encoding:NSASCIIStringEncoding];
-    
+#if DEBUG
+    static NSString *_SwiftValueString;
+    static NSString *SwiftObjectString;
+    static NSString *_swiftValueString;
+    static dispatch_once_t onceToken;
+    dispatch_once(&onceToken, ^{
+        //Split private API name, in case you use them in release mode.
+        NSString *underline = @"_";
+        NSString *Swift = @"Swift";
+        NSString *swift = @"swift";
+        NSString *Object = @"Object";
+        NSString *Value = @"Value";
+        _SwiftValueString = [NSString stringWithFormat:@"%@%@%@",underline,Swift,Value];
+        SwiftObjectString = [NSString stringWithFormat:@"%@%@",Swift,Object];
+        _swiftValueString = [NSString stringWithFormat:@"%@%@%@",underline,swift,Value];
+    });
     Class _SwiftValueClass = NSClassFromString(_SwiftValueString);
     Class SwiftObjectClass = NSClassFromString(SwiftObjectString);
     BOOL isSwiftType = [swiftType isKindOfClass:SwiftObjectClass] || [swiftType isKindOfClass:_SwiftValueClass];
@@ -634,4 +645,7 @@ bool _swift_typeConformsToProtocol(id swiftType, id swiftProtocol) {
 #pragma clang diagnostic pop
     bool result = _conformsToProtocols(swiftTypeOpaqueValue, swiftTypeMetadata, swiftProtocolMetadata, NULL);
     return result;
+#else
+    return true;
+#endif
 }

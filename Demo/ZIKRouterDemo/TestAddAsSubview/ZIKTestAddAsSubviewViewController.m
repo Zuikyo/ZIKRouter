@@ -26,7 +26,7 @@
                         performWithConfiguring:^(ZIKViewRouteConfiguration * _Nonnull config) {
                             config.source = self.view;
                             config.routeType = ZIKViewRouteTypeAddAsSubview;
-                            config.prepareForRoute = ^(id<ZIKSimpleLabelProtocol>  _Nonnull destination) {
+                            config.prepareDestination = ^(id<ZIKSimpleLabelProtocol>  _Nonnull destination) {
                                 destination.text = @"this is a label from router";
                                 destination.frame = CGRectMake(50, 50, 200, 50);
                             };

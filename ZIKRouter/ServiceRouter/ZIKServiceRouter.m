@@ -233,8 +233,8 @@ _Nullable Class _ZIKServiceRouterToModule(Protocol *configProtocol) {
 #if ZIKSERVICEROUTER_CHECK
     [self _validateDestinationConformance:destination];
 #endif
-    if (configuration.prepareForRoute) {
-        configuration.prepareForRoute(destination);
+    if (configuration.prepareDestination) {
+        configuration.prepareDestination(destination);
     }
     if (configuration.routeCompletion) {
         configuration.routeCompletion(destination);
@@ -334,21 +334,6 @@ _Nullable Class _ZIKServiceRouterToModule(Protocol *configProtocol) {
     [super notifyError:error routeAction:routeAction];
 }
 
-+ (void)_callbackGlobalErrorHandlerWithRouter:(__kindof ZIKServiceRouter *)router action:(SEL)action error:(NSError *)error {
-    dispatch_semaphore_wait(g_globalErrorSema, DISPATCH_TIME_FOREVER);
-    
-    ZIKServiceRouteGlobalErrorHandler errorHandler = g_globalErrorHandler;
-    if (errorHandler) {
-        errorHandler(router, action, error);
-    } else {
-#ifdef DEBUG
-        NSLog(@"❌ZIKServiceRouter Error: router's action (%@) catch error: (%@),\nrouter:(%@)", NSStringFromSelector(action), error,router);
-#endif
-    }
-    
-    dispatch_semaphore_signal(g_globalErrorSema);
-}
-
 - (void)_callbackError_infiniteRecursionWithAction:(SEL)action errorDescription:(NSString *)format ,... {
     va_list argList;
     va_start(argList, format);
@@ -390,7 +375,7 @@ _Nullable Class _ZIKServiceRouterToModule(Protocol *configProtocol) {
     NSAssert1([self completeSynchronously] == YES, @"The router (%@) should return the destination Synchronously when use +destinationForConfigure",self);
     ZIKServiceRouter *router = [[self alloc] initWithConfiguring:(void(^)(ZIKRouteConfiguration*))^(ZIKServiceRouteConfiguration * _Nonnull config) {
         if (prepare) {
-            config.prepareForRoute = ^(id  _Nonnull destination) {
+            config.prepareDestination = ^(id  _Nonnull destination) {
                 prepare(destination);
             };
         }
@@ -625,6 +610,21 @@ extern _Nullable Class _swift_ZIKServiceRouterToModule(id configProtocol) {
 #else
     return nil;
 #endif
+}
+
++ (void)_callbackGlobalErrorHandlerWithRouter:(nullable __kindof ZIKServiceRouter *)router action:(SEL)action error:(NSError *)error {
+    dispatch_semaphore_wait(g_globalErrorSema, DISPATCH_TIME_FOREVER);
+    
+    ZIKServiceRouteGlobalErrorHandler errorHandler = g_globalErrorHandler;
+    if (errorHandler) {
+        errorHandler(router, action, error);
+    } else {
+#ifdef DEBUG
+        NSLog(@"❌ZIKServiceRouter Error: router's action (%@) catch error: (%@),\nrouter:(%@)", NSStringFromSelector(action), error,router);
+#endif
+    }
+    
+    dispatch_semaphore_signal(g_globalErrorSema);
 }
 
 @end

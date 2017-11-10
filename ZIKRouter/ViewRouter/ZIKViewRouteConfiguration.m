@@ -139,7 +139,7 @@
     config.sender = self.sender;
     config.popoverConfiguration = [self.popoverConfiguration copy];
     config.segueConfiguration = [self.segueConfiguration copy];
-    config.prepareForRoute = self.prepareForRoute;
+    config.prepareDestination = self.prepareDestination;
     config.routeCompletion = self.routeCompletion;
     config.handleExternalRoute = self.handleExternalRoute;
     return config;

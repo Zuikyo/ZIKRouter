@@ -45,7 +45,7 @@ typedef void(^ZIKServiceRouteGlobalErrorHandler)(__kindof ZIKServiceRouter * _Nu
  __block id<ZIKLoginServiceInput> loginService;
  [ZIKServiceRouter.toService(@protocol(ZIKLoginServiceInput))
      performWithConfiguring:^(ZIKServiceRouteConfiguration *config) {
-         config.prepareForRoute = ^(id<ZIKLoginServiceInput> destination) {
+         config.prepareDestination = ^(id<ZIKLoginServiceInput> destination) {
              //Prepare service
          };
          config.routeCompletion = ^(id destination) {
@@ -62,7 +62,7 @@ typedef void(^ZIKServiceRouteGlobalErrorHandler)(__kindof ZIKServiceRouter * _Nu
  //Use the router type to perform route
  self.loginServiceRouterClass.perform { config in
      //config conforms to ZIKLoginServiceConfigProtocol, modify config to prepare service
-     config.prepareForRoute = { destination in
+     config.prepareDestination = { destination in
          
      }
      config.routeCompletion = { destination in
@@ -166,7 +166,7 @@ typedef void(^ZIKServiceRouteGlobalErrorHandler)(__kindof ZIKServiceRouter * _Nu
 
 typedef NS_ENUM(NSInteger, ZIKServiceRouteError) {
     ///The protocol you use to fetch the router is not registered.
-    ZIKServiceRouteErrorInvaidProtocol,
+    ZIKServiceRouteErrorInvalidProtocol,
     ///Router returns nil for destination, you can't use this service now. Maybe your configuration is invalid, or there is a bug in the router.
     ZIKServiceRouteErrorServiceUnavailable,
     ///Infinite recursion for performing route detected. See ZIKViewRouterProtocol's -prepareDestination:configuration: for more detail.
