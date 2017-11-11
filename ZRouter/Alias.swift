@@ -9,16 +9,15 @@
 //  LICENSE file in the root directory of this source tree.
 //
 
-import Foundation
 import ZIKRouter
 
 public typealias RouteConfig = ZIKRouteConfiguration
 
+public typealias ViewRouteType = ZIKViewRouteType
+public typealias ViewRouteError = ZIKViewRouteError
 public typealias ViewRouteConfig = ZIKViewRouteConfiguration
 public typealias ViewRemoveConfig = ZIKViewRemoveConfiguration
 public typealias DefaultViewRouter = ZIKViewRouter<ViewRouteConfig, ViewRemoveConfig>
-public typealias ViewRouteType = ZIKViewRouteType
-public typealias ViewRouteError = ZIKViewRouteError
 
 public typealias ServiceRouteConfig = ZIKServiceRouteConfiguration
 public typealias DefaultServiceRouter = ZIKServiceRouter<ServiceRouteConfig, RouteConfig>

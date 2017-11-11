@@ -42,29 +42,22 @@ typedef void(^ZIKServiceRouteGlobalErrorHandler)(__kindof ZIKServiceRouter * _Nu
  Abstract superclass of service router for discovering service and injecting dependencies with registered protocol. Subclass it and implement ZIKServiceRouterProtocol to make router of your service.
  
  @code
- __block id<ZIKLoginServiceInput> loginService;
- [ZIKServiceRouter.toService(@protocol(ZIKLoginServiceInput))
-     performWithConfiguring:^(ZIKServiceRouteConfiguration *config) {
-         config.prepareDestination = ^(id<ZIKLoginServiceInput> destination) {
-             //Prepare service
-         };
-         config.routeCompletion = ^(id destination) {
-             loginService = destination;
-         };
- }];
+ __block id<LoginServiceInput> loginService;
+ loginService = [ZIKServiceRouter.toService(@protocol(LoginServiceInput))
+                    makeDestinationWithPreparation:^(id<LoginServiceInput> destination) {
+                      //Prepare service
+                }];
  @endcode
  
  In Swift, you can use router type with generic and protocol:
  @code
  //Injected dependency from outside
- var loginServiceRouterClass: ZIServiceRouter<ZIKServiceRouteConfiguration & ZIKLoginServiceConfigProtocol, ZIKRouteConfiguration>.Type!
+ var loginServiceRouterClass: ZIServiceRouter<ZIKServiceRouteConfiguration & ZIKLoginServiceConfigInput, ZIKRouteConfiguration>.Type!
  
  //Use the router type to perform route
  self.loginServiceRouterClass.perform { config in
-     //config conforms to ZIKLoginServiceConfigProtocol, modify config to prepare service
-     config.prepareDestination = { destination in
-         
-     }
+     //config is inferred as ZIKLoginServiceConfigInput, modify config to prepare service
+     
      config.routeCompletion = { destination in
          loginService = destination;
      }
@@ -152,7 +145,7 @@ typedef void(^ZIKServiceRouteGlobalErrorHandler)(__kindof ZIKServiceRouter * _Nu
  
  The return Class of the block is: a router class matched with the service. Return nil if protocol is nil or not declared. There will be an assert failure when result is nil.
  */
-@property (nonatomic,class,readonly) Class _Nullable (^toService)(Protocol *serviceProtocol);
+@property (nonatomic,class,readonly) Class _Nullable (^toService)(Protocol *serviceProtocol) NS_SWIFT_UNAVAILABLE("Use Registry.router(to:) function in ZRouter instead.");
 
 /**
  Get the router class combined with a custom ZIKRouteConfiguration conforming to a unique protocol.
@@ -160,7 +153,7 @@ typedef void(^ZIKServiceRouteGlobalErrorHandler)(__kindof ZIKServiceRouter * _Nu
  The parameter configProtocol of the block is: the protocol conformed by defaultConfiguration of router. Should be a ZIKServiceModuleRoutable protocol when ZIKSERVICEROUTER_CHECK is enabled. When ZIKSERVICEROUTER_CHECK is disabled, the protocol doesn't need to inheriting from ZIKServiceModuleRoutable.
  The return Class of the block is: a router class matched with the service. Return nil if protocol is nil or not declared. There will be an assert failure when result is nil.
  */
-@property (nonatomic,class,readonly) Class _Nullable (^toModule)(Protocol *configProtocol);
+@property (nonatomic,class,readonly) Class _Nullable (^toModule)(Protocol *configProtocol) NS_SWIFT_UNAVAILABLE("Use Registry.router(to:) function in ZRouter instead.");
 
 @end
 

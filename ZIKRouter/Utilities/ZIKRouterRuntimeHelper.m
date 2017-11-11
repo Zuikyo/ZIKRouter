@@ -523,7 +523,7 @@ static bool(*swift_conformsToProtocols())(void *, void *, void *, void *) {
             NSLog(@"\n⏳⏳⏳⏳⏳⏳⏳⏳\nZIKRouter:: _swift_typeConformsToProtocol():\nEnvironment variable SWIFT_CONFORMSTOPROTOCOLS_ADDRESS was not found.\nStart searching function pointer for\n`bool _conformsToProtocols(const OpaqueValue *value, const Metadata *type, const ExistentialTypeMetadata *existentialType, const WitnessTable **conformances)` in libswiftCore.dylib to validate swift type.\nThis may costs 0.8 second...\n");
             _conformsToProtocols = fuzzySearchFunctionPointerBySymbol(libswiftCorePath.UTF8String, "_conformsToProtocols");
             address = (long)_conformsToProtocols;
-            NSLog(@"\n✅ZIKRouter: function pointer 0x%lx is found for `_conformsToProtocols`.\nIf the searching cost too many times, set 0x%lx as environment variable SWIFT_CONFORMSTOPROTOCOLS_ADDRESS to avoid search function pointer again for later run.\n\n",address,address - baseAddressForImage(libswiftCorePath.UTF8String));
+            NSLog(@"\n✅ZIKRouter: function pointer 0x%lx is found for `_conformsToProtocols`.\nIf the searching costs too many times, set 0x%lx as environment variable SWIFT_CONFORMSTOPROTOCOLS_ADDRESS to avoid searching function pointer again for later run.\n\n",address,address - baseAddressForImage(libswiftCorePath.UTF8String));
         } else {
             NSCAssert([addressString hasPrefix:@"0x"], @"Environment variable (SWIFT_CONFORMSTOPROTOCOLS_ADDRESS) should be a hex number prefixed with 0x");
             address = strtol(addressString.UTF8String, NULL, 0);
