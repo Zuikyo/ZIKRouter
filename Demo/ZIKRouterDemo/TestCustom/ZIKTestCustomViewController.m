@@ -22,8 +22,8 @@
 }
 - (IBAction)performCustomRoute:(id)sender {
     self.alertViewRouter = [ZIKViewRouter.toModule(ZIKCompatibleAlertConfigProtocol_configRoutable)
-                            performWithConfiguring:^(ZIKViewRouteConfiguration<ZIKCompatibleAlertConfigProtocol> * _Nonnull config) {
-                                config.source = self;
+                            performFromSource:self
+                            configuring:^(ZIKViewRouteConfiguration<ZIKCompatibleAlertConfigProtocol> * _Nonnull config) {
                                 config.routeType = ZIKViewRouteTypeCustom;
                                 config.title = @"Compatible Alert";
                                 config.message = @"Test custom route for alert with UIAlertView and UIAlertController";
@@ -53,11 +53,6 @@
     } errorHandler:^(SEL  _Nonnull routeAction, NSError * _Nonnull error) {
         NSLog(@"remove failed,error:%@",error);
     }];
-}
-
-- (void)didReceiveMemoryWarning {
-    [super didReceiveMemoryWarning];
-    // Dispose of any resources that can be recreated.
 }
 
 /*

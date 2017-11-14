@@ -30,12 +30,13 @@
 - (void)viewDidLoad {
     [super viewDidLoad];
     
-    self.nameLabel.text = self.name;
-    self.ageLabel.text = [@(self.age) stringValue];
 }
 
 - (void)viewWillAppear:(BOOL)animated {
     [super viewWillAppear:animated];
+    
+    self.nameLabel.text = self.name;
+    self.ageLabel.text = [@(self.age) stringValue];
 }
 
 - (void)viewDidAppear:(BOOL)animated {
@@ -54,11 +55,6 @@
     if ([self.delegate respondsToSelector:@selector(handleRemoveInfoViewController:)]) {
         [self.delegate handleRemoveInfoViewController:self];
     }
-}
-
-- (void)didReceiveMemoryWarning {
-    [super didReceiveMemoryWarning];
-    // Dispose of any resources that can be recreated.
 }
 
 /*

@@ -31,7 +31,8 @@
 - (IBAction)performSegue:(id)sender {
     __weak typeof(self) weakSelf = self;
     self.segueRouter = [ZIKViewRouter.toView(ZIKInfoViewProtocol_routable)
-                           performWithConfiguring:^(ZIKViewRouteConfiguration * _Nonnull config) {
+                            performFromSource:self
+                            configuring:^(ZIKViewRouteConfiguration * _Nonnull config) {
                                config.source = self;
                                config.routeType = ZIKViewRouteTypePerformSegue;
                                config.configureSegue(^(ZIKViewRouteSegueConfiguration * _Nonnull segueConfig) {
@@ -54,7 +55,8 @@
 - (IBAction)performCustomSegue:(id)sender {
     __weak typeof(self) weakSelf = self;
     self.segueRouter = [ZIKViewRouter.toView(ZIKInfoViewProtocol_routable)
-                           performWithConfiguring:^(ZIKViewRouteConfiguration * _Nonnull config) {
+                            performFromSource:self
+                            configuring:^(ZIKViewRouteConfiguration * _Nonnull config) {
                                config.source = self;
                                config.routeType = ZIKViewRouteTypePerformSegue;
                                config.configureSegue(^(ZIKViewRouteSegueConfiguration * _Nonnull segueConfig) {

@@ -23,8 +23,8 @@
 
 - (IBAction)addAsSubview:(id)sender {
     self.labelRouter = [ZIKViewRouter.toView(ZIKSimpleLabelProtocol_routable)
-                        performWithConfiguring:^(ZIKViewRouteConfiguration * _Nonnull config) {
-                            config.source = self.view;
+                        performFromSource:self.view
+                        configuring:^(ZIKViewRouteConfiguration * _Nonnull config) {
                             config.routeType = ZIKViewRouteTypeAddAsSubview;
                             config.prepareDestination = ^(id<ZIKSimpleLabelProtocol>  _Nonnull destination) {
                                 destination.text = @"this is a label from router";
@@ -37,11 +37,6 @@
                                 NSLog(@"add as subview failed: %@",error);
                             };
                         }];
-}
-
-- (void)didReceiveMemoryWarning {
-    [super didReceiveMemoryWarning];
-    // Dispose of any resources that can be recreated.
 }
 
 /*

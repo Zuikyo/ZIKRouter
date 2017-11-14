@@ -52,17 +52,11 @@
 }
 
 - (void)handleRemoveInfoViewController:(UIViewController *)infoViewController {
-    [infoViewController dismissViewControllerAnimated:YES completion:^{
-        NSLog(@"dismiss manually complete");
-//        [self presentViewController:infoViewController animated:YES completion:^{
-//            
-//        }];
+    [self.router removeRouteWithSuccessHandler:^{
+        NSLog(@"remove success");
+    } errorHandler:^(SEL  _Nonnull routeAction, NSError * _Nonnull error) {
+        NSLog(@"remove failed, error:%@",error);
     }];
-}
-
-- (void)didReceiveMemoryWarning {
-    [super didReceiveMemoryWarning];
-    // Dispose of any resources that can be recreated.
 }
 
 /*

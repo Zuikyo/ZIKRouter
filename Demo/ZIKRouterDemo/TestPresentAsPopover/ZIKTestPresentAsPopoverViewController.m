@@ -24,8 +24,8 @@
 - (IBAction)presentAsPopover:(id)sender {
     __weak typeof(self) weakSelf = self;
     self.infoViewRouter = [ZIKViewRouter.toView(ZIKInfoViewProtocol_routable)
-                           performWithConfiguring:^(ZIKViewRouteConfiguration *config) {
-                               config.source = self;
+                           performFromSource:self
+                           configuring:^(ZIKViewRouteConfiguration *config) {
                                config.routeType = ZIKViewRouteTypePresentAsPopover;
                                config.configurePopover(^(ZIKViewRoutePopoverConfiguration * _Nonnull popoverConfig) {
                                    popoverConfig.delegate = self;
@@ -48,8 +48,8 @@
 - (IBAction)presentAsPopoverAndDismiss:(id)sender {
     __weak typeof(self) weakSelf = self;
     self.infoViewRouter = [ZIKViewRouter.toView(ZIKInfoViewProtocol_routable)
-                           performWithConfiguring:^(ZIKViewRouteConfiguration *config) {
-                               config.source = self;
+                           performFromSource:self
+                           configuring:^(ZIKViewRouteConfiguration *config) {
                                config.routeType = ZIKViewRouteTypePresentAsPopover;
                                config.configurePopover(^(ZIKViewRoutePopoverConfiguration * _Nonnull popoverConfig) {
                                    popoverConfig.delegate = self;
@@ -92,11 +92,6 @@
 
 - (UIModalPresentationStyle)adaptivePresentationStyleForPresentationController:(UIPresentationController *)controller {
     return UIModalPresentationNone; //You have to specify this particular value in order to make it work on iPhone.
-}
-
-- (void)didReceiveMemoryWarning {
-    [super didReceiveMemoryWarning];
-    // Dispose of any resources that can be recreated.
 }
 
 /*

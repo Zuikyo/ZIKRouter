@@ -24,8 +24,8 @@
 - (IBAction)showDetail:(id)sender {
     __weak typeof(self) weakSelf = self;
     self.infoViewRouter = [ZIKViewRouter.toView(ZIKInfoViewProtocol_routable)
-                           performWithConfiguring:^(ZIKViewRouteConfiguration * _Nonnull config) {
-                               config.source = self;
+                           performFromSource:self
+                           configuring:^(ZIKViewRouteConfiguration * _Nonnull config) {
                                config.routeType = ZIKViewRouteTypeShowDetail;
                                config.containerWrapper = ^UIViewController<ZIKViewRouteContainer> * _Nonnull(UIViewController * _Nonnull destination) {
 //                                     UINavigationController *container = [[UINavigationController alloc] initWithRootViewController:destination];
@@ -66,11 +66,6 @@
 
 - (void)handleRemoveInfoViewController:(UIViewController *)infoViewController {
     [self removeInfoViewController];
-}
-
-- (void)didReceiveMemoryWarning {
-    [super didReceiveMemoryWarning];
-    // Dispose of any resources that can be recreated.
 }
 
 /*
