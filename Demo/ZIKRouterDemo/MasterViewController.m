@@ -20,6 +20,7 @@
 #import "ZIKTestGetDestinationViewRouter.h"
 #import "ZIKTestAutoCreateViewRouter.h"
 #import "ZIKTestCircularDependenciesViewRouter.h"
+#import "TestClassHierarchyViewRouter.h"
 #import "ZIKTestServiceRouterViewRouter.h"
 #import "ZIKRouterDemo-Swift.h"
 
@@ -36,6 +37,7 @@ typedef NS_ENUM(NSInteger,ZIKRouterTestType) {
     ZIKRouterTestTypeGetDestination,
     ZIKRouterTestTypeAutoCreate,
     ZIKRouterTestTypeCircularDependencies,
+    ZIKRouterTestTypeSubclassHierarchy,
     ZIKRouterTestTypeServiceRouter,
     ZIKRouterTestTypeSwiftSample
 };
@@ -73,7 +75,7 @@ typedef NS_ENUM(NSInteger,ZIKRouterTestType) {
 
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
-    return 14;
+    return 15;
 }
 
 
@@ -117,7 +119,10 @@ typedef NS_ENUM(NSInteger,ZIKRouterTestType) {
             name = @"Test AutoCreate";
             break;
         case ZIKRouterTestTypeCircularDependencies:
-            name = @"Test CircularDependencies";
+            name = @"Test Circular Dependencies";
+            break;
+        case ZIKRouterTestTypeSubclassHierarchy:
+            name = @"Test Subclass Hierarchy";
             break;
         case ZIKRouterTestTypeServiceRouter:
             name = @"Test ServiceRouter";
@@ -205,6 +210,10 @@ typedef NS_ENUM(NSInteger,ZIKRouterTestType) {
             
         case ZIKRouterTestTypeCircularDependencies:
             routerClass = [ZIKTestCircularDependenciesViewRouter class];
+            break;
+            
+        case ZIKRouterTestTypeSubclassHierarchy:
+            routerClass = [TestClassHierarchyViewRouter class];
             break;
             
         case ZIKRouterTestTypeServiceRouter:
