@@ -43,6 +43,9 @@ class SwiftSampleViewController: UIViewController, PureSwiftSampleViewInput, Pur
     }
     
     func handleRemoveInfoViewController(_ infoViewController: UIViewController!) {
+        guard infoRouter != nil && infoRouter!.canRemove() else {
+            return
+        }
         infoRouter?.removeRoute(successHandler: {
             print("remove success")
         }, errorHandler: { (action, error) in
@@ -84,6 +87,7 @@ class SwiftSampleViewController: UIViewController, PureSwiftSampleViewInput, Pur
         default:
             switchableView = SwitchableView(RoutableView<SwiftSampleViewInput>())
         }
+        
         infoRouter = Registry.router(to: switchableView)?
             .perform(from: self,
                      configuring: { config in

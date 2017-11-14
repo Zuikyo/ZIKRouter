@@ -16,11 +16,9 @@
 #import <UIKit/UIKit.h>
 #import "ZIKRouterRuntimeHelper.h"
 
-NSNotificationName kZIKServiceRouterRegisterCompleteNotification = @"kZIKServiceRouterRegisterCompleteNotification";
 NSString *const kZIKServiceRouterErrorDomain = @"ZIKServiceRouterErrorDomain";
 
-static BOOL _isLoadFinished = NO;
-
+static BOOL _isAutoRegistrationFinished = NO;
 static CFMutableDictionaryRef g_serviceProtocolToRouterMap;
 static CFMutableDictionaryRef g_configProtocolToRouterMap;
 static CFMutableDictionaryRef g_serviceToRoutersMap;
@@ -66,6 +64,10 @@ static dispatch_semaphore_t g_globalErrorSema;
     return [self ZIKServiceRouter_hook_storyboardWithName:name bundle:storyboardBundleOrNil];
 }
 
++ (void)_autoRegistrationDidFinished {
+    
+}
+
 void _initializeZIKServiceRouter() {
     g_globalErrorSema = dispatch_semaphore_create(1);
     if (!g_serviceProtocolToRouterMap) {
@@ -79,6 +81,7 @@ void _initializeZIKServiceRouter() {
     if (!_check_routerToServicesMap) {
         _check_routerToServicesMap = CFDictionaryCreateMutable(kCFAllocatorDefault, 0, NULL, &kCFTypeDictionaryValueCallBacks);
     }
+    NSMutableArray<Class> *serviceRouterClasses = [NSMutableArray array];
 #endif
     Class ZIKServiceRouterClass = [ZIKServiceRouter class];
     ZIKRouter_enumerateClassList(^(__unsafe_unretained Class class) {
@@ -118,6 +121,7 @@ void _initializeZIKServiceRouter() {
             CFMutableSetRef services = (CFMutableSetRef)CFDictionaryGetValue(_check_routerToServicesMap, (__bridge const void *)(class));
             NSSet *serviceSet = (__bridge NSSet *)(services);
             NSCAssert2(serviceSet.count > 0 || ZIKRouter_classIsSubclassOfClass(class, NSClassFromString(@"ZIKServiceRouteAdapter")) || class == NSClassFromString(@"ZIKServiceRouteAdapter"), @"This router class(%@) was not resgistered with any service class. Use +registerService: to register service in Router(%@)'s +registerRoutableDestination.",class,class);
+            [serviceRouterClasses addObject:class];
 #endif
         }
     });
@@ -145,16 +149,20 @@ void _initializeZIKServiceRouter() {
             NSCAssert3([config conformsToProtocol:protocol], @"Router(%@)'s default ZIKRouteConfiguration(%@) should conform to registered config protocol(%@)",routerClass, [config class], NSStringFromProtocol(protocol));
         }
     });
+    [[NSNotificationCenter defaultCenter] addObserverForName:UIApplicationDidFinishLaunchingNotification object:nil queue:[NSOperationQueue mainQueue] usingBlock:^(NSNotification * _Nonnull note) {
+        for (Class class in serviceRouterClasses) {
+            [class _autoRegistrationDidFinished];
+        }
+    }];
 #endif
     
-    _isLoadFinished = YES;
-    [[NSNotificationCenter defaultCenter] postNotificationName:kZIKServiceRouterRegisterCompleteNotification object:nil];
+    _isAutoRegistrationFinished = YES;
 }
 
 _Nullable Class _ZIKServiceRouterToService(Protocol *serviceProtocol) {
     NSCParameterAssert(serviceProtocol);
     NSCAssert(g_serviceProtocolToRouterMap, @"Didn't register any protocol yet.");
-    NSCAssert(_isLoadFinished, @"Only get router after app did finish launch.");
+    NSCAssert(_isAutoRegistrationFinished, @"Only get router after app did finish launch.");
     
     static dispatch_once_t onceToken;
     dispatch_once(&onceToken, ^{
@@ -181,7 +189,7 @@ _Nullable Class _ZIKServiceRouterToService(Protocol *serviceProtocol) {
 _Nullable Class _ZIKServiceRouterToModule(Protocol *configProtocol) {
     NSCParameterAssert(configProtocol);
     NSCAssert(g_configProtocolToRouterMap, @"Didn't register any protocol yet.");
-    NSCAssert(_isLoadFinished, @"Only get router after app did finish launch.");
+    NSCAssert(_isAutoRegistrationFinished, @"Only get router after app did finish launch.");
     
     static dispatch_once_t onceToken;
     dispatch_once(&onceToken, ^{
@@ -398,7 +406,7 @@ _Nullable Class _ZIKServiceRouterToModule(Protocol *configProtocol) {
     NSParameterAssert(serviceClass);
     NSParameterAssert([serviceClass conformsToProtocol:@protocol(ZIKRoutableService)]);
     NSParameterAssert([routerClass isSubclassOfClass:[ZIKServiceRouter class]]);
-    NSAssert(!_isLoadFinished, @"Only register in +registerRoutableDestination.");
+    NSAssert(!_isAutoRegistrationFinished, @"Only register in +registerRoutableDestination.");
     NSAssert([NSThread isMainThread], @"Call in main thread for thread safety.");
     
     static dispatch_once_t onceToken;
@@ -442,7 +450,7 @@ _Nullable Class _ZIKServiceRouterToModule(Protocol *configProtocol) {
     Class routerClass = self;
     NSParameterAssert([serviceClass conformsToProtocol:@protocol(ZIKRoutableService)]);
     NSParameterAssert([routerClass isSubclassOfClass:[ZIKServiceRouter class]]);
-    NSAssert(!_isLoadFinished, @"Only register in +registerRoutableDestination.");
+    NSAssert(!_isAutoRegistrationFinished, @"Only register in +registerRoutableDestination.");
     NSAssert([NSThread isMainThread], @"Call in main thread for thread safety.");
     
     static dispatch_once_t onceToken;
@@ -494,7 +502,7 @@ _Nullable Class _ZIKServiceRouterToModule(Protocol *configProtocol) {
 + (void)registerServiceProtocol:(Protocol *)serviceProtocol {
     Class routerClass = self;
     NSParameterAssert([routerClass isSubclassOfClass:[ZIKServiceRouter class]]);
-    NSAssert(!_isLoadFinished, @"Only register in +registerRoutableDestination.");
+    NSAssert(!_isAutoRegistrationFinished, @"Only register in +registerRoutableDestination.");
     NSAssert([NSThread isMainThread], @"Call in main thread for thread safety.");
     
     static dispatch_once_t onceToken;
@@ -527,7 +535,7 @@ _Nullable Class _ZIKServiceRouterToModule(Protocol *configProtocol) {
     Class routerClass = self;
     NSParameterAssert([routerClass isSubclassOfClass:[ZIKServiceRouter class]]);
     NSAssert([[routerClass defaultRouteConfiguration] conformsToProtocol:configProtocol], @"configProtocol should be conformed by this router's defaultRouteConfiguration.");
-    NSAssert(!_isLoadFinished, @"Only register in +registerRoutableDestination.");
+    NSAssert(!_isAutoRegistrationFinished, @"Only register in +registerRoutableDestination.");
     NSAssert([NSThread isMainThread], @"Call in main thread for thread safety.");
     
     static dispatch_once_t onceToken;
@@ -579,8 +587,8 @@ extern _Nullable Class _swift_ZIKServiceRouterToModule(id configProtocol) {
 #endif
 }
 
-+ (BOOL)_isLoadFinished {
-    return _isLoadFinished;
++ (BOOL)_isAutoRegistrationFinished {
+    return _isAutoRegistrationFinished;
 }
 
 + (void)_swift_registerServiceProtocol:(id)serviceProtocol {

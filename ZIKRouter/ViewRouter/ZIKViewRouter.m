@@ -24,14 +24,13 @@
 #import "UIStoryboardSegue+ZIKViewRouterPrivate.h"
 #import "ZIKViewRouteConfiguration+Private.h"
 
-NSNotificationName kZIKViewRouterRegisterCompleteNotification = @"kZIKViewRouterRegisterCompleteNotification";
 NSNotificationName kZIKViewRouteWillPerformRouteNotification = @"kZIKViewRouteWillPerformRouteNotification";
 NSNotificationName kZIKViewRouteDidPerformRouteNotification = @"kZIKViewRouteDidPerformRouteNotification";
 NSNotificationName kZIKViewRouteWillRemoveRouteNotification = @"kZIKViewRouteWillRemoveRouteNotification";
 NSNotificationName kZIKViewRouteDidRemoveRouteNotification = @"kZIKViewRouteDidRemoveRouteNotification";
 NSNotificationName kZIKViewRouteRemoveRouteCanceledNotification = @"kZIKViewRouteRemoveRouteCanceledNotification";
 
-static BOOL _isLoadFinished = NO;
+static BOOL _isAutoRegistrationFinished = NO;
 static CFMutableDictionaryRef g_viewProtocolToRouterMap;
 static CFMutableDictionaryRef g_configProtocolToRouterMap;
 static CFMutableDictionaryRef g_viewToRoutersMap;
@@ -88,6 +87,10 @@ static NSMutableArray *g_preparingUIViewRouters;
 + (UIStoryboard *)ZIKViewRouter_hook_storyboardWithName:(NSString *)name bundle:(nullable NSBundle *)storyboardBundleOrNil {
     [ZIKViewRouter setup];
     return [self ZIKViewRouter_hook_storyboardWithName:name bundle:storyboardBundleOrNil];
+}
+
++ (void)_autoRegistrationDidFinished {
+    
 }
 
 static void _initializeZIKViewRouter(void) {
@@ -147,6 +150,10 @@ static void _initializeZIKViewRouter(void) {
                                       ZIKViewRouterClass, @selector(ZIKViewRouter_hook_seguePerform));
     ZIKRouter_replaceMethodWithMethod([UIStoryboard class], @selector(instantiateInitialViewController), ZIKViewRouterClass, @selector(ZIKViewRouter_hook_instantiateInitialViewController));
     
+#if ZIKVIEWROUTER_CHECK
+    NSMutableArray<Class> *viewRouterClasses = [NSMutableArray array];
+#endif
+    
     ZIKRouter_enumerateClassList(^(__unsafe_unretained Class class) {
         if (ZIKRouter_classIsSubclassOfClass(class, UIResponderClass)) {
 #if ZIKVIEWROUTER_CHECK
@@ -194,6 +201,7 @@ static void _initializeZIKViewRouter(void) {
             CFMutableSetRef views = (CFMutableSetRef)CFDictionaryGetValue(_check_routerToViewsMap, (__bridge const void *)(class));
             NSSet *viewSet = (__bridge NSSet *)(views);
             NSCAssert3(viewSet.count > 0 || ZIKRouter_classIsSubclassOfClass(class, NSClassFromString(@"ZIKViewRouteAdapter")) || class == NSClassFromString(@"ZIKViewRouteAdapter"), @"This router class(%@) was not resgistered with any view class. Use +[%@ registerView:] to register view in Router(%@)'s +registerRoutableDestination.",class,class,class);
+            [viewRouterClasses addObject:class];
 #endif
         }
 
@@ -223,9 +231,14 @@ static void _initializeZIKViewRouter(void) {
             NSCAssert3([config conformsToProtocol:protocol], @"Router(%@)'s default ZIKViewRouteConfiguration(%@) should conform to registered config protocol(%@)",routerClass, [config class], NSStringFromProtocol(protocol));
         }
     });
+    [[NSNotificationCenter defaultCenter] addObserverForName:UIApplicationDidFinishLaunchingNotification object:nil queue:[NSOperationQueue mainQueue] usingBlock:^(NSNotification * _Nonnull note) {
+        for (Class class in viewRouterClasses) {
+            [class _autoRegistrationDidFinished];
+        }
+    }];
 #endif
-    _isLoadFinished = YES;
-    [[NSNotificationCenter defaultCenter] postNotificationName:kZIKViewRouterRegisterCompleteNotification object:nil];
+    
+    _isAutoRegistrationFinished = YES;
 }
 
 #pragma mark Dynamic Discover
@@ -269,7 +282,7 @@ static _Nullable Class ZIKViewRouterToRegisteredView(Class viewClass) {
     NSCParameterAssert([viewClass isSubclassOfClass:[UIView class]] ||
                        [viewClass isSubclassOfClass:[UIViewController class]]);
     NSCParameterAssert(_isClassRoutable(viewClass));
-    NSCAssert(_isLoadFinished, @"Only get router after app did finish launch.");
+    NSCAssert(_isAutoRegistrationFinished, @"Only get router after app did finish launch.");
     NSCAssert(g_viewToDefaultRouterMap, @"Didn't register any viewClass yet.");
     static dispatch_once_t onceToken;
     dispatch_once(&onceToken, ^{
@@ -297,7 +310,7 @@ static _Nullable Class ZIKViewRouterToRegisteredView(Class viewClass) {
 _Nullable Class _ZIKViewRouterToView(Protocol *viewProtocol) {
     NSCParameterAssert(viewProtocol);
     NSCAssert(g_viewProtocolToRouterMap, @"Didn't register any protocol yet.");
-    NSCAssert(_isLoadFinished, @"Only get router after app did finish launch.");
+    NSCAssert(_isAutoRegistrationFinished, @"Only get router after app did finish launch.");
     
     static dispatch_once_t onceToken;
     dispatch_once(&onceToken, ^{
@@ -323,7 +336,7 @@ _Nullable Class _ZIKViewRouterToView(Protocol *viewProtocol) {
 _Nullable Class _ZIKViewRouterToModule(Protocol *configProtocol) {
     NSCParameterAssert(configProtocol);
     NSCAssert(g_configProtocolToRouterMap, @"Didn't register any protocol yet.");
-    NSCAssert(_isLoadFinished, @"Only get router after app did finish launch.");
+    NSCAssert(_isAutoRegistrationFinished, @"Only get router after app did finish launch.");
     
     static dispatch_once_t onceToken;
     dispatch_once(&onceToken, ^{
@@ -3373,7 +3386,7 @@ destinationStateBeforeRoute:(ZIKPresentationState *)destinationStateBeforeRoute
                       [viewClass isSubclassOfClass:[UIViewController class]]);
     NSParameterAssert(_isClassRoutable(viewClass));
     NSParameterAssert([routerClass isSubclassOfClass:[ZIKViewRouter class]]);
-    NSAssert(!_isLoadFinished, @"Only register in +registerRoutableDestination.");
+    NSAssert(!_isAutoRegistrationFinished, @"Only register in +registerRoutableDestination.");
     NSAssert([NSThread isMainThread], @"Call in main thread for thread safety.");
     
     static dispatch_once_t onceToken;
@@ -3419,7 +3432,7 @@ destinationStateBeforeRoute:(ZIKPresentationState *)destinationStateBeforeRoute
                        [viewClass isSubclassOfClass:[UIViewController class]]);
     NSCParameterAssert(_isClassRoutable(viewClass));
     NSCParameterAssert([routerClass isSubclassOfClass:[ZIKViewRouter class]]);
-    NSCAssert(!_isLoadFinished, @"Only register in +registerRoutableDestination.");
+    NSCAssert(!_isAutoRegistrationFinished, @"Only register in +registerRoutableDestination.");
     NSCAssert([NSThread isMainThread], @"Call in main thread for thread safety.");
     
     static dispatch_once_t onceToken;
@@ -3471,7 +3484,7 @@ destinationStateBeforeRoute:(ZIKPresentationState *)destinationStateBeforeRoute
 + (void)registerViewProtocol:(Protocol *)viewProtocol {
     Class routerClass = self;
     NSParameterAssert([routerClass isSubclassOfClass:[ZIKViewRouter class]]);
-    NSAssert(!_isLoadFinished, @"Only register in +registerRoutableDestination.");
+    NSAssert(!_isAutoRegistrationFinished, @"Only register in +registerRoutableDestination.");
     NSAssert([NSThread isMainThread], @"Call in main thread for thread safety.");
 #if ZIKVIEWROUTER_CHECK
     NSAssert1(protocol_conformsToProtocol(viewProtocol, @protocol(ZIKViewRoutable)), @"%@ should conforms to ZIKViewRoutable in DEBUG mode for safety checking", NSStringFromProtocol(viewProtocol));
@@ -3507,7 +3520,7 @@ destinationStateBeforeRoute:(ZIKPresentationState *)destinationStateBeforeRoute
     Class routerClass = self;
     NSParameterAssert([routerClass isSubclassOfClass:[ZIKViewRouter class]]);
     NSAssert2([[routerClass defaultRouteConfiguration] conformsToProtocol:configProtocol], @"configProtocol(%@) should be conformed by this router(%@)'s defaultRouteConfiguration.",NSStringFromProtocol(configProtocol),self);
-    NSAssert(!_isLoadFinished, @"Only register in +registerRoutableDestination.");
+    NSAssert(!_isAutoRegistrationFinished, @"Only register in +registerRoutableDestination.");
     NSAssert([NSThread isMainThread], @"Call in main thread for thread safety.");
 #if ZIKVIEWROUTER_CHECK
     NSAssert1(protocol_conformsToProtocol(configProtocol, @protocol(ZIKViewModuleRoutable)), @"%@ should conforms to ZIKViewModuleRoutable in DEBUG mode for safety checking", NSStringFromProtocol(configProtocol));
@@ -3554,8 +3567,8 @@ destinationStateBeforeRoute:(ZIKPresentationState *)destinationStateBeforeRoute
 #endif
 }
 
-+ (BOOL)_isLoadFinished {
-    return _isLoadFinished;
++ (BOOL)_isAutoRegistrationFinished {
+    return _isAutoRegistrationFinished;
 }
 
 + (void)_swift_registerViewProtocol:(id)viewProtocol {

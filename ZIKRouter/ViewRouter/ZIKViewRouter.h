@@ -157,7 +157,7 @@ typedef void(^ZIKViewRouteGlobalErrorHandler)(__kindof ZIKViewRouter * _Nullable
 
 @interface ZIKViewRouter<__covariant RouteConfig: ZIKViewRouteConfiguration *, __covariant RemoveConfig: ZIKViewRemoveConfiguration *> (Prepare)
 /**
- Prepare destination from external, then you can use the router to perform route. You can also use this to prepare view created from external, use it like a builder.
+ Prepare destination from external, then you can use the router to perform route. You can also use this as a builder to prepare view created from external.
 
  @param destination The destination to prepare. Destination must be registered with this router class.
  @param configBuilder Builder for config when perform route.
