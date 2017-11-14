@@ -27,21 +27,21 @@
     }
 }
 
-- (UIViewController *)demoParentViewController {
+- (UIViewController *)emptyContainerViewController {
     UIStoryboard *sb = [UIStoryboard storyboardWithName:@"Main" bundle:nil];
-    return [sb instantiateViewControllerWithIdentifier:@"emptyDemoParent"];
+    return [sb instantiateViewControllerWithIdentifier:@"emptyContainer"];
 }
 
 ///Route UIViewController by code manually won't auto create a corresponding router, but router classes registered with the view controller will get AOP callback. The reason is we can't find which view controller is the performer invoking -pushViewController:animated:. The performer may be a child view controller of any view controller in the navigation stack.
 - (void)pushManually {
-    UIViewController *demoParentViewController = [self demoParentViewController];
-    [self.navigationController pushViewController:demoParentViewController animated:YES];
+    UIViewController *emptyContainerViewController = [self emptyContainerViewController];
+    [self.navigationController pushViewController:emptyContainerViewController animated:YES];
 }
 
 ///Route UIViewController by code manually won't auto create a corresponding router, but router classes registered with the view controller will get AOP callback
 - (void)presentManually {
-    UIViewController *demoParentViewController = [self demoParentViewController];
-    [self presentViewController:demoParentViewController animated:YES completion:^{
+    UIViewController *emptyContainerViewController = [self emptyContainerViewController];
+    [self presentViewController:emptyContainerViewController animated:YES completion:^{
         
     }];
 }

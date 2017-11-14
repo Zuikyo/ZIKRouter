@@ -14,7 +14,7 @@
 		F82ECABF1F17DC51007168AA /* ZIKSimpleLabelRouter.m in Sources */ = {isa = PBXBuildFile; fileRef = F82ECA761F17DC51007168AA /* ZIKSimpleLabelRouter.m */; };
 		F82ECAC01F17DC51007168AA /* ZIKInfoViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = F82ECA791F17DC51007168AA /* ZIKInfoViewController.m */; };
 		F82ECAC11F17DC51007168AA /* ZIKInfoViewRouter.m in Sources */ = {isa = PBXBuildFile; fileRef = F82ECA7C1F17DC51007168AA /* ZIKInfoViewRouter.m */; };
-		F82ECAC21F17DC51007168AA /* ZIKDemoParentViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = F82ECA7F1F17DC51007168AA /* ZIKDemoParentViewController.m */; };
+		F82ECAC21F17DC51007168AA /* EmptyContainerViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = F82ECA7F1F17DC51007168AA /* EmptyContainerViewController.m */; };
 		F82ECAC31F17DC51007168AA /* ZIKDemoParentViewRouter.m in Sources */ = {isa = PBXBuildFile; fileRef = F82ECA811F17DC51007168AA /* ZIKDemoParentViewRouter.m */; };
 		F82ECAC41F17DC51007168AA /* ZIKTestAutoCreateViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = F82ECA831F17DC51007168AA /* ZIKTestAutoCreateViewController.m */; };
 		F82ECAC51F17DC51007168AA /* ZIKTestAutoCreateViewRouter.m in Sources */ = {isa = PBXBuildFile; fileRef = F82ECA851F17DC51007168AA /* ZIKTestAutoCreateViewRouter.m */; };
@@ -138,8 +138,8 @@
 		F82ECA7A1F17DC51007168AA /* ZIKInfoViewProtocol.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ZIKInfoViewProtocol.h; sourceTree = "<group>"; };
 		F82ECA7B1F17DC51007168AA /* ZIKInfoViewRouter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; lineEnding = 0; path = ZIKInfoViewRouter.h; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objcpp; };
 		F82ECA7C1F17DC51007168AA /* ZIKInfoViewRouter.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ZIKInfoViewRouter.m; sourceTree = "<group>"; };
-		F82ECA7E1F17DC51007168AA /* ZIKDemoParentViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ZIKDemoParentViewController.h; sourceTree = "<group>"; };
-		F82ECA7F1F17DC51007168AA /* ZIKDemoParentViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; lineEnding = 0; path = ZIKDemoParentViewController.m; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objc; };
+		F82ECA7E1F17DC51007168AA /* EmptyContainerViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EmptyContainerViewController.h; sourceTree = "<group>"; };
+		F82ECA7F1F17DC51007168AA /* EmptyContainerViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; lineEnding = 0; path = EmptyContainerViewController.m; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objc; };
 		F82ECA801F17DC51007168AA /* ZIKDemoParentViewRouter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; lineEnding = 0; path = ZIKDemoParentViewRouter.h; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objcpp; };
 		F82ECA811F17DC51007168AA /* ZIKDemoParentViewRouter.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ZIKDemoParentViewRouter.m; sourceTree = "<group>"; };
 		F82ECA821F17DC51007168AA /* ZIKTestAutoCreateViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ZIKTestAutoCreateViewController.h; sourceTree = "<group>"; };
@@ -299,8 +299,8 @@
 		F82ECA7D1F17DC51007168AA /* TestAutoCreate */ = {
 			isa = PBXGroup;
 			children = (
-				F82ECA7E1F17DC51007168AA /* ZIKDemoParentViewController.h */,
-				F82ECA7F1F17DC51007168AA /* ZIKDemoParentViewController.m */,
+				F82ECA7E1F17DC51007168AA /* EmptyContainerViewController.h */,
+				F82ECA7F1F17DC51007168AA /* EmptyContainerViewController.m */,
 				F82ECA801F17DC51007168AA /* ZIKDemoParentViewRouter.h */,
 				F82ECA811F17DC51007168AA /* ZIKDemoParentViewRouter.m */,
 				F82ECA821F17DC51007168AA /* ZIKTestAutoCreateViewController.h */,
@@ -679,7 +679,7 @@
 				F82ECAC51F17DC51007168AA /* ZIKTestAutoCreateViewRouter.m in Sources */,
 				F82ECAC01F17DC51007168AA /* ZIKInfoViewController.m in Sources */,
 				F82ECAC61F17DC51007168AA /* ZIKTestGetDestinationViewController.m in Sources */,
-				F82ECAC21F17DC51007168AA /* ZIKDemoParentViewController.m in Sources */,
+				F82ECAC21F17DC51007168AA /* EmptyContainerViewController.m in Sources */,
 				F84239CF1F0CDE78000FEE5F /* AppDelegate.m in Sources */,
 				F85283B21F8CF43F0093C812 /* ZIKUnroutableViewController.m in Sources */,
 				F88DD30F1FBB303B00715097 /* SubclassViewRouter.m in Sources */,

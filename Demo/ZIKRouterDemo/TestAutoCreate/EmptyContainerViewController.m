@@ -1,21 +1,21 @@
 //
-//  ZIKDemoParentViewController.m
+//  EmptyContainerViewController.m
 //  ZIKRouterDemo
 //
 //  Created by zuik on 2017/7/7.
 //  Copyright © 2017 zuik. All rights reserved.
 //
 
-#import "ZIKDemoParentViewController.h"
+#import "EmptyContainerViewController.h"
 @import ZIKRouter;
 #import "ZIKInfoViewProtocol.h"
 #import "ZIKSimpleLabel.h"
 
-@interface ZIKDemoParentViewController () <ZIKInfoViewDelegate>
+@interface EmptyContainerViewController () <ZIKInfoViewDelegate>
 
 @end
 
-@implementation ZIKDemoParentViewController
+@implementation EmptyContainerViewController
 
 ///Add subview by code or storyboard will auto create a corresponding router. We assume it's superview's view controller as the performer. If your custom class view use a routable view as it's part, the custom view should use a router to add and prepare the routable view, then the routable view don't need to search performer.
 

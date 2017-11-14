@@ -7,23 +7,23 @@
 //
 
 #import "ZIKDemoParentViewRouter.h"
-#import "ZIKDemoParentViewController.h"
+#import "EmptyContainerViewController.h"
 
-@interface ZIKDemoParentViewController (ZIKDemoParentViewRouter) <ZIKRoutableView>
+@interface EmptyContainerViewController (ZIKDemoParentViewRouter) <ZIKRoutableView>
 @end
-@implementation ZIKDemoParentViewController (ZIKDemoParentViewRouter)
+@implementation EmptyContainerViewController (ZIKDemoParentViewRouter)
 @end
 
 @implementation ZIKDemoParentViewRouter
 
 + (void)registerRoutableDestination {
-    [self registerView:[ZIKDemoParentViewController class]];
+    [self registerView:[EmptyContainerViewController class]];
 }
 
 - (id)destinationWithConfiguration:(__kindof ZIKRouteConfiguration *)configuration {
     UIStoryboard *sb = [UIStoryboard storyboardWithName:@"Main" bundle:nil];
-    ZIKDemoParentViewController *destination = [sb instantiateViewControllerWithIdentifier:@"demoParent"];;
-    destination.title = @"Demo Parent";
+    EmptyContainerViewController *destination = [sb instantiateViewControllerWithIdentifier:@"emptyContainer"];;
+    destination.title = @"Empty Container";
     return destination;
 }
 

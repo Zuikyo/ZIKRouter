@@ -1,5 +1,5 @@
 //
-//  ZIKDemoParentViewController.h
+//  EmptyContainerViewController.h
 //  ZIKRouterDemo
 //
 //  Created by zuik on 2017/7/7.
@@ -8,6 +8,6 @@
 
 #import <UIKit/UIKit.h>
 
-@interface ZIKDemoParentViewController : UIViewController
+@interface EmptyContainerViewController : UIViewController
 
 @end
