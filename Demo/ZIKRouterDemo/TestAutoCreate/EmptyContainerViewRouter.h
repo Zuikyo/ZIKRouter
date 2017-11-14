@@ -1,5 +1,5 @@
 //
-//  ZIKDemoParentViewRouter.h
+//  EmptyContainerViewRouter.h
 //  ZIKRouterDemo
 //
 //  Created by zuik on 2017/7/7.
@@ -8,6 +8,6 @@
 
 @import ZIKRouter;
 
-@interface ZIKDemoParentViewRouter : ZIKViewRouter <ZIKViewRouterProtocol>
+@interface EmptyContainerViewRouter : ZIKViewRouter <ZIKViewRouterProtocol>
 
 @end

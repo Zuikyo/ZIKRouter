@@ -1,12 +1,12 @@
 //
-//  ZIKDemoParentViewRouter.m
+//  EmptyContainerViewRouter.m
 //  ZIKRouterDemo
 //
 //  Created by zuik on 2017/7/7.
 //  Copyright © 2017 zuik. All rights reserved.
 //
 
-#import "ZIKDemoParentViewRouter.h"
+#import "EmptyContainerViewRouter.h"
 #import "EmptyContainerViewController.h"
 
 @interface EmptyContainerViewController (ZIKDemoParentViewRouter) <ZIKRoutableView>
@@ -14,7 +14,7 @@
 @implementation EmptyContainerViewController (ZIKDemoParentViewRouter)
 @end
 
-@implementation ZIKDemoParentViewRouter
+@implementation EmptyContainerViewRouter
 
 + (void)registerRoutableDestination {
     [self registerView:[EmptyContainerViewController class]];
