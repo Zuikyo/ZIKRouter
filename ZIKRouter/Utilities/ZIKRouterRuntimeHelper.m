@@ -44,18 +44,19 @@ bool ZIKRouter_replaceMethodWithMethod(Class originalClass, SEL originalSelector
     
     IMP originalIMP = method_getImplementation(originalMethod);
     IMP swizzledIMP = method_getImplementation(swizzledMethod);
-    const char *originalType = method_getTypeEncoding(originalMethod);
-    const char *swizzledType = method_getTypeEncoding(swizzledMethod);
-    int cmpResult = strcmp(originalType, swizzledType);
-    if (cmpResult != 0) {
-        NSLog(@"warning：method signature not match, please confirm！original method:%@\n signature:%s\nswizzled method:%@\nsignature:%s",NSStringFromSelector(originalSelector),originalType,NSStringFromSelector(swizzledSelector),swizzledType);
-        swizzledType = originalType;
-    }
     if (originalIMP == swizzledIMP) {//original class was already swizzled, or originalSelector's implementation is in super class but super class was already swizzled
         return true;
     }
+    
     if (originIsClassMethod) {
         originalClass = objc_getMetaClass(class_getName(originalClass));
+    }
+    
+    const char *originalType = method_getTypeEncoding(originalMethod);
+    const char *swizzledType = method_getTypeEncoding(swizzledMethod);
+    if (strcmp(originalType, swizzledType) != 0) {
+        NSLog(@"warning：method signature not match, please confirm！original method:%@\n signature:%s\nswizzled method:%@\nsignature:%s",NSStringFromSelector(originalSelector),originalType,NSStringFromSelector(swizzledSelector),swizzledType);
+        swizzledType = originalType;
     }
     class_replaceMethod(originalClass,swizzledSelector,originalIMP,originalType);
     class_replaceMethod(originalClass,originalSelector,swizzledIMP,swizzledType);
@@ -93,18 +94,17 @@ bool ZIKRouter_replaceMethodWithMethodType(Class originalClass, SEL originalSele
     
     IMP originalIMP = method_getImplementation(originalMethod);
     IMP swizzledIMP = method_getImplementation(swizzledMethod);
-    const char *originalType = method_getTypeEncoding(originalMethod);
-    const char *swizzledType = method_getTypeEncoding(swizzledMethod);
-    int cmpResult = strcmp(originalType, swizzledType);
-    if (cmpResult != 0) {
-        NSLog(@"warning：method signature not match, please confirm！original method:%@\n signature:%s\nswizzled method:%@\nsignature:%s",NSStringFromSelector(originalSelector),originalType,NSStringFromSelector(swizzledSelector),swizzledType);
-        swizzledType = originalType;
-    }
     if (originalIMP == swizzledIMP) {//original class was already swizzled, or originalSelector's implementation is in super class but super class was already swizzled
         return true;
     }
     if (originIsClassMethod) {
         originalClass = objc_getMetaClass(class_getName(originalClass));
+    }
+    const char *originalType = method_getTypeEncoding(originalMethod);
+    const char *swizzledType = method_getTypeEncoding(swizzledMethod);
+    if (strcmp(originalType, swizzledType) != 0) {
+        NSLog(@"warning：method signature not match, please confirm！original method:%@\n signature:%s\nswizzled method:%@\nsignature:%s",NSStringFromSelector(originalSelector),originalType,NSStringFromSelector(swizzledSelector),swizzledType);
+        swizzledType = originalType;
     }
     class_replaceMethod(originalClass,swizzledSelector,originalIMP,originalType);
     class_replaceMethod(originalClass,originalSelector,swizzledIMP,swizzledType);
@@ -141,18 +141,17 @@ IMP ZIKRouter_replaceMethodWithMethodAndGetOriginalImp(Class originalClass, SEL 
     
     IMP originalIMP = method_getImplementation(originalMethod);
     IMP swizzledIMP = method_getImplementation(swizzledMethod);
-    const char *originalType = method_getTypeEncoding(originalMethod);
-    const char *swizzledType = method_getTypeEncoding(swizzledMethod);
-    int cmpResult = strcmp(originalType, swizzledType);
-    if (cmpResult != 0) {
-        NSLog(@"warning：method signature not match, please confirm！original method:%@\n signature:%s\nswizzled method:%@\nsignature:%s",NSStringFromSelector(originalSelector),originalType,NSStringFromSelector(swizzledSelector),swizzledType);
-        swizzledType = originalType;
-    }
     if (originalIMP == swizzledIMP) {//original class was already swizzled, or originalSelector's implementation is in super class but super class was already swizzled
         return NULL;
     }
     if (originIsClassMethod) {
         originalClass = objc_getMetaClass(class_getName(originalClass));
+    }
+    const char *originalType = method_getTypeEncoding(originalMethod);
+    const char *swizzledType = method_getTypeEncoding(swizzledMethod);
+    if (strcmp(originalType, swizzledType) != 0) {
+        NSLog(@"warning：method signature not match, please confirm！original method:%@\n signature:%s\nswizzled method:%@\nsignature:%s",NSStringFromSelector(originalSelector),originalType,NSStringFromSelector(swizzledSelector),swizzledType);
+        swizzledType = originalType;
     }
     BOOL success = class_addMethod(originalClass, originalSelector, swizzledIMP, swizzledType);
     if (success) {
@@ -173,7 +172,6 @@ void ZIKRouter_enumerateClassList(void(^handler)(Class aClass)) {
     NSCParameterAssert(handler);
     int numClasses = objc_getClassList(NULL, 0);
     Class *classes = NULL;
-    // from http://stackoverflow.com/a/8731509/46768
     classes = (Class *)malloc(sizeof(Class) * numClasses);
     numClasses = objc_getClassList(classes, numClasses);
     
@@ -193,7 +191,9 @@ void ZIKRouter_enumerateProtocolList(void(^handler)(Protocol *protocol)) {
     Protocol *__unsafe_unretained *protocols = objc_copyProtocolList(&outCount);
     for (int i = 0; i < outCount; i++) {
         Protocol *protocol = protocols[i];
-        handler(protocol);
+        if (protocol) {
+            handler(protocol);
+        }
     }
     free(protocols);
 }

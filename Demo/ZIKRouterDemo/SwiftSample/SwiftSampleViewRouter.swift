@@ -23,6 +23,7 @@ class SwiftSampleViewConfiguration: ZIKViewRouteConfiguration, SwiftSampleViewCo
 
 //Router for SwiftSampleViewController.
 class SwiftSampleViewRouter: ZIKViewRouter<SwiftSampleViewConfiguration, ZIKViewRemoveConfiguration> {
+    
     override class func registerRoutableDestination() {
         registerView(SwiftSampleViewController.self)
         registerViewProtocol(SwiftSampleViewInput.self)

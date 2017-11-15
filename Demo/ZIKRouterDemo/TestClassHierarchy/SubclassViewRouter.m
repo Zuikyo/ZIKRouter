@@ -9,9 +9,9 @@
 #import "SubclassViewRouter.h"
 #import "SubclassViewController.h"
 
-@interface SubclassViewController (TestClassHierarchyViewRouter) <ZIKRoutableView>
+@interface SubclassViewController (SubclassViewRouter) <ZIKRoutableView>
 @end
-@implementation SubclassViewController (TestClassHierarchyViewRouter)
+@implementation SubclassViewController (SubclassViewRouter)
 @end
 
 @implementation SubclassViewRouter
