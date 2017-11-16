@@ -14,6 +14,13 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
+///Enble this to check whether all routers and routable protocols are properly implemented.
+#ifdef DEBUG
+#define ZIKROUTER_CHECK 1
+#else
+#define ZIKROUTER_CHECK 0
+#endif
+
 ///Methods for ZIKRouter subclass
 @protocol ZIKRouterProtocol <NSObject>
 @required

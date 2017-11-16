@@ -101,7 +101,7 @@ _Nullable Class _ZIKServiceRouterToModule(Protocol *configProtocol) {
         [self endPerformRouteWithError:[[self class] errorWithCode:ZIKServiceRouteErrorServiceUnavailable localizedDescriptionFormat:@"Router(%@) returns nil for destination, you can't use this service now. Maybe your configuration is invalid (%@), or there is a bug in the router.",self,configuration]];
         return;
     }
-#if ZIKSERVICEROUTER_CHECK
+#if ZIKROUTER_CHECK
     [self _validateDestinationConformance:destination];
 #endif
     if (configuration.prepareDestination) {
@@ -167,7 +167,7 @@ _Nullable Class _ZIKServiceRouterToModule(Protocol *configProtocol) {
 #pragma mark Validate
 
 - (BOOL)_validateDestinationConformance:(id)destination {
-#if ZIKSERVICEROUTER_CHECK
+#if ZIKROUTER_CHECK
     Class routerClass = [self class];
     CFMutableSetRef serviceProtocols = (CFMutableSetRef)CFDictionaryGetValue(ZIKServiceRouteRegistry._check_routerToDestinationProtocolsMap, (__bridge const void *)(routerClass));
     if (serviceProtocols != NULL) {
@@ -321,7 +321,7 @@ extern _Nullable Class _swift_ZIKServiceRouterToModule(id configProtocol) {
 @implementation ZIKServiceRouter (Private)
 
 + (BOOL)shouldCheckImplementation {
-#if ZIKSERVICEROUTER_CHECK
+#if ZIKROUTER_CHECK
     return YES;
 #else
     return NO;
@@ -343,7 +343,7 @@ extern _Nullable Class _swift_ZIKServiceRouterToModule(id configProtocol) {
 }
 
 + (_Nullable Class)validateRegisteredServiceClasses:(ZIKServiceClassValidater)handler {
-#if ZIKSERVICEROUTER_CHECK
+#if ZIKROUTER_CHECK
     Class routerClass = self;
     CFMutableSetRef services = (CFMutableSetRef)CFDictionaryGetValue(ZIKServiceRouteRegistry._check_routerToDestinationsMap, (__bridge const void *)(routerClass));
     __block Class badClass = nil;

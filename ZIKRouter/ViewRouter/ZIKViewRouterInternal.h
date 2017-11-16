@@ -18,7 +18,7 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic, readonly, copy) __kindof ZIKViewRouteConfiguration *original_configuration;
 @property (nonatomic, readonly, copy) __kindof ZIKViewRemoveConfiguration *original_removeConfiguration;
 
-///Invoked after auto registration is finished when ZIKVIEWROUTER_CHECK is enabled. You can override and validate whether those routable swift protocols used in your module as external dependencies have registered with routers, because we can't enumerate swift protocols at runtime.
+///Invoked after auto registration is finished when ZIKROUTER_CHECK is enabled. You can override and validate whether those routable swift protocols used in your module as external dependencies have registered with routers, because we can't enumerate swift protocols at runtime.
 + (void)_autoRegistrationDidFinished;
 
 ///Maintain the route state for custom route.

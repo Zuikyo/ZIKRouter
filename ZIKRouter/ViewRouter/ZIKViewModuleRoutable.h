@@ -18,7 +18,7 @@
  1. Let module declare routable protocol in header as the module's provided interface
  1. Checking whether declared protocol is correctly supported in it's view router
  
- It's safe to use objc protocols inheriting from ZIKViewModuleRoutable with ZIKViewRouter.toModule() and won't get nil. ZIKViewRouter will validate all ZIKViewModuleRoutable protocols and registered protocols when app launchs and ZIKVIEWROUTER_CHECK is enbled. When ZIKVIEWROUTER_CHECK is disabled, the protocol doesn't need to inheriting from ZIKViewModuleRoutable.
+ It's safe to use objc protocols inheriting from ZIKViewModuleRoutable with ZIKViewRouter.toModule() and won't get nil. ZIKViewRouter will validate all ZIKViewModuleRoutable protocols and registered protocols when app launchs and ZIKROUTER_CHECK is enbled. When ZIKROUTER_CHECK is disabled, the protocol doesn't need to inheriting from ZIKViewModuleRoutable.
  */
 @protocol ZIKViewModuleRoutable
 

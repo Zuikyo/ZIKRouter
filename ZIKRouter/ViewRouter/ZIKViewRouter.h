@@ -17,13 +17,6 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-///Enble this to check whether all routers and routable protocols are properly implemented.
-#ifdef DEBUG
-#define ZIKVIEWROUTER_CHECK 1
-#else
-#define ZIKVIEWROUTER_CHECK 0
-#endif
-
 /**
  Error handler for all view router, for debugging and log.
  @discussion
@@ -233,7 +226,7 @@ typedef void(^ZIKViewRouteGlobalErrorHandler)(__kindof ZIKViewRouter * _Nullable
  
  You can register your protocol and let the view conforms to the protocol in category in your interface adapter.
  
- @param viewProtocol The protocol conformed by view to identify the routerClass. Should inherit from ZIKViewRoutable when ZIKVIEWROUTER_CHECK is enabled. When ZIKVIEWROUTER_CHECK is disabled, the protocol doesn't need to inheriting from ZIKViewRoutable.
+ @param viewProtocol The protocol conformed by view to identify the routerClass. Should inherit from ZIKViewRoutable when ZIKROUTER_CHECK is enabled. When ZIKROUTER_CHECK is disabled, the protocol doesn't need to inheriting from ZIKViewRoutable.
  */
 + (void)registerViewProtocol:(Protocol *)viewProtocol;
 
@@ -246,7 +239,7 @@ typedef void(^ZIKViewRouteGlobalErrorHandler)(__kindof ZIKViewRouter * _Nullable
  
  You can register your protocol and let the configuration conforms to the protocol in category in your interface adapter.
  
- @param configProtocol The protocol conformed by default configuration of the routerClass. Should inherit from ZIKViewModuleRoutable when ZIKVIEWROUTER_CHECK is enabled. When ZIKVIEWROUTER_CHECK is disabled, the protocol doesn't need to inheriting from ZIKViewModuleRoutable.
+ @param configProtocol The protocol conformed by default configuration of the routerClass. Should inherit from ZIKViewModuleRoutable when ZIKROUTER_CHECK is enabled. When ZIKROUTER_CHECK is disabled, the protocol doesn't need to inheriting from ZIKViewModuleRoutable.
  */
 + (void)registerModuleProtocol:(Protocol *)configProtocol;
 @end
@@ -256,7 +249,7 @@ typedef void(^ZIKViewRouteGlobalErrorHandler)(__kindof ZIKViewRouter * _Nullable
 /**
  Get the view router class registered with a view protocol.
  
- The parameter viewProtocol of the block is: the protocol conformed by the view. Should be a ZIKViewRoutable protocol when ZIKVIEWROUTER_CHECK is enabled. When ZIKVIEWROUTER_CHECK is disabled, the protocol doesn't need to inherit from ZIKViewRoutable.
+ The parameter viewProtocol of the block is: the protocol conformed by the view. Should be a ZIKViewRoutable protocol when ZIKROUTER_CHECK is enabled. When ZIKROUTER_CHECK is disabled, the protocol doesn't need to inherit from ZIKViewRoutable.
  
  The return Class of the block is: a router class matched with the view. Return nil if protocol is nil or not registered. There will be an assert failure when result is nil.
  @discussion
@@ -302,7 +295,7 @@ typedef void(^ZIKViewRouteGlobalErrorHandler)(__kindof ZIKViewRouter * _Nullable
 /**
  Get the view router class combined with a custom ZIKViewRouteConfiguration conforming to a module config protocol.
  
- The parameter configProtocol of the block is: The protocol conformed by defaultConfiguration of router. Should be a ZIKViewModuleRoutable protocol when ZIKVIEWROUTER_CHECK is enabled. When ZIKVIEWROUTER_CHECK is disabled, the protocol doesn't need to inherit from ZIKViewModuleRoutable.
+ The parameter configProtocol of the block is: The protocol conformed by defaultConfiguration of router. Should be a ZIKViewModuleRoutable protocol when ZIKROUTER_CHECK is enabled. When ZIKROUTER_CHECK is disabled, the protocol doesn't need to inherit from ZIKViewModuleRoutable.
  
  The return Class of the block is: a router class matched with the view. Return nil if protocol is nil or not registered. There will be an assert failure when result is nil.
  @discussion

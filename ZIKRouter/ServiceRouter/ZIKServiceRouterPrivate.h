@@ -23,7 +23,7 @@ typedef  BOOL(^ZIKServiceClassValidater)(Class serviceClass);
 ///Is registration all finished.
 + (BOOL)_isAutoRegistrationFinished;
 
-///Validate all registered service classes of this router class, return the class when the validater return false. Only available when ZIKSERVICEROUTER_CHECK is true.
+///Validate all registered service classes of this router class, return the class when the validater return false. Only available when ZIKROUTER_CHECK is true.
 + (_Nullable Class)validateRegisteredServiceClasses:(ZIKServiceClassValidater)handler;
 
 + (void)_callbackGlobalErrorHandlerWithRouter:(nullable __kindof ZIKServiceRouter *)router action:(SEL)action error:(NSError *)error;

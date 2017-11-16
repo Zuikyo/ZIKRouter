@@ -409,7 +409,7 @@ static BOOL _isClassRoutable(Class class) {
         NSAssert(NO, @"Bad impletment in destinationWithConfiguration: of router: %@, invalid destination: %@ !",[self class],destination);
         return;
     }
-#if ZIKVIEWROUTER_CHECK
+#if ZIKROUTER_CHECK
     if ([[self class] _validateDestinationShouldExistInConfiguration:configuration]) {
         [self _validateDestinationConformance:destination];
     }
@@ -685,7 +685,7 @@ static BOOL _isClassRoutable(Class class) {
         self.routingFromInternal = NO;
         return;
     }
-#if ZIKVIEWROUTER_CHECK
+#if ZIKROUTER_CHECK
     if ([self class] != [ZIKViewRouter class]) {
         [self _validateDestinationConformance:destination];
     }
@@ -2610,7 +2610,7 @@ static _Nullable Class _routerClassToRegisteredView(Class viewClass) {
 }
 
 - (BOOL)_validateDestinationConformance:(id)destination {
-#if ZIKVIEWROUTER_CHECK
+#if ZIKROUTER_CHECK
     Class routerClass = [self class];
     CFMutableSetRef viewProtocols = (CFMutableSetRef)CFDictionaryGetValue(ZIKViewRouteRegistry._check_routerToDestinationProtocolsMap, (__bridge const void *)(routerClass));
     if (viewProtocols != NULL) {
@@ -3199,7 +3199,7 @@ static _Nullable Class _routerClassToRegisteredView(Class viewClass) {
 + (void)registerViewProtocol:(Protocol *)viewProtocol {
     NSAssert(!ZIKViewRouteRegistry.autoRegistrationFinished, @"Only register in +registerRoutableDestination.");
     NSAssert([NSThread isMainThread], @"Call in main thread for thread safety.");
-#if ZIKVIEWROUTER_CHECK
+#if ZIKROUTER_CHECK
     NSAssert1(protocol_conformsToProtocol(viewProtocol, @protocol(ZIKViewRoutable)), @"%@ should conforms to ZIKViewRoutable in DEBUG mode for safety checking", NSStringFromProtocol(viewProtocol));
 #endif
     [ZIKViewRouteRegistry registerDestinationProtocol:viewProtocol router:self];
@@ -3209,7 +3209,7 @@ static _Nullable Class _routerClassToRegisteredView(Class viewClass) {
     NSAssert2([[self defaultRouteConfiguration] conformsToProtocol:configProtocol], @"configProtocol(%@) should be conformed by this router(%@)'s defaultRouteConfiguration.",NSStringFromProtocol(configProtocol),self);
     NSAssert(!ZIKViewRouteRegistry.autoRegistrationFinished, @"Only register in +registerRoutableDestination.");
     NSAssert([NSThread isMainThread], @"Call in main thread for thread safety.");
-#if ZIKVIEWROUTER_CHECK
+#if ZIKROUTER_CHECK
     NSAssert1(protocol_conformsToProtocol(configProtocol, @protocol(ZIKViewModuleRoutable)), @"%@ should conforms to ZIKViewModuleRoutable in DEBUG mode for safety checking", NSStringFromProtocol(configProtocol));
 #endif
     [ZIKViewRouteRegistry registerModuleProtocol:configProtocol router:self];
@@ -3271,7 +3271,7 @@ _Nullable Class _ZIKViewRouterToModule(Protocol *configProtocol) {
 @implementation ZIKViewRouter (Private)
 
 + (BOOL)shouldCheckImplementation {
-#if ZIKVIEWROUTER_CHECK
+#if ZIKROUTER_CHECK
     return YES;
 #else
     return NO;
@@ -3293,7 +3293,7 @@ _Nullable Class _ZIKViewRouterToModule(Protocol *configProtocol) {
 }
 
 + (_Nullable Class)validateRegisteredViewClasses:(ZIKViewClassValidater)handler {
-#if ZIKVIEWROUTER_CHECK
+#if ZIKROUTER_CHECK
     Class routerClass = self;
     CFMutableSetRef views = (CFMutableSetRef)CFDictionaryGetValue(ZIKViewRouteRegistry._check_routerToDestinationsMap, (__bridge const void *)(routerClass));
     __block Class badClass = nil;

@@ -19,13 +19,6 @@ NS_ASSUME_NONNULL_BEGIN
 
 extern NSString *const kZIKServiceRouterErrorDomain;
 
-///Enble this to check whether all routers and routable protocols are properly implemented.
-#ifdef DEBUG
-#define ZIKSERVICEROUTER_CHECK 1
-#else
-#define ZIKSERVICEROUTER_CHECK 0
-#endif
-
 @class ZIKServiceRouter;
 /**
  Error handler for all service routers, for debug and log.
@@ -121,7 +114,7 @@ typedef void(^ZIKServiceRouteGlobalErrorHandler)(__kindof ZIKServiceRouter * _Nu
 /**
  Register a service protocol that all services registered with the router conform to, then use ZIKServiceRouter.toService() to get the router class.You can register your protocol and let the service conforms to the protocol in category in your interface adapter.
  
- @param serviceProtocol The protocol conformed by service to identify the routerClass. Should inherit from ZIKServiceRoutable when ZIKSERVICEROUTER_CHECK is enabled. When ZIKSERVICEROUTER_CHECK is disabled, the protocol doesn't need to inheriting from ZIKServiceRoutable.
+ @param serviceProtocol The protocol conformed by service to identify the routerClass. Should inherit from ZIKServiceRoutable when ZIKROUTER_CHECK is enabled. When ZIKROUTER_CHECK is disabled, the protocol doesn't need to inheriting from ZIKServiceRoutable.
  */
 + (void)registerServiceProtocol:(Protocol *)serviceProtocol;
 
@@ -130,7 +123,7 @@ typedef void(^ZIKServiceRouteGlobalErrorHandler)(__kindof ZIKServiceRouter * _Nu
  
  When the service module contains not only a single service class, but also other internal services, and you can't prepare the module with a simple service protocol, then you need a moudle config protocol.
  
- @param configProtocol The protocol conformed by default configuration of the routerClass. Should inherit from ZIKServiceModuleRoutable when ZIKSERVICEROUTER_CHECK is enabled. When ZIKSERVICEROUTER_CHECK is disabled, the protocol doesn't need to inheriting from ZIKServiceModuleRoutable.
+ @param configProtocol The protocol conformed by default configuration of the routerClass. Should inherit from ZIKServiceModuleRoutable when ZIKROUTER_CHECK is enabled. When ZIKROUTER_CHECK is disabled, the protocol doesn't need to inheriting from ZIKServiceModuleRoutable.
  */
 + (void)registerModuleProtocol:(Protocol *)configProtocol;
 
@@ -141,7 +134,7 @@ typedef void(^ZIKServiceRouteGlobalErrorHandler)(__kindof ZIKServiceRouter * _Nu
 /**
  Get the router class registered with a service protocol.
  
- The parameter serviceProtocol of the block is: the protocol conformed by the service. Should be a ZIKServiceRoutable protocol when ZIKSERVICEROUTER_CHECK is enabled. When ZIKSERVICEROUTER_CHECK is disabled, the protocol doesn't need to inheriting from ZIKServiceRoutable.
+ The parameter serviceProtocol of the block is: the protocol conformed by the service. Should be a ZIKServiceRoutable protocol when ZIKROUTER_CHECK is enabled. When ZIKROUTER_CHECK is disabled, the protocol doesn't need to inheriting from ZIKServiceRoutable.
  
  The return Class of the block is: a router class matched with the service. Return nil if protocol is nil or not declared. There will be an assert failure when result is nil.
  */
@@ -150,7 +143,7 @@ typedef void(^ZIKServiceRouteGlobalErrorHandler)(__kindof ZIKServiceRouter * _Nu
 /**
  Get the router class combined with a custom ZIKRouteConfiguration conforming to a unique protocol.
  
- The parameter configProtocol of the block is: the protocol conformed by defaultConfiguration of router. Should be a ZIKServiceModuleRoutable protocol when ZIKSERVICEROUTER_CHECK is enabled. When ZIKSERVICEROUTER_CHECK is disabled, the protocol doesn't need to inheriting from ZIKServiceModuleRoutable.
+ The parameter configProtocol of the block is: the protocol conformed by defaultConfiguration of router. Should be a ZIKServiceModuleRoutable protocol when ZIKROUTER_CHECK is enabled. When ZIKROUTER_CHECK is disabled, the protocol doesn't need to inheriting from ZIKServiceModuleRoutable.
  The return Class of the block is: a router class matched with the service. Return nil if protocol is nil or not declared. There will be an assert failure when result is nil.
  */
 @property (nonatomic,class,readonly) Class _Nullable (^toModule)(Protocol *configProtocol) NS_SWIFT_UNAVAILABLE("Use Registry.router(to:) function in ZRouter instead.");
