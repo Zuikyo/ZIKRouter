@@ -575,8 +575,8 @@ static void *dereferencedPointer(void *pointer) {
     return *deref;
 }
 
-static BOOL isSwiftObjectClassType(id object) {
-    return [object superclass] == NSClassFromString(@"SwiftObject");
+static BOOL isObjectClassType(id object) {
+    return object == [object class];
 }
 
 bool _swift_typeIsTargetType(id sourceType, id targetType) {
@@ -614,14 +614,13 @@ bool _swift_typeIsTargetType(id sourceType, id targetType) {
         return class_conformsToProtocol([sourceType class], targetType);
     }
     if (isSourceSwiftObjectType) {
-        NSCParameterAssert(isSwiftObjectClassType(sourceType));
-        if (!isSwiftObjectClassType(sourceType)) {
+        if (!isObjectClassType(sourceType)) {
             NSCAssert(NO, @"This function only accept type parameter, not instance parameter.");
             return false;
         }
     }
     if (isTargetSwiftObjectType) {
-        if (!isSwiftObjectClassType(targetType)) {
+        if (!isObjectClassType(targetType)) {
             NSCAssert(NO, @"This function only accept type parameter, not instance parameter.");
             return false;
         }
