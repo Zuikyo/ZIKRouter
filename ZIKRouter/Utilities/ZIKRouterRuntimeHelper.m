@@ -204,7 +204,7 @@ bool ZIKRouter_classIsSubclassOfClass(Class aClass, Class parentClass) {
     Class superClass = aClass;
     do {
         superClass = class_getSuperclass(superClass);
-    } while (superClass && superClass != parentClass);
+    } while (superClass != parentClass && superClass);
     
     if (superClass == nil) {
         return false;
