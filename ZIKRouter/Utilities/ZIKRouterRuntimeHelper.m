@@ -575,6 +575,10 @@ static void *dereferencedPointer(void *pointer) {
     return *deref;
 }
 
+static BOOL isSwiftObjectClassType(id object) {
+    return [object superclass] == NSClassFromString(@"SwiftObject");
+}
+
 bool _swift_typeConformsToProtocol(id swiftType, id swiftProtocol) {
 #if DEBUG
     static NSString *_SwiftValueString;
@@ -594,8 +598,11 @@ bool _swift_typeConformsToProtocol(id swiftType, id swiftProtocol) {
     });
     Class _SwiftValueClass = NSClassFromString(_SwiftValueString);
     Class SwiftObjectClass = NSClassFromString(SwiftObjectString);
-    BOOL isSwiftType = [swiftType isKindOfClass:SwiftObjectClass] || [swiftType isKindOfClass:_SwiftValueClass];
-    BOOL isSwiftProtocol = [swiftProtocol isKindOfClass:SwiftObjectClass] || [swiftProtocol isKindOfClass:_SwiftValueClass];
+    
+    BOOL isSwiftTypeObjectType = [swiftType isKindOfClass:SwiftObjectClass];
+    BOOL isSwiftProtocolObjectType = [swiftProtocol isKindOfClass:SwiftObjectClass];
+    BOOL isSwiftType = isSwiftTypeObjectType || [swiftType isKindOfClass:_SwiftValueClass];
+    BOOL isSwiftProtocol = isSwiftProtocolObjectType || [swiftProtocol isKindOfClass:_SwiftValueClass];
     if ([swiftType isKindOfClass:NSClassFromString(@"Protocol")]) {
         if (isSwiftProtocol) {
             return NO;
@@ -603,10 +610,14 @@ bool _swift_typeConformsToProtocol(id swiftType, id swiftProtocol) {
         isSwiftType = YES;
     }
     NSCParameterAssert(isSwiftType || [swiftType isKindOfClass:[NSObject class]]);
-    NSCParameterAssert(isSwiftProtocol || [swiftProtocol isKindOfClass:NSClassFromString(@"Protocol")]);
     
     if (!isSwiftType && !isSwiftProtocol) {
-        return class_conformsToProtocol(swiftType, swiftProtocol);
+        return class_conformsToProtocol([swiftType class], swiftProtocol);
+    }
+    if (isSwiftTypeObjectType && isSwiftProtocolObjectType) {
+        NSCParameterAssert(isSwiftObjectClassType(swiftType));
+        NSCParameterAssert(isSwiftObjectClassType(swiftProtocol));
+        return ZIKRouter_classIsSubclassOfClass(swiftType, swiftProtocol) || [swiftType isKindOfClass:swiftProtocol];
     }
     
     bool (*_conformsToProtocols)(void *, void *, void *, void *) = swift_conformsToProtocols();
@@ -618,11 +629,11 @@ bool _swift_typeConformsToProtocol(id swiftType, id swiftProtocol) {
     void* swiftTypeOpaqueValue;
     void* swiftTypeMetadata;
     if ([swiftType isKindOfClass:SwiftObjectClass]) {
-        //swift class
+        //swift class or swift object
         swiftTypeMetadata = (__bridge void *)(swiftType);
         swiftTypeOpaqueValue = (__bridge void *)(swiftType);
     } else if ([swiftType isKindOfClass:_SwiftValueClass]) {
-        //swift struct or swift enum
+        //swift struct or swift enum or swift protocol
         NSCAssert2([swiftType respondsToSelector:NSSelectorFromString(_swiftValueString)], @"Swift value(%@) doesn't have method(%@), the API may be changed in libswiftCore.dylib.",swiftType,_swiftValueString);
         swiftTypeOpaqueValue = (__bridge void *)[swiftType performSelector:NSSelectorFromString(_swiftValueString)];
         swiftTypeMetadata = dereferencedPointer(swiftTypeOpaqueValue);
@@ -635,10 +646,12 @@ bool _swift_typeConformsToProtocol(id swiftType, id swiftProtocol) {
     void* swiftProtocolOpaqueValue;
     void* swiftProtocolMetadata;
     if ([swiftProtocol isKindOfClass:_SwiftValueClass]) {
+        //swift struct or swift enum or swift protocol
         NSCAssert2([swiftProtocol respondsToSelector:NSSelectorFromString(_swiftValueString)], @"Swift value(%@) doesn't have method(%@), the API may be changed in libswiftCore.dylib.",swiftProtocol,_swiftValueString);
         swiftProtocolOpaqueValue = (__bridge void *)[swiftProtocol performSelector:NSSelectorFromString(_swiftValueString)];
         swiftProtocolMetadata = dereferencedPointer(swiftProtocolOpaqueValue);
     } else {
+        //objc protocol
         swiftProtocolMetadata = (__bridge void *)(swiftProtocol);
         swiftProtocolOpaqueValue = (__bridge void *)(swiftProtocol);
     }
@@ -646,6 +659,6 @@ bool _swift_typeConformsToProtocol(id swiftType, id swiftProtocol) {
     bool result = _conformsToProtocols(swiftTypeOpaqueValue, swiftTypeMetadata, swiftProtocolMetadata, NULL);
     return result;
 #else
-    return true;
+    return false;
 #endif
 }

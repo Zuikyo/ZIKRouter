@@ -3,7 +3,10 @@
 //  ZIKRouter
 //
 //  Created by zuik on 2017/11/15.
-//  Copyright © 2017年 zuik. All rights reserved.
+//  Copyright © 2017 zuik. All rights reserved.
+//
+//  This source code is licensed under the MIT-style license found in the
+//  LICENSE file in the root directory of this source tree.
 //
 
 #import "ZIKViewRouteRegistry.h"
@@ -147,10 +150,6 @@ static NSMutableArray<Class> *_routerClasses;
             }
             valid;
         }), @"Router(%@) must override -destinationWithConfiguration: to return destination.",class);
-//        void(*registerFunc)(Class, SEL) = (void(*)(Class,SEL))registerIMP;
-//        if (registerFunc) {
-//            registerFunc(class,@selector(registerRoutableDestination));
-//        }
         [class registerRoutableDestination];
 #if ZIKROUTER_CHECK
         CFMutableSetRef views = (CFMutableSetRef)CFDictionaryGetValue(self._check_routerToDestinationsMap, (__bridge const void *)(class));
