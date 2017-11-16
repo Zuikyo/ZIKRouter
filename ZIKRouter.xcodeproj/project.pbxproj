@@ -229,6 +229,20 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		F82A98321FBDA8B700B59A6C /* Registry */ = {
+			isa = PBXGroup;
+			children = (
+				F8AD32D11FBC6B3F00186A22 /* ZIKRouteRegistry.h */,
+				F8AD32D21FBC6B3F00186A22 /* ZIKRouteRegistry.m */,
+				F8AD32D51FBC89F200186A22 /* ZIKRouteRegistryInternal.h */,
+				F8AD32D71FBC8C6A00186A22 /* ZIKViewRouteRegistry.h */,
+				F8AD32D81FBC8C6A00186A22 /* ZIKViewRouteRegistry.m */,
+				F8AD32F01FBD5C5F00186A22 /* ZIKServiceRouteRegistry.h */,
+				F8AD32F11FBD5C5F00186A22 /* ZIKServiceRouteRegistry.m */,
+			);
+			path = Registry;
+			sourceTree = "<group>";
+		};
 		F83315331F6FC73D00891004 /* Private */ = {
 			isa = PBXGroup;
 			children = (
@@ -269,6 +283,7 @@
 				F872F5071FAF5FC600297A1D /* Router */,
 				F872F5081FAF5FE200297A1D /* ViewRouter */,
 				F872F5091FAF5FF700297A1D /* ServiceRouter */,
+				F82A98321FBDA8B700B59A6C /* Registry */,
 				F872F50A1FAF602A00297A1D /* Adapter */,
 				F872F50B1FAF603E00297A1D /* Utilities */,
 				F85F4D0E1F223F0F003106C3 /* Extensions */,
@@ -297,9 +312,6 @@
 				F85A69931F90E37100F33285 /* ZIKRouteConfiguration.h */,
 				F85A69941F90E37100F33285 /* ZIKRouteConfiguration.m */,
 				F85F4D131F223F0F003106C3 /* ZIKRouterInternal.h */,
-				F8AD32D11FBC6B3F00186A22 /* ZIKRouteRegistry.h */,
-				F8AD32D21FBC6B3F00186A22 /* ZIKRouteRegistry.m */,
-				F8AD32D51FBC89F200186A22 /* ZIKRouteRegistryInternal.h */,
 			);
 			path = Router;
 			sourceTree = "<group>";
@@ -318,8 +330,6 @@
 				F8611F6C1F9B8E3C008F35DC /* ZIKViewRouterPrivate.h */,
 				F8B99A591F4ACD4D0063127F /* ZIKViewRoutable.h */,
 				F8B99A5B1F4ACE300063127F /* ZIKViewModuleRoutable.h */,
-				F8AD32D71FBC8C6A00186A22 /* ZIKViewRouteRegistry.h */,
-				F8AD32D81FBC8C6A00186A22 /* ZIKViewRouteRegistry.m */,
 			);
 			path = ViewRouter;
 			sourceTree = "<group>";
@@ -336,8 +346,6 @@
 				F8611F6E1F9B8EBB008F35DC /* ZIKServiceRouterPrivate.h */,
 				F8B99A5D1F4ADB350063127F /* ZIKServiceRoutable.h */,
 				F8B99A5F1F4ADB4A0063127F /* ZIKServiceModuleRoutable.h */,
-				F8AD32F01FBD5C5F00186A22 /* ZIKServiceRouteRegistry.h */,
-				F8AD32F11FBD5C5F00186A22 /* ZIKServiceRouteRegistry.m */,
 			);
 			path = ServiceRouter;
 			sourceTree = "<group>";
