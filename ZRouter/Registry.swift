@@ -413,8 +413,8 @@ internal extension Registry {
         let protocols = _check_viewProtocolContainer[_RouteKey(type: type(of: router))]
         if protocols != nil {
             for viewProtocol in protocols! {
-                assert(_swift_typeConformsToProtocol(type(of: destination), viewProtocol))
-                if _swift_typeConformsToProtocol(type(of: destination), viewProtocol) == false {
+                assert(_swift_typeIsTargetType(type(of: destination), viewProtocol))
+                if _swift_typeIsTargetType(type(of: destination), viewProtocol) == false {
                     return false
                 }
             }
@@ -425,8 +425,8 @@ internal extension Registry {
         let protocols = _check_serviceProtocolContainer[_RouteKey(type: type(of: router))]
         if protocols != nil {
             for serviceProtocolEntry in protocols! {
-                assert(_swift_typeConformsToProtocol(type(of: destination), serviceProtocolEntry.type!), "Bad implementation in router (\(type(of: router)))'s destination(with configuration:), the destination (\(destination)) doesn't conforms to registered service protocol (\(serviceProtocolEntry.type!))")
-                if _swift_typeConformsToProtocol(type(of: destination), serviceProtocolEntry.type!) == false {
+                assert(_swift_typeIsTargetType(type(of: destination), serviceProtocolEntry.type!), "Bad implementation in router (\(type(of: router)))'s destination(with configuration:), the destination (\(destination)) doesn't conforms to registered service protocol (\(serviceProtocolEntry.type!))")
+                if _swift_typeIsTargetType(type(of: destination), serviceProtocolEntry.type!) == false {
                     return false
                 }
             }
@@ -443,8 +443,8 @@ private class _ViewRouterValidater: ZIKViewRouteAdapter {
     override class func _autoRegistrationDidFinished() {
         for (routeKey, routerClass) in Registry.viewProtocolContainer {
             let viewProtocol = routeKey.type!
-            assert(routerClass.validateRegisteredViewClasses({return _swift_typeConformsToProtocol($0, viewProtocol)}) == nil,
-                   "Registered view class (\(String(describing: routerClass.validateRegisteredViewClasses{return _swift_typeConformsToProtocol($0, viewProtocol)}!))) for router (\(routerClass)) should conform to registered view protocol (\(viewProtocol)).")
+            assert(routerClass.validateRegisteredViewClasses({return _swift_typeIsTargetType($0, viewProtocol)}) == nil,
+                   "Registered view class (\(String(describing: routerClass.validateRegisteredViewClasses{return _swift_typeIsTargetType($0, viewProtocol)}!))) for router (\(routerClass)) should conform to registered view protocol (\(viewProtocol)).")
         }
     }
 }
@@ -457,8 +457,8 @@ private class _ServiceRouterValidater: ZIKServiceRouteAdapter {
     override class func _autoRegistrationDidFinished() {
         for (routeKey, routerClass) in Registry.serviceProtocolContainer {
             let serviceProtocol = routeKey.type!
-            assert(routerClass.validateRegisteredServiceClasses({return _swift_typeConformsToProtocol($0, serviceProtocol)}) == nil,
-                   "Registered service class (\(String(describing: routerClass.validateRegisteredServiceClasses{return _swift_typeConformsToProtocol($0, serviceProtocol)}!))) for router (\(routerClass)) should conform to registered service protocol (\(serviceProtocol)).")
+            assert(routerClass.validateRegisteredServiceClasses({return _swift_typeIsTargetType($0, serviceProtocol)}) == nil,
+                   "Registered service class (\(String(describing: routerClass.validateRegisteredServiceClasses{return _swift_typeIsTargetType($0, serviceProtocol)}!))) for router (\(routerClass)) should conform to registered service protocol (\(serviceProtocol)).")
         }
     }
 }

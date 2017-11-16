@@ -579,7 +579,7 @@ static BOOL isSwiftObjectClassType(id object) {
     return [object superclass] == NSClassFromString(@"SwiftObject");
 }
 
-bool _swift_typeConformsToProtocol(id swiftType, id swiftProtocol) {
+bool _swift_typeIsTargetType(id sourceType, id targetType) {
 #if DEBUG
     static NSString *_SwiftValueString;
     static NSString *SwiftObjectString;
@@ -599,25 +599,35 @@ bool _swift_typeConformsToProtocol(id swiftType, id swiftProtocol) {
     Class _SwiftValueClass = NSClassFromString(_SwiftValueString);
     Class SwiftObjectClass = NSClassFromString(SwiftObjectString);
     
-    BOOL isSwiftTypeObjectType = [swiftType isKindOfClass:SwiftObjectClass];
-    BOOL isSwiftProtocolObjectType = [swiftProtocol isKindOfClass:SwiftObjectClass];
-    BOOL isSwiftType = isSwiftTypeObjectType || [swiftType isKindOfClass:_SwiftValueClass];
-    BOOL isSwiftProtocol = isSwiftProtocolObjectType || [swiftProtocol isKindOfClass:_SwiftValueClass];
-    if ([swiftType isKindOfClass:NSClassFromString(@"Protocol")]) {
-        if (isSwiftProtocol) {
+    BOOL isSourceSwiftObjectType = [sourceType isKindOfClass:SwiftObjectClass];
+    BOOL isTargetSwiftObjectType = [targetType isKindOfClass:SwiftObjectClass];
+    BOOL isSourceSwiftType = isSourceSwiftObjectType || [sourceType isKindOfClass:_SwiftValueClass];
+    BOOL isTargetSwiftType = isTargetSwiftObjectType || [targetType isKindOfClass:_SwiftValueClass];
+    if ([sourceType isKindOfClass:NSClassFromString(@"Protocol")]) {
+        if (isTargetSwiftType) {
             return NO;
         }
-        isSwiftType = YES;
+        isSourceSwiftType = YES;
     }
-    NSCParameterAssert(isSwiftType || [swiftType isKindOfClass:[NSObject class]]);
-    
-    if (!isSwiftType && !isSwiftProtocol) {
-        return class_conformsToProtocol([swiftType class], swiftProtocol);
+    NSCParameterAssert(isSourceSwiftType || [sourceType isKindOfClass:[NSObject class]]);
+    if (!isSourceSwiftType && !isTargetSwiftType) {
+        return class_conformsToProtocol([sourceType class], targetType);
     }
-    if (isSwiftTypeObjectType && isSwiftProtocolObjectType) {
-        NSCParameterAssert(isSwiftObjectClassType(swiftType));
-        NSCParameterAssert(isSwiftObjectClassType(swiftProtocol));
-        return ZIKRouter_classIsSubclassOfClass(swiftType, swiftProtocol) || [swiftType isKindOfClass:swiftProtocol];
+    if (isSourceSwiftObjectType) {
+        NSCParameterAssert(isSwiftObjectClassType(sourceType));
+        if (!isSwiftObjectClassType(sourceType)) {
+            NSCAssert(NO, @"This function only accept type parameter, not instance parameter.");
+            return false;
+        }
+    }
+    if (isTargetSwiftObjectType) {
+        if (!isSwiftObjectClassType(targetType)) {
+            NSCAssert(NO, @"This function only accept type parameter, not instance parameter.");
+            return false;
+        }
+    }
+    if (isSourceSwiftObjectType && isTargetSwiftObjectType) {
+        return ZIKRouter_classIsSubclassOfClass(sourceType, targetType) || [sourceType isKindOfClass:targetType];
     }
     
     bool (*_conformsToProtocols)(void *, void *, void *, void *) = swift_conformsToProtocols();
@@ -626,37 +636,37 @@ bool _swift_typeConformsToProtocol(id swiftType, id swiftProtocol) {
     }
 #pragma clang diagnostic push
 #pragma clang diagnostic ignored "-Warc-performSelector-leaks"
-    void* swiftTypeOpaqueValue;
-    void* swiftTypeMetadata;
-    if ([swiftType isKindOfClass:SwiftObjectClass]) {
+    void* sourceTypeOpaqueValue;
+    void* sourceTypeMetadata;
+    if ([sourceType isKindOfClass:SwiftObjectClass]) {
         //swift class or swift object
-        swiftTypeMetadata = (__bridge void *)(swiftType);
-        swiftTypeOpaqueValue = (__bridge void *)(swiftType);
-    } else if ([swiftType isKindOfClass:_SwiftValueClass]) {
+        sourceTypeMetadata = (__bridge void *)(sourceType);
+        sourceTypeOpaqueValue = (__bridge void *)(sourceType);
+    } else if ([sourceType isKindOfClass:_SwiftValueClass]) {
         //swift struct or swift enum or swift protocol
-        NSCAssert2([swiftType respondsToSelector:NSSelectorFromString(_swiftValueString)], @"Swift value(%@) doesn't have method(%@), the API may be changed in libswiftCore.dylib.",swiftType,_swiftValueString);
-        swiftTypeOpaqueValue = (__bridge void *)[swiftType performSelector:NSSelectorFromString(_swiftValueString)];
-        swiftTypeMetadata = dereferencedPointer(swiftTypeOpaqueValue);
+        NSCAssert2([sourceType respondsToSelector:NSSelectorFromString(_swiftValueString)], @"Swift value(%@) doesn't have method(%@), the API may be changed in libswiftCore.dylib.",sourceType,_swiftValueString);
+        sourceTypeOpaqueValue = (__bridge void *)[sourceType performSelector:NSSelectorFromString(_swiftValueString)];
+        sourceTypeMetadata = dereferencedPointer(sourceTypeOpaqueValue);
     } else {
         //objc class or objc protocol
-        swiftTypeMetadata = (__bridge void *)(swiftType);
-        swiftTypeOpaqueValue = (__bridge void *)(swiftType);
+        sourceTypeMetadata = (__bridge void *)(sourceType);
+        sourceTypeOpaqueValue = (__bridge void *)(sourceType);
     }
     
-    void* swiftProtocolOpaqueValue;
-    void* swiftProtocolMetadata;
-    if ([swiftProtocol isKindOfClass:_SwiftValueClass]) {
+    void* targetTypeOpaqueValue;
+    void* targetTypeMetadata;
+    if ([targetType isKindOfClass:_SwiftValueClass]) {
         //swift struct or swift enum or swift protocol
-        NSCAssert2([swiftProtocol respondsToSelector:NSSelectorFromString(_swiftValueString)], @"Swift value(%@) doesn't have method(%@), the API may be changed in libswiftCore.dylib.",swiftProtocol,_swiftValueString);
-        swiftProtocolOpaqueValue = (__bridge void *)[swiftProtocol performSelector:NSSelectorFromString(_swiftValueString)];
-        swiftProtocolMetadata = dereferencedPointer(swiftProtocolOpaqueValue);
+        NSCAssert2([targetType respondsToSelector:NSSelectorFromString(_swiftValueString)], @"Swift value(%@) doesn't have method(%@), the API may be changed in libswiftCore.dylib.",targetType,_swiftValueString);
+        targetTypeOpaqueValue = (__bridge void *)[targetType performSelector:NSSelectorFromString(_swiftValueString)];
+        targetTypeMetadata = dereferencedPointer(targetTypeOpaqueValue);
     } else {
         //objc protocol
-        swiftProtocolMetadata = (__bridge void *)(swiftProtocol);
-        swiftProtocolOpaqueValue = (__bridge void *)(swiftProtocol);
+        targetTypeMetadata = (__bridge void *)(targetType);
+        targetTypeOpaqueValue = (__bridge void *)(targetType);
     }
 #pragma clang diagnostic pop
-    bool result = _conformsToProtocols(swiftTypeOpaqueValue, swiftTypeMetadata, swiftProtocolMetadata, NULL);
+    bool result = _conformsToProtocols(sourceTypeOpaqueValue, sourceTypeMetadata, targetTypeMetadata, NULL);
     return result;
 #else
     return false;

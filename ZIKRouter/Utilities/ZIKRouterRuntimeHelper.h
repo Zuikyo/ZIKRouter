@@ -68,7 +68,7 @@ extern bool ZIKRouter_classIsCustomClass(Class aClass);
 extern bool ZIKRouter_isObjcProtocol(id protocol);
 
 /**
- Check whether a swift type conforms to a protocol, actually it works like `is` operator in swift.
+ Check whether a swift type is the target type(is same type or subclass, or conforms to the target protocol), works like `is` operator in swift.
  @warning
  This function is for debugging assertion and it always return true in release mode. It uses private APIs in Swift bridging class, and these code won't be included in release mode. It need to search a private function pointer in libswiftCore.dylib at first call, and it may take some times:
  `bool _conformsToProtocols(const OpaqueValue *value, const Metadata *type, const ExistentialTypeMetadata *existentialType, const WitnessTable **conformances)`. See `https://github.com/apple/swift/blob/master/stdlib/public/runtime/Casting.cpp`.
@@ -80,11 +80,11 @@ extern bool ZIKRouter_isObjcProtocol(id protocol);
  
  If you need to support fat binary, set SWIFT_CONFORMSTOPROTOCOLS_ADDRESS_ARMV7 and SWIFT_CONFORMSTOPROTOCOLS_ADDRESS_ARMV7S. `nm -a libswiftCore.dylib` will dump symbols for armv7 and armv7s, like: `0038f644 t __ZL20_conformsToProtocolsPKN5swift11OpaqueValueEPKNS_14TargetMetadataINS_9InProcessEEEPKNS_29TargetExistentialTypeMetadataIS4_EEPPKNS_12WitnessTableE`. you need to add 0x1 for the symbol's address for armv7 and armv7s, so the final value to set is 0038f645). If the address you set is invalid, there will be an assert failure.
  
- @param swiftType Any type of swift class, objc class, swift struct, swift enum, objc protocol. But can't be swift protocol.
- @param swiftProtocol The protocol to check, can be swift protocol or objc protocol ,and can also be type of swift class, objc class, swift struct, swift enum.
- @return True if the type conforms to the protocol.
+ @param sourceType Any type of swift class, objc class, swift struct, swift enum, objc protocol, swift protocol.
+ @param targetType The target type to check, can be swift protocol, objc protocol, swift class, objc class, swift struct, swift enum.
+ @return True if the sourceType is the targetType.
  */
-extern bool _swift_typeConformsToProtocol(id swiftType, id swiftProtocol);
+extern bool _swift_typeIsTargetType(id sourceType, id targetType);
 
 /**
  Search function pointer in loaded library file which it's symbol contains the fuzzyFunctionSymbol. You can get static function's function pointer which not supported by dlsym().
