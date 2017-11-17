@@ -11,7 +11,7 @@
 
 #import "ZIKServiceRouteRegistry.h"
 #import "ZIKServiceRouterInternal.h"
-#import "ZIKRouterRuntimeHelper.h"
+#import "ZIKRouterRuntime.h"
 #import <objc/runtime.h>
 #import <UIKit/UIKit.h>
 

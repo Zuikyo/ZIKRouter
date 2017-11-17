@@ -21,7 +21,7 @@
 #import "ZIKServiceRouterProtocol.h"
 #import "ZIKServiceRouter.h"
 #import "ZIKServiceRouteConfiguration.h"
-#import "ZIKRouterRuntimeHelper.h"
+#import "ZIKRouterRuntime.h"
 #import "ZIKViewRouteAdapter.h"
 #import "ZIKServiceRouteAdapter.h"
 #import "ZIKViewRoutable.h"

@@ -12,7 +12,7 @@
 #import "UIView+ZIKViewRouter.h"
 #import "UIViewController+ZIKViewRouter.h"
 #import <objc/runtime.h>
-#import "ZIKRouterRuntimeHelper.h"
+#import "ZIKRouterRuntime.h"
 
 @implementation UIView (ZIKViewRouter)
 

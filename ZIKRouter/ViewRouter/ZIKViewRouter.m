@@ -17,7 +17,7 @@
 #import "ZIKRouteRegistryInternal.h"
 #import "ZIKViewRouteError.h"
 #import <objc/runtime.h>
-#import "ZIKRouterRuntimeHelper.h"
+#import "ZIKRouterRuntime.h"
 #import "UIViewController+ZIKViewRouter.h"
 #import "UIView+ZIKViewRouter.h"
 #import "ZIKPresentationState.h"

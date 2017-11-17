@@ -13,7 +13,7 @@
 #import "ZIKRouteRegistryInternal.h"
 #import <UIKit/UIKit.h>
 #import <objc/runtime.h>
-#import "ZIKRouterRuntimeHelper.h"
+#import "ZIKRouterRuntime.h"
 #import "ZIKRouter.h"
 
 static NSMutableSet<Class> *_registries;

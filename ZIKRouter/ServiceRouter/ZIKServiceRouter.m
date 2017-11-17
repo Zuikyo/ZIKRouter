@@ -16,7 +16,7 @@
 #import "ZIKRouteRegistryInternal.h"
 #import <objc/runtime.h>
 #import <UIKit/UIKit.h>
-#import "ZIKRouterRuntimeHelper.h"
+#import "ZIKRouterRuntime.h"
 
 NSString *const kZIKServiceRouterErrorDomain = @"ZIKServiceRouterErrorDomain";
 
@@ -45,7 +45,7 @@ _Nullable Class _ZIKServiceRouterToService(Protocol *serviceProtocol) {
     NSCParameterAssert(serviceProtocol);
     NSCAssert(ZIKServiceRouteRegistry.autoRegistrationFinished, @"Only get router after app did finish launch.");
     if (!serviceProtocol) {
-//        [ZIKServiceRouter _callbackError_invalidProtocolWithAction:@selector(init) errorDescription:@"ZIKServiceRouter.toService() serviceProtocol is nil"];
+        [ZIKServiceRouter _callbackError_invalidProtocolWithAction:@selector(toService) errorDescription:@"ZIKServiceRouter.toService() serviceProtocol is nil"];
         NSCAssert1(NO, @"ZIKServiceRouter.toService() serviceProtocol is nil. callStackSymbols: %@",[NSThread callStackSymbols]);
         return nil;
     }
@@ -53,8 +53,8 @@ _Nullable Class _ZIKServiceRouterToService(Protocol *serviceProtocol) {
     if (routerClass) {
         return routerClass;
     }
-//    [ZIKServiceRouter _callbackError_invalidProtocolWithAction:@selector(init)
-//                                             errorDescription:@"Didn't find service router for service protocol: %@, this protocol was not registered.",serviceProtocol];
+    [ZIKServiceRouter _callbackError_invalidProtocolWithAction:@selector(toService)
+                                             errorDescription:@"Didn't find service router for service protocol: %@, this protocol was not registered.",serviceProtocol];
     NSCAssert1(NO, @"Didn't find service router for service protocol: %@, this protocol was not registered.",serviceProtocol);
     return nil;
 }
@@ -63,7 +63,7 @@ _Nullable Class _ZIKServiceRouterToModule(Protocol *configProtocol) {
     NSCParameterAssert(configProtocol);
     NSCAssert(ZIKServiceRouteRegistry.autoRegistrationFinished, @"Only get router after app did finish launch.");
     if (!configProtocol) {
-//        [ZIKServiceRouter _callbackError_invalidProtocolWithAction:@selector(init) errorDescription:@"ZIKServiceRouter.toModule() configProtocol is nil"];
+        [ZIKServiceRouter _callbackError_invalidProtocolWithAction:@selector(toModule) errorDescription:@"ZIKServiceRouter.toModule() configProtocol is nil"];
         NSCAssert1(NO, @"ZIKServiceRouter.toModule() configProtocol is nil. callStackSymbols: %@",[NSThread callStackSymbols]);
         return nil;
     }
@@ -71,8 +71,8 @@ _Nullable Class _ZIKServiceRouterToModule(Protocol *configProtocol) {
     if (routerClass) {
         return routerClass;
     }
-//    [ZIKServiceRouter _callbackError_invalidProtocolWithAction:@selector(init)
-//                                             errorDescription:@"Didn't find service router for config protocol: %@, this protocol was not registered.",configProtocol];
+    [ZIKServiceRouter _callbackError_invalidProtocolWithAction:@selector(toModule)
+                                             errorDescription:@"Didn't find service router for config protocol: %@, this protocol was not registered.",configProtocol];
     NSCAssert1(NO, @"Didn't find service router for config protocol: %@, this protocol was not registered.",configProtocol);
     return nil;
 }
@@ -203,6 +203,15 @@ _Nullable Class _ZIKServiceRouterToModule(Protocol *configProtocol) {
 - (void)_callbackErrorWithAction:(SEL)routeAction error:(NSError *)error {
     [[self class] _callbackGlobalErrorHandlerWithRouter:self action:routeAction error:error];
     [super notifyError:error routeAction:routeAction];
+}
+
++ (void)_callbackError_invalidProtocolWithAction:(SEL)action errorDescription:(NSString *)format ,... {
+    va_list argList;
+    va_start(argList, format);
+    NSString *description = [[NSString alloc] initWithFormat:format arguments:argList];
+    va_end(argList);
+    [self _callbackGlobalErrorHandlerWithRouter:nil action:action error:[[self class] errorWithCode:ZIKServiceRouteErrorInvalidProtocol localizedDescription:description]];
+    NSAssert(NO, @"Error when get router for serviceProtocol: %@",description);
 }
 
 - (void)_callbackError_infiniteRecursionWithAction:(SEL)action errorDescription:(NSString *)format ,... {

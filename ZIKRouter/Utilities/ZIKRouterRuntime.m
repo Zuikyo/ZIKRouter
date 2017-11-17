@@ -1,5 +1,5 @@
 //
-//  ZIKRouterRuntimeHelper.m
+//  ZIKRouterRuntime.m
 //  ZIKRouter
 //
 //  Created by zuik on 2017/9/20.
@@ -9,7 +9,7 @@
 //  LICENSE file in the root directory of this source tree.
 //
 
-#import "ZIKRouterRuntimeHelper.h"
+#import "ZIKRouterRuntime.h"
 #import <objc/runtime.h>
 #import <dlfcn.h>
 #include <mach-o/dyld.h>
@@ -345,9 +345,9 @@ void asyncFuzzySearchFunctionPointerBySymbol(const char *libFileName, const char
                 const char *symbol = dlinfo.dli_sname;
                 if (dlinfo.dli_fbase != NULL && (symbol != NULL) && (symbol[0] != '\0')) {
                     if (strstr(symbol, fuzzyFunctionSymbol) == NULL) {
-                        addr -= 0x8;
+                        addr -= 0x16;
                         if (addr > (long)dlinfo.dli_saddr) {
-                            addr = (long)dlinfo.dli_saddr - 0x8;
+                            addr = (long)dlinfo.dli_saddr - 0x16;
                         }
                         continue;
                     }
@@ -362,9 +362,9 @@ void asyncFuzzySearchFunctionPointerBySymbol(const char *libFileName, const char
                     dispatch_semaphore_signal(semaphore);
                     break;
                 } else {
-                    addr -= 0x8;
+                    addr -= 0x16;
                     if (addr > (long)dlinfo.dli_saddr) {
-                        addr = (long)dlinfo.dli_saddr - 0x8;
+                        addr = (long)dlinfo.dli_saddr - 0x16;
                     }
                 }
             }
@@ -406,9 +406,9 @@ void asyncSearchFunctionPointerBySymbol(const char *libFileName, const char *fuz
                 const char *symbol = dlinfo.dli_sname;
                 if (dlinfo.dli_fbase != NULL && (symbol != NULL) && (symbol[0] != '\0')) {
                     if (strcmp(symbol, fuzzyFunctionSymbol) != 0) {
-                        addr -= 0x8;
+                        addr -= 0x16;
                         if (addr > (long)dlinfo.dli_saddr) {
-                            addr = (long)dlinfo.dli_saddr - 0x8;
+                            addr = (long)dlinfo.dli_saddr - 0x16;
                         }
                         continue;
                     }
@@ -423,9 +423,9 @@ void asyncSearchFunctionPointerBySymbol(const char *libFileName, const char *fuz
                     dispatch_semaphore_signal(semaphore);
                     break;
                 } else {
-                    addr -= 0x8;
+                    addr -= 0x16;
                     if (addr > (long)dlinfo.dli_saddr) {
-                        addr = (long)dlinfo.dli_saddr - 0x8;
+                        addr = (long)dlinfo.dli_saddr - 0x16;
                     }
                 }
             }
@@ -452,18 +452,18 @@ void* fuzzySearchFunctionPointerBySymbol(const char *libFileName, const char *fu
         const char *symbol = dlinfo.dli_sname;
         if (dlinfo.dli_fbase != NULL && (symbol != NULL) && (symbol[0] != '\0')) {
             if (strstr(symbol, fuzzyFunctionSymbol) == NULL) {
-                addr -= 0x8;
+                addr -= 0x16;
                 if (addr > (long)dlinfo.dli_saddr) {
-                    addr = (long)dlinfo.dli_saddr - 0x8;
+                    addr = (long)dlinfo.dli_saddr - 0x16;
                 }
                 continue;
             }
             foundAddress = dlinfo.dli_saddr;
             break;
         } else {
-            addr -= 0x8;
+            addr -= 0x16;
             if (addr > (long)dlinfo.dli_saddr) {
-                addr = (long)dlinfo.dli_saddr - 0x8;
+                addr = (long)dlinfo.dli_saddr - 0x16;
             }
         }
     }
@@ -488,18 +488,18 @@ void* searchFunctionPointerBySymbol(const char *libFileName, const char *functio
         if (dlinfo.dli_fbase != NULL && (symbol != NULL) && (symbol[0] != '\0')) {
             
             if (strstr(symbol, functionSymbol) == NULL) {
-                addr -= 0x8;
+                addr -= 0x16;
                 if (addr > (long)dlinfo.dli_saddr) {
-                    addr = (long)dlinfo.dli_saddr - 0x8;
+                    addr = (long)dlinfo.dli_saddr - 0x16;
                 }
                 continue;
             }
             foundAddress = dlinfo.dli_saddr;
             break;
         } else {
-            addr -= 0x8;
+            addr -= 0x16;
             if (addr > (long)dlinfo.dli_saddr) {
-                addr = (long)dlinfo.dli_saddr - 0x8;
+                addr = (long)dlinfo.dli_saddr - 0x16;
             }
         }
     }
@@ -520,7 +520,7 @@ static bool(*swift_conformsToProtocols())(void *, void *, void *, void *) {
         NSString *addressString = [[[NSProcessInfo processInfo] environment] objectForKey:@"SWIFT_CONFORMSTOPROTOCOLS_ADDRESS"];
         long address;
         if (addressString == nil) {
-            NSLog(@"\n⏳⏳⏳⏳⏳⏳⏳⏳\nZIKRouter:: _swift_typeConformsToProtocol():\nEnvironment variable SWIFT_CONFORMSTOPROTOCOLS_ADDRESS was not found.\nStart searching function pointer for\n`bool _conformsToProtocols(const OpaqueValue *value, const Metadata *type, const ExistentialTypeMetadata *existentialType, const WitnessTable **conformances)` in libswiftCore.dylib to validate swift type.\nThis may costs 0.8 second...\n");
+            NSLog(@"\n⏳⏳⏳⏳⏳\nZIKRouter:: _swift_typeConformsToProtocol():\nEnvironment variable SWIFT_CONFORMSTOPROTOCOLS_ADDRESS was not found.\nStart searching function pointer for\n`bool _conformsToProtocols(const OpaqueValue *value, const Metadata *type, const ExistentialTypeMetadata *existentialType, const WitnessTable **conformances)` in libswiftCore.dylib to validate swift type.\nThis may costs 0.5 second...\n");
             _conformsToProtocols = fuzzySearchFunctionPointerBySymbol(libswiftCorePath.UTF8String, "_conformsToProtocols");
             address = (long)_conformsToProtocols;
             NSLog(@"\n✅ZIKRouter: function pointer 0x%lx is found for `_conformsToProtocols`.\nIf the searching costs too many times, set 0x%lx as environment variable SWIFT_CONFORMSTOPROTOCOLS_ADDRESS to avoid searching function pointer again for later run.\n\n",address,address - baseAddressForImage(libswiftCorePath.UTF8String));
