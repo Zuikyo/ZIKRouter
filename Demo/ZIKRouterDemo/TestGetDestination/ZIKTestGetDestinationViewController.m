@@ -24,31 +24,31 @@
 - (IBAction)getDestinationAndPresent:(id)sender {
     __weak typeof(self) weakSelf = self;
     self.router = [ZIKViewRouter.toView(ZIKInfoViewProtocol_routable)
-     performWithConfiguring:^(ZIKViewRouteConfiguration * _Nonnull config) {
-         config.source = self;
-         config.routeType = ZIKViewRouteTypeGetDestination;
-         config.prepareDestination = ^(id<ZIKInfoViewProtocol>  _Nonnull destination) {
-             destination.delegate = weakSelf;
-             destination.name = @"Zuik";
-             destination.age = 18;
-         };
-         config.routeCompletion = ^(UIViewController * _Nonnull destination) {
-             NSLog(@"get destination by router complete");
-             if ([destination isKindOfClass:[UIViewController class]]) {
-                 [weakSelf presentViewController:destination animated:YES completion:^{
-                     NSLog(@"present manually complete");
-                 }];
-             }
-         };
-         config.successHandler = ^{
-             NSLog(@"get destination success");
-         };
-         config.errorHandler = ^(SEL  _Nonnull routeAction, NSError * _Nonnull error) {
-             NSLog(@"get destination by router failed: %@",error);
-         };
-         //Set handleExternalRoute to YES will let router call routeCompletion when destination is dispalyed, be cautious.
-//         config.handleExternalRoute = YES;
-     }];
+                   performFromSource:self
+                   configuring:^(ZIKViewRouteConfiguration * _Nonnull config) {
+                       config.routeType = ZIKViewRouteTypeGetDestination;
+                       config.prepareDestination = ^(id<ZIKInfoViewProtocol>  _Nonnull destination) {
+                           destination.delegate = weakSelf;
+                           destination.name = @"Zuik";
+                           destination.age = 18;
+                       };
+                       config.routeCompletion = ^(UIViewController * _Nonnull destination) {
+                           NSLog(@"get destination by router complete");
+                           if ([destination isKindOfClass:[UIViewController class]]) {
+                               [weakSelf presentViewController:destination animated:YES completion:^{
+                                   NSLog(@"present manually complete");
+                               }];
+                           }
+                       };
+                       config.successHandler = ^{
+                           NSLog(@"get destination success");
+                       };
+                       config.errorHandler = ^(SEL  _Nonnull routeAction, NSError * _Nonnull error) {
+                           NSLog(@"get destination by router failed: %@",error);
+                       };
+                       //Set handleExternalRoute to YES will let router call routeCompletion when destination is dispalyed, be cautious.
+                       //         config.handleExternalRoute = YES;
+                   }];
 }
 
 - (void)handleRemoveInfoViewController:(UIViewController *)infoViewController {

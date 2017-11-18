@@ -58,7 +58,7 @@ NS_ASSUME_NONNULL_BEGIN
  
  See sample code in ZIKServiceRouter and ZIKViewRouter for more detail.
  */
-@interface ZIKRouter<__covariant RouteConfig: ZIKRouteConfiguration *, __covariant RemoveConfig: ZIKRouteConfiguration *, __covariant RouterType> : NSObject <ZIKRouterProtocol>
+@interface ZIKRouter<__covariant RouteConfig: ZIKRouteConfiguration *, __covariant RemoveConfig: ZIKRouteConfiguration *> : NSObject <ZIKRouterProtocol>
 ///State of route.
 @property (nonatomic, readonly, assign) ZIKRouterState state;
 ///Configuration for performRoute; Return copy of configuration, so modify this won't change the real configuration inside router.
@@ -91,12 +91,12 @@ NS_ASSUME_NONNULL_BEGIN
                          errorHandler:(void(^ __nullable)(SEL routeAction, NSError *error))performerErrorHandler;
 
 ///If this route action doesn't need any arguments, just perform directly.
-+ (nullable RouterType)performRoute;
++ (nullable instancetype)performRoute;
 ///Set dependencies required by destination and perform route.
-+ (nullable RouterType)performWithConfiguring:(void(NS_NOESCAPE ^)(RouteConfig config))configBuilder;
++ (nullable instancetype)performWithConfiguring:(void(NS_NOESCAPE ^)(RouteConfig config))configBuilder;
 ///Set dependencies required by destination and perform route, and you can remove the route with remove configuration later.
-+ (nullable RouterType)performWithConfiguring:(void(NS_NOESCAPE ^)(RouteConfig config))configBuilder
-                                     removing:(void(NS_NOESCAPE ^ _Nullable)(RemoveConfig config))removeConfigBuilder;
++ (nullable instancetype)performWithConfiguring:(void(NS_NOESCAPE ^)(RouteConfig config))configBuilder
+                                       removing:(void(NS_NOESCAPE ^ _Nullable)(RemoveConfig config))removeConfigBuilder;
 
 ///Whether the route action is synchronously.
 + (BOOL)completeSynchronously;

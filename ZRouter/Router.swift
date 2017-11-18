@@ -138,7 +138,7 @@ public extension Router {
         var destination: Destination?
         let routerClass = Registry.router(to: routableView)
         assert((routerClass?.completeSynchronously())!,"router class (\(String(describing: routerClass))) can't get destination synchronously.")
-        routerClass?.perform(configuring: { config in
+        _ = routerClass?.perform(configuring: { config in
             config.routeType = ViewRouteType.getDestination
             config.prepareDestination = { d in
                 if let destination = d as? Destination {
@@ -166,7 +166,7 @@ public extension Router {
         var destination: Any?
         let routerClass = Registry.router(to: routableViewModule)
         assert((routerClass?.completeSynchronously())!,"router class (\(String(describing: routerClass))) can't get destination synchronously")
-        routerClass?.perform(configuring: { config in
+        _ = routerClass?.perform(configuring: { config in
             config.routeType = ViewRouteType.getDestination
             if config is Module {
                 prepare?(config as! Module)

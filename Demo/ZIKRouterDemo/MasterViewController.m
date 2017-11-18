@@ -229,17 +229,10 @@ typedef NS_ENUM(NSInteger,ZIKRouterTestType) {
 }
 
 - (nullable UIViewController *)previewingContext:(id <UIViewControllerPreviewing>)previewingContext viewControllerForLocation:(CGPoint)location {
-    __block UIViewController *destinationViewController;
     NSIndexPath *indexPath = [self.tableView indexPathForRowAtPoint:location];
     Class routerClass = [self routerClassForIndexPath:indexPath];
+    UIViewController *destinationViewController = [routerClass makeDestination];
     
-    [routerClass performWithConfiguring:^(ZIKViewRouteConfiguration *config) {
-        config.source = self;
-        config.routeType = ZIKViewRouteTypeGetDestination;
-        config.routeCompletion = ^(id  _Nonnull destination) {
-            destinationViewController = destination;
-        };
-    }];
     NSAssert(destinationViewController != nil, nil);
     return destinationViewController;
 }

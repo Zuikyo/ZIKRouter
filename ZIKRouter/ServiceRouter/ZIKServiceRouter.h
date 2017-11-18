@@ -62,16 +62,16 @@ typedef void(^ZIKServiceRouteGlobalErrorHandler)(__kindof ZIKServiceRouter * _Nu
  @endcode
  So, it only works as a dependency daclaration. But this design pattern let you hide subclass type.
  */
-@interface ZIKServiceRouter<ServiceRouteConfig: ZIKServiceRouteConfiguration *, ServiceRemoveConfig: ZIKRouteConfiguration *> : ZIKRouter<ServiceRouteConfig, ServiceRemoveConfig, ZIKServiceRouter *> <ZIKServiceRouterProtocol>
+@interface ZIKServiceRouter<ServiceRouteConfig: ZIKServiceRouteConfiguration *, ServiceRemoveConfig: ZIKRouteConfiguration *> : ZIKRouter<ServiceRouteConfig, ServiceRemoveConfig> <ZIKServiceRouterProtocol>
 
 @end
 
 @interface ZIKServiceRouter<ServiceRouteConfig: ZIKServiceRouteConfiguration *, ServiceRemoveConfig: ZIKRouteConfiguration *> (Perform)
 
 ///Convenient method to perform route
-+ (nullable ZIKServiceRouter<ServiceRouteConfig, ServiceRemoveConfig> *)performWithConfiguring:(void(NS_NOESCAPE ^)(ServiceRouteConfig config))configBuilder
-                                                                                      removing:(void(NS_NOESCAPE ^ _Nullable)(ServiceRemoveConfig config))removeConfigBuilder;
-+ (nullable ZIKServiceRouter<ServiceRouteConfig, ServiceRemoveConfig> *)performWithConfiguring:(void(NS_NOESCAPE ^)(ServiceRouteConfig config))configBuilder;
++ (nullable instancetype)performWithConfiguring:(void(NS_NOESCAPE ^)(ServiceRouteConfig config))configBuilder
+                                       removing:(void(NS_NOESCAPE ^ _Nullable)(ServiceRemoveConfig config))removeConfigBuilder;
++ (nullable instancetype)performWithConfiguring:(void(NS_NOESCAPE ^)(ServiceRouteConfig config))configBuilder;
 
 ///Default implemenation of -performXX will call routeCompletion synchronously, so the user can get service synchronously. Subclass router may return NO if it's service can only be generated asynchronously.
 + (BOOL)completeSynchronously;
