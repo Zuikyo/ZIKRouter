@@ -7,7 +7,7 @@
 //
 
 import UIKit
-import ZIKRouter
+import ZIKRouter.Internal
 import ZRouter
 
 protocol SwiftSampleViewConfig {
@@ -22,7 +22,7 @@ class SwiftSampleViewConfiguration: ZIKViewRouteConfiguration, SwiftSampleViewCo
 }
 
 //Router for SwiftSampleViewController.
-class SwiftSampleViewRouter: ZIKViewRouter<SwiftSampleViewConfiguration, ZIKViewRemoveConfiguration> {
+class SwiftSampleViewRouter: ZIKViewRouter<SwiftSampleViewController, SwiftSampleViewConfiguration, ZIKViewRemoveConfiguration> {
     
     override class func registerRoutableDestination() {
         registerView(SwiftSampleViewController.self)
@@ -36,27 +36,24 @@ class SwiftSampleViewRouter: ZIKViewRouter<SwiftSampleViewConfiguration, ZIKView
         assert((Registry.router(to: RoutableService<SwiftServiceInput>()) != nil))
     }
     
-    override class func defaultRouteConfiguration() -> ZIKViewRouteConfiguration {
+    override class func defaultRouteConfiguration() -> SwiftSampleViewConfiguration {
         return SwiftSampleViewConfiguration()
     }
     
-    override func destination(with configuration: ZIKViewRouteConfiguration) -> ZIKRoutableView? {
+    override func destination(with configuration: SwiftSampleViewConfiguration) -> SwiftSampleViewController? {
         let sb = UIStoryboard.init(name: "Main", bundle: nil)
         let destination = sb.instantiateViewController(withIdentifier: "SwiftSampleViewController") as! SwiftSampleViewController
         return destination
     }
-    override static func destinationPrepared(_ destination: Any) -> Bool {
-        if let dest = destination as? SwiftSampleViewController {
-            if (dest.alertRouterClass != nil) {
-                return true
-            }
+    
+    override static func destinationPrepared(_ destination: SwiftSampleViewController) -> Bool {
+        if (destination.alertRouterClass != nil) {
+            return true
         }
         return false
     }
-    override func prepareDestination(_ destination: Any, configuration: ZIKViewRouteConfiguration) {
-        if let dest = destination as? SwiftSampleViewController {
-            dest.alertRouterClass = Registry.router(to: RoutableViewModule<ZIKCompatibleAlertConfigProtocol>())! as AnyClass as! ConfigurableViewRouter<ViewRouteConfig & ZIKCompatibleAlertConfigProtocol>.Type
-        }
+    override func prepareDestination(_ destination: SwiftSampleViewController, configuration: ZIKViewRouteConfiguration) {
+        destination.alertRouterClass = Registry.router(to: RoutableViewModule<ZIKCompatibleAlertConfigProtocol>())! as AnyClass as! ZIKViewRouter<ZIKRoutableView, ViewRouteConfig & ZIKCompatibleAlertConfigProtocol, ViewRemoveConfig>.Type
     }
 }
 

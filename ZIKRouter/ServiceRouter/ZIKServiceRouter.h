@@ -80,9 +80,9 @@ typedef void(^ZIKServiceRouteGlobalErrorHandler)(__kindof ZIKServiceRouter * _Nu
 
 @interface ZIKServiceRouter (Factory)
 
-///Asynchronous get destination
+///Synchronously get destination
 + (nullable id)makeDestinationWithPreparation:(void(^ _Nullable)(id destination))prepare;
-///Asynchronous get destination
+///Synchronously get destination
 + (nullable id)makeDestination;
 
 @end

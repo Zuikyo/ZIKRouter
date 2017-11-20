@@ -10,6 +10,7 @@
 //
 
 #import "ZIKViewRouteRegistry.h"
+#import "ZIKRouterInternal.h"
 #import "ZIKRouteRegistryInternal.h"
 #import "ZIKRouterRuntime.h"
 #import <objc/runtime.h>
@@ -29,47 +30,35 @@ static NSMutableArray<Class> *_routerClasses;
 #endif
 @implementation ZIKViewRouteRegistry
 
++ (void)load {
+    _destinationProtocolToRouterMap = CFDictionaryCreateMutable(kCFAllocatorDefault, 0, NULL, NULL);
+    _moduleConfigProtocolToRouterMap = CFDictionaryCreateMutable(kCFAllocatorDefault, 0, NULL, NULL);
+    _destinationToRoutersMap = CFDictionaryCreateMutable(kCFAllocatorDefault, 0, NULL, &kCFTypeDictionaryValueCallBacks);
+    _destinationToDefaultRouterMap = CFDictionaryCreateMutable(kCFAllocatorDefault, 0, NULL, NULL);
+    _destinationToExclusiveRouterMap = CFDictionaryCreateMutable(kCFAllocatorDefault, 0, NULL, NULL);
+#if ZIKROUTER_CHECK
+    _check_routerToDestinationsMap = CFDictionaryCreateMutable(kCFAllocatorDefault, 0, NULL, &kCFTypeDictionaryValueCallBacks);
+    _check_routerToDestinationProtocolsMap = CFDictionaryCreateMutable(kCFAllocatorDefault, 0, NULL, &kCFTypeDictionaryValueCallBacks);
+#endif
+}
+
 + (CFMutableDictionaryRef)destinationProtocolToRouterMap {
-    static dispatch_once_t onceToken;
-    dispatch_once(&onceToken, ^{
-        _destinationProtocolToRouterMap = CFDictionaryCreateMutable(kCFAllocatorDefault, 0, NULL, NULL);
-    });
     return _destinationProtocolToRouterMap;
 }
 + (CFMutableDictionaryRef)moduleConfigProtocolToRouterMap {
-    static dispatch_once_t onceToken;
-    dispatch_once(&onceToken, ^{
-        _moduleConfigProtocolToRouterMap = CFDictionaryCreateMutable(kCFAllocatorDefault, 0, NULL, NULL);
-    });
     return _moduleConfigProtocolToRouterMap;
 }
 + (CFMutableDictionaryRef)destinationToRoutersMap {
-    static dispatch_once_t onceToken;
-    dispatch_once(&onceToken, ^{
-        _destinationToRoutersMap = CFDictionaryCreateMutable(kCFAllocatorDefault, 0, NULL, &kCFTypeDictionaryValueCallBacks);
-    });
     return _destinationToRoutersMap;
 }
 + (CFMutableDictionaryRef)destinationToDefaultRouterMap {
-    static dispatch_once_t onceToken;
-    dispatch_once(&onceToken, ^{
-        _destinationToDefaultRouterMap = CFDictionaryCreateMutable(kCFAllocatorDefault, 0, NULL, NULL);
-    });
     return _destinationToDefaultRouterMap;
 }
 + (CFMutableDictionaryRef)destinationToExclusiveRouterMap {
-    static dispatch_once_t onceToken;
-    dispatch_once(&onceToken, ^{
-        _destinationToExclusiveRouterMap = CFDictionaryCreateMutable(kCFAllocatorDefault, 0, NULL, NULL);
-    });
     return _destinationToExclusiveRouterMap;
 }
 + (CFMutableDictionaryRef)_check_routerToDestinationsMap {
 #if ZIKROUTER_CHECK
-    static dispatch_once_t onceToken;
-    dispatch_once(&onceToken, ^{
-        _check_routerToDestinationsMap = CFDictionaryCreateMutable(kCFAllocatorDefault, 0, NULL, &kCFTypeDictionaryValueCallBacks);
-    });
     return _check_routerToDestinationsMap;
 #else
     return NULL;
@@ -77,10 +66,6 @@ static NSMutableArray<Class> *_routerClasses;
 }
 + (CFMutableDictionaryRef)_check_routerToDestinationProtocolsMap {
 #if ZIKROUTER_CHECK
-    static dispatch_once_t onceToken;
-    dispatch_once(&onceToken, ^{
-        _check_routerToDestinationProtocolsMap = CFDictionaryCreateMutable(kCFAllocatorDefault, 0, NULL, &kCFTypeDictionaryValueCallBacks);
-    });
     return _check_routerToDestinationProtocolsMap;
 #else
     return NULL;

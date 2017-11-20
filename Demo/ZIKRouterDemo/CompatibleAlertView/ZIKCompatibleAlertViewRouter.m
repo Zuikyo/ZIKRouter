@@ -100,12 +100,12 @@
 
 #pragma mark Implementation for custom route
 
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wincomplete-implementation"
+//#pragma clang diagnostic push
+//#pragma clang diagnostic ignored "-Wincomplete-implementation"
 
 @implementation ZIKCompatibleAlertViewRouter
 
-#pragma clang diagnostic pop
+//#pragma clang diagnostic pop
 
 + (void)registerRoutableDestination {
     [self registerView:[UIAlertController class]];
@@ -223,7 +223,7 @@
 - (void)alertView:(UIAlertView *)alertView clickedButtonAtIndex:(NSInteger)buttonIndex {
     ZIKCompatibleAlertViewRouter *router = [alertView zix_compatibleAlertRouter];
     NSAssert(router && [router isKindOfClass:[self class]], nil);
-    NSArray<ZIKCompatibleAlertViewAction *> *actions = [router.original_configuration actions];
+    NSArray<ZIKCompatibleAlertViewAction *> *actions = [(ZIKCompatibleAlertViewConfiguration *)router.original_configuration actions];
     NSParameterAssert(buttonIndex <= actions.count - 1);
     
     ZIKCompatibleAlertViewAction *action = [actions objectAtIndex:buttonIndex];
@@ -240,7 +240,7 @@
 }
 
 - (void)alertView:(UIAlertView *)alertView didDismissWithButtonIndex:(NSInteger)buttonIndex {
-    ZIKViewRouter *router = [alertView zix_compatibleAlertRouter];
+    ZIKCompatibleAlertViewRouter *router = [alertView zix_compatibleAlertRouter];
     NSAssert(router && [router isKindOfClass:[self class]], nil);
     if (router.routingFromInternal) {
         if (router.state == ZIKRouterStateRemoving) {

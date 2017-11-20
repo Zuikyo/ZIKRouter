@@ -8,6 +8,6 @@
 
 @import ZIKRouter;
 
-@interface EmptyContainerViewRouter : ZIKViewRouter <ZIKViewRouterProtocol>
+@interface EmptyContainerViewRouter : ZIKViewRouter
 
 @end

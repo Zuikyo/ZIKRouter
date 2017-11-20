@@ -8,6 +8,6 @@
 
 @import ZIKRouter;
 
-@interface ZIKTimeServiceRouter : ZIKServiceRouter <ZIKRouterProtocol>
+@interface ZIKTimeServiceRouter : ZIKServiceRouter
 
 @end

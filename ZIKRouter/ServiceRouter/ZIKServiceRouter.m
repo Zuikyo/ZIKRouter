@@ -23,7 +23,7 @@ NSString *const kZIKServiceRouterErrorDomain = @"ZIKServiceRouterErrorDomain";
 static ZIKServiceRouteGlobalErrorHandler g_globalErrorHandler;
 static dispatch_semaphore_t g_globalErrorSema;
 
-@interface ZIKServiceRouter () <ZIKRouterProtocol>
+@interface ZIKServiceRouter ()
 
 @end
 

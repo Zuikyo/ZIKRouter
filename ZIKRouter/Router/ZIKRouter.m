@@ -30,7 +30,6 @@ NSString *kZIKRouterErrorDomain = @"kZIKRouterErrorDomain";
 
 - (instancetype)initWithConfiguration:(ZIKRouteConfiguration *)configuration removeConfiguration:(nullable ZIKRouteConfiguration *)removeConfiguration {
     NSParameterAssert(configuration);
-    NSAssert([self conformsToProtocol:@protocol(ZIKRouterProtocol)], @"%@ not conforms to ZIKRouterProtocol",[self class]);
     
     if (self = [super init]) {
         _state = ZIKRouterStateNotRoute;
@@ -41,7 +40,7 @@ NSString *kZIKRouterErrorDomain = @"kZIKRouterErrorDomain";
     return self;
 }
 
-- (instancetype)initWithConfiguring:(void(^)(ZIKRouteConfiguration * configuration))configBuilder removing:(void(^ _Nullable)(ZIKRouteConfiguration *configuration))removeConfigBuilder {
+- (instancetype)initWithConfiguring:(void(^)(id /*ZIKRouteConfiguration * */configuration))configBuilder removing:(void(^ _Nullable)(id /*ZIKRouteConfiguration * */configuration))removeConfigBuilder {
     NSParameterAssert(configBuilder);
     ZIKRouteConfiguration *configuration = [[self class] defaultRouteConfiguration];
     if (configBuilder) {
@@ -112,14 +111,14 @@ NSString *kZIKRouterErrorDomain = @"kZIKRouterErrorDomain";
     return router;
 }
 
-+ (__kindof ZIKRouter *)performWithConfiguring:(void(^)(ZIKRouteConfiguration *configuration))configBuilder {
++ (__kindof ZIKRouter *)performWithConfiguring:(void(^)(id /*ZIKRouteConfiguration * */configuration))configBuilder {
     NSParameterAssert(configBuilder);
     ZIKRouter *router = [[self alloc] initWithConfiguring:configBuilder removing:nil];
     [router performRoute];
     return router;
 }
 
-+ (__kindof ZIKRouter *)performWithConfiguring:(void(^)(ZIKRouteConfiguration *configuration))configBuilder removing:(void(^)(ZIKRouteConfiguration * configuration))removeConfigBuilder {
++ (__kindof ZIKRouter *)performWithConfiguring:(void(^)(id /*ZIKRouteConfiguration * */configuration))configBuilder removing:(void(^)(id /*ZIKRouteConfiguration * */ configuration))removeConfigBuilder {
     NSParameterAssert(configBuilder);
     ZIKRouter *router = [[self alloc] initWithConfiguring:configBuilder removing:removeConfigBuilder];
     [router performRoute];

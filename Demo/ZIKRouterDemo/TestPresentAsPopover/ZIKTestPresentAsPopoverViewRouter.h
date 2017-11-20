@@ -8,6 +8,6 @@
 
 @import ZIKRouter;
 
-@interface ZIKTestPresentAsPopoverViewRouter : ZIKViewRouter <ZIKViewRouterProtocol>
+@interface ZIKTestPresentAsPopoverViewRouter : ZIKViewRouter
 
 @end

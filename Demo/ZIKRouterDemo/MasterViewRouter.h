@@ -8,6 +8,6 @@
 
 @import ZIKRouter;
 
-@interface MasterViewRouter : ZIKViewRouter <ZIKViewRouterProtocol>
+@interface MasterViewRouter : ZIKDefaultViewRouter
 
 @end

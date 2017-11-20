@@ -8,6 +8,7 @@
 
 #import "MasterViewRouter.h"
 #import "MasterViewController.h"
+@import ZIKRouter.Internal;
 
 @interface MasterViewController (MasterViewRouter) <ZIKRoutableView>
 @end
@@ -20,7 +21,7 @@
     [self registerView:[MasterViewController class]];
 }
 
-- (id)destinationWithConfiguration:(__kindof ZIKRouteConfiguration *)configuration {
+- (id<ZIKRoutableView>)destinationWithConfiguration:(ZIKViewRouteConfiguration *)configuration {
     UIStoryboard *sb = [UIStoryboard storyboardWithName:@"Main" bundle:nil];
     MasterViewController *destination = [sb instantiateViewControllerWithIdentifier:@"master"];
     return destination;

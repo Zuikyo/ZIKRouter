@@ -10,6 +10,7 @@
 //
 
 #import "ZIKServiceRouteRegistry.h"
+#import "ZIKRouterInternal.h"
 #import "ZIKServiceRouterInternal.h"
 #import "ZIKRouterRuntime.h"
 #import <objc/runtime.h>

@@ -8,6 +8,6 @@
 
 @import ZIKRouter;
 
-@interface ZIKTestAddAsSubviewViewRouter : ZIKViewRouter <ZIKViewRouterProtocol>
+@interface ZIKTestAddAsSubviewViewRouter : ZIKViewRouter
 
 @end

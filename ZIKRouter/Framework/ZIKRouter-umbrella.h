@@ -14,7 +14,6 @@
 #import "ZIKRouterAlias.h"
 #import "ZIKRouter.h"
 #import "ZIKRouteConfiguration.h"
-#import "ZIKViewRouterProtocol.h"
 #import "ZIKViewRouter.h"
 #import "ZIKViewRouteConfiguration.h"
 #import "ZIKViewRouteError.h"
