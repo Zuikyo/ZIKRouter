@@ -82,7 +82,7 @@ public class Router {
     /// - Returns: The service router.
     public static func perform<Destination>(
         to routableService: RoutableService<Destination>,
-        configuring configure: ((ServiceRouteConfig) -> Swift.Void)? = nil,
+        configuring configure: ((PerformRouteConfig) -> Swift.Void)? = nil,
         preparation prepare: ((Destination) -> Swift.Void)? = nil
         ) -> DefaultServiceRouter? {
         var destination: Any?
@@ -110,7 +110,7 @@ public class Router {
     /// - Returns: The service router.
     public static func perform<Module>(
         to routableServiceModule: RoutableServiceModule<Module>,
-        configuring configure: ((ServiceRouteConfig) -> Swift.Void)? = nil,
+        configuring configure: ((PerformRouteConfig) -> Swift.Void)? = nil,
         preparation prepare: ((Module) -> Swift.Void)? = nil
         ) -> DefaultServiceRouter? {
         return Registry.router(to: routableServiceModule)?.perform(configuring: { config in

@@ -77,7 +77,7 @@ _Nullable Class _ZIKServiceRouterToModule(Protocol *configProtocol) {
     return nil;
 }
 
-- (void)performWithConfiguration:(__kindof ZIKServiceRouteConfiguration *)configuration {
+- (void)performWithConfiguration:(__kindof ZIKPerformRouteConfiguration *)configuration {
     [[self class] increaseRecursiveDepth];
     if ([[self class] _validateInfiniteRecursion] == NO) {
         [self _callbackError_infiniteRecursionWithAction:@selector(performRoute) errorDescription:@"Infinite recursion for performing route detected. Recursive call stack:\n%@",[NSThread callStackSymbols]];
@@ -94,7 +94,7 @@ _Nullable Class _ZIKServiceRouterToModule(Protocol *configProtocol) {
     NSAssert1(NO, @"subclass(%@) must override +registerRoutableDestination to register destination.",self);
 }
 
-- (void)performRouteOnDestination:(id)destination configuration:(__kindof ZIKServiceRouteConfiguration *)configuration {
+- (void)performRouteOnDestination:(id)destination configuration:(__kindof ZIKPerformRouteConfiguration *)configuration {
     [self beginPerformRoute];
     
     if (!destination) {
@@ -148,8 +148,8 @@ _Nullable Class _ZIKServiceRouterToModule(Protocol *configProtocol) {
     [self notifyError:error routeAction:@selector(removeRoute)];
 }
 
-+ (__kindof ZIKRouteConfiguration *)defaultRouteConfiguration {
-    return [ZIKServiceRouteConfiguration new];
++ (__kindof ZIKPerformRouteConfiguration *)defaultRouteConfiguration {
+    return [ZIKPerformRouteConfiguration new];
 }
 
 + (__kindof ZIKRouteConfiguration *)defaultRemoveConfiguration {
@@ -244,29 +244,6 @@ _Nullable Class _ZIKServiceRouterToModule(Protocol *configProtocol) {
 + (void)decreaseRecursiveDepth {
     NSUInteger depth = [self recursiveDepth];
     [self setRecursiveDepth:--depth];
-}
-
-@end
-
-@implementation ZIKServiceRouter (Factory)
-
-+ (nullable id)makeDestinationWithPreparation:(void(^ _Nullable)(id destination))prepare {
-    NSAssert(self != [ZIKServiceRouter class], @"Only get destination from router subclass");
-    NSAssert1([self completeSynchronously] == YES, @"The router (%@) should return the destination Synchronously when use +destinationForConfigure",self);
-    ZIKServiceRouter *router = [[self alloc] initWithConfiguring:(void(^)(ZIKRouteConfiguration*))^(ZIKServiceRouteConfiguration * _Nonnull config) {
-        if (prepare) {
-            config.prepareDestination = ^(id  _Nonnull destination) {
-                prepare(destination);
-            };
-        }
-    } removing:nil];
-    [router performRoute];
-    id destination = router.destination;
-    return destination;
-}
-
-+ (nullable id)makeDestination {
-    return [self makeDestinationWithPreparation:nil];
 }
 
 @end

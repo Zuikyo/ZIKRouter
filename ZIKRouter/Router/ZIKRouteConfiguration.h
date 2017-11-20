@@ -51,4 +51,23 @@ typedef void(^ZIKRouteStateNotifier)(ZIKRouterState oldState, ZIKRouterState new
 @property (nonatomic, copy, nullable) ZIKRouteStateNotifier stateNotifier;
 @end
 
+@interface ZIKPerformRouteConfiguration : ZIKRouteConfiguration <NSCopying>
+
+/**
+ Prepare for performRoute, and config other dependency for destination here. Subclass can offer more specific info.
+ 
+ @note
+ Use weakSelf in prepareDestination to avoid retain cycle.
+ */
+@property (nonatomic, copy, nullable) void(^prepareDestination)(id destination);
+
+/**
+ Completion for performRoute. Default implemenation will call routeCompletion synchronously.
+ 
+ @note
+ Use weakSelf in routeCompletion to avoid retain cycle.
+ */
+@property (nonatomic, copy, nullable) void(^routeCompletion)(id destination);
+@end
+
 NS_ASSUME_NONNULL_END

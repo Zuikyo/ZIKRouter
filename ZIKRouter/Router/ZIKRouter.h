@@ -32,7 +32,7 @@ NS_ASSUME_NONNULL_BEGIN
  
  See sample code in ZIKServiceRouter and ZIKViewRouter for more detail.
  */
-@interface ZIKRouter<__covariant Destination: id, __covariant RouteConfig: ZIKRouteConfiguration *, __covariant RemoveConfig: ZIKRouteConfiguration *> : NSObject
+@interface ZIKRouter<__covariant Destination: id, __covariant RouteConfig: ZIKPerformRouteConfiguration *, __covariant RemoveConfig: ZIKRouteConfiguration *> : NSObject
 ///State of route.
 @property (nonatomic, readonly, assign) ZIKRouterState state;
 ///Configuration for performRoute; Return copy of configuration, so modify this won't change the real configuration inside router.
@@ -50,6 +50,8 @@ NS_ASSUME_NONNULL_BEGIN
 - (instancetype)init NS_UNAVAILABLE;
 + (instancetype)new NS_UNAVAILABLE;
 
+#pragma mark Perform
+
 ///Whether the router can perform route now.
 - (BOOL)canPerform;
 ///Perform route directly.
@@ -57,14 +59,6 @@ NS_ASSUME_NONNULL_BEGIN
 ///Perform with success handler and error handler.
 - (void)performRouteWithSuccessHandler:(void(^ __nullable)(void))performerSuccessHandler
                           errorHandler:(void(^ __nullable)(SEL routeAction, NSError *error))performerErrorHandler;
-
-///Whether the router can remove route now.
-- (BOOL)canRemove;
-///Remove route directly. If -canRemove return NO, this will failed.
-- (void)removeRoute;
-///Remove with success handler and error handler.
-- (void)removeRouteWithSuccessHandler:(void(^ __nullable)(void))performerSuccessHandler
-                         errorHandler:(void(^ __nullable)(SEL routeAction, NSError *error))performerErrorHandler;
 
 ///If this route action doesn't need any arguments, just perform directly.
 + (nullable instancetype)performRoute;
@@ -76,6 +70,28 @@ NS_ASSUME_NONNULL_BEGIN
 
 ///Whether the route action is synchronously.
 + (BOOL)completeSynchronously;
+
+#pragma mark Remove
+
+///Whether the router can remove route now.
+- (BOOL)canRemove;
+///Remove route directly. If -canRemove return NO, this will failed.
+- (void)removeRoute;
+///Remove with success handler and error handler.
+- (void)removeRouteWithSuccessHandler:(void(^ __nullable)(void))performerSuccessHandler
+                         errorHandler:(void(^ __nullable)(SEL routeAction, NSError *error))performerErrorHandler;
+
+#pragma mark Factory
+
+///Synchronously get destination.
++ (nullable Destination)makeDestination;
+
+///Synchronously get destination, and prepare the destination with destination protocol.
++ (nullable Destination)makeDestinationWithPreparation:(void(^ _Nullable)(Destination destination))prepare;
+
++ (nullable Destination)makeDestinationWithConfiguring:(void(^ _Nullable)(RouteConfig config))configBuilder;
+
+#pragma mark Debug
 
 + (NSString *)descriptionOfState:(ZIKRouterState)state;
 @end

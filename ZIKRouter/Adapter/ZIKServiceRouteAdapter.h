@@ -19,9 +19,9 @@ NS_ASSUME_NONNULL_BEGIN
  Why you need an adapter to decouple? There is a situation: module A need to use a file log module inside it, and A use the log module by a required interface (ModuleALogProtocol). The app context provides the log module with module B, and module B use a provided interface (ModuleBLogProtocol). So in the app context, you need to adapte required interface(ModuleALogProtocol) and provided interface(ModuleBLogProtocol). Use category, swift extension, NSProxy or custom mediator to forward ModuleALogProtocol to ModuleBLogProtocol. Then module A is totally decoupled with module B.
  */
 @interface ZIKServiceRouteAdapter : ZIKServiceRouter
-- (nullable instancetype)initWithConfiguration:(__kindof ZIKServiceRouteConfiguration *)configuration
+- (nullable instancetype)initWithConfiguration:(__kindof ZIKPerformRouteConfiguration *)configuration
                            removeConfiguration:(nullable __kindof ZIKRouteConfiguration *)removeConfiguration NS_UNAVAILABLE;
-- (nullable instancetype)initWithConfiguring:(void(NS_NOESCAPE ^)(__kindof ZIKServiceRouteConfiguration *config))configBuilder
+- (nullable instancetype)initWithConfiguring:(void(NS_NOESCAPE ^)(__kindof ZIKPerformRouteConfiguration *config))configBuilder
                            removing:(void(NS_NOESCAPE ^ _Nullable)( __kindof ZIKRouteConfiguration *config))removeConfigBuilder NS_UNAVAILABLE;
 - (instancetype)init NS_UNAVAILABLE;
 - (BOOL)canPerform NS_UNAVAILABLE;
@@ -32,9 +32,9 @@ NS_ASSUME_NONNULL_BEGIN
 - (void)removeRoute NS_UNAVAILABLE;
 - (void)removeRouteWithSuccessHandler:(void(^ __nullable)(void))performerSuccessHandler
                          errorHandler:(void(^ __nullable)(SEL routeAction, NSError *error))performerErrorHandler NS_UNAVAILABLE;
-+ (nullable __kindof ZIKServiceRouter *)performWithConfiguring:(void(NS_NOESCAPE ^)(__kindof ZIKServiceRouteConfiguration *config))configBuilder
++ (nullable __kindof ZIKServiceRouter *)performWithConfiguring:(void(NS_NOESCAPE ^)(__kindof ZIKPerformRouteConfiguration *config))configBuilder
                                              removing:(void(NS_NOESCAPE ^ _Nullable)( __kindof ZIKRouteConfiguration *config))removeConfigBuilder NS_UNAVAILABLE;
-+ (nullable __kindof ZIKServiceRouter *)performWithConfiguring:(void(NS_NOESCAPE ^)(__kindof ZIKServiceRouteConfiguration *config))configBuilder NS_UNAVAILABLE;
++ (nullable __kindof ZIKServiceRouter *)performWithConfiguring:(void(NS_NOESCAPE ^)(__kindof ZIKPerformRouteConfiguration *config))configBuilder NS_UNAVAILABLE;
 @end
 
 NS_ASSUME_NONNULL_END

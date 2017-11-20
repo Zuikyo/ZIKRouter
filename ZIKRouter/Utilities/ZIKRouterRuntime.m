@@ -228,6 +228,40 @@ bool ZIKRouter_classIsCustomClass(Class aClass) {
     return false;
 }
 
+bool ZIKRouter_classSelfImplementingMethod(Class aClass, SEL method, bool isClassMethod) {
+    NSCParameterAssert(aClass);
+    NSCParameterAssert(method);
+    if (!aClass) {
+        return false;
+    }
+    if (!method) {
+        return false;
+    }
+    Method selfMethod;
+    if (!isClassMethod) {
+        selfMethod = class_getInstanceMethod(aClass, method);
+    } else {
+        selfMethod = class_getClassMethod(aClass, method);
+    }
+    if (!selfMethod) {
+        return false;
+    }
+    Class superClass = class_getSuperclass(aClass);
+    if (!superClass) {
+        return YES;
+    }
+    Method superMethod;
+    if (!isClassMethod) {
+        superMethod = class_getInstanceMethod(superClass, method);
+    } else {
+        superMethod = class_getClassMethod(superClass, method);
+    }
+    if (!superMethod) {
+        return false;
+    }
+    return method_getImplementation(selfMethod) != method_getImplementation(superMethod);
+}
+
 bool ZIKRouter_isObjcProtocol(id protocol) {
     return [protocol isKindOfClass:NSClassFromString(@"Protocol")];
 }

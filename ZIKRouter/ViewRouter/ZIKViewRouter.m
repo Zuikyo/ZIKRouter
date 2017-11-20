@@ -208,7 +208,7 @@ static BOOL _isClassRoutable(Class class) {
     [[NSNotificationCenter defaultCenter] removeObserver:self];
 }
 
-#pragma mark
+#pragma mark Override
 
 - (void)notifyRouteState:(ZIKRouterState)state {
     if (state == ZIKRouterStateRemoved) {
@@ -218,37 +218,6 @@ static BOOL _isClassRoutable(Class class) {
     [super notifyRouteState:state];
 }
 
-#pragma mark ZIKViewRouterSubclass
-
-+ (void)registerRoutableDestination {
-    NSAssert1(NO, @"subclass(%@) must override +registerRoutableDestination to register destination.",self);
-}
-
-- (id)destinationWithConfiguration:(__kindof ZIKViewRouteConfiguration *)configuration {
-    NSAssert(NO, @"Router: %@ must override -destinationWithConfiguration: to return the destination！",[self class]);
-    return nil;
-}
-
-+ (BOOL)destinationPrepared:(id)destination {
-    NSAssert(self != [ZIKViewRouter class], @"Check destination prepared with it's router.");
-    return YES;
-}
-
-- (void)prepareDestination:(id)destination configuration:(__kindof ZIKViewRouteConfiguration *)configuration {
-    NSAssert(self != [ZIKViewRouter class], @"Prepare destination with it's router.");
-}
-
-- (void)didFinishPrepareDestination:(id)destination configuration:(nonnull __kindof ZIKViewRouteConfiguration *)configuration {
-    NSAssert([self class] != [ZIKViewRouter class] ||
-             configuration.routeType == ZIKViewRouteTypePerformSegue,
-             @"Only ZIKViewRouteTypePerformSegue can use ZIKViewRouter class to perform route, otherwise, use a subclass of ZIKViewRouter for destination.");
-}
-
-+ (ZIKViewRouteTypeMask)supportedRouteTypes {
-    return ZIKViewRouteTypeMaskUIViewControllerDefault;
-}
-
-#pragma mark Override
 
 + (ZIKViewRouteConfiguration *)defaultRouteConfiguration {
     return [ZIKViewRouteConfiguration new];
@@ -310,6 +279,64 @@ static BOOL _isClassRoutable(Class class) {
             [[self class] decreaseRecursiveDepth];
         });
     }
+}
+
++ (nullable id)makeDestinationWithPreparation:(void(^ _Nullable)(id destination))prepare {
+    NSAssert(self != [ZIKViewRouter class], @"Only get destination from router subclass");
+    NSAssert1([self completeSynchronously] == YES, @"The router (%@) should return the destination Synchronously when use +destinationForConfigure",self);
+    ZIKViewRouter *router = [[self alloc] initWithConfiguring:(void(^)(ZIKRouteConfiguration*))^(ZIKViewRouteConfiguration * _Nonnull config) {
+        config.routeType = ZIKViewRouteTypeGetDestination;
+        if (prepare) {
+            config.prepareDestination = ^(id  _Nonnull destination) {
+                prepare(destination);
+            };
+        }
+    } removing:nil];
+    [router performRoute];
+    return router.destination;
+}
+
++ (nullable id)makeDestinationWithConfiguring:(void(^ _Nullable)(ZIKPerformRouteConfiguration *config))configBuilder {
+    NSAssert(self != [ZIKViewRouter class], @"Only get destination from router subclass");
+    NSAssert1([self completeSynchronously] == YES, @"The router (%@) should return the destination synchronously for +makeDestination",self);
+    ZIKViewRouteConfiguration *configuration = [[self class] defaultRouteConfiguration];
+    if (configBuilder) {
+        configBuilder(configuration);
+    }
+    configuration.routeType = ZIKViewRouteTypeGetDestination;
+    ZIKViewRouter *router = [[self alloc] initWithConfiguration:configuration removeConfiguration:nil];
+    [router performRoute];
+    return router.destination;
+}
+
+#pragma mark ZIKViewRouterSubclass
+
++ (void)registerRoutableDestination {
+    NSAssert1(NO, @"subclass(%@) must override +registerRoutableDestination to register destination.",self);
+}
+
+- (id)destinationWithConfiguration:(__kindof ZIKViewRouteConfiguration *)configuration {
+    NSAssert(NO, @"Router: %@ must override -destinationWithConfiguration: to return the destination！",[self class]);
+    return nil;
+}
+
++ (BOOL)destinationPrepared:(id)destination {
+    NSAssert(self != [ZIKViewRouter class], @"Check destination prepared with it's router.");
+    return YES;
+}
+
+- (void)prepareDestination:(id)destination configuration:(__kindof ZIKViewRouteConfiguration *)configuration {
+    NSAssert(self != [ZIKViewRouter class], @"Prepare destination with it's router.");
+}
+
+- (void)didFinishPrepareDestination:(id)destination configuration:(nonnull __kindof ZIKViewRouteConfiguration *)configuration {
+    NSAssert([self class] != [ZIKViewRouter class] ||
+             configuration.routeType == ZIKViewRouteTypePerformSegue,
+             @"Only ZIKViewRouteTypePerformSegue can use ZIKViewRouter class to perform route, otherwise, use a subclass of ZIKViewRouter for destination.");
+}
+
++ (ZIKViewRouteTypeMask)supportedRouteTypes {
+    return ZIKViewRouteTypeMaskUIViewControllerDefault;
 }
 
 #pragma mark Perform Route
@@ -3057,29 +3084,6 @@ static _Nullable Class _routerClassToRegisteredView(Class viewClass) {
         }
         config.routeType = routeType;
     }];
-}
-
-@end
-
-@implementation ZIKViewRouter (Factory)
-
-+ (nullable id)makeDestinationWithPreparation:(void(^ _Nullable)(id destination))prepare {
-    NSAssert(self != [ZIKViewRouter class], @"Only get destination from router subclass");
-    NSAssert1([self completeSynchronously] == YES, @"The router (%@) should return the destination Synchronously when use +destinationForConfigure",self);
-    ZIKViewRouter *router = [[self alloc] initWithConfiguring:(void(^)(ZIKRouteConfiguration*))^(ZIKViewRouteConfiguration * _Nonnull config) {
-        config.routeType = ZIKViewRouteTypeGetDestination;
-        if (prepare) {
-            config.prepareDestination = ^(id  _Nonnull destination) {
-                prepare(destination);
-            };
-        }
-    } removing:nil];
-    [router performRoute];
-    return router.destination;
-}
-
-+ (nullable id)makeDestination {
-    return [self makeDestinationWithPreparation:nil];
 }
 
 @end

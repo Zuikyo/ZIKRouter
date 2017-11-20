@@ -109,14 +109,6 @@ NS_ASSUME_NONNULL_BEGIN
 + (nullable instancetype)performFromSource:(nullable id<ZIKViewRouteSource>)source routeType:(ZIKViewRouteType)routeType;
 @end
 
-@interface ZIKViewRouter<Destination: id, __covariant RouteConfig: ZIKViewRouteConfiguration *, __covariant RemoveConfig: ZIKViewRemoveConfiguration *> (Factory)
-///Synchronously get destination with ZIKViewRouteTypeGetDestination.
-+ (nullable Destination)makeDestinationWithPreparation:(void(^ _Nullable)(Destination destination))prepare;
-///Synchronously get destination with ZIKViewRouteTypeGetDestination.
-+ (nullable Destination)makeDestination;
-
-@end
-
 @interface ZIKViewRouter<__covariant Destination: id, __covariant RouteConfig: ZIKViewRouteConfiguration *, __covariant RemoveConfig: ZIKViewRemoveConfiguration *> (PerformOnDestination)
 
 /**

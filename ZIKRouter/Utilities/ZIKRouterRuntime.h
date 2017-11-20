@@ -64,6 +64,9 @@ extern bool ZIKRouter_classIsSubclassOfClass(Class aClass, Class parentClass);
 ///Check whether a class is from Apple's system framework, or from your project.
 extern bool ZIKRouter_classIsCustomClass(Class aClass);
 
+///Check whether a class self implementing a method.
+extern bool ZIKRouter_classSelfImplementingMethod(Class aClass, SEL method, bool isClassMethod);
+
 ///Check whether an object is an objc protocol.
 extern bool ZIKRouter_isObjcProtocol(id protocol);
 

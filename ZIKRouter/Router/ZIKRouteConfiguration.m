@@ -11,6 +11,7 @@
 
 #import "ZIKRouteConfiguration.h"
 #import <objc/runtime.h>
+#import "ZIKRouterRuntime.h"
 
 @interface ZIKRouteConfiguration ()
 @property (nonatomic, copy, nullable) ZIKRouteErrorHandler performerErrorHandler;
@@ -21,7 +22,7 @@
 
 - (instancetype)init {
     if (self = [super init]) {
-        NSAssert(class_conformsToProtocol([self class], @protocol(NSCopying)) || [NSStringFromClass([self class]) containsString:@"."], @"configuration must conforms to NSCopying, because it will be deep copied when router is initialized.");
+        NSAssert1(ZIKRouter_classSelfImplementingMethod([self class], @selector(copyWithZone:), false), @"configuration (%@) must override -copyWithZone:, because it will be deep copied when router is initialized.",[self class]);
         
     }
     return self;
@@ -34,6 +35,17 @@
     config.performerErrorHandler = self.performerErrorHandler;
     config.performerSuccessHandler = self.performerSuccessHandler;
     config.stateNotifier = [self.stateNotifier copy];
+    return config;
+}
+
+@end
+
+@implementation ZIKPerformRouteConfiguration
+
+- (id)copyWithZone:(nullable NSZone *)zone {
+    ZIKPerformRouteConfiguration *config = [super copyWithZone:zone];
+    config.prepareDestination = self.prepareDestination;
+    config.routeCompletion = self.routeCompletion;
     return config;
 }
 

@@ -12,7 +12,6 @@
 #import "ZIKRouter.h"
 #import "ZIKServiceRoutable.h"
 #import "ZIKServiceModuleRoutable.h"
-#import "ZIKServiceRouteConfiguration.h"
 
 NS_ASSUME_NONNULL_BEGIN
 
@@ -60,16 +59,7 @@ typedef void(^ZIKServiceRouteGlobalErrorHandler)(__kindof ZIKServiceRouter * _Nu
  @endcode
  So, it only works as a dependency daclaration. But this design pattern let you hide subclass type.
  */
-@interface ZIKServiceRouter<__covariant Destination: id, __covariant RouteConfig: ZIKServiceRouteConfiguration *, __covariant RemoveConfig: ZIKRouteConfiguration *> : ZIKRouter<Destination, RouteConfig, RemoveConfig>
-
-@end
-
-@interface ZIKServiceRouter<__covariant Destination: id, __covariant RouteConfig: ZIKServiceRouteConfiguration *, __covariant RemoveConfig: ZIKRouteConfiguration *> (Factory)
-
-///Synchronously get destination
-+ (nullable Destination)makeDestinationWithPreparation:(void(^ _Nullable)(Destination destination))prepare;
-///Synchronously get destination
-+ (nullable Destination)makeDestination;
+@interface ZIKServiceRouter<__covariant Destination: id, __covariant RouteConfig: ZIKPerformRouteConfiguration *, __covariant RemoveConfig: ZIKRouteConfiguration *> : ZIKRouter<Destination, RouteConfig, RemoveConfig>
 
 @end
 

@@ -12,6 +12,7 @@
 import ZIKRouter
 
 public typealias RouteConfig = ZIKRouteConfiguration
+public typealias PerformRouteConfig = ZIKPerformRouteConfiguration
 
 public typealias ViewRouteType = ZIKViewRouteType
 public typealias ViewRouteError = ZIKViewRouteError
@@ -19,13 +20,12 @@ public typealias ViewRouteConfig = ZIKViewRouteConfiguration
 public typealias ViewRemoveConfig = ZIKViewRemoveConfiguration
 public typealias DefaultViewRouter = ZIKViewRouter<ZIKRoutableView, ViewRouteConfig, ViewRemoveConfig>
 
-public typealias ServiceRouteConfig = ZIKServiceRouteConfiguration
-public typealias DefaultServiceRouter = ZIKServiceRouter<AnyObject, ServiceRouteConfig, RouteConfig>
+public typealias DefaultServiceRouter = ZIKServiceRouter<AnyObject, PerformRouteConfig, RouteConfig>
 
 public typealias ConfigurableViewRouter<PerformConfig: ViewRouteConfig> = ZIKViewRouter<ZIKRoutableView, PerformConfig, ViewRemoveConfig>
 public typealias RemovableViewRouter<RemoveConfig: ViewRemoveConfig> = ZIKViewRouter<ZIKRoutableView, ViewRouteConfig, RemoveConfig>
 public typealias DesignatedViewRouter<PerformConfig: ViewRouteConfig, RemoveConfig: ViewRemoveConfig> = ZIKViewRouter<ZIKRoutableView, PerformConfig, RemoveConfig>
 
-public typealias ConfigurableServiceRouter<PerformConfig: ServiceRouteConfig> = ZIKServiceRouter<AnyObject, PerformConfig, RouteConfig>
-public typealias RemovableServiceRouter<RemoveConfig: RouteConfig> = ZIKServiceRouter<AnyObject, ServiceRouteConfig, RemoveConfig>
-public typealias DesignatedServiceRouter<PerformConfig: ServiceRouteConfig, RemoveConfig: RouteConfig> = ZIKServiceRouter<AnyObject, PerformConfig, RemoveConfig>
+public typealias ConfigurableServiceRouter<PerformConfig: PerformRouteConfig> = ZIKServiceRouter<AnyObject, PerformConfig, RouteConfig>
+public typealias RemovableServiceRouter<RemoveConfig: RouteConfig> = ZIKServiceRouter<AnyObject, PerformRouteConfig, RemoveConfig>
+public typealias DesignatedServiceRouter<PerformConfig: PerformRouteConfig, RemoveConfig: RouteConfig> = ZIKServiceRouter<AnyObject, PerformConfig, RemoveConfig>
