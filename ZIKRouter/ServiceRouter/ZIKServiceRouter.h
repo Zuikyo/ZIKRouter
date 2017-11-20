@@ -10,7 +10,6 @@
 //
 
 #import "ZIKRouter.h"
-#import "ZIKServiceRouterProtocol.h"
 #import "ZIKServiceRoutable.h"
 #import "ZIKServiceModuleRoutable.h"
 #import "ZIKServiceRouteConfiguration.h"
@@ -34,6 +33,9 @@ typedef void(^ZIKServiceRouteGlobalErrorHandler)(__kindof ZIKServiceRouter * _Nu
 /**
  Abstract superclass of service router for discovering service and injecting dependencies with registered protocol. Subclass it and implement ZIKServiceRouterProtocol to make router of your service.
  
+ @note
+ Subclass's generic parameter `RouteConfig` must be a ZIKServiceRouteConfiguration, and `RemoveConfig` must be a ZIKRouteConfiguration, the `id` type is for allowing swift protocol.
+ 
  @code
  __block id<LoginServiceInput> loginService;
  loginService = [ZIKServiceRouter.toService(@protocol(LoginServiceInput))
@@ -45,45 +47,29 @@ typedef void(^ZIKServiceRouteGlobalErrorHandler)(__kindof ZIKServiceRouter * _Nu
  In Swift, you can use router type with generic and protocol:
  @code
  //Injected dependency from outside
- var loginServiceRouterClass: ZIServiceRouter<ZIKServiceRouteConfiguration & ZIKLoginServiceConfigInput, ZIKRouteConfiguration>.Type!
+ var loginServiceRouterClass: ZIServiceRouter<AnyObject & LoginServiceInput, ZIKServiceRouteConfiguration, ZIKRouteConfiguration>.Type!
  
  //Use the router type to perform route
- self.loginServiceRouterClass.perform { config in
-     //config is inferred as ZIKLoginServiceConfigInput, modify config to prepare service
-     
-     config.routeCompletion = { destination in
-         loginService = destination;
-     }
+ self.loginServiceRouterClass.makeDestinationWithPreparation: { destination in
+     //destination is inferred as AnyObject & LoginServiceInput, modify destination to prepare service
  }
  @endcode
  In Objective-C, you can't use a type like Swift, you can only declare a router instance, and let the router be injected from outside:
  @code
- @property (nonatomic, strong) ZIKServiceRouter<ZIKServiceRouteConfiguration<ZIKLoginServiceConfigProtocol> *, ZIKRouteConfiguration*> *loginServiceRouter;
+ @property (nonatomic, strong) ZIKServiceRouter<id<LoginServiceInput>, ZIKServiceRouteConfiguration *, ZIKRouteConfiguration*> *loginServiceRouter;
  @endcode
  So, it only works as a dependency daclaration. But this design pattern let you hide subclass type.
  */
-@interface ZIKServiceRouter<ServiceRouteConfig: ZIKServiceRouteConfiguration *, ServiceRemoveConfig: ZIKRouteConfiguration *> : ZIKRouter<ServiceRouteConfig, ServiceRemoveConfig> <ZIKServiceRouterProtocol>
+@interface ZIKServiceRouter<__covariant Destination: id, __covariant RouteConfig: id, __covariant RemoveConfig: id> : ZIKRouter<RouteConfig, RemoveConfig>
 
 @end
 
-@interface ZIKServiceRouter<ServiceRouteConfig: ZIKServiceRouteConfiguration *, ServiceRemoveConfig: ZIKRouteConfiguration *> (Perform)
-
-///Convenient method to perform route
-+ (nullable instancetype)performWithConfiguring:(void(NS_NOESCAPE ^)(ServiceRouteConfig config))configBuilder
-                                       removing:(void(NS_NOESCAPE ^ _Nullable)(ServiceRemoveConfig config))removeConfigBuilder;
-+ (nullable instancetype)performWithConfiguring:(void(NS_NOESCAPE ^)(ServiceRouteConfig config))configBuilder;
-
-///Default implemenation of -performXX will call routeCompletion synchronously, so the user can get service synchronously. Subclass router may return NO if it's service can only be generated asynchronously.
-+ (BOOL)completeSynchronously;
-
-@end
-
-@interface ZIKServiceRouter (Factory)
+@interface ZIKServiceRouter<__covariant Destination: id, __covariant RouteConfig: id, __covariant RemoveConfig: id> (Factory)
 
 ///Synchronously get destination
-+ (nullable id)makeDestinationWithPreparation:(void(^ _Nullable)(id destination))prepare;
++ (nullable Destination)makeDestinationWithPreparation:(void(^ _Nullable)(Destination destination))prepare;
 ///Synchronously get destination
-+ (nullable id)makeDestination;
++ (nullable Destination)makeDestination;
 
 @end
 

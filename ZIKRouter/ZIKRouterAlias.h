@@ -22,4 +22,4 @@ typedef ZIKViewRouter<id, ZIKViewRouteConfig *, ZIKViewRemoveConfig *> ZIKDefaul
 #define ZIKModuleViewRouter(ModuleConfigProtocol) ZIKViewRouter<id, ZIKViewRouteConfig<ModuleConfigProtocol> *, ZIKViewRemoveConfig *>
 
 typedef ZIKServiceRouteConfiguration ZIKServiceRouteConfig;
-typedef ZIKServiceRouter<ZIKServiceRouteConfig *, ZIKRouteConfig *> ZIKDefaultServiceRouter;
+typedef ZIKServiceRouter<id, ZIKServiceRouteConfig *, ZIKRouteConfig *> ZIKDefaultServiceRouter;

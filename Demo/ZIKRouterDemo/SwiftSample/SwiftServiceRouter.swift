@@ -10,12 +10,13 @@ import Foundation
 import ZIKRouter
 import ZRouter
 
-class SwiftServiceRouter: ZIKServiceRouter<ZIKServiceRouteConfiguration, ZIKRouteConfiguration> {
+class SwiftServiceRouter: ZIKServiceRouter<AnyObject, ZIKServiceRouteConfiguration, ZIKRouteConfiguration> {
     override class func registerRoutableDestination() {
         registerService(SwiftService.self)
         Registry.register(RoutableService<SwiftServiceInput>(), forRouter: self)
     }
-    override func destination(with configuration: ZIKServiceRouteConfiguration) -> ZIKRoutableService? {
+    
+    override func destination(with configuration: ZIKServiceRouteConfiguration) -> AnyObject? {
         return SwiftService()
     }
 }

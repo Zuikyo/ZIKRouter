@@ -20,12 +20,12 @@ public typealias ViewRemoveConfig = ZIKViewRemoveConfiguration
 public typealias DefaultViewRouter = ZIKViewRouter<ZIKRoutableView, ViewRouteConfig, ViewRemoveConfig>
 
 public typealias ServiceRouteConfig = ZIKServiceRouteConfiguration
-public typealias DefaultServiceRouter = ZIKServiceRouter<ServiceRouteConfig, RouteConfig>
+public typealias DefaultServiceRouter = ZIKServiceRouter<AnyObject, ServiceRouteConfig, RouteConfig>
 
 public typealias ConfigurableViewRouter<PerformConfig: ViewRouteConfig> = ZIKViewRouter<ZIKRoutableView, PerformConfig, ViewRemoveConfig>
 public typealias RemovableViewRouter<RemoveConfig: ViewRemoveConfig> = ZIKViewRouter<ZIKRoutableView, ViewRouteConfig, RemoveConfig>
 public typealias DesignatedViewRouter<PerformConfig: ViewRouteConfig, RemoveConfig: ViewRemoveConfig> = ZIKViewRouter<ZIKRoutableView, PerformConfig, RemoveConfig>
 
-public typealias ConfigurableServiceRouter<PerformConfig: ServiceRouteConfig> = ZIKServiceRouter<PerformConfig, RouteConfig>
-public typealias RemovableServiceRouter<RemoveConfig: RouteConfig> = ZIKServiceRouter<ServiceRouteConfig, RemoveConfig>
-public typealias DesignatedServiceRouter<PerformConfig: ServiceRouteConfig, RemoveConfig: RouteConfig> = ZIKServiceRouter<PerformConfig, RemoveConfig>
+public typealias ConfigurableServiceRouter<PerformConfig: ServiceRouteConfig> = ZIKServiceRouter<AnyObject, PerformConfig, RouteConfig>
+public typealias RemovableServiceRouter<RemoveConfig: RouteConfig> = ZIKServiceRouter<AnyObject, ServiceRouteConfig, RemoveConfig>
+public typealias DesignatedServiceRouter<PerformConfig: ServiceRouteConfig, RemoveConfig: RouteConfig> = ZIKServiceRouter<AnyObject, PerformConfig, RemoveConfig>

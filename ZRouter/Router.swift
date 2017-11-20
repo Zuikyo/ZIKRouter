@@ -191,7 +191,7 @@ public extension Router {
         var destination: Destination?
         let routerClass = Registry.router(to: routableService)
         assert((routerClass?.completeSynchronously())!,"router class (\(String(describing: routerClass))) can't get destination synchronously")
-        routerClass?.perform(configuring: { config in
+        _ = routerClass?.perform(configuring: { config in
             config.prepareDestination = { d in
                 if let destination = d as? Destination {
                     prepare?(destination)
@@ -218,7 +218,7 @@ public extension Router {
         var destination: Any?
         let routerClass = Registry.router(to: routableServiceModule)
         assert((routerClass?.completeSynchronously())!,"router class (\(String(describing: routerClass))) can't get destination synchronously")
-        routerClass?.perform(configuring: { config in
+        _ = routerClass?.perform(configuring: { config in
             if config is Config {
                 prepare?(config as! Config)
             }
