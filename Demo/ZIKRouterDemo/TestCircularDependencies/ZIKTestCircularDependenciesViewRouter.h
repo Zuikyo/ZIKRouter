@@ -8,6 +8,6 @@
 
 @import ZIKRouter;
 
-@interface ZIKTestCircularDependenciesViewRouter : ZIKViewRouter
+@interface ZIKTestCircularDependenciesViewRouter : ZIKDefaultViewRouter
 
 @end

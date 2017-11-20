@@ -20,7 +20,7 @@
     [self registerView:[ZIKTestPresentAsPopoverViewController class]];
 }
 
-- (id)destinationWithConfiguration:(__kindof ZIKRouteConfiguration *)configuration {
+- (id<ZIKRoutableView>)destinationWithConfiguration:(ZIKViewRouteConfiguration *)configuration {
     UIStoryboard *sb = [UIStoryboard storyboardWithName:@"Main" bundle:nil];
     ZIKTestPresentAsPopoverViewController *destination = [sb instantiateViewControllerWithIdentifier:@"testPresentAsPopover"];;
     destination.title = @"Test PresentAsPopover";

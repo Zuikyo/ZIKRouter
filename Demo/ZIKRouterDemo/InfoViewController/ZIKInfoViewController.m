@@ -8,9 +8,7 @@
 
 #import "ZIKInfoViewController.h"
 
-@interface ZIKInfoViewController () <ZIKInfoViewProtocol>
-@property (nonatomic, copy) NSString *name;
-@property (nonatomic, assign) NSInteger age;
+@interface ZIKInfoViewController ()
 
 @property (weak, nonatomic) IBOutlet UILabel *nameLabel;
 @property (weak, nonatomic) IBOutlet UILabel *ageLabel;

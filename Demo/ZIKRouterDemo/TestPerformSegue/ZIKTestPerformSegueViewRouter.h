@@ -8,6 +8,6 @@
 
 @import ZIKRouter;
 
-@interface ZIKTestPerformSegueViewRouter : ZIKViewRouter
+@interface ZIKTestPerformSegueViewRouter : ZIKDefaultViewRouter
 
 @end

@@ -20,7 +20,7 @@
     [self registerView:[ZIKTestAddAsSubviewViewController class]];
 }
 
-- (id)destinationWithConfiguration:(__kindof ZIKRouteConfiguration *)configuration {
+- (id<ZIKRoutableView>)destinationWithConfiguration:(ZIKViewRouteConfiguration *)configuration {
     UIStoryboard *sb = [UIStoryboard storyboardWithName:@"Main" bundle:nil];
     ZIKTestAddAsSubviewViewController *destination = [sb instantiateViewControllerWithIdentifier:@"testAddAsSubview"];;
     destination.title = @"Test AddAsSubview";

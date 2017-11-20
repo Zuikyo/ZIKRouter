@@ -8,6 +8,6 @@
 
 @import ZIKRouter;
 
-@interface ZIKTestCustomViewRouter : ZIKViewRouter
+@interface ZIKTestCustomViewRouter : ZIKDefaultViewRouter
 
 @end

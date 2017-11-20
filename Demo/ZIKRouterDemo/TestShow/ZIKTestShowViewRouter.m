@@ -20,7 +20,7 @@
     [self registerView:[ZIKTestShowViewController class]];
 }
 
-- (id)destinationWithConfiguration:(__kindof ZIKRouteConfiguration *)configuration {
+- (id<ZIKRoutableView>)destinationWithConfiguration:(ZIKViewRouteConfiguration *)configuration {
     UIStoryboard *sb = [UIStoryboard storyboardWithName:@"Main" bundle:nil];
     ZIKTestShowViewController *destination = [sb instantiateViewControllerWithIdentifier:@"testShow"];;
     destination.title = @"Test Show";

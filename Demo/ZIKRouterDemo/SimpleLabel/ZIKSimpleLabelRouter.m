@@ -21,7 +21,7 @@
     [self registerViewProtocol:@protocol(ZIKSimpleLabelProtocol)];
 }
 
-- (id)destinationWithConfiguration:(__kindof ZIKRouteConfiguration *)configuration {
+- (id<ZIKRoutableView>)destinationWithConfiguration:(ZIKViewRouteConfiguration *)configuration {
     ZIKSimpleLabel *destination = [[ZIKSimpleLabel alloc] init];
     NSAssert([destination conformsToProtocol:@protocol(ZIKSimpleLabelProtocol)], nil);
     return destination;

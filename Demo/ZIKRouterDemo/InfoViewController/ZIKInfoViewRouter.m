@@ -21,7 +21,7 @@
     [self registerViewProtocol:@protocol(ZIKInfoViewProtocol)];
 }
 
-- (id)destinationWithConfiguration:(__kindof ZIKRouteConfiguration *)configuration {
+- (id<ZIKInfoViewProtocol>)destinationWithConfiguration:(ZIKViewRouteConfiguration *)configuration {
     UIStoryboard *sb = [UIStoryboard storyboardWithName:@"Main" bundle:nil];
     ZIKInfoViewController *destination = [sb instantiateViewControllerWithIdentifier:@"info"];
     destination.title = @"info";

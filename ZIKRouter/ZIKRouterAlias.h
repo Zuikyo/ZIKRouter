@@ -16,10 +16,10 @@ typedef ZIKRouteConfiguration ZIKRouteConfig;
 
 typedef ZIKViewRouteConfiguration ZIKViewRouteConfig;
 typedef ZIKViewRemoveConfiguration ZIKViewRemoveConfig;
-typedef ZIKViewRouter<id, ZIKViewRouteConfig *, ZIKViewRemoveConfig *> ZIKDefaultViewRouter;
+typedef ZIKViewRouter<id<ZIKRoutableView>, ZIKViewRouteConfig *, ZIKViewRemoveConfig *> ZIKDefaultViewRouter;
 
 #define ZIKDestinationViewRouter(Destination) ZIKViewRouter<Destination, ZIKViewRouteConfig *, ZIKViewRemoveConfig *>
-#define ZIKModuleViewRouter(ModuleConfigProtocol) ZIKViewRouter<id, ZIKViewRouteConfig<ModuleConfigProtocol> *, ZIKViewRemoveConfig *>
+#define ZIKModuleViewRouter(ModuleConfigProtocol) ZIKViewRouter<id<ZIKRoutableView>, ZIKViewRouteConfig<ModuleConfigProtocol> *, ZIKViewRemoveConfig *>
 
 typedef ZIKServiceRouteConfiguration ZIKServiceRouteConfig;
 typedef ZIKServiceRouter<id, ZIKServiceRouteConfig *, ZIKRouteConfig *> ZIKDefaultServiceRouter;

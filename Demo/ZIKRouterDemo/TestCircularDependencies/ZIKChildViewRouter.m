@@ -23,7 +23,7 @@
     [self registerViewProtocol:@protocol(ZIKChildViewProtocol)];
 }
 
-- (id)destinationWithConfiguration:(__kindof ZIKRouteConfiguration *)configuration {
+- (id<ZIKRoutableView>)destinationWithConfiguration:(ZIKViewRouteConfiguration *)configuration {
     ZIKChildViewController *destination = [[ZIKChildViewController alloc] init];
     destination.title = @"Test Circular Dependencies";
     destination.view.backgroundColor = [UIColor greenColor];

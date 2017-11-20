@@ -30,7 +30,7 @@ class SwiftSampleViewController: UIViewController, PureSwiftSampleViewInput, Pur
     //You can inject alertRouterClass from outside, then use the router directly
     var alertRouterClass: ConfigurableViewRouter<ViewRouteConfig & ZIKCompatibleAlertConfigProtocol>.Type!
     
-    @IBAction func testRouteForView(_ sender: Any) {        
+    @IBAction func testRouteForView(_ sender: Any) {
         infoRouter = Router.perform(
             to: RoutableView<ZIKInfoViewProtocol>(),
             from: self,

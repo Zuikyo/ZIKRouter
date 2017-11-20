@@ -20,7 +20,7 @@
     [self registerView:[TestClassHierarchyViewController class]];
 }
 
-- (id)destinationWithConfiguration:(__kindof ZIKRouteConfiguration *)configuration {
+- (id<ZIKRoutableView>)destinationWithConfiguration:(ZIKViewRouteConfiguration *)configuration {
     TestClassHierarchyViewController *destination = [[TestClassHierarchyViewController alloc] init];
     destination.title = @"Test Class Hierarchy";
     return destination;

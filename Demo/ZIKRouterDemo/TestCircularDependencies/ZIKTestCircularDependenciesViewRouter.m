@@ -23,7 +23,7 @@
     [self registerViewProtocol:@protocol(ZIKParentViewProtocol)];
 }
 
-- (id)destinationWithConfiguration:(__kindof ZIKRouteConfiguration *)configuration {
+- (id<ZIKRoutableView>)destinationWithConfiguration:(ZIKViewRouteConfiguration *)configuration {
     ZIKTestCircularDependenciesViewController *destination = [[ZIKTestCircularDependenciesViewController alloc] init];
     destination.title = @"Test Circular Dependencies";
     

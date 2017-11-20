@@ -20,7 +20,7 @@
     [self registerView:[ZIKTestCustomViewController class]];
 }
 
-- (id)destinationWithConfiguration:(__kindof ZIKRouteConfiguration *)configuration {
+- (id<ZIKRoutableView>)destinationWithConfiguration:(ZIKViewRouteConfiguration *)configuration {
     UIStoryboard *sb = [UIStoryboard storyboardWithName:@"Main" bundle:nil];
     ZIKTestCustomViewController *destination = [sb instantiateViewControllerWithIdentifier:@"testCustom"];;
     destination.title = @"Test Custom";

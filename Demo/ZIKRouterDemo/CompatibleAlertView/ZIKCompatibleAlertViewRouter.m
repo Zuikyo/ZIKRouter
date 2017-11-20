@@ -113,7 +113,7 @@
     [self registerModuleProtocol:@protocol(ZIKCompatibleAlertConfigProtocol)];
 }
 
-- (id)destinationWithConfiguration:(ZIKCompatibleAlertViewConfiguration *)configuration {
+- (id<ZIKRoutableView>)destinationWithConfiguration:(ZIKCompatibleAlertViewConfiguration *)configuration {
     id destination;
     if (NSClassFromString(@"UIAlertController")) {
         UIAlertController *alertController = [UIAlertController alertControllerWithTitle:configuration.title message:configuration.message preferredStyle:UIAlertControllerStyleAlert];

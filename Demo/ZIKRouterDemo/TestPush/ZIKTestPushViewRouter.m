@@ -20,7 +20,7 @@
     [self registerView:[ZIKTestPushViewController class]];
 }
 
-- (id)destinationWithConfiguration:(__kindof ZIKRouteConfiguration *)configuration {
+- (id<ZIKRoutableView>)destinationWithConfiguration:(ZIKViewRouteConfiguration *)configuration {
     UIStoryboard *sb = [UIStoryboard storyboardWithName:@"Main" bundle:nil];
     ZIKTestPushViewController *destination = [sb instantiateViewControllerWithIdentifier:@"testPush"];
     destination.title = @"Test Push";

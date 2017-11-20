@@ -20,7 +20,7 @@
     [self registerView:[SubclassViewController class]];
 }
 
-- (id)destinationWithConfiguration:(__kindof ZIKRouteConfiguration *)configuration {
+- (id<ZIKRoutableView>)destinationWithConfiguration:(ZIKViewRouteConfiguration *)configuration {
     SubclassViewController *destination = [[SubclassViewController alloc] init];
     destination.title = @"Subclass";
     return destination;
