@@ -19,8 +19,6 @@ NS_ASSUME_NONNULL_BEGIN
 /**
  Abstract superclass for view router.
  Subclass it and override those methods in `ZIKViewRouterInternal` to make router of your view. Then use generic with protocol or those dynamic discovering functions to reduce couple with subclasses.
- @note
- Subclass's generic parameter `RouteConfig` must be a ZIKViewRouteConfiguration, and `RemoveConfig` must be a ZIKViewRemoveConfiguration, the `id` type is for allowing swift protocol.
  
  @discussion
  Features:
@@ -47,7 +45,7 @@ NS_ASSUME_NONNULL_BEGIN
  
  When Adding a registered UIView by code or xib, a router will be auto created. We search the view controller with custom class (not system class like native UINavigationController, or any container view controller) in it's responder hierarchy as the performer. If the registered UIView needs preparing, you have to add the view to a superview in a view controller before it removed from superview. There will be an assert failure if there is no view controller to prepare it (such as: 1. add it to a superview, and the superview is never added to a view controller; 2. add it to a UIWindow). If your custom class view use a routable view as it's subview, the custom view should use a router to add and prepare the routable view, then the routable view don't need to search performer because it's already prepared.
  */
-@interface ZIKViewRouter<__covariant Destination: id, __covariant RouteConfig: id, __covariant RemoveConfig: id> : ZIKRouter<RouteConfig, RemoveConfig>
+@interface ZIKViewRouter<__covariant Destination: id, __covariant RouteConfig: ZIKViewRouteConfiguration *, __covariant RemoveConfig: ZIKViewRemoveConfiguration *> : ZIKRouter<Destination, RouteConfig, RemoveConfig>
 
 ///If this router's view is a UIViewController routed from storyboard, or a UIView added as subview from xib or code, a router will be auto created to prepare the view, and the router's autoCreated is YES; But when a UIViewController is routed from code manually, router won't be auto created because we can't find the performer to prepare the destination.
 @property (nonatomic, readonly, assign) BOOL autoCreated;
@@ -61,7 +59,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 @end
 
-@interface ZIKViewRouter<__covariant Destination: id, __covariant RouteConfig: id, __covariant RemoveConfig: id> (Perform)
+@interface ZIKViewRouter<__covariant Destination: id, __covariant RouteConfig: ZIKViewRouteConfiguration *, __covariant RemoveConfig: ZIKViewRemoveConfiguration *> (Perform)
 /**
  Whether the router can perform a view route now
  @discusstion
@@ -111,7 +109,7 @@ NS_ASSUME_NONNULL_BEGIN
 + (nullable instancetype)performFromSource:(nullable id<ZIKViewRouteSource>)source routeType:(ZIKViewRouteType)routeType;
 @end
 
-@interface ZIKViewRouter<Destination: id, __covariant RouteConfig: id, __covariant RemoveConfig: id> (Factory)
+@interface ZIKViewRouter<Destination: id, __covariant RouteConfig: ZIKViewRouteConfiguration *, __covariant RemoveConfig: ZIKViewRemoveConfiguration *> (Factory)
 ///Synchronously get destination with ZIKViewRouteTypeGetDestination.
 + (nullable Destination)makeDestinationWithPreparation:(void(^ _Nullable)(Destination destination))prepare;
 ///Synchronously get destination with ZIKViewRouteTypeGetDestination.
@@ -119,7 +117,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 @end
 
-@interface ZIKViewRouter<__covariant Destination: id, __covariant RouteConfig: id, __covariant RemoveConfig: id> (PerformOnDestination)
+@interface ZIKViewRouter<__covariant Destination: id, __covariant RouteConfig: ZIKViewRouteConfiguration *, __covariant RemoveConfig: ZIKViewRemoveConfiguration *> (PerformOnDestination)
 
 /**
  Perform route on destination. If you get a prepared destination by ZIKViewRouteTypeGetDestination, you can use this method to perform route on the destination.
@@ -142,7 +140,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 @end
 
-@interface ZIKViewRouter<__covariant Destination: id, __covariant RouteConfig: id, __covariant RemoveConfig: id> (Prepare)
+@interface ZIKViewRouter<__covariant Destination: id, __covariant RouteConfig: ZIKViewRouteConfiguration *, __covariant RemoveConfig: ZIKViewRemoveConfiguration *> (Prepare)
 /**
  Prepare destination from external, then you can use the router to perform route. You can also use this as a builder to prepare view created from external.
 

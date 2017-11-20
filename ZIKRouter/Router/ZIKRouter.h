@@ -23,9 +23,6 @@ NS_ASSUME_NONNULL_BEGIN
 
 /**
  Abstract superclass for router that can perform route and remove route.
- @note
- Subclass's generic parameter `RouteConfig` and `RemoveConfig` must be a ZIKRouteConfiguration, the `id` type is for allowing swift protocol.
- 
  @discussion
  Features:
  
@@ -35,7 +32,7 @@ NS_ASSUME_NONNULL_BEGIN
  
  See sample code in ZIKServiceRouter and ZIKViewRouter for more detail.
  */
-@interface ZIKRouter<__covariant RouteConfig: id, __covariant RemoveConfig: id> : NSObject
+@interface ZIKRouter<__covariant Destination: id, __covariant RouteConfig: ZIKRouteConfiguration *, __covariant RemoveConfig: ZIKRouteConfiguration *> : NSObject
 ///State of route.
 @property (nonatomic, readonly, assign) ZIKRouterState state;
 ///Configuration for performRoute; Return copy of configuration, so modify this won't change the real configuration inside router.

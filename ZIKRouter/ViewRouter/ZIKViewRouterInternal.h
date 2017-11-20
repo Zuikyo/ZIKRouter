@@ -14,7 +14,7 @@
 NS_ASSUME_NONNULL_BEGIN
 
 ///Internal methods for subclass to override. Use these methods when implementing your custom route.
-@interface ZIKViewRouter<__covariant Destination: id, __covariant RouteConfig: id, __covariant RemoveConfig: id> ()
+@interface ZIKViewRouter<__covariant Destination: id, __covariant RouteConfig: ZIKViewRouteConfiguration *, __covariant RemoveConfig: ZIKViewRemoveConfiguration *> ()
 @property (nonatomic, readonly, copy) RouteConfig original_configuration;
 @property (nonatomic, readonly, copy) RemoveConfig original_removeConfiguration;
 

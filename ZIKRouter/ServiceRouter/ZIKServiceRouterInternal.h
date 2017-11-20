@@ -14,7 +14,7 @@
 NS_ASSUME_NONNULL_BEGIN
 
 ///Internal methods for subclass.
-@interface ZIKServiceRouter<__covariant Destination: id, __covariant RouteConfig: id, __covariant RemoveConfig: id> ()
+@interface ZIKServiceRouter<__covariant Destination: id, __covariant RouteConfig: ZIKServiceRouteConfiguration *, __covariant RemoveConfig: ZIKRouteConfiguration *> ()
 @property (nonatomic, readonly, copy) __kindof ZIKServiceRouteConfiguration *original_configuration;
 
 #pragma mark Required Override

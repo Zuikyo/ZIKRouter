@@ -14,7 +14,7 @@
 NS_ASSUME_NONNULL_BEGIN
 
 ///Internal methods for subclass.
-@interface ZIKRouter<__covariant RouteConfig: id, __covariant RemoveConfig: id> ()
+@interface ZIKRouter<__covariant Destination: id, __covariant RouteConfig: ZIKRouteConfiguration *, __covariant RemoveConfig: ZIKRouteConfiguration *> ()
 ///Previous state.
 @property (nonatomic, readonly, assign) ZIKRouterState preState;
 ///Subclass can get the real configuration to avoid unnecessary copy.
