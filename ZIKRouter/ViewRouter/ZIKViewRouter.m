@@ -123,13 +123,13 @@ static BOOL _isClassRoutable(Class class) {
     if (self = [super initWithConfiguration:configuration removeConfiguration:removeConfiguration]) {
         if (![[self class] _validateRouteTypeInConfiguration:configuration]) {
             [self _callbackError_unsupportTypeWithAction:@selector(init)
-                                          errorDescription:@"%@ doesn't support routeType:%ld, supported types: %ld",[self class],configuration.routeType,[[self class] supportedRouteTypes]];
+                                        errorDescription:@"%@ doesn't support routeType:%ld, supported types: %ld",[self class],configuration.routeType,[[self class] supportedRouteTypes]];
             NSAssert(NO, @"%@ doesn't support routeType:%ld, supported types: %ld",[self class],(long)configuration.routeType,(long)[[self class] supportedRouteTypes]);
             return nil;
         } else if (![[self class] _validateRouteSourceNotMissedInConfiguration:configuration] ||
                    ![[self class] _validateRouteSourceClassInConfiguration:configuration]) {
             [self _callbackError_invalidSourceWithAction:@selector(init)
-                                          errorDescription:@"Source: (%@) is invalid for configuration: (%@)",configuration.source,configuration];
+                                        errorDescription:@"Source: (%@) is invalid for configuration: (%@)",configuration.source,configuration];
             NSAssert(NO, @"Source: (%@) is invalid for configuration: (%@)",configuration.source,configuration);
             return nil;
         } else {
@@ -137,21 +137,21 @@ static BOOL _isClassRoutable(Class class) {
             if (type == ZIKViewRouteTypePerformSegue) {
                 if (![[self class] _validateSegueInConfiguration:configuration]) {
                     [self _callbackError_invalidConfigurationWithAction:@selector(performRoute)
-                                                         errorDescription:@"SegueConfiguration : (%@) was invalid",configuration.segueConfiguration];
+                                                       errorDescription:@"SegueConfiguration : (%@) was invalid",configuration.segueConfiguration];
                     NSAssert(NO, @"SegueConfiguration : (%@) was invalid",configuration.segueConfiguration);
                     return nil;
                 }
             } else if (type == ZIKViewRouteTypePresentAsPopover) {
                 if (![[self class] _validatePopoverInConfiguration:configuration]) {
                     [self _callbackError_invalidConfigurationWithAction:@selector(performRoute)
-                                                         errorDescription:@"PopoverConfiguration : (%@) was invalid",configuration.popoverConfiguration];
+                                                       errorDescription:@"PopoverConfiguration : (%@) was invalid",configuration.popoverConfiguration];
                     NSAssert(NO, @"PopoverConfiguration : (%@) was invalid",configuration.popoverConfiguration);
                     return nil;
                 }
             } else if (type == ZIKViewRouteTypeCustom) {
                 if (![[self class] validateCustomRouteConfiguration:configuration removeConfiguration:removeConfiguration]) {
                     [self _callbackError_invalidConfigurationWithAction:@selector(performRoute)
-                                                         errorDescription:@"Configuration : (%@) was invalid for ZIKViewRouteTypeCustom",configuration];
+                                                       errorDescription:@"Configuration : (%@) was invalid for ZIKViewRouteTypeCustom",configuration];
                     NSAssert(NO, @"Configuration : (%@) was invalid for ZIKViewRouteTypeCustom",configuration);
                     return nil;
                 }
@@ -444,7 +444,7 @@ static BOOL _isClassRoutable(Class class) {
     if (![[self class] _validateRouteSourceNotMissedInConfiguration:configuration]) {
         [self notifyRouteState:ZIKRouterStateRouteFailed];
         [self _callbackError_invalidSourceWithAction:@selector(performRoute)
-                                      errorDescription:@"Source was dealloced when performRoute on (%@)",self];
+                                    errorDescription:@"Source was dealloced when performRoute on (%@)",self];
         return;
     }
     
@@ -500,13 +500,13 @@ static BOOL _isClassRoutable(Class class) {
     if (![[self class] _validateSourceInNavigationStack:source]) {
         [self notifyRouteState:ZIKRouterStateRouteFailed];
         [self _callbackError_invalidSourceWithAction:@selector(performRoute)
-                                      errorDescription:@"Source: (%@) is not in any navigation stack when perform push.",source];
+                                    errorDescription:@"Source: (%@) is not in any navigation stack when perform push.",source];
         return;
     }
     if (![[self class] _validateDestination:destination notInNavigationStackOfSource:source]) {
         [self notifyRouteState:ZIKRouterStateRouteFailed];
         [self _callbackError_overRouteWithAction:@selector(performRoute)
-                                  errorDescription:@"Pushing the same view controller instance more than once is not supported. Source: (%@), destination: (%@), viewControllers in navigation stack: (%@)",source,destination,source.navigationController.viewControllers];
+                                errorDescription:@"Pushing the same view controller instance more than once is not supported. Source: (%@), destination: (%@), viewControllers in navigation stack: (%@)",source,destination,source.navigationController.viewControllers];
         return;
     }
     UIViewController *wrappedDestination = [self _wrappedDestination:destination];
@@ -527,13 +527,13 @@ static BOOL _isClassRoutable(Class class) {
     if (![[self class] _validateSourceNotPresentedAnyView:source]) {
         [self notifyRouteState:ZIKRouterStateRouteFailed];
         [self _callbackError_invalidSourceWithAction:@selector(performRoute)
-                                      errorDescription:@"Warning: Attempt to present %@ on %@ whose view is not in the window hierarchy! %@ already presented %@.",destination,source,source,source.presentedViewController];
+                                    errorDescription:@"Warning: Attempt to present %@ on %@ whose view is not in the window hierarchy! %@ already presented %@.",destination,source,source,source.presentedViewController];
         return;
     }
     if (![[self class] _validateSourceInWindowHierarchy:source]) {
         [self notifyRouteState:ZIKRouterStateRouteFailed];
         [self _callbackError_invalidSourceWithAction:@selector(performRoute)
-                                      errorDescription:@"Warning: Attempt to present %@ on %@ whose view is not in the window hierarchy! %@ 's view not in any superview.",destination,source,source];
+                                    errorDescription:@"Warning: Attempt to present %@ on %@ whose view is not in the window hierarchy! %@ 's view not in any superview.",destination,source,source];
         return;
     }
     UIViewController *wrappedDestination = [self _wrappedDestination:destination];
@@ -552,19 +552,19 @@ static BOOL _isClassRoutable(Class class) {
     if (!popoverConfiguration) {
         [self notifyRouteState:ZIKRouterStateRouteFailed];
         [self _callbackError_invalidConfigurationWithAction:@selector(performRoute)
-                                             errorDescription:@"Miss popoverConfiguration when perform presentAsPopover on source: (%@), router: (%@).",source,self];
+                                           errorDescription:@"Miss popoverConfiguration when perform presentAsPopover on source: (%@), router: (%@).",source,self];
         return;
     }
     if (![[self class] _validateSourceNotPresentedAnyView:source]) {
         [self notifyRouteState:ZIKRouterStateRouteFailed];
         [self _callbackError_invalidSourceWithAction:@selector(performRoute)
-                                      errorDescription:@"Warning: Attempt to present %@ on %@ whose view is not in the window hierarchy! %@ already presented %@.",destination,source,source,source.presentedViewController];
+                                    errorDescription:@"Warning: Attempt to present %@ on %@ whose view is not in the window hierarchy! %@ already presented %@.",destination,source,source,source.presentedViewController];
         return;
     }
     if (![[self class] _validateSourceInWindowHierarchy:source]) {
         [self notifyRouteState:ZIKRouterStateRouteFailed];
         [self _callbackError_invalidSourceWithAction:@selector(performRoute)
-                                      errorDescription:@"Warning: Attempt to present %@ on %@ whose view is not in the window hierarchy! %@ 's view not in any superview.",destination,source,source];
+                                    errorDescription:@"Warning: Attempt to present %@ on %@ whose view is not in the window hierarchy! %@ 's view not in any superview.",destination,source,source];
         return;
     }
     
@@ -585,7 +585,7 @@ static BOOL _isClassRoutable(Class class) {
         } else {
             [self notifyRouteState:ZIKRouterStateRouteFailed];
             [self _callbackError_invalidConfigurationWithAction:@selector(performRoute)
-                                                 errorDescription:@"Invalid popoverConfiguration: (%@) when perform presentAsPopover on source: (%@), router: (%@).",popoverConfiguration,source,self];
+                                               errorDescription:@"Invalid popoverConfiguration: (%@) when perform presentAsPopover on source: (%@), router: (%@).",popoverConfiguration,source,self];
             
             return;
         }
@@ -656,13 +656,13 @@ static BOOL _isClassRoutable(Class class) {
         } else {
             [self notifyRouteState:ZIKRouterStateRouteFailed];
             [self _callbackError_invalidConfigurationWithAction:@selector(performRoute)
-                                                 errorDescription:@"Invalid popoverConfiguration: (%@) when perform presentAsPopover on source: (%@), router: (%@).",popoverConfiguration,source,self];
+                                               errorDescription:@"Invalid popoverConfiguration: (%@) when perform presentAsPopover on source: (%@), router: (%@).",popoverConfiguration,source,self];
             self.routingFromInternal = NO;
             return;
         }
         
         [ZIKViewRouter _completeWithtransitionCoordinator:popover.contentViewController.transitionCoordinator
-                                       transitionCompletion:^{
+                                     transitionCompletion:^{
             [self endPerformRouteWithSuccess];
         }];
         return;
@@ -1231,7 +1231,7 @@ destinationStateBeforeRoute:(ZIKPresentationState *)destinationStateBeforeRoute
         if (![self _canRemoveWithErrorMessage:&errorMessage]) {
             NSString *description = [NSString stringWithFormat:@"%@, configuration:%@",errorMessage,self.original_configuration];
             [self _callbackError_actionFailedWithAction:@selector(removeRoute)
-                                         errorDescription:description];
+                                       errorDescription:description];
             if (performerErrorHandler) {
                 performerErrorHandler(@selector(removeRoute),[[self class] errorWithCode:ZIKViewRouteErrorActionFailed localizedDescription:description]);
             }
@@ -1256,7 +1256,7 @@ destinationStateBeforeRoute:(ZIKPresentationState *)destinationStateBeforeRoute
     if (!destination) {
         [self notifyRouteState:ZIKRouterStateRemoveFailed];
         [self _callbackError_actionFailedWithAction:@selector(removeRoute)
-                                     errorDescription:@"Destination was deallced when removeRoute, router:%@",self];
+                                   errorDescription:@"Destination was deallced when removeRoute, router:%@",self];
         return;
     }
     
@@ -1307,7 +1307,7 @@ destinationStateBeforeRoute:(ZIKPresentationState *)destinationStateBeforeRoute
     if (errorDescription) {
         [self notifyRouteState:ZIKRouterStateRemoveFailed];
         [self _callbackError_actionFailedWithAction:@selector(removeRoute)
-                                     errorDescription:errorDescription];
+                                   errorDescription:errorDescription];
     }
 }
 
@@ -1331,7 +1331,7 @@ destinationStateBeforeRoute:(ZIKPresentationState *)destinationStateBeforeRoute
         [destination.navigationController popViewControllerAnimated:self.original_removeConfiguration.animated];
     }
     [ZIKViewRouter _completeWithtransitionCoordinator:destination.navigationController.transitionCoordinator
-                                   transitionCompletion:^{
+                                 transitionCompletion:^{
         [self endRemoveRouteWithSuccessOnDestination:destination fromSource:source];
     }];
 }
@@ -1372,7 +1372,7 @@ destinationStateBeforeRoute:(ZIKPresentationState *)destinationStateBeforeRoute
     }
     [popover dismissPopoverAnimated:self.original_removeConfiguration.animated];
     [ZIKViewRouter _completeWithtransitionCoordinator:destination.transitionCoordinator
-                                   transitionCompletion:^{
+                                 transitionCompletion:^{
         [self endRemoveRouteWithSuccessOnDestination:destination fromSource:source];
     }];
 }

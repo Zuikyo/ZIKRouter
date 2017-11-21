@@ -54,7 +54,7 @@ _Nullable Class _ZIKServiceRouterToService(Protocol *serviceProtocol) {
         return routerClass;
     }
     [ZIKServiceRouter _callbackError_invalidProtocolWithAction:@selector(toService)
-                                             errorDescription:@"Didn't find service router for service protocol: %@, this protocol was not registered.",serviceProtocol];
+                                              errorDescription:@"Didn't find service router for service protocol: %@, this protocol was not registered.",serviceProtocol];
     NSCAssert1(NO, @"Didn't find service router for service protocol: %@, this protocol was not registered.",serviceProtocol);
     return nil;
 }
@@ -72,7 +72,7 @@ _Nullable Class _ZIKServiceRouterToModule(Protocol *configProtocol) {
         return routerClass;
     }
     [ZIKServiceRouter _callbackError_invalidProtocolWithAction:@selector(toModule)
-                                             errorDescription:@"Didn't find service router for config protocol: %@, this protocol was not registered.",configProtocol];
+                                              errorDescription:@"Didn't find service router for config protocol: %@, this protocol was not registered.",configProtocol];
     NSCAssert1(NO, @"Didn't find service router for config protocol: %@, this protocol was not registered.",configProtocol);
     return nil;
 }
