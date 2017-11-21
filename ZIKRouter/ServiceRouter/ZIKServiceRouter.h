@@ -15,6 +15,8 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
+extern ZIKRouteAction const ZIKRouteActionToService;
+extern ZIKRouteAction const ZIKRouteActionToServiceModule;
 extern NSString *const kZIKServiceRouterErrorDomain;
 
 @class ZIKServiceRouter;
@@ -27,7 +29,7 @@ extern NSString *const kZIKServiceRouterErrorDomain;
  @param routeAction The action where error happens
  @param error Error in kZIKServiceRouterErrorDomain or domain from subclass router, see ZIKServiceRouteError for detail
  */
-typedef void(^ZIKServiceRouteGlobalErrorHandler)(__kindof ZIKServiceRouter * _Nullable router, SEL routeAction, NSError *error);
+typedef void(^ZIKServiceRouteGlobalErrorHandler)(__kindof ZIKServiceRouter * _Nullable router, ZIKRouteAction routeAction, NSError *error);
 
 /**
  Abstract superclass of service router for discovering service and injecting dependencies with registered protocol. Subclass it and implement ZIKServiceRouterProtocol to make router of your service.

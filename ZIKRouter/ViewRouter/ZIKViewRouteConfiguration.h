@@ -15,6 +15,11 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
+extern ZIKRouteAction const ZIKRouteActionToView;
+extern ZIKRouteAction const ZIKRouteActionToViewModule;
+extern ZIKRouteAction const ZIKRouteActionPrepareOnDestination;
+extern ZIKRouteAction const ZIKRouteActionPerformOnDestination;
+
 ///Route types for view.
 typedef NS_ENUM(NSInteger,ZIKViewRouteType) {
     ///Navigation using @code-[source pushViewController:animated:]@endcode Source must be a UIViewController.

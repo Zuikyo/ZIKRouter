@@ -18,9 +18,9 @@
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
     [ZIKViewRouter setGlobalErrorHandler:^(ZIKViewRouter * _Nullable router,
-                                           SEL  _Nonnull routeAction,
+                                           ZIKRouteAction routeAction,
                                            NSError * _Nonnull error) {
-        NSLog(@"❌ZIKRouter Error: router's action (%@) catch error! code:%@, description: %@,\nrouter:(%@)", NSStringFromSelector(routeAction), @(error.code), error.localizedDescription,router);
+        NSLog(@"❌ZIKRouter Error: router's action (%@) catch error! code:%@, description: %@,\nrouter:(%@)", routeAction, @(error.code), error.localizedDescription,router);
     }];
     
     UISplitViewController *splitViewController = (UISplitViewController *)self.window.rootViewController;

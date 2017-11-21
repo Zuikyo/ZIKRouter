@@ -187,7 +187,8 @@ NS_ASSUME_NONNULL_BEGIN
  @param routeAction The action where error happens.
  @param error Error in kZIKViewRouteErrorDomain or domain from subclass router, see ZIKViewRouteError for detail.
  */
-typedef void(^ZIKViewRouteGlobalErrorHandler)(__kindof ZIKViewRouter * _Nullable router, SEL routeAction, NSError *error);
+typedef void(^ZIKViewRouteGlobalErrorHandler)(__kindof ZIKViewRouter * _Nullable router, ZIKRouteAction routeAction, NSError *error);
+
 
 @interface ZIKViewRouter (ErrorHandle)
 

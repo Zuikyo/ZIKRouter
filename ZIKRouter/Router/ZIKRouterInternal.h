@@ -59,10 +59,10 @@ NS_ASSUME_NONNULL_BEGIN
 - (void)notifyRouteState:(ZIKRouterState)state;
 
 ///Call sucessHandler and performerSuccessHandler.
-- (void)notifySuccessWithAction:(SEL)routeAction;
+- (void)notifySuccessWithAction:(ZIKRouteAction)routeAction;
 
 ///Call errorHandler and performerErrorHandler.
-- (void)notifyError:(NSError *)error routeAction:(SEL)routeAction;
+- (void)notifyError:(NSError *)error routeAction:(ZIKRouteAction)routeAction;
 
 + (NSError *)errorWithCode:(NSInteger)code userInfo:(nullable NSDictionary *)userInfo;
 + (NSError *)errorWithCode:(NSInteger)code localizedDescription:(NSString *)description;

@@ -58,7 +58,7 @@ NS_ASSUME_NONNULL_BEGIN
 - (void)performRoute;
 ///Perform with success handler and error handler.
 - (void)performRouteWithSuccessHandler:(void(^ __nullable)(void))performerSuccessHandler
-                          errorHandler:(void(^ __nullable)(SEL routeAction, NSError *error))performerErrorHandler;
+                          errorHandler:(void(^ __nullable)(ZIKRouteAction routeAction, NSError *error))performerErrorHandler;
 
 ///If this route action doesn't need any arguments, just perform directly.
 + (nullable instancetype)performRoute;
@@ -79,7 +79,7 @@ NS_ASSUME_NONNULL_BEGIN
 - (void)removeRoute;
 ///Remove with success handler and error handler.
 - (void)removeRouteWithSuccessHandler:(void(^ __nullable)(void))performerSuccessHandler
-                         errorHandler:(void(^ __nullable)(SEL routeAction, NSError *error))performerErrorHandler;
+                         errorHandler:(void(^ __nullable)(ZIKRouteAction routeAction, NSError *error))performerErrorHandler;
 
 #pragma mark Factory
 

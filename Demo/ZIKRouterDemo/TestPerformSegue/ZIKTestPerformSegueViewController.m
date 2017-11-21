@@ -46,7 +46,7 @@
                                config.routeCompletion = ^(id  _Nonnull destination) {
                                    NSLog(@"perform segue complete");
                                };
-                               config.errorHandler = ^(SEL  _Nonnull routeAction, NSError * _Nonnull error) {
+                               config.errorHandler = ^(ZIKRouteAction routeAction, NSError * _Nonnull error) {
                                    NSLog(@"perform segue failed: %@",error);
                                };
                            }];
@@ -70,7 +70,7 @@
                                config.routeCompletion = ^(id  _Nonnull destination) {
                                    NSLog(@"perform segue complete");
                                };
-                               config.errorHandler = ^(SEL  _Nonnull routeAction, NSError * _Nonnull error) {
+                               config.errorHandler = ^(ZIKRouteAction routeAction, NSError * _Nonnull error) {
                                    NSLog(@"perform segue failed: %@",error);
                                };
                            }];
@@ -91,7 +91,7 @@
                             config.routeCompletion = ^(id  _Nonnull destination) {
                                 NSLog(@"perform segue complete for destination:%@",destination);
                             };
-                            config.errorHandler = ^(SEL  _Nonnull routeAction, NSError * _Nonnull error) {
+                            config.errorHandler = ^(ZIKRouteAction routeAction, NSError * _Nonnull error) {
                                 NSLog(@"perform segue failed: %@",error);
                             };
                         }];
@@ -105,7 +105,7 @@
     NSLog(@"the routed router is %@",self.segueRouter);
     [self.segueRouter removeRouteWithSuccessHandler:^{
         NSLog(@"dismiss success");
-    } errorHandler:^(SEL  _Nonnull routeAction, NSError * _Nonnull error) {
+    } errorHandler:^(ZIKRouteAction routeAction, NSError * _Nonnull error) {
         NSLog(@"dismiss failed,error:%@",error);
     }];
 }
@@ -126,7 +126,7 @@
          config.routeCompletion = ^(id  _Nonnull destination) {
              NSLog(@"perform unwind segue to ZIKTestPerformSegueViewController complete");
          };
-         config.errorHandler = ^(SEL  _Nonnull routeAction, NSError * _Nonnull error) {
+         config.errorHandler = ^(ZIKRouteAction routeAction, NSError * _Nonnull error) {
              NSLog(@"perform unwind segue to ZIKTestPerformSegueViewController failed: %@",error);
          };
      }];

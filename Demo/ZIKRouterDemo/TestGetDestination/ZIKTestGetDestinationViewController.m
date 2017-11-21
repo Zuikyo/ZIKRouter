@@ -43,7 +43,7 @@
                        config.successHandler = ^{
                            NSLog(@"get destination success");
                        };
-                       config.errorHandler = ^(SEL  _Nonnull routeAction, NSError * _Nonnull error) {
+                       config.errorHandler = ^(ZIKRouteAction routeAction, NSError * _Nonnull error) {
                            NSLog(@"get destination by router failed: %@",error);
                        };
                        //Set handleExternalRoute to YES will let router call routeCompletion when destination is dispalyed, be cautious.
@@ -54,7 +54,7 @@
 - (void)handleRemoveInfoViewController:(UIViewController *)infoViewController {
     [self.router removeRouteWithSuccessHandler:^{
         NSLog(@"remove success");
-    } errorHandler:^(SEL  _Nonnull routeAction, NSError * _Nonnull error) {
+    } errorHandler:^(ZIKRouteAction routeAction, NSError * _Nonnull error) {
         NSLog(@"remove failed, error:%@",error);
     }];
 }

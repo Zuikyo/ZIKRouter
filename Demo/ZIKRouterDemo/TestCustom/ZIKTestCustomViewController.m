@@ -37,7 +37,7 @@
                                 config.routeCompletion = ^(id _Nonnull destination) {
                                     NSLog(@"show custom alert complete");
                                 };
-                                config.errorHandler = ^(SEL  _Nonnull routeAction, NSError * _Nonnull error) {
+                                config.errorHandler = ^(ZIKRouteAction routeAction, NSError * _Nonnull error) {
                                     NSLog(@"show custom alert failed: %@",error);
                                 };
                             }];
@@ -50,7 +50,7 @@
     }
     [self.alertViewRouter removeRouteWithSuccessHandler:^{
         NSLog(@"remove success");
-    } errorHandler:^(SEL  _Nonnull routeAction, NSError * _Nonnull error) {
+    } errorHandler:^(ZIKRouteAction routeAction, NSError * _Nonnull error) {
         NSLog(@"remove failed,error:%@",error);
     }];
 }

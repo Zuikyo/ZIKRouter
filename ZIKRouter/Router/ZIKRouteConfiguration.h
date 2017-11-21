@@ -23,7 +23,13 @@ typedef NS_ENUM(NSInteger, ZIKRouterState) {
     ZIKRouterStateRemoveFailed
 };
 
-typedef void(^ZIKRouteErrorHandler)(SEL routeAction, NSError *error);
+typedef NSString *ZIKRouteAction NS_EXTENSIBLE_STRING_ENUM;
+
+extern ZIKRouteAction const ZIKRouteActionInit;
+extern ZIKRouteAction const ZIKRouteActionPerformRoute;
+extern ZIKRouteAction const ZIKRouteActionRemoveRoute;
+
+typedef void(^ZIKRouteErrorHandler)(ZIKRouteAction routeAction, NSError *error);
 typedef void(^ZIKRouteStateNotifier)(ZIKRouterState oldState, ZIKRouterState newState);
 
 ///Configuration for destination module. You can use a subclass to add complex dependencies for destination. The subclass must conforms to NSCopying, because the configuration will be copied.

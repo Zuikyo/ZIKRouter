@@ -28,11 +28,11 @@ NS_ASSUME_NONNULL_BEGIN
 - (BOOL)canPerform NS_UNAVAILABLE;
 - (void)performRoute NS_UNAVAILABLE;
 - (void)performRouteWithSuccessHandler:(void(^ __nullable)(void))performerSuccessHandler
-                          errorHandler:(void(^ __nullable)(SEL routeAction, NSError *error))performerErrorHandler NS_UNAVAILABLE;
+                          errorHandler:(void(^ __nullable)(ZIKRouteAction routeAction, NSError *error))performerErrorHandler NS_UNAVAILABLE;
 - (BOOL)canRemove NS_UNAVAILABLE;
 - (void)removeRoute NS_UNAVAILABLE;
 - (void)removeRouteWithSuccessHandler:(void(^ __nullable)(void))performerSuccessHandler
-                         errorHandler:(void(^ __nullable)(SEL routeAction, NSError *error))performerErrorHandler NS_UNAVAILABLE;
+                         errorHandler:(void(^ __nullable)(ZIKRouteAction routeAction, NSError *error))performerErrorHandler NS_UNAVAILABLE;
 + (nullable __kindof ZIKViewRouter *)performFromSource:(nullable id<ZIKViewRouteSource>)source configuring:(void(NS_NOESCAPE ^)(__kindof ZIKViewRouteConfiguration *config))configBuilder NS_UNAVAILABLE;
 + (nullable __kindof ZIKViewRouter *)performFromSource:(nullable id<ZIKViewRouteSource>)source
                                            configuring:(void(NS_NOESCAPE ^)(__kindof ZIKViewRouteConfiguration *config))configBuilder

@@ -13,6 +13,10 @@
 #import "ZIKRouteConfiguration+Private.h"
 #import <objc/runtime.h>
 
+ZIKRouteAction const ZIKRouteActionInit = @"ZIKRouteActionInit";
+ZIKRouteAction const ZIKRouteActionPerformRoute = @"ZIKRouteActionPerformRoute";
+ZIKRouteAction const ZIKRouteActionRemoveRoute = @"ZIKRouteActionRemoveRoute";
+
 NSString *kZIKRouterErrorDomain = @"kZIKRouterErrorDomain";
 
 @interface ZIKRouter () {
@@ -85,7 +89,7 @@ NSString *kZIKRouterErrorDomain = @"kZIKRouterErrorDomain";
 }
 
 - (void)performRouteWithSuccessHandler:(void(^)(void))performerSuccessHandler
-                          errorHandler:(void(^)(SEL routeAction, NSError *error))performerErrorHandler {
+                          errorHandler:(void(^)(ZIKRouteAction routeAction, NSError *error))performerErrorHandler {
     NSAssert(self.original_configuration, @"router must has configuration");
     ZIKRouteConfiguration *configuration = self.original_configuration;
     if (performerSuccessHandler) {
@@ -134,7 +138,7 @@ NSString *kZIKRouterErrorDomain = @"kZIKRouterErrorDomain";
 }
 
 - (void)removeRouteWithSuccessHandler:(void(^)(void))performerSuccessHandler
-                         errorHandler:(void(^)(SEL routeAction, NSError *error))performerErrorHandler {
+                         errorHandler:(void(^)(ZIKRouteAction routeAction, NSError *error))performerErrorHandler {
     ZIKRouteConfiguration *configuration = self.original_removeConfiguration;
     if (!configuration) {
         configuration = [[self class] defaultRemoveConfiguration];
@@ -230,22 +234,22 @@ NSString *kZIKRouterErrorDomain = @"kZIKRouterErrorDomain";
     return [NSError errorWithDomain:[self errorDomain] code:code userInfo:@{NSLocalizedDescriptionKey:description}];
 }
 
-- (void)notifySuccessWithAction:(SEL)routeAction {
+- (void)notifySuccessWithAction:(ZIKRouteAction)routeAction {
     [self notifySuccessToProviderWithAction:routeAction];
     [self notifySuccessToPerformerWithAction:routeAction];
 }
 
-- (void)notifyError:(NSError *)error routeAction:(SEL)routeAction {
+- (void)notifyError:(NSError *)error routeAction:(ZIKRouteAction)routeAction {
     [self notifyErrorToProvider:error routeAction:routeAction];
     [self notifyErrorToPerformer:error routeAction:routeAction];
 }
 
-- (void)notifySuccessToProviderWithAction:(SEL)routeAction {
+- (void)notifySuccessToProviderWithAction:(ZIKRouteAction)routeAction {
     NSParameterAssert(routeAction);
     ZIKRouteConfiguration *configuration;
-    if (routeAction == @selector(performRoute)) {
+    if ([routeAction isEqual:ZIKRouteActionPerformRoute]) {
         configuration = self.original_configuration;
-    } else if (routeAction == @selector(removeRoute)) {
+    } else if ([routeAction isEqual:ZIKRouteActionRemoveRoute]) {
         configuration = self.original_removeConfiguration;
     } else {
         configuration = self.original_configuration;
@@ -256,14 +260,14 @@ NSString *kZIKRouterErrorDomain = @"kZIKRouterErrorDomain";
     }
 }
 
-- (void)notifyErrorToProvider:(NSError *)error routeAction:(SEL)routeAction {
+- (void)notifyErrorToProvider:(NSError *)error routeAction:(ZIKRouteAction)routeAction {
     NSParameterAssert(error);
     NSParameterAssert(routeAction);
     self.error = error;
     ZIKRouteConfiguration *configuration;
-    if (routeAction == @selector(performRoute)) {
+    if ([routeAction isEqual:ZIKRouteActionPerformRoute]) {
         configuration = self.original_configuration;
-    } else if (routeAction == @selector(removeRoute)) {
+    } else if ([routeAction isEqual:ZIKRouteActionRemoveRoute]) {
         configuration = self.original_removeConfiguration;
     } else {
         configuration = self.original_configuration;
@@ -280,13 +284,13 @@ NSString *kZIKRouterErrorDomain = @"kZIKRouterErrorDomain";
     }
 }
 
-- (void)notifySuccessToPerformerWithAction:(SEL)routeAction {
+- (void)notifySuccessToPerformerWithAction:(ZIKRouteAction)routeAction {
     NSParameterAssert(routeAction);
     
     ZIKRouteConfiguration *configuration;
-    if (routeAction == @selector(performRoute)) {
+    if ([routeAction isEqual:ZIKRouteActionPerformRoute]) {
         configuration = self.original_configuration;
-    } else if (routeAction == @selector(removeRoute)) {
+    } else if ([routeAction isEqual:ZIKRouteActionRemoveRoute]) {
         configuration = self.original_removeConfiguration;
     } else {
         configuration = self.original_configuration;
@@ -301,15 +305,15 @@ NSString *kZIKRouterErrorDomain = @"kZIKRouterErrorDomain";
     }
 }
 
-- (void)notifyErrorToPerformer:(NSError *)error routeAction:(SEL)routeAction {
+- (void)notifyErrorToPerformer:(NSError *)error routeAction:(ZIKRouteAction)routeAction {
     NSParameterAssert(error);
     NSParameterAssert(routeAction);
     
     self.error = error;
     ZIKRouteConfiguration *configuration;
-    if (routeAction == @selector(performRoute)) {
+    if ([routeAction isEqual:ZIKRouteActionPerformRoute]) {
         configuration = self.original_configuration;
-    } else if (routeAction == @selector(removeRoute)) {
+    } else if ([routeAction isEqual:ZIKRouteActionRemoveRoute]) {
         configuration = self.original_removeConfiguration;
     } else {
         configuration = self.original_configuration;

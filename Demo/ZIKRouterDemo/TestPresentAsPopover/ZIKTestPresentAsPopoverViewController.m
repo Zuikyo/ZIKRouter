@@ -40,7 +40,7 @@
                                config.routeCompletion = ^(id  _Nonnull destination) {
                                    NSLog(@"present as popover complete");
                                };
-                               config.errorHandler = ^(SEL  _Nonnull routeAction, NSError * _Nonnull error) {
+                               config.errorHandler = ^(ZIKRouteAction routeAction, NSError * _Nonnull error) {
                                    NSLog(@"present as popover failed: %@",error);
                                };
                            }];
@@ -64,7 +64,7 @@
                                config.routeCompletion = ^(id  _Nonnull destination) {
                                    NSLog(@"present as popover complete");
                                };
-                               config.errorHandler = ^(SEL  _Nonnull routeAction, NSError * _Nonnull error) {
+                               config.errorHandler = ^(ZIKRouteAction routeAction, NSError * _Nonnull error) {
                                    NSLog(@"present as popover failed: %@",error);
                                };
                            }];
@@ -81,7 +81,7 @@
     }
     [self.infoViewRouter removeRouteWithSuccessHandler:^{
         NSLog(@"performer: dismiss success");
-    } errorHandler:^(SEL  _Nonnull routeAction, NSError * _Nonnull error) {
+    } errorHandler:^(ZIKRouteAction routeAction, NSError * _Nonnull error) {
         NSLog(@"performer: dismiss failed,error:%@",error);
     }];
 }

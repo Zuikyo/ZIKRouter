@@ -15,6 +15,11 @@
 #import "ZIKRouterInternal.h"
 #import "ZIKViewRouteError.h"
 
+ZIKRouteAction const ZIKRouteActionToView = @"ZIKRouteActionToView";
+ZIKRouteAction const ZIKRouteActionToViewModule = @"ZIKRouteActionToViewModule";
+ZIKRouteAction const ZIKRouteActionPrepareOnDestination = @"ZIKRouteActionPrepareOnDestination";
+ZIKRouteAction const ZIKRouteActionPerformOnDestination = @"ZIKRouteActionPerformOnDestination";
+
 @interface ZIKViewRouter()
 + (void)_callbackGlobalErrorHandlerWithRouter:(__kindof ZIKViewRouter *)router action:(SEL)action error:(NSError *)error;
 + (NSString *)descriptionOfRouteType:(ZIKViewRouteType)routeType;

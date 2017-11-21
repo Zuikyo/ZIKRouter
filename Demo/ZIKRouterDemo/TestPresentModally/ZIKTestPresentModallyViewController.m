@@ -39,7 +39,7 @@
                                config.successHandler = ^{
                                    NSLog(@"provider: present modally success");
                                };
-                               config.errorHandler = ^(SEL  _Nonnull routeAction, NSError * _Nonnull error) {
+                               config.errorHandler = ^(ZIKRouteAction routeAction, NSError * _Nonnull error) {
                                    NSLog(@"provider: present modally failed: %@",error);
                                };
                            }
@@ -47,7 +47,7 @@
                                config.successHandler = ^{
                                    NSLog(@"provider: dismiss success");
                                };
-                               config.errorHandler = ^(SEL  _Nonnull routeAction, NSError * _Nonnull error) {
+                               config.errorHandler = ^(ZIKRouteAction routeAction, NSError * _Nonnull error) {
                                    NSLog(@"provider: dismiss failed: %@",error);
                                };
                            }];
@@ -61,7 +61,7 @@
     //perform the router
     [self.infoViewRouter performRouteWithSuccessHandler:^{
         NSLog(@"performer: present modally success");
-    } errorHandler:^(SEL  _Nonnull routeAction, NSError * _Nonnull error) {
+    } errorHandler:^(ZIKRouteAction routeAction, NSError * _Nonnull error) {
         NSLog(@"performer: present modally failed: %@",error);
     }];
 }
@@ -85,7 +85,7 @@
     }
     [self.infoViewRouter removeRouteWithSuccessHandler:^{
         NSLog(@"performer: dismiss success");
-    } errorHandler:^(SEL  _Nonnull routeAction, NSError * _Nonnull error) {
+    } errorHandler:^(ZIKRouteAction routeAction, NSError * _Nonnull error) {
         NSLog(@"performer: dismiss failed,error:%@",error);
     }];
 }

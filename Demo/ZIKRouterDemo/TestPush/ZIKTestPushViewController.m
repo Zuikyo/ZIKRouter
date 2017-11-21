@@ -38,7 +38,7 @@
                                config.successHandler = ^{
                                    NSLog(@"provider: push success");
                                };
-                               config.errorHandler = ^(SEL  _Nonnull routeAction, NSError * _Nonnull error) {
+                               config.errorHandler = ^(ZIKRouteAction routeAction, NSError * _Nonnull error) {
                                    NSLog(@"provider: push failed: %@",error);
                                };
                                config.stateNotifier = ^(ZIKRouterState oldState, ZIKRouterState newState) {
@@ -50,7 +50,7 @@
                                config.successHandler = ^{
                                    NSLog(@"provider: pop success");
                                };
-                               config.errorHandler = ^(SEL  _Nonnull routeAction, NSError * _Nonnull error) {
+                               config.errorHandler = ^(ZIKRouteAction routeAction, NSError * _Nonnull error) {
                                    NSLog(@"provider: pop failed: %@",error);
                                };
                                config.handleExternalRoute = YES;
@@ -63,7 +63,7 @@
     }
     [self.infoViewRouter performRouteWithSuccessHandler:^{
         NSLog(@"performer: push success");
-    } errorHandler:^(SEL  _Nonnull routeAction, NSError * _Nonnull error) {
+    } errorHandler:^(ZIKRouteAction routeAction, NSError * _Nonnull error) {
         NSLog(@"performer: push failed: %@",error);
     }];
 }
@@ -77,11 +77,11 @@
         
         [self.infoViewRouter removeRouteWithSuccessHandler:^{
             NSLog(@"performer: pop success");
-        } errorHandler:^(SEL  _Nonnull routeAction, NSError * _Nonnull error) {
+        } errorHandler:^(ZIKRouteAction routeAction, NSError * _Nonnull error) {
             NSLog(@"performer: pop failed,error:%@",error);
         }];
         
-    } errorHandler:^(SEL  _Nonnull routeAction, NSError * _Nonnull error) {
+    } errorHandler:^(ZIKRouteAction routeAction, NSError * _Nonnull error) {
         NSLog(@"performer: push failed: %@",error);
     }];
 }
@@ -93,7 +93,7 @@
     }
     [self.infoViewRouter removeRouteWithSuccessHandler:^{
         NSLog(@"performer: pop success");
-    } errorHandler:^(SEL  _Nonnull routeAction, NSError * _Nonnull error) {
+    } errorHandler:^(ZIKRouteAction routeAction, NSError * _Nonnull error) {
         NSLog(@"performer: pop failed,error:%@",error);
     }];
     
