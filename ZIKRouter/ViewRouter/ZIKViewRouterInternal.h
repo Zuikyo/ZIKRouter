@@ -101,7 +101,8 @@ NS_ASSUME_NONNULL_BEGIN
 + (BOOL)validateCustomRouteConfiguration:(RouteConfig)configuration removeConfiguration:(RemoveConfig)removeConfiguration;
 
 #pragma mark Custom Route State Control
-///Maintain the route state for custom route.
+
+///Maintain the route state when you implement custom route or remove route by overriding -performRouteOnDestination:configuration: or -removeDestination:removeConfiguration:.
 ///Call it when route will perform.
 - (void)beginPerformRoute;
 ///Call it when route is successfully performed.
@@ -113,9 +114,9 @@ NS_ASSUME_NONNULL_BEGIN
 - (void)_performSegueWithIdentifier:(NSString *)identifier fromSource:(UIViewController *)source sender:(nullable id)sender;
 
 ///Call it when route will remove.
-- (void)beginRemoveRouteFromSource:(id)source;
+- (void)beginRemoveRouteFromSource:(nullable id)source;
 ///Call it when route is successfully removed.
-- (void)endRemoveRouteWithSuccessOnDestination:(Destination)destination fromSource:(id)source;
+- (void)endRemoveRouteWithSuccessOnDestination:(Destination)destination fromSource:(nullable id)source;
 ///Call it when route remove failed.
 - (void)endRemoveRouteWithError:(NSError *)error;
 

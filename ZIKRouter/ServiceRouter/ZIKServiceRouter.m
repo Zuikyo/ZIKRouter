@@ -139,9 +139,10 @@ _Nullable Class _ZIKServiceRouterToModule(Protocol *configProtocol) {
     [self notifyRouteState:ZIKRouterStateRemoving];
 }
 
-- (void)endRemoveRouteWithSuccessOnDestination:(id)destination {
+- (void)endRemoveRouteWithSuccess {
     NSAssert(self.state == ZIKRouterStateRemoving, @"state should be removing when end remove route.");
     [self notifyRouteState:ZIKRouterStateRemoved];
+    [self notifySuccessWithAction:@selector(removeRoute)];
 }
 
 - (void)endRemoveRouteWithError:(NSError *)error {

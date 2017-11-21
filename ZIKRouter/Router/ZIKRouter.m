@@ -260,14 +260,22 @@ NSString *kZIKRouterErrorDomain = @"kZIKRouterErrorDomain";
     NSParameterAssert(error);
     NSParameterAssert(routeAction);
     self.error = error;
-    if (!self.original_configuration.errorHandler) {
+    ZIKRouteConfiguration *configuration;
+    if (routeAction == @selector(performRoute)) {
+        configuration = self.original_configuration;
+    } else if (routeAction == @selector(removeRoute)) {
+        configuration = self.original_removeConfiguration;
+    } else {
+        configuration = self.original_configuration;
+    }
+    if (!configuration.errorHandler) {
         return;
     }
     if ([NSThread isMainThread]) {
-        self.original_configuration.errorHandler(routeAction, error);
+        configuration.errorHandler(routeAction, error);
     } else {
         dispatch_async(dispatch_get_main_queue(), ^{
-            self.original_configuration.errorHandler(routeAction, error);
+            configuration.errorHandler(routeAction, error);
         });
     }
 }

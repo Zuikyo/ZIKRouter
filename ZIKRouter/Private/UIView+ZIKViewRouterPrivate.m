@@ -15,14 +15,14 @@
 
 @implementation UIView (ZIKViewRouterPrivate)
 
-///Temporary bind auto created router to a UIView when it's not addSubView: by router. Reset to nil when view is removed.
+///Temporary bind auto created router to a UIView when it's not addSubView: by router. Reset to nil when view is routed or removed.
 - (__kindof ZIKViewRouter *)zix_destinationViewRouter {
     return objc_getAssociatedObject(self, "zix_destinationViewRouter");
 }
 - (void)setZix_destinationViewRouter:(nullable ZIKViewRouter *)viewRouter {
     objc_setAssociatedObject(self, "zix_destinationViewRouter", viewRouter, OBJC_ASSOCIATION_RETAIN);
 }
-///Route type when view is routed from a router, will reset to nil when view is removed
+///Route type when view is routed from a router, will reset to nil when view is routed or removed.
 - (nullable NSNumber *)zix_routeTypeFromRouter {
     NSNumber *result = objc_getAssociatedObject(self, "zix_routeTypeFromRouter");
     return result;

@@ -31,7 +31,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 #pragma mark State Control
 
-///Maintain the route state when you implement custom route or remove route.
+///Maintain the route state when you implement custom route or remove route by overriding -performRouteOnDestination:configuration: or -removeDestination:removeConfiguration:.
 ///Call it when route will perform.
 - (void)beginPerformRoute;
 ///Call it when route is successfully performed.
@@ -42,7 +42,7 @@ NS_ASSUME_NONNULL_BEGIN
 ///Call it when route will remove.
 - (void)beginRemoveRoute;
 ///Call it when route is successfully removed.
-- (void)endRemoveRouteWithSuccessOnDestination:(id)destination;
+- (void)endRemoveRouteWithSuccess;
 ///Call it when route remove failed.
 - (void)endRemoveRouteWithError:(NSError *)error;
 

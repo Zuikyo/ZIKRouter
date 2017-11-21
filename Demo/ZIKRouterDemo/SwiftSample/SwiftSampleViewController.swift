@@ -25,10 +25,10 @@ protocol PureSwiftSampleViewInput2 {
 // Show how ZIKRouter working in a swifty way.
 class SwiftSampleViewController: UIViewController, PureSwiftSampleViewInput, PureSwiftSampleViewInput2, SwiftSampleViewInput, ZIKInfoViewDelegate {
     var infoRouter: DefaultViewRouter?
-    var alertRouter: ConfigurableViewRouter<ViewRouteConfig & ZIKCompatibleAlertConfigProtocol>?
+    var alertRouter: ModuleViewRouter<ViewRouteConfig & ZIKCompatibleAlertConfigProtocol>?
     
     //You can inject alertRouterClass from outside, then use the router directly
-    var alertRouterClass: ConfigurableViewRouter<ViewRouteConfig & ZIKCompatibleAlertConfigProtocol>.Type!
+    var alertRouterClass: ModuleViewRouter<ViewRouteConfig & ZIKCompatibleAlertConfigProtocol>.Type!
     
     @IBAction func testRouteForView(_ sender: Any) {
         infoRouter = Router.perform(
@@ -75,7 +75,7 @@ class SwiftSampleViewController: UIViewController, PureSwiftSampleViewInput, Pur
                     print("Tap Hello alert")
                 })
             }))
-        alertRouter = (router as! ConfigurableViewRouter<ViewRouteConfig & ZIKCompatibleAlertConfigProtocol>)
+        alertRouter = (router as! ModuleViewRouter<ViewRouteConfig & ZIKCompatibleAlertConfigProtocol>)
     }
     
     @IBAction func testSwitchableRoute(_ sender: Any) {

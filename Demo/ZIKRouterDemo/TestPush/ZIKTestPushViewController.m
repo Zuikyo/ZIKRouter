@@ -74,13 +74,16 @@
     }
     [self.infoViewRouter performRouteWithSuccessHandler:^{
         NSLog(@"performer: push success");
+        
+        [self.infoViewRouter removeRouteWithSuccessHandler:^{
+            NSLog(@"performer: pop success");
+        } errorHandler:^(SEL  _Nonnull routeAction, NSError * _Nonnull error) {
+            NSLog(@"performer: pop failed,error:%@",error);
+        }];
+        
     } errorHandler:^(SEL  _Nonnull routeAction, NSError * _Nonnull error) {
         NSLog(@"performer: push failed: %@",error);
     }];
-    
-    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(2 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
-        [self removeInfoViewController];
-    });
 }
 
 - (void)removeInfoViewController {
@@ -93,6 +96,8 @@
     } errorHandler:^(SEL  _Nonnull routeAction, NSError * _Nonnull error) {
         NSLog(@"performer: pop failed,error:%@",error);
     }];
+    
+    
 }
 
 - (void)routeFromExternalForInfoViewController:(UIViewController *)infoViewController {
@@ -100,8 +105,8 @@
 }
 
 - (void)handleRemoveInfoViewController:(UIViewController *)infoViewController {
-//    [self removeInfoViewController];
-    [self routeFromExternalForInfoViewController:infoViewController];
+    [self removeInfoViewController];
+//    [self routeFromExternalForInfoViewController:infoViewController];
 }
 
 /*
