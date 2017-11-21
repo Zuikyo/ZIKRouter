@@ -2249,7 +2249,6 @@ static _Nullable Class _routerClassToRegisteredView(Class viewClass) {
                 //end perform
                 [destinationRouter notifyRouteState:ZIKRouterStateRouted];
                 [destination setZix_destinationViewRouter:nil];
-                [destinationRouter notifyPerformRouteSuccessWithDestination:destination];
             }
             
             [[NSNotificationCenter defaultCenter] postNotificationName:kZIKViewRouteDidPerformRouteNotification object:destination];
@@ -2257,9 +2256,12 @@ static _Nullable Class _routerClassToRegisteredView(Class viewClass) {
                 [routeTypeFromRouter integerValue] == ZIKViewRouteTypeGetDestination) {
                 [ZIKViewRouter AOP_notifyAll_router:router didPerformRouteOnDestination:destination fromSource:superview];
             }
-            router.routingFromInternal = NO;
             if (routeTypeFromRouter) {
                 [destination setZix_routeTypeFromRouter:nil];
+            }
+            if (router) {
+                router.routingFromInternal = NO;
+                [router notifyPerformRouteSuccessWithDestination:destination];
             }
         }
     }
