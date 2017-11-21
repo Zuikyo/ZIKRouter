@@ -88,7 +88,9 @@ _Nullable Class _ZIKServiceRouterToModule(Protocol *configProtocol) {
     [[self class] decreaseRecursiveDepth];
 }
 
-#pragma mark ZIKRouterProtocol
++ (BOOL)isAbstractRouter {
+    return self == [ZIKServiceRouter class];
+}
 
 + (void)registerRoutableDestination {
     NSAssert1(NO, @"subclass(%@) must override +registerRoutableDestination to register destination.",self);

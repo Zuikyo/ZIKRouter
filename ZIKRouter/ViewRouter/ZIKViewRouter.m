@@ -309,6 +309,10 @@ static BOOL _isClassRoutable(Class class) {
     return router.destination;
 }
 
++ (BOOL)isAbstractRouter {
+    return self == [ZIKViewRouter class];
+}
+
 #pragma mark ZIKViewRouterSubclass
 
 + (void)registerRoutableDestination {

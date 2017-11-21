@@ -25,6 +25,9 @@ NS_ASSUME_NONNULL_BEGIN
 #pragma mark Override
 ///Methods for ZIKRouter subclass.
 
+///Whether this router is an abstract router.
++ (BOOL)isAbstractRouter;
+
 ///Create destination and initilize it with configuration.
 - (id)destinationWithConfiguration:(__kindof ZIKRouteConfiguration *)configuration;
 

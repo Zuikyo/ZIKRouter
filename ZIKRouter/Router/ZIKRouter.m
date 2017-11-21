@@ -174,7 +174,11 @@ NSString *kZIKRouterErrorDomain = @"kZIKRouterErrorDomain";
     return [self makeDestinationWithPreparation:nil];
 }
 
-#pragma mark ZIKRouterProtocol
+#pragma mark ZIKRouterSubclass
+
++ (BOOL)isAbstractRouter {
+    return self == [ZIKRouter class];
+}
 
 - (void)performRouteOnDestination:(id)destination configuration:(ZIKRouteConfiguration *)configuration {
     NSAssert(NO, @"ZIKRouter: %@ not conforms to ZIKRouterProtocol!",[self class]);

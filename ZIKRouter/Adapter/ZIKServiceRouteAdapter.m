@@ -19,6 +19,10 @@
     return nil;
 }
 
++ (BOOL)isAbstractRouter {
+    return YES;
+}
+
 + (void)registerRoutableDestination {
     
 }

@@ -113,33 +113,13 @@ static NSMutableArray<Class> *_routerClasses;
 #pragma clang diagnostic pop
     }
     else if (ZIKRouter_classIsSubclassOfClass(class, ZIKViewRouterClass)) {
-        NSCAssert1(({
-            BOOL valid = YES;
-            Class superClass = class_getSuperclass(class);
-            if (superClass == ZIKViewRouterClass || ZIKRouter_classIsSubclassOfClass(superClass, ZIKViewRouterClass)) {
-                IMP registerIMP = class_getMethodImplementation(objc_getMetaClass(class_getName(class)), @selector(registerRoutableDestination));
-                IMP superClassIMP = class_getMethodImplementation(objc_getMetaClass(class_getName(superClass)), @selector(registerRoutableDestination));
-                valid = (registerIMP != superClassIMP);
-            }
-            valid;
-        }), @"Router(%@) must override +registerRoutableDestination to register destination.",class);
-        NSCAssert1(({
-            BOOL valid = YES;
-            if (class != NSClassFromString(@"ZIKViewRouteAdapter") && !ZIKRouter_classIsSubclassOfClass(class, NSClassFromString(@"ZIKViewRouteAdapter"))) {
-                IMP destinationIMP = class_getMethodImplementation(class, @selector(destinationWithConfiguration:));
-                Class superClass = class_getSuperclass(class);
-                if (superClass == ZIKViewRouterClass || ZIKRouter_classIsSubclassOfClass(superClass, ZIKViewRouterClass)) {
-                    IMP superClassIMP = class_getMethodImplementation(superClass, @selector(destinationWithConfiguration:));
-                    valid = (destinationIMP != superClassIMP);
-                }
-            }
-            valid;
-        }), @"Router(%@) must override -destinationWithConfiguration: to return destination.",class);
+        NSCAssert1(ZIKRouter_classSelfImplementingMethod(class, @selector(registerRoutableDestination), true), @"Router(%@) must override +registerRoutableDestination to register destination.",class);
+        NSCAssert1(ZIKRouter_classSelfImplementingMethod(class, @selector(destinationWithConfiguration:), false) || [class isAbstractRouter], @"Router(%@) must override -destinationWithConfiguration: to return destination.",class);
         [class registerRoutableDestination];
 #if ZIKROUTER_CHECK
         CFMutableSetRef views = (CFMutableSetRef)CFDictionaryGetValue(self._check_routerToDestinationsMap, (__bridge const void *)(class));
         NSSet *viewSet = (__bridge NSSet *)(views);
-        NSCAssert3(viewSet.count > 0 || ZIKRouter_classIsSubclassOfClass(class, NSClassFromString(@"ZIKViewRouteAdapter")) || class == NSClassFromString(@"ZIKViewRouteAdapter"), @"This router class(%@) was not resgistered with any view class. Use +[%@ registerView:] to register view in Router(%@)'s +registerRoutableDestination.",class,class,class);
+        NSCAssert3(viewSet.count > 0 || [class isAbstractRouter], @"This router class(%@) was not resgistered with any view class. Use +[%@ registerView:] to register view in Router(%@)'s +registerRoutableDestination.",class,class,class);
         [_routerClasses addObject:class];
 #endif
     }
