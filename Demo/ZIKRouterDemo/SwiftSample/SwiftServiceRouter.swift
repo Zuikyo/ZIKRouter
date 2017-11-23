@@ -10,14 +10,30 @@ import Foundation
 import ZIKRouter
 import ZRouter
 
-class SwiftServiceRouter: ZIKServiceRouter<AnyObject, PerformRouteConfig, ZIKRouteConfiguration> {
+protocol SwiftServiceConfig {
+    
+}
+
+//Custom configuration of this router.
+class SwiftServiceConfiguration: ZIKPerformRouteConfiguration, SwiftServiceConfig {
+    override func copy(with zone: NSZone? = nil) -> Any {
+        return super.copy(with: zone)
+    }
+}
+
+class SwiftServiceRouter: ZIKServiceRouter<AnyObject, SwiftServiceConfiguration, ZIKRouteConfiguration> {
     override class func registerRoutableDestination() {
         registerService(SwiftService.self)
         Registry.register(RoutableService<SwiftServiceInput>(), forRouter: self)
+        Registry.register(RoutableServiceModule<SwiftServiceConfig>(), forRouter: self)
     }
     
-    override func destination(with configuration: PerformRouteConfig) -> AnyObject? {
+    override func destination(with configuration: SwiftServiceConfiguration) -> AnyObject? {
         return SwiftService()
+    }
+    
+    override class func defaultRouteConfiguration() -> SwiftServiceConfiguration {
+        return SwiftServiceConfiguration()
     }
 }
 
@@ -31,5 +47,8 @@ extension RoutableService where Protocol == SwiftServiceInput {
     init() { }
 }
 extension RoutableService where Protocol == SwiftServiceInput2 {
+    init() { }
+}
+extension RoutableServiceModule where Protocol == SwiftServiceConfig {
     init() { }
 }

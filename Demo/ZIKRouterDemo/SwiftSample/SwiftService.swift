@@ -7,7 +7,6 @@
 //
 
 import Foundation
-import ZIKRouter
 import ZRouter
 
 protocol SwiftServiceInput {
@@ -24,18 +23,17 @@ class SwiftService: SwiftServiceInput, SwiftServiceInput2 {
         _ = Router.perform(
             to: RoutableViewModule<ZIKCompatibleAlertConfigProtocol>(),
             from: UIApplication.shared.keyWindow?.rootViewController,
-            configuring: { config in
-                config.source = UIApplication.shared.keyWindow?.rootViewController
-                config.routeType = ViewRouteType.custom
-        },
-            preparation: { module in
-                module.title = "SwiftService"
-                module.message = "This is a swift service"
-                module.addCancelButtonTitle("Cancel", handler: {
-                    print("Tap cancel alert")
-                })
-                module.addOtherButtonTitle("OK", handler: {
-                    print("Tap OK alert")
+            configuring: { (config, _, prepareModule) in
+                config.routeType = .custom
+                prepareModule({ module in
+                    module.title = "SwiftService"
+                    module.message = "This is a swift service"
+                    module.addCancelButtonTitle("Cancel", handler: {
+                        print("Tap cancel alert")
+                    })
+                    module.addOtherButtonTitle("OK", handler: {
+                        print("Tap OK alert")
+                    })
                 })
         })
     }

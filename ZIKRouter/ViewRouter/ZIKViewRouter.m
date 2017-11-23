@@ -284,29 +284,51 @@ static BOOL _isClassRoutable(Class class) {
 + (nullable id)makeDestinationWithPreparation:(void(^ _Nullable)(id destination))prepare {
     NSAssert(self != [ZIKViewRouter class], @"Only get destination from router subclass");
     NSAssert1([self completeSynchronously] == YES, @"The router (%@) should return the destination Synchronously when use +destinationForConfigure",self);
+    __block id dest;
     ZIKViewRouter *router = [[self alloc] initWithConfiguring:(void(^)(ZIKRouteConfiguration*))^(ZIKViewRouteConfiguration * _Nonnull config) {
         config.routeType = ZIKViewRouteTypeGetDestination;
         if (prepare) {
-            config.prepareDestination = ^(id  _Nonnull destination) {
-                prepare(destination);
+            config.prepareDestination = prepare;
+        }
+        void(^routeCompletion)(id destination) = config.routeCompletion;
+        if (routeCompletion) {
+            config.routeCompletion = ^(id  _Nonnull destination) {
+                routeCompletion(destination);
+                dest = destination;
+            };
+        } else {
+            config.routeCompletion = ^(id  _Nonnull destination) {
+                dest = destination;
             };
         }
-    } removing:nil];
+    } removing:NULL];
     [router performRoute];
-    return router.destination;
+    return dest;
 }
 
 + (nullable id)makeDestinationWithConfiguring:(void(^ _Nullable)(ZIKPerformRouteConfiguration *config))configBuilder {
     NSAssert(self != [ZIKViewRouter class], @"Only get destination from router subclass");
     NSAssert1([self completeSynchronously] == YES, @"The router (%@) should return the destination synchronously for +makeDestination",self);
+    __block id dest;
     ZIKViewRouteConfiguration *configuration = [[self class] defaultRouteConfiguration];
     if (configBuilder) {
         configBuilder(configuration);
     }
+    void(^routeCompletion)(id destination) = configuration.routeCompletion;
+    if (routeCompletion) {
+        configuration.routeCompletion = ^(id  _Nonnull destination) {
+            routeCompletion(destination);
+            dest = destination;
+        };
+    } else {
+        configuration.routeCompletion = ^(id  _Nonnull destination) {
+            dest = destination;
+        };
+    }
     configuration.routeType = ZIKViewRouteTypeGetDestination;
     ZIKViewRouter *router = [[self alloc] initWithConfiguration:configuration removeConfiguration:nil];
     [router performRoute];
-    return router.destination;
+    return dest;
 }
 
 + (BOOL)isAbstractRouter {

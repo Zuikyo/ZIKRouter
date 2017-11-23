@@ -47,13 +47,13 @@ class SwiftSampleViewRouter: ZIKViewRouter<SwiftSampleViewController, SwiftSampl
     }
     
     override static func destinationPrepared(_ destination: SwiftSampleViewController) -> Bool {
-        if (destination.alertRouterClass != nil) {
+        if (destination.injectedAlertRouter != nil) {
             return true
         }
         return false
     }
     override func prepareDestination(_ destination: SwiftSampleViewController, configuration: ZIKViewRouteConfiguration) {
-        destination.alertRouterClass = Registry.router(to: RoutableViewModule<ZIKCompatibleAlertConfigProtocol>())! as AnyClass as! ZIKViewRouter<ZIKRoutableView, ViewRouteConfig & ZIKCompatibleAlertConfigProtocol, ViewRemoveConfig>.Type
+        destination.injectedAlertRouter = Registry.router(to: RoutableViewModule<ZIKCompatibleAlertConfigProtocol>())
     }
 }
 

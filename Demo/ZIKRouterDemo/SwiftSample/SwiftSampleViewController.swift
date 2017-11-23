@@ -24,26 +24,28 @@ protocol PureSwiftSampleViewInput2 {
 
 // Show how ZIKRouter working in a swifty way.
 class SwiftSampleViewController: UIViewController, PureSwiftSampleViewInput, PureSwiftSampleViewInput2, SwiftSampleViewInput, ZIKInfoViewDelegate {
-    var infoRouter: DefaultViewRouter?
-    var alertRouter: ModuleViewRouter<ViewRouteConfig & ZIKCompatibleAlertConfigProtocol>?
+    var infoRouter: ViewRouter<ZIKInfoViewProtocol, ViewRouteConfig, ViewRemoveConfig>?
+    var alertRouter: ViewRouter<Any, ZIKCompatibleAlertConfigProtocol, ViewRemoveConfig>?
     
-    //You can inject alertRouterClass from outside, then use the router directly
-    var alertRouterClass: ModuleViewRouter<ViewRouteConfig & ZIKCompatibleAlertConfigProtocol>.Type!
+    //You can inject alertRouter from outside, then use the router directly
+    var injectedAlertRouter: ViewRouter<Any, ZIKCompatibleAlertConfigProtocol, ViewRemoveConfig>?
     
     @IBAction func testRouteForView(_ sender: Any) {
         infoRouter = Router.perform(
             to: RoutableView<ZIKInfoViewProtocol>(),
             from: self,
-            configuring: { $0.routeType = ViewRouteType.presentModally },
-            preparation: { [weak self] destination in
-                destination.delegate = self
-                destination.name = "zuik"
-                destination.age = 18
+            configuring: { (config, prepareDestination, _) in
+                config.routeType = .getDestination
+                prepareDestination({ [weak self] destination in
+                    destination.delegate = self
+                    destination.name = "zuik"
+                    destination.age = 18
+                })
         })
     }
     
     func handleRemoveInfoViewController(_ infoViewController: UIViewController!) {
-        guard infoRouter != nil && infoRouter!.canRemove() else {
+        guard infoRouter != nil && infoRouter!.canRemove else {
             return
         }
         infoRouter?.removeRoute(successHandler: {
@@ -54,28 +56,27 @@ class SwiftSampleViewController: UIViewController, PureSwiftSampleViewInput, Pur
     }
     
     @IBAction func testRouteForConfig(_ sender: Any) {
-        let router = Router.perform(
+        alertRouter = Router.perform(
             to: RoutableViewModule<ZIKCompatibleAlertConfigProtocol>(),
             from: self,
-            configuring: { config in
+            configuring: { (config, _, prepareModule) in
                 config.routeCompletion = { d in
                     print("show custom alert complete")
                 }
                 config.errorHandler = { (action, error) in
                     print("show custom alert failed: %@",error)
                 }
-        },
-            preparation: ({ module in
-                module.title = "Compatible Alert"
-                module.message = "Test custom route for alert with UIAlertView and UIAlertController"
-                module.addCancelButtonTitle("Cancel", handler: {
-                    print("Tap cancel alert")
+                prepareModule({ module in
+                    module.title = "Compatible Alert"
+                    module.message = "Test custom route for alert with UIAlertView and UIAlertController"
+                    module.addCancelButtonTitle("Cancel", handler: {
+                        print("Tap cancel alert")
+                    })
+                    module.addOtherButtonTitle("Hello", handler: {
+                        print("Tap Hello alert")
+                    })
                 })
-                module.addOtherButtonTitle("Hello", handler: {
-                    print("Tap Hello alert")
-                })
-            }))
-        alertRouter = (router as! ModuleViewRouter<ViewRouteConfig & ZIKCompatibleAlertConfigProtocol>)
+        })
     }
     
     @IBAction func testSwitchableRoute(_ sender: Any) {
@@ -88,9 +89,9 @@ class SwiftSampleViewController: UIViewController, PureSwiftSampleViewInput, Pur
             switchableView = SwitchableView(RoutableView<SwiftSampleViewInput>())
         }
         
-        infoRouter = Registry.router(to: switchableView)?
+        _ = Registry.router(to: switchableView)?
             .perform(from: self,
-                     configuring: { config in
+                     configuring: { config,_,_  in
                         config.routeType = ViewRouteType.push
                         config.prepareDestination = { [weak self] dest in
                             switch dest {
@@ -108,17 +109,20 @@ class SwiftSampleViewController: UIViewController, PureSwiftSampleViewInput, Pur
     }
     
     @IBAction func testInjectedRouter(_ sender: Any) {
-        let router = alertRouterClass.perform(
+        injectedAlertRouter?.perform(
             from: self,
-            configuring: { config in
-                config.title = "Compatible Alert"
-                config.message = "Test custom route for alert with UIAlertView and UIAlertController"
-                config.addCancelButtonTitle("Cancel", handler: {
-                    print("Tap cancel alert")
+            configuring: { (config, _, prepareModule) in
+                prepareModule({ module in
+                    module.title = "Compatible Alert"
+                    module.message = "Test custom route for alert with UIAlertView and UIAlertController"
+                    module.addCancelButtonTitle("Cancel", handler: {
+                        print("Tap cancel alert")
+                    })
+                    module.addOtherButtonTitle("Hello", handler: {
+                        print("Tap Hello alert")
+                    })
                 })
-                config.addOtherButtonTitle("Hello", handler: {
-                    print("Tap Hello alert")
-                })
+                
                 config.routeCompletion = { d in
                     print("show custom alert complete")
                 }
@@ -126,7 +130,6 @@ class SwiftSampleViewController: UIViewController, PureSwiftSampleViewInput, Pur
                     print("show custom alert failed: %@",error)
                 }
             })
-        alertRouter = router
     }
 
     @IBAction func testRouteForSwiftService(_ sender: Any) {

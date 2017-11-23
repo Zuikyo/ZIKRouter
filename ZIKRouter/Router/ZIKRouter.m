@@ -155,23 +155,49 @@ NSString *kZIKRouterErrorDomain = @"kZIKRouterErrorDomain";
 + (nullable id)makeDestinationWithPreparation:(void(^ _Nullable)(id destination))prepare {
     NSAssert(self != [ZIKRouter class], @"Only get destination from router subclass");
     NSAssert1([self completeSynchronously] == YES, @"The router (%@) should return the destination synchronously for +makeDestination",self);
+    __block id dest;
     ZIKRouter *router = [[self alloc] initWithConfiguring:^(ZIKPerformRouteConfiguration * _Nonnull config) {
         if (prepare) {
-            config.prepareDestination = ^(id  _Nonnull destination) {
-                prepare(destination);
+            config.prepareDestination = prepare;
+        }
+        void(^routeCompletion)(id destination) = config.routeCompletion;
+        if (routeCompletion) {
+            config.routeCompletion = ^(id  _Nonnull destination) {
+                routeCompletion(destination);
+                dest = destination;
+            };
+        } else {
+            config.routeCompletion = ^(id  _Nonnull destination) {
+                dest = destination;
             };
         }
     } removing:NULL];
     [router performRoute];
-    return router.destination;
+    return dest;
 }
 
 + (nullable id)makeDestinationWithConfiguring:(void(^ _Nullable)(ZIKPerformRouteConfiguration *config))configBuilder {
     NSAssert(self != [ZIKRouter class], @"Only get destination from router subclass");
     NSAssert1([self completeSynchronously] == YES, @"The router (%@) should return the destination synchronously for +makeDestination",self);
-    ZIKRouter *router = [[self alloc] initWithConfiguring:configBuilder removing:NULL];
+    __block id dest;
+    ZIKRouter *router = [[self alloc] initWithConfiguring:^(ZIKPerformRouteConfiguration * _Nonnull config) {
+        if (configBuilder) {
+            configBuilder(config);
+        }
+        void(^routeCompletion)(id destination) = config.routeCompletion;
+        if (routeCompletion) {
+            config.routeCompletion = ^(id  _Nonnull destination) {
+                routeCompletion(destination);
+                dest = destination;
+            };
+        } else {
+            config.routeCompletion = ^(id  _Nonnull destination) {
+                dest = destination;
+            };
+        }
+    } removing:NULL];
     [router performRoute];
-    return router.destination;
+    return dest;
 }
 
 + (nullable id)makeDestination {

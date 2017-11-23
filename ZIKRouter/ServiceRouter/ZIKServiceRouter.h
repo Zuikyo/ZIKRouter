@@ -67,7 +67,7 @@ typedef void(^ZIKServiceRouteGlobalErrorHandler)(__kindof ZIKServiceRouter * _Nu
 
 @interface ZIKServiceRouter (ErrorHandle)
 
-///Set error callback for all service router instance. Use this to debug and log
+///Set error callback for all service router instance. Use this to debug and log.
 + (void)setGlobalErrorHandler:(ZIKServiceRouteGlobalErrorHandler)globalErrorHandler;
 
 @end
