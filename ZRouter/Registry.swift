@@ -13,8 +13,8 @@
 import ZIKRouter.Internal
 import ZIKRouter.Private
 
-internal let shouldCheckViewRouter = ZIKDefaultViewRouter.shouldCheckImplementation()
-internal let shouldCheckServiceRouter = ZIKDefaultServiceRouter.shouldCheckImplementation()
+internal let shouldCheckViewRouter = ZIKAnyViewRouter.shouldCheckImplementation()
+internal let shouldCheckServiceRouter = ZIKAnyServiceRouter.shouldCheckImplementation()
 
 ///Key of registered protocol.
 internal struct _RouteKey<Type>: Hashable {
@@ -38,10 +38,10 @@ internal struct _RouteKey<Type>: Hashable {
 
 ///Registry for registering pure Swift protocol and discovering ZIKRouter subclass.
 public class Registry {
-    fileprivate static var viewProtocolContainer = [_RouteKey<Any>: ZIKDefaultViewRouter.Type]()
-    fileprivate static var viewConfigContainer = [_RouteKey<Any>: ZIKDefaultViewRouter.Type]()
-    fileprivate static var serviceProtocolContainer = [_RouteKey<Any>: ZIKDefaultServiceRouter.Type]()
-    fileprivate static var serviceConfigContainer = [_RouteKey<Any>: ZIKDefaultServiceRouter.Type]()
+    fileprivate static var viewProtocolContainer = [_RouteKey<Any>: ZIKAnyViewRouter.Type]()
+    fileprivate static var viewConfigContainer = [_RouteKey<Any>: ZIKAnyViewRouter.Type]()
+    fileprivate static var serviceProtocolContainer = [_RouteKey<Any>: ZIKAnyServiceRouter.Type]()
+    fileprivate static var serviceConfigContainer = [_RouteKey<Any>: ZIKAnyServiceRouter.Type]()
     fileprivate static var _check_viewProtocolContainer = [_RouteKey<Any>: Set<_RouteKey<Any>>]()
     fileprivate static var _check_serviceProtocolContainer = [_RouteKey<Any>: Set<_RouteKey<Any>>]()
     
@@ -54,17 +54,17 @@ public class Registry {
     ///   - router: The subclass of ZIKViewRouter.
     public static func register<Protocol>(_ routableView: RoutableView<Protocol>, forRouter router: AnyClass) {
         let viewProtocol = Protocol.self
-        assert(ZIKDefaultViewRouter._isAutoRegistrationFinished() == false, "Can't register after app did finish launch. Only register in registerRoutableDestination().")
-        assert(ZIKRouter_classIsSubclassOfClass(router, ZIKDefaultViewRouter.self), "This router must be subclass of ZIKViewRouter")
+        assert(ZIKAnyViewRouter._isAutoRegistrationFinished() == false, "Can't register after app did finish launch. Only register in registerRoutableDestination().")
+        assert(ZIKRouter_classIsSubclassOfClass(router, ZIKAnyViewRouter.self), "This router must be subclass of ZIKViewRouter")
         if ZIKRouter_isObjcProtocol(viewProtocol) {
-            (router as! ZIKDefaultViewRouter.Type)._swift_registerViewProtocol(viewProtocol)
+            (router as! ZIKAnyViewRouter.Type)._swift_registerViewProtocol(viewProtocol)
             return
         }
         assert(viewProtocolContainer[_RouteKey(type:viewProtocol)] == nil, "view protocol (\(viewProtocol)) was already registered with router (\(String(describing: viewProtocolContainer[_RouteKey(type:viewProtocol)]))).")
         if shouldCheckViewRouter {
-            _add(viewProtocol: viewProtocol, toRouter: router as! ZIKDefaultViewRouter.Type)
+            _add(viewProtocol: viewProtocol, toRouter: router as! ZIKAnyViewRouter.Type)
         }
-        viewProtocolContainer[_RouteKey(type:viewProtocol)] = (router as! ZIKDefaultViewRouter.Type)
+        viewProtocolContainer[_RouteKey(type:viewProtocol)] = (router as! ZIKAnyViewRouter.Type)
     }
     
     /// Register pure Swift protocol or objc protocol for your custom configuration with a ZIKViewRouter subclass. Router will check whether the registered config protocol is conformed by the defaultRouteConfiguration of the router.
@@ -74,15 +74,15 @@ public class Registry {
     ///   - router: The subclass of ZIKViewRouter.
     public static func register<Protocol>(_ routableViewModule: RoutableViewModule<Protocol>, forRouter router: AnyClass) {
         let configProtocol = Protocol.self
-        assert(ZIKDefaultViewRouter._isAutoRegistrationFinished() == false, "Can't register after app did finish launch. Only register in registerRoutableDestination().")
-        assert(ZIKRouter_classIsSubclassOfClass(router, ZIKDefaultViewRouter.self), "This router must be subclass of ZIKViewRouter")
+        assert(ZIKAnyViewRouter._isAutoRegistrationFinished() == false, "Can't register after app did finish launch. Only register in registerRoutableDestination().")
+        assert(ZIKRouter_classIsSubclassOfClass(router, ZIKAnyViewRouter.self), "This router must be subclass of ZIKViewRouter")
         if ZIKRouter_isObjcProtocol(configProtocol) {
-            (router as! ZIKDefaultViewRouter.Type)._swift_registerConfigProtocol(configProtocol)
+            (router as! ZIKAnyViewRouter.Type)._swift_registerConfigProtocol(configProtocol)
             return
         }
-        assert((router as! ZIKDefaultViewRouter.Type).defaultRouteConfiguration() is Protocol, "The router (\(router))'s default configuration must conform to the config protocol (\(configProtocol)) to register.")
+        assert((router as! ZIKAnyViewRouter.Type).defaultRouteConfiguration() is Protocol, "The router (\(router))'s default configuration must conform to the config protocol (\(configProtocol)) to register.")
         assert(viewConfigContainer[_RouteKey(type:configProtocol)] == nil, "view config protocol (\(configProtocol)) was already registered with router (\(String(describing: viewConfigContainer[_RouteKey(type:configProtocol)]))).")
-        viewConfigContainer[_RouteKey(type:configProtocol)] = (router as! ZIKDefaultViewRouter.Type)
+        viewConfigContainer[_RouteKey(type:configProtocol)] = (router as! ZIKAnyViewRouter.Type)
     }
     
     /// Register pure Swift protocol or objc protocol for your service with a ZIKServiceRouter subclass. Router will check whether the registered service protocol is conformed by the registered service.
@@ -92,17 +92,17 @@ public class Registry {
     ///   - router: The subclass of ZIKServiceRouter.
     public static func register<Protocol>(_ routableService: RoutableService<Protocol>, forRouter router: AnyClass) {
         let serviceProtocol = Protocol.self
-        assert(ZIKDefaultServiceRouter._isAutoRegistrationFinished() == false, "Can't register after app did finish launch. Only register in registerRoutableDestination().")
-        assert(ZIKRouter_classIsSubclassOfClass(router, ZIKDefaultServiceRouter.self), "This router must be subclass of ZIKServiceRouter")
+        assert(ZIKAnyServiceRouter._isAutoRegistrationFinished() == false, "Can't register after app did finish launch. Only register in registerRoutableDestination().")
+        assert(ZIKRouter_classIsSubclassOfClass(router, ZIKAnyServiceRouter.self), "This router must be subclass of ZIKServiceRouter")
         if ZIKRouter_isObjcProtocol(serviceProtocol) {
-            (router as! ZIKDefaultServiceRouter.Type)._swift_registerServiceProtocol(serviceProtocol)
+            (router as! ZIKAnyServiceRouter.Type)._swift_registerServiceProtocol(serviceProtocol)
             return
         }
         assert(serviceProtocolContainer[_RouteKey(type:serviceProtocol)] == nil, "service protocol (\(serviceProtocol)) was already registered with router (\(String(describing: serviceProtocolContainer[_RouteKey(type:serviceProtocol)]))).")
         if shouldCheckServiceRouter {
-            _add(serviceProtocol: serviceProtocol, toRouter: router as! ZIKDefaultServiceRouter.Type)
+            _add(serviceProtocol: serviceProtocol, toRouter: router as! ZIKAnyServiceRouter.Type)
         }
-        serviceProtocolContainer[_RouteKey(type:serviceProtocol)] = (router as! ZIKDefaultServiceRouter.Type)
+        serviceProtocolContainer[_RouteKey(type:serviceProtocol)] = (router as! ZIKAnyServiceRouter.Type)
     }
     
     /// Register pure Swift protocol or objc protocol for your custom configuration with a ZIKServiceRouter subclass.  Router will check whether the registered config protocol is conformed by the defaultRouteConfiguration of the router.
@@ -112,19 +112,19 @@ public class Registry {
     ///   - router: The subclass of ZIKServiceRouter.
     public static func register<Protocol>(_ routableServiceModule: RoutableServiceModule<Protocol>, forRouter router: AnyClass) {
         let configProtocol = Protocol.self
-        assert(ZIKDefaultServiceRouter._isAutoRegistrationFinished() == false, "Can't register after app did finish launch. Only register in registerRoutableDestination().")
-        assert(ZIKRouter_classIsSubclassOfClass(router, ZIKDefaultServiceRouter.self), "This router must be subclass of ZIKServiceRouter")
+        assert(ZIKAnyServiceRouter._isAutoRegistrationFinished() == false, "Can't register after app did finish launch. Only register in registerRoutableDestination().")
+        assert(ZIKRouter_classIsSubclassOfClass(router, ZIKAnyServiceRouter.self), "This router must be subclass of ZIKServiceRouter")
         if ZIKRouter_isObjcProtocol(configProtocol) {
-            (router as! ZIKDefaultServiceRouter.Type)._swift_registerConfigProtocol(configProtocol)
+            (router as! ZIKAnyServiceRouter.Type)._swift_registerConfigProtocol(configProtocol)
             return
         }
-        assert((router as! ZIKDefaultServiceRouter.Type).defaultRouteConfiguration() is Protocol, "The router (\(router))'s default configuration must conform to the config protocol (\(configProtocol)) to register.")
+        assert((router as! ZIKAnyServiceRouter.Type).defaultRouteConfiguration() is Protocol, "The router (\(router))'s default configuration must conform to the config protocol (\(configProtocol)) to register.")
         assert(serviceConfigContainer[_RouteKey(type:configProtocol)] == nil, "service config protocol (\(configProtocol)) was already registered with router (\(String(describing: serviceConfigContainer[_RouteKey(type:configProtocol)]))).")
-        serviceConfigContainer[_RouteKey(type:configProtocol)] = (router as! ZIKDefaultServiceRouter.Type)
+        serviceConfigContainer[_RouteKey(type:configProtocol)] = (router as! ZIKAnyServiceRouter.Type)
     }
     
     
-    private static func _add(viewProtocol: Any.Type, toRouter router: ZIKDefaultViewRouter.Type) {
+    private static func _add(viewProtocol: Any.Type, toRouter router: ZIKAnyViewRouter.Type) {
         var protocols = _check_viewProtocolContainer[_RouteKey(type: router.self)]
         if protocols == nil {
             protocols = Set()
@@ -136,7 +136,7 @@ public class Registry {
     }
     
     
-    private static func _add(serviceProtocol: Any.Type, toRouter router: ZIKDefaultServiceRouter.Type) {
+    private static func _add(serviceProtocol: Any.Type, toRouter router: ZIKAnyServiceRouter.Type) {
         var protocols = _check_serviceProtocolContainer[_RouteKey(type: router.self)]
         if protocols == nil {
             protocols = Set()
@@ -220,7 +220,7 @@ public extension Registry {
     ///
     /// - Parameter switchableViewModule: A struct carrying any routable view module config protocol, but not a specified one.
     /// - Returns: The view router class for the view module config protocol.
-    public static func router(to switchableViewModule: SwitchableViewModule) -> ZIKDefaultViewRouter.Type? {
+    public static func router(to switchableViewModule: SwitchableViewModule) -> ZIKAnyViewRouter.Type? {
         return _router(toView: switchableViewModule.routableProtocol)
     }
     
@@ -228,7 +228,7 @@ public extension Registry {
     ///
     /// - Parameter switchableService: A struct carrying any routable service protocol, but not a specified one.
     /// - Returns: The service router class for the service protocol.
-    public static func router(to switchableService: SwitchableService) -> ZIKDefaultViewRouter.Type? {
+    public static func router(to switchableService: SwitchableService) -> ZIKAnyViewRouter.Type? {
         return _router(toView: switchableService.routableProtocol)
     }
     
@@ -236,7 +236,7 @@ public extension Registry {
     ///
     /// - Parameter switchableServiceModule: A struct carrying any routable service module config protocol, but not a specified one.
     /// - Returns: The service router class for the service module config protocol.
-    public static func router(to switchableServiceModule: SwitchableServiceModule) -> ZIKDefaultViewRouter.Type? {
+    public static func router(to switchableServiceModule: SwitchableServiceModule) -> ZIKAnyViewRouter.Type? {
         return _router(toView: switchableServiceModule.routableProtocol)
     }
 }
@@ -250,21 +250,21 @@ public extension Registry {
     ///
     /// - Parameter viewProtocolName: The name string of the view protocol.
     /// - Returns: The view router class for the view protocol.
-    public static func router(toDynamicViewKey viewProtocolName: String) -> ZIKDefaultViewRouter.Type? {
+    public static func router(toDynamicViewKey viewProtocolName: String) -> ZIKAnyViewRouter.Type? {
         var isObjcProtocol = false
         var routerClass = viewProtocolContainer[_RouteKey(key:viewProtocolName)]
         if routerClass == nil {
             let viewProtocol = NSProtocolFromString(viewProtocolName)
             if viewProtocol != nil && ZIKRouter_isObjcProtocol(viewProtocol!) {
                 isObjcProtocol = true
-                routerClass = _swift_ZIKViewRouterToView(viewProtocol!) as? ZIKDefaultViewRouter.Type
+                routerClass = _swift_ZIKViewRouterToView(viewProtocol!) as? ZIKAnyViewRouter.Type
             }
         }
         if routerClass == nil && isObjcProtocol == false {
-            ZIKDefaultViewRouter._callbackGlobalErrorHandler(with: nil,
-                                                             action: ZIKRouteAction.toView,
-                                                             error: ZIKDefaultViewRouter.error(withCode:ZIKViewRouteError.invalidProtocol.rawValue,
-                                                                                 localizedDescription:"Swift view protocol name (\(viewProtocolName)) is invalid, maybe it was not registered with any view router, or not a protocol type name."))
+            ZIKAnyViewRouter._callbackGlobalErrorHandler(with: nil,
+                                                         action: ZIKRouteAction.toView,
+                                                         error: ZIKAnyViewRouter.error(withCode:ZIKViewRouteError.invalidProtocol.rawValue,
+                                                                                       localizedDescription:"Swift view protocol name (\(viewProtocolName)) is invalid, maybe it was not registered with any view router, or not a protocol type name."))
             assertionFailure("Swift view protocol name (\(viewProtocolName)) is invalid, maybe it was not registered with any view router, or not a protocol type name.")
         }
         return routerClass
@@ -275,21 +275,21 @@ public extension Registry {
     ///
     /// - Parameter configProtocolName: The name string of the view module config protocol.
     /// - Returns: The view router class for the view module config protocol.
-    public static func router(toDynamicViewModuleKey configProtocolName: String) -> ZIKDefaultViewRouter.Type? {
+    public static func router(toDynamicViewModuleKey configProtocolName: String) -> ZIKAnyViewRouter.Type? {
         var isObjcProtocol = false
         var routerClass = viewConfigContainer[_RouteKey(key:configProtocolName)]
         if routerClass == nil {
             let configProtocol = NSProtocolFromString(configProtocolName)
             if configProtocol != nil && ZIKRouter_isObjcProtocol(configProtocol!) {
                 isObjcProtocol = true
-                routerClass = _swift_ZIKViewRouterToModule(configProtocol!) as? ZIKDefaultViewRouter.Type
+                routerClass = _swift_ZIKViewRouterToModule(configProtocol!) as? ZIKAnyViewRouter.Type
             }
         }
         if routerClass == nil && isObjcProtocol == false {
-            ZIKDefaultViewRouter._callbackGlobalErrorHandler(with: nil,
-                                                             action: ZIKRouteAction.toViewModule,
-                                                             error: ZIKDefaultViewRouter.error(withCode:ZIKViewRouteError.invalidProtocol.rawValue,
-                                                                                 localizedDescription:"Swift view module protocol name (\(configProtocolName)) is invalid, maybe it was not registered with any view router, or not a protocol type name."))
+            ZIKAnyViewRouter._callbackGlobalErrorHandler(with: nil,
+                                                         action: ZIKRouteAction.toViewModule,
+                                                         error: ZIKAnyViewRouter.error(withCode:ZIKViewRouteError.invalidProtocol.rawValue,
+                                                                                       localizedDescription:"Swift view module protocol name (\(configProtocolName)) is invalid, maybe it was not registered with any view router, or not a protocol type name."))
             assertionFailure("Swift view module protocol name (\(configProtocolName)) is invalid, maybe it was not registered with any view router, or not a protocol type name.")
         }
         return routerClass
@@ -300,21 +300,21 @@ public extension Registry {
     ///
     /// - Parameter serviceProtocolName: The name string of the service protocol.
     /// - Returns: The service router class for the service protocol.
-    public static func router(toDynamicServiceKey serviceProtocolName: String) -> ZIKDefaultServiceRouter.Type? {
+    public static func router(toDynamicServiceKey serviceProtocolName: String) -> ZIKAnyServiceRouter.Type? {
         var isObjcProtocol = false
         var routerClass = serviceProtocolContainer[_RouteKey(key:serviceProtocolName)]
         if routerClass == nil {
             let serviceProtocol = NSProtocolFromString(serviceProtocolName)
             if serviceProtocol != nil && ZIKRouter_isObjcProtocol(serviceProtocol!) {
                 isObjcProtocol = true
-                routerClass = _swift_ZIKServiceRouterToService(serviceProtocol!) as? ZIKDefaultServiceRouter.Type
+                routerClass = _swift_ZIKServiceRouterToService(serviceProtocol!) as? ZIKAnyServiceRouter.Type
             }
         }
         if routerClass == nil && isObjcProtocol == false {
-            ZIKDefaultServiceRouter._callbackGlobalErrorHandler(with: nil,
-                                                                action: ZIKRouteAction.toService,
-                                                                error: ZIKDefaultServiceRouter.error(withCode:ZIKServiceRouteError.invalidProtocol.rawValue,
-                                                                                 localizedDescription:"Swift service protocol name (\(serviceProtocolName)) is invalid, maybe it was not registered with any service router, or not a protocol name."))
+            ZIKAnyServiceRouter._callbackGlobalErrorHandler(with: nil,
+                                                            action: ZIKRouteAction.toService,
+                                                            error: ZIKAnyServiceRouter.error(withCode:ZIKServiceRouteError.invalidProtocol.rawValue,
+                                                                                             localizedDescription:"Swift service protocol name (\(serviceProtocolName)) is invalid, maybe it was not registered with any service router, or not a protocol name."))
             assertionFailure("Swift service protocol name (\(serviceProtocolName)) is invalid, maybe it was not registered with any service router, or not a protocol name.")
         }
         return routerClass
@@ -325,21 +325,21 @@ public extension Registry {
     ///
     /// - Parameter configProtocolName: The name string of the service module config protocol.
     /// - Returns: The service router class for the service module config protocol.
-    public static func router(toDynamicServiceModuleKey configProtocolName: String) -> ZIKDefaultServiceRouter.Type? {
+    public static func router(toDynamicServiceModuleKey configProtocolName: String) -> ZIKAnyServiceRouter.Type? {
         var isObjcProtocol = false
         var routerClass = serviceConfigContainer[_RouteKey(key:configProtocolName)]
         if routerClass == nil {
             let configProtocol = NSProtocolFromString(configProtocolName)
             if configProtocol != nil && ZIKRouter_isObjcProtocol(configProtocol!) {
                 isObjcProtocol = true
-                routerClass = _swift_ZIKServiceRouterToModule(configProtocol!) as? ZIKDefaultServiceRouter.Type
+                routerClass = _swift_ZIKServiceRouterToModule(configProtocol!) as? ZIKAnyServiceRouter.Type
             }
         }
         if routerClass == nil && isObjcProtocol == false {
-            ZIKDefaultServiceRouter._callbackGlobalErrorHandler(with: nil,
-                                                                action: ZIKRouteAction.toServiceModule,
-                                                                error: ZIKDefaultServiceRouter.error(withCode:ZIKServiceRouteError.invalidProtocol.rawValue,
-                                                                                 localizedDescription:"Swift service module protocol name (\(configProtocolName)) is invalid, maybe it was not registered with any service router, or not a protocol name."))
+            ZIKAnyServiceRouter._callbackGlobalErrorHandler(with: nil,
+                                                            action: ZIKRouteAction.toServiceModule,
+                                                            error: ZIKAnyServiceRouter.error(withCode:ZIKServiceRouteError.invalidProtocol.rawValue,
+                                                                                             localizedDescription:"Swift service module protocol name (\(configProtocolName)) is invalid, maybe it was not registered with any service router, or not a protocol name."))
             assertionFailure("Swift service module protocol name (\(configProtocolName)) is invalid, maybe it was not registered with any service router, or not a protocol name.")
         }
         return routerClass
@@ -354,16 +354,16 @@ private extension Registry {
     ///
     /// - Parameter routableView: A routabe entry carrying a view protocol conformed by the view registered with a view router. Support objc protocol and pure Swift protocol.
     /// - Returns: The view router class for the view protocol.
-    private static func _router(toView viewProtocol: Any.Type) -> ZIKDefaultViewRouter.Type? {
+    private static func _router(toView viewProtocol: Any.Type) -> ZIKAnyViewRouter.Type? {
         var routerClass = viewProtocolContainer[_RouteKey(type:viewProtocol)]
         if routerClass == nil && ZIKRouter_isObjcProtocol(viewProtocol) {
-            routerClass = _swift_ZIKViewRouterToView(viewProtocol) as? ZIKDefaultViewRouter.Type
+            routerClass = _swift_ZIKViewRouterToView(viewProtocol) as? ZIKAnyViewRouter.Type
         }
         if routerClass == nil && !ZIKRouter_isObjcProtocol(viewProtocol) {
-            ZIKDefaultViewRouter._callbackGlobalErrorHandler(with: nil,
-                                                             action: ZIKRouteAction.toView,
-                                                             error: ZIKDefaultViewRouter.error(withCode:ZIKViewRouteError.invalidProtocol.rawValue,
-                                                                                 localizedDescription:"Swift view protocol (\(viewProtocol)) was not registered with any view router."))
+            ZIKAnyViewRouter._callbackGlobalErrorHandler(with: nil,
+                                                         action: ZIKRouteAction.toView,
+                                                         error: ZIKAnyViewRouter.error(withCode:ZIKViewRouteError.invalidProtocol.rawValue,
+                                                                                       localizedDescription:"Swift view protocol (\(viewProtocol)) was not registered with any view router."))
             assertionFailure("Swift view protocol (\(viewProtocol)) was not registered with any view router.")
         }
         return routerClass
@@ -373,16 +373,16 @@ private extension Registry {
     ///
     /// - Parameter routableViewModule: A routabe entry carrying a view module config protocol registered with a view router. Support objc protocol and pure Swift protocol.
     /// - Returns: The view router class for the config protocol.
-    private static func _router(toViewModule configProtocol: Any.Type) -> ZIKDefaultViewRouter.Type? {
+    private static func _router(toViewModule configProtocol: Any.Type) -> ZIKAnyViewRouter.Type? {
         var routerClass = viewConfigContainer[_RouteKey(type:configProtocol)]
         if routerClass == nil && ZIKRouter_isObjcProtocol(configProtocol) {
-            routerClass = _swift_ZIKViewRouterToModule(configProtocol) as? ZIKDefaultViewRouter.Type
+            routerClass = _swift_ZIKViewRouterToModule(configProtocol) as? ZIKAnyViewRouter.Type
         }
         if routerClass == nil && !ZIKRouter_isObjcProtocol(configProtocol) {
-            ZIKDefaultViewRouter._callbackGlobalErrorHandler(with: nil,
-                                                             action: ZIKRouteAction.toViewModule,
-                                                             error: ZIKDefaultViewRouter.error(withCode:ZIKViewRouteError.invalidProtocol.rawValue,
-                                                                                 localizedDescription:"Swift module config protocol (\(configProtocol)) was not registered with any view router."))
+            ZIKAnyViewRouter._callbackGlobalErrorHandler(with: nil,
+                                                         action: ZIKRouteAction.toViewModule,
+                                                         error: ZIKAnyViewRouter.error(withCode:ZIKViewRouteError.invalidProtocol.rawValue,
+                                                                                       localizedDescription:"Swift module config protocol (\(configProtocol)) was not registered with any view router."))
             assertionFailure("Swift module config protocol (\(configProtocol)) was not registered with any view router.")
         }
         return routerClass
@@ -392,16 +392,16 @@ private extension Registry {
     ///
     /// - Parameter routableService: A routabe entry carrying a service protocol conformed by the service registered with a service router. Support objc protocol and pure Swift protocol.
     /// - Returns: The view router class for the service protocol.
-    private static func _router(toService serviceProtocol: Any.Type) -> ZIKDefaultServiceRouter.Type? {
+    private static func _router(toService serviceProtocol: Any.Type) -> ZIKAnyServiceRouter.Type? {
         var routerClass = serviceProtocolContainer[_RouteKey(type:serviceProtocol)]
         if routerClass == nil && ZIKRouter_isObjcProtocol(serviceProtocol) {
-            routerClass = _swift_ZIKServiceRouterToService(serviceProtocol) as? ZIKDefaultServiceRouter.Type
+            routerClass = _swift_ZIKServiceRouterToService(serviceProtocol) as? ZIKAnyServiceRouter.Type
         }
         if routerClass == nil && !ZIKRouter_isObjcProtocol(serviceProtocol) {
-            ZIKDefaultServiceRouter._callbackGlobalErrorHandler(with: nil,
-                                                                action: ZIKRouteAction.toService,
-                                                                error: ZIKDefaultServiceRouter.error(withCode:ZIKServiceRouteError.invalidProtocol.rawValue,
-                                                                                 localizedDescription:"Swift service protocol (\(serviceProtocol)) was not registered with any service router."))
+            ZIKAnyServiceRouter._callbackGlobalErrorHandler(with: nil,
+                                                            action: ZIKRouteAction.toService,
+                                                            error: ZIKAnyServiceRouter.error(withCode:ZIKServiceRouteError.invalidProtocol.rawValue,
+                                                                                             localizedDescription:"Swift service protocol (\(serviceProtocol)) was not registered with any service router."))
             assertionFailure("Swift service protocol (\(serviceProtocol)) was not registered with any service router.")
         }
         return routerClass
@@ -411,16 +411,16 @@ private extension Registry {
     ///
     /// - Parameter routableServiceModule: A routabe entry carrying a service module config protocol registered with a service router. Support objc protocol and pure Swift protocol.
     /// - Returns: The service router class for the config protocol.
-    private static func _router(toServiceModule configProtocol: Any.Type) -> ZIKDefaultServiceRouter.Type? {
+    private static func _router(toServiceModule configProtocol: Any.Type) -> ZIKAnyServiceRouter.Type? {
         var routerClass = serviceConfigContainer[_RouteKey(type:configProtocol)]
         if routerClass == nil && ZIKRouter_isObjcProtocol(configProtocol) {
-            routerClass = _swift_ZIKServiceRouterToModule(configProtocol) as? ZIKDefaultServiceRouter.Type
+            routerClass = _swift_ZIKServiceRouterToModule(configProtocol) as? ZIKAnyServiceRouter.Type
         }
         if routerClass == nil && !ZIKRouter_isObjcProtocol(configProtocol) {
-            ZIKDefaultServiceRouter._callbackGlobalErrorHandler(with: nil,
-                                                                action: ZIKRouteAction.toServiceModule,
-                                                                error: ZIKDefaultServiceRouter.error(withCode:ZIKServiceRouteError.invalidProtocol.rawValue,
-                                                                                 localizedDescription:"Swift module config protocol (\(configProtocol)) was not registered with any service router."))
+            ZIKAnyServiceRouter._callbackGlobalErrorHandler(with: nil,
+                                                            action: ZIKRouteAction.toServiceModule,
+                                                            error: ZIKAnyServiceRouter.error(withCode:ZIKServiceRouteError.invalidProtocol.rawValue,
+                                                                                             localizedDescription:"Swift module config protocol (\(configProtocol)) was not registered with any service router."))
             assertionFailure("Swift module config protocol (\(configProtocol)) was not registered with any service router.")
         }
         return routerClass
@@ -429,7 +429,7 @@ private extension Registry {
 
 // MARK: Validate
 internal extension Registry {
-    internal class func validateConformance(destination: Any, inViewRouter router: ZIKDefaultViewRouter) -> Bool {
+    internal class func validateConformance(destination: Any, inViewRouter router: ZIKAnyViewRouter) -> Bool {
         let protocols = _check_viewProtocolContainer[_RouteKey(type: type(of: router))]
         if protocols != nil {
             for viewProtocol in protocols! {
@@ -441,7 +441,7 @@ internal extension Registry {
         }
         return true
     }
-    internal class func validateConformance(destination: Any, inServiceRouter router: ZIKDefaultServiceRouter) -> Bool {
+    internal class func validateConformance(destination: Any, inServiceRouter router: ZIKAnyServiceRouter) -> Bool {
         let protocols = _check_serviceProtocolContainer[_RouteKey(type: type(of: router))]
         if protocols != nil {
             for serviceProtocolEntry in protocols! {

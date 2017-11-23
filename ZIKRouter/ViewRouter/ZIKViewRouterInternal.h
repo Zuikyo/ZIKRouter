@@ -36,7 +36,7 @@ NS_ASSUME_NONNULL_BEGIN
  @param configuration Configuration for route.
  @return A UIViewController or UIView, If the configuration is invalid, return nil to make this route failed.
  */
-- (nullable Destination)destinationWithConfiguration:(RouteConfig)configuration;
+//- (nullable Destination)destinationWithConfiguration:(RouteConfig)configuration;
 
 #pragma mark Optional Override
 

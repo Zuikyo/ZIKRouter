@@ -119,20 +119,9 @@ public extension Router {
         to routableView: RoutableView<Destination>,
         preparation prepare: ((Destination) -> Swift.Void)? = nil
         ) -> Destination? {
-        var destination: Destination?
         let routerClass = Registry.router(to: routableView)
         assert((routerClass?.completeSynchronously)!,"router class (\(String(describing: routerClass))) can't get destination synchronously.")
-        _ = routerClass?.perform(from: nil, configuring: { config, prepareDestination, _  in
-            config.routeType = ViewRouteType.getDestination
-            prepareDestination({ d in
-                prepare?(d)
-            })
-            config.routeCompletion = { d in
-                assert(d is Destination,"Bad implementation in router(\(String(describing: routerClass))), destination(\(type(of: d))) is not \(Destination.self) type.")
-                destination = d as? Destination
-            }
-        })
-        return destination
+        return routerClass?.makeDestination(preparation: prepare)
     }
     
     /// Get view destination with view config protocol.

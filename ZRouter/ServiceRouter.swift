@@ -15,12 +15,12 @@ import ZIKRouter.Internal
 public class ServiceRouter<Destination, ModuleConfig, RemoveConfig> {
     
     /// The router type to wrap.
-    public let routerType: ZIKDefaultServiceRouter.Type
+    public let routerType: ZIKAnyServiceRouter.Type
     
-    /// The routed ZIKViewRouter.
-    public private(set) var routed: ZIKDefaultServiceRouter?
+    /// The routed ZIKServiceRouter.
+    public private(set) var routed: ZIKAnyServiceRouter?
     
-    internal init(routerType: ZIKDefaultServiceRouter.Type) {
+    internal init(routerType: ZIKAnyServiceRouter.Type) {
         self.routerType = routerType
     }
     
@@ -99,26 +99,23 @@ public class ServiceRouter<Destination, ModuleConfig, RemoveConfig> {
     // MARK: Make Destination
     
     public func makeDestination() -> Destination? {
-        return routerType.makeDestination() as? Destination
+        let destination = routerType.makeDestination()
+        assert(destination == nil || destination is Destination, "Router (\(self.routerType)) returns wrong destination type (\(String(describing: destination))), destination should be \(Destination.self)")
+        return destination as? Destination
     }
     
     public func makeDestination(preparation prepare: ((Destination) -> Void)? = nil) -> Destination? {
-        var destination: Any?;
-        routerType.perform(configuring: ({ config in
-            config.prepareDestination = { d in
-                if d is Destination {
-                    prepare?(d as! Destination)
-                }
+        let destination = routerType.makeDestination(preparation: { d in
+            if d is Destination {
+                prepare?(d as! Destination)
             }
-            config.routeCompletion = { d in
-                destination = d
-            }
-        }))
+        })
+        assert(destination == nil || destination is Destination, "Router (\(self.routerType)) returns wrong destination type (\(String(describing: destination))), destination should be \(Destination.self)")
         return destination as? Destination
     }
     
     public func makeDestination(configuring configBuilder: @escaping (PerformRouteConfig, DestinationPreparation, ModulePreparation) -> Void) -> Destination? {
-        return routerType.makeDestination(configuring: { config in
+        let destination = routerType.makeDestination(configuring: { config in
             let prepareDestination = { (prepare: @escaping (Destination) -> Void) in
                 config.prepareDestination = { d in
                     if d is Destination {
@@ -134,9 +131,10 @@ public class ServiceRouter<Destination, ModuleConfig, RemoveConfig> {
                 }
             }
             configBuilder(config, prepareDestination, prepareModule)
-        }) as? Destination
+        })
+        assert(destination == nil || destination is Destination, "Router (\(self.routerType)) returns wrong destination type (\(String(describing: destination))), destination should be \(Destination.self)")
+        return destination as? Destination
     }
-    
     
     public func description(of state: ZIKRouterState) -> String {
         return routerType.description(of: state)

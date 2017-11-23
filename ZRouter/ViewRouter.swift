@@ -15,12 +15,12 @@ import ZIKRouter.Internal
 public class ViewRouter<Destination, ModuleConfig, RemoveConfig> {
     
     /// The router type to wrap.
-    public let routerType: ZIKDefaultViewRouter.Type
+    public let routerType: ZIKAnyViewRouter.Type
     
     /// The routed ZIKViewRouter.
-    public private(set) var routed: ZIKDefaultViewRouter?
+    public private(set) var routed: ZIKAnyViewRouter?
     
-    internal init(routerType: ZIKDefaultViewRouter.Type) {
+    internal init(routerType: ZIKAnyViewRouter.Type) {
         self.routerType = routerType
     }
     
@@ -99,21 +99,27 @@ public class ViewRouter<Destination, ModuleConfig, RemoveConfig> {
     // MARK: Make Destination
     
     public func makeDestination() -> Destination? {
-        return routerType.makeDestination() as? Destination
+        let destination = routerType.makeDestination()
+        assert(destination == nil || destination is Destination, "Router (\(self.routerType)) returns wrong destination type (\(String(describing: destination))), destination should be \(Destination.self)")
+        return destination as? Destination
     }
     
     public func makeDestination(preparation prepare: ((Destination) -> Void)? = nil) -> Destination? {
-        return routerType.makeDestination(preparation: prepare as? (ZIKRoutableView) -> Void) as? Destination
+        let destination = routerType.makeDestination(preparation: { d in
+            if d is Destination {
+                prepare?(d as! Destination)
+            }
+        })
+        assert(destination == nil || destination is Destination, "Router (\(self.routerType)) returns wrong destination type (\(String(describing: destination))), destination should be \(Destination.self)")
+        return destination as? Destination
     }
     
     public func makeDestination(configuring configBuilder: @escaping (ViewRouteConfig, DestinationPreparation, ModulePreparation) -> Void) -> Destination? {
-        return routerType.makeDestination(configuring: { config in
+        let destination = routerType.makeDestination(configuring: { config in
             let prepareDestination = { (prepare: @escaping (Destination) -> Void) in
                 config.prepareDestination = { d in
                     if d is Destination {
                         prepare(d as! Destination)
-                    } else {
-                        assertionFailure("Router (\(self.routerType)) returns wrong destination type, destination should be \(Destination.self)")
                     }
                 }
             }
@@ -123,7 +129,9 @@ public class ViewRouter<Destination, ModuleConfig, RemoveConfig> {
                 }
             }
             configBuilder(config, prepareDestination, prepareModule)
-        }) as? Destination
+        })
+        assert(destination == nil || destination is Destination, "Router (\(self.routerType)) returns wrong destination type (\(String(describing: destination))), destination should be \(Destination.self)")
+        return destination as? Destination
     }
     
     

@@ -21,9 +21,6 @@ NS_ASSUME_NONNULL_BEGIN
 ///Register the destination class with those +registerXXX: methods. ZIKServiceRouter will call this method before app did finish launch. If a router was not registered with any service class, there'll be an assert failure.
 + (void)registerRoutableDestination;
 
-///Create and initialize destination with configuration.
-- (nullable Destination)destinationWithConfiguration:(RouteConfig)configuration;
-
 #pragma mark Optional Override
 
 ///Invoked after auto registration is finished when ZIKROUTER_CHECK is enabled. You can override and validate whether those routable swift protocols used in your module as external dependencies have registered with routers, because we can't enumerate swift protocols at runtime.

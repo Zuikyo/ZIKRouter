@@ -28,14 +28,14 @@ NS_ASSUME_NONNULL_BEGIN
 ///Whether this router is an abstract router.
 + (BOOL)isAbstractRouter;
 
-///Create destination and initilize it with configuration.
-- (id)destinationWithConfiguration:(__kindof ZIKRouteConfiguration *)configuration;
+///Create destination and initilize it with configuration. If the configuration is invalid, return nil to make this route failed.
+- (nullable Destination)destinationWithConfiguration:(RouteConfig)configuration;
 
 ///If a router need to perform on a specific thread, override -performWithConfiguration: and call [super performWithConfiguration:configuration] in that thread.
-- (void)performWithConfiguration:(__kindof ZIKRouteConfiguration *)configuration;
+- (void)performWithConfiguration:(RouteConfig)configuration;
 
 ///Perform your custom route action.
-- (void)performRouteOnDestination:(nullable id)destination configuration:(__kindof ZIKRouteConfiguration *)configuration;
+- (void)performRouteOnDestination:(nullable Destination)destination configuration:(RouteConfig)configuration;
 ///If the router use a custom configuration, override this and return the configuration.
 //+ (__kindof ZIKRouteConfiguration *)defaultRouteConfiguration;
 
@@ -43,17 +43,17 @@ NS_ASSUME_NONNULL_BEGIN
 + (RouteConfig)defaultRouteConfiguration;
 
 ///If you can undo your route action, such as dismiss a routed view, do remove in this.
-- (void)removeDestination:(id)destination removeConfiguration:(__kindof ZIKRouteConfiguration *)removeConfiguration;
+- (void)removeDestination:(Destination)destination removeConfiguration:(RemoveConfig)removeConfiguration;
 
 ///If the router use a custom configuration, override this and return the configuration.
-+ (__kindof ZIKRouteConfiguration *)defaultRemoveConfiguration;
++ (RemoveConfig)defaultRemoveConfiguration;
 
 - (NSString *)errorDomain;
 
 #pragma mark Internal Methods
 
 //Attach a destination not created from router.
-- (void)attachDestination:(id)destination;
+- (void)attachDestination:(Destination)destination;
 
 ///Change state.
 - (void)notifyRouteState:(ZIKRouterState)state;
