@@ -109,7 +109,7 @@ class SwiftSampleViewController: UIViewController, PureSwiftSampleViewInput, Pur
     }
     
     @IBAction func testInjectedRouter(_ sender: Any) {
-        _ = injectedAlertRouter?.perform(
+        injectedAlertRouter?.perform(
             from: self,
             configuring: { (config, _, prepareModule) in
                 prepareModule({ module in

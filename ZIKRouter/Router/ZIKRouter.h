@@ -54,10 +54,10 @@ NS_ASSUME_NONNULL_BEGIN
 
 ///Whether the router can perform route now.
 - (BOOL)canPerform;
-///Perform route directly. If -canPerform return NO, this will failed and return NO.
-- (BOOL)performRoute;
-///Perform with success handler and error handler. If -canPerform return NO, this will failed and return NO.
-- (BOOL)performRouteWithSuccessHandler:(void(^ __nullable)(void))performerSuccessHandler
+///Perform route directly.
+- (void)performRoute;
+///Perform with success handler and error handler.
+- (void)performRouteWithSuccessHandler:(void(^ __nullable)(void))performerSuccessHandler
                           errorHandler:(void(^ __nullable)(ZIKRouteAction routeAction, NSError *error))performerErrorHandler;
 
 ///If this route action doesn't need any arguments, just perform directly.
@@ -75,10 +75,10 @@ NS_ASSUME_NONNULL_BEGIN
 
 ///Whether the router can remove route now.
 - (BOOL)canRemove;
-///Remove route directly. If -canRemove return NO, this will failed and return NO.
-- (BOOL)removeRoute;
-///Remove with success handler and error handler. If -canRemove return NO, this will failed and return NO.
-- (BOOL)removeRouteWithSuccessHandler:(void(^ __nullable)(void))performerSuccessHandler
+///Remove route directly. If -canRemove return NO, this will failed.
+- (void)removeRoute;
+///Remove with success handler and error handler.
+- (void)removeRouteWithSuccessHandler:(void(^ __nullable)(void))performerSuccessHandler
                          errorHandler:(void(^ __nullable)(ZIKRouteAction routeAction, NSError *error))performerErrorHandler;
 
 #pragma mark Factory
