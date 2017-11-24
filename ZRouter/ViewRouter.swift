@@ -54,7 +54,10 @@ public class ViewRouter<Destination, ModuleConfig, RemoveConfig> {
     public typealias ModulePreparation = ((ModuleConfig) -> Void) -> Void
     public typealias RemovePreparation = ((RemoveConfig) -> Void) -> Void
     
-    public func perform(from source: ZIKViewRouteSource?, configuring configBuilder: (ViewRouteConfig, DestinationPreparation, ModulePreparation) -> Void, removing removeConfigBuilder: ((ViewRemoveConfig, RemovePreparation) -> Void)? = nil) {
+    public func perform(from source: ZIKViewRouteSource?, configuring configBuilder: (ViewRouteConfig, DestinationPreparation, ModulePreparation) -> Void, removing removeConfigBuilder: ((ViewRemoveConfig, RemovePreparation) -> Void)? = nil) -> Bool {
+        guard canPerform else {
+            return false
+        }
         var removeBuilder: ((ViewRemoveConfig) -> Void)? = nil
         if removeConfigBuilder != nil {
             removeBuilder = { (config: ViewRemoveConfig) in
@@ -84,6 +87,7 @@ public class ViewRouter<Destination, ModuleConfig, RemoveConfig> {
             }
             configBuilder(config, prepareDestination, prepareModule)
         }, removing: removeBuilder)
+        return true
     }
     
     // MARK: Remove

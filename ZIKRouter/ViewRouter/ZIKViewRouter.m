@@ -231,7 +231,7 @@ static BOOL _isClassRoutable(Class class) {
     return YES;
 }
 
-- (void)performRouteWithSuccessHandler:(void(^)(void))performerSuccessHandler
+- (BOOL)performRouteWithSuccessHandler:(void(^)(void))performerSuccessHandler
                           errorHandler:(void(^)(ZIKRouteAction routeAction, NSError *error))performerErrorHandler {
     ZIKRouterState state = self.state;
     if (state == ZIKRouterStateRouting) {
@@ -239,19 +239,19 @@ static BOOL _isClassRoutable(Class class) {
                           errorHandler:performerErrorHandler
                                 action:ZIKRouteActionPerformRoute
                       errorDescription:@"%@ is routing, can't perform route again",self];
-        return;
+        return NO;
     } else if (state == ZIKRouterStateRouted) {
         [self _callbackError_actionFailedWithAction:ZIKRouteActionPerformRoute
                                    errorDescription:@"%@ 's state is routed, can't perform route again",self];
-        return;
+        return NO;
     } else if (state == ZIKRouterStateRemoving) {
         [self _callbackError_errorCode:ZIKViewRouteErrorActionFailed
                           errorHandler:performerErrorHandler
                                 action:ZIKRouteActionPerformRoute
                       errorDescription:@"%@ 's state is removing, can't perform route again",self];
-        return;
+        return NO;
     }
-    [super performRouteWithSuccessHandler:performerSuccessHandler errorHandler:performerErrorHandler];
+    return [super performRouteWithSuccessHandler:performerSuccessHandler errorHandler:performerErrorHandler];
 }
 
 - (void)performWithConfiguration:(__kindof ZIKViewRouteConfiguration *)configuration {
@@ -1252,8 +1252,11 @@ destinationStateBeforeRoute:(ZIKPresentationState *)destinationStateBeforeRoute
     return YES;
 }
 
-- (void)removeRouteWithSuccessHandler:(void(^)(void))performerSuccessHandler
+- (BOOL)removeRouteWithSuccessHandler:(void(^)(void))performerSuccessHandler
                          errorHandler:(void(^)(ZIKRouteAction routeAction, NSError *error))performerErrorHandler {
+    if (![self canRemove]) {
+        return NO;
+    }
     void(^doRemoveRoute)(void) = ^ {
         if (self.state != ZIKRouterStateRouted || !self.original_configuration) {
             [self _callbackError_errorCode:ZIKViewRouteErrorActionFailed
@@ -1284,6 +1287,7 @@ destinationStateBeforeRoute:(ZIKPresentationState *)destinationStateBeforeRoute
             doRemoveRoute();
         });
     }
+    return YES;
 }
 
 - (void)removeDestination:(id)destination removeConfiguration:(__kindof ZIKRouteConfiguration *)removeConfiguration {
