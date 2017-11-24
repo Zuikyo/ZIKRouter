@@ -152,9 +152,16 @@ NSString *kZIKRouterErrorDomain = @"kZIKRouterErrorDomain";
     [self removeDestination:self.destination removeConfiguration:configuration];
 }
 
++ (BOOL)canMakeDestination {
+    return [self completeSynchronously];
+}
+
 + (nullable id)makeDestinationWithPreparation:(void(^ _Nullable)(id destination))prepare {
     NSAssert(self != [ZIKRouter class], @"Only get destination from router subclass");
-    NSAssert1([self completeSynchronously] == YES, @"The router (%@) should return the destination synchronously for +makeDestination",self);
+    if (![self canMakeDestination]) {
+        NSAssert1(NO, @"The router (%@) doesn't support makeDestination",self);
+        return nil;
+    }
     __block id dest;
     ZIKRouter *router = [[self alloc] initWithConfiguring:^(ZIKPerformRouteConfiguration * _Nonnull config) {
         if (prepare) {
@@ -178,7 +185,10 @@ NSString *kZIKRouterErrorDomain = @"kZIKRouterErrorDomain";
 
 + (nullable id)makeDestinationWithConfiguring:(void(^ _Nullable)(ZIKPerformRouteConfiguration *config))configBuilder {
     NSAssert(self != [ZIKRouter class], @"Only get destination from router subclass");
-    NSAssert1([self completeSynchronously] == YES, @"The router (%@) should return the destination synchronously for +makeDestination",self);
+    if (![self canMakeDestination]) {
+        NSAssert1(NO, @"The router (%@) doesn't support makeDestination",self);
+        return nil;
+    }
     __block id dest;
     ZIKRouter *router = [[self alloc] initWithConfiguring:^(ZIKPerformRouteConfiguration * _Nonnull config) {
         if (configBuilder) {

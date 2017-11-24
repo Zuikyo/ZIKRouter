@@ -281,9 +281,19 @@ static BOOL _isClassRoutable(Class class) {
     }
 }
 
++ (BOOL)canMakeDestination {
+    if (![super canMakeDestination]) {
+        return NO;
+    }
+    return [self supportRouteType:ZIKViewRouteTypeGetDestination];
+}
+
 + (nullable id)makeDestinationWithPreparation:(void(^ _Nullable)(id destination))prepare {
     NSAssert(self != [ZIKViewRouter class], @"Only get destination from router subclass");
-    NSAssert1([self completeSynchronously] == YES, @"The router (%@) should return the destination Synchronously when use +destinationForConfigure",self);
+    if (![self canMakeDestination]) {
+        NSAssert1(NO, @"The router (%@) doesn't support makeDestination",self);
+        return nil;
+    }
     __block id dest;
     ZIKViewRouter *router = [[self alloc] initWithConfiguring:(void(^)(ZIKRouteConfiguration*))^(ZIKViewRouteConfiguration * _Nonnull config) {
         config.routeType = ZIKViewRouteTypeGetDestination;
@@ -308,7 +318,10 @@ static BOOL _isClassRoutable(Class class) {
 
 + (nullable id)makeDestinationWithConfiguring:(void(^ _Nullable)(ZIKPerformRouteConfiguration *config))configBuilder {
     NSAssert(self != [ZIKViewRouter class], @"Only get destination from router subclass");
-    NSAssert1([self completeSynchronously] == YES, @"The router (%@) should return the destination synchronously for +makeDestination",self);
+    if (![self canMakeDestination]) {
+        NSAssert1(NO, @"The router (%@) doesn't support makeDestination",self);
+        return nil;
+    }
     __block id dest;
     ZIKViewRouteConfiguration *configuration = [[self class] defaultRouteConfiguration];
     if (configBuilder) {

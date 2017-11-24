@@ -98,6 +98,10 @@ public class ViewRouter<Destination, ModuleConfig, RemoveConfig> {
     
     // MARK: Make Destination
     
+    public var canMakeDestination: Bool {
+        return routerType.canMakeDestination()
+    }
+    
     public func makeDestination() -> Destination? {
         let destination = routerType.makeDestination()
         assert(destination == nil || destination is Destination, "Router (\(self.routerType)) returns wrong destination type (\(String(describing: destination))), destination should be \(Destination.self)")
