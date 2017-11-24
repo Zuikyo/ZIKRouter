@@ -220,6 +220,14 @@ _Nullable Class _ZIKServiceRouterToModule(Protocol *configProtocol) {
     NSAssert(NO, @"Error when get router for serviceProtocol: %@",description);
 }
 
+- (void)_callbackError_actionFailedWithAction:(ZIKRouteAction)action errorDescription:(NSString *)format ,... {
+    va_list argList;
+    va_start(argList, format);
+    NSString *description = [[NSString alloc] initWithFormat:format arguments:argList];
+    va_end(argList);
+    [self _callbackErrorWithAction:action error:[[self class] errorWithCode:ZIKServiceRouteErrorActionFailed localizedDescription:description]];
+}
+
 - (void)_callbackError_infiniteRecursionWithAction:(ZIKRouteAction)action errorDescription:(NSString *)format ,... {
     va_list argList;
     va_start(argList, format);

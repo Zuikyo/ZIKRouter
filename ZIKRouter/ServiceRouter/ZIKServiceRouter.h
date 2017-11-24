@@ -133,6 +133,8 @@ typedef NS_ENUM(NSInteger, ZIKServiceRouteError) {
     ZIKServiceRouteErrorInvalidProtocol,
     ///Router returns nil for destination, you can't use this service now. Maybe your configuration is invalid, or there is a bug in the router.
     ZIKServiceRouteErrorServiceUnavailable,
+    ///Perform or remove route action failed. Remove route when destiantion was already dealloced.
+    ZIKServiceRouteErrorActionFailed,
     ///Infinite recursion for performing route detected. See ZIKViewRouterProtocol's -prepareDestination:configuration: for more detail.
     ZIKServiceRouteErrorInfiniteRecursion
 };

@@ -56,33 +56,38 @@ public class ViewRouter<Destination, ModuleConfig, RemoveConfig> {
     
     public func perform(from source: ZIKViewRouteSource?, configuring configBuilder: (ViewRouteConfig, DestinationPreparation, ModulePreparation) -> Void, removing removeConfigBuilder: ((ViewRemoveConfig, RemovePreparation) -> Void)? = nil) {
         var removeBuilder: ((ViewRemoveConfig) -> Void)? = nil
-        if removeConfigBuilder != nil {
+        if let configBuilder = removeConfigBuilder {
             removeBuilder = { (config: ViewRemoveConfig) in
                 let prepareModule = { (prepare: (RemoveConfig) -> Void) in
-                    if config is RemoveConfig {
-                        prepare(config as! RemoveConfig)
+                    if let removeConfig = config as? RemoveConfig {
+                        prepare(removeConfig)
                     }
                 }
-                removeConfigBuilder!(config, prepareModule)
+                configBuilder(config, prepareModule)
             }
         }
         
         routed = routerType.perform(from: source, configuring: { config in
             let prepareDestination = { (prepare: @escaping (Destination) -> Void) in
                 config.prepareDestination = { d in
-                    if d is Destination {
-                        prepare(d as! Destination)
-                    } else {
-                        assertionFailure("Router (\(self.routerType)) returns wrong destination type, destination should be \(Destination.self)")
+                    if let destination = d as? Destination {
+                        prepare(destination)
                     }
                 }
             }
             let prepareModule = { (prepare: (ModuleConfig) -> Void) in
-                if config is ModuleConfig {
-                    prepare(config as! ModuleConfig)
+                if let moduleConfig = config as? ModuleConfig {
+                    prepare(moduleConfig)
                 }
             }
             configBuilder(config, prepareDestination, prepareModule)
+            if shouldCheckServiceRouter {
+                let completion = config.routeCompletion
+                config.routeCompletion = { d in
+                    completion?(d)
+                    assert(d is Destination, "Router (\(self.routerType)) returns wrong destination type (\(String(describing: d))), destination should be \(Destination.self)")
+                }
+            }
         }, removing: removeBuilder)
     }
     
@@ -110,8 +115,8 @@ public class ViewRouter<Destination, ModuleConfig, RemoveConfig> {
     
     public func makeDestination(preparation prepare: ((Destination) -> Void)? = nil) -> Destination? {
         let destination = routerType.makeDestination(preparation: { d in
-            if d is Destination {
-                prepare?(d as! Destination)
+            if let destination = d as? Destination {
+                prepare?(destination)
             }
         })
         assert(destination == nil || destination is Destination, "Router (\(self.routerType)) returns wrong destination type (\(String(describing: destination))), destination should be \(Destination.self)")
@@ -122,14 +127,14 @@ public class ViewRouter<Destination, ModuleConfig, RemoveConfig> {
         let destination = routerType.makeDestination(configuring: { config in
             let prepareDestination = { (prepare: @escaping (Destination) -> Void) in
                 config.prepareDestination = { d in
-                    if d is Destination {
-                        prepare(d as! Destination)
+                    if let destination = d as? Destination {
+                        prepare(destination)
                     }
                 }
             }
             let prepareModule = { (prepare: (ModuleConfig) -> Void) in
-                if config is ModuleConfig {
-                    prepare(config as! ModuleConfig)
+                if let moduleConfig = config as? ModuleConfig {
+                    prepare(moduleConfig)
                 }
             }
             configBuilder(config, prepareDestination, prepareModule)

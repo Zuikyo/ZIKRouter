@@ -17,10 +17,10 @@ internal let shouldCheckViewRouter = ZIKAnyViewRouter.shouldCheckImplementation(
 internal let shouldCheckServiceRouter = ZIKAnyServiceRouter.shouldCheckImplementation()
 
 ///Key of registered protocol.
-internal struct _RouteKey<Type>: Hashable {
-    fileprivate let type: Type?
+internal struct _RouteKey: Hashable {
+    fileprivate let type: Any.Type?
     private let key: String
-    init(type: Type) {
+    init(type: Any.Type) {
         self.type = type
         key = String(describing:type)
     }
@@ -38,12 +38,12 @@ internal struct _RouteKey<Type>: Hashable {
 
 ///Registry for registering pure Swift protocol and discovering ZIKRouter subclass.
 public class Registry {
-    fileprivate static var viewProtocolContainer = [_RouteKey<Any>: ZIKAnyViewRouter.Type]()
-    fileprivate static var viewConfigContainer = [_RouteKey<Any>: ZIKAnyViewRouter.Type]()
-    fileprivate static var serviceProtocolContainer = [_RouteKey<Any>: ZIKAnyServiceRouter.Type]()
-    fileprivate static var serviceConfigContainer = [_RouteKey<Any>: ZIKAnyServiceRouter.Type]()
-    fileprivate static var _check_viewProtocolContainer = [_RouteKey<Any>: Set<_RouteKey<Any>>]()
-    fileprivate static var _check_serviceProtocolContainer = [_RouteKey<Any>: Set<_RouteKey<Any>>]()
+    fileprivate static var viewProtocolContainer = [_RouteKey: ZIKAnyViewRouter.Type]()
+    private static var viewConfigContainer = [_RouteKey: ZIKAnyViewRouter.Type]()
+    fileprivate static var serviceProtocolContainer = [_RouteKey: ZIKAnyServiceRouter.Type]()
+    private static var serviceConfigContainer = [_RouteKey: ZIKAnyServiceRouter.Type]()
+    private static var _check_viewProtocolContainer = [_RouteKey: Set<_RouteKey>]()
+    private static var _check_serviceProtocolContainer = [_RouteKey: Set<_RouteKey>]()
     
     // MARK: Register
     
@@ -441,11 +441,11 @@ internal extension Registry {
         }
         return true
     }
-    internal class func validateConformance(destination: Any, inServiceRouter router: ZIKAnyServiceRouter) -> Bool {
-        let protocols = _check_serviceProtocolContainer[_RouteKey(type: type(of: router))]
+    internal class func validateConformance(destination: Any, inServiceRouterType routerType: ZIKAnyServiceRouter.Type) -> Bool {
+        let protocols = _check_serviceProtocolContainer[_RouteKey(type: routerType)]
         if protocols != nil {
             for serviceProtocolEntry in protocols! {
-                assert(_swift_typeIsTargetType(type(of: destination), serviceProtocolEntry.type!), "Bad implementation in router (\(type(of: router)))'s destination(with configuration:), the destination (\(destination)) doesn't conforms to registered service protocol (\(serviceProtocolEntry.type!))")
+                assert(_swift_typeIsTargetType(type(of: destination), serviceProtocolEntry.type!), "Bad implementation in router (\(routerType))'s destination(with configuration:), the destination (\(destination)) doesn't conforms to registered service protocol (\(serviceProtocolEntry.type!))")
                 if _swift_typeIsTargetType(type(of: destination), serviceProtocolEntry.type!) == false {
                     return false
                 }

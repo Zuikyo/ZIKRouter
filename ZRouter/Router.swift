@@ -79,9 +79,6 @@ public class Router {
         ) -> ServiceRouter<Destination, PerformRouteConfig, RouteConfig>? {
         let r = Registry.router(to: routableService)
         r?.perform(configuring: configure)
-        if shouldCheckServiceRouter && r?.routed?.destination != nil {
-            _ = Registry.validateConformance(destination: r!.routed!.destination!, inServiceRouter: r!.routed!)
-        }
         return r
     }
     
@@ -99,9 +96,6 @@ public class Router {
         ) -> ServiceRouter<Any, Module, RouteConfig>? {
         let r = Registry.router(to: routableServiceModule)
         r?.perform(configuring: configure)
-        if shouldCheckServiceRouter && r?.routed?.destination != nil {
-            _ = Registry.validateConformance(destination: r!.routed!.destination!, inServiceRouter: r!.routed!)
-        }
         return r
     }
 }
@@ -120,7 +114,6 @@ public extension Router {
         preparation prepare: ((Destination) -> Swift.Void)? = nil
         ) -> Destination? {
         let routerClass = Registry.router(to: routableView)
-        assert((routerClass?.completeSynchronously)!,"router class (\(String(describing: routerClass))) can't get destination synchronously.")
         return routerClass?.makeDestination(preparation: prepare)
     }
     
@@ -136,7 +129,6 @@ public extension Router {
         ) -> Any? {
         var destination: Any?
         let routerClass = Registry.router(to: routableViewModule)
-        assert((routerClass?.completeSynchronously)!,"router class (\(String(describing: routerClass))) can't get destination synchronously")
         _ = routerClass?.makeDestination(configuring: { config,_,_  in
             config.routeType = ViewRouteType.getDestination
             if config is Module {
@@ -160,7 +152,6 @@ public extension Router {
         configuring configure: @escaping (ViewRouteConfig, (@escaping (Any) -> Void) -> Void, ((Module) -> Void) -> Void) -> Void
         ) -> Any? {
         let routerClass = Registry.router(to: routableViewModule)
-        assert((routerClass?.completeSynchronously)!,"router class (\(String(describing: routerClass))) can't get destination synchronously")
         return routerClass?.makeDestination(configuring: configure)
     }
     
@@ -175,7 +166,6 @@ public extension Router {
         preparation prepare: ((Destination) -> Swift.Void)? = nil
         ) -> Destination? {
         let routerClass = Registry.router(to: routableService)
-        assert((routerClass?.completeSynchronously)!,"router class (\(String(describing: routerClass))) can't get destination synchronously")
         return routerClass?.makeDestination(preparation: prepare)
     }
     
@@ -191,7 +181,6 @@ public extension Router {
         ) -> Any? {
         var destination: Any?
         let routerClass = Registry.router(to: routableServiceModule)
-        assert((routerClass?.completeSynchronously)!,"router class (\(String(describing: routerClass))) can't get destination synchronously")
         _ = routerClass?.perform(configuring: { config,_,_  in
             if config is Module {
                 prepare?(config as! Module)
@@ -214,7 +203,6 @@ public extension Router {
         configuring configure: @escaping (PerformRouteConfig, (@escaping (Any) -> Void) -> Void, ((Module) -> Void) -> Void) -> Void
         ) -> Any? {
         let routerClass = Registry.router(to: routableServiceModule)
-        assert((routerClass?.completeSynchronously)!,"router class (\(String(describing: routerClass))) can't get destination synchronously")
         return routerClass?.makeDestination(configuring: configure)
     }
 }

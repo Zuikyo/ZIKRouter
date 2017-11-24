@@ -56,34 +56,40 @@ public class ServiceRouter<Destination, ModuleConfig, RemoveConfig> {
     
     public func perform(configuring configBuilder: (PerformRouteConfig, DestinationPreparation, ModulePreparation) -> Void, removing removeConfigBuilder: ((RouteConfig, RemovePreparation) -> Void)? = nil) {
         var removeBuilder: ((RouteConfig) -> Void)? = nil
-        if removeConfigBuilder != nil {
+        if let configBuilder = removeConfigBuilder {
             removeBuilder = { (config: RouteConfig) in
                 let prepareModule = { (prepare: (RemoveConfig) -> Void) in
-                    if config is RemoveConfig {
-                        prepare(config as! RemoveConfig)
+                    if let removeConfig = config as? RemoveConfig {
+                        prepare(removeConfig)
                     }
                 }
-                removeConfigBuilder!(config, prepareModule)
+                configBuilder(config, prepareModule)
             }
         }
         
         routed = routerType.perform(configuring: { config in
             let prepareDestination = { (prepare: @escaping (Destination) -> Void) in
                 config.prepareDestination = { d in
-                    if d is Destination {
-                        prepare(d as! Destination)
-                    } else {
-                        assertionFailure("Router (\(self.routerType)) returns wrong destination type, destination should be \(Destination.self)")
+                    if let destination = self._castedDestination(d) {
+                        prepare(destination)
                     }
                 }
             }
             let prepareModule = { (prepare: (ModuleConfig) -> Void) in
-                if config is ModuleConfig {
-                    prepare(config as! ModuleConfig)
+                if let moduleConfig = config as? ModuleConfig {
+                    prepare(moduleConfig)
                 }
             }
             configBuilder(config, prepareDestination, prepareModule)
+            if shouldCheckServiceRouter {
+                let completion = config.routeCompletion
+                config.routeCompletion = { d in
+                    completion?(d)
+                    assert(self._castedDestination(d) != nil, "Router (\(self.routerType)) returns wrong destination type (\(String(describing: d))), destination should be \(Destination.self)")
+                }
+            }
         }, removing: removeBuilder)
+        
     }
     
     // MARK: Remove
@@ -104,17 +110,17 @@ public class ServiceRouter<Destination, ModuleConfig, RemoveConfig> {
     
     public func makeDestination() -> Destination? {
         let destination = routerType.makeDestination()
-        assert(destination == nil || destination is Destination, "Router (\(self.routerType)) returns wrong destination type (\(String(describing: destination))), destination should be \(Destination.self)")
+        assert(destination == nil || self._castedDestination(destination!) != nil, "Router (\(self.routerType)) returns wrong destination type (\(String(describing: destination))), destination should be \(Destination.self)")
         return destination as? Destination
     }
     
     public func makeDestination(preparation prepare: ((Destination) -> Void)? = nil) -> Destination? {
         let destination = routerType.makeDestination(preparation: { d in
-            if d is Destination {
-                prepare?(d as! Destination)
+            if let destination = self._castedDestination(d) {
+                prepare?(destination)
             }
         })
-        assert(destination == nil || destination is Destination, "Router (\(self.routerType)) returns wrong destination type (\(String(describing: destination))), destination should be \(Destination.self)")
+        assert(destination == nil || self._castedDestination(destination!) != nil, "Router (\(self.routerType)) returns wrong destination type (\(String(describing: destination))), destination should be \(Destination.self)")
         return destination as? Destination
     }
     
@@ -122,22 +128,37 @@ public class ServiceRouter<Destination, ModuleConfig, RemoveConfig> {
         let destination = routerType.makeDestination(configuring: { config in
             let prepareDestination = { (prepare: @escaping (Destination) -> Void) in
                 config.prepareDestination = { d in
-                    if d is Destination {
-                        prepare(d as! Destination)
-                    } else {
-                        assertionFailure("Router (\(self.routerType)) returns wrong destination type, destination should be \(Destination.self)")
+                    if let destination = self._castedDestination(d) {
+                        prepare(destination)
                     }
                 }
             }
             let prepareModule = { (prepare: (ModuleConfig) -> Void) in
-                if config is ModuleConfig {
-                    prepare(config as! ModuleConfig)
+                if let moduleConfig = config as? ModuleConfig {
+                    prepare(moduleConfig)
                 }
             }
             configBuilder(config, prepareDestination, prepareModule)
         })
-        assert(destination == nil || destination is Destination, "Router (\(self.routerType)) returns wrong destination type (\(String(describing: destination))), destination should be \(Destination.self)")
+        assert(destination == nil || self._castedDestination(destination!) != nil, "Router (\(self.routerType)) returns wrong destination type (\(String(describing: destination))), destination should be \(Destination.self)")
         return destination as? Destination
+    }
+    
+    private func _castedDestination(_ destination: Any) -> Destination? {
+        if let d = destination as? Destination {
+            if shouldCheckServiceRouter {
+                _ = Registry.validateConformance(destination: d, inServiceRouterType: routerType)
+            }
+            return d
+        } else if let d = (destination as AnyObject) as? Destination {
+            if shouldCheckServiceRouter {
+                _ = Registry.validateConformance(destination: d, inServiceRouterType: routerType)
+            }
+            return d
+        } else {
+            assertionFailure("Router (\(self.routerType)) returns wrong destination type (\(destination)), destination should be \(Destination.self)")
+        }
+        return nil
     }
     
     public func description(of state: ZIKRouterState) -> String {
