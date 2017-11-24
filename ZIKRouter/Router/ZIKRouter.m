@@ -210,6 +210,10 @@ NSString *kZIKRouterErrorDomain = @"kZIKRouterErrorDomain";
     return self == [ZIKRouter class];
 }
 
++ (BOOL)isAdapter {
+    return NO;
+}
+
 - (void)performRouteOnDestination:(id)destination configuration:(ZIKRouteConfiguration *)configuration {
     NSAssert(NO, @"ZIKRouter: %@ not conforms to ZIKRouterProtocol!",[self class]);
 }

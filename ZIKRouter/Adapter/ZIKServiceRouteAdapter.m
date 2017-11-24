@@ -20,6 +20,10 @@
 }
 
 + (BOOL)isAbstractRouter {
+    return self == [ZIKServiceRouteAdapter class];
+}
+
++ (BOOL)isAdapter {
     return YES;
 }
 

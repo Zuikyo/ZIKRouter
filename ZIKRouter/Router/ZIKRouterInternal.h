@@ -28,6 +28,9 @@ NS_ASSUME_NONNULL_BEGIN
 ///Whether this router is an abstract router.
 + (BOOL)isAbstractRouter;
 
+///Whether this router is an adapter for another router.
++ (BOOL)isAdapter;
+
 ///Create destination and initilize it with configuration. If the configuration is invalid, return nil to make this route failed.
 - (nullable Destination)destinationWithConfiguration:(RouteConfig)configuration;
 

@@ -35,7 +35,7 @@ class SwiftSampleViewController: UIViewController, PureSwiftSampleViewInput, Pur
             to: RoutableView<ZIKInfoViewProtocol>(),
             from: self,
             configuring: { (config, prepareDestination, _) in
-                config.routeType = .getDestination
+                config.routeType = .presentModally
                 prepareDestination({ [weak self] destination in
                     destination.delegate = self
                     destination.name = "zuik"
