@@ -46,7 +46,7 @@ NS_ASSUME_NONNULL_BEGIN
 + (RouteConfig)defaultRouteConfiguration;
 
 ///If you can undo your route action, such as dismiss a routed view, do remove in this.
-- (void)removeDestination:(Destination)destination removeConfiguration:(RemoveConfig)removeConfiguration;
+- (void)removeDestination:(nullable Destination)destination removeConfiguration:(RemoveConfig)removeConfiguration;
 
 ///If the router use a custom configuration, override this and return the configuration.
 + (RemoveConfig)defaultRemoveConfiguration;

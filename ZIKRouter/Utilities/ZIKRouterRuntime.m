@@ -248,7 +248,7 @@ bool ZIKRouter_classSelfImplementingMethod(Class aClass, SEL method, bool isClas
     }
     Class superClass = class_getSuperclass(aClass);
     if (!superClass) {
-        return YES;
+        return true;
     }
     Method superMethod;
     if (!isClassMethod) {
@@ -257,7 +257,7 @@ bool ZIKRouter_classSelfImplementingMethod(Class aClass, SEL method, bool isClas
         superMethod = class_getClassMethod(superClass, method);
     }
     if (!superMethod) {
-        return false;
+        return true;
     }
     return method_getImplementation(selfMethod) != method_getImplementation(superMethod);
 }
