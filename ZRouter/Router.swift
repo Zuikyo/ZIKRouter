@@ -34,9 +34,6 @@ public class Router {
                    configuring: { config, prepareDestination, prepareModule  in
                     configure(config, prepareDestination, prepareModule)
         }, removing: removeConfigure)
-        if shouldCheckViewRouter && r?.routed?.destination != nil {
-            _ = Registry.validateConformance(destination: r!.routed!.destination!, inViewRouter: (r!.routed)!)
-        }
         return r
     }
     
@@ -59,9 +56,6 @@ public class Router {
                    configuring: { config, prepareDestination, prepareModule  in
                     configure(config, prepareDestination, prepareModule)
         }, removing: removeConfigure)
-        if shouldCheckViewRouter && r?.routed?.destination != nil {
-            _ = Registry.validateConformance(destination: r!.routed!.destination!, inViewRouter: (r!.routed)!)
-        }
         return r
     }
     
@@ -131,8 +125,8 @@ public extension Router {
         let routerClass = Registry.router(to: routableViewModule)
         _ = routerClass?.makeDestination(configuring: { config,_,_  in
             config.routeType = ViewRouteType.getDestination
-            if config is Module {
-                prepare?(config as! Module)
+            if let moduleConfig = config as? Module {
+                prepare?(moduleConfig)
             }
             config.routeCompletion = { d in
                 destination = d
@@ -182,8 +176,8 @@ public extension Router {
         var destination: Any?
         let routerClass = Registry.router(to: routableServiceModule)
         _ = routerClass?.perform(configuring: { config,_,_  in
-            if config is Module {
-                prepare?(config as! Module)
+            if let moduleConfig = config as? Module {
+                prepare?(moduleConfig)
             }
             config.routeCompletion = { d in
                 destination = d

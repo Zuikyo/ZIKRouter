@@ -66,7 +66,7 @@ public class ViewRouter<Destination, ModuleConfig, RemoveConfig> {
                 configBuilder(config, prepareModule)
             }
         }
-        
+        let routerType = self.routerType
         routed = routerType.perform(from: source, configuring: { config in
             let prepareDestination = { (prepare: @escaping (Destination) -> Void) in
                 config.prepareDestination = { d in
@@ -85,7 +85,8 @@ public class ViewRouter<Destination, ModuleConfig, RemoveConfig> {
                 let completion = config.routeCompletion
                 config.routeCompletion = { d in
                     completion?(d)
-                    assert(d is Destination, "Router (\(self.routerType)) returns wrong destination type (\(String(describing: d))), destination should be \(Destination.self)")
+                    assert(d is Destination, "Router (\(routerType)) returns wrong destination type (\(String(describing: d))), destination should be \(Destination.self)")
+                    assert(Registry.validateConformance(destination: d, inViewRouterType: routerType))
                 }
             }
         }, removing: removeBuilder)
@@ -109,7 +110,8 @@ public class ViewRouter<Destination, ModuleConfig, RemoveConfig> {
     
     public func makeDestination() -> Destination? {
         let destination = routerType.makeDestination()
-        assert(destination == nil || destination is Destination, "Router (\(self.routerType)) returns wrong destination type (\(String(describing: destination))), destination should be \(Destination.self)")
+        assert(destination == nil || destination is Destination, "Router (\(routerType)) returns wrong destination type (\(String(describing: destination))), destination should be \(Destination.self)")
+        assert(destination == nil || Registry.validateConformance(destination: destination!, inViewRouterType: routerType))
         return destination as? Destination
     }
     
@@ -119,7 +121,8 @@ public class ViewRouter<Destination, ModuleConfig, RemoveConfig> {
                 prepare?(destination)
             }
         })
-        assert(destination == nil || destination is Destination, "Router (\(self.routerType)) returns wrong destination type (\(String(describing: destination))), destination should be \(Destination.self)")
+        assert(destination == nil || destination is Destination, "Router (\(routerType)) returns wrong destination type (\(String(describing: destination))), destination should be \(Destination.self)")
+        assert(destination == nil || Registry.validateConformance(destination: destination!, inViewRouterType: routerType))
         return destination as? Destination
     }
     
@@ -139,7 +142,8 @@ public class ViewRouter<Destination, ModuleConfig, RemoveConfig> {
             }
             configBuilder(config, prepareDestination, prepareModule)
         })
-        assert(destination == nil || destination is Destination, "Router (\(self.routerType)) returns wrong destination type (\(String(describing: destination))), destination should be \(Destination.self)")
+        assert(destination == nil || destination is Destination, "Router (\(routerType)) returns wrong destination type (\(String(describing: destination))), destination should be \(Destination.self)")
+        assert(destination == nil || Registry.validateConformance(destination: destination!, inViewRouterType: routerType))
         return destination as? Destination
     }
     
