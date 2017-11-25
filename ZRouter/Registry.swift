@@ -429,12 +429,12 @@ private extension Registry {
 
 // MARK: Validate
 internal extension Registry {
-    internal class func validateConformance(destination: Any, inViewRouter router: ZIKAnyViewRouter) -> Bool {
-        let protocols = _check_viewProtocolContainer[_RouteKey(type: type(of: router))]
+    internal class func validateConformance(destination: Any, inViewRouterType routerType: ZIKAnyViewRouter.Type) -> Bool {
+        let protocols = _check_viewProtocolContainer[_RouteKey(type: routerType)]
         if protocols != nil {
-            for viewProtocol in protocols! {
-                assert(_swift_typeIsTargetType(type(of: destination), viewProtocol))
-                if _swift_typeIsTargetType(type(of: destination), viewProtocol) == false {
+            for viewProtocolEntry in protocols! {
+                assert(_swift_typeIsTargetType(type(of: destination), viewProtocolEntry.type!), "Bad implementation in router (\(routerType))'s destination(with configuration:), the destination (\(destination)) doesn't conforms to registered view protocol (\(viewProtocolEntry.type!))")
+                if _swift_typeIsTargetType(type(of: destination), viewProtocolEntry) == false {
                     return false
                 }
             }
