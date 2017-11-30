@@ -27,7 +27,7 @@ public class Router {
         to routableView: RoutableView<Destination>,
         from source: ZIKViewRouteSource?,
         configuring configure: @escaping (ViewRouteConfig, (@escaping (Destination) -> Void) -> Void, ((ViewRouteConfig) -> Void) -> Void) -> Void,
-        removing removeConfigure: ((ViewRemoveConfig, ((ViewRemoveConfig) -> Void) -> Void) -> Void)? = nil
+        removing removeConfigure: ((ViewRemoveConfig, (@escaping (Destination) -> Void) -> Void, ((ViewRemoveConfig) -> Void) -> Void) -> Void)? = nil
         ) -> ViewRouter<Destination, ViewRouteConfig, ViewRemoveConfig>? {
         let r = Registry.router(to: routableView)
         r?.perform(from: source,
@@ -49,7 +49,7 @@ public class Router {
         to routableViewModule: RoutableViewModule<Module>,
         from source: ZIKViewRouteSource?,
         configuring configure: @escaping (ViewRouteConfig, (@escaping (Any) -> Void) -> Void, ((Module) -> Void) -> Void) -> Void,
-        removing removeConfigure: ((ViewRemoveConfig, ((ViewRemoveConfig) -> Void) -> Void) -> Void)? = nil
+        removing removeConfigure: ((ViewRemoveConfig, (@escaping (Any) -> Void) -> Void, ((ViewRemoveConfig) -> Void) -> Void) -> Void)? = nil
         ) -> ViewRouter<Any, Module, ViewRemoveConfig>? {
         let r = Registry.router(to: routableViewModule)
         r?.perform(from: source,

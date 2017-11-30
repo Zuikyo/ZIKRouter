@@ -76,4 +76,16 @@ typedef void(^ZIKRouteStateNotifier)(ZIKRouterState oldState, ZIKRouterState new
 @property (nonatomic, copy, nullable) void(^routeCompletion)(id destination);
 @end
 
+@interface ZIKRemoveRouteConfiguration : ZIKRouteConfiguration <NSCopying>
+
+/**
+ Prepare for removeRoute. Subclass can offer more specific info.
+ 
+ @note
+ Use weakSelf in prepareDestination to avoid retain cycle.
+ */
+@property (nonatomic, copy, nullable) void(^prepareDestination)(id destination);
+
+@end
+
 NS_ASSUME_NONNULL_END

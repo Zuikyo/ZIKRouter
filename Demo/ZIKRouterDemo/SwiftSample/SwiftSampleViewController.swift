@@ -45,10 +45,10 @@ class SwiftSampleViewController: UIViewController, PureSwiftSampleViewInput, Pur
     }
     
     func handleRemoveInfoViewController(_ infoViewController: UIViewController!) {
-        guard infoRouter != nil && infoRouter!.canRemove else {
+        guard let router = infoRouter, router.canRemove else {
             return
         }
-        infoRouter?.removeRoute(successHandler: {
+        router.removeRoute(successHandler: {
             print("remove success")
         }, errorHandler: { (action, error) in
             print("remove failed,error:%@",error)

@@ -196,18 +196,11 @@ typedef void(^ZIKViewRouteSegueConfiger)(NS_NOESCAPE ZIKViewRouteSegueConfigure)
 @property (nonatomic, weak, nullable) id sender;
 @end
 
-@interface ZIKViewRemoveConfiguration : ZIKRouteConfiguration <NSCopying>
+@interface ZIKViewRemoveConfiguration : ZIKRemoveRouteConfiguration <NSCopying>
 ///For pop/dismiss, default is YES
 @property (nonatomic, assign) BOOL animated;
 
-/**
- Handler when finish remove.
- @note
- Use weakSelf in routeCompletion to avoid retain cycle.
- */
-@property (nonatomic, copy, nullable) void(^removeCompletion)(void);
-
-///When set to YES and the router still exists, if the same destination instance is removed from external, removeCompletion, successHandler, errorHandler will be called
+///When set to YES and the router still exists, if the same destination instance is removed from external, successHandler, errorHandler will be called
 @property (nonatomic, assign) BOOL handleExternalRoute;
 @end
 

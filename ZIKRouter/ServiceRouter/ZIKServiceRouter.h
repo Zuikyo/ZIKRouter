@@ -61,7 +61,7 @@ typedef void(^ZIKServiceRouteGlobalErrorHandler)(__kindof ZIKServiceRouter * _Nu
  @endcode
  So, it only works as a dependency daclaration. But this design pattern let you hide subclass type.
  */
-@interface ZIKServiceRouter<__covariant Destination: id, __covariant RouteConfig: ZIKPerformRouteConfiguration *, __covariant RemoveConfig: ZIKRouteConfiguration *> : ZIKRouter<Destination, RouteConfig, RemoveConfig>
+@interface ZIKServiceRouter<__covariant Destination: id, __covariant RouteConfig: ZIKPerformRouteConfiguration *, __covariant RemoveConfig: ZIKRemoveRouteConfiguration *> : ZIKRouter<Destination, RouteConfig, RemoveConfig>
 
 @end
 

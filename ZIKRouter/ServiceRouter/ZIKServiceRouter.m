@@ -125,6 +125,14 @@ _Nullable Class _ZIKServiceRouterToModule(Protocol *configProtocol) {
     [self notifyRouteState:ZIKRouterStateRouting];
 }
 
+- (void)prepareDestinationBeforeRemoving {
+    id destination = self.destination;
+    ZIKRemoveRouteConfiguration *configuration = self.original_removeConfiguration;
+    if (configuration.prepareDestination && destination) {
+        configuration.prepareDestination(destination);
+    }
+}
+
 - (void)endPerformRouteWithSuccess {
     NSAssert(self.state == ZIKRouterStateRouting, @"state should be routing when end to route.");
     [self notifyRouteState:ZIKRouterStateRouted];
@@ -158,8 +166,8 @@ _Nullable Class _ZIKServiceRouterToModule(Protocol *configProtocol) {
     return [ZIKPerformRouteConfiguration new];
 }
 
-+ (__kindof ZIKRouteConfiguration *)defaultRemoveConfiguration {
-    return [ZIKRouteConfiguration new];
++ (__kindof ZIKRemoveRouteConfiguration *)defaultRemoveConfiguration {
+    return [ZIKRemoveRouteConfiguration new];
 }
 
 - (NSString *)errorDomain {

@@ -23,13 +23,13 @@ import ZIKRouter
  Now we can access to the initializer method when the generic parameter `Protocol` is `TestViewInput`, and use `TestViewInput` in router:
  ```
  Router.perform(
- for: RoutableView<TestViewInput>(),
- routeConfig: { config in
-     config.source = self
-     config.routeType = ViewRouteType.presentModally
- },
- preparation: { destination in
-     //destination is inferred as TestViewInput
+ to: RoutableView<TestViewInput>(),
+ from: self,
+ configuring: { (config, prepareDestination, _) in
+     config.routeType = .presentModally
+     prepareDestination({ destination in
+         //destination is inferred as TestViewInput
+     })
  })
  ```
  

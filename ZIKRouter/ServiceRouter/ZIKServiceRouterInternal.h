@@ -14,7 +14,7 @@
 NS_ASSUME_NONNULL_BEGIN
 
 ///Internal methods for subclass.
-@interface ZIKServiceRouter<__covariant Destination: id, __covariant RouteConfig: ZIKPerformRouteConfiguration *, __covariant RemoveConfig: ZIKRouteConfiguration *> ()
+@interface ZIKServiceRouter<__covariant Destination: id, __covariant RouteConfig: ZIKPerformRouteConfiguration *, __covariant RemoveConfig: ZIKRemoveRouteConfiguration *> ()
 
 #pragma mark Required Override
 
@@ -38,6 +38,8 @@ NS_ASSUME_NONNULL_BEGIN
 
 ///Call it when route will remove.
 - (void)beginRemoveRoute;
+///Prepare the destination with the -prepareDestination block in removeConfiguration before removing the destination when you override -removeDestination:removeConfiguration:.
+- (void)prepareDestinationBeforeRemoving;
 ///Call it when route is successfully removed.
 - (void)endRemoveRouteWithSuccess;
 ///Call it when route remove failed.

@@ -50,3 +50,13 @@
 }
 
 @end
+
+@implementation ZIKRemoveRouteConfiguration
+
+- (id)copyWithZone:(nullable NSZone *)zone {
+    ZIKRemoveRouteConfiguration *config = [super copyWithZone:zone];
+    config.prepareDestination = self.prepareDestination;
+    return config;
+}
+
+@end

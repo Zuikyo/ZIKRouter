@@ -241,7 +241,6 @@ ZIKRouteAction const ZIKRouteActionPerformOnDestination = @"ZIKRouteActionPerfor
 - (id)copyWithZone:(nullable NSZone *)zone {
     ZIKViewRemoveConfiguration *config = [super copyWithZone:zone];
     config.animated = self.animated;
-    config.removeCompletion = self.removeCompletion;
     config.handleExternalRoute = self.handleExternalRoute;
     return config;
 }

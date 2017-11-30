@@ -14,7 +14,7 @@
 NS_ASSUME_NONNULL_BEGIN
 
 ///Internal methods for subclass.
-@interface ZIKRouter<__covariant Destination: id, __covariant RouteConfig: ZIKPerformRouteConfiguration *, __covariant RemoveConfig: ZIKRouteConfiguration *> ()
+@interface ZIKRouter<__covariant Destination: id, __covariant RouteConfig: ZIKPerformRouteConfiguration *, __covariant RemoveConfig: ZIKRemoveRouteConfiguration *> ()
 ///Previous state.
 @property (nonatomic, readonly, assign) ZIKRouterState preState;
 ///Subclass can get the real configuration to avoid unnecessary copy.
@@ -39,8 +39,6 @@ NS_ASSUME_NONNULL_BEGIN
 
 ///Perform your custom route action.
 - (void)performRouteOnDestination:(nullable Destination)destination configuration:(RouteConfig)configuration;
-///If the router use a custom configuration, override this and return the configuration.
-//+ (__kindof ZIKRouteConfiguration *)defaultRouteConfiguration;
 
 ///If the router use a custom configuration, override this and return the configuration.
 + (RouteConfig)defaultRouteConfiguration;

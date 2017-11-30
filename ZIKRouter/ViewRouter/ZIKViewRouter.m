@@ -295,7 +295,7 @@ static BOOL _isClassRoutable(Class class) {
         return nil;
     }
     __block id dest;
-    ZIKViewRouter *router = [[self alloc] initWithConfiguring:(void(^)(ZIKRouteConfiguration*))^(ZIKViewRouteConfiguration * _Nonnull config) {
+    ZIKViewRouter *router = [[self alloc] initWithConfiguring:(void(^)(ZIKPerformRouteConfiguration *))^(ZIKViewRouteConfiguration * _Nonnull config) {
         config.routeType = ZIKViewRouteTypeGetDestination;
         if (prepare) {
             config.prepareDestination = prepare;
@@ -351,7 +351,7 @@ static BOOL _isClassRoutable(Class class) {
 #pragma mark ZIKViewRouterSubclass
 
 + (void)registerRoutableDestination {
-    NSAssert1(NO, @"subclass(%@) must override +registerRoutableDestination to register destination.",self);
+    NSAssert1(NO, @"Subclass(%@) must override +registerRoutableDestination to register destination.",self);
 }
 
 - (id)destinationWithConfiguration:(__kindof ZIKViewRouteConfiguration *)configuration {
@@ -1286,7 +1286,7 @@ destinationStateBeforeRoute:(ZIKPresentationState *)destinationStateBeforeRoute
     }
 }
 
-- (void)removeDestination:(id)destination removeConfiguration:(__kindof ZIKRouteConfiguration *)removeConfiguration {
+- (void)removeDestination:(id)destination removeConfiguration:(__kindof ZIKRemoveRouteConfiguration *)removeConfiguration {
     [self notifyRouteState:ZIKRouterStateRemoving];
     if (!destination) {
         [self notifyRouteState:ZIKRouterStateRemoveFailed];
@@ -1295,6 +1295,9 @@ destinationStateBeforeRoute:(ZIKPresentationState *)destinationStateBeforeRoute
         return;
     }
     
+    if (removeConfiguration.prepareDestination) {
+        removeConfiguration.prepareDestination(destination);
+    }
     ZIKViewRouteConfiguration *configuration = self.original_configuration;
     if (configuration.routeType == ZIKViewRouteTypeCustom) {
         [self removeCustomRouteOnDestination:destination
@@ -1453,10 +1456,6 @@ destinationStateBeforeRoute:(ZIKPresentationState *)destinationStateBeforeRoute
 }
 
 - (void)notifyRemoveRouteSuccess {
-    ZIKViewRemoveConfiguration *configuration = self.original_removeConfiguration;
-    if (configuration.removeCompletion) {
-        configuration.removeCompletion();
-    }
     [super notifySuccessWithAction:ZIKRouteActionRemoveRoute];
 }
 
@@ -3118,7 +3117,7 @@ static _Nullable Class _routerClassToRegisteredView(Class viewClass) {
 }
 
 + (__kindof ZIKViewRouter *)performFromSource:(nullable id)source routeType:(ZIKViewRouteType)routeType {
-    return [super performWithConfiguring:^(ZIKRouteConfiguration *configuration) {
+    return [super performWithConfiguring:^(ZIKPerformRouteConfiguration *configuration) {
         ZIKViewRouteConfiguration *config = (ZIKViewRouteConfiguration *)configuration;
         if (source) {
             config.source = source;
@@ -3145,7 +3144,7 @@ static _Nullable Class _routerClassToRegisteredView(Class viewClass) {
         NSAssert2(NO, @"Perform route on invalid destination (%@), this view is not registered with this router (%@)",destination,self);
         return nil;
     }
-    ZIKViewRouter *router = [[self alloc] initWithConfiguring:(void(^)(ZIKRouteConfiguration *))configBuilder removing:(void(^)(ZIKRouteConfiguration *))removeConfigBuilder];
+    ZIKViewRouter *router = [[self alloc] initWithConfiguring:(void(^)(ZIKPerformRouteConfiguration *))configBuilder removing:(void(^)(ZIKRemoveRouteConfiguration *))removeConfigBuilder];
     NSAssert([(ZIKViewRouteConfiguration *)router.original_configuration routeType] != ZIKViewRouteTypeGetDestination, @"It's meaningless to get destination when you already offer a prepared destination.");
     if (source) {
         [(ZIKViewRouteConfiguration *)router.original_configuration setSource:source];

@@ -32,7 +32,7 @@ NS_ASSUME_NONNULL_BEGIN
  
  See sample code in ZIKServiceRouter and ZIKViewRouter for more detail.
  */
-@interface ZIKRouter<__covariant Destination: id, __covariant RouteConfig: ZIKPerformRouteConfiguration *, __covariant RemoveConfig: ZIKRouteConfiguration *> : NSObject
+@interface ZIKRouter<__covariant Destination: id, __covariant RouteConfig: ZIKPerformRouteConfiguration *, __covariant RemoveConfig: ZIKRemoveRouteConfiguration *> : NSObject
 ///State of route.
 @property (nonatomic, readonly, assign) ZIKRouterState state;
 ///Configuration for performRoute; Return copy of configuration, so modify this won't change the real configuration inside router.
@@ -80,6 +80,8 @@ NS_ASSUME_NONNULL_BEGIN
 ///Remove with success handler and error handler.
 - (void)removeRouteWithSuccessHandler:(void(^ __nullable)(void))performerSuccessHandler
                          errorHandler:(void(^ __nullable)(ZIKRouteAction routeAction, NSError *error))performerErrorHandler;
+///Remove route and prepare before removing.
+- (void)removeRouteWithConfiguring:(void(NS_NOESCAPE ^)(RemoveConfig config))removeConfigBuilder;
 
 #pragma mark Factory
 

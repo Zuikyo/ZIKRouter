@@ -11,7 +11,7 @@
 #import "ZIKInfoViewProtocol.h"
 
 @interface ZIKTestPushViewController () <ZIKInfoViewDelegate>
-@property (nonatomic, strong) ZIKViewRouter *infoViewRouter;
+@property (nonatomic, strong) ZIKDestinationViewRouter(UIViewController<ZIKInfoViewProtocol> *) *infoViewRouter;
 @end
 
 @implementation ZIKTestPushViewController
@@ -96,8 +96,6 @@
     } errorHandler:^(ZIKRouteAction routeAction, NSError * _Nonnull error) {
         NSLog(@"performer: pop failed,error:%@",error);
     }];
-    
-    
 }
 
 - (void)routeFromExternalForInfoViewController:(UIViewController *)infoViewController {

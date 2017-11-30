@@ -11,7 +11,7 @@
 #import "ZIKInfoViewProtocol.h"
 
 @interface ZIKTestPresentAsPopoverViewController () <ZIKInfoViewDelegate, UIPopoverPresentationControllerDelegate>
-@property (nonatomic, strong) ZIKViewRouter *infoViewRouter;
+@property (nonatomic, strong) ZIKDestinationViewRouter(UIViewController<ZIKInfoViewProtocol> *) *infoViewRouter;
 @end
 
 @implementation ZIKTestPresentAsPopoverViewController
@@ -79,10 +79,16 @@
         NSLog(@"Can't remove router now:%@",self.infoViewRouter);
         return;
     }
-    [self.infoViewRouter removeRouteWithSuccessHandler:^{
-        NSLog(@"performer: dismiss success");
-    } errorHandler:^(ZIKRouteAction routeAction, NSError * _Nonnull error) {
-        NSLog(@"performer: dismiss failed,error:%@",error);
+    [self.infoViewRouter removeRouteWithConfiguring:^(ZIKViewRemoveConfig * _Nonnull config) {
+        config.prepareDestination = ^(id  _Nonnull destination) {
+            NSLog(@"Prepare destination before removing.");
+        };
+        config.successHandler = ^{
+            NSLog(@"dismiss success");
+        };
+        config.errorHandler = ^(ZIKRouteAction  _Nonnull routeAction, NSError * _Nonnull error) {
+            NSLog(@"dismiss failed,error:%@",error);
+        };
     }];
 }
 
