@@ -13,7 +13,7 @@ View router将UIKit中的所有界面跳转方式封装成一个统一的方法�
 
 Service router用于模块寻找，通过protocol寻找对应的模块，并用protocol进行依赖注入和模块调用。
 
-### [中文文档](https://github.com/Zuikyo/ZIKRouter/blob/master/README-CN.md)
+### [中文文档](Documentation/Chinese/README-CN.md)
 
 ---
 
@@ -46,38 +46,81 @@ How it looks like in code?
 
 Code for showing a view controller：
 
+```swift
+///editor view's interface
+protocol NoteEditorInput {
+    weak var delegate: EditorDelegate? { get set }
+    func constructForCreatingNewNote()
+}
+
+///Editor view controller
+class NoteEditorViewController: UIViewController, NoteEditorInput {
+    ...
+}
+```
+
+```swift
+class TestViewController: UIViewController {
+    //Transition to editor view, and prepare the destination with NoteEditorInput
+    func showEditor() {
+        Router.perform(
+            to: RoutableView<NoteEditorInput>(),
+            from: self,
+            configuring: { (config, prepareDestination, _) in
+                //Route config
+                //Transition type
+                config.routeType = ViewRouteType.push
+                config.routeCompletion = { destination in
+                    //Transition completes
+                }
+                config.errorHandler = { (action, error) in
+                    //Transition is failed
+                }
+                //Prepare the destination before transition
+                prepareDestination({ destination in
+                    //destination is inferred as NoteEditorInput
+                    destination.delegate = self
+                    destination.constructForCreatingNewNote()
+                })
+        })
+    }
+}
+```
+
+<details><summary>Objecive-C示例</summary>
+  
 ```objectivec
-///editor view controller module's interface
-@protocol NoteEditorProtocol <ZIKViewRoutable>
-@property (nonatomic, weak) id<ZIKEditorDelegate> delegate;
+///editor模块的接口和依赖
+@protocol NoteEditorInput <ZIKViewRoutable>
+@property (nonatomic, weak) id<EditorDelegate> delegate;
 - (void)constructForCreatingNewNote;
-- (void)constructForEditingNote:(ZIKNoteModel *)note;
 @end
 
 ```
-
 ```objectivec
-@implementation TestEditorViewController
+///Editor界面
+@interface NoteEditorViewController: UIViewController <NoteEditorInput>
+@end
+@implementation NoteEditorViewController
+@end
+```
+```objectivec
+@implementation TestViewController
 
 - (void)showEditor {
-    //Transition to editor view. Get editor's router class with protocol, and prepare the editor view with the protocol.
-    [ZIKViewRouterForConfig(@protocol(NoteEditorProtocol))
-	     performWithConfigure:^(ZIKViewRouteConfiguration<NoteEditorProtocol> *config) {
-	         //Route config
-	         //Source view controller
-	         config.source = self;
-	         
-	         //Transition type
+    //跳转到editor界面；通过protocol获取对应的router类，再通过protocol配置界面
+    [ZIKViewRouter.toView(@protocol(NoteEditorInput))
+	     performFromSource:self
+	     configuring:^(ZIKViewRouteConfig *config) {
+	         //路由相关的设置
+	         //设置跳转方式
 	         config.routeType = ZIKViewRouteTypePush;
-	         
-	         //Router will config editor module with these arguments
-	         config.delegate = self;
-	         [config constructForCreatingNewNote];
-	         
-	         config.prepareForRoute = ^(id destination) {
+	         config.prepareDestination = ^(id<NoteEditorInput> destination) {
 	             //Prepare the destination before transition
+	             destination.delegate = self;
+	             [destination constructForCreatingNewNote];
 	         };
-	         config.routeCompletion = ^(id destination) {
+	         config.routeCompletion = ^(id<NoteEditorInput> destination) {
 	             //Transition completes
 	         };
 	         config.performerErrorHandler = ^(SEL routeAction, NSError * error) {
@@ -88,67 +131,61 @@ Code for showing a view controller：
 
 @end
 ```
-in Swift:
 
-```swift
-class TestEditorViewController: UIViewController {
-    func showEditor() {
-        ZIKSViewRouterForView(NoteEditorProtocol.self)?.perform { config in
-            config.source = self
-            config.routeType = ZIKViewRouteType.push
-            config.constructForCreatingNewNote()
-            config.prepareForRoute = { [weak self] des in
-                let destination = des as! NoteEditorProtocol
-                //Prepare the destination before transition
-            }
-            config.routeCompletion = { [weak self] des in
-                let destination = des as! NoteEditorProtocol
-                //Transition completes
-            }
-            config.performerErrorHandler = { [weak self] (action, error) in
-                //Transition is failed
-            }
-        }
-    }
-}
-```
+</details>
 
 ### Service Router
 
 Get a module and use:
 
+```swift
+///time service's interface
+protocol TimeServiceInput {
+    func currentTimeString() -> String
+}
+```
+```
+class TestViewController: UIViewController {
+    @IBOutlet weak var timeLabel: UILabel!
+    
+    func callTimeService() {
+        //Get the service for TimeServiceInput
+        let timeService = Router.makeDestination(
+            to: RoutableService<TimeServiceInput>(),
+            preparation: { destination in
+            //prepare the service if needed
+        })
+        //Use the service
+        timeLabel.text = timeService.currentTimeString()
+    }
+}
+```
+
+<details><summary>Objective-C示例</summary>
+
 ```objectivec
 ///time service's interface
-@protocol ZIKTimeServiceInput <ZIKServiceRoutable>
+@protocol TimeServiceInput <ZIKServiceRoutable>
 - (NSString *)currentTimeString;
 @end
 ```
 
 ```objectivec
-@interface TestServiceViewController ()
+@interface TestViewController ()
 @property (weak, nonatomic) IBOutlet UILabel *timeLabel;
 @end
 
-@implementation TestServiceViewController
+@implementation TestViewController
 
 - (void)callTimeService {
-   [ZIKServiceRouterForService(@protocol(ZIKTimeServiceInput))
-         performWithConfigure:^(ZIKServiceRouteConfiguration *config) {
-            config.prepareForRoute = ^(id<ZIKTimeServiceInput> destination) {
-                //config time service
-            };
-            config.routeCompletion = ^(id<ZIKTimeServiceInput> destination) {
-                //Get timeService success
-                id<ZIKTimeServiceInput> timeService = destination;
-                //Use the service
-                NSString *timeString = [timeService currentTimeString];
-                self.timeLabel.text = timeString;
-            };
-        }];
-    
+   //Get the service for TimeServiceInput
+   id<TimeServiceInput> timeService = [ZIKServiceRouter.toService(TimeServiceInput) makeDestination];
+   self.timeLabel.text = [timeService currentTimeString];    
 }
 
 ```
+
+</details>
 
 ## How to use
 
@@ -159,37 +196,37 @@ Create a subclass of `ZIKViewRouter` for your module:
 ```objectivec
 //MasterViewProtocol.h
 //ZIKViewRotable declares that MasterViewProtocol can be used to get a router class by ZIKViewRouterForView()
-@protocol MasterViewProtocol: ZIKViewRotable
+@protocol MasterViewProtocol: ZIKViewRoutable
 
 @end
 ```
 ```objectivec
 //MasterViewRouter.h
-@interface MasterViewRouter : ZIKViewRouter <ZIKViewRouterProtocol>
+@interface MasterViewRouter : ZIKViewRouter
 @end
 
 //MasterViewRouter.m
 @implementation MasterViewRouter
 
-//implementation of ZIKViewRouterProtocol
+//Override methods in superclass
 
 + (void)registerRoutableDestination {
     //Register MasterViewController with  MasterViewRouter. A view can be registered in multi routers, and a router can be registered with multi views.
-    ZIKViewRouter_registerView([MasterViewController class], self);
+    [self registerView:[MasterViewController class]];
     
-    //Register MasterViewProtocol, then you can use ZIKViewRouterForView() to get MasterViewRouter class. You can also use subclass of ZIKViewRouteAdapter, and register protocols for other ZIKViewRouter classes in it's +registerRoutableDestination
-    ZIKViewRouter_registerViewProtocol(@protocol(MasterViewProtocol), self);
+    //Register MasterViewProtocol, then you can use ZIKViewRouter.toView() to get MasterViewRouter class. You can also use subclass of ZIKViewRouteAdapter, and register protocols for other ZIKViewRouter classes in it's +registerRoutableDestination
+    [self registerViewProtocol:@protocol(MasterViewProtocol)];
 }
 
 //Initialize and return the destination
-- (id)destinationWithConfiguration:(__kindof ZIKRouteConfiguration *)configuration {
+- (id)destinationWithConfiguration:(ZIKViewRouteConfiguration *)configuration {
     UIStoryboard *sb = [UIStoryboard storyboardWithName:@"Main" bundle:nil];
     MasterViewController *destination = [sb instantiateViewControllerWithIdentifier:@"master"];
     return destination;
 }
 
 //Config the destination before peforming route
-- (void)prepareDestination:(MasterViewController *)destination configuration:(__kindof ZIKViewRouteConfiguration *)configuration {
+- (void)prepareDestination:(MasterViewController *)destination configuration:(ZIKViewRouteConfiguration *)configuration {
     destination.tableView.backgroundColor = [UIColor lightGrayColor];
 }
 
@@ -225,10 +262,10 @@ Create a subclass of `ZIKViewRouter` for your module:
 - (void)showMasterViewController {
 	ZIKViewRouter *router;
 	
-	//You can directly use MasterViewRouter，or use ZIKViewRouterForView(@protocol(MasterViewProtocol)) to get the class.
+	//You can directly use MasterViewRouter，or use ZIKViewRouter.toView(@protocol(MasterViewProtocol)) to get the class.
 	//When you use protocol to get the router class, you can use the protocol to config the destination
-	router = [MasterViewRouter
-	          performWithConfigure:^(ZIKViewRouteConfiguration *config) {
+	router = [ZIKViewRouter.toView(@protocol(MasterViewProtocol))
+	          performWithConfiguring:^(ZIKViewRouteConfiguration *config) {
 	              config.source = self;
 	              config.routeType = ZIKViewRouteTypePresentModally;
 	              config.animated = YES;
