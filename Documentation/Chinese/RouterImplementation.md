@@ -169,3 +169,5 @@ class EditorViewRouter: ZIKViewRouter<EditorViewController, ZIKViewRouteConfigur
 @end
 ```
 </details>
+
+在继承时可以指定泛型参数，参考[Type Checking](TypeChecking.md#泛型)。
