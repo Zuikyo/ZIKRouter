@@ -92,20 +92,20 @@ public struct RoutableServiceModule<Protocol> {
 
 ///All protocols inherited from ZIKViewRoutable are routable as view protocol.
 public extension RoutableView where Protocol: ZIKViewRoutable {
-    init() { }
+    init() { assert(ZIKRouter_isObjcProtocol(Protocol.self),"Generic parameter \(Protocol.self) should be protocol type.") }
 }
 
 ///All protocols inherited from ZIKViewModuleRoutable are routable as view module protocol.
 public extension RoutableViewModule where Protocol: ZIKViewModuleRoutable {
-    init() { }
+    init() { assert(ZIKRouter_isObjcProtocol(Protocol.self),"Generic parameter \(Protocol.self) should be protocol type.") }
 }
 
 ///All protocols inherited from ZIKServiceRoutable are routable as service protocol.
 public extension RoutableService where Protocol: ZIKServiceRoutable {
-    init() { }
+    init() { assert(ZIKRouter_isObjcProtocol(Protocol.self),"Generic parameter \(Protocol.self) should be protocol type.") }
 }
 
 ///All protocols inherited from ZIKViewRoutable are routable as service module protocol.
 public extension RoutableServiceModule where Protocol: ZIKServiceModuleRoutable {
-    init() { }
+    init() { assert(ZIKRouter_isObjcProtocol(Protocol.self),"Generic parameter \(Protocol.self) should be protocol type.") }
 }
