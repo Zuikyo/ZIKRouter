@@ -144,6 +144,7 @@ NSString *kZIKRouterErrorDomain = @"kZIKRouterErrorDomain";
 
 - (void)removeRouteWithSuccessHandler:(void(^)(void))performerSuccessHandler
                          errorHandler:(void(^)(ZIKRouteAction routeAction, NSError *error))performerErrorHandler {
+    NSAssert([self canRemove], @"Can't remove route for router now: (%@).", self);
     ZIKRemoveRouteConfiguration *configuration = self.original_removeConfiguration;
     if (!configuration) {
         configuration = [[self class] defaultRemoveConfiguration];
@@ -158,6 +159,7 @@ NSString *kZIKRouterErrorDomain = @"kZIKRouterErrorDomain";
 }
 
 - (void)removeRouteWithConfiguring:(void(NS_NOESCAPE ^)(ZIKRemoveRouteConfiguration *config))removeConfigBuilder {
+    NSAssert([self canRemove], @"Can't remove route for router now: (%@).", self);
     ZIKRemoveRouteConfiguration *configuration = self.original_removeConfiguration;
     if (!configuration) {
         configuration = [[self class] defaultRemoveConfiguration];

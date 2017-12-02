@@ -39,7 +39,7 @@ NS_ASSUME_NONNULL_BEGIN
 ///If the router use a custom configuration, override this and return the configuration.
 + (RouteConfig)defaultRouteConfiguration;
 
-///If you can undo your route action, such as dismiss a routed view, do remove in this.
+///If you can undo your route action, such as dismiss a routed view, do remove in this. The destination was hold as weak in router, so you should check whether the destination still exists.
 - (void)removeDestination:(nullable Destination)destination removeConfiguration:(RemoveConfig)removeConfiguration;
 
 ///If the router use a custom configuration, override this and return the configuration.

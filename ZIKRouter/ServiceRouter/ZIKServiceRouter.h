@@ -34,9 +34,6 @@ typedef void(^ZIKServiceRouteGlobalErrorHandler)(__kindof ZIKServiceRouter * _Nu
 /**
  Abstract superclass of service router for discovering service and injecting dependencies with registered protocol. Subclass it and override those methods in `ZIKRouterInternal` and `ZIKServiceRouterInternal` to make router of your service.
  
- @note
- Subclass's generic parameter `RouteConfig` must be a ZIKServiceRouteConfiguration, and `RemoveConfig` must be a ZIKRouteConfiguration, the `id` type is for allowing swift protocol.
- 
  @code
  __block id<LoginServiceInput> loginService;
  loginService = [ZIKServiceRouter.toService(@protocol(LoginServiceInput))
@@ -44,22 +41,6 @@ typedef void(^ZIKServiceRouteGlobalErrorHandler)(__kindof ZIKServiceRouter * _Nu
                       //Prepare service
                 }];
  @endcode
- 
- In Swift, you can use router type with generic and protocol:
- @code
- //Injected dependency from outside
- var loginServiceRouterClass: ZIServiceRouter<AnyObject & LoginServiceInput, ZIKServiceRouteConfiguration, ZIKRouteConfiguration>.Type!
- 
- //Use the router type to perform route
- self.loginServiceRouterClass.makeDestinationWithPreparation: { destination in
-     //destination is inferred as AnyObject & LoginServiceInput, modify destination to prepare service
- }
- @endcode
- In Objective-C, you can't use a type like Swift, you can only declare a router instance, and let the router be injected from outside:
- @code
- @property (nonatomic, strong) ZIKServiceRouter<id<LoginServiceInput>, ZIKServiceRouteConfiguration *, ZIKRouteConfiguration*> *loginServiceRouter;
- @endcode
- So, it only works as a dependency daclaration. But this design pattern let you hide subclass type.
  */
 @interface ZIKServiceRouter<__covariant Destination: id, __covariant RouteConfig: ZIKPerformRouteConfiguration *, __covariant RemoveConfig: ZIKRemoveRouteConfiguration *> : ZIKRouter<Destination, RouteConfig, RemoveConfig>
 

@@ -12,19 +12,23 @@ Service router用于模块寻找，通过protocol寻找对应的模块，并用p
 
 ## Features
 
-* 支持Swift和Objective-C，以及两者混编
-* 支持对模块进行静态依赖注入和动态依赖注入
-* 用protocol动态获取界面和模块，隐藏具体类
-* 用protocol向模块传递参数，基于接口进行类型安全的模块调用
-* 明确声明可用于路由的public protocol，进行编译时检查和运行时检查，避免了动态特性带来的过于自由的安全问题
-* 使用泛型表明指定功能的router
-* 用adapter对两个模块进行解耦和接口兼容
-* 支持界面路由和任意模块的路由
-* 封装UIKit里的所有界面跳转方式（push、present modally、present as popover、segue、show、showDetail、addChildViewController、addSubview）以及自定义的展示方式，封装成一个统一的方法
-* 支持用一个方法执行界面回退和模块销毁，不必区分使用pop、dismiss、removeFromParentViewController、removeFromSuperview
-* 支持storyboard，可以对从segue中跳转的界面执行依赖注入
-* 完备的错误检查，可以检测界面跳转时的大部分问题
-* 支持界面跳转过程中的AOP回调
+- [x] 支持Swift和Objective-C，以及两者混编
+- [x] 支持界面路由和任意模块的路由
+- [x] 支持对模块进行静态依赖注入和动态依赖注入
+- [x] 用protocol动态获取界面和模块，隐藏具体类
+- [x] 用protocol向模块传递参数，基于接口进行类型安全的模块调用和参数传递
+- [x] 明确声明可用于路由的public protocol，进行编译时检查和运行时检查，避免了动态特性带来的过于自由的安全问题
+- [x] 使用泛型表明指定功能的router
+- [x] 用adapter对两个模块进行解耦和接口兼容
+- [x] 封装UIKit里的所有界面跳转方式（push、present modally、present as popover、segue、show、showDetail、addChildViewController、addSubview）以及自定义的展示方式，封装成一个统一的方法
+- [x] 支持用一个方法执行界面回退和模块销毁，不必区分使用pop、dismiss、removeFromParentViewController、removeFromSuperview
+- [x] 支持storyboard，可以对从segue中跳转的界面执行依赖注入
+- [x] 完备的错误检查，可以检测界面跳转时的大部分问题
+- [x] 支持界面跳转过程中的AOP回调
+- [ ] 增加支持Mac OS和TV OS
+- [ ] 可以选择自定义注册
+- [ ] 支持swift中的value类型
+- [ ] 支持用block添加router，而不是router子类
 
 ## Table of Contents
 
@@ -44,5 +48,6 @@ Service router用于模块寻找，通过protocol寻找对应的模块，并用p
 2. [Storyboard](Storyboard.md)
 3. [AOP](AOP.md)
 4. [Dependency Injection](DependencyInjection.md)
-5. [Adapter](Adapter.md)
-6. [Modularization](Modularization.md)
+5. [Circular Dependencies](CircularDependencies.md)
+6. [Module Adapter](ModuleAdapter.md)
+7. [Modularization](Modularization.md)
