@@ -100,7 +100,7 @@ func handleOpenURLWithViewName(_ viewName: String) {
 	              config.routeCompletion = ^(id<NoteEditorInput> destination) {
 	                  //界面显示完毕
 	              };
-	              config.performerErrorHandler = ^(SEL routeAction, NSError *error) {
+	              config.errorHandler = ^(ZIKRouteAction routeAction, NSError *error) {
 	                  //界面显示失败
 	              };
 	          }];

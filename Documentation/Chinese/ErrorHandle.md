@@ -1,0 +1,72 @@
+# 错误处理
+
+ZIKRouter对路由时会产生的错误进行了详细的识别和记录。
+
+可以识别的错误有：
+
+* 执行路由时，设置的参数不符合要求
+* 跳转的界面不支持指定的跳转方式
+* 在界面跳转的同时执行了第二次界面跳转，从而产生`Unbalanced Transition`错误
+* 执行push界面时，源界面没有在任何navigation界面栈上
+* 执行push界面时，被push的界面是UINavigationController或者UISplitViewController
+* 执行present界面时，源界面已经present了其他的界面
+* 执行present界面时，源界面没有添加到视图树上
+* 执行segue时，segue在代理方法里被取消，导致没有执行界面跳转
+* 同时执行了多次界面跳转
+* 消除模块时，模块已经被释放，或者界面已经从视图树上移除
+* 依赖注入时，发生了循环依赖导致无限递归
+
+可以用`setGlobalErrorHandler:`记录全局的错误记录：
+
+```swift
+ZIKAnyViewRouter.setGlobalErrorHandler { (router, action, error) in
+    print("❌ZIKRouter Error: \(router)'s action \(action) catch error: \(error)!")
+}
+```
+
+<details><summary>Objective-C示例</summary>
+
+```objectivec
+[ZIKViewRouter setGlobalErrorHandler:^(ZIKViewRouter * _Nullable router,
+                                           ZIKRouteAction routeAction,
+                                           NSError * _Nonnull error) {
+        NSLog(@"❌ZIKRouter Error: router's action (%@) catch error! code:%@, description: %@,\nrouter:(%@)", routeAction, @(error.code), error.localizedDescription,router);
+    }];
+```
+
+</details>
+
+也可以在执行路由和移除路由时处理错误：
+
+```swift
+Router.perform(
+            to: RoutableView<NoteEditorInput>(),
+            from: self,
+            configuring: { (config, prepareDestiantion, _) in
+                config.routeType = .push
+                config.successHandler = {
+                    //跳转成功处理
+                }
+                config.errorHandler = { (action, error) in
+                    //跳转失败处理
+                }
+        })
+```
+
+<details><summary>Objective-C示例</summary>
+
+```objectivec
+[ZIKViewRouter.toView(@protocol(NoteEditorInput))
+	          performFromSource:self
+	          configuring:^(ZIKViewRouteConfiguration *config) {
+	              config.routeType = ZIKViewRouteTypePresentModally;
+	              config.successHandler = ^{
+	                  //跳转成功处理
+	              };
+	              config.errorHandler = ^(ZIKRouteAction routeAction, NSError *error) {
+	                  //跳转失败处理
+	              };
+	          }];
+```
+
+</details>
