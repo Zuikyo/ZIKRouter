@@ -20,19 +20,15 @@ NS_ASSUME_NONNULL_BEGIN
 ///Subclass can get the real configuration to avoid unnecessary copy.
 @property (nonatomic, readonly, copy) RouteConfig original_configuration;
 @property (nonatomic, readonly, copy) RemoveConfig original_removeConfiguration;
-@property (nonatomic, readonly, weak) id destination;
+@property (nonatomic, readonly, weak) Destination destination;
 
-#pragma mark Override
+#pragma mark Required Override
 ///Methods for ZIKRouter subclass.
-
-///Whether this router is an abstract router.
-+ (BOOL)isAbstractRouter;
-
-///Whether this router is an adapter for another router.
-+ (BOOL)isAdapter;
 
 ///Create destination and initilize it with configuration. If the configuration is invalid, return nil to make this route failed.
 - (nullable Destination)destinationWithConfiguration:(RouteConfig)configuration;
+
+#pragma mark Optional Override
 
 ///If a router need to perform on a specific thread, override -performWithConfiguration: and call [super performWithConfiguration:configuration] in that thread.
 - (void)performWithConfiguration:(RouteConfig)configuration;
@@ -51,9 +47,15 @@ NS_ASSUME_NONNULL_BEGIN
 
 - (NSString *)errorDomain;
 
+///Whether this router is an abstract router.
++ (BOOL)isAbstractRouter;
+
+///Whether this router is an adapter for another router.
++ (BOOL)isAdapter;
+
 #pragma mark Internal Methods
 
-//Attach a destination not created from router.
+///Attach a destination not created from router.
 - (void)attachDestination:(Destination)destination;
 
 ///Change state.

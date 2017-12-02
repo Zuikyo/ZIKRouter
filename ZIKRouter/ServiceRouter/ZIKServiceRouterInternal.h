@@ -26,6 +26,12 @@ NS_ASSUME_NONNULL_BEGIN
 ///Invoked after auto registration is finished when ZIKROUTER_CHECK is enabled. You can override and validate whether those routable swift protocols used in your module as external dependencies have registered with routers, because we can't enumerate swift protocols at runtime.
 + (void)_autoRegistrationDidFinished;
 
+///Prepare the destination after -prepareDestiantion is invoked.
+- (void)prepareDestination:(Destination)destination configuration:(RouteConfig)configuration;
+
+///Check whether destination is preapred correctly.
+- (void)didFinishPrepareDestination:(Destination)destination configuration:(RouteConfig)configuration;
+
 #pragma mark State Control
 
 ///Maintain the route state when you implement custom route or remove route by overriding -performRouteOnDestination:configuration: or -removeDestination:removeConfiguration:.

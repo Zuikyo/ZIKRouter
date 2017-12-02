@@ -109,13 +109,27 @@ _Nullable Class _ZIKServiceRouterToModule(Protocol *configProtocol) {
 #if ZIKROUTER_CHECK
     [self _validateDestinationConformance:destination];
 #endif
-    if (configuration.prepareDestination) {
-        configuration.prepareDestination(destination);
-    }
+    [self prepareForPerformRouteOnDestination:destination configuration:configuration];
     if (configuration.routeCompletion) {
         configuration.routeCompletion(destination);
     }
     [self endPerformRouteWithSuccess];
+}
+
+- (void)prepareForPerformRouteOnDestination:(id)destination configuration:(__kindof ZIKPerformRouteConfiguration *)configuration {
+    if (configuration.prepareDestination) {
+        configuration.prepareDestination(destination);
+    }
+    [self prepareDestination:destination configuration:configuration];
+    [self didFinishPrepareDestination:destination configuration:configuration];
+}
+
+- (void)prepareDestination:(id)destination configuration:(__kindof ZIKPerformRouteConfiguration *)configuration {
+    NSAssert([self class] != [ZIKServiceRouter class], @"Prepare destination with it's router.");
+}
+
+- (void)didFinishPrepareDestination:(id)destination configuration:(__kindof ZIKPerformRouteConfiguration *)configuration {
+    NSAssert([self class] != [ZIKServiceRouter class], @"Prepare destination with it's router.");
 }
 
 #pragma mark State

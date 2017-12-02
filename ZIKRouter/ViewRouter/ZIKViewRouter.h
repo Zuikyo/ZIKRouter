@@ -18,7 +18,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 /**
  Abstract superclass for view router.
- Subclass it and override those methods in `ZIKViewRouterInternal` to make router of your view. Then use generic with protocol or those dynamic discovering functions to reduce couple with subclasses.
+ Subclass it and override those methods in `ZIKRouterInternal` and `ZIKViewRouterInternal` to make router of your view. Then use generic with protocol or those dynamic discovering functions to reduce couple with subclasses.
  
  @discussion
  Features:

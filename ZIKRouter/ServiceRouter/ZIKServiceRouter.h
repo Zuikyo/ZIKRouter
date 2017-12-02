@@ -32,7 +32,7 @@ extern NSString *const kZIKServiceRouterErrorDomain;
 typedef void(^ZIKServiceRouteGlobalErrorHandler)(__kindof ZIKServiceRouter * _Nullable router, ZIKRouteAction routeAction, NSError *error);
 
 /**
- Abstract superclass of service router for discovering service and injecting dependencies with registered protocol. Subclass it and implement ZIKServiceRouterProtocol to make router of your service.
+ Abstract superclass of service router for discovering service and injecting dependencies with registered protocol. Subclass it and override those methods in `ZIKRouterInternal` and `ZIKServiceRouterInternal` to make router of your service.
  
  @note
  Subclass's generic parameter `RouteConfig` must be a ZIKServiceRouteConfiguration, and `RemoveConfig` must be a ZIKRouteConfiguration, the `id` type is for allowing swift protocol.
@@ -135,7 +135,7 @@ typedef NS_ENUM(NSInteger, ZIKServiceRouteError) {
     ZIKServiceRouteErrorServiceUnavailable,
     ///Perform or remove route action failed. Remove route when destiantion was already dealloced.
     ZIKServiceRouteErrorActionFailed,
-    ///Infinite recursion for performing route detected. See ZIKViewRouterProtocol's -prepareDestination:configuration: for more detail.
+    ///Infinite recursion for performing route detected. See -prepareDestination:configuration: for more detail.
     ZIKServiceRouteErrorInfiniteRecursion
 };
 

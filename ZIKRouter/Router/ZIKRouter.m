@@ -79,6 +79,8 @@ NSString *kZIKRouterErrorDomain = @"kZIKRouterErrorDomain";
     dispatch_semaphore_signal(_stateSema);
 }
 
+#pragma mark Perform
+
 - (BOOL)canPerform {
     ZIKRouterState state = self.state;
     return state == ZIKRouterStateNotRoute || state == ZIKRouterStateRemoved || state == ZIKRouterStateRouteFailed;
@@ -130,6 +132,8 @@ NSString *kZIKRouterErrorDomain = @"kZIKRouterErrorDomain";
     return router;
 }
 
+#pragma mark Remove
+
 - (BOOL)canRemove {
     return NO;
 }
@@ -163,6 +167,8 @@ NSString *kZIKRouterErrorDomain = @"kZIKRouterErrorDomain";
     }
     [self removeDestination:self.destination removeConfiguration:configuration];
 }
+
+#pragma mark Make Destination
 
 + (BOOL)canMakeDestination {
     return [self completeSynchronously];
@@ -237,25 +243,25 @@ NSString *kZIKRouterErrorDomain = @"kZIKRouterErrorDomain";
 }
 
 - (void)performRouteOnDestination:(id)destination configuration:(ZIKPerformRouteConfiguration *)configuration {
-    NSAssert(NO, @"ZIKRouter: %@ not conforms to ZIKRouterProtocol!",[self class]);
+    NSAssert(NO, @"Router: %@ must overrode %@!",[self class],NSStringFromSelector(_cmd));
 }
 
 - (void)removeDestination:(id)destination removeConfiguration:(ZIKRemoveRouteConfiguration *)removeConfiguration {
-    NSAssert(NO, @"ZIKRouter: %@ not conforms to ZIKRouterProtocol!",[self class]);
+    NSAssert(NO, @"Router: %@ must overrode %@!",[self class],NSStringFromSelector(_cmd));
 }
 
 - (id)destinationWithConfiguration:(ZIKPerformRouteConfiguration *)configuration {
-    NSAssert(NO, @"ZIKRouter: %@ not conforms to ZIKRouterProtocol!",[self class]);
+    NSAssert(NO, @"Router: %@ must overrode %@!",[self class],NSStringFromSelector(_cmd));
     return nil;
 }
 
 + (ZIKPerformRouteConfiguration *)defaultRouteConfiguration {
-    NSAssert(NO, @"ZIKRouter: %@ not conforms to ZIKRouterProtocol!",[self class]);
+    NSAssert(NO, @"Router: %@ must overrode %@!",[self class],NSStringFromSelector(_cmd));
     return nil;
 }
 
 + (ZIKRemoveRouteConfiguration *)defaultRemoveConfiguration {
-    NSAssert(NO, @"ZIKRouter: %@ not conforms to ZIKRouterProtocol!",[self class]);
+    NSAssert(NO, @"Router: %@ must overrode %@!",[self class],NSStringFromSelector(_cmd));
     return nil;
 }
 
