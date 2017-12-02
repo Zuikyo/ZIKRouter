@@ -1,6 +1,6 @@
 # 模块注册
 
-在router里，你必须重写`registerRoutableDestination`方法，注册当前router所管理的类和用于动态路由的protocol。
+在router里，你必须重写`registerRoutableDestination`方法，注册当前router所管理的类和用于动态路由的protocol。App启动时会自动执行所有router的`registerRoutableDestination`方法。
 
 ## 注册destination类
 
@@ -101,3 +101,23 @@ class EditorViewRouter: ZIKViewRouter<EditorViewController, EditorModuleConfigur
 }
 
 ```
+
+## 自动注册的性能
+
+App启动时会遍历所有的类，自动执行所有router的`registerRoutableDestination`方法。下面是自动注册的性能测试结果。
+
+在测试项目中有5000个view controller，5000个view router。
+
+用`+registerView:`和`registerViewProtocol:`注册：
+
+* iPhone6s真机：58ms
+* iPhone5真机：240ms
+
+用`+ registerExclusiveView:`和`registerViewProtocol:`注册：
+
+* iPhone6s真机：50ms
+* iPhone5真机：220ms
+
+在新机型上没有性能问题，在老机型上耗时会比较多，而大部分耗时都是在Objc的方法调用上，经测试，即便把注册方法都替换为空方法，耗时也是差不多的。
+
+如果对性能问题有疑虑，可以关闭自动注册，使用分阶段的手动注册。不过目前还未支持。

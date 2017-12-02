@@ -66,3 +66,24 @@ class TestViewController: UIViewController {
 </details>
 
 对于service router，你可以在router内部的remove接口里进行模块销毁的操作。例如停止工作、释放资源等。
+
+# 自定义移除路由
+
+## View Router
+
+如果要自定义移除界面操作，则需要：
+
+1. 重写`supportedRouteTypes`，添加`ZIKViewRouteTypeCustom`
+2. 重写`removeCustomRouteOnDestination:fromSource:removeConfiguration:configuration:`，进行自定义移除操作
+3. 用`beginRemoveRouteFromSource:`、`endRemoveRouteWithSuccessOnDestination:fromSource:`、`endRemoveRouteWithError:`改变路由状态
+
+另外，还可以重写`-canRemoveCustomRoute`判断当前是否能执行移除操作。
+
+## Service Router
+
+Service router默认不支持移除操作。如果要用移除操作来销毁模块，则：
+
+1. 重写`canRemove`，如果当前可以销毁模块，则返回true
+2. 重写`-removeDestination:removeConfiguration:`，判断destination是否存在，执行销毁操作
+3. 用`-prepareDestinationBeforeRemoving`在销毁前调用模块
+4. 用`beginRemoveRoute`、`endRemoveRouteWithSuccess`、`endRemoveRouteWithError:`改变路由状态

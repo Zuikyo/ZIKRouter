@@ -160,6 +160,21 @@ class TestViewController: UIViewController {
 
 </details>
 
-Service Router的使用也是类似的，只是去掉了界面跳转的封装，要比View Router更加简单和通用。而大多数service并不需要view controller那样的一个路由过程，只是需要获取某个service模块。此时可以使用[Make Destination](MakeDestination.md)。
+## 自定义路由操作
+
+### View Router
+
+如果要进行自定义的界面跳转，需要：
+
+1. 重写`supportedRouteTypes`，添加`ZIKViewRouteTypeCustom`
+2. 如果需要判断configuration是否正确，则重写`-validateCustomRouteConfiguration:removeConfiguration:`
+3. 重写`performCustomRouteOnDestination:fromSource:configuration:`，执行自定义界面跳转操作，如果自定义操作是执行segue，则在执行时需要使用`_performSegueWithIdentifier:fromSource:sender:`
+4. 用`beginPerformRoute`、`endPerformRouteWithSuccess`、`endPerformRouteWithError:`改变路由状态
+
+### Service Router
+
+Service router只是用于返回一个对象。如果你需要自定义service router的路由，可以重写`-performRouteOnDestination:configuration:`。
+
+Service router的使用和view router也是类似的，只是去掉了界面跳转的封装，要比view router更加简单和通用。而大多数service并不需要view controller那样的一个路由过程，只是需要获取某个service模块。此时可以使用[Make Destination](MakeDestination.md)。
 
 执行路由之后，会得到一个router实例，你可以持有这个router实例，在之后移除路由，参考[Remove Route](RemoveRoute.md)。
