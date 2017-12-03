@@ -1,7 +1,7 @@
 Pod::Spec.new do |s|
 
   s.name         = "ZIKRouter"
-  s.version      = "0.8.0"
+  s.version      = "0.9.0"
   s.summary      = "Type safe iOS router for discovering modules and injecting dependencies with protocol in both Swift and Objective-C."
   s.description  = <<-DESC
                 Type safe iOS router for discovering modules and injecting dependencies with protocol in both Swift and Objective-C, designed for VIPER. The view router can perform all navigation types in UIKit through one method. The service router can discover service with protocol.
