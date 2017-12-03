@@ -8,4 +8,4 @@ ZIKViewRouter支持storyboard。
 
 最后会调用router的`-prepareDestination:configuration:`和`didFinishPrepareDestination:configuration:`，让router配置view controller。
 
-同理，当添加subview的时候，也会检查UIView是否遵守`ZIKRoutableView`，并查找router进行配置。
+同理，当添加subview的时候，也会检查UIView是否遵守`ZIKRoutableView`，并按照同样的流程查找router进行配置。

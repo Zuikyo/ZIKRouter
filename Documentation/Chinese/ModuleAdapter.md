@@ -25,7 +25,7 @@ protocol ModuleARequiredLoginViewInput {
   var message: String? { get set } //显示在登陆界面上的自定义提示语
 }
 //Module A中调用Login模块
-let loginViewController = Router.perform(
+Router.perform(
     to RoutableView<ModuleARequiredLoginViewInput>(),
     from: self,
     configuring { (config, prepareDestiantion, _) in
