@@ -266,6 +266,8 @@ bool ZIKRouter_isObjcProtocol(id protocol) {
     return [protocol isKindOfClass:NSClassFromString(@"Protocol")];
 }
 
+#if DEBUG
+
 static long baseAddressForImage(const char *imagePath) {
     long base = NSNotFound;
     uint32_t imageCount = _dyld_image_count();
@@ -313,6 +315,7 @@ static long baseAddressForImage(const char *imagePath) {
     
     return realAddr;
 }
+#endif
 
 static void fetchBaseAddressForImage(const char *libFileName, long *baseAddress, long *endAddress) {
     long base = NSNotFound;

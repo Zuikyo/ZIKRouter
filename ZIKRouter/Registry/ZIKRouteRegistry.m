@@ -104,17 +104,9 @@ static BOOL _autoRegistrationFinished = NO;
     
 }
 
-double t(double last, char* key) {
-    clock_t now = clock();
-    printf("time:%fs \t key:%s \n", (last != 0) ? (double)(now - last) / CLOCKS_PER_SEC : 0, key);
-    objc_setAssociatedObject([UIApplication class], (void*)123456789, @((double)(now - last) / CLOCKS_PER_SEC), OBJC_ASSOCIATION_RETAIN);
-    return now;
-}
-
 + (void)setup {
     static dispatch_once_t onceToken;
     dispatch_once(&onceToken, ^{
-        double t1 = t(0, "start");
         
         NSSet *registries = [[self registries] copy];
         for (Class registry in registries) {
@@ -139,8 +131,6 @@ double t(double last, char* key) {
             [registry didFinishAutoRegistration];
         }
         self.autoRegistrationFinished = YES;
-        //do something
-        t(t1, "end");
     });
 }
 
