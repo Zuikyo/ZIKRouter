@@ -540,6 +540,7 @@ void* searchFunctionPointerBySymbol(const char *libFileName, const char *functio
     return foundAddress;
 }
 
+#if DEBUG
 /**
  Check whether a type conforms to the given protocol. Use private C++ function inside libswiftCore.dylib:
  `bool _conformsToProtocols(const OpaqueValue *value, const Metadata *type, const ExistentialTypeMetadata *existentialType, const WitnessTable **conformances)`.
@@ -612,6 +613,7 @@ static void *dereferencedPointer(void *pointer) {
 static BOOL isObjectClassType(id object) {
     return object == [object class];
 }
+#endif
 
 bool _swift_typeIsTargetType(id sourceType, id targetType) {
 #if DEBUG
