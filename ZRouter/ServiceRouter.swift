@@ -12,7 +12,7 @@
 import ZIKRouter.Internal
 
 /// Swift Wrapper for ZIKServiceRouter.
-public class ServiceRouter<Destination, ModuleConfig, RemoveConfig> {
+public class ServiceRouter<Destination, ModuleConfig> {
     
     /// The router type to wrap.
     public let routerType: ZIKAnyServiceRouter.Type
@@ -52,7 +52,7 @@ public class ServiceRouter<Destination, ModuleConfig, RemoveConfig> {
     
     public typealias DestinationPreparation = (@escaping (Destination) -> Void) -> Void
     public typealias ModulePreparation = ((ModuleConfig) -> Void) -> Void
-    public typealias RemovePreparation = ((RemoveConfig) -> Void) -> Void
+    public typealias RemovePreparation = ((RemoveRouteConfig) -> Void) -> Void
     
     public func perform(configuring configBuilder: (PerformRouteConfig, DestinationPreparation, ModulePreparation) -> Void, removing removeConfigBuilder: ((RemoveRouteConfig, DestinationPreparation, RemovePreparation) -> Void)? = nil) {
         var removeBuilder: ((RemoveRouteConfig) -> Void)? = nil
@@ -65,10 +65,8 @@ public class ServiceRouter<Destination, ModuleConfig, RemoveConfig> {
                         }
                     }
                 }
-                let prepareModule = { (prepare: (RemoveConfig) -> Void) in
-                    if let removeConfig = config as? RemoveConfig {
-                        prepare(removeConfig)
-                    }
+                let prepareModule = { (prepare: (RemoveRouteConfig) -> Void) in
+                    prepare(config)
                 }
                 configBuilder(config, prepareDestination, prepareModule)
             }
@@ -118,10 +116,8 @@ public class ServiceRouter<Destination, ModuleConfig, RemoveConfig> {
                     }
                 }
             }
-            let prepareModule = { (prepare: (RemoveConfig) -> Void) in
-                if let removeConfig = config as? RemoveConfig {
-                    prepare(removeConfig)
-                }
+            let prepareModule = { (prepare: (RemoveRouteConfig) -> Void) in
+                prepare(config)
             }
             configBuilder(config, prepareDestination, prepareModule)
         }

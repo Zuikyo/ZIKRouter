@@ -14,9 +14,9 @@
 NS_ASSUME_NONNULL_BEGIN
 
 ///Internal methods for subclass to override. Use these methods when implementing your custom route.
-@interface ZIKViewRouter<__covariant Destination: id, __covariant RouteConfig: ZIKViewRouteConfiguration *, __covariant RemoveConfig: ZIKViewRemoveConfiguration *> ()
+@interface ZIKViewRouter<__covariant Destination: id, __covariant RouteConfig: ZIKViewRouteConfiguration *> ()
 @property (nonatomic, readonly, copy) RouteConfig original_configuration;
-@property (nonatomic, readonly, copy) RemoveConfig original_removeConfiguration;
+@property (nonatomic, readonly, copy) ZIKViewRemoveConfiguration *original_removeConfiguration;
 
 #pragma mark Required Override
 
@@ -95,10 +95,10 @@ NS_ASSUME_NONNULL_BEGIN
 #pragma mark Custom Route Optional Override
 
 ///Remove your custom route. You must maintain the router's state with methods in ZIKViewRouterInternal.h.
-- (void)removeCustomRouteOnDestination:(Destination)destination fromSource:(nullable id)source removeConfiguration:(RemoveConfig)removeConfiguration configuration:(RouteConfig)configuration;
+- (void)removeCustomRouteOnDestination:(Destination)destination fromSource:(nullable id)source removeConfiguration:(ZIKViewRemoveConfiguration *)removeConfiguration configuration:(RouteConfig)configuration;
 
 ///Validate the configuration for your custom route. If return NO, current perform action will be failed.
-+ (BOOL)validateCustomRouteConfiguration:(RouteConfig)configuration removeConfiguration:(RemoveConfig)removeConfiguration;
++ (BOOL)validateCustomRouteConfiguration:(RouteConfig)configuration removeConfiguration:(ZIKViewRemoveConfiguration *)removeConfiguration;
 
 #pragma mark Custom Route State Control
 

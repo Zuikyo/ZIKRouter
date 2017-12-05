@@ -12,7 +12,7 @@
 import ZIKRouter.Internal
 
 /// Swift Wrapper for ZIKViewRouter.
-public class ViewRouter<Destination, ModuleConfig, RemoveConfig> {
+public class ViewRouter<Destination, ModuleConfig> {
     
     /// The router type to wrap.
     public let routerType: ZIKAnyViewRouter.Type
@@ -52,9 +52,8 @@ public class ViewRouter<Destination, ModuleConfig, RemoveConfig> {
     
     public typealias DestinationPreparation = (@escaping (Destination) -> Void) -> Void
     public typealias ModulePreparation = ((ModuleConfig) -> Void) -> Void
-    public typealias RemovePreparation = ((RemoveConfig) -> Void) -> Void
     
-    public func perform(from source: ZIKViewRouteSource?, configuring configBuilder: (ViewRouteConfig, DestinationPreparation, ModulePreparation) -> Void, removing removeConfigBuilder: ((ViewRemoveConfig, DestinationPreparation, RemovePreparation) -> Void)? = nil) {
+    public func perform(from source: ZIKViewRouteSource?, configuring configBuilder: (ViewRouteConfig, DestinationPreparation, ModulePreparation) -> Void, removing removeConfigBuilder: ((ViewRemoveConfig, DestinationPreparation) -> Void)? = nil) {
         var removeBuilder: ((ViewRemoveConfig) -> Void)? = nil
         if let configBuilder = removeConfigBuilder {
             removeBuilder = { (config: ViewRemoveConfig) in
@@ -65,12 +64,7 @@ public class ViewRouter<Destination, ModuleConfig, RemoveConfig> {
                         }
                     }
                 }
-                let prepareModule = { (prepare: (RemoveConfig) -> Void) in
-                    if let removeConfig = config as? RemoveConfig {
-                        prepare(removeConfig)
-                    }
-                }
-                configBuilder(config, prepareDestination, prepareModule)
+                configBuilder(config, prepareDestination)
             }
         }
         let routerType = self.routerType
@@ -109,7 +103,7 @@ public class ViewRouter<Destination, ModuleConfig, RemoveConfig> {
         routed?.removeRoute(successHandler: performerSuccessHandler, errorHandler: performerErrorHandler)
     }
     
-    public func removeRoute(configuring configBuilder: @escaping (ViewRemoveConfig, DestinationPreparation, RemovePreparation) -> Void) {
+    public func removeRoute(configuring configBuilder: @escaping (ViewRemoveConfig, DestinationPreparation) -> Void) {
         let removeBuilder = { (config: ViewRemoveConfig) in
             let prepareDestination = { (prepare: @escaping (Destination) -> Void) in
                 config.prepareDestination = { d in
@@ -118,12 +112,7 @@ public class ViewRouter<Destination, ModuleConfig, RemoveConfig> {
                     }
                 }
             }
-            let prepareModule = { (prepare: (RemoveConfig) -> Void) in
-                if let removeConfig = config as? RemoveConfig {
-                    prepare(removeConfig)
-                }
-            }
-            configBuilder(config, prepareDestination, prepareModule)
+            configBuilder(config, prepareDestination)
         }
         routed?.removeRoute(configuring: removeBuilder)
     }

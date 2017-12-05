@@ -24,11 +24,11 @@ protocol PureSwiftSampleViewInput2 {
 
 // Show how ZIKRouter working in a swifty way.
 class SwiftSampleViewController: UIViewController, PureSwiftSampleViewInput, PureSwiftSampleViewInput2, SwiftSampleViewInput, ZIKInfoViewDelegate {
-    var infoRouter: ViewRouter<ZIKInfoViewProtocol, ViewRouteConfig, ViewRemoveConfig>?
-    var alertRouter: ViewRouter<Any, ZIKCompatibleAlertConfigProtocol, ViewRemoveConfig>?
+    var infoRouter: ViewRouter<ZIKInfoViewProtocol, ViewRouteConfig>?
+    var alertRouter: ViewRouter<Any, ZIKCompatibleAlertConfigProtocol>?
     
     //You can inject alertRouter from outside, then use the router directly
-    var injectedAlertRouter: ViewRouter<Any, ZIKCompatibleAlertConfigProtocol, ViewRemoveConfig>?
+    var injectedAlertRouter: ViewRouter<Any, ZIKCompatibleAlertConfigProtocol>?
     
     @IBAction func testRouteForView(_ sender: Any) {
         infoRouter = Router.perform(
