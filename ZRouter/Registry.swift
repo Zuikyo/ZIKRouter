@@ -162,7 +162,7 @@ extension Registry {
     ///
     /// - Parameter routableView: A routabe entry carrying a view protocol conformed by the view registered with a view router. Support objc protocol and pure Swift protocol.
     /// - Returns: The view router class for the view protocol.
-    public static func router<Destination>(to routableView: RoutableView<Destination>) -> ViewRouter<Destination, ViewRouteConfig, ViewRemoveConfig>? {
+    public static func router<Destination>(to routableView: RoutableView<Destination>) -> ViewRouter<Destination, ViewRouteConfig>? {
         let routerClass = _router(toView: Destination.self)
         if routerClass != nil {
             return ViewRouter(routerType: routerClass!)
@@ -174,7 +174,7 @@ extension Registry {
     ///
     /// - Parameter routableViewModule: A routabe entry carrying a view module config protocol registered with a view router. Support objc protocol and pure Swift protocol.
     /// - Returns: The view router class for the config protocol.
-    public static func router<Module>(to routableViewModule: RoutableViewModule<Module>) -> ViewRouter<Any, Module, ViewRemoveConfig>? {
+    public static func router<Module>(to routableViewModule: RoutableViewModule<Module>) -> ViewRouter<Any, Module>? {
         let routerClass = _router(toViewModule: Module.self)
         if routerClass != nil {
             return ViewRouter(routerType: routerClass!)
@@ -186,7 +186,7 @@ extension Registry {
     ///
     /// - Parameter routableService: A routabe entry carrying a service protocol conformed by the service registered with a service router. Support objc protocol and pure Swift protocol.
     /// - Returns: The view router class for the service protocol.
-    public static func router<Destination>(to routableService: RoutableService<Destination>) -> ServiceRouter<Destination, PerformRouteConfig, RouteConfig>? {
+    public static func router<Destination>(to routableService: RoutableService<Destination>) -> ServiceRouter<Destination, PerformRouteConfig>? {
         let routerClass = _router(toService: Destination.self)
         if routerClass != nil {
             return ServiceRouter(routerType: routerClass!)
@@ -198,7 +198,7 @@ extension Registry {
     ///
     /// - Parameter routableServiceModule: A routabe entry carrying a cconfg protocol registered with a service router. Support objc protocol and pure Swift protocol.
     /// - Returns: The service router class for the config protocol.
-    public static func router<Module>(to routableServiceModule: RoutableServiceModule<Module>) -> ServiceRouter<Any, Module, RouteConfig>? {
+    public static func router<Module>(to routableServiceModule: RoutableServiceModule<Module>) -> ServiceRouter<Any, Module>? {
         let routerClass = _router(toServiceModule: Module.self)
         if routerClass != nil {
             return ServiceRouter(routerType: routerClass!)
@@ -215,7 +215,7 @@ public extension Registry {
     ///
     /// - Parameter switchableView: A struct carrying any routable view protocol, but not a specified one.
     /// - Returns: The view router class for the view protocol.
-    public static func router(to switchableView: SwitchableView) -> ViewRouter<Any, ViewRouteConfig, ViewRemoveConfig>? {
+    public static func router(to switchableView: SwitchableView) -> ViewRouter<Any, ViewRouteConfig>? {
         let routerClass = _router(toView: switchableView.routableProtocol)
         if routerClass != nil {
             return ViewRouter(routerType: routerClass!)

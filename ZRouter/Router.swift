@@ -27,8 +27,8 @@ public class Router {
         to routableView: RoutableView<Destination>,
         from source: ZIKViewRouteSource?,
         configuring configure: @escaping (ViewRouteConfig, (@escaping (Destination) -> Void) -> Void, ((ViewRouteConfig) -> Void) -> Void) -> Void,
-        removing removeConfigure: ((ViewRemoveConfig, (@escaping (Destination) -> Void) -> Void, ((ViewRemoveConfig) -> Void) -> Void) -> Void)? = nil
-        ) -> ViewRouter<Destination, ViewRouteConfig, ViewRemoveConfig>? {
+        removing removeConfigure: ((ViewRemoveConfig, (@escaping (Destination) -> Void) -> Void) -> Void)? = nil
+        ) -> ViewRouter<Destination, ViewRouteConfig>? {
         let r = Registry.router(to: routableView)
         r?.perform(from: source,
                    configuring: { config, prepareDestination, prepareModule  in
@@ -49,8 +49,8 @@ public class Router {
         to routableViewModule: RoutableViewModule<Module>,
         from source: ZIKViewRouteSource?,
         configuring configure: @escaping (ViewRouteConfig, (@escaping (Any) -> Void) -> Void, ((Module) -> Void) -> Void) -> Void,
-        removing removeConfigure: ((ViewRemoveConfig, (@escaping (Any) -> Void) -> Void, ((ViewRemoveConfig) -> Void) -> Void) -> Void)? = nil
-        ) -> ViewRouter<Any, Module, ViewRemoveConfig>? {
+        removing removeConfigure: ((ViewRemoveConfig, (@escaping (Any) -> Void) -> Void) -> Void)? = nil
+        ) -> ViewRouter<Any, Module>? {
         let r = Registry.router(to: routableViewModule)
         r?.perform(from: source,
                    configuring: { config, prepareDestination, prepareModule  in
@@ -70,7 +70,7 @@ public class Router {
         to routableService: RoutableService<Destination>,
         configuring configure: @escaping (PerformRouteConfig, (@escaping (Destination) -> Void) -> Void, ((PerformRouteConfig) -> Void) -> Void) -> Void,
         removing removeConfigure: ((RouteConfig, ((RouteConfig) -> Void) -> Void) -> Void)? = nil
-        ) -> ServiceRouter<Destination, PerformRouteConfig, RouteConfig>? {
+        ) -> ServiceRouter<Destination, PerformRouteConfig>? {
         let r = Registry.router(to: routableService)
         r?.perform(configuring: configure)
         return r
@@ -87,7 +87,7 @@ public class Router {
         to routableServiceModule: RoutableServiceModule<Module>,
         configuring configure: @escaping (PerformRouteConfig, (@escaping (Any) -> Void) -> Void, ((Module) -> Void) -> Void) -> Void,
         removing removeConfigure: ((RouteConfig, ((RouteConfig) -> Void) -> Void) -> Void)? = nil
-        ) -> ServiceRouter<Any, Module, RouteConfig>? {
+        ) -> ServiceRouter<Any, Module>? {
         let r = Registry.router(to: routableServiceModule)
         r?.perform(configuring: configure)
         return r

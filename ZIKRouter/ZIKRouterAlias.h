@@ -21,10 +21,10 @@ typedef ZIKViewRemoveConfiguration ZIKViewRemoveConfig;
 typedef ZIKViewRouteSegueConfiguration ZIKViewRouteSegueConfig;
 typedef ZIKViewRoutePopoverConfiguration ZIKViewRoutePopoverConfig;
 
-typedef ZIKViewRouter<id<ZIKRoutableView>, ZIKViewRouteConfig *, ZIKViewRemoveConfig *> ZIKAnyViewRouter;
-#define ZIKDestinationViewRouter(Destination) ZIKViewRouter<Destination, ZIKViewRouteConfig *, ZIKViewRemoveConfig *>
-#define ZIKModuleViewRouter(ModuleConfigProtocol) ZIKViewRouter<id<ZIKRoutableView>, ZIKViewRouteConfig<ModuleConfigProtocol> *, ZIKViewRemoveConfig *>
+typedef ZIKViewRouter<id<ZIKRoutableView>, ZIKViewRouteConfig *> ZIKAnyViewRouter;
+#define ZIKDestinationViewRouter(Destination) ZIKViewRouter<Destination, ZIKViewRouteConfig *>
+#define ZIKModuleViewRouter(ModuleConfigProtocol) ZIKViewRouter<id<ZIKRoutableView>, ZIKViewRouteConfig<ModuleConfigProtocol> *>
 
-typedef ZIKServiceRouter<id, ZIKPerformRouteConfig *, ZIKRemoveRouteConfig *> ZIKAnyServiceRouter;
-#define ZIKDestinationServiceRouter(Destination) ZIKServiceRouter<Destination, ZIKPerformRouteConfig *, ZIKRemoveRouteConfig *>
-#define ZIKModuleServiceRouter(ModuleConfigProtocol) ZIKServiceRouter<id<ZIKRoutableView>, ZIKPerformRouteConfig<ModuleConfigProtocol> *, ZIKRemoveRouteConfig *>
+typedef ZIKServiceRouter<id, ZIKPerformRouteConfig *> ZIKAnyServiceRouter;
+#define ZIKDestinationServiceRouter(Destination) ZIKServiceRouter<Destination, ZIKPerformRouteConfig *>
+#define ZIKModuleServiceRouter(ModuleConfigProtocol) ZIKServiceRouter<id, ZIKPerformRouteConfig<ModuleConfigProtocol> *>

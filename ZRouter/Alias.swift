@@ -23,15 +23,14 @@ public typealias ViewRemoveConfig = ZIKViewRemoveConfiguration
 public typealias ViewRouteSegueConfig = ZIKViewRouteSegueConfiguration
 public typealias ViewRoutePopoverConfig = ZIKViewRoutePopoverConfiguration
 
-public typealias AnyViewRouter = ViewRouter<ZIKRoutableView, ViewRouteConfig, ViewRemoveConfig>
-public typealias ZIKAnyViewRouter = ZIKViewRouter<ZIKRoutableView, ViewRouteConfig, ViewRemoveConfig>
-public typealias DestinationViewRouter<Destination> = ViewRouter<Destination, ViewRouteConfig, ViewRemoveConfig>
-public typealias ModuleViewRouter<ModuleConfig: ViewRouteConfig> = ViewRouter<ZIKRoutableView, ModuleConfig, ViewRemoveConfig>
-public typealias RemovableViewRouter<RemoveConfig: ViewRemoveConfig> = ViewRouter<ZIKRoutableView, ViewRouteConfig, RemoveConfig>
+public typealias AnyViewRouter = ViewRouter<ZIKRoutableView, ViewRouteConfig>
+public typealias ZIKAnyViewRouter = ZIKViewRouter<ZIKRoutableView, ViewRouteConfig>
+public typealias DestinationViewRouter<Destination> = ViewRouter<Destination, ViewRouteConfig>
+public typealias ModuleViewRouter<ModuleConfig: ViewRouteConfig> = ViewRouter<ZIKRoutableView, ModuleConfig>
+public typealias RemovableViewRouter<RemoveConfig: ViewRemoveConfig> = ViewRouter<ZIKRoutableView, ViewRouteConfig>
 
-public typealias AnyServiceRouter = ServiceRouter<Any, PerformRouteConfig, RemoveRouteConfig>
-public typealias ZIKAnyServiceRouter = ZIKServiceRouter<AnyObject, ZIKPerformRouteConfig, ZIKRemoveRouteConfig>
-public typealias DestinationServiceRouter<Destination> = ServiceRouter<Destination, PerformRouteConfig, RemoveRouteConfig>
-public typealias ModuleServiceRouter<ModuleConfig: PerformRouteConfig> = ServiceRouter<Any, ModuleConfig, RemoveRouteConfig>
-public typealias RemovableServiceRouter<RemoveConfig: RemoveRouteConfig> = ServiceRouter<Any, PerformRouteConfig, RemoveConfig>
-
+public typealias AnyServiceRouter = ServiceRouter<Any, PerformRouteConfig>
+public typealias ZIKAnyServiceRouter = ZIKServiceRouter<AnyObject, ZIKPerformRouteConfig>
+public typealias DestinationServiceRouter<Destination> = ServiceRouter<Destination, PerformRouteConfig>
+public typealias ModuleServiceRouter<ModuleConfig: PerformRouteConfig> = ServiceRouter<Any, ModuleConfig>
+public typealias RemovableServiceRouter<RemoveConfig: RemoveRouteConfig> = ServiceRouter<Any, PerformRouteConfig>
