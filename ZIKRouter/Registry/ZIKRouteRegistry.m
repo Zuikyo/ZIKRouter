@@ -32,6 +32,9 @@ static BOOL _autoRegistrationFinished = NO;
         ZIKRouter_replaceMethodWithMethod([UIApplication class], @selector(setDelegate:),
                                           self, @selector(ZIKRouteRegistry_hook_setDelegate:));
         ZIKRouter_replaceMethodWithMethodType([UIStoryboard class], @selector(storyboardWithName:bundle:), true, self, @selector(ZIKRouteRegistry_hook_storyboardWithName:bundle:), true);
+        if ([self respondsToSelector:@selector(_beforeStartRegistration)]) {
+            [self performSelector:@selector(_beforeStartRegistration)];
+        }
     });
 }
 

@@ -40,6 +40,7 @@ internal struct _RouteKey: Hashable {
 public class Registry {
     fileprivate static var viewProtocolContainer = [_RouteKey: ZIKAnyViewRouter.Type]()
     private static var viewConfigContainer = [_RouteKey: ZIKAnyViewRouter.Type]()
+    fileprivate static var swiftServiceContainer = [_RouteKey: RouterAware.Type]()
     fileprivate static var serviceProtocolContainer = [_RouteKey: ZIKAnyServiceRouter.Type]()
     private static var serviceConfigContainer = [_RouteKey: ZIKAnyServiceRouter.Type]()
     private static var _check_viewProtocolContainer = [_RouteKey: Set<_RouteKey>]()
@@ -83,6 +84,12 @@ public class Registry {
         assert((router as! ZIKAnyViewRouter.Type).defaultRouteConfiguration() is Protocol, "The router (\(router))'s default configuration must conform to the config protocol (\(configProtocol)) to register.")
         assert(viewConfigContainer[_RouteKey(type:configProtocol)] == nil, "view config protocol (\(configProtocol)) was already registered with router (\(String(describing: viewConfigContainer[_RouteKey(type:configProtocol)]))).")
         viewConfigContainer[_RouteKey(type:configProtocol)] = (router as! ZIKAnyViewRouter.Type)
+    }
+    
+    public static func register(swiftType: Any.Type, forRouter router: RouterAware.Type) {
+        assert(ZIKAnyServiceRouter._isAutoRegistrationFinished() == false, "Can't register after app did finish launch. Only register in registerRoutableDestination().")
+        assert(ZIKRouter_classIsSubclassOfClass(router, ZIKAnyServiceRouter.self), "This router must be subclass of ZIKServiceRouter")
+        swiftServiceContainer[_RouteKey(type:swiftType)] = router
     }
     
     /// Register pure Swift protocol or objc protocol for your service with a ZIKServiceRouter subclass. Router will check whether the registered service protocol is conformed by the registered service.
@@ -453,6 +460,18 @@ internal extension Registry {
         }
         return true
     }
+    internal class func validateConformance(destinationType: Any.Type, inServiceRouterType routerType: RouterAware.Type) -> Bool {
+        let protocols = _check_serviceProtocolContainer[_RouteKey(type: routerType)]
+        if protocols != nil {
+            for serviceProtocolEntry in protocols! {
+                assert(_swift_typeIsTargetType(destinationType, serviceProtocolEntry.type!), "Bad implementation in router (\(routerType))'s destination(with configuration:), the destination (\(destinationType)) doesn't conforms to registered service protocol (\(serviceProtocolEntry.type!))")
+                if _swift_typeIsTargetType(destinationType, serviceProtocolEntry.type!) == false {
+                    return false
+                }
+            }
+        }
+        return true
+    }
 }
 
 ///Make sure all registered view classes conform to their registered view protocols.
@@ -480,5 +499,26 @@ private class _ServiceRouterValidater: ZIKServiceRouteAdapter {
             assert(routerClass.validateRegisteredServiceClasses({return _swift_typeIsTargetType($0, serviceProtocol)}) == nil,
                    "Registered service class (\(String(describing: routerClass.validateRegisteredServiceClasses{return _swift_typeIsTargetType($0, serviceProtocol)}!))) for router (\(routerClass)) should conform to registered service protocol (\(serviceProtocol)).")
         }
+        for (routeKey, routerType) in Registry.swiftServiceContainer {
+            let destinationType = routeKey.type!
+            assert(Registry.validateConformance(destinationType: destinationType, inServiceRouterType: routerType))
+        }
+    }
+}
+
+extension ZIKRouteRegistry {
+    @objc class func _beforeStartRegistration() {
+        self.add(SwiftServiceRegistry.self)
+    }
+}
+
+private class SwiftServiceRegistry: ZIKRouteRegistry {
+    override class func handleEnumerateClasses(_ aClass: AnyClass) {
+        if let routerType = aClass as? RouterAware.Type {
+            routerType.registerRoutableDestination()
+        }
+    }
+    override class func didFinishAutoRegistration() {
+        
     }
 }

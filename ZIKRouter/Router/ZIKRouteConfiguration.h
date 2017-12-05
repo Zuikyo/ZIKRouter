@@ -40,14 +40,14 @@ typedef void(^ZIKRouteStateNotifier)(ZIKRouterState oldState, ZIKRouterState new
  @note
  Use weakSelf in errorHandler to avoid retain cycle.
  */
-@property (nonatomic, copy, nullable) ZIKRouteErrorHandler errorHandler;
+@property (nonatomic, copy, nullable) ZIKRouteErrorHandler errorHandler NS_SWIFT_NAME(oc_errorHandler);
 
 /**
  Success handler for router's provider.
  @note
  Use weakSelf in successHandler to avoid retain cycle.
  */
-@property (nonatomic, copy, nullable) void(^successHandler)(void);
+@property (nonatomic, copy, nullable) void(^successHandler)(void) NS_SWIFT_NAME(oc_successHandler);
 
 /**
  Monitor state
@@ -65,7 +65,7 @@ typedef void(^ZIKRouteStateNotifier)(ZIKRouterState oldState, ZIKRouterState new
  @note
  Use weakSelf in prepareDestination to avoid retain cycle.
  */
-@property (nonatomic, copy, nullable) void(^prepareDestination)(id destination);
+@property (nonatomic, copy, nullable) void(^prepareDestination)(id destination) NS_SWIFT_NAME(oc_prepareDestination);
 
 /**
  Completion for performRoute. Default implemenation will call routeCompletion synchronously.
@@ -73,7 +73,7 @@ typedef void(^ZIKRouteStateNotifier)(ZIKRouterState oldState, ZIKRouterState new
  @note
  Use weakSelf in routeCompletion to avoid retain cycle.
  */
-@property (nonatomic, copy, nullable) void(^routeCompletion)(id destination);
+@property (nonatomic, copy, nullable) void(^routeCompletion)(id destination) NS_SWIFT_NAME(oc_routeCompletion);
 @end
 
 @interface ZIKRemoveRouteConfiguration : ZIKRouteConfiguration <NSCopying>
@@ -84,7 +84,7 @@ typedef void(^ZIKRouteStateNotifier)(ZIKRouterState oldState, ZIKRouterState new
  @note
  Use weakSelf in prepareDestination to avoid retain cycle.
  */
-@property (nonatomic, copy, nullable) void(^prepareDestination)(id destination);
+@property (nonatomic, copy, nullable) void(^prepareDestination)(id destination) NS_SWIFT_NAME(oc_prepareDestination);
 
 @end
 

@@ -50,6 +50,8 @@
 		F84239D81F0CDE78000FEE5F /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = F84239D61F0CDE78000FEE5F /* Main.storyboard */; };
 		F84239DA1F0CDE78000FEE5F /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = F84239D91F0CDE78000FEE5F /* Assets.xcassets */; };
 		F84239DD1F0CDE78000FEE5F /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = F84239DB1F0CDE78000FEE5F /* LaunchScreen.storyboard */; };
+		F84E8D801FC6CF50007CD433 /* SwiftStruct.swift in Sources */ = {isa = PBXBuildFile; fileRef = F84E8D7F1FC6CF50007CD433 /* SwiftStruct.swift */; };
+		F84E8D841FC6D2E8007CD433 /* SwiftStructRouter.swift in Sources */ = {isa = PBXBuildFile; fileRef = F84E8D831FC6D2E8007CD433 /* SwiftStructRouter.swift */; };
 		F85283B21F8CF43F0093C812 /* ZIKUnroutableViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = F85283B11F8CF43F0093C812 /* ZIKUnroutableViewController.m */; };
 		F8611F621F9B4FC5008F35DC /* ZIKRouter.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F8611F5F1F9B4FBA008F35DC /* ZIKRouter.framework */; };
 		F8611F631F9B4FC5008F35DC /* ZIKRouter.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = F8611F5F1F9B4FBA008F35DC /* ZIKRouter.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
@@ -209,6 +211,8 @@
 		F84239D91F0CDE78000FEE5F /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		F84239DC1F0CDE78000FEE5F /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		F84239DE1F0CDE78000FEE5F /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		F84E8D7F1FC6CF50007CD433 /* SwiftStruct.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SwiftStruct.swift; sourceTree = "<group>"; };
+		F84E8D831FC6D2E8007CD433 /* SwiftStructRouter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SwiftStructRouter.swift; sourceTree = "<group>"; };
 		F85283B01F8CF43F0093C812 /* ZIKUnroutableViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ZIKUnroutableViewController.h; sourceTree = "<group>"; };
 		F85283B11F8CF43F0093C812 /* ZIKUnroutableViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ZIKUnroutableViewController.m; sourceTree = "<group>"; };
 		F8611F581F9B4FBA008F35DC /* ZIKRouter.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = ZIKRouter.xcodeproj; path = ../ZIKRouter.xcodeproj; sourceTree = "<group>"; };
@@ -255,8 +259,10 @@
 			children = (
 				F820BF921F628A9600D570CF /* SwiftSampleViewController.swift */,
 				F820BF941F628EF300D570CF /* SwiftSampleViewRouter.swift */,
-				F87317CF1F922EB100A5F5D4 /* SwiftServiceRouter.swift */,
 				F87317D31F923E2000A5F5D4 /* SwiftService.swift */,
+				F87317CF1F922EB100A5F5D4 /* SwiftServiceRouter.swift */,
+				F84E8D7F1FC6CF50007CD433 /* SwiftStruct.swift */,
+				F84E8D831FC6D2E8007CD433 /* SwiftStructRouter.swift */,
 				F820BF911F628A9600D570CF /* ZIKRouterDemo-Bridging-Header.h */,
 			);
 			path = SwiftSample;
@@ -684,6 +690,7 @@
 				F85283B21F8CF43F0093C812 /* ZIKUnroutableViewController.m in Sources */,
 				F88DD30F1FBB303B00715097 /* SubclassViewRouter.m in Sources */,
 				F88DD3061FBB2ED400715097 /* TestClassHierarchyViewController.m in Sources */,
+				F84E8D841FC6D2E8007CD433 /* SwiftStructRouter.swift in Sources */,
 				F84239D21F0CDE78000FEE5F /* MasterViewController.m in Sources */,
 				F87317DF1F924EFC00A5F5D4 /* ZIKChildViewRouter.m in Sources */,
 				F88DD3091FBB2F0400715097 /* TestClassHierarchyViewRouter.m in Sources */,
@@ -693,6 +700,7 @@
 				F82ECAD21F17DC51007168AA /* ZIKCustomTransitionSegue.m in Sources */,
 				F82ECACA1F17DC51007168AA /* ZIKTestAddAsSubviewViewController.m in Sources */,
 				F82ECACF1F17DC51007168AA /* ZIKTestShowDetailViewRouter.m in Sources */,
+				F84E8D801FC6CF50007CD433 /* SwiftStruct.swift in Sources */,
 				F87317D41F923E2000A5F5D4 /* SwiftService.swift in Sources */,
 				F82ECAD81F17DC51007168AA /* ZIKTestPresentModallyViewRouter.m in Sources */,
 				F833152F1F6FBE7900891004 /* ZIKTimeService.m in Sources */,

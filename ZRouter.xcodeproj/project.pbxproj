@@ -16,6 +16,7 @@
 		F872F4FB1FAF5BD600297A1D /* Namespace.swift in Sources */ = {isa = PBXBuildFile; fileRef = F872F4F31FAF5BD500297A1D /* Namespace.swift */; };
 		F8C0D1161FB034B5003D3B3B /* Router.swift in Sources */ = {isa = PBXBuildFile; fileRef = F8C0D1151FB034B5003D3B3B /* Router.swift */; };
 		F8C0D11E1FB04E06003D3B3B /* Routable.swift in Sources */ = {isa = PBXBuildFile; fileRef = F8C0D11D1FB04E06003D3B3B /* Routable.swift */; };
+		F8D151FB1FC9965000D2F57B /* SwiftServiceRouter.swift in Sources */ = {isa = PBXBuildFile; fileRef = F8D151FA1FC9965000D2F57B /* SwiftServiceRouter.swift */; };
 		F8EF733C1FB4C4550040008C /* Switchable.swift in Sources */ = {isa = PBXBuildFile; fileRef = F8EF733B1FB4C4550040008C /* Switchable.swift */; };
 /* End PBXBuildFile section */
 
@@ -56,6 +57,7 @@
 		F872F4FC1FAF5C6E00297A1D /* ZIKRouter.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; path = ZIKRouter.xcodeproj; sourceTree = "<group>"; };
 		F8C0D1151FB034B5003D3B3B /* Router.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Router.swift; sourceTree = "<group>"; };
 		F8C0D11D1FB04E06003D3B3B /* Routable.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Routable.swift; sourceTree = "<group>"; };
+		F8D151FA1FC9965000D2F57B /* SwiftServiceRouter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SwiftServiceRouter.swift; sourceTree = "<group>"; };
 		F8EF733B1FB4C4550040008C /* Switchable.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Switchable.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -95,6 +97,7 @@
 				F8C0D1151FB034B5003D3B3B /* Router.swift */,
 				F82035CD1FC51F03009DB80B /* ViewRouter.swift */,
 				F82035D11FC66537009DB80B /* ServiceRouter.swift */,
+				F8D151FA1FC9965000D2F57B /* SwiftServiceRouter.swift */,
 				F8C0D11D1FB04E06003D3B3B /* Routable.swift */,
 				F8EF733B1FB4C4550040008C /* Switchable.swift */,
 				F872F4EE1FAF5BD500297A1D /* ViewExtension.swift */,
@@ -218,6 +221,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				F8D151FB1FC9965000D2F57B /* SwiftServiceRouter.swift in Sources */,
 				F872F4F61FAF5BD600297A1D /* ViewExtension.swift in Sources */,
 				F82035D21FC66537009DB80B /* ServiceRouter.swift in Sources */,
 				F8C0D1161FB034B5003D3B3B /* Router.swift in Sources */,

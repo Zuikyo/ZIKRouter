@@ -12,9 +12,9 @@
 import ZIKRouter
 
 public typealias RouterState = ZIKRouterState
-public typealias RouteConfig = ZIKRouteConfiguration
-public typealias PerformRouteConfig = ZIKPerformRouteConfiguration
-public typealias RemoveRouteConfig = ZIKRemoveRouteConfiguration
+public typealias ZIKRouteConfig = ZIKRouteConfiguration
+public typealias ZIKPerformRouteConfig = ZIKPerformRouteConfiguration
+public typealias ZIKRemoveRouteConfig = ZIKRemoveRouteConfiguration
 
 public typealias ViewRouteType = ZIKViewRouteType
 public typealias ViewRouteError = ZIKViewRouteError
@@ -30,7 +30,8 @@ public typealias ModuleViewRouter<ModuleConfig: ViewRouteConfig> = ViewRouter<ZI
 public typealias RemovableViewRouter<RemoveConfig: ViewRemoveConfig> = ViewRouter<ZIKRoutableView, ViewRouteConfig, RemoveConfig>
 
 public typealias AnyServiceRouter = ServiceRouter<Any, PerformRouteConfig, RemoveRouteConfig>
-public typealias ZIKAnyServiceRouter = ZIKServiceRouter<AnyObject, PerformRouteConfig, RemoveRouteConfig>
+public typealias ZIKAnyServiceRouter = ZIKServiceRouter<AnyObject, ZIKPerformRouteConfig, ZIKRemoveRouteConfig>
 public typealias DestinationServiceRouter<Destination> = ServiceRouter<Destination, PerformRouteConfig, RemoveRouteConfig>
 public typealias ModuleServiceRouter<ModuleConfig: PerformRouteConfig> = ServiceRouter<Any, ModuleConfig, RemoveRouteConfig>
 public typealias RemovableServiceRouter<RemoveConfig: RemoveRouteConfig> = ServiceRouter<Any, PerformRouteConfig, RemoveConfig>
+
