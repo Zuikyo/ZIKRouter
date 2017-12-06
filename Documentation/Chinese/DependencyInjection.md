@@ -60,7 +60,7 @@ class PersonConfiguration: ZIKPerformRouteConfiguration, PersonConfig {
         return copy
     }
 }
-class PersonRouter: ZIKServiceRouter<Person, PersonConfiguration, ZIKRemoveRouteConfiguration> {
+class PersonRouter: ZIKServiceRouter<Person, PersonConfiguration> {
     ...    
     override func destination(with configuration: PersonConfiguration) -> Person? {
         guard let name = configuration.name else {
@@ -102,7 +102,7 @@ let person = Router.makeDestination(to: RoutableServiceModule<PersonConfig>(), p
 }
 @end
 
-@interface PersonRouter: ZIKServiceRouter<Person *, PersonConfiguration *, ZIKRemoveRouteConfiguration *>
+@interface PersonRouter: ZIKServiceRouter<Person *, PersonConfiguration *>
 @end
 @implementation PersonRouter
 
@@ -174,7 +174,7 @@ class Person: PersonType {
 在router里，可以注入一些默认的依赖：
 
 ```swift
-class PersonRouter: ZIKServiceRouter<Person, ZIKPerformRouteConfiguration, ZIKRemoveRouteConfiguration> {
+class PersonRouter: ZIKServiceRouter<Person, ZIKPerformRouteConfiguration> {
     ...    
     override func destination(with configuration: ZIKPerformRouteConfiguration) -> Person? {
         let person = Person()
@@ -199,7 +199,7 @@ let person = Router.makeDestination(to: RoutableService<PersonType>(), preparati
 <details><summary>Objecive-C示例</summary>
 
 ```objectivec
-@interface PersonRouter: ZIKServiceRouter<Person *, ZIKPerformRouteConfiguration *, ZIKRemoveRouteConfiguration *>
+@interface PersonRouter: ZIKServiceRouter<Person *, ZIKPerformRouteConfiguration *>
 @end
 @implementation PersonRouter
 

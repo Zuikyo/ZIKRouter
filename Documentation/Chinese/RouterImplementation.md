@@ -30,7 +30,7 @@ extension RoutableView where Protocol == NoteEditorInput {
     init() { }
 }
 
-class EditorViewRouter: ZIKViewRouter<EditorViewController, ZIKViewRouteConfiguration, ZIKViewRemoveConfiguration> {
+class EditorViewRouter: ZIKViewRouter<EditorViewController, ZIKViewRouteConfiguration> {
     //注册当前Router所管理的view和protocol
     override class func registerRoutableDestination() {
         registerView(EditorViewController.self)
@@ -103,7 +103,7 @@ class EditorViewRouter: ZIKViewRouter<EditorViewController, ZIKViewRouteConfigur
 
 ```objectivec
 //EditorViewRouter.h
-@interface EditorViewRouter : ZIKViewRouter <ZIKViewRouterProtocol>
+@interface EditorViewRouter : ZIKViewRouter
 @end
 ```
 ```objectivec
@@ -171,3 +171,5 @@ class EditorViewRouter: ZIKViewRouter<EditorViewController, ZIKViewRouteConfigur
 </details>
 
 在继承时可以指定泛型参数，参考[Type Checking](TypeChecking.md#泛型)。
+
+如果不想使用router子类来添加路由，也可以用轻量化的block来注册，不过这个特性目前暂时还未发布。

@@ -25,7 +25,7 @@ class ChildObject: Child {
 ```
 
 ```
-class ParentRouter: ZIKServiceRouter<ParentObject, ZIKPerformRouteConfigration, ZIKRemoveRouteConfigration> {
+class ParentRouter: ZIKServiceRouter<ParentObject, ZIKPerformRouteConfigration> {
     ...    
     override func destination(with configuration: ZIKPerformRouteConfiguration) -> ParentObject? {
         return ParentObject()
@@ -43,7 +43,7 @@ class ParentRouter: ZIKServiceRouter<ParentObject, ZIKPerformRouteConfigration, 
     }
 }
 
-class ChildRouter: ZIKServiceRouter<ChildObject, ZIKPerformRouteConfigration, ZIKRemoveRouteConfigration> {
+class ChildRouter: ZIKServiceRouter<ChildObject, ZIKPerformRouteConfigration> {
     ...    
     override func destination(with configuration: ZIKPerformRouteConfiguration) -> ChildObject? {
         return ChildObject()

@@ -65,10 +65,10 @@ class SwiftSampleViewRouter: ZIKAnyViewRouter {
 
 ## 泛型
 
-在创建router子类的时候，可以指定泛型参数，在重写父类方法时就能利用泛型指定参数类型。ZIKViewRouter和ZIKServiceRouter总共有三个泛型参数：`Destination`、`RouteConfig`、`RemoveConfig`。
+在创建router子类的时候，可以指定泛型参数，在重写父类方法时就能利用泛型指定参数类型。ZIKViewRouter和ZIKServiceRouter有两个泛型参数：`Destination`、`RouteConfig`。
 
 ```swift
-class SwiftSampleViewRouter: ZIKViewRouter<SwiftSampleViewController, SwiftSampleViewConfiguration, ZIKViewRemoveConfiguration> {
+class SwiftSampleViewRouter: ZIKViewRouter<SwiftSampleViewController, SwiftSampleViewConfiguration> {
     
     override class func registerRoutableDestination() {
         registerView(SwiftSampleViewController.self)
@@ -108,16 +108,12 @@ Destination是指router所管理的destination的类型。
 
 RouteConfig是指router用于执行路由时的configuration类型。当使用自定义的ModuleConfig时，可以指定。
 
-### RemoveConfig参数
-
-RemoveConfig是指router在移除路由时的configuration类型。
-
 ### 泛型的使用
 
-由于swift的自定义泛型不支持协变和逆变，因此不能把`ZIKViewRouter<UIViewController, ViewRouteConfig, ViewRemoveConfig>`类型赋值给`ZIKViewRouter<AnyObject, ViewRouteConfig, ViewRemoveConfig>`类型。因此在swift里，用了另外的`ViewRouter`和`ServiceRouter`类来包裹`ZIKViewRouter`和`ZIKServiceRouter`。
+由于swift的自定义泛型不支持协变和逆变，因此不能把`ZIKViewRouter<UIViewController, ViewRouteConfig>`类型赋值给`ZIKViewRouter<AnyObject, ViewRouteConfig>`类型。因此在swift里，用了另外的`ViewRouter`和`ServiceRouter`类来包裹`ZIKViewRouter`和`ZIKServiceRouter`。
 
-三个泛型每次只会自定义一个。可以用`DestinationViewRouter`、`DestinationServiceRouter`、`ModuleViewRouter`、`ModuleServiceRouter`来指定一个泛型，其余的用默认值。
+两个泛型每次只会自定义一个。可以用`DestinationViewRouter`、`DestinationServiceRouter`、`ModuleViewRouter`、`ModuleServiceRouter`来指定一个泛型值，另一个用默认值。
 
-例如`ViewRouter<NoteEditorInput, ViewRouteConfig, ViewRemoveConfig>`可以简写为`DestinationViewRouter<NoteEditorInput>`。
+例如`ViewRouter<NoteEditorInput, ViewRouteConfig>`可以简写为`DestinationViewRouter<NoteEditorInput>`。
 
 当指定了module config protocol时，就不需要再指定destination的类型了。因为目前不支持同时用module protocol和destination protocol查找router。如果需要返回指定的destination，则在module config protocol的接口里返回。

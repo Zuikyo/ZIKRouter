@@ -63,7 +63,7 @@ class EditorModuleConfiguration: ZIKViewRouteConfiguration, EditorModuleConfig {
     var noteModel: Note?
 }
 
-class EditorViewRouter: ZIKViewRouter<EditorViewController, EditorModuleConfiguration, ZIKViewRemoveConfiguration> {
+class EditorViewRouter: ZIKViewRouter<EditorViewController, EditorModuleConfiguration> {
     //注册当前Router所管理的view和protocol
     override class func registerRoutableDestination() {
         registerView(EditorViewController.self)

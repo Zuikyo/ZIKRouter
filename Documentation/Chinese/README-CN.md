@@ -26,7 +26,7 @@ Service router用于模块寻找，通过protocol寻找对应的模块，并用p
 - [x] 完备的错误检查，可以检测界面跳转时的大部分问题
 - [x] 支持界面跳转过程中的AOP回调
 - [ ] 增加支持Mac OS和TV OS
-- [ ] 可以选择自定义注册
+- [ ] 可以选择自定义注册时机
 - [ ] 支持swift中的value类型
 - [ ] 支持用block添加router，而不是router子类
 
