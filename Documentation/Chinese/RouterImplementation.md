@@ -172,4 +172,16 @@ class EditorViewRouter: ZIKViewRouter<EditorViewController, ZIKViewRouteConfigur
 
 在继承时可以指定泛型参数，参考[Type Checking](TypeChecking.md#泛型)。
 
-如果不想使用router子类来添加路由，也可以用轻量化的block来注册，不过这个特性目前暂时还未发布。
+如果不想使用router子类来添加路由，也可以用轻量化的block来注册：
+
+```swift
+Registry.register(destination: EditorViewController.self, routableProtocol: NoteEditorInput.self)
+	.makeDestination({ config in
+		return EditorViewController()
+	})
+	.prepareDestination({ destination in
+		
+	})
+```
+
+不过这个特性目前暂时还未发布。

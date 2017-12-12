@@ -25,8 +25,8 @@ Service router用于模块寻找，通过protocol寻找对应的模块，并用p
 - [x] 支持storyboard，可以对从segue中跳转的界面执行依赖注入
 - [x] 完备的错误检查，可以检测界面跳转时的大部分问题
 - [x] 支持界面跳转过程中的AOP回调
-- [ ] 增加支持Mac OS和TV OS
-- [ ] 可以选择自定义注册时机
+- [ ] 增加支持Mac OS和tv OS
+- [ ] 可以选择自定义注册时机，不必在启动时一次性注册
 - [ ] 支持swift中的value类型
 - [ ] 支持用block添加router，而不是router子类
 
@@ -34,7 +34,7 @@ Service router用于模块寻找，通过protocol寻找对应的模块，并用p
 
 ### Basics
 
-1. [添加路由](RouterImplementation.md)
+1. [创建路由](RouterImplementation.md)
 2. [模块注册](ModuleRegistration.md)
 3. [Routable声明](RoutableDeclaration.md)
 4. [类型检查](TypeChecking.md)
