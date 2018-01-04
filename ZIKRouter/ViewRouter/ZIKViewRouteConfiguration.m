@@ -43,6 +43,8 @@ ZIKRouteAction const ZIKRouteActionPerformOnDestination = @"ZIKRouteActionPerfor
 @end
 
 @implementation ZIKViewRouteConfiguration
+@dynamic prepareDestination;
+@dynamic routeCompletion;
 
 - (instancetype)init {
     if (self = [super init]) {

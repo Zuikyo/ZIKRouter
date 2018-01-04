@@ -20,8 +20,11 @@ public class Router {
     /// - Parameters:
     ///   - routableView: A routable entry carrying a view protocol.
     ///   - source: Source UIViewController or UIView. See ZIKViewRouteConfiguration's source.
-    ///   - configure: Configure the configuration for view route.
-    ///   - prepare: Prepare the destination with the protocol.
+    ///   - configure: Configure the configuration for performing view route.
+    ///     - config: Config for view route.
+    ///     - prepareDestination: Prepare destination before performing route.
+    ///     - prepareModule: Prepare custom moudle config.
+    ///   - removeConfigure: Configure the configuration for removing view.
     /// - Returns: The view router.
     public static func perform<Destination>(
         to routableView: RoutableView<Destination>,
@@ -43,7 +46,10 @@ public class Router {
     ///   - routableViewModule: A routabe entry carrying a view module config protocol.
     ///   - source: Source UIViewController or UIView. See ZIKViewRouteConfiguration's source.
     ///   - configure: Configure the configuration for view route.
-    ///   - prepare: Prepare the module with the protocol.
+    ///     - config: Config for view route.
+    ///     - prepareDestination: Prepare destination before performing route.
+    ///     - prepareModule: Prepare custom moudle config.
+    ///   - removeConfigure: Configure the configuration for removing view.
     /// - Returns: The view router.
     public static func perform<Module>(
         to routableViewModule: RoutableViewModule<Module>,
@@ -64,7 +70,10 @@ public class Router {
     /// - Parameters:
     ///   - routableService: A routabe entry carrying a service protocol.
     ///   - configure: Configure the configuration for service route.
-    ///   - prepare: Prepare the destination with the protocol.
+    ///     - config: Config for view route.
+    ///     - prepareDestination: Prepare destination before performing route.
+    ///     - prepareModule: Prepare custom moudle config.
+    ///   - removeConfigure: Configure the configuration for removing service.
     /// - Returns: The service router.
     public static func perform<Destination>(
         to routableService: RoutableService<Destination>,
@@ -81,7 +90,10 @@ public class Router {
     /// - Parameters:
     ///   - routableServiceModule: A routabe entry carrying a module config protocol.
     ///   - configure: Configure the configuration for service route.
-    ///   - prepare: Prepare the module with the protocol.
+    ///     - config: Config for view route.
+    ///     - prepareDestination: Prepare destination before performing route.
+    ///     - prepareModule: Prepare custom moudle config.
+    ///   - removeConfigure: Configure the configuration for removing service.
     /// - Returns: The service router.
     public static func perform<Module>(
         to routableServiceModule: RoutableServiceModule<Module>,

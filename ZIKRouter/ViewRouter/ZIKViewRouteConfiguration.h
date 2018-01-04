@@ -131,7 +131,7 @@ typedef void(^ZIKViewRouteSegueConfiger)(NS_NOESCAPE ZIKViewRouteSegueConfigure)
  Prepare for performRoute, and config other dependencies for destination here.
  
  @discussion
- For ZIKViewRouteTypePush, ZIKViewRouteTypePresentModally,  ZIKViewRouteTypePresentAsPopover, ZIKViewRouteTypePerformSegue, ZIKViewRouteTypeShow, ZIKViewRouteTypeShowDetail, ZIKViewRouteTypeAddAsChildViewController, destination is a UIViewController.
+ For ZIKViewRouteTypePush, ZIKViewRouteTypePresentModally, ZIKViewRouteTypePresentAsPopover, ZIKViewRouteTypePerformSegue, ZIKViewRouteTypeShow, ZIKViewRouteTypeShowDetail, ZIKViewRouteTypeAddAsChildViewController, destination is a UIViewController.
  
  For ZIKViewRouteTypeAddAsSubview, destination is a UIView.
  
@@ -140,24 +140,24 @@ typedef void(^ZIKViewRouteSegueConfiger)(NS_NOESCAPE ZIKViewRouteSegueConfigure)
  @note
  Use weakSelf in prepareDestination to avoid retain cycle.
  */
-//@property (nonatomic, copy, nullable) void(^prepareDestination)(id destination);
+@property (nonatomic, copy, nullable) void(^prepareDestination)(id destination);
 
 /**
  Completion for performRoute.
  
  @discussion
- For ZIKViewRouteTypePush, ZIKViewRouteTypePresentModally, ZIKViewRouteTypePresentAsPopover, ZIKViewRouteTypeShow, ZIKViewRouteTypeShowDetail, ZIKViewRouteTypeAddAsChildViewController, destination is a UIViewController.
+ For ZIKViewRouteTypePush, ZIKViewRouteTypePresentModally, ZIKViewRouteTypePresentAsPopover, ZIKViewRouteTypePerformSegue, ZIKViewRouteTypeShow, ZIKViewRouteTypeShowDetail, ZIKViewRouteTypeAddAsChildViewController, destination is a UIViewController.
  
  For ZIKViewRouteTypeAddAsSubview, destination is a UIView.
  
- For ZIKViewRouteTypePerformSegue and ZIKViewRouteTypeCustom, destination is a UIViewController or UIView.
+ For ZIKViewRouteTypeCustom, destination is a UIViewController or UIView.
  
  @note
  Use weakSelf in routeCompletion to avoid retain cycle.
  
  ZIKViewRouter use UIViewController's transitionCoordinator to do completion, so if you override segue's -perform or override -showViewController:sender: and provide custom transition, but didn't use a transitionCoordinator (such as use +[UIView animateWithDuration:animations:completion:] to animate), routeCompletion when be called immediately, before the animation really completes.
  */
-//@property (nonatomic, copy, nullable) void(^routeCompletion)(id destination);
+@property (nonatomic, copy, nullable) void(^routeCompletion)(id destination);
 
 ///Sender for -showViewController:sender: and -showDetailViewController:sender:
 @property (nonatomic, weak, nullable) id sender;

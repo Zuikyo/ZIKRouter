@@ -95,11 +95,11 @@ class SwiftSampleViewController: UIViewController, PureSwiftSampleViewInput, Pur
                         config.routeType = ViewRouteType.push
                         config.prepareDestination = { [weak self] dest in
                             switch dest {
-                            case is UIViewController & ZIKInfoViewProtocol:
-                                (dest as! ZIKInfoViewProtocol).delegate = self
-                                (dest as! UIViewController).title = "switchable routed"
-                            case is UIViewController & SwiftSampleViewInput:
-                                (dest as! UIViewController).title = "switchable routed"
+                            case let dest as UIViewController & ZIKInfoViewProtocol:
+                                dest.delegate = self
+                                dest.title = "switchable routed"
+                            case let dest as UIViewController & SwiftSampleViewInput:
+                                dest.title = "switchable routed"
                                 break
                             default:
                                 break

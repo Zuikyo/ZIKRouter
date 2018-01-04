@@ -99,7 +99,7 @@ public class ViewRouter<Destination, ModuleConfig> {
         return routed?.canRemove() ?? false
     }
     
-    public func removeRoute(successHandler performerSuccessHandler: (() -> Void)?, errorHandler performerErrorHandler: ((ZIKRouteAction, Error) -> Void)? = nil) {
+    public func removeRoute(successHandler performerSuccessHandler: (() -> Void)? = nil, errorHandler performerErrorHandler: ((ZIKRouteAction, Error) -> Void)? = nil) {
         routed?.removeRoute(successHandler: performerSuccessHandler, errorHandler: performerErrorHandler)
     }
     

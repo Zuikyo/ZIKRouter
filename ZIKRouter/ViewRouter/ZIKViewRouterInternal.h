@@ -44,11 +44,11 @@ NS_ASSUME_NONNULL_BEGIN
 + (void)_autoRegistrationDidFinished;
 
 /**
- Whether the destination is all configured.
+ Whether the destination is all configured. This method is for destination from storyboard and UIView from -addSubview:.
  @discussion
  Destination created from external will use this method to determine whether the router have to search the performer to prepare itself by invoking performer's -prepareDestinationFromExternal:configuration:.
  
- @param destination The view to perform route.
+ @param destination The view from external, such as UIViewController from storyboard and UIView from -addSubview:.
  @return If the destination is not prepared, return NO. Default is YES.
  */
 + (BOOL)destinationPrepared:(Destination)destination;
@@ -58,7 +58,7 @@ NS_ASSUME_NONNULL_BEGIN
  @warning
  If a router(A) fetch destination(A)'s dependency destination(B) with another router(B) in router(A)'s -prepareDestination:configuration:, and the destination(A) is also the destination(B)'s dependency, so destination(B)'s router(B) will also fetch destination(A) with router(A) in it's -prepareDestination:configuration:. Then there will be an infinite recursion.
  
- To void it, when router(A) fetch destination(B) in -prepareDestination:configuration:, router(A) must inject destination(A) to destination(B) in -prepareRoute block of router(B)'s config or use custom config property. And router(B) should check in -prepareDestination:configuration: to avoid unnecessary preparation to fetch destination(A) again.
+ To void it, when router(A) fetch destination(B) in -prepareDestination:configuration:, router(A) must inject destination(A) to destination(B) in -prepareDestination block of router(B)'s config or use custom config property. And router(B) should check in -prepareDestination:configuration: to avoid unnecessary preparation to fetch destination(A) again.
  
  @note
  When it's removed and routed again, it's alse treated as first appearance, so this method may be called more than once. You should check whether the destination is already prepared to avoid unnecessary preparation.

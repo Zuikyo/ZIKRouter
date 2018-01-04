@@ -18,7 +18,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 /**
  Abstract superclass for view router.
- Subclass it and override those methods in `ZIKRouterInternal` and `ZIKViewRouterInternal` to make router of your view. Then use generic with protocol or those dynamic discovering functions to reduce couple with subclasses.
+ Subclass it and override those methods in `ZIKRouterInternal` and `ZIKViewRouterInternal` to make router of your view.
  
  @discussion
  Features:
@@ -277,8 +277,8 @@ typedef void(^ZIKViewRouteGlobalErrorHandler)(__kindof ZIKViewRouter * _Nullable
  
  //Get ZIKLoginViewRouter and perform route
  [ZIKViewRouter.toView(@protocol(ZIKLoginViewProtocol))
-     performWithConfiguring:^(ZIKViewRouteConfiguration *config) {
-         config.source = self;
+    performFromSource:self
+    configuring:^(ZIKViewRouteConfiguration *config) {
          config.prepareDestination = ^(id<ZIKLoginViewProtocol> destination) {
              destination.account = @"my account";
          };
@@ -336,8 +336,8 @@ typedef void(^ZIKViewRouteGlobalErrorHandler)(__kindof ZIKViewRouter * _Nullable
  
  //Get ZIKLoginViewRouter and perform route
  [ZIKViewRouter.toModule(@protocol(ZIKLoginViewConfigProtocol))
-     performWithConfiguring:^(ZIKViewRouteConfiguration<ZIKLoginViewConfigProtocol> *config) {
-         config.source = self;
+    performFromSource:self
+    configuring:^(ZIKViewRouteConfiguration<ZIKLoginViewConfigProtocol> *config) {
          config.account = @"my account";
  }];
  @endcode
