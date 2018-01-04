@@ -13,6 +13,7 @@
 #import <objc/runtime.h>
 #import <dlfcn.h>
 #include <mach-o/dyld.h>
+#import "ZIKImageSymbol.h"
 
 bool ZIKRouter_replaceMethodWithMethod(Class originalClass, SEL originalSelector, Class swizzledClass, SEL swizzledSelector) {
     NSCParameterAssert(originalClass);
@@ -20,7 +21,7 @@ bool ZIKRouter_replaceMethodWithMethod(Class originalClass, SEL originalSelector
     NSCParameterAssert(swizzledClass);
     NSCParameterAssert(swizzledSelector);
     NSCParameterAssert(!(originalClass == swizzledClass && originalSelector == swizzledSelector));
-    NSCAssert2([originalClass respondsToSelector:swizzledSelector] == NO, @"originalClass(%@) already exists same method name(%@) to swizzle",originalClass,NSStringFromSelector(swizzledSelector));
+    NSCAssert2(class_respondsToSelector(object_getClass(originalClass), swizzledSelector) == NO, @"originalClass(%@) already exists same method name(%@) to swizzle",originalClass,NSStringFromSelector(swizzledSelector));
     Method originalMethod = class_getInstanceMethod(originalClass, originalSelector);
     Method swizzledMethod = class_getInstanceMethod(swizzledClass, swizzledSelector);
     bool originIsClassMethod = false;
@@ -70,7 +71,7 @@ bool ZIKRouter_replaceMethodWithMethodType(Class originalClass, SEL originalSele
     NSCParameterAssert(swizzledSelector);
     NSCParameterAssert(!(originalClass == swizzledClass && originalSelector == swizzledSelector));
     NSCAssert2((swizzledIsClassMethod == NO && [originalClass instancesRespondToSelector:swizzledSelector] == NO) ||
-               (swizzledIsClassMethod == YES && [originalClass respondsToSelector:swizzledSelector] == NO), @"originalClass(%@) already exists same method name(%@) to swizzle",originalClass,NSStringFromSelector(swizzledSelector));
+               (swizzledIsClassMethod == YES && class_respondsToSelector(object_getClass(originalClass), swizzledSelector) == NO), @"originalClass(%@) already exists same method name(%@) to swizzle",originalClass,NSStringFromSelector(swizzledSelector));
     Method originalMethod;
     Method swizzledMethod;
     if (originIsClassMethod) {
@@ -117,7 +118,7 @@ IMP ZIKRouter_replaceMethodWithMethodAndGetOriginalImp(Class originalClass, SEL 
     NSCParameterAssert(swizzledClass);
     NSCParameterAssert(swizzledSelector);
     NSCParameterAssert(!(originalClass == swizzledClass && originalSelector == swizzledSelector));
-    NSCAssert2([originalClass respondsToSelector:swizzledSelector] == NO, @"originalClass(%@) already exists same method name(%@) to swizzle",originalClass,NSStringFromSelector(swizzledSelector));
+    NSCAssert2(class_respondsToSelector(object_getClass(originalClass), swizzledSelector) == NO, @"originalClass(%@) already exists same method name(%@) to swizzle",originalClass,NSStringFromSelector(swizzledSelector));
     Method originalMethod = class_getInstanceMethod(originalClass, originalSelector);
     Method swizzledMethod = class_getInstanceMethod(swizzledClass, swizzledSelector);
     bool originIsClassMethod = false;
@@ -267,283 +268,6 @@ bool ZIKRouter_isObjcProtocol(id protocol) {
 }
 
 #if DEBUG
-
-static long baseAddressForImage(const char *imagePath) {
-    long base = NSNotFound;
-    uint32_t imageCount = _dyld_image_count();
-    for (uint32_t index = 0; index < imageCount; index++) {
-        const char *imageName = _dyld_get_image_name(index);
-        if (strstr(imageName, imagePath) != NULL) {
-            base = (long)_dyld_get_image_header(index);
-            break;
-        }
-    }
-    return base;
-}
-
-/**
- Get function pointer with it's address offset in the loaded library file.
- If you pass a wrong address and there is no function at the address, there will be an assert failure.
- 
- @param address The function's address offset inside the binary file.
- @param libFileName The loaded library file path of the function.
- */
- static void* funcPointerForSymbolAddress(long address, const char *libFileName) {
-    NSCParameterAssert(address > 0);
-    NSCParameterAssert(libFileName);
-     long base = baseAddressForImage(libFileName);
-    if (base == NSNotFound) {
-        NSCAssert1(NO, @"Invalid library file(%s), not exist or not be loaded.",libFileName);
-        return NULL;
-    }
-    
-    void *realAddr = (void *)(base + address);
-    Dl_info dlinfo;
-    dladdr(realAddr, &dlinfo);
-    
-    if (dlinfo.dli_fname == NULL ||
-        (dlinfo.dli_fname != NULL &&
-         strlen(dlinfo.dli_fname) > 0 &&
-         strcmp(dlinfo.dli_fname, libFileName) != 0)) {
-//        NSCAssert2(NO, @"Invalid address(0x%lx) to fetch function pointer in library file(%s). Address may be too large. Remove SWIFT_CONFORMSTOPROTOCOLS_ADDRESS and let ZIKRouter auto search.",address,libFileName);
-        return NULL;
-    }
-    if (dlinfo.dli_saddr != realAddr) {
-//        NSCAssert2(NO, @"Invalid address(0x%lx) to fetch function pointer in library file(%s). Can't find any function at this address. Remove SWIFT_CONFORMSTOPROTOCOLS_ADDRESS and let ZIKRouter auto search.",address,libFileName);
-        return NULL;
-    }
-    
-    return realAddr;
-}
-#endif
-
-static void fetchBaseAddressForImage(const char *libFileName, long *baseAddress, long *endAddress) {
-    long base = NSNotFound;
-    long nextBase = NSNotFound;
-    uint32_t imageCount = _dyld_image_count();
-    NSMutableArray<NSNumber *> *baseAddressArray = [NSMutableArray array];
-    for (uint32_t index = 0; index < imageCount; index++) {
-        const char *imageName = _dyld_get_image_name(index);
-        const struct mach_header *header = _dyld_get_image_header(index);
-        [baseAddressArray addObject:@((long)header)];
-        if (base == NSNotFound && strstr(imageName, libFileName) != NULL) {
-            base = (long)header;
-        }
-    }
-    if (base == NSNotFound) {
-        NSCAssert1(NO, @"Invalid library file(%s), not exist or not be loaded.",libFileName);
-        return;
-    }
-    [baseAddressArray sortUsingComparator:^NSComparisonResult(id  _Nonnull obj1, id  _Nonnull obj2) {
-        return [obj1 compare:obj2];
-    }];
-    NSInteger indexOfTarget = [baseAddressArray indexOfObject:@(base)];
-    if (indexOfTarget != NSNotFound && indexOfTarget < baseAddressArray.count - 1) {
-        nextBase = [baseAddressArray[indexOfTarget + 1] longValue];
-    } else {
-        nextBase = base + (base - [baseAddressArray[indexOfTarget - 1] longValue]);
-    }
-    if (baseAddress) {
-        *baseAddress = base;
-    }
-    if (endAddress) {
-        *endAddress = nextBase;
-    }
-}
-
-void asyncFuzzySearchFunctionPointerBySymbol(const char *libFileName, const char *fuzzyFunctionSymbol, void(^completion)(void *functionPointer)) {
-    NSCParameterAssert(libFileName);
-    NSCParameterAssert(fuzzyFunctionSymbol);
-    __block void *foundAddress = 0;
-    long beginAddress;
-    long endAddress;
-    fetchBaseAddressForImage(libFileName, &beginAddress, &endAddress);
-    if (beginAddress == NSNotFound || endAddress == NSNotFound) {
-        return;
-    }
-    long difference = (endAddress - beginAddress) / 20;
-    NSOperationQueue *queue = [[NSOperationQueue alloc] init];
-    dispatch_semaphore_t semaphore = dispatch_semaphore_create(1);
-    for (long start = beginAddress; start < endAddress; start += difference) {
-        [queue addOperationWithBlock:^{
-            Dl_info dlinfo;
-            long end = start + difference;
-            for (long addr = end; addr > start;) {
-                BOOL stop = NO;
-                dispatch_semaphore_wait(semaphore, DISPATCH_TIME_FOREVER);
-                if (foundAddress != 0) {
-                    stop = YES;
-                }
-                dispatch_semaphore_signal(semaphore);
-                if (stop) {
-                    break;
-                }
-                dladdr((void *)addr, &dlinfo);
-                const char *symbol = dlinfo.dli_sname;
-                if (dlinfo.dli_fbase != NULL && (symbol != NULL) && (symbol[0] != '\0')) {
-                    if (strstr(symbol, fuzzyFunctionSymbol) == NULL) {
-                        addr -= 0x16;
-                        if (addr > (long)dlinfo.dli_saddr) {
-                            addr = (long)dlinfo.dli_saddr - 0x16;
-                        }
-                        continue;
-                    }
-                    dispatch_semaphore_wait(semaphore, DISPATCH_TIME_FOREVER);
-                    if (foundAddress == 0) {
-                        foundAddress = dlinfo.dli_saddr;
-                        if (completion) {
-                            completion(foundAddress);
-                        }
-                        [queue cancelAllOperations];
-                    }
-                    dispatch_semaphore_signal(semaphore);
-                    break;
-                } else {
-                    addr -= 0x16;
-                    if (addr > (long)dlinfo.dli_saddr) {
-                        addr = (long)dlinfo.dli_saddr - 0x16;
-                    }
-                }
-            }
-            if (queue.operationCount == 1 && foundAddress == 0 && completion) {
-                completion(NULL);
-            }
-        }];
-    }
-}
-
-void asyncSearchFunctionPointerBySymbol(const char *libFileName, const char *fuzzyFunctionSymbol, void(^completion)(void *functionPointer)) {
-    NSCParameterAssert(libFileName);
-    NSCParameterAssert(fuzzyFunctionSymbol);
-    __block void *foundAddress = 0;
-    long beginAddress;
-    long endAddress;
-    fetchBaseAddressForImage(libFileName, &beginAddress, &endAddress);
-    if (beginAddress == NSNotFound || endAddress == NSNotFound) {
-        return;
-    }
-    long difference = (endAddress - beginAddress) / 20;
-    NSOperationQueue *queue = [[NSOperationQueue alloc] init];
-    dispatch_semaphore_t semaphore = dispatch_semaphore_create(1);
-    for (long start = beginAddress; start < endAddress; start += difference) {
-        [queue addOperationWithBlock:^{
-            Dl_info dlinfo;
-            long end = start + difference;
-            for (long addr = end; addr > start;) {
-                BOOL stop = NO;
-                dispatch_semaphore_wait(semaphore, DISPATCH_TIME_FOREVER);
-                if (foundAddress != 0) {
-                    stop = YES;
-                }
-                dispatch_semaphore_signal(semaphore);
-                if (stop) {
-                    break;
-                }
-                dladdr((void *)addr, &dlinfo);
-                const char *symbol = dlinfo.dli_sname;
-                if (dlinfo.dli_fbase != NULL && (symbol != NULL) && (symbol[0] != '\0')) {
-                    if (strcmp(symbol, fuzzyFunctionSymbol) != 0) {
-                        addr -= 0x16;
-                        if (addr > (long)dlinfo.dli_saddr) {
-                            addr = (long)dlinfo.dli_saddr - 0x16;
-                        }
-                        continue;
-                    }
-                    dispatch_semaphore_wait(semaphore, DISPATCH_TIME_FOREVER);
-                    if (foundAddress == 0) {
-                        foundAddress = dlinfo.dli_saddr;
-                        if (completion) {
-                            completion(foundAddress);
-                        }
-                        [queue cancelAllOperations];
-                    }
-                    dispatch_semaphore_signal(semaphore);
-                    break;
-                } else {
-                    addr -= 0x16;
-                    if (addr > (long)dlinfo.dli_saddr) {
-                        addr = (long)dlinfo.dli_saddr - 0x16;
-                    }
-                }
-            }
-            if (queue.operationCount == 1 && foundAddress == 0 && completion) {
-                completion(NULL);
-            }
-        }];
-    }
-}
-
-void* fuzzySearchFunctionPointerBySymbol(const char *libFileName, const char *fuzzyFunctionSymbol) {
-    NSCParameterAssert(libFileName);
-    NSCParameterAssert(fuzzyFunctionSymbol);
-    __block void *foundAddress = 0;
-    long beginAddress;
-    long endAddress;
-    fetchBaseAddressForImage(libFileName, &beginAddress, &endAddress);
-    if (beginAddress == NSNotFound || endAddress == NSNotFound) {
-        return NULL;
-    }
-    Dl_info dlinfo;
-    for (long addr = endAddress; addr > beginAddress;) {
-        dladdr((void *)addr, &dlinfo);
-        const char *symbol = dlinfo.dli_sname;
-        if (dlinfo.dli_fbase != NULL && (symbol != NULL) && (symbol[0] != '\0')) {
-            if (strstr(symbol, fuzzyFunctionSymbol) == NULL) {
-                addr -= 0x16;
-                if (addr > (long)dlinfo.dli_saddr) {
-                    addr = (long)dlinfo.dli_saddr - 0x16;
-                }
-                continue;
-            }
-            foundAddress = dlinfo.dli_saddr;
-            break;
-        } else {
-            addr -= 0x16;
-            if (addr > (long)dlinfo.dli_saddr) {
-                addr = (long)dlinfo.dli_saddr - 0x16;
-            }
-        }
-    }
-    
-    return foundAddress;
-}
-
-void* searchFunctionPointerBySymbol(const char *libFileName, const char *functionSymbol) {
-    NSCParameterAssert(libFileName);
-    NSCParameterAssert(functionSymbol);
-    __block void *foundAddress = 0;
-    long beginAddress;
-    long endAddress;
-    fetchBaseAddressForImage(libFileName, &beginAddress, &endAddress);
-    if (beginAddress == NSNotFound || endAddress == NSNotFound) {
-        return NULL;
-    }
-    Dl_info dlinfo;
-    for (long addr = endAddress; addr > beginAddress;) {
-        dladdr((void *)addr, &dlinfo);
-        const char *symbol = dlinfo.dli_sname;
-        if (dlinfo.dli_fbase != NULL && (symbol != NULL) && (symbol[0] != '\0')) {
-            
-            if (strstr(symbol, functionSymbol) == NULL) {
-                addr -= 0x16;
-                if (addr > (long)dlinfo.dli_saddr) {
-                    addr = (long)dlinfo.dli_saddr - 0x16;
-                }
-                continue;
-            }
-            foundAddress = dlinfo.dli_saddr;
-            break;
-        } else {
-            addr -= 0x16;
-            if (addr > (long)dlinfo.dli_saddr) {
-                addr = (long)dlinfo.dli_saddr - 0x16;
-            }
-        }
-    }
-    return foundAddress;
-}
-
-#if DEBUG
 /**
  Check whether a type conforms to the given protocol. Use private C++ function inside libswiftCore.dylib:
  `bool _conformsToProtocols(const OpaqueValue *value, const Metadata *type, const ExistentialTypeMetadata *existentialType, const WitnessTable **conformances)`.
@@ -555,54 +279,18 @@ static bool(*swift_conformsToProtocols())(void *, void *, void *, void *) {
     static dispatch_once_t onceToken;
     dispatch_once(&onceToken, ^{
         NSString *libswiftCorePath = [[[NSBundle mainBundle] bundlePath] stringByAppendingPathComponent:@"Frameworks/libswiftCore.dylib"];
-        NSString *addressString = [[[NSProcessInfo processInfo] environment] objectForKey:@"SWIFT_CONFORMSTOPROTOCOLS_ADDRESS"];
         long address;
-        if (addressString == nil) {
-            NSLog(@"\n⏳⏳⏳⏳⏳\nZIKRouter:: _swift_typeConformsToProtocol():\nEnvironment variable SWIFT_CONFORMSTOPROTOCOLS_ADDRESS was not found.\nStart searching function pointer for\n`bool _conformsToProtocols(const OpaqueValue *value, const Metadata *type, const ExistentialTypeMetadata *existentialType, const WitnessTable **conformances)` in libswiftCore.dylib to validate swift type.\nThis may costs 0.5 second...\n");
-            _conformsToProtocols = fuzzySearchFunctionPointerBySymbol(libswiftCorePath.UTF8String, "_conformsToProtocols");
-            address = (long)_conformsToProtocols;
-            NSLog(@"\n✅ZIKRouter: function pointer 0x%lx is found for `_conformsToProtocols`.\nIf the searching costs too many times, set 0x%lx as environment variable SWIFT_CONFORMSTOPROTOCOLS_ADDRESS to avoid searching function pointer again for later run.\n\n",address,address - baseAddressForImage(libswiftCorePath.UTF8String));
-        } else {
-            NSCAssert([addressString hasPrefix:@"0x"], @"Environment variable (SWIFT_CONFORMSTOPROTOCOLS_ADDRESS) should be a hex number prefixed with 0x");
-            address = strtol(addressString.UTF8String, NULL, 0);
-            _conformsToProtocols = funcPointerForSymbolAddress(address,libswiftCorePath.UTF8String);
-            if (_conformsToProtocols == NULL) {
-                addressString = [[[NSProcessInfo processInfo] environment] objectForKey:@"SWIFT_CONFORMSTOPROTOCOLS_ADDRESS_ARMV7S"];
-                if (addressString != nil) {
-                    NSCAssert([addressString hasPrefix:@"0x"], @"Environment variable (SWIFT_CONFORMSTOPROTOCOLS_ADDRESS_ARMV7S) should be a hex number prefixed with 0x");
-                    address = strtol(addressString.UTF8String, NULL, 0);
-                    _conformsToProtocols = funcPointerForSymbolAddress(address,libswiftCorePath.UTF8String);
-                }
-            } else {
-                Dl_info dlinfo;
-                dladdr(_conformsToProtocols, &dlinfo);
-                if (dlinfo.dli_sname == NULL || strstr(dlinfo.dli_sname,"_conformsToProtocols") == NULL) {
-                    _conformsToProtocols = NULL;
-                }
-            }
-            if (_conformsToProtocols == NULL) {
-                addressString = [[[NSProcessInfo processInfo] environment] objectForKey:@"SWIFT_CONFORMSTOPROTOCOLS_ADDRESS_ARMV7"];
-                if (addressString != nil) {
-                    NSCAssert([addressString hasPrefix:@"0x"], @"Environment variable (SWIFT_CONFORMSTOPROTOCOLS_ADDRESS_ARMV7) should be a hex number prefixed with 0x");
-                    address = strtol(addressString.UTF8String, NULL, 0);
-                    _conformsToProtocols = funcPointerForSymbolAddress(address,libswiftCorePath.UTF8String);
-                }
-            }
-            if (_conformsToProtocols == NULL) {
-                NSCAssert(NO, @"Function pointer for `_conformsToProtocols` not found. If you set SWIFT_CONFORMSTOPROTOCOLS_ADDRESS, it's value is invalid. Remove SWIFT_CONFORMSTOPROTOCOLS_ADDRESS and let ZIKRouter to auto search, or use `nm -a libswiftCore.dylib` to get the new value.");
-                return;
-            }
-            Dl_info dlinfo;
-            dladdr(_conformsToProtocols, &dlinfo);
-            if (dlinfo.dli_sname == NULL) {
-                NSCAssert1(NO, @"Invalid address(0x%lx) to fetch function pointer of `_conformsToProtocols` in libswiftCore.dylib. Can't find any function. Remove SWIFT_CONFORMSTOPROTOCOLS_ADDRESS and let ZIKRouter to auto search, or use `nm -a libswiftCore.dylib` to get the new value.",address);
-                return;
-            }
-            if (strstr(dlinfo.dli_sname,"_conformsToProtocols") == NULL) {
-                NSCAssert2(NO, @"Invalid address(0x%lx) to fetch function pointer of `_conformsToProtocols` in libswiftCore.dylib. The function pointer is not for `_conformsToProtocols`, but for `%s`.  Remove SWIFT_CONFORMSTOPROTOCOLS_ADDRESS and let ZIKRouter to auto search, or use `nm -a libswiftCore.dylib` to get the new value.",address,dlinfo.dli_sname);
-                return;
-            }
-        }
+        NSLog(@"\nZIKRouter:: _swift_typeConformsToProtocol():\nStart searching function pointer for\n`bool _conformsToProtocols(const OpaqueValue *value, const Metadata *type, const ExistentialTypeMetadata *existentialType, const WitnessTable **conformances)` in libswiftCore.dylib to validate swift type.\n");
+        
+        ZIKImageRef libswiftCoreImage = [ZIKImageSymbol imageByName:libswiftCorePath.UTF8String];
+        _conformsToProtocols = [ZIKImageSymbol findSymbolInImage:libswiftCoreImage name:"_conformsToProtocols" matchAsSubstring:YES];
+        NSCAssert1([[ZIKImageSymbol symbolByAddress:_conformsToProtocols] containsString:@"OpaqueValue"] &&
+                  [[ZIKImageSymbol symbolByAddress:_conformsToProtocols] containsString:@"ExistentialTypeMetadata"] &&
+                  [[ZIKImageSymbol symbolByAddress:_conformsToProtocols] containsString:@"WitnessTable"]
+                  , @"The symbol name is not matched: %@", [ZIKImageSymbol symbolByAddress:_conformsToProtocols]);
+        
+        address = (long)_conformsToProtocols;
+        NSLog(@"\n✅ZIKRouter: function pointer address 0x%lx is found for `_conformsToProtocols`.\n",address);
     });
     
     return (bool(*)(void *, void *, void *, void *))_conformsToProtocols;
@@ -672,7 +360,7 @@ bool _swift_typeIsTargetType(id sourceType, id targetType) {
         }
     }
     if (isSourceSwiftObjectType && isTargetSwiftObjectType) {
-        return ZIKRouter_classIsSubclassOfClass(sourceType, targetType) || [sourceType isKindOfClass:targetType];
+        return ZIKRouter_classIsSubclassOfClass(sourceType, targetType) || [sourceType isKindOfClass:targetType] || sourceType == targetType;
     }
     
     bool (*_conformsToProtocols)(void *, void *, void *, void *) = swift_conformsToProtocols();

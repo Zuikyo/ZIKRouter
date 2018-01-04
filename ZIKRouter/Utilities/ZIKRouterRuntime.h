@@ -69,35 +69,3 @@ extern bool ZIKRouter_classSelfImplementingMethod(Class aClass, SEL method, bool
 
 ///Check whether an object is an objc protocol.
 extern bool ZIKRouter_isObjcProtocol(id protocol);
-
-/**
- Search function pointer in loaded library file which it's symbol contains the fuzzyFunctionSymbol. You can get static function's function pointer which not supported by dlsym().
- @warning
- This function is for debugging and not recommanded to use in release mode. It searchs the symbols in the library and it's a heavy operation.
- @note
- Not all static functions can be found, because it's symbol may be striped in the binary file, e.g. those `<redacted>` in system frameworks.
- 
- @param libFileName The loaded library file path of the function.
- @param fuzzyFunctionSymbol The symbol to search.
- @return The first found function pointer which it's symbol contains fuzzyFunctionSymbol. Return NULL when not found.
- */
-extern void* fuzzySearchFunctionPointerBySymbol(const char *libFileName, const char *fuzzyFunctionSymbol);
-
-///Async version of fuzzySearchFunctionPointerBySymbol(). If the library is large, this may reduce the cost of time.
-extern void asyncFuzzySearchFunctionPointerBySymbol(const char *libFileName, const char *fuzzyFunctionSymbol, void(^completion)(void *functionPointer));
-
-/**
- Search function pointer in loaded library file which it's symbol exact matchs the functionSymbol. You can get static function's function pointer which not supported by dlsym().
- @warning
- This function is for debugging and not recommanded to use in release mode. It searchs the symbols in the library and it's a heavy operation.
- @note
- Not all static functions can be found, because it's symbol may be striped in the binary file, e.g. those `<redacted>` in system frameworks.
- 
- @param libFileName The loaded library file path of the function.
- @param functionSymbol The symbol to match.
- @return The founded function pointer exact matching the functionSymbol. Return NULL when not found.
- */
-extern void* searchFunctionPointerBySymbol(const char *libFileName, const char *functionSymbol);
-
-///Async version of searchFunctionPointerBySymbol(). If the library is large, this may reduce the cost of time.
-extern void asyncSearchFunctionPointerBySymbol(const char *libFileName, const char *fuzzyFunctionSymbol, void(^completion)(void *functionPointer));
