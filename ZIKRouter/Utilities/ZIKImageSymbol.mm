@@ -21,16 +21,16 @@
     return symbol;
 }
 
-+ (nullable NSString *)symbolByAddress:(void *)address {
-    const char *symbol = ZIKGetSymbolByAddress(address);
++ (nullable NSString *)symbolNameForAddress:(void *)address {
+    const char *symbol = ZIKSymbolNameForAddress(address);
     if (strlen(symbol) == 0) {
         return nil;
     }
     return [NSString stringWithUTF8String:symbol];
 }
 
-+ (nullable NSString *)imageFileByAddress:(void *)address {
-    const char *imageFile = ZIKGetImageFileByAddress(address);
++ (nullable NSString *)imagePathForAddress:(void *)address {
+    const char *imageFile = ZIKImagePathForAddress(address);
     if (strlen(imageFile) == 0) {
         return nil;
     }

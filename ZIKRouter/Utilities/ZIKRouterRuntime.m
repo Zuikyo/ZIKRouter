@@ -284,10 +284,10 @@ static bool(*swift_conformsToProtocols())(void *, void *, void *, void *) {
         
         ZIKImageRef libswiftCoreImage = [ZIKImageSymbol imageByName:libswiftCorePath.UTF8String];
         _conformsToProtocols = [ZIKImageSymbol findSymbolInImage:libswiftCoreImage name:"_conformsToProtocols" matchAsSubstring:YES];
-        NSCAssert1([[ZIKImageSymbol symbolByAddress:_conformsToProtocols] containsString:@"OpaqueValue"] &&
-                  [[ZIKImageSymbol symbolByAddress:_conformsToProtocols] containsString:@"ExistentialTypeMetadata"] &&
-                  [[ZIKImageSymbol symbolByAddress:_conformsToProtocols] containsString:@"WitnessTable"]
-                  , @"The symbol name is not matched: %@", [ZIKImageSymbol symbolByAddress:_conformsToProtocols]);
+        NSCAssert1([[ZIKImageSymbol symbolNameForAddress:_conformsToProtocols] containsString:@"OpaqueValue"] &&
+                  [[ZIKImageSymbol symbolNameForAddress:_conformsToProtocols] containsString:@"ExistentialTypeMetadata"] &&
+                  [[ZIKImageSymbol symbolNameForAddress:_conformsToProtocols] containsString:@"WitnessTable"]
+                  , @"The symbol name is not matched: %@", [ZIKImageSymbol symbolNameForAddress:_conformsToProtocols]);
         
         address = (long)_conformsToProtocols;
         NSLog(@"\n✅ZIKRouter: function pointer address 0x%lx is found for `_conformsToProtocols`.\n",address);

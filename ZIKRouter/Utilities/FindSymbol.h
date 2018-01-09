@@ -28,8 +28,8 @@ extern ZIKImageRef ZIKGetImageByName(const char *file);
 extern void *ZIKFindSymbol(ZIKImageRef image, const char *name, bool matchAsSubstring);
 
 ///Get symbol of a address.
-extern const char *ZIKGetSymbolByAddress(void *address);
+extern const char *ZIKSymbolNameForAddress(void *address);
 
 ///Get image file path of a address.
-extern const char *ZIKGetImageFileByAddress(void *address);
+extern const char *ZIKImagePathForAddress(void *address);
 #endif

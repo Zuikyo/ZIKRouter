@@ -30,10 +30,10 @@ typedef const void *ZIKImageRef;
 +(void *)findSymbolInImage:(ZIKImageRef)image name:(const char *)symbolName matchAsSubstring:(BOOL)matchAsSubstring;
 
 ///Get symbol of a address.
-+ (nullable NSString *)symbolByAddress:(void *)address;
++ (nullable NSString *)symbolNameForAddress:(void *)address;
 
 ///Get image file path of a address.
-+ (nullable NSString *)imageFileByAddress:(void *)address;
++ (nullable NSString *)imagePathForAddress:(void *)address;
 @end
 
 NS_ASSUME_NONNULL_END

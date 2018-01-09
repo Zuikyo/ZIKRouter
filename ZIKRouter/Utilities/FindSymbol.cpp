@@ -291,13 +291,13 @@ static void ZIKFindSymbols(ZIKImageRef image, size_t count, const char *names[],
     return value;
 }
 
-const char *ZIKGetSymbolByAddress(void *address) {
+const char *ZIKSymbolNameForAddress(void *address) {
     Dl_info dlinfo;
     dladdr(address, &dlinfo);
     return dlinfo.dli_sname;
 }
 
-const char *ZIKGetImageFileByAddress(void *address) {
+const char *ZIKImagePathForAddress(void *address) {
     Dl_info dlinfo;
     dladdr(address, &dlinfo);
     return dlinfo.dli_fname;
