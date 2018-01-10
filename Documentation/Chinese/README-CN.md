@@ -1,5 +1,12 @@
 # Documentation
 
+![](https://img.shields.io/cocoapods/p/ZIKRouter.svg?style=flat)
+![](https://img.shields.io/badge/language-objectivec-green.svg)
+![ZIKRouter](https://img.shields.io/cocoapods/v/ZIKRouter.svg?style=flat)
+![](https://img.shields.io/badge/language-swift-orange.svg)
+![ZRouter](https://img.shields.io/cocoapods/v/ZRouter.svg?style=flat)
+![license](https://img.shields.io/github/license/mashape/apistatus.svg)
+
 一个用于模块间路由，基于接口进行模块发现和依赖注入的Router，能够同时实现高度解耦和类型安全。
 
 View router将UIKit中的所有界面跳转方式封装成一个统一的方法。

@@ -1,4 +1,12 @@
 # ZIKRouter
+
+![](https://img.shields.io/cocoapods/p/ZIKRouter.svg?style=flat)
+![](https://img.shields.io/badge/language-objectivec-green.svg)
+![ZIKRouter](https://img.shields.io/cocoapods/v/ZIKRouter.svg?style=flat)
+![](https://img.shields.io/badge/language-swift-orange.svg)
+![ZRouter](https://img.shields.io/cocoapods/v/ZRouter.svg?style=flat)
+![license](https://img.shields.io/github/license/mashape/apistatus.svg)
+
 An interface-oriented iOS router for decoupling modules, discovering modules and injecting dependencies with protocol.
 
 The view router can perform all navigation types in UIKit through one method.
