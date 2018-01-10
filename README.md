@@ -28,6 +28,25 @@ Service router用于模块寻找，通过protocol寻找对应的模块，并用p
 * Enough error checking for view route action
 * AOP support for view route action
 
+## Features
+
+- [x] Swift, Objective-C and mixed development Support
+- [x] Routing for UIViewController, UIView and any classes
+- [x] Dependency injection
+- [x] Locate view and service with it's protocol
+- [x] Prepare the module with it's protocol when performing route, such as passing parameters or method injection. Forget passing a parameters dictionary now
+- [x] Declare routable protocol. There're compile-time checking and runtime checking to make safe routing
+- [x] Declare a specific router with generic parameters
+- [x] Decouple modules and add compatible interfaces with adapter
+- [x] Encapsulate navigation methods in UIKit (push, present modally, present as popover, segue, show, showDetail, addChildViewController, addSubview) and your custom navigation actions into one method
+- [x] Remove a UIviewController/UIView or unload a module by one method, never to use pop、dismiss、removeFromParentViewController、removeFromSuperview in different situation
+- [x] Support storyboard
+- [x] Error checking for UIKit view transition
+- [x] AOP for view transition
+- [ ] Support Mac OS and tv OS
+- [ ] Register router manually after launch, but not auto registering all routers
+- [ ] Add route for module with block, but not router subclass
+
 ## Interface-oriented Programming
 
 ZIKRouter is an interface-oriented design. The caller of the module doesn't know the class of the module, but only the interface of the module. Caller can get the module with it's protocol, and use the module with the protocol.
@@ -40,11 +59,9 @@ You can inject dependencies in module's router. Router can declare the module's 
 
 ## Sample Code
 
-How it looks like in code?
-
 ### View Router
 
-Code for showing a view controller：
+Showing a view controller：
 
 ```swift
 ///editor view's interface
@@ -87,10 +104,10 @@ class TestViewController: UIViewController {
 }
 ```
 
-<details><summary>Objecive-C示例</summary>
+<details><summary>Objecive-C Sample</summary>
   
 ```objectivec
-///editor模块的接口和依赖
+///editor view's interface
 @protocol NoteEditorInput <ZIKViewRoutable>
 @property (nonatomic, weak) id<EditorDelegate> delegate;
 - (void)constructForCreatingNewNote;
@@ -98,7 +115,7 @@ class TestViewController: UIViewController {
 
 ```
 ```objectivec
-///Editor界面
+///Editor view controller
 @interface NoteEditorViewController: UIViewController <NoteEditorInput>
 @end
 @implementation NoteEditorViewController
@@ -108,7 +125,7 @@ class TestViewController: UIViewController {
 @implementation TestViewController
 
 - (void)showEditor {
-    //跳转到editor界面；通过protocol获取对应的router类，再通过protocol配置界面
+    //Transition to editor view, and prepare the destination with NoteEditorInput
     [ZIKViewRouter.toView(@protocol(NoteEditorInput))
 	     performFromSource:self
 	     configuring:^(ZIKViewRouteConfig *config) {
@@ -144,7 +161,7 @@ protocol TimeServiceInput {
     func currentTimeString() -> String
 }
 ```
-```
+```swift
 class TestViewController: UIViewController {
     @IBOutlet weak var timeLabel: UILabel!
     
@@ -161,7 +178,7 @@ class TestViewController: UIViewController {
 }
 ```
 
-<details><summary>Objective-C示例</summary>
+<details><summary>Objective-C Sample</summary>
 
 ```objectivec
 ///time service's interface
@@ -303,8 +320,15 @@ If you want to see how it works in a VIPER architecture app, go to [ZIKViper](ht
 
 ## Cocoapods
 
+For Objective-C project:
+
 ```
-pod "ZIKRouter"
+pod 'ZIKRouter', '0.10.0'
+```
+For Swift project:
+
+```
+pod 'ZRouter', '0.5.0'
 ```
 
 ## License
