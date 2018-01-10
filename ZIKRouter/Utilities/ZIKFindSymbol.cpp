@@ -1,5 +1,5 @@
 //
-//  FindSymbol.cpp
+//  ZIKFindSymbol.cpp
 //  ZIKRouter
 //
 //  Created by zuik on 2017/12/22.
@@ -8,7 +8,7 @@
 
 //https://github.com/r-plus/substrate/blob/master/DarwinFindSymbol.cpp
 
-#include "FindSymbol.h"
+#include "ZIKFindSymbol.h"
 
 #include <mach/mach.h>
 #include <mach/mach_init.h>

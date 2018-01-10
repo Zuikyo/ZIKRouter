@@ -7,7 +7,7 @@
 //
 
 #import "ZIKImageSymbol.h"
-#import "FindSymbol.h"
+#import "ZIKFindSymbol.h"
 
 @implementation ZIKImageSymbol
 
