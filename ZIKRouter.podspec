@@ -24,6 +24,7 @@ Pod::Spec.new do |s|
                           "ZIKRouter/Utilities/*.h",
                           "ZIKRouter/Extensions/*.h",
                           "ZIKRouter/Framework/*.h"
+  s.private_header_files = "ZIKRouter/Utilities/ZIKImageSymbol/*.h"
   s.preserve_path = 'ZIKRouter/Framework/module.modulemap'
   s.module_map = 'ZIKRouter/Framework/module.modulemap'
 
