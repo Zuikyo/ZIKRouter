@@ -94,7 +94,7 @@ static NSMutableArray<Class> *_routerClasses;
     if (ZIKRouter_classIsSubclassOfClass(class, UIResponderClass)) {
 #if ZIKROUTER_CHECK
         if (class_conformsToProtocol(class, @protocol(ZIKRoutableView))) {
-            NSCAssert([class isSubclassOfClass:[UIView class]] || [class isSubclassOfClass:UIViewControllerClass], @"ZIKRoutableView only suppourt UIView and UIViewController");
+            NSCAssert(ZIKRouter_classIsSubclassOfClass(class, [UIView class]) || ZIKRouter_classIsSubclassOfClass(class, UIViewControllerClass), @"ZIKRoutableView only suppourt UIView and UIViewController");
             [_routableDestinations addObject:class];
         }
 #endif

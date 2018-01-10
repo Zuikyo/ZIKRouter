@@ -14,9 +14,9 @@
 NS_ASSUME_NONNULL_BEGIN
 
 /**
- Subclass it and register protocols for other ZIKViewRouter in the subclass's +registerRoutableDestination with +registerViewProtocol: or +registerModuleProtocol:. It's only for register protocol for other ZIKViewRouter, don't use it's instance.
+ Subclass it and register protocols for other ZIKViewRouter in the subclass's +registerRoutableDestination with +registerViewProtocol: or +registerModuleProtocol:. It's only for register protocols for other ZIKViewRouter, don't use it's instance.
  @discussion
- Why you need an adapter to decouple? There is a situation: module A need to use a file log module inside it, and A use the log module by a required interface (ModuleALogProtocol). The app context provides the log module with module B, and module B use a provided interface (ModuleBLogProtocol). So in the app context, you need to adapte required interface(ModuleALogProtocol) and provided interface(ModuleBLogProtocol). Use category, swift extension, NSProxy or custom mediator to forward ModuleALogProtocol to ModuleBLogProtocol. Then module A is totally decoupled with module B.
+ Why you need an adapter to decouple? There is a situation: module A need to use a file log module inside it, and A use the log module with a required interface (ModuleALogProtocol). The app context provides the log module as module B, and module B uses a provided interface (ModuleBLogProtocol). So in the app context, you need to adapte required interface(ModuleALogProtocol) and provided interface(ModuleBLogProtocol). Use category, swift extension, NSProxy or custom mediator to forward ModuleALogProtocol to ModuleBLogProtocol. Then module A is totally decoupled with module B.
  */
 @interface ZIKViewRouteAdapter : ZIKViewRouter
 

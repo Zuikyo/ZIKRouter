@@ -97,7 +97,7 @@ typedef void(^ZIKServiceRouteGlobalErrorHandler)(__kindof ZIKServiceRouter * _Nu
  
  The return Class of the block is: a router class matched with the service. Return nil if protocol is nil or not declared. There will be an assert failure when result is nil.
  */
-@property (nonatomic,class,readonly) Class _Nullable (^toService)(Protocol *serviceProtocol) NS_SWIFT_UNAVAILABLE("Use Registry.router(to:) function in ZRouter instead.");
+@property (nonatomic,class,readonly) Class _Nullable (^toService)(Protocol *serviceProtocol);
 
 /**
  Get the router class combined with a custom ZIKRouteConfiguration conforming to a unique protocol.
@@ -105,7 +105,7 @@ typedef void(^ZIKServiceRouteGlobalErrorHandler)(__kindof ZIKServiceRouter * _Nu
  The parameter configProtocol of the block is: the protocol conformed by defaultConfiguration of router. Should be a ZIKServiceModuleRoutable protocol when ZIKROUTER_CHECK is enabled. When ZIKROUTER_CHECK is disabled, the protocol doesn't need to inheriting from ZIKServiceModuleRoutable.
  The return Class of the block is: a router class matched with the service. Return nil if protocol is nil or not declared. There will be an assert failure when result is nil.
  */
-@property (nonatomic,class,readonly) Class _Nullable (^toModule)(Protocol *configProtocol) NS_SWIFT_UNAVAILABLE("Use Registry.router(to:) function in ZRouter instead.");
+@property (nonatomic,class,readonly) Class _Nullable (^toModule)(Protocol *configProtocol);
 
 @end
 

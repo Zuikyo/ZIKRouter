@@ -21,7 +21,7 @@ NS_ASSUME_NONNULL_BEGIN
  Subclass it and override those methods in `ZIKRouterInternal` and `ZIKViewRouterInternal` to make router of your view.
  
  @discussion
- Features:
+ ## Features:
  
  1. Find destination with registered protocol, decoupling the source with the destination class.
  
@@ -33,13 +33,13 @@ NS_ASSUME_NONNULL_BEGIN
  
  5. AOP support for destination's route action.
  
- Method swizzle declaration:
+ ## Method swizzle declaration:
  
  What did ZIKViewRouter hooked: -willMoveToParentViewController:, -didMoveToParentViewController:, -viewWillAppear:, -viewDidAppear:, -viewWillDisappear:, -viewDidDisappear:, -viewDidLoad, -willMoveToSuperview:, -didMoveToSuperview, -willMoveToWindow:, -didMoveToWindow, all UIViewControllers' -prepareForSegue:sender:, all UIStoryboardSegues' -perform.
  
  ZIKViewRouter hooks these methods for AOP. In -willMoveToSuperview, -willMoveToWindow:, -prepareForSegue:sender:, it detects if the view is registered with a router, and auto create a router if it's not routed from it's router.
  
- About auto create:
+ ## About auto create:
  
  When a UIViewController conforms to ZIKRoutableView, and is routing from storyboard segue or from -instantiateInitialViewController, a router will be auto created to prepare the UIViewController. If the destination needs preparing, the segue's performer is responsible for preparing in delegate method -prepareDestinationFromExternal:configuration:. But if a UIViewController is routed from code manually, ZIKViewRouter won't auto create router, only get AOP notify, because we can't find the performer to prepare the destination. So you should avoid route the UIViewController instance from code manually, if you use a router as a dependency injector for preparing the UIViewController. You can check whether the destination is prepared properly in those AOP delegate methods.
  
@@ -286,7 +286,7 @@ typedef void(^ZIKViewRouteGlobalErrorHandler)(__kindof ZIKViewRouter * _Nullable
  @endcode
  See +registerViewProtocol: and ZIKViewRoutable for more info.
  */
-@property (nonatomic,class,readonly) Class _Nullable (^toView)(Protocol *viewProtocol) NS_SWIFT_UNAVAILABLE("Use Registry.router(to:) function in ZRouter instead.");
+@property (nonatomic,class,readonly) Class _Nullable (^toView)(Protocol *viewProtocol);
 
 /**
  Get the view router class combined with a custom ZIKViewRouteConfiguration conforming to a module config protocol.
@@ -343,7 +343,7 @@ typedef void(^ZIKViewRouteGlobalErrorHandler)(__kindof ZIKViewRouter * _Nullable
  @endcode
  See +registerModuleProtocol: and ZIKViewModuleRoutable for more info.
  */
-@property (nonatomic,class,readonly) Class _Nullable (^toModule)(Protocol *configProtocol) NS_SWIFT_UNAVAILABLE("Use Registry.router(to:) function in ZRouter instead.");
+@property (nonatomic,class,readonly) Class _Nullable (^toModule)(Protocol *configProtocol);
 
 @end
 
