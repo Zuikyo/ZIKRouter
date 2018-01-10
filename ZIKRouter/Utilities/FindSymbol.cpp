@@ -60,7 +60,7 @@ static const uint32_t MH_MAGIC_XX = MH_MAGIC;
 #endif
 
 static ssize_t MSMachONameList_(const void *stuff, struct MSSymbolData *list, size_t nreq, bool matchAsSubstring) {
-    // XXX: ok, this is just pathetic; API fail much?
+    //get slide
     size_t slide(0);
     for (uint32_t image(0), images(_dyld_image_count()); image != images; ++image)
         if (_dyld_get_image_header(image) == stuff) {
@@ -71,6 +71,7 @@ static ssize_t MSMachONameList_(const void *stuff, struct MSSymbolData *list, si
     return -1;
     
 fat:
+    //find corresponding arch in fat binary
     const uint8_t *base(reinterpret_cast<const uint8_t *>(stuff));
     const struct exec *buf(reinterpret_cast<const struct exec *>(base));
     
@@ -97,6 +98,7 @@ fat:
     }
     
 thin:
+    //find load command of LC_SYMTAB
     const nlist_xx *symbols;
     const char *strings;
     size_t n;
@@ -137,6 +139,7 @@ thin:
     found:
         n = stp->nsyms;
         
+        //find symbol table and string table from __LINKEDIT segment command
         symbols = NULL;
         strings = NULL;
         
@@ -157,12 +160,15 @@ thin:
                 if (lcp->cmdsize < sizeof(segment_command_xx))
                     return -1;
                 const segment_command_xx *segment(reinterpret_cast<const segment_command_xx *>(lcp));
-                if (stp->symoff >= segment->fileoff && stp->symoff < segment->fileoff + segment->filesize)
-                    symbols = reinterpret_cast<const nlist_xx *>(stp->symoff - segment->fileoff + segment->vmaddr + slide);
-                if (stp->stroff >= segment->fileoff && stp->stroff < segment->fileoff + segment->filesize)
-                    strings = reinterpret_cast<const char *>(stp->stroff - segment->fileoff + segment->vmaddr + slide);
+                if (strcmp(segment->segname, SEG_LINKEDIT) == 0) {
+                    if (stp->symoff >= segment->fileoff && stp->symoff < segment->fileoff + segment->filesize)
+                        //symbol table's address = segment's address (slide + segment's virtual memory address) + symbol table's offset in segment (symbol table's offset in mach-o file - segment's offset in file)
+                        symbols = reinterpret_cast<const nlist_xx *>(stp->symoff - segment->fileoff + segment->vmaddr + slide);
+                    if (stp->stroff >= segment->fileoff && stp->stroff < segment->fileoff + segment->filesize)
+                        strings = reinterpret_cast<const char *>(stp->stroff - segment->fileoff + segment->vmaddr + slide);
+                    break;
+                }
             }
-            
             lcp = reinterpret_cast<const struct load_command *>(reinterpret_cast<const uint8_t *>(lcp) + lcp->cmdsize);
         }
         
@@ -176,6 +182,7 @@ thin:
 //        n = buf->a_syms / sizeof(nlist_xx);
     } else return -1;
     
+    //find symbols with names
     size_t result(nreq);
     
     for (size_t m(0); m != n; ++m) {
@@ -183,6 +190,7 @@ thin:
         if (q->n_un.n_strx == 0 || (q->n_type & N_STAB) != 0)
             continue;
         
+        //name of the symbol in string table
         const char *nambuf(strings + q->n_un.n_strx);
 //        fprintf(stderr, " == %s\n", nambuf);
         

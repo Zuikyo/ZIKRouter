@@ -17,16 +17,18 @@
 }
 
 +(void *)findSymbolInImage:(ZIKImageRef)image name:(const char *)symbolName matchAsSubstring:(BOOL)matchAsSubstring {
+    NSParameterAssert(image);
+    NSParameterAssert(symbolName);
     void *symbol = ZIKFindSymbol(image, symbolName, matchAsSubstring);
     return symbol;
 }
 
 + (nullable NSString *)symbolNameForAddress:(void *)address {
-    const char *symbol = ZIKSymbolNameForAddress(address);
-    if (strlen(symbol) == 0) {
+    const char *name = ZIKSymbolNameForAddress(address);
+    if (strlen(name) == 0) {
         return nil;
     }
-    return [NSString stringWithUTF8String:symbol];
+    return [NSString stringWithUTF8String:name];
 }
 
 + (nullable NSString *)imagePathForAddress:(void *)address {

@@ -13,7 +13,7 @@
 
 typedef const void *ZIKImageRef;
 
-///Get begin address of a loaded image.
+///Get beginning address of a loaded image.
 extern ZIKImageRef ZIKGetImageByName(const char *file);
 
 /**
@@ -24,6 +24,7 @@ extern ZIKImageRef ZIKGetImageByName(const char *file);
  @param image The image to search in, pass NULL to search in all images.
  @param name The symbol to find. Need to add `_` when finding a C function name.
  @param matchAsSubstring Pass false to make exact match, true to find the first address matching the `name` as substring.
+ @return Address of the symbol, NULL when symbol was not found.
  */
 extern void *ZIKFindSymbol(ZIKImageRef image, const char *name, bool matchAsSubstring);
 

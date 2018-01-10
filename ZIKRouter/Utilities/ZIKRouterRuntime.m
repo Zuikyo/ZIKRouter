@@ -332,15 +332,15 @@ bool _swift_typeIsTargetType(id sourceType, id targetType) {
     BOOL isTargetSwiftType = isTargetSwiftObjectType || [targetType isKindOfClass:_SwiftValueClass];
     if ([sourceType isKindOfClass:NSClassFromString(@"Protocol")]) {
         if (isTargetSwiftType) {
-            return NO;
+            return false;
         }
         if ([targetType isKindOfClass:NSClassFromString(@"Protocol")]) {
             return protocol_conformsToProtocol(sourceType, targetType);
         } else {
             if (targetType == NSClassFromString(@"Protocol")) {
-                return YES;
+                return true;
             }
-            return NO;
+            return false;
         }
     }
     NSCParameterAssert(isSourceSwiftType || [sourceType isKindOfClass:[NSObject class]]);
