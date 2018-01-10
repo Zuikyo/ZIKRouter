@@ -256,6 +256,18 @@
 			path = Private;
 			sourceTree = "<group>";
 		};
+		F83B1A6A2006963200675251 /* ZIKImageSymbol */ = {
+			isa = PBXGroup;
+			children = (
+				F88D8B621FECF1AA00157E71 /* exec.h */,
+				F88D8B5F1FECECE200157E71 /* ZIKFindSymbol.h */,
+				F88D8B5E1FECECE200157E71 /* ZIKFindSymbol.cpp */,
+				F88D8B641FECFB0900157E71 /* ZIKImageSymbol.h */,
+				F88D8B651FECFB0900157E71 /* ZIKImageSymbol.mm */,
+			);
+			path = ZIKImageSymbol;
+			sourceTree = "<group>";
+		};
 		F85F4CF51F223EB0003106C3 = {
 			isa = PBXGroup;
 			children = (
@@ -363,11 +375,7 @@
 				F8564E181F717F2700C16A8A /* ZIKRouterRuntime.h */,
 				F8564E191F717F2700C16A8A /* ZIKRouterRuntime.m */,
 				F82A98381FBE0B9500B59A6C /* ZIKRouterRuntimeInternal.h */,
-				F88D8B621FECF1AA00157E71 /* exec.h */,
-				F88D8B5F1FECECE200157E71 /* ZIKFindSymbol.h */,
-				F88D8B5E1FECECE200157E71 /* ZIKFindSymbol.cpp */,
-				F88D8B641FECFB0900157E71 /* ZIKImageSymbol.h */,
-				F88D8B651FECFB0900157E71 /* ZIKImageSymbol.mm */,
+				F83B1A6A2006963200675251 /* ZIKImageSymbol */,
 			);
 			path = Utilities;
 			sourceTree = "<group>";
