@@ -170,7 +170,9 @@ class TestViewController: UIViewController {
     
     func callTimeService() {
         //获取TimeServiceInput模块
-        let timeService = Router.makeDestination(to: RoutableService<TimeServiceInput>(), preparation: { destination in
+        let timeService = Router.makeDestination(
+        	to: RoutableService<TimeServiceInput>(), 
+        	preparation: { destination in
             //配置模块
         })
         //使用service
