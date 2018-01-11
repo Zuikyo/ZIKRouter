@@ -164,7 +164,7 @@ protocol TimeServiceInput {
     func currentTimeString() -> String
 }
 ```
-```
+```swift
 class TestViewController: UIViewController {
     @IBOutlet weak var timeLabel: UILabel!
     
