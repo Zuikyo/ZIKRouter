@@ -27,17 +27,6 @@ Service router用于模块寻找，通过protocol寻找对应的模块，并用p
 
 ## Features
 
-* Discover view or module with protocol, decoupling the source and the destination class
-* Prepare the route with protocol in block, instead of directly configuring the destination (the source is coupled with the destination) or in delegate method (in `-prepareForSegue:sender:` you have to distinguish different destinations, and they're alse coupled with source)
-* Support route for view and any module
-* Support all route types in UIKit (push, present modally, present as popover, segue, show, showDetail, addChildViewController, addSubview and custom presentation), encapsulating into one method
-* Remove a view through one method, without using `-popViewControllerAnimated:`,`-dismissViewControllerAnimated:completion:`,`removeFromParentViewController`,`removeFromSuperview` in different sistuation. Router can choose the proper method
-* Support storyboard. UIViewController and UIView from a segue can auto create it's registered router
-* Enough error checking for view route action
-* AOP support for view route action
-
-## Features
-
 - [x] Swift, Objective-C and mixed development Support
 - [x] Routing for UIViewController, UIView and any classes
 - [x] Dependency injection
@@ -46,9 +35,9 @@ Service router用于模块寻找，通过protocol寻找对应的模块，并用p
 - [x] Declare routable protocol. There're compile-time checking and runtime checking to make safe routing
 - [x] Declare a specific router with generic parameters
 - [x] Decouple modules and add compatible interfaces with adapter
-- [x] Encapsulate navigation methods in UIKit (push, present modally, present as popover, segue, show, showDetail, addChildViewController, addSubview) and your custom navigation actions into one method
-- [x] Remove a UIviewController/UIView or unload a module by one method, never to use pop、dismiss、removeFromParentViewController、removeFromSuperview in different situation
-- [x] Support storyboard
+- [x] Encapsulate navigation methods in UIKit (push, present modally, present as popover, segue, show, showDetail, addChildViewController, addSubview) and custom transitions into one method
+- [x] Remove a UIviewController/UIView or unload a module through one method, without using pop、dismiss、removeFromParentViewController、removeFromSuperview in different situation. Router can choose the proper method
+- [x] Support storyboard. UIViewController and UIView from a segue can auto create it's registered router
 - [x] Error checking for UIKit view transition
 - [x] AOP for view transition
 - [ ] Support Mac OS and tv OS
