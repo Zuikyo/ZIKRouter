@@ -12,7 +12,7 @@
 /**
  Check whether a swift type is the target type(is same type or subclass, or conforms to the target protocol), works like `is` operator in swift.
  @warning
- This function is for debugging assertion and it always return false in release mode. It uses private APIs in Swift bridging class, and these code won't be included in release mode. It will search private function pointer in libswiftCore.dylib when first invoked, and it may take some times:
+ This function is for debugging assertion and it always return false in release mode. It uses private APIs in Swift bridging class, and these code won't be included in release mode. It will search private function pointer in libswiftCore.dylib when first invoked:
  `bool _conformsToProtocols(const OpaqueValue *value, const Metadata *type, const ExistentialTypeMetadata *existentialType, const WitnessTable **conformances)`. See `https://github.com/apple/swift/blob/master/stdlib/public/runtime/Casting.cpp`.
  
  This private function may change in later version of swift, so this function may not work then.

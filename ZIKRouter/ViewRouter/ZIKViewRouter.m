@@ -103,7 +103,7 @@ static NSMutableArray *g_preparingUIViewRouters;
 
 static BOOL _isClassRoutable(Class class) {
     Class UIResponderClass = [UIResponder class];
-    while (class != UIResponderClass) {
+    while (class && class != UIResponderClass) {
         if (class_conformsToProtocol(class, @protocol(ZIKRoutableView))) {
             return YES;
         }
