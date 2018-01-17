@@ -242,7 +242,7 @@ If you want to see how it works in a VIPER architecture app, go to [ZIKViper](ht
 For Objective-C project:
 
 ```
-pod 'ZIKRouter', '0.10.0'
+pod 'ZIKRouter', '0.11.0'
 ```
 For Swift project:
 
