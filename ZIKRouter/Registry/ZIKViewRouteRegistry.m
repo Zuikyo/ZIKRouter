@@ -160,7 +160,7 @@ static NSMutableArray<Class> *_routerClasses;
 #if ZIKROUTER_CHECK
     [[NSNotificationCenter defaultCenter] addObserverForName:UIApplicationDidFinishLaunchingNotification object:nil queue:[NSOperationQueue mainQueue] usingBlock:^(NSNotification * _Nonnull note) {
         for (Class class in _routerClasses) {
-            [class _autoRegistrationDidFinished];
+            [class _registrationDidFinished];
         }
     }];
 #endif

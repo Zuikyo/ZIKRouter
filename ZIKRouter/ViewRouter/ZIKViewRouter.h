@@ -41,7 +41,7 @@ NS_ASSUME_NONNULL_BEGIN
  
  ## About auto create:
  
- When a UIViewController conforms to ZIKRoutableView, and is routing from storyboard segue or from -instantiateInitialViewController, a router will be auto created to prepare the UIViewController. If the destination needs preparing, the segue's performer is responsible for preparing in delegate method -prepareDestinationFromExternal:configuration:. But if a UIViewController is routed from code manually, ZIKViewRouter won't auto create router, only get AOP notify, because we can't find the performer to prepare the destination. So you should avoid route the UIViewController instance from code manually, if you use a router as a dependency injector for preparing the UIViewController. You can check whether the destination is prepared properly in those AOP delegate methods.
+ When a UIViewController conforms to ZIKRoutableView, and is routing from storyboard segue or from -instantiateInitialViewController, a router will be auto created to prepare the UIViewController. If the destination needs preparing, the segue's performer is responsible for preparing in delegate method -prepareDestinationFromExternal:configuration:. But if a UIViewController is routed from code manually, ZIKViewRouter won't auto create router, only get AOP notify, because we can't find the performer to prepare the destination. So if you use a router as a dependency injector for preparing the UIViewController, you should avoid route the UIViewController instance from code manually.
  
  When Adding a registered UIView by code or xib, a router will be auto created. We search the view controller with custom class (not system class like native UINavigationController, or any container view controller) in it's responder hierarchy as the performer. If the registered UIView needs preparing, you have to add the view to a superview in a view controller before it removed from superview. There will be an assert failure if there is no view controller to prepare it (such as: 1. add it to a superview, and the superview is never added to a view controller; 2. add it to a UIWindow). If your custom class view use a routable view as it's subview, the custom view should use a router to add and prepare the routable view, then the routable view don't need to search performer because it's already prepared.
  */
@@ -60,6 +60,7 @@ NS_ASSUME_NONNULL_BEGIN
 @end
 
 @interface ZIKViewRouter<__covariant Destination: id, __covariant RouteConfig: ZIKViewRouteConfiguration *> (Perform)
+
 /**
  Whether the router can perform a view route now
  @discusstion
@@ -82,7 +83,6 @@ NS_ASSUME_NONNULL_BEGIN
 + (nullable instancetype)performWithConfiguring:(void(NS_NOESCAPE ^)(RouteConfig config))configBuilder
                                        removing:(void(NS_NOESCAPE ^ _Nullable)(ZIKViewRemoveConfiguration *config))removeConfigBuilder NS_UNAVAILABLE;
 + (nullable instancetype)performWithConfiguring:(void(NS_NOESCAPE ^)(RouteConfig config))configBuilder NS_UNAVAILABLE;
-
 
 /**
  Perform route from source view to destination view.
@@ -150,6 +150,7 @@ NS_ASSUME_NONNULL_BEGIN
 @end
 
 @interface ZIKViewRouter (Remove)
+
 /**
  Whether can remove a performed view route. Always use it in main thread, bacause state may be changed in main thread after you check the state in child thread.
  @discussion
@@ -171,10 +172,10 @@ NS_ASSUME_NONNULL_BEGIN
 
  @return return YES if can do removeRoute.
  */
-//- (BOOL)canRemove;
+- (BOOL)canRemove;
 
 ///Remove a routed destination. Auto choose proper remove action in pop/dismiss/removeFromParentViewController/removeFromSuperview/custom. If -canRemove return NO, this will failed, use -removeRouteWithSuccessHandler:errorHandler: to get error info. Main thread only.
-//- (void)removeRoute;
+- (void)removeRoute;
 
 @end
 
@@ -351,5 +352,12 @@ typedef void(^ZIKViewRouteGlobalErrorHandler)(__kindof ZIKViewRouter * _Nullable
 @protocol ZIKRoutableView <NSObject>
 
 @end
+
+///The routable UIViewController or UIView must be declared as routable.
+#define DeclareRoutableView(RoutableView, ExtensionName)    \
+@interface RoutableView (ExtensionName) <ZIKRoutableView>    \
+@end    \
+@implementation RoutableView (ExtensionName) \
+@end    \
 
 NS_ASSUME_NONNULL_END

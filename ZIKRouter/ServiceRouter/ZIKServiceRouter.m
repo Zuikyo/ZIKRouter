@@ -40,7 +40,7 @@ static dispatch_semaphore_t g_globalErrorSema;
     });
 }
 
-+ (void)_autoRegistrationDidFinished {
++ (void)_registrationDidFinished {
     
 }
 
@@ -188,7 +188,7 @@ _Nullable Class _ZIKServiceRouterToModule(Protocol *configProtocol) {
     return kZIKServiceRouterErrorDomain;
 }
 
-+ (BOOL)completeSynchronously {
++ (BOOL)makeDestinationSynchronously {
     return YES;
 }
 

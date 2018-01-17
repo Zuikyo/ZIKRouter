@@ -24,28 +24,29 @@ public class ServiceRouter<Destination, ModuleConfig> {
         self.routerType = routerType
     }
     
+    /// State of route.
     public var state: ZIKRouterState {
         return routed?.state ?? ZIKRouterState.notRoute
     }
     
+    /// Configuration for performRoute; Return copy of configuration, so modify this won't change the real configuration inside router.
     public var configuration: PerformRouteConfig {
         return routed?.configuration ?? routerType.defaultRouteConfiguration()
     }
     
+    /// Configuration for removeRoute; return copy of configuration, so modify this won't change the real configuration inside router.
     public var removeConfiguration: RouteConfig? {
         return routed?.removeConfiguration
     }
     
+    /// Latest error when route action failed.
     public var error: Error? {
         return routed?.error
     }
     
-    public var completeSynchronously: Bool {
-        return routerType.completeSynchronously()
-    }
-    
     // MARK: Perform
     
+    /// Whether the router can perform route now.
     public var canPerform: Bool {
         return routed?.canPerform() ?? true
     }
@@ -54,6 +55,16 @@ public class ServiceRouter<Destination, ModuleConfig> {
     public typealias ModulePreparation = ((ModuleConfig) -> Void) -> Void
     public typealias RemovePreparation = ((RemoveRouteConfig) -> Void) -> Void
     
+    /// Set dependencies required by destination and perform route, and you can remove the route with remove configuration later.
+    ///
+    /// - Parameters:
+    ///   - configBuilder: Build the configuration for performing route.
+    ///     - config: Config for performing route.
+    ///     - prepareDestination: Prepare destination before performing route.
+    ///     - prepareModule: Prepare custom moudle config.
+    ///   - removeConfigBuilder: Configure the configuration for removing route.
+    ///     - config: Config for removing route.
+    ///     - prepareDestination: Prepare destination before removing route.
     public func perform(configuring configBuilder: (PerformRouteConfig, DestinationPreparation, ModulePreparation) -> Void, removing removeConfigBuilder: ((RemoveRouteConfig, DestinationPreparation, RemovePreparation) -> Void)? = nil) {
         var removeBuilder: ((RemoveRouteConfig) -> Void)? = nil
         if let configBuilder = removeConfigBuilder {
@@ -99,14 +110,21 @@ public class ServiceRouter<Destination, ModuleConfig> {
     
     // MARK: Remove
     
+    /// Whether the router can remove route now. Default is false.
     public var canRemove: Bool {
         return routed?.canRemove() ?? false
     }
     
+    /// Remove with success handler and error handler. If canRemove return false, this will failed.
     public func removeRoute(successHandler performerSuccessHandler: (() -> Void)?, errorHandler performerErrorHandler: ((ZIKRouteAction, Error) -> Void)? = nil) {
         routed?.removeRoute(successHandler: performerSuccessHandler, errorHandler: performerErrorHandler)
     }
     
+    /// Remove route and prepare before removing.
+    ///
+    /// - Parameter configBuilder: Configure the configuration for removing route.
+    ///     - config: Config for removing route.
+    ///     - prepareDestination: Prepare destination before removing route.
     public func removeRoute(configuring configBuilder: @escaping (RemoveRouteConfig, DestinationPreparation, RemovePreparation) -> Void) {
         let removeBuilder = { (config: RemoveRouteConfig) in
             let prepareDestination = { (prepare: @escaping (Destination) -> Void) in
@@ -126,10 +144,17 @@ public class ServiceRouter<Destination, ModuleConfig> {
     
     // MARK: Make Destination
     
+    /// Whether the destination is instantiated synchronously.
+    public var makeDestinationSynchronously: Bool {
+        return routerType.makeDestinationSynchronously()
+    }
+    
+    /// The router may can't make destination synchronously, or it's not for providing a destination but only for performing some actions.
     public var canMakeDestination: Bool {
         return routerType.canMakeDestination()
     }
     
+    /// Synchronously get destination.
     public func makeDestination() -> Destination? {
         let routerType = self.routerType
         let destination = routerType.makeDestination()
@@ -137,6 +162,7 @@ public class ServiceRouter<Destination, ModuleConfig> {
         return destination as? Destination
     }
     
+    /// Synchronously get destination, and prepare the destination with destination protocol.
     public func makeDestination(preparation prepare: ((Destination) -> Void)? = nil) -> Destination? {
         let routerType = self.routerType
         let destination = routerType.makeDestination(preparation: { d in
@@ -148,6 +174,13 @@ public class ServiceRouter<Destination, ModuleConfig> {
         return destination as? Destination
     }
     
+    /// Synchronously get destination, and prepare the destination.
+    ///
+    /// - Parameter configBuilder: Build the configuration for performing route.
+    ///     - config: Config for performing route.
+    ///     - prepareDestination: Prepare destination before performing route.
+    ///     - prepareModule: Prepare custom moudle config.
+    /// - Returns: Destination
     public func makeDestination(configuring configBuilder: @escaping (PerformRouteConfig, DestinationPreparation, ModulePreparation) -> Void) -> Destination? {
         let routerType = self.routerType
         let destination = routerType.makeDestination(configuring: { config in

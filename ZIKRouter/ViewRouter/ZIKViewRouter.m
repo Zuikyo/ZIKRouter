@@ -97,7 +97,7 @@ static NSMutableArray *g_preparingUIViewRouters;
     ZIKRouter_replaceMethodWithMethod([UIStoryboard class], @selector(instantiateInitialViewController), ZIKViewRouterClass, @selector(ZIKViewRouter_hook_instantiateInitialViewController));
 }
 
-+ (void)_autoRegistrationDidFinished {
++ (void)_registrationDidFinished {
     
 }
 
@@ -227,7 +227,7 @@ static BOOL _isClassRoutable(Class class) {
     return [ZIKViewRemoveConfiguration new];
 }
 
-+ (BOOL)completeSynchronously {
++ (BOOL)makeDestinationSynchronously {
     return YES;
 }
 

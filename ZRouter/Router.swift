@@ -136,6 +136,8 @@ public extension Router {
     ///     - prepareDestination: Prepare destination before performing route.
     ///     - prepareModule: Prepare custom moudle config.
     ///   - removeConfigure: Configure the configuration for removing view.
+    ///     - config: Config for removing view route.
+    ///     - prepareDestination: Prepare destination before removing route.
     /// - Returns: The view router.
     public static func perform<Destination>(
         to routableView: RoutableView<Destination>,

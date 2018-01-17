@@ -125,4 +125,11 @@ typedef NS_ENUM(NSInteger, ZIKServiceRouteError) {
 
 @end
 
+///The routable service must be declared as routable.
+#define DeclareRoutableService(RoutableService, ExtensionName)    \
+@interface RoutableService (ExtensionName) <ZIKRoutableService>    \
+@end    \
+@implementation RoutableService (ExtensionName) \
+@end    \
+
 NS_ASSUME_NONNULL_END

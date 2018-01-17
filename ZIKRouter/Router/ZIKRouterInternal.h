@@ -20,12 +20,13 @@ NS_ASSUME_NONNULL_BEGIN
 ///Subclass can get the real configuration to avoid unnecessary copy.
 @property (nonatomic, readonly, copy) RouteConfig original_configuration;
 @property (nonatomic, readonly, copy) RemoveConfig original_removeConfiguration;
+///Destination after performed. Router won't hold the destination, the performer is responsible for holding it.
 @property (nonatomic, readonly, weak) Destination destination;
 
 #pragma mark Required Override
 ///Methods for ZIKRouter subclass.
 
-///Create destination and initilize it with configuration. If the configuration is invalid, return nil to make this route failed.
+///Create destination and initialize it with configuration. If the configuration is invalid, return nil to make this route failed.
 - (nullable Destination)destinationWithConfiguration:(RouteConfig)configuration;
 
 #pragma mark Optional Override

@@ -173,7 +173,7 @@ NSString *kZIKRouterErrorDomain = @"kZIKRouterErrorDomain";
 #pragma mark Make Destination
 
 + (BOOL)canMakeDestination {
-    return [self completeSynchronously];
+    return [self makeDestinationSynchronously];
 }
 
 + (nullable id)makeDestinationWithPreparation:(void(^ _Nullable)(id destination))prepare {
@@ -267,7 +267,7 @@ NSString *kZIKRouterErrorDomain = @"kZIKRouterErrorDomain";
     return nil;
 }
 
-+ (BOOL)completeSynchronously {
++ (BOOL)makeDestinationSynchronously {
     return YES;
 }
 

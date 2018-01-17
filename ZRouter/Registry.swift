@@ -484,7 +484,7 @@ private class _ViewRouterValidater: ZIKViewRouteAdapter {
     override class func registerRoutableDestination() {
         
     }
-    override class func _autoRegistrationDidFinished() {
+    override class func _registrationDidFinished() {
         for (routeKey, routerClass) in Registry.viewProtocolContainer {
             let viewProtocol = routeKey.type!
             assert(routerClass.validateRegisteredViewClasses({return _swift_typeIsTargetType($0, viewProtocol)}) == nil,
@@ -498,7 +498,7 @@ private class _ServiceRouterValidater: ZIKServiceRouteAdapter {
     override class func registerRoutableDestination() {
         
     }
-    override class func _autoRegistrationDidFinished() {
+    override class func _registrationDidFinished() {
         for (routeKey, routerClass) in Registry.serviceProtocolContainer {
             let serviceProtocol = routeKey.type!
             assert(routerClass.validateRegisteredServiceClasses({return _swift_typeIsTargetType($0, serviceProtocol)}) == nil,

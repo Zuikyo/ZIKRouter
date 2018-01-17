@@ -24,7 +24,7 @@ NS_ASSUME_NONNULL_BEGIN
 /**
  Abstract superclass for router that can perform route and remove route.
  @discussion
- Features:
+ ## Features:
  
  1. Prepare the route with protocol in block, instead of directly configuring the destination (the source is coupled with the destination if you do this) or in delegate method (in -prepareForSegue:sender: you have to distinguish different destinations, and they're alse coupled with source).
  
@@ -68,9 +68,6 @@ NS_ASSUME_NONNULL_BEGIN
 + (nullable instancetype)performWithConfiguring:(void(NS_NOESCAPE ^)(RouteConfig config))configBuilder
                                        removing:(void(NS_NOESCAPE ^ _Nullable)(RemoveConfig config))removeConfigBuilder;
 
-///Whether the route action is synchronously.
-+ (BOOL)completeSynchronously;
-
 #pragma mark Remove
 
 ///Whether the router can remove route now.
@@ -85,6 +82,9 @@ NS_ASSUME_NONNULL_BEGIN
 
 #pragma mark Factory
 
+///Whether the destination is instantiated synchronously.
++ (BOOL)makeDestinationSynchronously;
+
 ///The router may can't make destination synchronously, or it's not for providing a destination but only for performing some actions.
 + (BOOL)canMakeDestination;
 
@@ -94,6 +94,7 @@ NS_ASSUME_NONNULL_BEGIN
 ///Synchronously get destination, and prepare the destination with destination protocol.
 + (nullable Destination)makeDestinationWithPreparation:(void(^ _Nullable)(Destination destination))prepare;
 
+///Synchronously get destination, and prepare the destination.
 + (nullable Destination)makeDestinationWithConfiguring:(void(^ _Nullable)(RouteConfig config))configBuilder;
 
 #pragma mark Debug
