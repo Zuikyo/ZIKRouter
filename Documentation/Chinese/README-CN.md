@@ -81,6 +81,13 @@ class NoteEditorViewController: UIViewController, NoteEditorInput {
 
 ```swift
 class TestViewController: UIViewController {
+
+    //直接跳转到editor界面
+    func showEditorDirectly() {
+        Router.perform(to: RoutableView<NoteEditorInput>(), from: self, routeType: .push)
+        })
+    }
+    
     //跳转到editor界面；通过protocol获取对应的router类，再通过protocol配置界面
     func showEditor() {
         Router.perform(
@@ -126,6 +133,12 @@ class TestViewController: UIViewController {
 ```
 ```objectivec
 @implementation TestViewController
+
+- (void)showEditorDirectly {
+    //直接跳转到editor界面
+    [ZIKViewRouter.toView(@protocol(NoteEditorInput))
+	     performFromSource:self routeType:ZIKViewRouteTypePush];
+}
 
 - (void)showEditor {
     //跳转到editor界面；通过protocol获取对应的router类，再通过protocol配置界面

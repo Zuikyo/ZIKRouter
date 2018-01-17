@@ -1,10 +1,10 @@
-# 创建路由
+# Router Implementation
 
-ZIKRouter的设计使用了抽象工厂模式，你需要为模块（产品）创建对应的router子类（工厂子类），然后在子类中实现router的接口即可，而无需对模块本身做出修改。
+ZIKRouter is an abstract factory design. You need to create router subclass (factory subclass) for your module (product), then implement router's interface. You don't need to modify the module's code.
 
-例如，要为`EditorViewController`创建路由。
+Here is an example for creating router for `EditorViewController`.
 
-Swift示例：
+Swift sample:
 
 ```swift
 protocol NoteEditorInput {
@@ -16,36 +16,35 @@ class EditorViewController: UIViewController, NoteEditorInput {
     ...
 }
 ```
-为`EditorViewController`创建一个`ZIKViewRouter`的子类：
+Create a `ZIKViewRouter` subclass for `EditorViewController`:
 
 ```swift
 //EditorViewRouter.swift
 
-//声明EditorViewController是可路由的UIViewController
+//Declare that EditorViewController is routable
 extension EditorViewController: ZIKRoutableView {
 
 }
-//声明NoteEditorInput是可路由的
+//Declare that NoteEditorInput is routable protocol
 extension RoutableView where Protocol == NoteEditorInput {
     init() { }
 }
 
 class EditorViewRouter: ZIKViewRouter<EditorViewController, ZIKViewRouteConfiguration> {
-    //注册当前Router所管理的view和protocol
+    //Register the router's view and protocol
     override class func registerRoutableDestination() {
-        //把EditorViewController和对应的Router子类进行注册，一个Router可以注册多个界面，一个界面也可以使用多个Router
+        //Register EditorViewController with this router. A router can register multi views, and a view can be registered with multi router
         registerView(EditorViewController.self)
         
-        //注册NoteEditorInput，注册后就可以用此protocol获取此router
+        //Register NoteEditorInput, then you can use this protocol to get this router
         Registry.register(RoutableView<NoteEditorInput>(), forRouter: self)
     }
-    //检查模块内使用的外部路由依赖是否有效
+    //Make sure all routable dependencies in this module is available.
     override class func _autoRegistrationDidFinished() {
-        //Make sure all routable dependencies in this module is available.
         assert(Router.to(RoutableService<SomeServiceInput>()) != nil)
     }
     
-    //返回需要获取的目的模块
+    //Return the destination module
     override func destination(with configuration: ZIKViewRouteConfiguration) -> EditorViewController? {
         let sb = UIStoryboard.init(name: "Main", bundle: nil)
         let destination = sb.instantiateViewController(withIdentifier: "EditorViewController") as! EditorViewController
@@ -59,17 +58,17 @@ class EditorViewRouter: ZIKViewRouter<EditorViewController, ZIKViewRouteConfigur
         return false
     }
     
-    //在执行路由前配置模块，执行依赖注入
+    //Prepare the destination before performing route, and inject dependencies
     override func prepareDestination(_ destination: EditorViewController, configuration: ZIKViewRouteConfiguration) {
-        //为EditorViewController注入依赖
+        //Inject dependencies for EditorViewController
     }
     
-    //配置完毕，检查是否配置正确
+    //Check dependencies after preparing
     override func didFinishPrepareDestination(_ destination: EditorViewController, configuration: ZIKViewRouteConfiguration) {
         
     }
     
-    //View Router的AOP回调
+    //AOP for view Router
     override class func router(_ router: DefaultViewRouter?, willPerformRouteOnDestination destination: EditorViewController, fromSource source: Any?) {
         
     }
@@ -85,11 +84,12 @@ class EditorViewRouter: ZIKViewRouter<EditorViewController, ZIKViewRouteConfigur
 }
 ```
 
-<details><summary>Objecive-C示例</summary>
+<details><summary>Objecive-C Sample</summary>
 
 ```objectivec
 //NoteEditorInput.h
-//声明NoteEditorInput是可路由的
+
+//Declare that NoteEditorInput is routable protocol
 @protocol NoteEditorInput: ZIKViewRoutable
 @property (nonatomic, weak) id<EditorDelegate> delegate;
 - (void)constructForCreatingNewNote;
@@ -100,7 +100,7 @@ class EditorViewRouter: ZIKViewRouter<EditorViewController, ZIKViewRouteConfigur
 @end
 ```
 
-为`EditorViewController`创建一个`ZIKViewRouter`的子类：
+Create a `ZIKViewRouter` subclass for `EditorViewController`:
 
 ```objectivec
 //EditorViewRouter.h
@@ -110,7 +110,7 @@ class EditorViewRouter: ZIKViewRouter<EditorViewController, ZIKViewRouteConfigur
 ```objectivec
 //EditorViewRouter.m
 
-//声明EditorViewController是可路由的UIViewController
+//Declare that EditorViewController is routable
 @interface EditorViewController (EditorViewRouter) <ZIKRoutableView>
 @end
 @implementation EditorViewController (EditorViewRouter)
@@ -118,16 +118,16 @@ class EditorViewRouter: ZIKViewRouter<EditorViewController, ZIKViewRouteConfigur
 
 @implementation EditorViewRouter
 
-//注册当前Router所管理的view和protocol
+//Register the router's view and protocol
 + (void)registerRoutableDestination {
-    //把EditorViewController和对应的Router子类进行注册，一个Router可以注册多个界面，一个界面也可以使用多个Router
+    //Register EditorViewController with this router. A router can register multi views, and a view can be registered with multi router
     [self registerView:[EditorViewController class]];
     
-    //注册NoteEditorInput，注册后就可以用此protocol获取此router
+    //Register NoteEditorInput, then you can use this protocol to get this router
     [self registerViewProtocol:@protocol(NoteEditorInput)];
 }
 
-//返回需要获取的目的模块
+//Return the destination module
 - (nullable EditorViewController *)destinationWithConfiguration:(ZIKViewRouteConfiguration *)configuration {
     UIStoryboard *sb = [UIStoryboard storyboardWithName:@"Main" bundle:nil];
     EditorViewController *destination = [sb instantiateViewControllerWithIdentifier:@"EditorViewController"];
@@ -141,17 +141,17 @@ class EditorViewRouter: ZIKViewRouter<EditorViewController, ZIKViewRouteConfigur
     return NO;
 }
 
-//在执行路由前配置模块，执行依赖注入
+//Prepare the destination before performing route, and inject dependencies
 - (void)prepareDestination:(EditorViewController *)destination configuration:(ZIKViewRouteConfiguration *)configuration {
-    //为EditorViewController注入依赖
+    //Inject dependencies for EditorViewController
 }
 
-//配置完毕，检查是否配置正确
+//Check dependencies after preparing
 - (void)didFinishPrepareDestination:(EditorViewController *)destination configuration:(ZIKViewRouteConfiguration *)configuration {
     
 }
 
-//路由时的AOP回调
+//AOP for view router
 + (void)router:(nullable ZIKViewRouter *)router willPerformRouteOnDestination:(EditorViewController *)destination fromSource:(id)source {
     
 }
@@ -169,9 +169,9 @@ class EditorViewRouter: ZIKViewRouter<EditorViewController, ZIKViewRouteConfigur
 ```
 </details>
 
-在继承时可以指定泛型参数，参考[Type Checking](TypeChecking.md#泛型)。
+The router subclass can set generic parameters when inheriting from ZIKViewRouter. See [Type Checking](TypeChecking.md).
 
-如果不想使用router子类来添加路由，也可以用轻量化的block来注册：
+If you don't want to create a complex router subclass for a simple module, you can use block to register the module:
 
 ```swift
 Registry.register(destination: EditorViewController.self, routableProtocol: NoteEditorInput.self)
@@ -183,4 +183,4 @@ Registry.register(destination: EditorViewController.self, routableProtocol: Note
 	})
 ```
 
-不过这个特性目前暂时还未发布。
+But this feature is not released now.

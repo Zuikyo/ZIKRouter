@@ -7,7 +7,7 @@
 ![ZRouter](https://img.shields.io/cocoapods/v/ZRouter.svg?style=flat)
 ![license](https://img.shields.io/github/license/mashape/apistatus.svg)
 
-An interface-oriented iOS router for decoupling modules, discovering modules and injecting dependencies with protocol.
+An interface-oriented iOS router for discovering modules and injecting dependencies with protocol.
 
 The view router can perform all navigation types in UIKit through one method.
 
@@ -31,7 +31,7 @@ Service router用于模块寻找，通过protocol寻找对应的模块，并用p
 - [x] Routing for UIViewController, UIView and any classes
 - [x] Dependency injection
 - [x] Locate view and service with it's protocol
-- [x] Prepare the module with it's protocol when performing route, such as passing parameters or method injection. Forget passing a parameters dictionary now
+- [x] Prepare the module with it's protocol when performing route, rather than passing a parameter dictionary
 - [x] Declare routable protocol. There're compile-time checking and runtime checking to make safe routing
 - [x] Declare a specific router with generic parameters
 - [x] Decouple modules and add compatible interfaces with adapter
@@ -41,18 +41,29 @@ Service router用于模块寻找，通过protocol寻找对应的模块，并用p
 - [x] Error checking for UIKit view transition
 - [x] AOP for view transition
 - [ ] Support Mac OS and tv OS
-- [ ] Register router manually after launch, but not auto registering all routers
-- [ ] Add route for module with block, but not router subclass
+- [ ] Register router manually after launch, not just automatically registering all routers
+- [ ] Add route for module with block, not just router subclasses
 
-## Interface-oriented Programming
+## Table of Contents
 
-ZIKRouter is an interface-oriented design. The caller of the module doesn't know the class of the module, but only the interface of the module. Caller can get the module with it's protocol, and use the module with the protocol.
+### Basics
 
-Comparing to URL router, interface-oriented router is safer and low coupling. It's also more efficient when updating the module interface, relying on the compile-time checking.
+1. [Router Implementation](Documentation/English/RouterImplementation.md)
+2. [Module Registration](Documentation/English/ModuleRegistration.md)
+3. [Routable Declaration](Documentation/English/RoutableDeclaration.md)
+4. [Type Checking](Documentation/English/TypeChecking.md)
+5. [Perform Route](Documentation/English/PerformRoute.md)
+6. [Remove Route](Documentation/English/RemoveRoute.md)
+7. [Make Destination](Documentation/English/MakeDestination.md)
 
-## Dependency Injection
+### Advanced Features
 
-You can inject dependencies in module's router. Router can declare the module's dependencies in it's protocol.
+1. [Error Handle](Documentation/English/ErrorHandle.md)
+2. [Storyboard](Documentation/English/Storyboard.md)
+3. [AOP](Documentation/English/AOP.md)
+4. [Dependency Injection](Documentation/English/DependencyInjection.md)
+5. [Circular Dependency](Documentation/English/CircularDependencies.md)
+6. [Module Adapter](Documentation/English/ModuleAdapter.md)
 
 ## Sample Code
 
@@ -75,6 +86,13 @@ class NoteEditorViewController: UIViewController, NoteEditorInput {
 
 ```swift
 class TestViewController: UIViewController {
+
+    //Transition to editor view directly
+    func showEditorDirectly() {
+        Router.perform(to: RoutableView<NoteEditorInput>(), from: self, routeType: .push)
+        })
+    }
+    
     //Transition to editor view, and prepare the destination with NoteEditorInput
     func showEditor() {
         Router.perform(
@@ -120,6 +138,12 @@ class TestViewController: UIViewController {
 ```
 ```objectivec
 @implementation TestViewController
+
+- (void)showEditorDirectly {
+    //Transition to editor view directly
+    [ZIKViewRouter.toView(@protocol(NoteEditorInput))
+	     performFromSource:self routeType:ZIKViewRouteTypePush];
+}
 
 - (void)showEditor {
     //Transition to editor view, and prepare the destination with NoteEditorInput
@@ -200,112 +224,6 @@ class TestViewController: UIViewController {
 ```
 
 </details>
-
-## How to use
-
-### Implement Router
-
-Create a subclass of `ZIKViewRouter` for your module:
-
-```objectivec
-//MasterViewProtocol.h
-//ZIKViewRotable declares that MasterViewProtocol can be used to get a router class by ZIKViewRouterForView()
-@protocol MasterViewProtocol: ZIKViewRoutable
-
-@end
-```
-```objectivec
-//MasterViewRouter.h
-@interface MasterViewRouter : ZIKViewRouter
-@end
-
-//MasterViewRouter.m
-@implementation MasterViewRouter
-
-//Override methods in superclass
-
-+ (void)registerRoutableDestination {
-    //Register MasterViewController with  MasterViewRouter. A view can be registered in multi routers, and a router can be registered with multi views.
-    [self registerView:[MasterViewController class]];
-    
-    //Register MasterViewProtocol, then you can use ZIKViewRouter.toView() to get MasterViewRouter class. You can also use subclass of ZIKViewRouteAdapter, and register protocols for other ZIKViewRouter classes in it's +registerRoutableDestination
-    [self registerViewProtocol:@protocol(MasterViewProtocol)];
-}
-
-//Initialize and return the destination
-- (id)destinationWithConfiguration:(ZIKViewRouteConfiguration *)configuration {
-    UIStoryboard *sb = [UIStoryboard storyboardWithName:@"Main" bundle:nil];
-    MasterViewController *destination = [sb instantiateViewControllerWithIdentifier:@"master"];
-    return destination;
-}
-
-//Config the destination before peforming route
-- (void)prepareDestination:(MasterViewController *)destination configuration:(ZIKViewRouteConfiguration *)configuration {
-    destination.tableView.backgroundColor = [UIColor lightGrayColor];
-}
-
-//Destination is prepared, validate it's dependencies
-- (void)didFinishPrepareDestination:(id)destination configuration:(__kindof ZIKViewRouteConfiguration *)configuration {
-    
-}
-
-//AOP methods for routing
-+ (void)router:(nullable ZIKViewRouter *)router willPerformRouteOnDestination:(id)destination fromSource:(id)source {
-    
-}
-+ (void)router:(nullable ZIKViewRouter *)router didPerformRouteOnDestination:(id)destination fromSource:(id)source {
-    
-}
-+ (void)router:(nullable ZIKViewRouter *)router willRemoveRouteOnDestination:(id)destination fromSource:(id)source {
-    
-}
-+ (void)router:(nullable ZIKViewRouter *)router didRemoveRouteOnDestination:(id)destination fromSource:(id)source {
-    
-}
-
-@end
-```
-
-### Use the Router
-
-```objectivec
-//In some view controller
-
-@implementation TestViewController
-
-- (void)showMasterViewController {
-	ZIKViewRouter *router;
-	
-	//You can directly use MasterViewRouter，or use ZIKViewRouter.toView(@protocol(MasterViewProtocol)) to get the class.
-	//When you use protocol to get the router class, you can use the protocol to config the destination
-	router = [ZIKViewRouter.toView(@protocol(MasterViewProtocol))
-	          performWithConfiguring:^(ZIKViewRouteConfiguration *config) {
-	              config.source = self;
-	              config.routeType = ZIKViewRouteTypePresentModally;
-	              config.animated = YES;
-	              config.prepareForRoute = ^(UIViewController *destination) {
-	              //Config transition style
-	                  destination.modalTransitionStyle = UIModalTransitionStyleCoverVertical;
-	              };
-	              config.routeCompletion = ^(UIViewController *destination) {
-	                  //Transition completes
-	              };
-	              config.performerErrorHandler = ^(SEL routeAction, NSError *error) {
-	                  //Transition is failed
-	              };
-	          }];
-	 self.router = router;
-}
-
-- (void)removeMasterViewController {
-	//You can use the router to remove a routed view
-	[self.router removeRouteWithSuccessHandler:^{
-	    //Remove success
-	} performerErrorHandler:^(SEL routeAction, NSError *error) {
-	    //Remove failed
-	}];
-}
-```
 
 ## Demo and Practice
 

@@ -1,12 +1,12 @@
-# 执行路由
+# Perform Route
 
-执行路由时，需要使用对应模块的router子类。ZIKRouter提供了通过protocol动态获取router子类的方法，而且可以利用protocol对目的模块进行运行时的依赖注入。
+You need get a router subclass for your destination module to perform route. You can use protocol to get router class.
 
-ZIKRouter是用Objective-C写的，在Swift里则需要使用`ZRouter`，这是对`ZIKRouter`在Swift上的封装，提供了更加Swifty的语法。
+ZIKRouter is written in Objective-C. If your project is in Swift, use `ZRouter`.
 
 ## Type Safe Perform
 
-使用声明过的protocol执行路由，路由操作是类型安全的。
+It's safe to perform route with routable protocol.
 
 ```swift
 class TestViewController: UIViewController {
@@ -15,19 +15,19 @@ class TestViewController: UIViewController {
             to: RoutableView<NoteEditorInput>(),
             from: self,
             configuring: { (config, prepareDestiantion, _) in
-                //路由相关的设置
-                //设置跳转方式，支持push、present、show、showDetail、custom等多种方式
+                //Config the route
+                //Config route type, such as push,present,show,showDetail,custom
                 config.routeType = ViewRouteType.push
                 config.routeCompletion = { destination in
-                    //跳转结束处理
+                    //Transition completed
                 }
                 config.errorHandler = { (action, error) in
-                    //跳转失败处理
+                    //Transition failed
                 }
-                //配置目的界面
+                //Config the destination before performing route
                 prepareDestination({ destination in
-                    //destination被Swift自动推断为NoteEditorInput类型
-                    //配置editor界面
+                    //destination is inferred as NoteEditorInput
+                    //Config editor view
                     destination.delegate = self
                     destination.constructForCreatingNewNote()
                 })
@@ -38,7 +38,7 @@ class TestViewController: UIViewController {
 
 ## Switchable Perform
 
-当某个界面跳转是从某几个界面中选择时，可以使用`Switchable`结构体。在保留了编译检查的同时，也能引入一定程度的动态性。
+When a route is for showing views from a limited list, you can use `Switchable`.
 
 ```swift
 enum RequestError: Error {
@@ -62,7 +62,7 @@ class TestViewController: UIViewController {
 
 ## Dynamic Perform
 
-针对一些需要完全动态路由的场景，可以使用protocol的字符串名字来执行路由：
+When you need highly dynamic routing, you can perform route with protocol's name string:
 
 ```swift
 func handleOpenURLWithViewName(_ viewName: String) {
@@ -70,32 +70,28 @@ func handleOpenURLWithViewName(_ viewName: String) {
     }
 
 ```
-你应该只在必要的时候才使用这个API，因为当传入错误的字符串时，将不会执行路由。
+You should only use this when you really need it. If the protocol name is wrong, the routing will be failed. So it's not that safe.
 
 ## Perform in Objective-C
-
-在Objective-C中，由于OC的动态特性，无法为router做到完美的安全。
 
 ```objectivec
 @implementation TestViewController
 
 - (void)showEditorViewController {
-	//用EditorViewInput获取router类
 	[ZIKViewRouter.toView(@protocol(NoteEditorInput))
 	          performFromSource:self
 	          configuring:^(ZIKViewRouteConfiguration *config) {
 	              config.routeType = ZIKViewRouteTypePresentModally;
 	              config.animated = YES;
-	              //配置目的界面
 	              config.prepareDestination = ^(id<NoteEditorInput> destination) {
 	                  destination.delegate = self;
 	                  [destination constructForCreatingNewNote];
 	              };
 	              config.routeCompletion = ^(id<NoteEditorInput> destination) {
-	                  //界面显示完毕
+	                  //Transition completed
 	              };
 	              config.errorHandler = ^(ZIKRouteAction routeAction, NSError *error) {
-	                  //界面显示失败
+	                  //Transition failed
 	              };
 	          }];
 }
@@ -103,9 +99,9 @@ func handleOpenURLWithViewName(_ viewName: String) {
 
 ## Lazy Perform
 
-你可以先创建router，再稍后执行路由。这样可以把路由的提供者和执行者分开。
+You can create the router, then perform it later. This let you separate the router's provider and performer.
 
-需要注意的是，router可能会执行失败（比如当前已经执行了路由，不能再重复执行），因此在执行路由前需要先检查状态。
+When performer performs the router, it may fail. The router may be performed already and can't be performed unless it's removed. So the performer need to check the router's state.
 
 ```swift
 class TestViewController: UIViewController {
@@ -124,7 +120,7 @@ class TestViewController: UIViewController {
 }
 ```
 
-<details><summary>Objective-C示例</summary>
+<details><summary>Objective-C Sample</summary>
 
 ```objectivec
 @implementation ZIKTestPushViewController
@@ -154,21 +150,21 @@ class TestViewController: UIViewController {
 
 </details>
 
-## 自定义路由操作
+## Custom Transition
 
 ### View Router
 
-如果要进行自定义的界面跳转，需要：
+Steps to support custom transition:
 
-1. 重写`supportedRouteTypes`，添加`ZIKViewRouteTypeCustom`
-2. 如果需要判断configuration是否正确，则重写`-validateCustomRouteConfiguration:removeConfiguration:`
-3. 重写`performCustomRouteOnDestination:fromSource:configuration:`，执行自定义界面跳转操作，如果自定义操作是执行segue，则在执行时需要使用`_performSegueWithIdentifier:fromSource:sender:`
-4. 用`beginPerformRoute`、`endPerformRouteWithSuccess`、`endPerformRouteWithError:`改变路由状态
+1. Override `supportedRouteTypes`, add`ZIKViewRouteTypeCustom`
+2. If the router needs to validate the configuration, override `-validateCustomRouteConfiguration:removeConfiguration:`
+3. Override `performCustomRouteOnDestination:fromSource:configuration:` to do custom transition. If the transition is performing a segue, use `_performSegueWithIdentifier:fromSource:sender:`
+4. Manage router's state with `beginPerformRoute`、`endPerformRouteWithSuccess`、`endPerformRouteWithError:`
 
 ### Service Router
 
-Service router只是用于返回一个对象。如果你需要自定义service router的路由，可以重写`-performRouteOnDestination:configuration:`。
+If you want to do custom route action, override `-performRouteOnDestination:configuration:`。
 
-Service router的使用和view router也是类似的，只是去掉了界面跳转的封装，要比view router更加简单和通用。而大多数service并不需要view controller那样的一个路由过程，只是需要获取某个service模块。此时可以使用[Make Destination](MakeDestination.md)。
+Most service routers are just for getting a service object. You can use [Make Destination](MakeDestination.md).
 
-执行路由之后，会得到一个router实例，你可以持有这个router实例，在之后移除路由，参考[Remove Route](RemoveRoute.md)。
+After performing, you will get a router instance. You can hold the router and remove route later. See [Remove Route](RemoveRoute.md).

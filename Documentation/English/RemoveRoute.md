@@ -1,15 +1,15 @@
-# 移除路由
+# Remove Route
 
-执行路由之后，可以使用返回的router一键移除路由，例如消除已经显示的界面、销毁模块等操作。
+After performing a route, you can remove the route with the router for dismissing a view or unloading a module.
 
-Swift示例：
+Swift Sample
 
 ```swift
 class TestViewController: UIViewController {
     var editorRouter: DestinationViewRouter<NoteEditorInput>?
     
     func showEditor() {
-        //保存执行路由后的router实例
+        //Hold router for this routing
         editorRouter = Router.perform(
             to: RoutableView<NoteEditorInput>(),
             from: self,
@@ -21,10 +21,10 @@ class TestViewController: UIViewController {
         guard let router = editorRouter, router.canRemove else {
             return
         }
-        //使用之前保存的router移除界面
+        //Remove the view with the router
         router.removeRoute(configuring: { (config, prepareDestination) in
             prepareDestination({ destination in
-                //移除路由前的操作destination
+                //Prepare the destination before removing
             })
             config.successHandler = {
                 print("remove editor success")
@@ -37,7 +37,7 @@ class TestViewController: UIViewController {
 }
 ```
 
-<details><summary>Objecive-C示例</summary>
+<details><summary>Objecive-C Sample</summary>
 
 ```objectivec
 @interface TestViewController()
@@ -65,25 +65,27 @@ class TestViewController: UIViewController {
 
 </details>
 
-对于service router，你可以在router内部的remove接口里进行模块销毁的操作。例如停止工作、释放资源等。
+For service router, you can unload the module in router's remove interface, such as stop some processing and release resources.
 
-# 自定义移除路由
+# Custom Remove
 
 ## View Router
 
-如果要自定义移除界面操作，则需要：
+Steps to support custom transition for removing a view:
 
-1. 重写`supportedRouteTypes`，添加`ZIKViewRouteTypeCustom`
-2. 重写`removeCustomRouteOnDestination:fromSource:removeConfiguration:configuration:`，进行自定义移除操作
-3. 用`beginRemoveRouteFromSource:`、`endRemoveRouteWithSuccessOnDestination:fromSource:`、`endRemoveRouteWithError:`改变路由状态
+1. Override `supportedRouteTypes`, add`ZIKViewRouteTypeCustom`
+2. Override `removeCustomRouteOnDestination:fromSource:removeConfiguration:configuration:` to do custom transition
+3. Manage router's state with `beginRemoveRouteFromSource:`、`endRemoveRouteWithSuccessOnDestination:fromSource:`、`endRemoveRouteWithError:`
 
-另外，还可以重写`-canRemoveCustomRoute`判断当前是否能执行移除操作。
+You can also override `-canRemoveCustomRoute` to check whether the view can be removed now.
 
 ## Service Router
 
-Service router默认不支持移除操作。如果要用移除操作来销毁模块，则：
+Service router do nothing when removing in default.
 
-1. 重写`canRemove`，如果当前可以销毁模块，则返回true
-2. 重写`-removeDestination:removeConfiguration:`，判断destination是否存在，执行销毁操作
-3. 调用`-prepareDestinationBeforeRemoving`在销毁前调用模块
-4. 用`beginRemoveRoute`、`endRemoveRouteWithSuccess`、`endRemoveRouteWithError:`改变路由状态
+Steps to support removing a service:
+
+1. Override `canRemove`, if the service can be removed, return true
+2. Override `-removeDestination:removeConfiguration:`, check whether the destination exists, and do unload action
+3. Call `-prepareDestinationBeforeRemoving` to let the performer prepare the destination before unloading
+4. Manage the router's state with `beginRemoveRoute`、`endRemoveRouteWithSuccess`、`endRemoveRouteWithError:`
