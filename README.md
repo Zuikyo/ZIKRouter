@@ -150,8 +150,8 @@ class TestViewController: UIViewController {
     [ZIKViewRouter.toView(@protocol(NoteEditorInput))
 	     performFromSource:self
 	     configuring:^(ZIKViewRouteConfig *config) {
-	         //路由相关的设置
-	         //设置跳转方式
+	         //Route config
+            //Transition type
 	         config.routeType = ZIKViewRouteTypePush;
 	         config.prepareDestination = ^(id<NoteEditorInput> destination) {
 	             //Prepare the destination before transition
