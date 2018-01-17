@@ -5,7 +5,7 @@
 # ZIKRouter
 
 ![](https://img.shields.io/cocoapods/p/ZIKRouter.svg?style=flat)
-![](https://img.shields.io/badge/language-objectivec-green.svg)
+![](https://img.shields.io/badge/language-objectivec-blue.svg)
 ![ZIKRouter](https://img.shields.io/cocoapods/v/ZIKRouter.svg?style=flat)
 ![](https://img.shields.io/badge/language-swift-orange.svg)
 ![ZRouter](https://img.shields.io/cocoapods/v/ZRouter.svg?style=flat)
@@ -19,7 +19,7 @@ The service router can discover corresponding module with it's protocol.
 
 ---
 
-一个用于模块间路由，基于接口进行模块发现和依赖注入的Router。包括view router和service router。
+一个用于模块间路由，基于接口进行模块发现和依赖注入的Router。
 
 View router将UIKit中的所有界面跳转方式封装成一个统一的方法。
 
@@ -123,7 +123,7 @@ class TestViewController: UIViewController {
 }
 ```
 
-<details><summary>Objecive-C Sample</summary>
+<details><summary>Objective-C Sample</summary>
   
 ```objectivec
 ///editor view's interface

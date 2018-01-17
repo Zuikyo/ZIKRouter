@@ -26,7 +26,7 @@ class Person {
 }
 ```
 
-<details><summary>Objecive-C Sample</summary>
+<details><summary>Objective-C Sample</summary>
 
 ```objectivec
 @protocol Name
@@ -78,7 +78,7 @@ let person = Router.makeDestination(to: RoutableServiceModule<PersonConfig>(), p
         })
 ```
 
-<details><summary>Objecive-C Sample</summary>
+<details><summary>Objective-C Sample</summary>
 
 ```objectivec
 @protocol PersonConfig: ZIKServiceModuleRoutable
@@ -151,7 +151,7 @@ class Person: PersonType {
 }
 ```
 
-<details><summary>Objecive-C Sample</summary>
+<details><summary>Objective-C Sample</summary>
 
 ```objectivec
 @protocol PersonType: ZIKServiceRoutable
@@ -194,7 +194,7 @@ let person = Router.makeDestination(to: RoutableService<PersonType>(), preparati
         })
 ```
 
-<details><summary>Objecive-C Sample</summary>
+<details><summary>Objective-C Sample</summary>
 
 ```objectivec
 @interface PersonRouter: ZIKServiceRouter<Person *, ZIKPerformRouteConfiguration *>

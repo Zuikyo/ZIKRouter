@@ -12,7 +12,7 @@ extension EditorViewController: ZIKRoutableView {
 }
 ```
 
-<details><summary>Objecive-C Sample</summary>
+<details><summary>Objective-C Sample</summary>
 
 ```objectivec
 @interface EditorViewController(EditorViewRouter)<ZIKRoutableView>

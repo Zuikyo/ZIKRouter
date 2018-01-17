@@ -5,7 +5,7 @@
 # ZIKRouter
 
 ![](https://img.shields.io/cocoapods/p/ZIKRouter.svg?style=flat)
-![](https://img.shields.io/badge/language-objectivec-green.svg)
+![](https://img.shields.io/badge/language-objectivec-blue.svg)
 ![ZIKRouter](https://img.shields.io/cocoapods/v/ZIKRouter.svg?style=flat)
 ![](https://img.shields.io/badge/language-swift-orange.svg)
 ![ZRouter](https://img.shields.io/cocoapods/v/ZRouter.svg?style=flat)

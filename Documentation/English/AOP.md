@@ -20,7 +20,7 @@ override class func router(_ router: DefaultViewRouter?, didRemoveRouteOnDestina
 
 ```
 
-<details><summary>Objecive-C Sample</summary>
+<details><summary>Objective-C Sample</summary>
 
 ```objectivec
 + (void)router:(nullable ZIKViewRouter *)router willPerformRouteOnDestination:(EditorViewController *)destination fromSource:(id)source {

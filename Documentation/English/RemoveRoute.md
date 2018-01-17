@@ -37,7 +37,7 @@ class TestViewController: UIViewController {
 }
 ```
 
-<details><summary>Objecive-C Sample</summary>
+<details><summary>Objective-C Sample</summary>
 
 ```objectivec
 @interface TestViewController()
