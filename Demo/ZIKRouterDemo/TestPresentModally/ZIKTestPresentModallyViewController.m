@@ -71,11 +71,11 @@
         NSLog(@"Can't perform route now:%@",self.infoViewRouter);
         return;
     }
-    [self.infoViewRouter performRoute];
-    
-    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(2 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+    [self.infoViewRouter performRouteWithSuccessHandler:^{
         [self removeInfoViewController];
-    });
+    } errorHandler:^(ZIKRouteAction  _Nonnull routeAction, NSError * _Nonnull error) {
+        NSLog(@"performer: push failed: %@",error);
+    }];
 }
 
 - (void)removeInfoViewController {
