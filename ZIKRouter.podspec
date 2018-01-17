@@ -2,9 +2,9 @@ Pod::Spec.new do |s|
 
   s.name         = "ZIKRouter"
   s.version      = "0.11.0"
-  s.summary      = "Interface-oriented iOS router for discovering modules and injecting dependencies with protocol in both Swift and Objective-C."
+  s.summary      = "Interface-Oriented iOS router for discovering modules and injecting dependencies with protocol in both Swift and Objective-C."
   s.description  = <<-DESC
-                Interface-oriented iOS router for discovering modules and injecting dependencies with protocol in both Swift and Objective-C, designed for VIPER. The view router can perform all navigation types in UIKit through one method. The service router can discover service with protocol.
+                Interface-Oriented iOS router for discovering modules and injecting dependencies with protocol in both Swift and Objective-C, designed for VIPER. The view router can perform all navigation types in UIKit through one method. The service router can discover service with protocol.
                    DESC
   s.homepage         = "https://github.com/Zuikyo/ZIKRouter"
   s.license      = "MIT"

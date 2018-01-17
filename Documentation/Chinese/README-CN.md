@@ -242,7 +242,7 @@ pod 'ZIKRouter', '0.11.0'
 如果是Swift项目，则使用ZRouter：
 
 ```
-pod 'ZRouter', '0.5.0'
+pod 'ZRouter', '0.6.0'
 ```
 
 ## License

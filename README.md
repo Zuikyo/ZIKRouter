@@ -247,7 +247,7 @@ pod 'ZIKRouter', '0.11.0'
 For Swift project:
 
 ```
-pod 'ZRouter', '0.5.0'
+pod 'ZRouter', '0.6.0'
 ```
 
 ## License
