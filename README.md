@@ -1,3 +1,7 @@
+<p align="center">
+  <img src="Documentation/Resources/icon.png" width="33%">
+</p>
+
 # ZIKRouter
 
 ![](https://img.shields.io/cocoapods/p/ZIKRouter.svg?style=flat)

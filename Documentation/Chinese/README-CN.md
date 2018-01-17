@@ -1,4 +1,8 @@
-# Documentation
+<p align="center">
+  <img src="../Resources/icon.png" width="33%">
+</p>
+
+# ZIKRouter
 
 ![](https://img.shields.io/cocoapods/p/ZIKRouter.svg?style=flat)
 ![](https://img.shields.io/badge/language-objectivec-green.svg)
