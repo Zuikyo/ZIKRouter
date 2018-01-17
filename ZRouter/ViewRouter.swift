@@ -93,6 +93,12 @@ public class ViewRouter<Destination, ModuleConfig> {
         }, removing: removeBuilder)
     }
     
+    public func perform(from source: ZIKViewRouteSource?, routeType: ViewRouteType) {
+        perform(from: source, configuring: { (config, _, _) in
+            config.routeType = routeType
+        })
+    }
+    
     // MARK: Remove
     
     public var canRemove: Bool {

@@ -151,6 +151,22 @@ public extension Router {
         return r
     }
     
+    /// Perform route with view protocol and route type.
+    ///
+    /// - Parameters:
+    ///   - routableView: A routable entry carrying a view protocol.
+    ///   - source: Source UIViewController or UIView. See ZIKViewRouteConfiguration's source.
+    ///   - routeType: Transition type.
+    /// - Returns: The view router.
+    public static func perform<Destination>(
+        to routableView: RoutableView<Destination>,
+        from source: ZIKViewRouteSource?,
+        routeType: ViewRouteType) -> ViewRouter<Destination, ViewRouteConfig>? {
+        return perform(to: routableView, from: source, configuring: { (config, _, _) in
+            config.routeType = routeType
+        })
+    }
+    
     /// Perform route with view config protocol and prepare the module with the protocol.
     ///
     /// - Parameters:
@@ -174,6 +190,22 @@ public extension Router {
                     configure(config, prepareDestination, prepareModule)
         }, removing: removeConfigure)
         return r
+    }
+    
+    /// Perform route with view config protocol and route type.
+    ///
+    /// - Parameters:
+    ///   - routableViewModule: A routabe entry carrying a view module config protocol.
+    ///   - source: Source UIViewController or UIView. See ZIKViewRouteConfiguration's source.
+    ///   - routeType: Transition type.
+    /// - Returns: The view router.
+    public static func perform<Module>(
+        to routableViewModule: RoutableViewModule<Module>,
+        from source: ZIKViewRouteSource?,
+        routeType: ViewRouteType) -> ViewRouter<Any, Module>? {
+        return perform(to: routableViewModule, from: source, configuring: { (config, _, _) in
+            config.routeType = routeType
+        })
     }
     
     /// Perform route with service protocol and prepare the destination with the protocol.

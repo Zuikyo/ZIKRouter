@@ -44,12 +44,12 @@ NS_ASSUME_NONNULL_BEGIN
 + (void)_autoRegistrationDidFinished;
 
 /**
- Whether the destination is all configured. This method is for destination from storyboard and UIView from -addSubview:.
+ Whether the destination requires the performer to prepare it. This method is for destination from storyboard and UIView from -addSubview:.
  @discussion
  Destination created from external will use this method to determine whether the router have to search the performer to prepare itself by invoking performer's -prepareDestinationFromExternal:configuration:.
  
  @param destination The view from external, such as UIViewController from storyboard and UIView from -addSubview:.
- @return If the destination is not prepared, return NO. Default is YES.
+ @return If the destination requires the performer to prepare it, return NO, and router will call performer's -prepareDestinationFromExternal:configuration:. Default is YES.
  */
 + (BOOL)destinationPrepared:(Destination)destination;
 
