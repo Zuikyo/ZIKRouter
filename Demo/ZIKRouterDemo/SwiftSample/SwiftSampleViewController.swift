@@ -89,7 +89,7 @@ class SwiftSampleViewController: UIViewController, PureSwiftSampleViewInput, Pur
             switchableView = SwitchableView(RoutableView<SwiftSampleViewInput>())
         }
         
-        _ = Registry.router(to: switchableView)?
+        _ = Router.to(switchableView)?
             .perform(from: self,
                      configuring: { config,_,_  in
                         config.routeType = ViewRouteType.push

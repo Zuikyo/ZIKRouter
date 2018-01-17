@@ -149,13 +149,13 @@ public class Registry {
 }
 
 // MARK: Routable Discover
-extension Registry {
+internal extension Registry {
     
-    /// Get view router class for registered view protocol.
+    /// Get view router for registered view protocol.
     ///
     /// - Parameter routableView: A routabe entry carrying a view protocol conformed by the view registered with a view router. Support objc protocol and pure Swift protocol.
-    /// - Returns: The view router class for the view protocol.
-    public static func router<Destination>(to routableView: RoutableView<Destination>) -> ViewRouter<Destination, ViewRouteConfig>? {
+    /// - Returns: The view router for the view protocol.
+    internal static func router<Destination>(to routableView: RoutableView<Destination>) -> ViewRouter<Destination, ViewRouteConfig>? {
         let routerClass = _router(toView: Destination.self)
         if routerClass != nil {
             return ViewRouter(routerType: routerClass!)
@@ -163,11 +163,11 @@ extension Registry {
         return nil
     }
     
-    /// Get view router class for registered view module config protocol.
+    /// Get view router for registered view module config protocol.
     ///
     /// - Parameter routableViewModule: A routabe entry carrying a view module config protocol registered with a view router. Support objc protocol and pure Swift protocol.
-    /// - Returns: The view router class for the config protocol.
-    public static func router<Module>(to routableViewModule: RoutableViewModule<Module>) -> ViewRouter<Any, Module>? {
+    /// - Returns: The view router for the config protocol.
+    internal static func router<Module>(to routableViewModule: RoutableViewModule<Module>) -> ViewRouter<Any, Module>? {
         let routerClass = _router(toViewModule: Module.self)
         if routerClass != nil {
             return ViewRouter(routerType: routerClass!)
@@ -175,11 +175,11 @@ extension Registry {
         return nil
     }
     
-    /// Get service router class for registered service protocol.
+    /// Get service router for registered service protocol.
     ///
     /// - Parameter routableService: A routabe entry carrying a service protocol conformed by the service registered with a service router. Support objc protocol and pure Swift protocol.
-    /// - Returns: The view router class for the service protocol.
-    public static func router<Destination>(to routableService: RoutableService<Destination>) -> ServiceRouter<Destination, PerformRouteConfig>? {
+    /// - Returns: The view router for the service protocol.
+    internal static func router<Destination>(to routableService: RoutableService<Destination>) -> ServiceRouter<Destination, PerformRouteConfig>? {
         let routerClass = _router(toService: Destination.self)
         if routerClass != nil {
             return ServiceRouter(routerType: routerClass!)
@@ -187,11 +187,11 @@ extension Registry {
         return nil
     }
     
-    /// Get service router class for registered servie module config protocol.
+    /// Get service router for registered servie module config protocol.
     ///
     /// - Parameter routableServiceModule: A routabe entry carrying a cconfg protocol registered with a service router. Support objc protocol and pure Swift protocol.
-    /// - Returns: The service router class for the config protocol.
-    public static func router<Module>(to routableServiceModule: RoutableServiceModule<Module>) -> ServiceRouter<Any, Module>? {
+    /// - Returns: The service router for the config protocol.
+    internal static func router<Module>(to routableServiceModule: RoutableServiceModule<Module>) -> ServiceRouter<Any, Module>? {
         let routerClass = _router(toServiceModule: Module.self)
         if routerClass != nil {
             return ServiceRouter(routerType: routerClass!)
@@ -202,13 +202,13 @@ extension Registry {
 
 // MARK: Switchable Discover
 
-public extension Registry {
+internal extension Registry {
     
-    /// Get view router class for switchable registered view protocol, when the destination view is switchable from some view protocols.
+    /// Get view router for switchable registered view protocol, when the destination view is switchable from some view protocols.
     ///
     /// - Parameter switchableView: A struct carrying any routable view protocol, but not a specified one.
-    /// - Returns: The view router class for the view protocol.
-    public static func router(to switchableView: SwitchableView) -> ViewRouter<Any, ViewRouteConfig>? {
+    /// - Returns: The view router for the view protocol.
+    internal static func router(to switchableView: SwitchableView) -> ViewRouter<Any, ViewRouteConfig>? {
         let routerClass = _router(toView: switchableView.routableProtocol)
         if routerClass != nil {
             return ViewRouter(routerType: routerClass!)
@@ -216,41 +216,53 @@ public extension Registry {
         return nil
     }
     
-    /// Get view router class for switchable registered view module protocol, when the destination view is switchable from some view module protocols.
+    /// Get view router for switchable registered view module protocol, when the destination view is switchable from some view module protocols.
     ///
     /// - Parameter switchableViewModule: A struct carrying any routable view module config protocol, but not a specified one.
-    /// - Returns: The view router class for the view module config protocol.
-    public static func router(to switchableViewModule: SwitchableViewModule) -> ZIKAnyViewRouter.Type? {
-        return _router(toView: switchableViewModule.routableProtocol)
+    /// - Returns: The view router for the view module config protocol.
+    internal static func router(to switchableViewModule: SwitchableViewModule) -> ViewRouter<Any, ViewRouteConfig>? {
+        let routerClass = _router(toViewModule: switchableViewModule.routableProtocol)
+        if routerClass != nil {
+            return ViewRouter(routerType: routerClass!)
+        }
+        return nil
     }
     
-    /// Get view service class for switchable registered service protocol, when the destination service is switchable from some service protocols.
+    /// Get service router for switchable registered service protocol, when the destination service is switchable from some service protocols.
     ///
     /// - Parameter switchableService: A struct carrying any routable service protocol, but not a specified one.
-    /// - Returns: The service router class for the service protocol.
-    public static func router(to switchableService: SwitchableService) -> ZIKAnyViewRouter.Type? {
-        return _router(toView: switchableService.routableProtocol)
+    /// - Returns: The service router for the service protocol.
+    internal static func router(to switchableService: SwitchableService) -> ServiceRouter<Any, PerformRouteConfig>? {
+        let routerClass = _router(toService: switchableService.routableProtocol)
+        if routerClass != nil {
+            return ServiceRouter(routerType: routerClass!)
+        }
+        return nil
     }
     
-    /// Get service router class for switchable registered service module config protocol, when the destination service is switchable from some service module protocols.
+    /// Get service router for switchable registered service module config protocol, when the destination service is switchable from some service module protocols.
     ///
     /// - Parameter switchableServiceModule: A struct carrying any routable service module config protocol, but not a specified one.
-    /// - Returns: The service router class for the service module config protocol.
-    public static func router(to switchableServiceModule: SwitchableServiceModule) -> ZIKAnyViewRouter.Type? {
-        return _router(toView: switchableServiceModule.routableProtocol)
+    /// - Returns: The service router for the service module config protocol.
+    internal static func router(to switchableServiceModule: SwitchableServiceModule) -> ServiceRouter<Any, PerformRouteConfig>? {
+        let routerClass = _router(toServiceModule: switchableServiceModule.routableProtocol)
+        if routerClass != nil {
+            return ServiceRouter(routerType: routerClass!)
+        }
+        return nil
     }
 }
 
 // MARK: Dynamic Discover
 
-public extension Registry {
+internal extension Registry {
     
-    /// Get view router class for registered view protocol name.
+    /// Get view router for registered view protocol name.
     /// - Warning: Only use this when the business logic requires highly dynamic route, e.g. handling open URL from outside and show dynamic view.
     ///
     /// - Parameter viewProtocolName: The name string of the view protocol.
-    /// - Returns: The view router class for the view protocol.
-    public static func router(toDynamicViewKey viewProtocolName: String) -> ZIKAnyViewRouter.Type? {
+    /// - Returns: The view router for the view protocol.
+    internal static func router(toDynamicView viewProtocolName: String) -> ViewRouter<Any, ViewRouteConfig>? {
         var isObjcProtocol = false
         var routerClass = viewProtocolContainer[_RouteKey(key:viewProtocolName)]
         if routerClass == nil {
@@ -267,15 +279,18 @@ public extension Registry {
                                                                                        localizedDescription:"Swift view protocol name (\(viewProtocolName)) is invalid, maybe it was not registered with any view router, or not a protocol type name."))
             assertionFailure("Swift view protocol name (\(viewProtocolName)) is invalid, maybe it was not registered with any view router, or not a protocol type name.")
         }
-        return routerClass
+        if routerClass != nil {
+            return ViewRouter(routerType: routerClass!)
+        }
+        return nil
     }
     
-    /// Get view router class for registered view module protocol name.
+    /// Get view router for registered view module protocol name.
     /// - Warning: Only use this when the business logic requires highly dynamic route, e.g. handling open URL from outside and show dynamic view.
     ///
     /// - Parameter configProtocolName: The name string of the view module config protocol.
-    /// - Returns: The view router class for the view module config protocol.
-    public static func router(toDynamicViewModuleKey configProtocolName: String) -> ZIKAnyViewRouter.Type? {
+    /// - Returns: The view router for the view module config protocol.
+    internal static func router(toDynamicViewModule configProtocolName: String) -> ViewRouter<Any, ViewRouteConfig>? {
         var isObjcProtocol = false
         var routerClass = viewConfigContainer[_RouteKey(key:configProtocolName)]
         if routerClass == nil {
@@ -292,7 +307,10 @@ public extension Registry {
                                                                                        localizedDescription:"Swift view module protocol name (\(configProtocolName)) is invalid, maybe it was not registered with any view router, or not a protocol type name."))
             assertionFailure("Swift view module protocol name (\(configProtocolName)) is invalid, maybe it was not registered with any view router, or not a protocol type name.")
         }
-        return routerClass
+        if routerClass != nil {
+            return ViewRouter(routerType: routerClass!)
+        }
+        return nil
     }
     
     /// Get service router class for registered service protocol name.
@@ -300,7 +318,7 @@ public extension Registry {
     ///
     /// - Parameter serviceProtocolName: The name string of the service protocol.
     /// - Returns: The service router class for the service protocol.
-    public static func router(toDynamicServiceKey serviceProtocolName: String) -> ZIKAnyServiceRouter.Type? {
+    internal static func router(toDynamicService serviceProtocolName: String) -> ServiceRouter<Any, PerformRouteConfig>? {
         var isObjcProtocol = false
         var routerClass = serviceProtocolContainer[_RouteKey(key:serviceProtocolName)]
         if routerClass == nil {
@@ -317,15 +335,18 @@ public extension Registry {
                                                                                              localizedDescription:"Swift service protocol name (\(serviceProtocolName)) is invalid, maybe it was not registered with any service router, or not a protocol name."))
             assertionFailure("Swift service protocol name (\(serviceProtocolName)) is invalid, maybe it was not registered with any service router, or not a protocol name.")
         }
-        return routerClass
+        if routerClass != nil {
+            return ServiceRouter(routerType: routerClass!)
+        }
+        return nil
     }
     
-    /// Get service router class for registered service module protocol name.
+    /// Get service router for registered service module protocol name.
     /// - Warning: Only use this when the business logic requires highly dynamic route.
     ///
     /// - Parameter configProtocolName: The name string of the service module config protocol.
-    /// - Returns: The service router class for the service module config protocol.
-    public static func router(toDynamicServiceModuleKey configProtocolName: String) -> ZIKAnyServiceRouter.Type? {
+    /// - Returns: The service router for the service module config protocol.
+    internal static func router(toDynamicServiceModule configProtocolName: String) -> ServiceRouter<Any, PerformRouteConfig>? {
         var isObjcProtocol = false
         var routerClass = serviceConfigContainer[_RouteKey(key:configProtocolName)]
         if routerClass == nil {
@@ -342,7 +363,10 @@ public extension Registry {
                                                                                              localizedDescription:"Swift service module protocol name (\(configProtocolName)) is invalid, maybe it was not registered with any service router, or not a protocol name."))
             assertionFailure("Swift service module protocol name (\(configProtocolName)) is invalid, maybe it was not registered with any service router, or not a protocol name.")
         }
-        return routerClass
+        if routerClass != nil {
+            return ServiceRouter(routerType: routerClass!)
+        }
+        return nil
     }
 }
 

@@ -33,7 +33,7 @@ class SwiftSampleViewRouter: ZIKViewRouter<SwiftSampleViewController, SwiftSampl
     
     override class func _autoRegistrationDidFinished() {
         //Make sure all routable dependencies in this module is available.
-        assert((Registry.router(to: RoutableService<SwiftServiceInput>()) != nil))
+        assert(Router.to(RoutableService<SwiftServiceInput>()) != nil)
     }
     
     override class func defaultRouteConfiguration() -> SwiftSampleViewConfiguration {
@@ -53,7 +53,7 @@ class SwiftSampleViewRouter: ZIKViewRouter<SwiftSampleViewController, SwiftSampl
         return false
     }
     override func prepareDestination(_ destination: SwiftSampleViewController, configuration: ZIKViewRouteConfiguration) {
-        destination.injectedAlertRouter = Registry.router(to: RoutableViewModule<ZIKCompatibleAlertConfigProtocol>())
+        destination.injectedAlertRouter = Router.to(RoutableViewModule<ZIKCompatibleAlertConfigProtocol>())
     }
 }
 
