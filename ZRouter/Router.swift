@@ -139,7 +139,7 @@ public extension Router {
     ///     - config: Config for removing view route.
     ///     - prepareDestination: Prepare destination before removing route.
     /// - Returns: The view router.
-    public static func perform<Destination>(
+    @discardableResult public static func perform<Destination>(
         to routableView: RoutableView<Destination>,
         from source: ZIKViewRouteSource?,
         configuring configure: @escaping (ViewRouteConfig, (@escaping (Destination) -> Void) -> Void, ((ViewRouteConfig) -> Void) -> Void) -> Void,
@@ -160,7 +160,7 @@ public extension Router {
     ///   - source: Source UIViewController or UIView. See ZIKViewRouteConfiguration's source.
     ///   - routeType: Transition type.
     /// - Returns: The view router.
-    public static func perform<Destination>(
+    @discardableResult public static func perform<Destination>(
         to routableView: RoutableView<Destination>,
         from source: ZIKViewRouteSource?,
         routeType: ViewRouteType) -> ViewRouter<Destination, ViewRouteConfig>? {
@@ -180,7 +180,7 @@ public extension Router {
     ///     - prepareModule: Prepare custom moudle config.
     ///   - removeConfigure: Configure the configuration for removing view.
     /// - Returns: The view router.
-    public static func perform<Module>(
+    @discardableResult public static func perform<Module>(
         to routableViewModule: RoutableViewModule<Module>,
         from source: ZIKViewRouteSource?,
         configuring configure: @escaping (ViewRouteConfig, (@escaping (Any) -> Void) -> Void, ((Module) -> Void) -> Void) -> Void,
@@ -201,7 +201,7 @@ public extension Router {
     ///   - source: Source UIViewController or UIView. See ZIKViewRouteConfiguration's source.
     ///   - routeType: Transition type.
     /// - Returns: The view router.
-    public static func perform<Module>(
+    @discardableResult public static func perform<Module>(
         to routableViewModule: RoutableViewModule<Module>,
         from source: ZIKViewRouteSource?,
         routeType: ViewRouteType) -> ViewRouter<Any, Module>? {
@@ -220,7 +220,7 @@ public extension Router {
     ///     - prepareModule: Prepare custom moudle config.
     ///   - removeConfigure: Configure the configuration for removing service.
     /// - Returns: The service router.
-    public static func perform<Destination>(
+    @discardableResult public static func perform<Destination>(
         to routableService: RoutableService<Destination>,
         configuring configure: @escaping (PerformRouteConfig, (@escaping (Destination) -> Void) -> Void, ((PerformRouteConfig) -> Void) -> Void) -> Void,
         removing removeConfigure: ((RouteConfig, ((RouteConfig) -> Void) -> Void) -> Void)? = nil
@@ -240,7 +240,7 @@ public extension Router {
     ///     - prepareModule: Prepare custom moudle config.
     ///   - removeConfigure: Configure the configuration for removing service.
     /// - Returns: The service router.
-    public static func perform<Module>(
+    @discardableResult public static func perform<Module>(
         to routableServiceModule: RoutableServiceModule<Module>,
         configuring configure: @escaping (PerformRouteConfig, (@escaping (Any) -> Void) -> Void, ((Module) -> Void) -> Void) -> Void,
         removing removeConfigure: ((RouteConfig, ((RouteConfig) -> Void) -> Void) -> Void)? = nil
