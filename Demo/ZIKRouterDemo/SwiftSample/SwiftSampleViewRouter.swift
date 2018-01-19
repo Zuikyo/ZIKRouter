@@ -27,8 +27,8 @@ class SwiftSampleViewRouter: ZIKViewRouter<SwiftSampleViewController, SwiftSampl
     override class func registerRoutableDestination() {
         registerView(SwiftSampleViewController.self)
         registerViewProtocol(SwiftSampleViewInput.self)
-        Registry.register(RoutableView<PureSwiftSampleViewInput>(), forRouter: self)
-        Registry.register(RoutableViewModule<SwiftSampleViewConfig>(), forRouter: self)
+        register(RoutableView<PureSwiftSampleViewInput>())
+        register(RoutableViewModule<SwiftSampleViewConfig>())
     }
     
     override class func _registrationDidFinished() {

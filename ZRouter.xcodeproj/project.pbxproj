@@ -9,6 +9,7 @@
 /* Begin PBXBuildFile section */
 		F82035CE1FC51F03009DB80B /* ViewRouter.swift in Sources */ = {isa = PBXBuildFile; fileRef = F82035CD1FC51F03009DB80B /* ViewRouter.swift */; };
 		F82035D21FC66537009DB80B /* ServiceRouter.swift in Sources */ = {isa = PBXBuildFile; fileRef = F82035D11FC66537009DB80B /* ServiceRouter.swift */; };
+		F85C58342012505A0096821B /* RouterExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = F85C58332012505A0096821B /* RouterExtension.swift */; };
 		F872F4E61FAF5BB200297A1D /* ZRouter.h in Headers */ = {isa = PBXBuildFile; fileRef = F872F4E41FAF5BB200297A1D /* ZRouter.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		F872F4F61FAF5BD600297A1D /* ViewExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = F872F4EE1FAF5BD500297A1D /* ViewExtension.swift */; };
 		F872F4F81FAF5BD600297A1D /* Alias.swift in Sources */ = {isa = PBXBuildFile; fileRef = F872F4F01FAF5BD500297A1D /* Alias.swift */; };
@@ -46,6 +47,7 @@
 /* Begin PBXFileReference section */
 		F82035CD1FC51F03009DB80B /* ViewRouter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewRouter.swift; sourceTree = "<group>"; };
 		F82035D11FC66537009DB80B /* ServiceRouter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ServiceRouter.swift; sourceTree = "<group>"; };
+		F85C58332012505A0096821B /* RouterExtension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RouterExtension.swift; sourceTree = "<group>"; };
 		F872F4E11FAF5BB200297A1D /* ZRouter.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = ZRouter.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		F872F4E41FAF5BB200297A1D /* ZRouter.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ZRouter.h; sourceTree = "<group>"; };
 		F872F4E51FAF5BB200297A1D /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
@@ -97,6 +99,7 @@
 				F82035D11FC66537009DB80B /* ServiceRouter.swift */,
 				F8C0D11D1FB04E06003D3B3B /* Routable.swift */,
 				F8EF733B1FB4C4550040008C /* Switchable.swift */,
+				F85C58332012505A0096821B /* RouterExtension.swift */,
 				F872F4EE1FAF5BD500297A1D /* ViewExtension.swift */,
 				F872F4F31FAF5BD500297A1D /* Namespace.swift */,
 				F872F4E41FAF5BB200297A1D /* ZRouter.h */,
@@ -220,6 +223,7 @@
 			files = (
 				F872F4F61FAF5BD600297A1D /* ViewExtension.swift in Sources */,
 				F82035D21FC66537009DB80B /* ServiceRouter.swift in Sources */,
+				F85C58342012505A0096821B /* RouterExtension.swift in Sources */,
 				F8C0D1161FB034B5003D3B3B /* Router.swift in Sources */,
 				F872F4F91FAF5BD600297A1D /* Registry.swift in Sources */,
 				F872F4F81FAF5BD600297A1D /* Alias.swift in Sources */,
