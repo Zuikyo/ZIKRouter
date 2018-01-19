@@ -258,7 +258,7 @@ public extension Router {
     ///
     /// - Parameters:
     ///   - routableView: A routabe entry carrying a view protocol.
-    ///   - prepare: Prepare the destination with the protocol.
+    ///   - prepare: Prepare the destination with the protocol. This is an escaping block, use weakSelf to avoid retain cycle.
     /// - Returns: The view destination.
     public static func makeDestination<Destination>(
         to routableView: RoutableView<Destination>,
@@ -272,7 +272,7 @@ public extension Router {
     ///
     /// - Parameters:
     ///   - routableViewModule: A routabe entry carrying a view module config protocol.
-    ///   - prepare: Prepare the module with the protocol.
+    ///   - prepare: Prepare the module with the protocol. This is an escaping block, use weakSelf to avoid retain cycle.
     /// - Returns: The view destination.
     public static func makeDestination<Module>(
         to routableViewModule: RoutableViewModule<Module>,
@@ -310,7 +310,7 @@ public extension Router {
     ///
     /// - Parameters:
     ///   - routableService: A routabe entry carrying a service protocol.
-    ///   - prepare: Prepare the destination with the protocol.
+    ///   - prepare: Prepare the destination with the protocol. This is an escaping block, use weakSelf to avoid retain cycle.
     /// - Returns: The service destination.
     public static func makeDestination<Destination>(
         to routableService: RoutableService<Destination>,
@@ -324,7 +324,7 @@ public extension Router {
     ///
     /// - Parameters:
     ///   - routableServiceModule: A routabe entry carrying a service module config protocol.
-    ///   - prepare: Prepare the module with the protocol.
+    ///   - prepare: Prepare the module with the protocol. This is an escaping block, use weakSelf to avoid retain cycle.
     /// - Returns: The service destination.
     public static func makeDestination<Module>(
         to routableServiceModule: RoutableServiceModule<Module>,

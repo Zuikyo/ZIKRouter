@@ -195,7 +195,7 @@ public class ViewRouter<Destination, ModuleConfig> {
         return destination as? Destination
     }
     
-    /// Synchronously get destination, and prepare the destination with destination protocol.
+    /// Synchronously get destination, and prepare the destination with destination protocol. Preparation is an escaping block, use weakSelf to avoid retain cycle.
     public func makeDestination(preparation prepare: ((Destination) -> Void)? = nil) -> Destination? {
         let destination = routerType.makeDestination(preparation: { d in
             if let destination = d as? Destination {
