@@ -259,12 +259,12 @@ class TestViewController: UIViewController {
         guard let router = router, router.canRemove else {
             return
         }
-        router.removeRoute { (config, prepareDestination) in
-            config.animated = true
-            prepareDestination({ destination in
-                //Notify the destination before remove it
+        router.removeRoute(configuring: { (config, prepareDestination) in
+	            config.animated = true
+	            prepareDestination({ destination in
+	                //Use destination before remove it
+	            })
             })
-        }
         router = nil
     }
 }
@@ -311,7 +311,7 @@ class TestViewController: UIViewController {
     [self.router removeRouteWithConfiguring:^(ZIKViewRemoveConfiguration *config) {
         config.animated = YES;
         config.prepareDestination = ^(UIViewController<NoteEditorInput> *destination) {
-            //Notify the destination before remove it
+            //Use destination before remove it
         };
     }];
     self.router = nil;

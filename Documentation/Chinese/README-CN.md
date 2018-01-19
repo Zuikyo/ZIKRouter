@@ -254,12 +254,12 @@ class TestViewController: UIViewController {
         guard let router = router, router.canRemove else {
             return
         }
-        router.removeRoute { (config, prepareDestination) in
-            config.animated = true
-            prepareDestination({ destination in
-                //在消除界面之前调用界面的方法
+        router.removeRoute(configuring: { (config, prepareDestination) in
+	            config.animated = true
+	            prepareDestination({ destination in
+	                //在消除界面之前调用界面的方法
+	            })
             })
-        }
         router = nil
     }
 }
