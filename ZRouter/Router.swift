@@ -133,11 +133,11 @@ public extension Router {
     ///   - source: Source UIViewController or UIView. See ZIKViewRouteConfiguration's source.
     ///   - configure: Configure the configuration for performing view route.
     ///     - config: Config for view route.
-    ///     - prepareDestination: Prepare destination before performing route.
+    ///     - prepareDestination: Prepare destination before performing route. It's an escaping block, use weakSelf to avoid retain cycle.
     ///     - prepareModule: Prepare custom moudle config.
     ///   - removeConfigure: Configure the configuration for removing view.
     ///     - config: Config for removing view route.
-    ///     - prepareDestination: Prepare destination before removing route.
+    ///     - prepareDestination: Prepare destination before removing route. It's an escaping block, use weakSelf to avoid retain cycle.
     /// - Returns: The view router.
     @discardableResult public static func perform<Destination>(
         to routableView: RoutableView<Destination>,
@@ -176,7 +176,7 @@ public extension Router {
     ///   - source: Source UIViewController or UIView. See ZIKViewRouteConfiguration's source.
     ///   - configure: Configure the configuration for view route.
     ///     - config: Config for view route.
-    ///     - prepareDestination: Prepare destination before performing route.
+    ///     - prepareDestination: Prepare destination before performing route. It's an escaping block, use weakSelf to avoid retain cycle.
     ///     - prepareModule: Prepare custom moudle config.
     ///   - removeConfigure: Configure the configuration for removing view.
     /// - Returns: The view router.
@@ -216,7 +216,7 @@ public extension Router {
     ///   - routableService: A routabe entry carrying a service protocol.
     ///   - configure: Configure the configuration for service route.
     ///     - config: Config for view route.
-    ///     - prepareDestination: Prepare destination before performing route.
+    ///     - prepareDestination: Prepare destination before performing route. It's an escaping block, use weakSelf to avoid retain cycle.
     ///     - prepareModule: Prepare custom moudle config.
     ///   - removeConfigure: Configure the configuration for removing service.
     /// - Returns: The service router.
@@ -236,7 +236,7 @@ public extension Router {
     ///   - routableServiceModule: A routabe entry carrying a module config protocol.
     ///   - configure: Configure the configuration for service route.
     ///     - config: Config for view route.
-    ///     - prepareDestination: Prepare destination before performing route.
+    ///     - prepareDestination: Prepare destination before performing route. It's an escaping block, use weakSelf to avoid retain cycle.
     ///     - prepareModule: Prepare custom moudle config.
     ///   - removeConfigure: Configure the configuration for removing service.
     /// - Returns: The service router.
@@ -262,7 +262,7 @@ public extension Router {
     /// - Returns: The view destination.
     public static func makeDestination<Destination>(
         to routableView: RoutableView<Destination>,
-        preparation prepare: ((Destination) -> Swift.Void)? = nil
+        preparation prepare: ((Destination) -> Void)? = nil
         ) -> Destination? {
         let routerClass = Registry.router(to: routableView)
         return routerClass?.makeDestination(preparation: prepare)
@@ -276,7 +276,7 @@ public extension Router {
     /// - Returns: The view destination.
     public static func makeDestination<Module>(
         to routableViewModule: RoutableViewModule<Module>,
-        preparation prepare: ((Module) -> Swift.Void)? = nil
+        preparation prepare: ((Module) -> Void)? = nil
         ) -> Any? {
         var destination: Any?
         let routerClass = Registry.router(to: routableViewModule)
@@ -314,7 +314,7 @@ public extension Router {
     /// - Returns: The service destination.
     public static func makeDestination<Destination>(
         to routableService: RoutableService<Destination>,
-        preparation prepare: ((Destination) -> Swift.Void)? = nil
+        preparation prepare: ((Destination) -> Void)? = nil
         ) -> Destination? {
         let routerClass = Registry.router(to: routableService)
         return routerClass?.makeDestination(preparation: prepare)
@@ -328,7 +328,7 @@ public extension Router {
     /// - Returns: The service destination.
     public static func makeDestination<Module>(
         to routableServiceModule: RoutableServiceModule<Module>,
-        preparation prepare: ((Module) -> Swift.Void)? = nil
+        preparation prepare: ((Module) -> Void)? = nil
         ) -> Any? {
         var destination: Any?
         let routerClass = Registry.router(to: routableServiceModule)

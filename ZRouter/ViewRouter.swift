@@ -70,11 +70,11 @@ public class ViewRouter<Destination, ModuleConfig> {
     ///   - source: Source UIViewController or UIView. See ViewRouteConfig's source.
     ///   - configBuilder: Build the configuration for performing route.
     ///     - config: Config for view route.
-    ///     - prepareDestination: Prepare destination before performing route.
+    ///     - prepareDestination: Prepare destination before performing route. It's an escaping block, use weakSelf to avoid retain cycle.
     ///     - prepareModule: Prepare custom moudle config.
     ///   - removeConfigBuilder: Configure the configuration for removing view.
     ///     - config: Config for removing view route.
-    ///     - prepareDestination: Prepare destination before removing route.
+    ///     - prepareDestination: Prepare destination before removing route. It's an escaping block, use weakSelf to avoid retain cycle.
     public func perform(from source: ZIKViewRouteSource?, configuring configBuilder: (ViewRouteConfig, DestinationPreparation, ModulePreparation) -> Void, removing removeConfigBuilder: ((ViewRemoveConfig, DestinationPreparation) -> Void)? = nil) {
         var removeBuilder: ((ViewRemoveConfig) -> Void)? = nil
         if let configBuilder = removeConfigBuilder {
@@ -160,7 +160,7 @@ public class ViewRouter<Destination, ModuleConfig> {
     ///
     /// - Parameter configBuilder: Configure the configuration for removing view.
     ///     - config: Config for removing view route.
-    ///     - prepareDestination: Prepare destination before removing route.
+    ///     - prepareDestination: Prepare destination before removing route. It's an escaping block, use weakSelf to avoid retain cycle.
     public func removeRoute(configuring configBuilder: @escaping (ViewRemoveConfig, DestinationPreparation) -> Void) {
         let removeBuilder = { (config: ViewRemoveConfig) in
             let prepareDestination = { (prepare: @escaping (Destination) -> Void) in
@@ -211,7 +211,7 @@ public class ViewRouter<Destination, ModuleConfig> {
     ///
     /// - Parameter configBuilder: Build the configuration for performing route.
     ///     - config: Config for view route.
-    ///     - prepareDestination: Prepare destination before performing route.
+    ///     - prepareDestination: Prepare destination before performing route. It's an escaping block, use weakSelf to avoid retain cycle.
     ///     - prepareModule: Prepare custom moudle config.
     /// - Returns: Destination
     public func makeDestination(configuring configBuilder: @escaping (ViewRouteConfig, DestinationPreparation, ModulePreparation) -> Void) -> Destination? {

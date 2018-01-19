@@ -60,11 +60,11 @@ public class ServiceRouter<Destination, ModuleConfig> {
     /// - Parameters:
     ///   - configBuilder: Build the configuration for performing route.
     ///     - config: Config for performing route.
-    ///     - prepareDestination: Prepare destination before performing route.
+    ///     - prepareDestination: Prepare destination before performing route. It's an escaping block, use weakSelf to avoid retain cycle.
     ///     - prepareModule: Prepare custom moudle config.
     ///   - removeConfigBuilder: Configure the configuration for removing route.
     ///     - config: Config for removing route.
-    ///     - prepareDestination: Prepare destination before removing route.
+    ///     - prepareDestination: Prepare destination before removing route. It's an escaping block, use weakSelf to avoid retain cycle.
     public func perform(configuring configBuilder: (PerformRouteConfig, DestinationPreparation, ModulePreparation) -> Void, removing removeConfigBuilder: ((RemoveRouteConfig, DestinationPreparation, RemovePreparation) -> Void)? = nil) {
         var removeBuilder: ((RemoveRouteConfig) -> Void)? = nil
         if let configBuilder = removeConfigBuilder {
@@ -124,7 +124,7 @@ public class ServiceRouter<Destination, ModuleConfig> {
     ///
     /// - Parameter configBuilder: Configure the configuration for removing route.
     ///     - config: Config for removing route.
-    ///     - prepareDestination: Prepare destination before removing route.
+    ///     - prepareDestination: Prepare destination before removing route. It's an escaping block, use weakSelf to avoid retain cycle.
     public func removeRoute(configuring configBuilder: @escaping (RemoveRouteConfig, DestinationPreparation, RemovePreparation) -> Void) {
         let removeBuilder = { (config: RemoveRouteConfig) in
             let prepareDestination = { (prepare: @escaping (Destination) -> Void) in
@@ -178,7 +178,7 @@ public class ServiceRouter<Destination, ModuleConfig> {
     ///
     /// - Parameter configBuilder: Build the configuration for performing route.
     ///     - config: Config for performing route.
-    ///     - prepareDestination: Prepare destination before performing route.
+    ///     - prepareDestination: Prepare destination before performing route. It's an escaping block, use weakSelf to avoid retain cycle.
     ///     - prepareModule: Prepare custom moudle config.
     /// - Returns: Destination
     public func makeDestination(configuring configBuilder: @escaping (PerformRouteConfig, DestinationPreparation, ModulePreparation) -> Void) -> Destination? {
