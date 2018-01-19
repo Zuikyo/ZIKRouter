@@ -64,34 +64,100 @@ Service router用于模块寻找，通过protocol寻找对应的模块，并用p
 
 ## 示例代码
 
-下面简单演示router的使用。
+下面演示router的基本使用。
 
 ### View Router
 
-界面跳转：
+演示用的界面和protocol。
 
 ```swift
-///editor模块的接口和依赖
+///Editor模块的接口和依赖
 protocol NoteEditorInput {
     weak var delegate: EditorDelegate? { get set }
     func constructForCreatingNewNote()
 }
 
-///Editor界面
+///Editor view controller
 class NoteEditorViewController: UIViewController, NoteEditorInput {
     ...
 }
 ```
 
+<details><summary>Objective-C Sample</summary>
+  
+```objectivec
+///Editor模块的接口和依赖
+@protocol NoteEditorInput <ZIKViewRoutable>
+@property (nonatomic, weak) id<EditorDelegate> delegate;
+- (void)constructForCreatingNewNote;
+@end
+```
+
+```objectivec
+///Editor view controller
+@interface NoteEditorViewController: UIViewController <NoteEditorInput>
+@end
+@implementation NoteEditorViewController
+@end
+```
+
+</details>
+
+#### 直接跳转
+
+直接跳转到editor界面:
+
 ```swift
 class TestViewController: UIViewController {
 
-    //直接跳转到editor界面
+    //直接跳转到editor view controller
     func showEditorDirectly() {
         Router.perform(to: RoutableView<NoteEditorInput>(), from: self, routeType: .push)
         })
     }
-    
+}
+```
+
+<details><summary>Objective-C Sample</summary>
+
+```objectivec
+@implementation TestViewController
+
+- (void)showEditorDirectly {
+    //直接跳转到editor view controller
+    [ZIKViewRouter.toView(@protocol(NoteEditorInput))
+	     performFromSource:self routeType:ZIKViewRouteTypePush];
+}
+
+@end
+```
+
+</details>
+
+可以用 `routeType` 一键切换不同的跳转方式:
+
+```swift
+enum ZIKViewRouteType : Int {
+    case push
+    case presentModally
+    case presentAsPopover
+    case performSegue
+    case show
+    case showDetail
+    case addAsChildViewController
+    case addAsSubview
+    case custom
+    case getDestination
+}
+```
+
+#### 跳转前进行配置
+
+可以在跳转前配置页面，传递参数:
+
+```swift
+class TestViewController: UIViewController {
+
     //跳转到editor界面；通过protocol获取对应的router类，再通过protocol配置界面
     func showEditor() {
         Router.perform(
@@ -99,8 +165,8 @@ class TestViewController: UIViewController {
             from: self,
             configuring: { (config, prepareDestination, _) in
                 //路由相关的设置
-                //跳转方式
-                config.routeType = ViewRouteType.push
+                //设置跳转方式
+                config.routeType = .push
                 config.routeCompletion = { destination in
                     //跳转结束
                 }
@@ -109,7 +175,7 @@ class TestViewController: UIViewController {
                 }
                 //跳转前配置界面
                 prepareDestination({ destination in
-                    //destination 自动推断为 NoteEditorInput 类型
+                    //destination 自动推断为 NoteEditorInput
                     destination.delegate = self
                     destination.constructForCreatingNewNote()
                 })
@@ -118,31 +184,10 @@ class TestViewController: UIViewController {
 }
 ```
 
-<details><summary>Objective-C示例</summary>
-  
-```objectivec
-///editor模块的接口和依赖
-@protocol NoteEditorInput <ZIKViewRoutable>
-@property (nonatomic, weak) id<EditorDelegate> delegate;
-- (void)constructForCreatingNewNote;
-@end
+<details><summary>Objective-C Sample</summary>
 
-```
-```objectivec
-///Editor界面
-@interface NoteEditorViewController: UIViewController <NoteEditorInput>
-@end
-@implementation NoteEditorViewController
-@end
-```
 ```objectivec
 @implementation TestViewController
-
-- (void)showEditorDirectly {
-    //直接跳转到editor界面
-    [ZIKViewRouter.toView(@protocol(NoteEditorInput))
-	     performFromSource:self routeType:ZIKViewRouteTypePush];
-}
 
 - (void)showEditor {
     //跳转到editor界面；通过protocol获取对应的router类，再通过protocol配置界面
@@ -164,6 +209,107 @@ class TestViewController: UIViewController {
 	             //跳转失败
 	         };
 	     }];
+}
+
+@end
+```
+
+</details>
+
+#### Remove
+
+用`removeRoute`一键移除界面，无需区分调用 pop / dismiss / removeFromParentViewController / removeFromSuperview:
+
+```swift
+class TestViewController: UIViewController {
+    var router: DestinationViewRouter<NoteEditorInput>?
+    
+    func showEditor() {
+        //持有router
+        router = Router.perform(to: RoutableView<NoteEditorInput>(), from: self, routeType: .push)
+        })
+    }
+    
+    func removeEditorDirectly() {
+        guard let router = router, router.canRemove else {
+            return
+        }
+        router.removeRoute()
+        router = nil
+    }
+    
+    func removeEditorWithResult() {
+        guard let router = router, router.canRemove else {
+            return
+        }
+        router.removeRoute(successHandler: {
+            print("remove success")
+        }, errorHandler: { (action, error) in
+            print("remove failed, error:%@",error)
+        })
+        router = nil
+    }
+    
+    func removeEditorAndPrepare() {
+        guard let router = router, router.canRemove else {
+            return
+        }
+        router.removeRoute { (config, prepareDestination) in
+            config.animated = true
+            prepareDestination({ destination in
+                //在消除界面之前调用界面的方法
+            })
+        }
+        router = nil
+    }
+}
+```
+
+<details><summary>Objective-C Sample</summary>
+
+```objectivec
+@interface TestViewController()
+@property (nonatomic, strong) ZIKDestinationViewRouter(id<NoteEditorInput>) *router;
+@end
+@implementation TestViewController
+
+- (void)showEditorDirectly {
+    //持有router
+    self.router = [ZIKViewRouter.toView(@protocol(NoteEditorInput))
+	     performFromSource:self routeType:ZIKViewRouteTypePush];
+}
+
+- (void)removeEditorDirectly {
+    if (![self.router canRemove]) {
+        return;
+    }
+    [self.router removeRoute];
+    self.router = nil;
+}
+
+- (void)removeEditorWithResult {
+    if (![self.router canRemove]) {
+        return;
+    }
+    [self.router removeRouteWithSuccessHandler:^{
+        NSLog(@"pop success");
+    } errorHandler:^(ZIKRouteAction routeAction, NSError *error) {
+        NSLog(@"pop failed,error:%@",error);
+    }];
+    self.router = nil;
+}
+
+- (void)removeEditorAndPrepare {
+    if (![self.router canRemove]) {
+        return;
+    }
+    [self.router removeRouteWithConfiguring:^(ZIKViewRemoveConfiguration *config) {
+        config.animated = YES;
+        config.prepareDestination = ^(UIViewController<NoteEditorInput> *destination) {
+            //在消除界面之前调用界面的方法
+        };
+    }];
+    self.router = nil;
 }
 
 @end

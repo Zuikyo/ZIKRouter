@@ -69,14 +69,14 @@ Service router用于模块寻找，通过protocol寻找对应的模块，并用p
 5. [Circular Dependency](Documentation/English/CircularDependencies.md)
 6. [Module Adapter](Documentation/English/ModuleAdapter.md)
 
-## Sample Code
+## Sample
 
 ### View Router
 
-Showing a view controller：
+Demo view controller and protocol：
 
 ```swift
-///editor view's interface
+///Editor view's interface
 protocol NoteEditorInput {
     weak var delegate: EditorDelegate? { get set }
     func constructForCreatingNewNote()
@@ -88,6 +88,30 @@ class NoteEditorViewController: UIViewController, NoteEditorInput {
 }
 ```
 
+<details><summary>Objective-C Sample</summary>
+  
+```objectivec
+///editor view's interface
+@protocol NoteEditorInput <ZIKViewRoutable>
+@property (nonatomic, weak) id<EditorDelegate> delegate;
+- (void)constructForCreatingNewNote;
+@end
+```
+
+```objectivec
+///Editor view controller
+@interface NoteEditorViewController: UIViewController <NoteEditorInput>
+@end
+@implementation NoteEditorViewController
+@end
+```
+
+</details>
+
+#### Transition directly
+
+Transition to editor view directly:
+
 ```swift
 class TestViewController: UIViewController {
 
@@ -96,7 +120,49 @@ class TestViewController: UIViewController {
         Router.perform(to: RoutableView<NoteEditorInput>(), from: self, routeType: .push)
         })
     }
-    
+}
+```
+
+<details><summary>Objective-C Sample</summary>
+
+```objectivec
+@implementation TestViewController
+
+- (void)showEditorDirectly {
+    //Transition to editor view directly
+    [ZIKViewRouter.toView(@protocol(NoteEditorInput))
+	     performFromSource:self routeType:ZIKViewRouteTypePush];
+}
+
+@end
+```
+
+</details>
+
+You can change transition type with `routeType`:
+
+```swift
+enum ZIKViewRouteType : Int {
+    case push
+    case presentModally
+    case presentAsPopover
+    case performSegue
+    case show
+    case showDetail
+    case addAsChildViewController
+    case addAsSubview
+    case custom
+    case getDestination
+}
+```
+
+#### Transition and Prepare
+
+Transition to editor view, and prepare it before transition:
+
+```swift
+class TestViewController: UIViewController {
+
     //Transition to editor view, and prepare the destination with NoteEditorInput
     func showEditor() {
         Router.perform(
@@ -105,12 +171,12 @@ class TestViewController: UIViewController {
             configuring: { (config, prepareDestination, _) in
                 //Route config
                 //Transition type
-                config.routeType = ViewRouteType.push
+                config.routeType = .push
                 config.routeCompletion = { destination in
-                    //Transition completes
+                    //Transition is completed
                 }
                 config.errorHandler = { (action, error) in
-                    //Transition is failed
+                    //Transition failed
                 }
                 //Prepare the destination before transition
                 prepareDestination({ destination in
@@ -124,30 +190,9 @@ class TestViewController: UIViewController {
 ```
 
 <details><summary>Objective-C Sample</summary>
-  
-```objectivec
-///editor view's interface
-@protocol NoteEditorInput <ZIKViewRoutable>
-@property (nonatomic, weak) id<EditorDelegate> delegate;
-- (void)constructForCreatingNewNote;
-@end
 
-```
-```objectivec
-///Editor view controller
-@interface NoteEditorViewController: UIViewController <NoteEditorInput>
-@end
-@implementation NoteEditorViewController
-@end
-```
 ```objectivec
 @implementation TestViewController
-
-- (void)showEditorDirectly {
-    //Transition to editor view directly
-    [ZIKViewRouter.toView(@protocol(NoteEditorInput))
-	     performFromSource:self routeType:ZIKViewRouteTypePush];
-}
 
 - (void)showEditor {
     //Transition to editor view, and prepare the destination with NoteEditorInput
@@ -155,20 +200,121 @@ class TestViewController: UIViewController {
 	     performFromSource:self
 	     configuring:^(ZIKViewRouteConfig *config) {
 	         //Route config
-            //Transition type
+	         //Transition type
 	         config.routeType = ZIKViewRouteTypePush;
+	         //Prepare the destination before transition
 	         config.prepareDestination = ^(id<NoteEditorInput> destination) {
-	             //Prepare the destination before transition
 	             destination.delegate = self;
 	             [destination constructForCreatingNewNote];
 	         };
 	         config.routeCompletion = ^(id<NoteEditorInput> destination) {
-	             //Transition completes
+	             //Transition is completed
 	         };
 	         config.performerErrorHandler = ^(SEL routeAction, NSError * error) {
-	             //Transition is failed
+	             //Transition failed
 	         };
 	     }];
+}
+
+@end
+```
+
+</details>
+
+#### Remove
+
+You can remove the view by `removeRoute`, without using pop / dismiss / removeFromParentViewController / removeFromSuperview:
+
+```swift
+class TestViewController: UIViewController {
+    var router: DestinationViewRouter<NoteEditorInput>?
+    
+    func showEditor() {
+        //Hold the router
+        router = Router.perform(to: RoutableView<NoteEditorInput>(), from: self, routeType: .push)
+        })
+    }
+    
+    func removeEditorDirectly() {
+        guard let router = router, router.canRemove else {
+            return
+        }
+        router.removeRoute()
+        router = nil
+    }
+    
+    func removeEditorWithResult() {
+        guard let router = router, router.canRemove else {
+            return
+        }
+        router.removeRoute(successHandler: {
+            print("remove success")
+        }, errorHandler: { (action, error) in
+            print("remove failed, error:%@",error)
+        })
+        router = nil
+    }
+    
+    func removeEditorAndPrepare() {
+        guard let router = router, router.canRemove else {
+            return
+        }
+        router.removeRoute { (config, prepareDestination) in
+            config.animated = true
+            prepareDestination({ destination in
+                //Notify the destination before remove it
+            })
+        }
+        router = nil
+    }
+}
+```
+
+<details><summary>Objective-C Sample</summary>
+
+```objectivec
+@interface TestViewController()
+@property (nonatomic, strong) ZIKDestinationViewRouter(id<NoteEditorInput>) *router;
+@end
+@implementation TestViewController
+
+- (void)showEditorDirectly {
+    //Hold the router
+    self.router = [ZIKViewRouter.toView(@protocol(NoteEditorInput))
+	     performFromSource:self routeType:ZIKViewRouteTypePush];
+}
+
+- (void)removeEditorDirectly {
+    if (![self.router canRemove]) {
+        return;
+    }
+    [self.router removeRoute];
+    self.router = nil;
+}
+
+- (void)removeEditorWithResult {
+    if (![self.router canRemove]) {
+        return;
+    }
+    [self.router removeRouteWithSuccessHandler:^{
+        NSLog(@"pop success");
+    } errorHandler:^(ZIKRouteAction routeAction, NSError *error) {
+        NSLog(@"pop failed,error:%@",error);
+    }];
+    self.router = nil;
+}
+
+- (void)removeEditorAndPrepare {
+    if (![self.router canRemove]) {
+        return;
+    }
+    [self.router removeRouteWithConfiguring:^(ZIKViewRemoveConfiguration *config) {
+        config.animated = YES;
+        config.prepareDestination = ^(UIViewController<NoteEditorInput> *destination) {
+            //Notify the destination before remove it
+        };
+    }];
+    self.router = nil;
 }
 
 @end
