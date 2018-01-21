@@ -326,13 +326,13 @@ extern _Nullable Class _swift_ZIKServiceRouterToModule(id configProtocol) {
 
 @implementation ZIKServiceRouter (Discover)
 
-+ (Class(^)(Protocol *))toService {
++ (ZIKServiceRouterType<id, ZIKPerformRouteConfiguration *> *(^)(Protocol *))toService {
     return ^(Protocol *serviceProtocol) {
         return _ZIKServiceRouterToService(serviceProtocol);
     };
 }
 
-+ (Class(^)(Protocol *))toModule {
++ (ZIKServiceRouterType<id, ZIKPerformRouteConfiguration *> *(^)(Protocol *))toModule {
     return ^(Protocol *configProtocol) {
         return _ZIKServiceRouterToModule(configProtocol);
     };
@@ -399,3 +399,11 @@ extern _Nullable Class _swift_ZIKServiceRouterToModule(id configProtocol) {
 }
 
 @end
+
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wincomplete-implementation"
+
+@implementation ZIKServiceRouterType
+@end
+
+#pragma clang diagnostic pop

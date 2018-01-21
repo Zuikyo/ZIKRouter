@@ -222,7 +222,7 @@ typedef NS_ENUM(NSInteger,ZIKRouterTestType) {
             
         case ZIKRouterTestTypeSwiftSample:
 //            routerClass = [SwiftSampleViewRouter class];
-            routerClass = ZIKViewRouter.toView(@protocol(SwiftSampleViewInput));
+            routerClass = ZIKViewRouter.classToView(@protocol(SwiftSampleViewInput));
             break;
     }
     return routerClass;

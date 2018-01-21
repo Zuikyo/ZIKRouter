@@ -3318,13 +3318,25 @@ _Nullable Class _ZIKViewRouterToModule(Protocol *configProtocol) {
 
 @implementation ZIKViewRouter (Discover)
 
-+ (Class(^)(Protocol *))toView {
++ (ZIKViewRouterType<id, ZIKViewRouteConfiguration *> *(^)(Protocol *))toView {
     return ^(Protocol *viewProtocol) {
         return _ZIKViewRouterToView(viewProtocol);
     };
 }
 
-+ (Class(^)(Protocol *))toModule {
++ (ZIKViewRouterType<id, ZIKViewRouteConfiguration *> *(^)(Protocol *))toModule {
+    return ^(Protocol *configProtocol) {
+        return _ZIKViewRouterToModule(configProtocol);
+    };
+}
+
++ (Class(^)(Protocol *))classToView {
+    return ^(Protocol *viewProtocol) {
+        return _ZIKViewRouterToView(viewProtocol);
+    };
+}
+
++ (Class(^)(Protocol *))classToModule {
     return ^(Protocol *configProtocol) {
         return _ZIKViewRouterToModule(configProtocol);
     };
@@ -3400,3 +3412,11 @@ _Nullable Class _swift_ZIKViewRouterToModule(id configProtocol) {
 }
 
 @end
+
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wincomplete-implementation"
+
+@implementation ZIKViewRouterType
+@end
+
+#pragma clang diagnostic pop

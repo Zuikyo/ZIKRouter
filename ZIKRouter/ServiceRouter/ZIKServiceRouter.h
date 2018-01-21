@@ -88,7 +88,19 @@ typedef void(^ZIKServiceRouteGlobalErrorHandler)(__kindof ZIKServiceRouter * _Nu
 
 @end
 
-@interface ZIKServiceRouter (Discover)
+NS_ASSUME_NONNULL_END
+
+#import "ZIKRouterType.h"
+
+NS_ASSUME_NONNULL_BEGIN
+
+NS_SWIFT_UNAVAILABLE("ZIKServiceRouterType is a fake class")
+///This is a fake class to use ZIKServiceRouter class type with compile time checking. The real object is Class of ZIKServiceRouter. Don't check whether a type is kind of ZIKServiceRouterType.
+@interface ZIKServiceRouterType<__covariant Destination: id, __covariant RouteConfig: ZIKPerformRouteConfiguration *> : ZIKRouterType<Destination, RouteConfig, ZIKRemoveRouteConfiguration *>
+
+@end
+
+@interface ZIKServiceRouter<__covariant Destination: id, __covariant RouteConfig: ZIKPerformRouteConfiguration *> (Discover)
 
 /**
  Get the router class registered with a service protocol.
@@ -97,7 +109,7 @@ typedef void(^ZIKServiceRouteGlobalErrorHandler)(__kindof ZIKServiceRouter * _Nu
  
  The return Class of the block is: a router class matched with the service. Return nil if protocol is nil or not declared. There will be an assert failure when result is nil.
  */
-@property (nonatomic,class,readonly) Class _Nullable (^toService)(Protocol *serviceProtocol);
+@property (nonatomic,class,readonly) ZIKServiceRouterType<Destination, RouteConfig> * _Nullable (^toService)(Protocol *serviceProtocol);
 
 /**
  Get the router class combined with a custom ZIKRouteConfiguration conforming to a unique protocol.
@@ -105,7 +117,7 @@ typedef void(^ZIKServiceRouteGlobalErrorHandler)(__kindof ZIKServiceRouter * _Nu
  The parameter configProtocol of the block is: the protocol conformed by defaultConfiguration of router. Should be a ZIKServiceModuleRoutable protocol when ZIKROUTER_CHECK is enabled. When ZIKROUTER_CHECK is disabled, the protocol doesn't need to inheriting from ZIKServiceModuleRoutable.
  The return Class of the block is: a router class matched with the service. Return nil if protocol is nil or not declared. There will be an assert failure when result is nil.
  */
-@property (nonatomic,class,readonly) Class _Nullable (^toModule)(Protocol *configProtocol);
+@property (nonatomic,class,readonly) ZIKServiceRouterType<Destination, RouteConfig> * _Nullable (^toModule)(Protocol *configProtocol);
 
 @end
 

@@ -241,7 +241,26 @@ typedef void(^ZIKViewRouteGlobalErrorHandler)(__kindof ZIKViewRouter * _Nullable
 + (void)registerModuleProtocol:(Protocol *)configProtocol;
 @end
 
-@interface ZIKViewRouter (Discover)
+NS_ASSUME_NONNULL_END
+
+#import "ZIKRouterType.h"
+
+NS_ASSUME_NONNULL_BEGIN
+
+NS_SWIFT_UNAVAILABLE("ZIKViewRouterType is a fake class")
+///This is a fake class to use ZIKViewRouter class type with compile time checking. The real object is Class of ZIKViewRouter. Don't check whether a type is kind of ZIKViewRouterType.
+@interface ZIKViewRouterType<__covariant Destination: id, __covariant RouteConfig: ZIKViewRouteConfiguration *> : ZIKRouterType<Destination, RouteConfig, ZIKViewRemoveConfiguration *>
+
+- (nullable instancetype)performRoute NS_UNAVAILABLE;
+- (nullable instancetype)performWithConfiguring:(void(NS_NOESCAPE ^)(RouteConfig config))configBuilder
+removing:(void(NS_NOESCAPE ^ _Nullable)(ZIKViewRemoveConfiguration *config))removeConfigBuilder NS_UNAVAILABLE;
+- (nullable instancetype)performWithConfiguring:(void(NS_NOESCAPE ^)(RouteConfig config))configBuilder NS_UNAVAILABLE;
+
+- (nullable ZIKViewRouter<Destination, RouteConfig> *)performFromSource:(nullable id<ZIKViewRouteSource>)source configuring:(void(NS_NOESCAPE ^)(RouteConfig config))configBuilder;
+
+@end
+
+@interface ZIKViewRouter<__covariant Destination: id, __covariant RouteConfig: ZIKViewRouteConfiguration *> (Discover)
 
 /**
  Get the view router class registered with a view protocol.
@@ -287,7 +306,10 @@ typedef void(^ZIKViewRouteGlobalErrorHandler)(__kindof ZIKViewRouter * _Nullable
  @endcode
  See +registerViewProtocol: and ZIKViewRoutable for more info.
  */
-@property (nonatomic,class,readonly) Class _Nullable (^toView)(Protocol *viewProtocol);
+@property (nonatomic, class, readonly) ZIKViewRouterType<Destination, RouteConfig> * _Nullable (^toView)(Protocol *viewProtocol);
+
+///Return the subclass of ZIKViewRouter for the protocol. See `toView`.
+@property (nonatomic, class, readonly) Class _Nullable (^classToView)(Protocol *viewProtocol);
 
 /**
  Get the view router class combined with a custom ZIKViewRouteConfiguration conforming to a module config protocol.
@@ -344,7 +366,10 @@ typedef void(^ZIKViewRouteGlobalErrorHandler)(__kindof ZIKViewRouter * _Nullable
  @endcode
  See +registerModuleProtocol: and ZIKViewModuleRoutable for more info.
  */
-@property (nonatomic,class,readonly) Class _Nullable (^toModule)(Protocol *configProtocol);
+@property (nonatomic, class, readonly) ZIKViewRouterType<Destination, RouteConfig> * _Nullable (^toModule)(Protocol *configProtocol);
+
+///Return the subclass of ZIKViewRouter for the protocol. See `toModule`.
+@property (nonatomic, class, readonly) Class _Nullable (^classToModule)(Protocol *configProtocol);
 
 @end
 
