@@ -18,7 +18,7 @@
 
 + (void)registerRoutableDestination {
     [self registerService:[ZIKTimeService class]];
-    [self registerServiceProtocol:@protocol(ZIKTimeServiceInput)];
+    [self registerServiceProtocol:ZIKRoutableProtocol(ZIKTimeServiceInput)];
 }
 
 - (id)destinationWithConfiguration:(__kindof ZIKRouteConfiguration *)configuration {

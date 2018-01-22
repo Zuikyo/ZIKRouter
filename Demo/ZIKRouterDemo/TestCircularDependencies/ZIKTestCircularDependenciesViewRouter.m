@@ -20,7 +20,7 @@
 
 + (void)registerRoutableDestination {
     [self registerView:[ZIKTestCircularDependenciesViewController class]];
-    [self registerViewProtocol:@protocol(ZIKParentViewProtocol)];
+    [self registerViewProtocol:ZIKRoutableProtocol(ZIKParentViewProtocol)];
 }
 
 - (id<ZIKRoutableView>)destinationWithConfiguration:(ZIKViewRouteConfiguration *)configuration {

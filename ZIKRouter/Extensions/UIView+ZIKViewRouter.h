@@ -13,7 +13,6 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-@protocol ZIKViperView;
 @interface UIView (ZIKViewRouter)
 
 /**

@@ -26,13 +26,13 @@
     };
 }
 
-+ (Class(^)(Protocol *))classToView {
++ (Class(^)(Protocol<ZIKViewRoutable> *))classToView {
     return ^(Protocol *viewProtocol) {
         return _ZIKViewRouterToView(viewProtocol);
     };
 }
 
-+ (Class(^)(Protocol *))classToModule {
++ (Class(^)(Protocol<ZIKViewModuleRoutable> *))classToModule {
     return ^(Protocol *configProtocol) {
         return _ZIKViewRouterToModule(configProtocol);
     };

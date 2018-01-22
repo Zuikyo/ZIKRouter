@@ -26,7 +26,7 @@ NS_ASSUME_NONNULL_BEGIN
  @discussion
  ## Features:
  
- 1. Prepare the route with protocol in block, instead of directly configuring the destination or in delegate method (in -prepareForSegue:sender: you have to distinguish different destinations, and they're alse coupled with source).
+ 1. Prepare the route with protocol in block, instead of directly configuring the destination or in delegate method (in -prepareForSegue:sender: you have to distinguish different destinations).
  
  2. Specify a router with generic and protocol, then you can hide subclass but still can get routers with different functions.
  

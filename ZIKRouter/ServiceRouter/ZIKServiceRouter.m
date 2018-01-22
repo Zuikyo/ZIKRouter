@@ -338,6 +338,18 @@ extern _Nullable Class _swift_ZIKServiceRouterToModule(id configProtocol) {
     };
 }
 
++ (Class(^)(Protocol<ZIKServiceRoutable> *))classToService {
+    return ^(Protocol *serviceProtocol) {
+        return _ZIKServiceRouterToService(serviceProtocol);
+    };
+}
+
++ (Class(^)(Protocol<ZIKServiceModuleRoutable> *))classToModule {
+    return ^(Protocol *configProtocol) {
+        return _ZIKServiceRouterToModule(configProtocol);
+    };
+}
+
 @end
 
 @implementation ZIKServiceRouter (Private)

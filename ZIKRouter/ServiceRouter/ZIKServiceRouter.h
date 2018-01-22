@@ -73,18 +73,18 @@ typedef void(^ZIKServiceRouteGlobalErrorHandler)(__kindof ZIKServiceRouter * _Nu
 /**
  Register a service protocol that all services registered with the router conform to, then use ZIKServiceRouterToService() to get the router class.You can register your protocol and let the service conforms to the protocol in category in your interface adapter.
  
- @param serviceProtocol The protocol conformed by service to identify the routerClass. Should inherit from ZIKServiceRoutable when ZIKROUTER_CHECK is enabled. When ZIKROUTER_CHECK is disabled, the protocol doesn't need to inheriting from ZIKServiceRoutable.
+ @param serviceProtocol The protocol conformed by service to identify the routerClass. Should inherit from ZIKServiceRoutable when ZIKROUTER_CHECK is enabled. Use macro `ZIKRoutableProtocol` to check whether the protocol is routable.
  */
-+ (void)registerServiceProtocol:(Protocol *)serviceProtocol;
++ (void)registerServiceProtocol:(Protocol<ZIKServiceRoutable> *)serviceProtocol  NS_SWIFT_UNAVAILABLE("Use `register<Protocol>(_ routableService: RoutableService<Protocol>)` instead");
 
 /**
  Register a module config protocol the router's default configuration conforms, then use ZIKServiceRouter.toModule() to get the router class. You can register your protocol and let the configuration conforms to the protocol in category in your interface adapter.
  
  When the service module contains not only a single service class, but also other internal services, and you can't prepare the module with a simple service protocol, then you need a moudle config protocol.
  
- @param configProtocol The protocol conformed by default configuration of the routerClass. Should inherit from ZIKServiceModuleRoutable when ZIKROUTER_CHECK is enabled. When ZIKROUTER_CHECK is disabled, the protocol doesn't need to inheriting from ZIKServiceModuleRoutable.
+ @param configProtocol The protocol conformed by default configuration of the routerClass. Should inherit from ZIKServiceModuleRoutable when ZIKROUTER_CHECK is enabled. Use macro `ZIKRoutableProtocol` to check whether the protocol is routable.
  */
-+ (void)registerModuleProtocol:(Protocol *)configProtocol;
++ (void)registerModuleProtocol:(Protocol<ZIKServiceModuleRoutable> *)configProtocol  NS_SWIFT_UNAVAILABLE("Use `register<Protocol>(_ routableServiceModule: RoutableServiceModule<Protocol>)` instead");
 
 @end
 
@@ -119,13 +119,21 @@ NS_SWIFT_UNAVAILABLE("ZIKModuleServiceRouterType is a fake class")
 @interface ZIKServiceRouter<__covariant Destination: id, __covariant RouteConfig: ZIKPerformRouteConfiguration *> (Discover)
 
 /**
- Get the router class registered with a service protocol. Always use macro `ZIKServiceRouterToService`.
+ Get the router class registered with a service protocol. Always use macro `ZIKServiceRouterToService` to get router class.
  
  The parameter serviceProtocol of the block is: the protocol conformed by the service. Should be a ZIKServiceRoutable protocol when ZIKROUTER_CHECK is enabled.
  
  The return Class of the block is: a router class matched with the service. Return nil if protocol is nil or not declared. There will be an assert failure when result is nil.
  */
-@property (nonatomic,class,readonly) ZIKDestinationServiceRouterType<id<ZIKServiceRoutable>, RouteConfig> * _Nullable (^toService)(Protocol *serviceProtocol) NS_SWIFT_UNAVAILABLE("Use `Router.to(RoutableService<ServiceProtocol>())` in ZRouter instead");;
+@property (nonatomic,class,readonly) ZIKDestinationServiceRouterType<id<ZIKServiceRoutable>, RouteConfig> * _Nullable (^toService)(Protocol *serviceProtocol) NS_SWIFT_UNAVAILABLE("Use `Router.to(RoutableService<ServiceProtocol>())` in ZRouter instead");
+
+/**
+ Return the subclass of ZIKServiceRouter for the protocol. See `toService`. Use macro `ZIKRoutableProtocol` to check whether the protocol is routable.
+ @code
+ ZIKServiceRouter.classToService(ZIKRoutableProtocol(ServiceProtocol))
+ @endcode
+ */
+@property (nonatomic,class,readonly) Class _Nullable (^classToService)(Protocol<ZIKServiceRoutable> *serviceProtocol) NS_SWIFT_UNAVAILABLE("Use `Router.to(RoutableService<ServiceProtocol>())` in ZRouter instead");
 
 /**
  Get the router class combined with a custom ZIKRouteConfiguration conforming to a unique protocol. Always use `ZIKServiceRouterToModule`.
@@ -133,7 +141,15 @@ NS_SWIFT_UNAVAILABLE("ZIKModuleServiceRouterType is a fake class")
  The parameter configProtocol of the block is: the protocol conformed by defaultConfiguration of router. Should be a ZIKServiceModuleRoutable protocol when ZIKROUTER_CHECK is enabled.
  The return Class of the block is: a router class matched with the service. Return nil if protocol is nil or not declared. There will be an assert failure when result is nil.
  */
-@property (nonatomic,class,readonly) ZIKModuleServiceRouterType<Destination, id<ZIKServiceModuleRoutable>, RouteConfig> * _Nullable (^toModule)(Protocol *configProtocol) NS_SWIFT_UNAVAILABLE("Use `Router.to(RoutableServiceModule<ModuleProtocol>())` in ZRouter instead");;
+@property (nonatomic,class,readonly) ZIKModuleServiceRouterType<Destination, id<ZIKServiceModuleRoutable>, RouteConfig> * _Nullable (^toModule)(Protocol *configProtocol) NS_SWIFT_UNAVAILABLE("Use `Router.to(RoutableServiceModule<ModuleProtocol>())` in ZRouter instead");
+
+/**
+ Return the subclass of ZIKServiceRouter for the protocol. See `toModule`. Use macro `ZIKRoutableProtocol` to check whether the protocol is routable.
+ @code
+ ZIKServiceRouter.classToModule(ZIKRoutableProtocol(ServiceModuleProtocol))
+ @endcode
+ */
+@property (nonatomic,class,readonly) Class _Nullable (^classToModule)(Protocol<ZIKServiceModuleRoutable> *configProtocol) NS_SWIFT_UNAVAILABLE("Use `Router.to(RoutableServiceModule<ModuleProtocol>())` in ZRouter instead");
 
 @end
 

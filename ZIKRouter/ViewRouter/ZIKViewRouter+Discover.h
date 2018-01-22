@@ -64,7 +64,7 @@ NS_SWIFT_UNAVAILABLE("ZIKModuleViewRouterType is a fake class")
  @implementation ZIKLoginViewRouter
  + (void)registerRoutableDestination {
      [self registerView:[ZIKLoginViewController class]];
-     [self registerViewProtocol:@protocol(ZIKLoginViewProtocol)];
+     [self registerViewProtocol:ZIKRoutableProtocol(ZIKLoginViewProtocol)];
  }
  @end
  
@@ -81,8 +81,13 @@ NS_SWIFT_UNAVAILABLE("ZIKModuleViewRouterType is a fake class")
  */
 @property (nonatomic, class, readonly) ZIKDestinationViewRouterType<id<ZIKViewRoutable>, ZIKViewRouteConfiguration *> * _Nullable (^toView)(Protocol *viewProtocol) NS_SWIFT_UNAVAILABLE("Use `Router.to(RoutableView<ViewProtocol>())` in ZRouter instead");
 
-///Return the subclass of ZIKViewRouter for the protocol. See `toView`.
-@property (nonatomic, class, readonly) Class _Nullable (^classToView)(Protocol *viewProtocol);
+/**
+ Return the subclass of ZIKViewRouter for the protocol. See `toView`. Use macro `ZIKRoutableProtocol` to check whether the protocol is routable.
+ @code
+ ZIKViewRouter.classToView(ZIKRoutableProtocol(ViewProtocol))
+ @endcode
+ */
+@property (nonatomic, class, readonly) Class _Nullable (^classToView)(Protocol<ZIKViewRoutable> *viewProtocol) NS_SWIFT_UNAVAILABLE("Use `Router.to(RoutableView<ViewProtocol>())` in ZRouter instead");
 
 /**
  Get the view router class combined with a custom ZIKViewRouteConfiguration conforming to a module config protocol. Always use macro `ZIKViewRouterToModule`.
@@ -119,7 +124,7 @@ NS_SWIFT_UNAVAILABLE("ZIKModuleViewRouterType is a fake class")
  @implementation ZIKLoginViewRouter
  + (void)registerRoutableDestination {
      [self registerView:[ZIKLoginViewController class]];
-     [self registerModuleProtocol:@protocol(ZIKLoginViewConfigProtocol)];
+     [self registerModuleProtocol:ZIKRoutableProtocol(ZIKLoginViewConfigProtocol)];
  }
  - (id)destinationWithConfiguration:(ZIKLoginViewConfiguration *)configuration {
      ZIKLoginViewController *destination = [ZIKLoginViewController new];
@@ -141,8 +146,13 @@ NS_SWIFT_UNAVAILABLE("ZIKModuleViewRouterType is a fake class")
  */
 @property (nonatomic, class, readonly) ZIKModuleViewRouterType<id<ZIKRoutableView>, id<ZIKViewModuleRoutable>, RouteConfig> * _Nullable (^toModule)(Protocol *configProtocol) NS_SWIFT_UNAVAILABLE("Use `Router.to(RoutableViewModule<ModuleProtocol>())` in ZRouter instead");
 
-///Return the subclass of ZIKViewRouter for the protocol. See `toModule`.
-@property (nonatomic, class, readonly) Class _Nullable (^classToModule)(Protocol *configProtocol);
+/**
+ Return the subclass of ZIKViewRouter for the protocol. See `toModule`. Use macro `ZIKRoutableProtocol` to check whether the protocol is routable.
+ @code
+ ZIKViewRouter.classToModule(ZIKRoutableProtocol(ViewModuleProtocol))
+ @endcode
+ */
+@property (nonatomic, class, readonly) Class _Nullable (^classToModule)(Protocol<ZIKViewModuleRoutable> *configProtocol) NS_SWIFT_UNAVAILABLE("Use `Router.to(RoutableView<ViewProtocol>())` in ZRouter instead");
 
 @end
 

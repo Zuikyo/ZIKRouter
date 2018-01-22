@@ -9,7 +9,6 @@
 #import <Foundation/Foundation.h>
 #import <ZIKRouter/ZIKViewRoutable.h>
 
-#define ZIKSimpleLabelProtocol_routable @protocol(ZIKSimpleLabelProtocol)
 @protocol ZIKSimpleLabelProtocol <ZIKViewRoutable>
 @property(nullable, nonatomic,copy) NSString *text;
 @property(nonatomic) CGRect frame;
