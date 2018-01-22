@@ -11,7 +11,7 @@
 #import "ZIKCompatibleAlertConfigProtocol.h"
 
 @interface ZIKTestCustomViewController ()
-@property (nonatomic, strong) ZIKViewRouter<id<ZIKRoutableView>, ZIKViewRouteConfiguration<ZIKCompatibleAlertConfigProtocol> *> *alertViewRouter;
+@property (nonatomic, strong) ZIKViewRouter<id, ZIKViewRouteConfiguration<ZIKCompatibleAlertConfigProtocol> *> *alertViewRouter;
 @end
 
 @implementation ZIKTestCustomViewController
@@ -21,7 +21,39 @@
     // Do any additional setup after loading the view.
 }
 - (IBAction)performCustomRoute:(id)sender {
-    self.alertViewRouter = [ZIKViewRouter.toModule(ZIKCompatibleAlertConfigProtocol_configRoutable)
+    [self showAlert];
+}
+
+- (void)showAlert {
+    ///If the protocol passed to `ZIKViewRouterToModule` is changed, parameter type in `prepareModule` will also change. So it's much safer when you change the routable protocol.
+    self.alertViewRouter = [ZIKViewRouterToModule(ZIKCompatibleAlertConfigProtocol)
+     performFromSource:self
+     routeConfiguring:^(ZIKViewRouteConfiguration<ZIKCompatibleAlertConfigProtocol> *config,
+                        void (^prepareDest)(void (^)(id)),
+                        void (^prepareModule)(void (^)(ZIKViewRouteConfig<ZIKCompatibleAlertConfigProtocol> *))) {
+         config.routeType = ZIKViewRouteTypeCustom;
+         config.routeCompletion = ^(id _Nonnull destination) {
+             NSLog(@"show custom alert complete");
+         };
+         config.errorHandler = ^(ZIKRouteAction routeAction, NSError * _Nonnull error) {
+             NSLog(@"show custom alert failed: %@",error);
+         };
+         
+         prepareModule(^(ZIKViewRouteConfig<ZIKCompatibleAlertConfigProtocol> * module){
+             module.title = @"Compatible Alert";
+             module.message = @"Test custom route for alert with UIAlertView and UIAlertController";
+             [module addCancelButtonTitle:@"Cancel" handler:^{
+                 NSLog(@"Tap cancel alert");
+             }];
+             [module addOtherButtonTitle:@"Hello" handler:^{
+                 NSLog(@"Tap hello button");
+             }];
+         });
+     }];
+}
+
+- (void)showAlert2 {
+    self.alertViewRouter = [ZIKViewRouterToModule(ZIKCompatibleAlertConfigProtocol)
                             performFromSource:self
                             configuring:^(ZIKViewRouteConfiguration<ZIKCompatibleAlertConfigProtocol> * _Nonnull config) {
                                 config.routeType = ZIKViewRouteTypeCustom;

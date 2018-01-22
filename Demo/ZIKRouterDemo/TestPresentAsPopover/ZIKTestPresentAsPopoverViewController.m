@@ -11,7 +11,7 @@
 #import "ZIKInfoViewProtocol.h"
 
 @interface ZIKTestPresentAsPopoverViewController () <ZIKInfoViewDelegate, UIPopoverPresentationControllerDelegate>
-@property (nonatomic, strong) ZIKDestinationViewRouter(UIViewController<ZIKInfoViewProtocol> *) *infoViewRouter;
+@property (nonatomic, strong) ZIKDestinationViewRouter(id<ZIKInfoViewProtocol>) *infoViewRouter;
 @end
 
 @implementation ZIKTestPresentAsPopoverViewController
@@ -23,7 +23,7 @@
 
 - (IBAction)presentAsPopover:(id)sender {
     __weak typeof(self) weakSelf = self;
-    self.infoViewRouter = [ZIKViewRouter.toView(ZIKInfoViewProtocol_routable)
+    self.infoViewRouter = [ZIKViewRouterToView(ZIKInfoViewProtocol)
                            performFromSource:self
                            configuring:^(ZIKViewRouteConfiguration *config) {
                                config.routeType = ZIKViewRouteTypePresentAsPopover;
@@ -47,7 +47,7 @@
 }
 - (IBAction)presentAsPopoverAndDismiss:(id)sender {
     __weak typeof(self) weakSelf = self;
-    self.infoViewRouter = [ZIKViewRouter.toView(ZIKInfoViewProtocol_routable)
+    self.infoViewRouter = [ZIKViewRouterToView(ZIKInfoViewProtocol)
                            performFromSource:self
                            configuring:^(ZIKViewRouteConfiguration *config) {
                                config.routeType = ZIKViewRouteTypePresentAsPopover;

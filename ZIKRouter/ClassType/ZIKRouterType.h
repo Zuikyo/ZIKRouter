@@ -25,16 +25,6 @@ NS_SWIFT_UNAVAILABLE("ZIKRouterType is a fake class")
 - (BOOL)isKindOfClass:(Class)aClass NS_UNAVAILABLE;
 - (BOOL)isMemberOfClass:(Class)aClass NS_UNAVAILABLE;
 
-#pragma mark Perform
-
-///If this route action doesn't need any arguments, just perform directly.
-- (nullable instancetype)performRoute;
-///Set dependencies required by destination and perform route.
-- (nullable instancetype)performWithConfiguring:(void(NS_NOESCAPE ^)(RouteConfig config))configBuilder;
-///Set dependencies required by destination and perform route, and you can remove the route with remove configuration later.
-- (nullable instancetype)performWithConfiguring:(void(NS_NOESCAPE ^)(RouteConfig config))configBuilder
-                                       removing:(void(NS_NOESCAPE ^ _Nullable)(RemoveConfig config))removeConfigBuilder;
-
 #pragma mark Factory
 
 ///Whether the destination is instantiated synchronously.
@@ -51,6 +41,17 @@ NS_SWIFT_UNAVAILABLE("ZIKRouterType is a fake class")
 
 ///Synchronously get destination, and prepare the destination.
 - (nullable Destination)makeDestinationWithConfiguring:(void(^ _Nullable)(RouteConfig config))configBuilder;
+
+/**
+ Synchronously get destination, and prepare the destination in a type safe way inferred by generic parameters.
+ 
+ @param configBuilder Type safe builder to build configuration, `prepareDest` is for setting `prepareDestination` block for configuration (it's an escapting block so use weakSelf in it), `prepareModule` is for setting custom route config.
+ @return The prepared destination.
+ */
+- (nullable Destination)makeDestinationWithRouteConfiguring:(void(^ _Nullable)(RouteConfig config,
+                                                                               void(^prepareDest)(void(^prepare)(Destination dest)),
+                                                                               void(^prepareModule)(void(NS_NOESCAPE ^prepare)(RouteConfig module))
+                                                                               ))configBuilder;
 
 @end
 

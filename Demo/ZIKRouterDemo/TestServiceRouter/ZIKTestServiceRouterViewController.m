@@ -30,7 +30,7 @@
 
 - (id<ZIKTimeServiceInput>)timeService {
     if (!_timeService) {
-        id<ZIKTimeServiceInput> timeService = [ZIKServiceRouter.toService(ZIKTimeServiceInput_routable) makeDestination];
+        id<ZIKTimeServiceInput> timeService = [ZIKServiceRouterToService(ZIKTimeServiceInput) makeDestination];
         _timeService = timeService;
     }
     return _timeService;

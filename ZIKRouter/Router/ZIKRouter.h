@@ -26,7 +26,7 @@ NS_ASSUME_NONNULL_BEGIN
  @discussion
  ## Features:
  
- 1. Prepare the route with protocol in block, instead of directly configuring the destination (the source is coupled with the destination if you do this) or in delegate method (in -prepareForSegue:sender: you have to distinguish different destinations, and they're alse coupled with source).
+ 1. Prepare the route with protocol in block, instead of directly configuring the destination or in delegate method (in -prepareForSegue:sender: you have to distinguish different destinations, and they're alse coupled with source).
  
  2. Specify a router with generic and protocol, then you can hide subclass but still can get routers with different functions.
  
@@ -47,6 +47,20 @@ NS_ASSUME_NONNULL_BEGIN
 ///Convenient method to create configuration in a builder block.
 - (nullable instancetype)initWithConfiguring:(void(NS_NOESCAPE ^)(RouteConfig config))configBuilder
                                     removing:(void(NS_NOESCAPE ^ _Nullable)(RemoveConfig config))removeConfigBuilder;
+/**
+ Convenient method to create configuration in a builder block and prepare destination or module in block.
+
+ @param configBuilder Type safe builder to build configuration, `prepareDest` is for setting `prepareDestination` block for configuration (it's an escapting block so use weakSelf in it), `prepareModule` is for setting custom route config.
+ @param removeConfigBuilder Type safe builder to build remove configuration, `prepareDest` is for setting `prepareDestination` block for configuration (it's an escapting block so use weakSelf in it).
+ @return The router.
+ */
+- (nullable instancetype)initWithRouteConfiguring:(void(NS_NOESCAPE ^)(RouteConfig config,
+                                                                       void(^prepareDest)(void(^prepare)(Destination dest)),
+                                                                       void(^prepareModule)(void(NS_NOESCAPE ^prepare)(RouteConfig module))
+                                                                       ))configBuilder
+                                    routeRemoving:(void(NS_NOESCAPE ^ _Nullable)(RemoveConfig config,
+                                                                                 void(^prepareDest)(void(^prepare)(Destination dest))
+                                                                                 ))removeConfigBuilder;
 - (instancetype)init NS_UNAVAILABLE;
 + (instancetype)new NS_UNAVAILABLE;
 
@@ -62,11 +76,37 @@ NS_ASSUME_NONNULL_BEGIN
 
 ///If this route action doesn't need any arguments, just perform directly.
 + (nullable instancetype)performRoute;
-///Set dependencies required by destination and perform route.
+///Convenient method to prepare destination and perform route.
 + (nullable instancetype)performWithConfiguring:(void(NS_NOESCAPE ^)(RouteConfig config))configBuilder;
-///Set dependencies required by destination and perform route, and you can remove the route with remove configuration later.
+///Convenient method to prepare destination and perform route, and you can remove the route with remove configuration later.
 + (nullable instancetype)performWithConfiguring:(void(NS_NOESCAPE ^)(RouteConfig config))configBuilder
                                        removing:(void(NS_NOESCAPE ^ _Nullable)(RemoveConfig config))removeConfigBuilder;
+
+/**
+ Convenient method to prepare destination in a type safe way inferred by generic parameters and perform route.
+
+ @param configBuilder Type safe builder to build configuration, `prepareDest` is for setting `prepareDestination` block for configuration (it's an escapting block so use weakSelf in it), `prepareModule` is for setting custom route config.
+ @return The router.
+ */
++ (nullable instancetype)performWithRouteConfiguring:(void(NS_NOESCAPE ^)(RouteConfig config,
+                                                                          void(^prepareDest)(void(^prepare)(Destination dest)),
+                                                                          void(^prepareModule)(void(NS_NOESCAPE ^prepare)(RouteConfig module))
+                                                                          ))configBuilder;
+
+/**
+ Convenient method to prepare destination in a type safe way inferred by generic parameters and perform route, and you can remove the route with remove configuration later.
+
+ @param configBuilder Type safe builder to build configuration, `prepareDest` is for setting `prepareDestination` block for configuration (it's an escapting block so use weakSelf in it), `prepareModule` is for setting custom route config.
+ @param removeConfigBuilder Type safe builder to build remove configuration, `prepareDest` is for setting `prepareDestination` block for configuration (it's an escapting block so use weakSelf in it).
+ @return The router.
+ */
++ (nullable instancetype)performWithRouteConfiguring:(void(NS_NOESCAPE ^)(RouteConfig config,
+                                                                          void(^prepareDest)(void(^prepare)(Destination dest)),
+                                                                          void(^prepareModule)(void(NS_NOESCAPE ^prepare)(RouteConfig module))
+                                                                          ))configBuilder
+                                       routeRemoving:(void(NS_NOESCAPE ^ _Nullable)(RemoveConfig config,
+                                                                                    void(^prepareDest)(void(^prepare)(Destination dest))
+                                                                                    ))removeConfigBuilder;
 
 #pragma mark Remove
 
@@ -79,6 +119,11 @@ NS_ASSUME_NONNULL_BEGIN
                          errorHandler:(void(^ __nullable)(ZIKRouteAction routeAction, NSError *error))performerErrorHandler;
 ///Remove route and prepare before removing.
 - (void)removeRouteWithConfiguring:(void(NS_NOESCAPE ^)(RemoveConfig config))removeConfigBuilder;
+
+///Remove route and prepare before removing.
+- (void)removeRouteWithRouteConfiguring:(void(NS_NOESCAPE ^)(RemoveConfig config,
+                                                             void(^prepareDest)(void(^prepare)(Destination dest))
+                                                             ))removeConfigBuilder;
 
 #pragma mark Factory
 
@@ -96,6 +141,17 @@ NS_ASSUME_NONNULL_BEGIN
 
 ///Synchronously get destination, and prepare the destination.
 + (nullable Destination)makeDestinationWithConfiguring:(void(^ _Nullable)(RouteConfig config))configBuilder;
+
+/**
+ Synchronously get destination, and prepare the destination in a type safe way inferred by generic parameters.
+
+ @param configBuilder Type safe builder to build configuration, `prepareDest` is for setting `prepareDestination` block for configuration (it's an escapting block so use weakSelf in it), `prepareModule` is for setting custom route config.
+ @return The prepared destination.
+ */
++ (nullable Destination)makeDestinationWithRouteConfiguring:(void(^ _Nullable)(RouteConfig config,
+                                                                               void(^prepareDest)(void(^prepare)(Destination dest)),
+                                                                               void(^prepareModule)(void(NS_NOESCAPE ^prepare)(RouteConfig module))
+                                                                               ))configBuilder;
 
 #pragma mark Debug
 

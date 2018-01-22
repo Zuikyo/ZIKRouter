@@ -22,7 +22,7 @@
     
     __weak typeof(self) weakSelf = self;
     //provide the router
-    self.infoViewRouter = [[ZIKViewRouter.classToView(ZIKInfoViewProtocol_routable) alloc]
+    self.infoViewRouter = [[ZIKViewRouter.classToView(@protocol(ZIKInfoViewProtocol)) alloc]
                            initWithConfiguring:^(ZIKViewRouteConfiguration * _Nonnull config) {
                                config.source = self;
                                config.routeType = ZIKViewRouteTypePresentModally;

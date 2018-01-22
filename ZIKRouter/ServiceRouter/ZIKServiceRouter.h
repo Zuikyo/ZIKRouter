@@ -36,7 +36,7 @@ typedef void(^ZIKServiceRouteGlobalErrorHandler)(__kindof ZIKServiceRouter * _Nu
  
  @code
  __block id<LoginServiceInput> loginService;
- loginService = [ZIKServiceRouter.toService(@protocol(LoginServiceInput))
+ loginService = [ZIKServiceRouterToService(LoginServiceInput)
                     makeDestinationWithPreparation:^(id<LoginServiceInput> destination) {
                       //Prepare service
                 }];
@@ -71,7 +71,7 @@ typedef void(^ZIKServiceRouteGlobalErrorHandler)(__kindof ZIKServiceRouter * _Nu
 + (void)registerExclusiveService:(Class)serviceClass;
 
 /**
- Register a service protocol that all services registered with the router conform to, then use ZIKServiceRouter.toService() to get the router class.You can register your protocol and let the service conforms to the protocol in category in your interface adapter.
+ Register a service protocol that all services registered with the router conform to, then use ZIKServiceRouterToService() to get the router class.You can register your protocol and let the service conforms to the protocol in category in your interface adapter.
  
  @param serviceProtocol The protocol conformed by service to identify the routerClass. Should inherit from ZIKServiceRoutable when ZIKROUTER_CHECK is enabled. When ZIKROUTER_CHECK is disabled, the protocol doesn't need to inheriting from ZIKServiceRoutable.
  */
@@ -95,29 +95,45 @@ NS_ASSUME_NONNULL_END
 NS_ASSUME_NONNULL_BEGIN
 
 NS_SWIFT_UNAVAILABLE("ZIKServiceRouterType is a fake class")
-///This is a fake class to use ZIKServiceRouter class type with compile time checking. The real object is Class of ZIKServiceRouter. Don't check whether a type is kind of ZIKServiceRouterType.
+///Fake class to use ZIKServiceRouter class type with compile time checking. The real object is Class of ZIKServiceRouter. Don't check whether a type is kind of ZIKServiceRouterType.
 @interface ZIKServiceRouterType<__covariant Destination: id, __covariant RouteConfig: ZIKPerformRouteConfiguration *> : ZIKRouterType<Destination, RouteConfig, ZIKRemoveRouteConfiguration *>
 
 @end
 
+NS_SWIFT_UNAVAILABLE("ZIKDestinationServiceRouterType is a fake class")
+@interface ZIKDestinationServiceRouterType<__covariant Destination: id<ZIKServiceRoutable>, __covariant RouteConfig: ZIKPerformRouteConfiguration *> : ZIKServiceRouterType<Destination, RouteConfig>
+
+@end
+
+NS_SWIFT_UNAVAILABLE("ZIKModuleServiceRouterType is a fake class")
+@interface ZIKModuleServiceRouterType<__covariant Destination: id, __covariant ModuleConfig: id<ZIKServiceModuleRoutable>, __covariant RouteConfig: ZIKPerformRouteConfiguration *> : ZIKServiceRouterType<Destination, RouteConfig>
+
+@end
+
+///Get service router in a type safe way. There will be complie error if the service protocol is not ZIKServiceRoutable.
+#define ZIKServiceRouterToService(ServiceProtocol) (ZIKDestinationServiceRouterType<id<ServiceProtocol>,ZIKPerformRouteConfiguration *> *)[ZIKServiceRouter<id<ServiceProtocol>,ZIKPerformRouteConfiguration *> toService](@protocol(ServiceProtocol))
+
+///Get service router in a type safe way. There will be complie error if the module protocol is not ZIKServiceModuleRoutable.
+#define ZIKServiceRouterToModule(ModuleProtocol) (ZIKModuleServiceRouterType<id,id<ModuleProtocol>,ZIKPerformRouteConfiguration<ModuleProtocol> *> *)[ZIKServiceRouter<id,ZIKPerformRouteConfiguration<ModuleProtocol> *> toModule](@protocol(ModuleProtocol))
+
 @interface ZIKServiceRouter<__covariant Destination: id, __covariant RouteConfig: ZIKPerformRouteConfiguration *> (Discover)
 
 /**
- Get the router class registered with a service protocol.
+ Get the router class registered with a service protocol. Always use macro `ZIKServiceRouterToService`.
  
- The parameter serviceProtocol of the block is: the protocol conformed by the service. Should be a ZIKServiceRoutable protocol when ZIKROUTER_CHECK is enabled. When ZIKROUTER_CHECK is disabled, the protocol doesn't need to inheriting from ZIKServiceRoutable.
+ The parameter serviceProtocol of the block is: the protocol conformed by the service. Should be a ZIKServiceRoutable protocol when ZIKROUTER_CHECK is enabled.
  
  The return Class of the block is: a router class matched with the service. Return nil if protocol is nil or not declared. There will be an assert failure when result is nil.
  */
-@property (nonatomic,class,readonly) ZIKServiceRouterType<Destination, RouteConfig> * _Nullable (^toService)(Protocol *serviceProtocol);
+@property (nonatomic,class,readonly) ZIKDestinationServiceRouterType<id<ZIKServiceRoutable>, RouteConfig> * _Nullable (^toService)(Protocol *serviceProtocol) NS_SWIFT_UNAVAILABLE("Use `Router.to(RoutableService<ServiceProtocol>())` in ZRouter instead");;
 
 /**
- Get the router class combined with a custom ZIKRouteConfiguration conforming to a unique protocol.
+ Get the router class combined with a custom ZIKRouteConfiguration conforming to a unique protocol. Always use `ZIKServiceRouterToModule`.
  
- The parameter configProtocol of the block is: the protocol conformed by defaultConfiguration of router. Should be a ZIKServiceModuleRoutable protocol when ZIKROUTER_CHECK is enabled. When ZIKROUTER_CHECK is disabled, the protocol doesn't need to inheriting from ZIKServiceModuleRoutable.
+ The parameter configProtocol of the block is: the protocol conformed by defaultConfiguration of router. Should be a ZIKServiceModuleRoutable protocol when ZIKROUTER_CHECK is enabled.
  The return Class of the block is: a router class matched with the service. Return nil if protocol is nil or not declared. There will be an assert failure when result is nil.
  */
-@property (nonatomic,class,readonly) ZIKServiceRouterType<Destination, RouteConfig> * _Nullable (^toModule)(Protocol *configProtocol);
+@property (nonatomic,class,readonly) ZIKModuleServiceRouterType<Destination, id<ZIKServiceModuleRoutable>, RouteConfig> * _Nullable (^toModule)(Protocol *configProtocol) NS_SWIFT_UNAVAILABLE("Use `Router.to(RoutableServiceModule<ModuleProtocol>())` in ZRouter instead");;
 
 @end
 
@@ -144,4 +160,74 @@ typedef NS_ENUM(NSInteger, ZIKServiceRouteError) {
 @implementation RoutableService (ExtensionName) \
 @end    \
 
+@interface ZIKServiceRouterType<__covariant Destination: id, __covariant RouteConfig: ZIKPerformRouteConfiguration *> (Extension)
+
+///If this route action doesn't need any arguments, just perform directly.
+- (nullable instancetype)performRoute;
+///Set dependencies required by destination and perform route.
+- (nullable instancetype)performWithConfiguring:(void(NS_NOESCAPE ^)(RouteConfig config))configBuilder;
+///Set dependencies required by destination and perform route, and you can remove the route with remove configuration later.
+- (nullable instancetype)performWithConfiguring:(void(NS_NOESCAPE ^)(RouteConfig config))configBuilder removing:(void(NS_NOESCAPE ^ _Nullable)(ZIKRemoveRouteConfiguration *config))removeConfigBuilder;
+
+@end
+
+@interface ZIKDestinationServiceRouterType<__covariant Destination: id<ZIKServiceRoutable>, __covariant RouteConfig: ZIKPerformRouteConfiguration *> (Extension)
+
+/**
+ Convenient method to prepare destination in a type safe way inferred by generic parameters and perform route.
+ 
+ @param configBuilder Type safe builder to build configuration, `prepareDest` is for setting `prepareDestination` block for configuration (it's an escapting block so use weakSelf in it), `prepareModule` is for setting custom route config.
+ @return The router.
+ */
++ (nullable instancetype)performWithRouteConfiguring:(void(NS_NOESCAPE ^)(RouteConfig config,
+                                                                          void(^prepareDest)(void(^prepare)(Destination dest)),
+                                                                          void(^prepareModule)(void(NS_NOESCAPE ^prepare)(RouteConfig module))
+                                                                          ))configBuilder;
+
+/**
+ Convenient method to prepare destination in a type safe way inferred by generic parameters and perform route, and you can remove the route with remove configuration later.
+ 
+ @param configBuilder Type safe builder to build configuration, `prepareDest` is for setting `prepareDestination` block for configuration (it's an escapting block so use weakSelf in it), `prepareModule` is for setting custom route config.
+ @param removeConfigBuilder Type safe builder to build remove configuration, `prepareDest` is for setting `prepareDestination` block for configuration (it's an escapting block so use weakSelf in it).
+ @return The router.
+ */
++ (nullable instancetype)performWithRouteConfiguring:(void(NS_NOESCAPE ^)(RouteConfig config,
+                                                                          void(^prepareDest)(void(^prepare)(Destination dest)),
+                                                                          void(^prepareModule)(void(NS_NOESCAPE ^prepare)(RouteConfig module))
+                                                                          ))configBuilder
+                                       routeRemoving:(void(NS_NOESCAPE ^ _Nullable)(ZIKRemoveRouteConfiguration *config,
+                                                                                    void(^prepareDest)(void(^prepare)(Destination dest))
+                                                                                    ))removeConfigBuilder;
+
+@end
+
+@interface ZIKModuleServiceRouterType<__covariant Destination: id, __covariant ModuleConfig: id<ZIKServiceModuleRoutable>, __covariant RouteConfig: ZIKPerformRouteConfiguration *> (Extension)
+
+/**
+ Convenient method to prepare destination in a type safe way inferred by generic parameters and perform route.
+ 
+ @param configBuilder Type safe builder to build configuration, `prepareDest` is for setting `prepareDestination` block for configuration (it's an escapting block so use weakSelf in it), `prepareModule` is for setting custom route config.
+ @return The router.
+ */
++ (nullable instancetype)performWithRouteConfiguring:(void(NS_NOESCAPE ^)(RouteConfig config,
+                                                                          void(^prepareDest)(void(^prepare)(Destination dest)),
+                                                                          void(^prepareModule)(void(NS_NOESCAPE ^prepare)(ModuleConfig module))
+                                                                          ))configBuilder;
+
+/**
+ Convenient method to prepare destination in a type safe way inferred by generic parameters and perform route, and you can remove the route with remove configuration later.
+ 
+ @param configBuilder Type safe builder to build configuration, `prepareDest` is for setting `prepareDestination` block for configuration (it's an escapting block so use weakSelf in it), `prepareModule` is for setting custom route config.
+ @param removeConfigBuilder Type safe builder to build remove configuration, `prepareDest` is for setting `prepareDestination` block for configuration (it's an escapting block so use weakSelf in it).
+ @return The router.
+ */
++ (nullable instancetype)performWithRouteConfiguring:(void(NS_NOESCAPE ^)(RouteConfig config,
+                                                                          void(^prepareDest)(void(^prepare)(Destination dest)),
+                                                                          void(^prepareModule)(void(NS_NOESCAPE ^prepare)(ModuleConfig module))
+                                                                          ))configBuilder
+                                       routeRemoving:(void(NS_NOESCAPE ^ _Nullable)(ZIKRemoveRouteConfiguration *config,
+                                                                                    void(^prepareDest)(void(^prepare)(Destination dest))
+                                                                                    ))removeConfigBuilder;
+
+@end
 NS_ASSUME_NONNULL_END
