@@ -10,10 +10,7 @@
 #import "MasterViewController.h"
 @import ZIKRouter.Internal;
 
-@interface MasterViewController (MasterViewRouter) <ZIKRoutableView>
-@end
-@implementation MasterViewController (MasterViewRouter)
-@end
+DeclareRoutableView(MasterViewController, MasterViewRouter)
 
 @implementation MasterViewRouter
 

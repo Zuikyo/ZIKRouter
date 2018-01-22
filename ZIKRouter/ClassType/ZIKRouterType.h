@@ -17,7 +17,7 @@ NS_ASSUME_NONNULL_BEGIN
 @class ZIKRemoveRouteConfiguration;
 
 NS_SWIFT_UNAVAILABLE("ZIKRouterType is a fake class")
-///This is a fake class to use ZIKRouter class type with compile time checking. The real object is Class of ZIKRouter. Don't check whether a type is kind of ZIKRouterType.
+///Fake class to use ZIKRouter class type with compile time checking. The real object is Class of ZIKRouter, so these instance methods are actually class methods in ZIKRouter class. Don't check whether a type is kind of ZIKRouterType.
 @interface ZIKRouterType<__covariant Destination: id, __covariant RouteConfig: ZIKPerformRouteConfiguration *, __covariant RemoveConfig: ZIKRemoveRouteConfiguration *> : NSObject
 
 - (instancetype)init NS_UNAVAILABLE;

@@ -18,12 +18,9 @@ import ZRouter
 protocol PureSwiftSampleViewInput {
     
 }
-protocol PureSwiftSampleViewInput2 {
-    
-}
 
 // Show how ZIKRouter working in a swifty way.
-class SwiftSampleViewController: UIViewController, PureSwiftSampleViewInput, PureSwiftSampleViewInput2, SwiftSampleViewInput, ZIKInfoViewDelegate {
+class SwiftSampleViewController: UIViewController, PureSwiftSampleViewInput, SwiftSampleViewInput, ZIKInfoViewDelegate {
     var infoRouter: ViewRouter<ZIKInfoViewProtocol, ViewRouteConfig>?
     var alertRouter: ViewRouter<Any, ZIKCompatibleAlertConfigProtocol>?
     

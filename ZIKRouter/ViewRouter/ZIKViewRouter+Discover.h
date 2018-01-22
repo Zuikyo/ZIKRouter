@@ -15,15 +15,17 @@
 NS_ASSUME_NONNULL_BEGIN
 
 NS_SWIFT_UNAVAILABLE("ZIKViewRouterType is a fake class")
-///Fake class to use ZIKViewRouter class type with compile time checking. The real object is Class of ZIKViewRouter. Don't check whether a type is kind of ZIKViewRouterType.
+///Fake class to use ZIKViewRouter class type with compile time checking. The real object is Class of ZIKViewRouter, so these instance methods are actually class methods in ZIKViewRouter class.. Don't check whether a type is kind of ZIKViewRouterType.
 @interface ZIKViewRouterType<__covariant Destination: id, __covariant RouteConfig: ZIKViewRouteConfiguration *> : ZIKRouterType<Destination, RouteConfig, ZIKViewRemoveConfiguration *>
 @end
 
 NS_SWIFT_UNAVAILABLE("ZIKDestinationViewRouterType is a fake class")
+///Fake class to use ZIKViewRouter class type to handle specific destination with compile time checking. The real object is Class of ZIKViewRouter, so these instance methods are actually class methods in ZIKViewRouter class. Don't check whether a type is kind of ZIKDestinationRouterType.
 @interface ZIKDestinationViewRouterType<__covariant Destination: id<ZIKViewRoutable>, __covariant RouteConfig: ZIKViewRouteConfiguration *> : ZIKViewRouterType<Destination, RouteConfig>
 @end
 
 NS_SWIFT_UNAVAILABLE("ZIKModuleViewRouterType is a fake class")
+///Fake class to use ZIKRouter class type to handle specific view module config with compile time checking. The real object is Class of ZIKRouter, so these instance methods are actually class methods in ZIKRouter class. Don't check whether a type is kind of ZIKRouterType.
 @interface ZIKModuleViewRouterType<__covariant Destination: id<ZIKRoutableView>, __covariant ModuleConfig: id<ZIKViewModuleRoutable>, __covariant RouteConfig: ZIKViewRouteConfiguration *> : ZIKViewRouterType<Destination, RouteConfig>
 @end
 
@@ -36,11 +38,11 @@ NS_SWIFT_UNAVAILABLE("ZIKModuleViewRouterType is a fake class")
 @interface ZIKViewRouter<__covariant Destination: id, __covariant RouteConfig: ZIKViewRouteConfiguration *> (Discover)
 
 /**
- Get the view router class registered with a view protocol. Always use macro `ZIKViewRouterToView`.
+ Get the view router class registered with a view protocol. Always use macro `ZIKViewRouterToView`, don't use this method directly.
  
- The parameter viewProtocol of the block is: the protocol conformed by the view. Should be a ZIKViewRoutable protocol when ZIKROUTER_CHECK is enabled.
+ The parameter viewProtocol of the block is the protocol conformed by the view. Should be a ZIKViewRoutable protocol when ZIKROUTER_CHECK is enabled.
  
- The return Class of the block is: a router class matched with the view. Return nil if protocol is nil or not registered. There will be an assert failure when result is nil.
+ The return Class of the block is a router class matched with the view. Return nil if protocol is nil or not registered. There will be an assert failure when result is nil.
  @discussion
  This function is for decoupling route behavior with router class. If a view conforms to a protocol for configuring it's dependencies, and the protocol is only used by this view, you can use +registerViewProtocol: to register the protocol, then you don't need to import the router's header when performing route.
  @code
@@ -90,11 +92,11 @@ NS_SWIFT_UNAVAILABLE("ZIKModuleViewRouterType is a fake class")
 @property (nonatomic, class, readonly) Class _Nullable (^classToView)(Protocol<ZIKViewRoutable> *viewProtocol) NS_SWIFT_UNAVAILABLE("Use `Router.to(RoutableView<ViewProtocol>())` in ZRouter instead");
 
 /**
- Get the view router class combined with a custom ZIKViewRouteConfiguration conforming to a module config protocol. Always use macro `ZIKViewRouterToModule`.
+ Get the view router class combined with a custom ZIKViewRouteConfiguration conforming to a module config protocol. Always use macro `ZIKViewRouterToModule`, don't use this method directly.
  
  The parameter configProtocol of the block is: The protocol conformed by defaultConfiguration of router. Should be a ZIKViewModuleRoutable protocol when ZIKROUTER_CHECK is enabled.
  
- The return Class of the block is: a router class matched with the view. Return nil if protocol is nil or not registered. There will be an assert failure when result is nil.
+ The return Class of the block is a router class matched with the view. Return nil if protocol is nil or not registered. There will be an assert failure when result is nil.
  @discussion
  Similar to ZIKViewRouter.toView(), this function is for decoupling route behavior with router class. If configurations of a module can't be set directly with a protocol the view conforms, you can use a custom ZIKViewRouteConfiguration to config these configurations. Use +registerModuleProtocol: to register the protocol, then you don't need to import the router's header when performing route.
  @code

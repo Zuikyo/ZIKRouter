@@ -95,17 +95,19 @@ NS_ASSUME_NONNULL_END
 NS_ASSUME_NONNULL_BEGIN
 
 NS_SWIFT_UNAVAILABLE("ZIKServiceRouterType is a fake class")
-///Fake class to use ZIKServiceRouter class type with compile time checking. The real object is Class of ZIKServiceRouter. Don't check whether a type is kind of ZIKServiceRouterType.
+///Fake class to use ZIKServiceRouter class type with compile time checking. The real object is Class of ZIKServiceRouter, so these instance methods are actually class methods in ZIKServiceRouter class. Don't check whether a type is kind of ZIKServiceRouterType.
 @interface ZIKServiceRouterType<__covariant Destination: id, __covariant RouteConfig: ZIKPerformRouteConfiguration *> : ZIKRouterType<Destination, RouteConfig, ZIKRemoveRouteConfiguration *>
 
 @end
 
 NS_SWIFT_UNAVAILABLE("ZIKDestinationServiceRouterType is a fake class")
+///Fake class to use ZIKServiceRouter class type to handle specific destination with compile time checking. The real object is Class of ZIKServiceRouter, so these instance methods are actually class methods in ZIKServiceRouter class. Don't check whether a type is kind of ZIKDestinationServiceRouterType.
 @interface ZIKDestinationServiceRouterType<__covariant Destination: id<ZIKServiceRoutable>, __covariant RouteConfig: ZIKPerformRouteConfiguration *> : ZIKServiceRouterType<Destination, RouteConfig>
 
 @end
 
 NS_SWIFT_UNAVAILABLE("ZIKModuleServiceRouterType is a fake class")
+///Fake class to use ZIKServiceRouter class type to handle specific view module config with compile time checking. The real object is Class of ZIKServiceRouter, so these instance methods are actually class methods in ZIKServiceRouter class. Don't check whether a type is kind of ZIKModuleServiceRouterType.
 @interface ZIKModuleServiceRouterType<__covariant Destination: id, __covariant ModuleConfig: id<ZIKServiceModuleRoutable>, __covariant RouteConfig: ZIKPerformRouteConfiguration *> : ZIKServiceRouterType<Destination, RouteConfig>
 
 @end
@@ -119,7 +121,7 @@ NS_SWIFT_UNAVAILABLE("ZIKModuleServiceRouterType is a fake class")
 @interface ZIKServiceRouter<__covariant Destination: id, __covariant RouteConfig: ZIKPerformRouteConfiguration *> (Discover)
 
 /**
- Get the router class registered with a service protocol. Always use macro `ZIKServiceRouterToService` to get router class.
+ Get the router class registered with a service protocol. Always use macro `ZIKServiceRouterToService` to get router class, don't use this method directly.
  
  The parameter serviceProtocol of the block is: the protocol conformed by the service. Should be a ZIKServiceRoutable protocol when ZIKROUTER_CHECK is enabled.
  
@@ -136,7 +138,7 @@ NS_SWIFT_UNAVAILABLE("ZIKModuleServiceRouterType is a fake class")
 @property (nonatomic,class,readonly) Class _Nullable (^classToService)(Protocol<ZIKServiceRoutable> *serviceProtocol) NS_SWIFT_UNAVAILABLE("Use `Router.to(RoutableService<ServiceProtocol>())` in ZRouter instead");
 
 /**
- Get the router class combined with a custom ZIKRouteConfiguration conforming to a unique protocol. Always use `ZIKServiceRouterToModule`.
+ Get the router class combined with a custom ZIKRouteConfiguration conforming to a unique protocol. Always use `ZIKServiceRouterToModule`, don't use this method directly.
  
  The parameter configProtocol of the block is: the protocol conformed by defaultConfiguration of router. Should be a ZIKServiceModuleRoutable protocol when ZIKROUTER_CHECK is enabled.
  The return Class of the block is: a router class matched with the service. Return nil if protocol is nil or not declared. There will be an assert failure when result is nil.
@@ -169,7 +171,7 @@ typedef NS_ENUM(NSInteger, ZIKServiceRouteError) {
 
 @end
 
-///The routable service must be declared as routable.
+///Convenient macro to let service conform to ZIKRoutableService, and declare that it's routable.
 #define DeclareRoutableService(RoutableService, ExtensionName)    \
 @interface RoutableService (ExtensionName) <ZIKRoutableService>    \
 @end    \

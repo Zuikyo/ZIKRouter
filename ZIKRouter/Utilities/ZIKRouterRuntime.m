@@ -264,7 +264,12 @@ bool ZIKRouter_classSelfImplementingMethod(Class aClass, SEL method, bool isClas
 }
 
 bool ZIKRouter_isObjcProtocol(id protocol) {
-    return [protocol isKindOfClass:NSClassFromString(@"Protocol")];
+    static Class ProtocolClass;
+    static dispatch_once_t onceToken;
+    dispatch_once(&onceToken, ^{
+        ProtocolClass = NSClassFromString(@"Protocol");
+    });
+    return [protocol isKindOfClass:ProtocolClass];
 }
 
 #if DEBUG

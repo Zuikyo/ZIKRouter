@@ -9,10 +9,7 @@
 #import "ZIKTestPushViewRouter.h"
 #import "ZIKTestPushViewController.h"
 
-@interface ZIKTestPushViewController (ZIKTestPushViewRouter) <ZIKRoutableView>
-@end
-@implementation ZIKTestPushViewController (ZIKTestPushViewRouter)
-@end
+DeclareRoutableView(ZIKTestPushViewController, ZIKTestPushViewRouter)
 
 @implementation ZIKTestPushViewRouter
 

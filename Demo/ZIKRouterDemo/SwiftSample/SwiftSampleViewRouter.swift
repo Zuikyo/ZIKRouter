@@ -67,10 +67,6 @@ extension SwiftSampleViewController: ZIKRoutableView {
 extension RoutableView where Protocol == PureSwiftSampleViewInput {
     init() { }
 }
-//Declare PureSwiftSampleViewInput is routable
-extension RoutableView where Protocol == PureSwiftSampleViewInput2 {
-    init() { }
-}
 //Declare SwiftSampleViewConfig is routable
 extension RoutableViewModule where Protocol == SwiftSampleViewConfig {
     init() { }
