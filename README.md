@@ -11,11 +11,11 @@
 ![ZRouter](https://img.shields.io/cocoapods/v/ZRouter.svg?style=flat)
 ![license](https://img.shields.io/github/license/mashape/apistatus.svg)
 
-An interface-oriented iOS router for discovering modules and injecting dependencies with protocol.
+An interface-oriented router for discovering modules and injecting dependencies with protocol.
 
 The view router can perform all navigation types in UIKit through one method.
 
-The service router can discover corresponding module with it's protocol.
+The service router can discover and prepare corresponding module with it's protocol.
 
 ---
 

@@ -26,11 +26,14 @@ NS_ASSUME_NONNULL_BEGIN
  @discussion
  ## Features:
  
- 1. Prepare the route with protocol in block, instead of directly configuring the destination or in delegate method (in -prepareForSegue:sender: you have to distinguish different destinations).
+ 1. Prepare module with protocol in block, instead of directly configuring the destination or in delegate method (in -prepareForSegue:sender: you have to distinguish different destinations).
  
  2. Specify a router with generic and protocol, then you can hide subclass but still can get routers with different functions.
  
  See sample code in ZIKServiceRouter and ZIKViewRouter for more detail.
+ 
+ @note
+ The router only keep weak reference to the destination, the performer is responsible for holding it.
  */
 @interface ZIKRouter<__covariant Destination: id, __covariant RouteConfig: ZIKPerformRouteConfiguration *, __covariant RemoveConfig: ZIKRemoveRouteConfiguration *> : NSObject
 ///State of route.
@@ -49,6 +52,8 @@ NS_ASSUME_NONNULL_BEGIN
                                     removing:(void(NS_NOESCAPE ^ _Nullable)(RemoveConfig config))removeConfigBuilder;
 /**
  Convenient method to create configuration in a builder block and prepare destination or module in block.
+ @discussion
+ `prepareDest` and `prepareModule`'s type changes with the router's generic parameters.
 
  @param configBuilder Type safe builder to build configuration, `prepareDest` is for setting `prepareDestination` block for configuration (it's an escapting block so use weakSelf in it), `prepareModule` is for setting custom route config.
  @param removeConfigBuilder Type safe builder to build remove configuration, `prepareDest` is for setting `prepareDestination` block for configuration (it's an escapting block so use weakSelf in it).

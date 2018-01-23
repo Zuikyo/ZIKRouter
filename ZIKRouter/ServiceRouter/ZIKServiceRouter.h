@@ -64,7 +64,9 @@ typedef void(^ZIKServiceRouteGlobalErrorHandler)(__kindof ZIKServiceRouter * _Nu
 + (void)registerService:(Class)serviceClass;
 
 /**
- If the service will hold and use it's router, and the router has it's custom functions for this service, that means the service is coupled with the router. In this situation, you can use this function to combine serviceClass with a specific routerClass, then no other routerClass can be used for this serviceClass. If another routerClass try to register with the serviceClass, there will be an assert failure.
+ combine serviceClass with a specific routerClass, then no other routerClass can be used for this serviceClass.
+ @discussion
+ If the service will hold and use it's router, and the router has it's custom functions for this service, that means the service is coupled with the router. You can use this method to register viewClass and routerClass. If another routerClass try to register with the serviceClass, there will be an assert failure.
  
  @param serviceClass The service class requiring a specific router class.
  */
@@ -78,7 +80,7 @@ typedef void(^ZIKServiceRouteGlobalErrorHandler)(__kindof ZIKServiceRouter * _Nu
 + (void)registerServiceProtocol:(Protocol<ZIKServiceRoutable> *)serviceProtocol  NS_SWIFT_UNAVAILABLE("Use `register<Protocol>(_ routableService: RoutableService<Protocol>)` instead");
 
 /**
- Register a module config protocol the router's default configuration conforms, then use ZIKServiceRouter.toModule() to get the router class. You can register your protocol and let the configuration conforms to the protocol in category in your interface adapter.
+ Register a module config protocol the router's default configuration conforms, then use ZIKServiceRouterToModule() to get the router class. You can register your protocol and let the configuration conforms to the protocol in category in your interface adapter.
  
  When the service module contains not only a single service class, but also other internal services, and you can't prepare the module with a simple service protocol, then you need a moudle config protocol.
  

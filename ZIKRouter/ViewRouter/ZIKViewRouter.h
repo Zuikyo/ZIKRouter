@@ -23,7 +23,7 @@ NS_ASSUME_NONNULL_BEGIN
  @discussion
  ## Features:
  
- 1. Find destination with registered protocol, decoupling the source with the destination class.
+ 1. Find router subclasses with registered protocols.
  
  2. Support all route types in UIKit, and can remove the destination without using -popViewControllerAnimated:/-dismissViewControllerAnimated:completion:/removeFromParentViewController/removeFromSuperview in different sistuation. Router can choose the proper method. You can alse add custom route type.
  
@@ -121,6 +121,8 @@ NS_ASSUME_NONNULL_BEGIN
 
 /**
  Perform route from source view to destination view, and prepare destination in a type safe way inferred by generic parameters.
+ @discussion
+ `prepareDest` and `prepareModule`'s type changes with the router's generic parameters.
  
  @param source Source UIViewController or UIView. See ZIKViewRouteConfiguration's source.
  @param configBuilder Type safe builder to build configuration, `prepareDest` is for setting `prepareDestination` block for configuration (it's an escapting block so use weakSelf in it), `prepareModule` is for setting custom route config.
@@ -134,6 +136,8 @@ NS_ASSUME_NONNULL_BEGIN
 
 /**
  Perform route from source view to destination view, and prepare destination in a type safe way inferred by generic parameters.
+ @discussion
+ `prepareDest` and `prepareModule`'s type changes with the router's generic parameters.
  
  @param source Source UIViewController or UIView. See ZIKViewRouteConfiguration's source.
  @param configBuilder Type safe builder to build configuration, `prepareDest` is for setting `prepareDestination` block for configuration (it's an escapting block so use weakSelf in it), `prepareModule` is for setting custom route config.
@@ -320,14 +324,14 @@ typedef void(^ZIKViewRouteGlobalErrorHandler)(__kindof ZIKViewRouter * _Nullable
 
 @interface ZIKViewRouter (ErrorHandle)
 
-///Set error callback for all view router instance. Use this to debug and log
+///Set error callback for all view router instance. Use this to debug and log.
 + (void)setGlobalErrorHandler:(ZIKViewRouteGlobalErrorHandler)globalErrorHandler;
 
 @end
 
 @interface ZIKViewRouter (Register)
 /**
- Register a viewClass with it's router's class, so we can create the router of a view and it's subclass when view is not created from router(UIViewController from storyboard or UIView added with -addSubview:, can't detect UIViewController displayed from code because we can't get the performer vc), and require the performer to config the view, and get AOP notified for some route actions.
+ Register a viewClass with it's router's class, so we can create the router of a view and it's subclass when view is not created from router(UIViewController from storyboard or UIView added with -addSubview:, can't detect UIViewController displayed from code because we can't get the performer vc), then require the performer to config the view, and get AOP notified for some route actions.
  @note
  One view may be registered with multi routers, when view is routed from storyboard or -addSubview:, a router will be auto created from one of the registered router classes randomly. If you want to use a certain router, see +registerExclusiveView:.
  One router may manage multi views. You can register multi view classes to a same router class.
@@ -337,7 +341,9 @@ typedef void(^ZIKViewRouteGlobalErrorHandler)(__kindof ZIKViewRouter * _Nullable
 + (void)registerView:(Class)viewClass;
 
 /**
- If the view will hold and use it's router, or you inject dependencies in the router, that means the view is coupled with the router. In this situation, you can use this function to combine viewClass with a unique routerClass, then no other routerClass can be used for this viewClass. If another routerClass try to register with the viewClass, there will be an assert failure.
+ Register viewClass with a unique routerClass, then no other routerClass can be used for this viewClass.
+ @discussion
+ If the view will hold and use it's router, or you inject dependencies in the router, that means the view is coupled with the router. Then use this method to register viewClass and routerClass. If another routerClass try to register with the viewClass, there will be an assert failure.
  
  @param viewClass The view class requiring a unique router class.
  */

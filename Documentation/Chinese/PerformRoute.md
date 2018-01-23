@@ -101,6 +101,38 @@ func handleOpenURLWithViewName(_ viewName: String) {
 }
 ```
 
+用`prepareDest` 或者 `prepareModule` block 来配置destination更加安全： 
+
+```objectivec
+@implementation TestViewController
+
+- (void)showEditorViewController {
+	[ZIKViewRouterToView(NoteEditorInput)
+	          performFromSource:self
+	          routeConfiguring:^(ZIKViewRouteConfiguration *config,
+	          					  void (^prepareDest)(void (^)(id<NoteEditorInput>)),
+                        		  void (^prepareModule)(void (^)(ZIKViewRouteConfig *))) {
+	              config.routeType = ZIKViewRouteTypePresentModally;
+	              config.animated = YES;
+	              //Type of prepareDest block changes with the router's generic parameters.
+	              prepareDest(^(id<NoteEditorInput> destination){
+	                  destination.delegate = self;
+	                  [destination constructForCreatingNewNote];
+	              });
+	              config.routeCompletion = ^(id<NoteEditorInput> destination) {
+	                  //Transition completed
+	              };
+	              config.errorHandler = ^(ZIKRouteAction routeAction, NSError *error) {
+	                  //Transition failed
+	              };
+	          }];
+}
+```
+
+`prepareDest` 和 `prepareModule` block 的类型会随着router的泛型值而改变。当你改变了protocol，编译器会帮助你进行检查。
+
+不过Xcode的自动补全在这种情况下有bug。`prepareDest` 和 `prepareModule`里的参数没有被正确地补全，你需要手动改成正确的参数类型。
+
 ## Lazy Perform
 
 你可以先创建router，再稍后执行路由。这样可以把路由的提供者和执行者分开。

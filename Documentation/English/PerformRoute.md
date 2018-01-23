@@ -97,6 +97,38 @@ You should only use this when you really need it. If the protocol name is wrong,
 }
 ```
 
+It's much safer to prepare destination in `prepareDest` or `prepareModule` block: 
+
+```objectivec
+@implementation TestViewController
+
+- (void)showEditorViewController {
+	[ZIKViewRouterToView(NoteEditorInput)
+	          performFromSource:self
+	          routeConfiguring:^(ZIKViewRouteConfiguration *config,
+	          					  void (^prepareDest)(void (^)(id<NoteEditorInput>)),
+                        		  void (^prepareModule)(void (^)(ZIKViewRouteConfig *))) {
+	              config.routeType = ZIKViewRouteTypePresentModally;
+	              config.animated = YES;
+	              //Type of prepareDest block changes with the router's generic parameters.
+	              prepareDest(^(id<NoteEditorInput> destination){
+	                  destination.delegate = self;
+	                  [destination constructForCreatingNewNote];
+	              });
+	              config.routeCompletion = ^(id<NoteEditorInput> destination) {
+	                  //Transition completed
+	              };
+	              config.errorHandler = ^(ZIKRouteAction routeAction, NSError *error) {
+	                  //Transition failed
+	              };
+	          }];
+}
+```
+
+Type of `prepareDest` and `prepareModule` block changes with the router's generic parameters. So there will be compile checking when you change the protocol.
+
+But there is bug in Xcode auto completions. These parameters in block are not correctly completed, you have to manually fix the code.
+
 ## Lazy Perform
 
 You can create the router, then perform it later. This let you separate the router's provider and performer.
