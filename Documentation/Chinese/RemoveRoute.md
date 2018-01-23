@@ -33,6 +33,7 @@ class TestViewController: UIViewController {
                 print("remove failed, error:%@",error)
             }
         })
+        editorRouter = nil
     }
 }
 ```
@@ -46,7 +47,7 @@ class TestViewController: UIViewController {
 @implementation TestViewController: UIViewController
 
 - (void)showEditor {
-  self.editorRouter = [ZIKViewRouter.toView(@protocol(NoteEditorInput)) performFromSource:self routeType:ZIKViewRouteTypePush];
+  self.editorRouter = [ZIKViewRouterToView(NoteEditorInput) performFromSource:self routeType:ZIKViewRouteTypePush];
 }
 
 - (void)removeEditor {
@@ -57,7 +58,8 @@ class TestViewController: UIViewController {
       NSLog(@"remove editor success");
   } errorHandler:^(SEL routeAction, NSError *error) {
       NSLog(@"remove failed, error:%@",error);
-  }];  
+  }];
+  self.editorRouter = nil
 }
 
 @end

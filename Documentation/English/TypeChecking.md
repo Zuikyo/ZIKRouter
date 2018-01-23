@@ -9,38 +9,60 @@ ZIKRouter checks and limits the routing to make dynamic routing safer. The  prin
 
 #### Swift
 
-In Swift, use conditional extension to declare routable protocol, and let the complier to check illegal use.
+In Swift, use conditional extension to declare routable protocol, and let the compiler to check illegal usage.
 
-See[Routable Declaration](RoutableDeclaration.md#Routable).
+See [Routable Declaration](RoutableDeclaration.md#Routable).
 
 #### Objective-C
 
-In Objective-C, you need to make Compile-Time Checking by your own.
+In Objective-C, we use some fake classes and macros to make compile time checking.
 
-First, write a function to get router like this:
+When registering and getting router with protocol, use macro `ZIKRoutableProtocol` to wrap the protocol:
 
 ```objectivec
-Class ViewRouterToView(Protocol<ZIKViewRoutable> *viewProtocol);
+@implementation EditorViewRouter
+
++ (void)registerRoutableDestination {
+    [self registerView:[EditorViewController class]];
+    
+    //If the protocol is not inherited from ZIKViewRoutable, there will be compile error
+    [self registerViewProtocol:ZIKRoutableProtocol(NoteEditorInput)];
+}
+
+@end
+```
+```
+//If the protocol is not inherited from ZIKViewRoutable, there will be compile error
+ZIKViewRouter.classToView(ZIKRoutableProtocol(NoteEditorInput))
 ```
 
-When you pass a protocol to `ViewRouterToView`, there will be a complie warning`Incompatible pointer types passing 'Protocol *' to parameter of type 'Protocol<ZIKViewRoutable> *'`:
+Use macro `ZIKViewRouterToView`, `ZIKViewRouterToModule`, `ZIKServiceRouterToService`, `ZIKServiceRouterToModule` to get router class:
 
-```
-Class viewRouterClass = ViewRouterToView(@protocol(EditorViewInput));
-```
-You can add `-Werror=incompatible-pointer-types` to your project's `Build Settings->Other C Flags`, to change warning to error.
-
-Then, if the protocol is routable, make a Type Cast for it:
-
-```
-#define RoutableView_EditorViewInput (Protocol<ZIKViewRoutable> *)@protocol(EditorViewInput)
+```objectivec
+//If the protocol is not inherited from ZIKViewRoutable, there will be compile error
+ZIKViewRouterToView(NoteEditorInput)
 ```
 
-Now you can use the protocol without warning
+And the protocol type will affect the parameters in methods:
+
+```objectivec
+//The 3 parameters have inheritance relationship
+[ZIKViewRouterToView(NoteEditorInput) //1
+     performFromSource:self
+     routeConfiguring:^(ZIKViewRouteConfig *config,
+                        void (^prepareDest)(void (^)(id<NoteEditorInput>)), //2
+                        void (^prepareModule)(void (^)(ZIKViewRouteConfig *))) {
+         config.routeType = ZIKViewRouteTypePush;
+         prepareDest(^(id<NoteEditorInput> dest){ //3
+             dest.delegate = weakSelf;
+             dest.name = @"zuik";
+             dest.age = 18;
+         });
+     }];
 
 ```
-Class viewRouterClass = ViewRouterToView(RoutableView_EditorViewInput);
-```
+
+It's not 100% perfect like in Swift. If the protocol is changed to parent protocol, the compiler won't give any errors.
 
 ## Runtime Checking
 
@@ -58,7 +80,7 @@ In Objective-C, we can enuemrate protocols to do checking. But pure Swift protoc
 ```swift
 class SwiftSampleViewRouter: ZIKAnyViewRouter {
     ...
-    override class func _autoRegistrationDidFinished() {
+    override class func _registrationDidFinished() {
         //Make sure all routable dependencies in this module is available.
         assert((Router.to(RoutableService<SwiftServiceInput>()) != nil))
     }
@@ -76,8 +98,8 @@ class SwiftSampleViewRouter: ZIKViewRouter<SwiftSampleViewController, SwiftSampl
     
     override class func registerRoutableDestination() {
         registerView(SwiftSampleViewController.self)
-        Registry.register(RoutableView<PureSwiftSampleViewInput>(), forRouter: self)
-        Registry.register(RoutableViewModule<SwiftSampleViewConfig>(), forRouter: self)
+        register(RoutableView<PureSwiftSampleViewInput>())
+        register(RoutableViewModule<SwiftSampleViewConfig>())
     }
     
     override class func defaultRouteConfiguration() -> SwiftSampleViewConfiguration {

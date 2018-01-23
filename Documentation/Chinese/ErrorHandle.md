@@ -56,7 +56,7 @@ Router.perform(
 <details><summary>Objective-C示例</summary>
 
 ```objectivec
-[ZIKViewRouter.toView(@protocol(NoteEditorInput))
+[ZIKViewRouterToView(NoteEditorInput)
 	          performFromSource:self
 	          configuring:^(ZIKViewRouteConfiguration *config) {
 	              config.routeType = ZIKViewRouteTypePresentModally;

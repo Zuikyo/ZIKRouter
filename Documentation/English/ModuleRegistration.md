@@ -12,7 +12,7 @@ class CommonAlertViewRouter: ZIKAnyViewRouter {
     override class func registerRoutableDestination() {
         registerView(UIAlertViewController.self)
         registerView(UIAlertView.self)
-        Registry.register(RoutableView<CommonAlertViewInput>(), forRouter: self)
+        register(RoutableView<CommonAlertViewInput>())
     }
 }
 ```
@@ -20,7 +20,7 @@ class CommonAlertViewRouter: ZIKAnyViewRouter {
 class EasyAlertViewRouter: ZIKAnyViewRouter {
     override class func registerRoutableDestination() {
         registerView(UIAlertViewController.self)
-        Registry.register(RoutableView<EasyAlertViewInput>(), forRouter: self)
+        register(RoutableView<EasyAlertViewInput>())
     }
 }
 ```
@@ -70,7 +70,7 @@ class EditorModuleConfiguration: ZIKViewRouteConfiguration, EditorModuleConfig {
 class EditorViewRouter: ZIKViewRouter<EditorViewController, EditorModuleConfiguration> {
     override class func registerRoutableDestination() {
         registerView(EditorViewController.self)
-        Registry.register(RoutableViewModule<EditorModuleConfig>(), forRouter: self)
+        register(RoutableViewModule<EditorModuleConfig>())
     }
     //Use custom configuration
     override defaultConfiguration() -> EditorModuleConfiguration {
@@ -109,12 +109,12 @@ When app is launched, ZIKRouter will enumerate all classes and call router's `re
 
 Here is the performance test for auto registration. There're 5000 UIViewController and 5000 router.
 
-Register by `+registerView:` and `registerViewProtocol:`:
+Register by `+registerView:` and `+registerViewProtocol:`:
 
 * iPhone6s real device: 58ms
 * iPhone5  real device: 240ms
 
-Register by `+ registerExclusiveView:` and `registerViewProtocol:`:
+Register by `+registerExclusiveView:` and `+registerViewProtocol:`:
 
 * iPhone6s real device: 50ms
 * iPhone5  real device: 220ms

@@ -21,6 +21,12 @@ extension EditorViewController: ZIKRoutableView {
 @end
 ```
 
+Or use convenient macro:
+
+```objectivec
+DeclareRoutableView(EditorViewController, EditorViewRouter)
+```
+
 </details>
 
 The routable declaration here is for supporting storyboard. When a segue is performed and the UIViewController is routable, ZIKRouter will search it's view router and prepare it.
@@ -59,7 +65,7 @@ class TestViewController: UIViewController {
         Router.perform(
             to: RoutableView<SwiftEditorViewInput>(),
             from: self,
-            configuring: { $0.routeType = .push }
+            routeType: .push
             )
     }
 }

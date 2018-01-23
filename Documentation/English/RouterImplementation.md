@@ -37,10 +37,10 @@ class EditorViewRouter: ZIKViewRouter<EditorViewController, ZIKViewRouteConfigur
         registerView(EditorViewController.self)
         
         //Register NoteEditorInput, then you can use this protocol to get this router
-        Registry.register(RoutableView<NoteEditorInput>(), forRouter: self)
+        register(RoutableView<NoteEditorInput>())
     }
     //Make sure all routable dependencies in this module is available.
-    override class func _autoRegistrationDidFinished() {
+    override class func _registrationDidFinished() {
         assert(Router.to(RoutableService<SomeServiceInput>()) != nil)
     }
     
@@ -51,6 +51,7 @@ class EditorViewRouter: ZIKViewRouter<EditorViewController, ZIKViewRouteConfigur
         return destination
     }
     
+    //Whether the destination from storyboard requires dependencies from external
     override static func destinationPrepared(_ destination: EditorViewController) -> Bool {
         if (destination.delegate != nil) {
             return true
@@ -124,7 +125,7 @@ Create a `ZIKViewRouter` subclass for `EditorViewController`:
     [self registerView:[EditorViewController class]];
     
     //Register NoteEditorInput, then you can use this protocol to get this router
-    [self registerViewProtocol:@protocol(NoteEditorInput)];
+    [self registerViewProtocol:ZIKRoutableProtocol(NoteEditorInput)];
 }
 
 //Return the destination module
@@ -134,6 +135,7 @@ Create a `ZIKViewRouter` subclass for `EditorViewController`:
     return destination;
 }
 
+//Whether the destination from storyboard requires dependencies from external
 + (BOOL)destinationPrepared:(EditorViewController *)destination {
     if (destination.delegate != nil) {
         return YES;

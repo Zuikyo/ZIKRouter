@@ -50,6 +50,7 @@ class SwiftSampleViewController: UIViewController, PureSwiftSampleViewInput, Swi
         }, errorHandler: { (action, error) in
             print("remove failed,error:%@",error)
         })
+        infoRouter = nil
     }
     
     @IBAction func testRouteForConfig(_ sender: Any) {

@@ -78,7 +78,7 @@ You should only use this when you really need it. If the protocol name is wrong,
 @implementation TestViewController
 
 - (void)showEditorViewController {
-	[ZIKViewRouter.toView(@protocol(NoteEditorInput))
+	[ZIKViewRouterToView(NoteEditorInput)
 	          performFromSource:self
 	          configuring:^(ZIKViewRouteConfiguration *config) {
 	              config.routeType = ZIKViewRouteTypePresentModally;
@@ -127,7 +127,7 @@ class TestViewController: UIViewController {
 
 - (void)viewDidLoad {
     [super viewDidLoad];
-    self.router = [[ZIKViewRouter.toView(@protocol(EditorViewInput)) alloc]
+    self.router = [[ZIKViewRouter.classToView(ZIKRoutableProtocol(EditorViewInput)) alloc]
                            initWithConfiguring:^(ZIKViewRouteConfiguration *config) {
                                config.source = self;
                                config.routeType = ZIKViewRouteTypePush;
@@ -163,7 +163,7 @@ Steps to support custom transition:
 
 ### Service Router
 
-If you want to do custom route action, override `-performRouteOnDestination:configuration:`。
+If you want to do custom route action, override `-performRouteOnDestination:configuration:`.
 
 Most service routers are just for getting a service object. You can use [Make Destination](MakeDestination.md).
 

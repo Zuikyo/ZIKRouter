@@ -21,6 +21,12 @@ extension EditorViewController: ZIKRoutableView {
 @end
 ```
 
+或者使用宏定义：
+
+```objectivec
+DeclareRoutableView(EditorViewController, EditorViewRouter)
+```
+
 </details>
 
 声明routable destination是为了支持storyboard，如果在执行segue时检测到view controller遵守`ZIKRoutableView`，就会去搜索view controller对应的view router进行依赖注入。
@@ -60,7 +66,7 @@ class TestViewController: UIViewController {
         Router.perform(
             to: RoutableView<SwiftEditorViewInput>(),
             from: self,
-            configuring: { $0.routeType = .push }
+            routeType: .push
             )
     }
 }

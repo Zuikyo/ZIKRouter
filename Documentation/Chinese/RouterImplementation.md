@@ -37,10 +37,10 @@ class EditorViewRouter: ZIKViewRouter<EditorViewController, ZIKViewRouteConfigur
         registerView(EditorViewController.self)
         
         //注册NoteEditorInput，注册后就可以用此protocol获取此router
-        Registry.register(RoutableView<NoteEditorInput>(), forRouter: self)
+        register(RoutableView<NoteEditorInput>())
     }
     //检查模块内使用的外部路由依赖是否有效
-    override class func _autoRegistrationDidFinished() {
+    override class func _registrationDidFinished() {
         //Make sure all routable dependencies in this module is available.
         assert(Router.to(RoutableService<SomeServiceInput>()) != nil)
     }
@@ -52,6 +52,7 @@ class EditorViewRouter: ZIKViewRouter<EditorViewController, ZIKViewRouteConfigur
         return destination
     }
     
+    //来自storyboard的destination，是否需要让source view controller进行配置
     override static func destinationPrepared(_ destination: EditorViewController) -> Bool {
         if (destination.delegate != nil) {
             return true
@@ -124,7 +125,7 @@ class EditorViewRouter: ZIKViewRouter<EditorViewController, ZIKViewRouteConfigur
     [self registerView:[EditorViewController class]];
     
     //注册NoteEditorInput，注册后就可以用此protocol获取此router
-    [self registerViewProtocol:@protocol(NoteEditorInput)];
+    [self registerViewProtocol:ZIKRoutableProtocol(NoteEditorInput)];
 }
 
 //返回需要获取的目的模块
@@ -134,6 +135,7 @@ class EditorViewRouter: ZIKViewRouter<EditorViewController, ZIKViewRouteConfigur
     return destination;
 }
 
+//来自storyboard的destination，是否需要让source view controller进行配置
 + (BOOL)destinationPrepared:(EditorViewController *)destination {
     if (destination.delegate != nil) {
         return YES;

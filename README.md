@@ -130,8 +130,7 @@ class TestViewController: UIViewController {
 
 - (void)showEditorDirectly {
     //Transition to editor view directly
-    [ZIKViewRouter.toView(@protocol(NoteEditorInput))
-	     performFromSource:self routeType:ZIKViewRouteTypePush];
+    [ZIKViewRouterToView(NoteEditorInput) performFromSource:self routeType:ZIKViewRouteTypePush];
 }
 
 @end
@@ -196,7 +195,7 @@ class TestViewController: UIViewController {
 
 - (void)showEditor {
     //Transition to editor view, and prepare the destination with NoteEditorInput
-    [ZIKViewRouter.toView(@protocol(NoteEditorInput))
+    [ZIKViewRouterToView(NoteEditorInput)
 	     performFromSource:self
 	     configuring:^(ZIKViewRouteConfig *config) {
 	         //Route config
@@ -280,7 +279,7 @@ class TestViewController: UIViewController {
 
 - (void)showEditorDirectly {
     //Hold the router
-    self.router = [ZIKViewRouter.toView(@protocol(NoteEditorInput))
+    self.router = [ZIKViewRouterToView(NoteEditorInput)
 	     performFromSource:self routeType:ZIKViewRouteTypePush];
 }
 
@@ -367,7 +366,7 @@ class TestViewController: UIViewController {
 
 - (void)callTimeService {
    //Get the service for TimeServiceInput
-   id<TimeServiceInput> timeService = [ZIKServiceRouter.toService(TimeServiceInput) makeDestination];
+   id<TimeServiceInput> timeService = [ZIKServiceRouterToService(TimeServiceInput) makeDestination];
    self.timeLabel.text = [timeService currentTimeString];    
 }
 

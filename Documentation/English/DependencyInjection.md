@@ -118,7 +118,7 @@ let person = Router.makeDestination(to: RoutableServiceModule<PersonConfig>(), p
 
 ```objectivec
 id<Name> name = ...
-Person *person = [ZIKServiceRouter.toModule(@protocol(PersonConfig)) 
+Person *person = [ZIKServiceRouterToModule(PersonConfig) 
          makeDestinationWithConfiguring:^(ZIKPerformRouteConfiguration<PersonConfig> * _Nonnull config) {
             [config constructWithName:name];
         }];
@@ -214,7 +214,7 @@ let person = Router.makeDestination(to: RoutableService<PersonType>(), preparati
 ```objectivec
 Person *wife = ...
 Child *child = ...
-Person *person = [ZIKServiceRouter.toService(@protocol(PersonType)) 
+Person *person = [ZIKServiceRouterToService(PersonType) 
          makeDestinationWithPreparation:^(id<PersonType> destination) {
             destination.wife = wife;
             [destination addChild:child];

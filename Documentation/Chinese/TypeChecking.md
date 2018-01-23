@@ -11,32 +11,58 @@ ZIKRouter对路由进行了安全检查和使用限制，能够最大程度地�
 
 Swift中，用条件extension来声明可路由的protocol，从而利用编译器检查非法protocol的使用。
 
-具体见[Routable Declaration](RoutableDeclaration.md#Routable)。
+具体见 [Routable Declaration](RoutableDeclaration.md#Routable)。
 
 #### Objective-C
 
-对于Objective-C，我们需要自己制造编译检查。例如定义这样一个获取router子类的方法：
+在Objective-C中，使用一些虚假类和宏定义制造编译检查。
+
+在注册protocol和获取router类时，用`ZIKRoutableProtocol`包裹protocol：
 
 ```objectivec
-Class ViewRouterToView(Protocol<ZIKViewRoutable> *viewProtocol);
+@implementation EditorViewRouter
+
++ (void)registerRoutableDestination {
+    [self registerView:[EditorViewController class]];
+    
+    //如果protocol不是继承自ZIKViewRoutable，将会编译错误
+    [self registerViewProtocol:ZIKRoutableProtocol(NoteEditorInput)];
+}
+
+@end
 ```
-当你向`ViewRouterToView`函数传入一个protocol时，会产生编译警告`Incompatible pointer types passing 'Protocol *' to parameter of type 'Protocol<ZIKViewRoutable> *'`：
+```
+//如果protocol不是继承自ZIKViewRoutable，将会编译错误
+ZIKViewRouter.classToView(ZIKRoutableProtocol(NoteEditorInput))
+```
+
+使用宏定义 `ZIKViewRouterToView`、`ZIKViewRouterToModule`、`ZIKServiceRouterToService`、`ZIKServiceRouterToModule` 来获取router类：
+
+```objectivec
+//如果protocol不是继承自ZIKViewRoutable，将会编译错误
+ZIKViewRouterToView(NoteEditorInput)
+```
+
+在调用方法时，方法中的参数也会自动进行编译检查：
+
+```objectivec
+//3处地方的参数有继承关系
+[ZIKViewRouterToView(NoteEditorInput) //1
+     performFromSource:self
+     routeConfiguring:^(ZIKViewRouteConfig *config,
+                        void (^prepareDest)(void (^)(id<NoteEditorInput>)), //2
+                        void (^prepareModule)(void (^)(ZIKViewRouteConfig *))) {
+         config.routeType = ZIKViewRouteTypePush;
+         prepareDest(^(id<NoteEditorInput> dest){ //3
+             dest.delegate = weakSelf;
+             dest.name = @"zuik";
+             dest.age = 18;
+         });
+     }];
 
 ```
-Class viewRouterClass = ViewRouterToView(@protocol(EditorViewInput));
-```
-，你可以在工程的`Build Settings->Other C Flags`里添加`-Werror=incompatible-pointer-types`，将编译警告转为编译错误。
 
-这时候，对于声明为routable的protocol，需要用宏定义进行类型强制转换：
-
-```
-#define RoutableView_EditorViewInput (Protocol<ZIKViewRoutable> *)@protocol(EditorViewInput)
-```
-在使用宏定义执行路由时就可以消除警告了：
-
-```
-Class viewRouterClass = ViewRouterToView(RoutableView_EditorViewInput);
-```
+这里的编译检查并不像Swift中那样完美。编译器只会检查是否有继承关系，当参数变成了parent protocol时，并不会有编译错误。
 
 ## 动态检查
 
@@ -54,7 +80,7 @@ Objective-C可以保证所有声明为routable的protocol都注册给了对应�
 ```swift
 class SwiftSampleViewRouter: ZIKAnyViewRouter {
     ...
-    override class func _autoRegistrationDidFinished() {
+    override class func _registrationDidFinished() {
         //Make sure all routable dependencies in this module is available.
         assert((Router.to(RoutableService<SwiftServiceInput>()) != nil))
     }
@@ -72,8 +98,8 @@ class SwiftSampleViewRouter: ZIKViewRouter<SwiftSampleViewController, SwiftSampl
     
     override class func registerRoutableDestination() {
         registerView(SwiftSampleViewController.self)
-        Registry.register(RoutableView<PureSwiftSampleViewInput>(), forRouter: self)
-        Registry.register(RoutableViewModule<SwiftSampleViewConfig>(), forRouter: self)
+        register(RoutableView<PureSwiftSampleViewInput>())
+        register(RoutableViewModule<SwiftSampleViewConfig>())
     }
     
     override class func defaultRouteConfiguration() -> SwiftSampleViewConfiguration {

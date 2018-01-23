@@ -11,7 +11,7 @@ class CommonAlertViewRouter: ZIKAnyViewRouter {
     override class func registerRoutableDestination() {
         registerView(UIAlertViewController.self)
         registerView(UIAlertView.self)
-        Registry.register(RoutableView<CommonAlertViewInput>(), forRouter: self)
+        register(RoutableView<CommonAlertViewInput>())
     }
 }
 ```
@@ -19,7 +19,7 @@ class CommonAlertViewRouter: ZIKAnyViewRouter {
 class EasyAlertViewRouter: ZIKAnyViewRouter {
     override class func registerRoutableDestination() {
         registerView(UIAlertViewController.self)
-        Registry.register(RoutableView<EasyAlertViewInput>(), forRouter: self)
+        register(RoutableView<EasyAlertViewInput>())
     }
 }
 ```
@@ -67,7 +67,7 @@ class EditorViewRouter: ZIKViewRouter<EditorViewController, EditorModuleConfigur
     //注册当前Router所管理的view和protocol
     override class func registerRoutableDestination() {
         registerView(EditorViewController.self)
-        Registry.register(RoutableViewModule<EditorModuleConfig>(), forRouter: self)
+        register(RoutableViewModule<EditorModuleConfig>())
     }
     //使用自定义模块配置
     override defaultConfiguration() -> EditorModuleConfiguration {
@@ -108,12 +108,12 @@ App启动时会遍历所有的类，自动执行所有router的`registerRoutable
 
 在测试项目中有5000个view controller，5000个view router。
 
-用`+registerView:`和`registerViewProtocol:`注册：
+用`+registerView:`和`+registerViewProtocol:`注册：
 
 * iPhone6s真机：58ms
 * iPhone5真机：240ms
 
-用`+ registerExclusiveView:`和`registerViewProtocol:`注册：
+用`+registerExclusiveView:`和`+registerViewProtocol:`注册：
 
 * iPhone6s真机：50ms
 * iPhone5真机：220ms

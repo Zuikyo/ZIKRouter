@@ -43,7 +43,7 @@ Router.perform(
 @end
 
 //Module A中调用Login模块
-[ZIKViewRouter.toView(@protocol(ModuleARequiredLoginViewInput))
+[ZIKViewRouterToView(ModuleARequiredLoginViewInput)
 	          performFromSource:self
 	          configuring:^(ZIKViewRouteConfiguration *config) {
 	              config.routeType = ZIKViewRouteTypePresentModally;
@@ -70,7 +70,7 @@ protocol ProvidedLoginViewInput {
 class EditorAdapter: ZIKViewRouteAdapter {
     override class func registerRoutableDestination() {
         //注册后就可以用ModuleARequiredLoginViewInput获取router
-        ZIKEditorViewRouter.registerViewProtocol(ModuleARequiredLoginViewInput.self);
+        register(RoutableView<ModuleARequiredLoginViewInput>())
     }
 }
 
@@ -103,7 +103,7 @@ extension LoginViewController: ModuleARequiredLoginViewInput {
 
 + (void)registerRoutableDestination {
 	//注册ModuleARequiredLoginViewInput和ZIKEditorViewRouter匹配
-	[ZIKEditorViewRouter registerViewProtocol:@protocol(ModuleARequiredLoginViewInput)];
+	[ZIKEditorViewRouter registerViewProtocol:ZIKRoutableProtocol(ModuleARequiredLoginViewInput)];
 }
 
 @end
@@ -181,7 +181,7 @@ protocol ProvidedLoginViewInput {
 class ModuleAReqiredEditorViewRouter: ZIKViewRouter {
    override class func registerRoutableDestination() {
        registerView(/* proxy的类*/);
-       registerViewProtocol(ModuleARequiredLoginViewInput.self);
+       register(RoutableView<ModuleARequiredLoginViewInput>())
    }
    override func destination(with configuration: ZIKViewRouteConfiguration) -> ModuleARequiredLoginViewInput? {
        let realDestination: ProvidedLoginViewInput = ZIKEditorViewRouter.makeDestination()
@@ -199,7 +199,7 @@ class ModuleAReqiredEditorViewRouter: ZIKViewRouter {
 + (void)registerRoutableDestination {
 	//注册ModuleARequiredLoginViewInput，和新的ZIKModuleARequiredEditorViewRouter配对，而不是目的模块中的ZIKEditorViewRouter
 	[self registerView:/* mediator的类*/];
-	[self registerViewProtocol:@protocol(NoteListRequiredNoteEditorProtocol)];
+	[self registerViewProtocol:ZIKRoutableProtocol(NoteListRequiredNoteEditorProtocol)];
 }
 - (id)destinationWithConfiguration:(ZIKViewRouteConfiguration *)configuration {
    //用ZIKEditorViewRouter获取真正的destination
