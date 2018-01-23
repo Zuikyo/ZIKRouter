@@ -19,6 +19,6 @@ Pod::Spec.new do |s|
 
   s.requires_arc = true
 
-  s.dependency "ZIKRouter", '>= 0.12.0'
+  s.dependency "ZIKRouter", '>= 0.12.1'
 
 end
