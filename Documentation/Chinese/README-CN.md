@@ -381,13 +381,13 @@ Demo目录下的ZIKRouterDemo展示了如何用ZIKRouter进行各种界面跳转
 可以用Cocoapods安装ZIKRouter：
 
 ```
-pod 'ZIKRouter', '0.11.0'
+pod 'ZIKRouter', '0.12.0'
 ```
 
 如果是Swift项目，则使用ZRouter：
 
 ```
-pod 'ZRouter', '0.6.0'
+pod 'ZRouter', '0.7.0'
 ```
 
 ## License
