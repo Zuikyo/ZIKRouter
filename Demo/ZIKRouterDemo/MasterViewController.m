@@ -43,7 +43,8 @@ typedef NS_ENUM(NSInteger,ZIKRouterTestType) {
 };
 
 @interface MasterViewController () <UIViewControllerPreviewingDelegate>
-
+@property (nonatomic, strong) NSArray<NSString *> *cellNames;
+@property (nonatomic, strong) NSArray<Class> *routerClasses;
 @end
 
 @implementation MasterViewController
@@ -53,6 +54,41 @@ typedef NS_ENUM(NSInteger,ZIKRouterTestType) {
     if ([self respondsToSelector:@selector(registerForPreviewingWithDelegate:sourceView:)]) {
         [self registerForPreviewingWithDelegate:self sourceView:self.view];
     }
+    self.cellNames = @[
+                       @"Test Push",
+                       @"Test PresentModally",
+                       @"Test PresentAsPopover",
+                       @"Test PerformSegue",
+                       @"Test Show",
+                       @"Test ShowDetail",
+                       @"Test AddAsChildViewController",
+                       @"Test AddAsSubview",
+                       @"Test Custom",
+                       @"Test GetDestination",
+                       @"Test AutoCreate",
+                       @"Test Circular Dependencies",
+                       @"Test Subclass Hierarchy",
+                       @"Test ServiceRouter",
+                       @"Swift Sample"
+                       ];
+    self.routerClasses = @[
+                           [ZIKTestPushViewRouter class],
+                           [ZIKTestPresentModallyViewRouter class],
+                           [ZIKTestPresentAsPopoverViewRouter class],
+                           [ZIKTestPerformSegueViewRouter class],
+                           [ZIKTestShowViewRouter class],
+                           [ZIKTestShowDetailViewRouter class],
+                           [ZIKTestAddAsChildViewRouter class],
+                           [ZIKTestAddAsSubviewViewRouter class],
+                           [ZIKTestCustomViewRouter class],
+                           [ZIKTestGetDestinationViewRouter class],
+                           [ZIKTestAutoCreateViewRouter class],
+                           [ZIKTestCircularDependenciesViewRouter class],
+                           [TestClassHierarchyViewRouter class],
+                           [ZIKTestServiceRouterViewRouter class],
+                           ZIKViewRouter.classToView(ZIKRoutableProtocol(SwiftSampleViewInput))
+                           ];
+    NSAssert(self.cellNames.count == self.routerClasses.count, nil);
 }
 
 - (void)viewWillAppear:(BOOL)animated {
@@ -69,70 +105,18 @@ typedef NS_ENUM(NSInteger,ZIKRouterTestType) {
 
 #pragma mark - Table View
 
-- (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView {
-    return 1;
-}
-
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
-    return 15;
+    return self.cellNames.count;
 }
 
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
     UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:@"Cell" forIndexPath:indexPath];
     
-    NSString *name;
-    ZIKRouterTestType testType = indexPath.row;
-    switch (testType) {
-        case ZIKRouterTestTypePush:
-            name = @"Test Push";
-            break;
-        case ZIKRouterTestTypePresentModally:
-            name = @"Test PresentModally";
-            break;
-        case ZIKRouterTestTypePresentAsPopover:
-            name = @"Test PresentAsPopover";
-            break;
-        case ZIKRouterTestTypePerformSegue:
-            name = @"Test PerformSegue";
-            break;
-        case ZIKRouterTestTypeShow:
-            name = @"Test Show";
-            break;
-        case ZIKRouterTestTypeShowDetail:
-            name = @"Test ShowDetail";
-            break;
-        case ZIKRouterTestTypeAddAsChildViewController:
-            name = @"Test AddAsChildViewController";
-            break;
-        case ZIKRouterTestTypeAddAsSubview:
-            name = @"Test AddAsSubview";
-            break;
-        case ZIKRouterTestTypeCustom:
-            name = @"Test Custom";
-            break;
-        case ZIKRouterTestTypeGetDestination:
-            name = @"Test GetDestination";
-            break;
-        case ZIKRouterTestTypeAutoCreate:
-            name = @"Test AutoCreate";
-            break;
-        case ZIKRouterTestTypeCircularDependencies:
-            name = @"Test Circular Dependencies";
-            break;
-        case ZIKRouterTestTypeSubclassHierarchy:
-            name = @"Test Subclass Hierarchy";
-            break;
-        case ZIKRouterTestTypeServiceRouter:
-            name = @"Test ServiceRouter";
-            break;
-        case ZIKRouterTestTypeSwiftSample:
-            name = @"Swift Sample";
-            break;
-        default:
-            name = @"undefined";
-            break;
+    NSString *name = @"undefined";
+    if (self.cellNames.count > indexPath.row) {
+        name = self.cellNames[indexPath.row];
     }
     cell.textLabel.text = name;
     return cell;
@@ -162,68 +146,8 @@ typedef NS_ENUM(NSInteger,ZIKRouterTestType) {
 
 - (Class)routerClassForIndexPath:(NSIndexPath *)indexPath {
     Class routerClass;
-    ZIKRouterTestType testType = indexPath.row;
-    switch (testType) {
-        case ZIKRouterTestTypePush:
-            routerClass = [ZIKTestPushViewRouter class];
-            break;
-            
-        case ZIKRouterTestTypePresentModally:
-            routerClass = [ZIKTestPresentModallyViewRouter class];
-            break;
-            
-        case ZIKRouterTestTypePresentAsPopover:
-            routerClass = [ZIKTestPresentAsPopoverViewRouter class];
-            break;
-            
-        case ZIKRouterTestTypePerformSegue:
-            routerClass = [ZIKTestPerformSegueViewRouter class];
-            break;
-            
-        case ZIKRouterTestTypeShow:
-            routerClass = [ZIKTestShowViewRouter class];
-            break;
-            
-        case ZIKRouterTestTypeShowDetail:
-            routerClass = [ZIKTestShowDetailViewRouter class];
-            break;
-            
-        case ZIKRouterTestTypeAddAsChildViewController:
-            routerClass = [ZIKTestAddAsChildViewRouter class];
-            break;
-            
-        case ZIKRouterTestTypeAddAsSubview:
-            routerClass = [ZIKTestAddAsSubviewViewRouter class];
-            break;
-            
-        case ZIKRouterTestTypeCustom:
-            routerClass = [ZIKTestCustomViewRouter class];
-            break;
-            
-        case ZIKRouterTestTypeGetDestination:
-            routerClass = [ZIKTestGetDestinationViewRouter class];
-            break;
-            
-        case ZIKRouterTestTypeAutoCreate:
-            routerClass = [ZIKTestAutoCreateViewRouter class];
-            break;
-            
-        case ZIKRouterTestTypeCircularDependencies:
-            routerClass = [ZIKTestCircularDependenciesViewRouter class];
-            break;
-            
-        case ZIKRouterTestTypeSubclassHierarchy:
-            routerClass = [TestClassHierarchyViewRouter class];
-            break;
-            
-        case ZIKRouterTestTypeServiceRouter:
-            routerClass = [ZIKTestServiceRouterViewRouter class];
-            break;
-            
-        case ZIKRouterTestTypeSwiftSample:
-//            routerClass = [SwiftSampleViewRouter class];
-            routerClass = ZIKViewRouter.classToView(ZIKRoutableProtocol(SwiftSampleViewInput));
-            break;
+    if (self.routerClasses.count > indexPath.row) {
+        routerClass = self.routerClasses[indexPath.row];
     }
     return routerClass;
 }
