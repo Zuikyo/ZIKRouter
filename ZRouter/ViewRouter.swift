@@ -126,6 +126,124 @@ public class ViewRouter<Destination, ModuleConfig> {
         })
     }
     
+    // MARK: Perform on Destination
+    
+    /// Perform route on destination. If you get a prepared destination by ZIKViewRouteTypeGetDestination, you can use this method to perform route on the destination.
+    ///
+    /// - Parameters:
+    ///   - destination: The destination to perform route.
+    ///   - source: The source view.
+    ///   - configBuilder: Builder for config when perform route.
+    ///   - removeConfigBuilder: Builder for config when remove route.
+    /// - Returns: A new router for the destination. If the destination is not registered with this router class, return nil and get assert failure.
+    public func perform(onDestination destination: Destination, from source: ZIKViewRouteSource?, configuring configBuilder: (ViewRouteConfig, DestinationPreparation, ModulePreparation) -> Void, removing removeConfigBuilder: ((ViewRemoveConfig, DestinationPreparation) -> Void)? = nil) -> ViewRouter<Destination, ModuleConfig>? {
+        var removeBuilder: ((ViewRemoveConfig) -> Void)? = nil
+        if let configBuilder = removeConfigBuilder {
+            removeBuilder = { (config: ViewRemoveConfig) in
+                let prepareDestination = { (prepare: @escaping (Destination) -> Void) in
+                    config.prepareDestination = { d in
+                        if let destination = d as? Destination {
+                            prepare(destination)
+                        }
+                    }
+                }
+                configBuilder(config, prepareDestination)
+            }
+        }
+        guard let dest = destination as? ZIKRoutableView else {
+            ZIKAnyViewRouter._callbackGlobalErrorHandler(with: nil, action: .init, error: ZIKAnyViewRouter.error(withCode: ZIKViewRouteError.invalidConfiguration.rawValue, localizedDescription: "Perform route on invalid destination: \(destination)"))
+            return nil
+        }
+        let routed = routerType.perform(onDestination: dest, from: source, configuring: { (config) in
+            let prepareDestination = { (prepare: @escaping (Destination) -> Void) in
+                config.prepareDestination = { d in
+                    if let destination = d as? Destination {
+                        prepare(destination)
+                    }
+                }
+            }
+            let prepareModule = { (prepare: (ModuleConfig) -> Void) in
+                if let moduleConfig = config as? ModuleConfig {
+                    prepare(moduleConfig)
+                }
+            }
+            configBuilder(config, prepareDestination, prepareModule)
+        }, removing: removeBuilder)
+        
+        if routed == nil {
+            return nil
+        }
+        assert(Registry.validateConformance(destination: dest, inViewRouterType: routerType))
+        let router = ViewRouter<Destination, ModuleConfig>(routerType: routerType)
+        router.routed = routed
+        return router
+    }
+    
+    /// Perform route on destination with route type. If you get a prepared destination by ZIKViewRouteTypeGetDestination, you can use this method to perform route on the destination.
+    ///
+    /// - Parameters:
+    ///   - destination: The destination to perform route.
+    ///   - source: The source view.
+    ///   - routeType: Route type to perform.
+    /// - Returns: A new router for the destination. If the destination is not registered with this router class, return nil and get assert failure.
+    public func perform(onDestination destination: Destination, from source: ZIKViewRouteSource?, routeType: ViewRouteType) -> ViewRouter<Destination, ModuleConfig>? {
+        return perform(onDestination: destination, from: source, configuring: { (config, _, _) in
+            config.routeType = routeType
+        })
+    }
+    
+    // MARK: Prepare Destination
+    
+    /// Prepare destination from external, then you can use the router to perform route. You can also use this as a builder to prepare view created from external.
+    ///
+    /// - Parameters:
+    ///   - destination: The destination to prepare. Destination must be registered with this router class.
+    ///   - configBuilder: Builder for config when perform route.
+    ///   - removeConfigBuilder: Builder for config when remove route.
+    /// - Returns: A new router for the destination. If the destination is not registered with this router class, return nil and get assert failure.
+    public func prepare(destination: Destination, configuring configBuilder: @escaping (ViewRouteConfig, DestinationPreparation, ModulePreparation) -> Void, removing removeConfigBuilder: ((ViewRemoveConfig, DestinationPreparation) -> Void)? = nil) -> ViewRouter<Destination, ModuleConfig>? {
+        var removeBuilder: ((ViewRemoveConfig) -> Void)? = nil
+        if let configBuilder = removeConfigBuilder {
+            removeBuilder = { (config: ViewRemoveConfig) in
+                let prepareDestination = { (prepare: @escaping (Destination) -> Void) in
+                    config.prepareDestination = { d in
+                        if let destination = d as? Destination {
+                            prepare(destination)
+                        }
+                    }
+                }
+                configBuilder(config, prepareDestination)
+            }
+        }
+        guard let dest = destination as? ZIKRoutableView else {
+            ZIKAnyViewRouter._callbackGlobalErrorHandler(with: nil, action: .init, error: ZIKAnyViewRouter.error(withCode: ZIKViewRouteError.invalidConfiguration.rawValue, localizedDescription: "Perform route on invalid destination: \(destination)"))
+            return nil
+        }
+        let routed = routerType.prepareDestination(dest, configuring: { (config) in
+            let prepareDestination = { (prepare: @escaping (Destination) -> Void) in
+                config.prepareDestination = { d in
+                    if let destination = d as? Destination {
+                        prepare(destination)
+                    }
+                }
+            }
+            let prepareModule = { (prepare: (ModuleConfig) -> Void) in
+                if let moduleConfig = config as? ModuleConfig {
+                    prepare(moduleConfig)
+                }
+            }
+            configBuilder(config, prepareDestination, prepareModule)
+        }, removing: removeBuilder)
+        
+        if routed == nil {
+            return nil
+        }
+        assert(Registry.validateConformance(destination: dest, inViewRouterType: routerType))
+        let router = ViewRouter<Destination, ModuleConfig>(routerType: routerType)
+        router.routed = routed
+        return router
+    }
+    
     // MARK: Remove
     
     /// Whether can remove a performed view route. Always use it in main thread, bacause state may be changed in main thread after you check the state in child thread.
@@ -234,7 +352,6 @@ public class ViewRouter<Destination, ModuleConfig> {
         assert(destination == nil || Registry.validateConformance(destination: destination!, inViewRouterType: routerType))
         return destination as? Destination
     }
-    
     
     public func description(of state: ZIKRouterState) -> String {
         return routerType.description(of: state)

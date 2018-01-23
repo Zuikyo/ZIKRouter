@@ -20,12 +20,18 @@ protocol PureSwiftSampleViewInput {
 }
 
 // Show how ZIKRouter working in a swifty way.
-class SwiftSampleViewController: UIViewController, PureSwiftSampleViewInput, SwiftSampleViewInput, ZIKInfoViewDelegate {
+class SwiftSampleViewController: UIViewController, PureSwiftSampleViewInput, SwiftSampleViewInput, ZIKInfoViewDelegate, UIViewControllerPreviewingDelegate {
     var infoRouter: ViewRouter<ZIKInfoViewProtocol, ViewRouteConfig>?
     var alertRouter: ViewRouter<Any, ZIKCompatibleAlertConfigProtocol>?
     
     //You can inject alertRouter from outside, then use the router directly
     var injectedAlertRouter: ViewRouter<Any, ZIKCompatibleAlertConfigProtocol>?
+    
+    override func viewDidLoad() {
+        if #available(iOS 9.0, *) {
+            registerForPreviewing(with: self, sourceView: view)
+        }
+    }
     
     @IBAction func testRouteForView(_ sender: Any) {
         infoRouter = Router.perform(
@@ -134,6 +140,25 @@ class SwiftSampleViewController: UIViewController, PureSwiftSampleViewInput, Swi
         let service = Router.makeDestination(to: RoutableService<SwiftServiceInput>())
         service?.swiftFunction()
     }
+    
+    public func previewingContext(_ previewingContext: UIViewControllerPreviewing, viewControllerForLocation location: CGPoint) -> UIViewController? {
+        let destination = Router.makeDestination(to: RoutableView<ZIKInfoViewProtocol>())
+        return destination as? UIViewController
+    }
+    
+    public func previewingContext(_ previewingContext: UIViewControllerPreviewing, commit viewControllerToCommit: UIViewController) {
+        guard let destination = viewControllerToCommit as? ZIKInfoViewProtocol else {
+            return
+        }
+        infoRouter = Router.to(RoutableView<ZIKInfoViewProtocol>())?.perform(onDestination: destination, from: self, configuring: { (config, prepareDest, _) in
+            config.routeType = .presentModally
+            prepareDest({ [weak self] d in
+                d.delegate = self
+                d.name = "test"
+            })
+        })
+    }
+    
     /*
     // MARK: - Navigation
 

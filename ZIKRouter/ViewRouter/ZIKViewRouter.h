@@ -160,6 +160,7 @@ NS_ASSUME_NONNULL_BEGIN
  Perform route on destination. If you get a prepared destination by ZIKViewRouteTypeGetDestination, you can use this method to perform route on the destination.
  
  @param destination The destination to perform route.
+ @param source The source view.
  @param configBuilder Builder for config when perform route.
  @return A router for the destination. If the destination is not registered with this router class, return nil and get assert failure.
  */
@@ -171,6 +172,7 @@ NS_ASSUME_NONNULL_BEGIN
  Perform route on destination. If you get a prepared destination by ZIKViewRouteTypeGetDestination, you can use this method to perform route on the destination.
 
  @param destination The destination to perform route.
+ @param source The source view.
  @param configBuilder Builder for config when perform route.
  @param removeConfigBuilder Builder for config when remove route.
  @return A router for the destination. If the destination is not registered with this router class, return nil and get assert failure.
@@ -196,6 +198,7 @@ NS_ASSUME_NONNULL_BEGIN
  Perform route on destination and prepare destination in a type safe way inferred by generic parameters. If you get a prepared destination by ZIKViewRouteTypeGetDestination, you can use this method to perform route on the destination.
  
  @param destination The destination to perform route.
+ @param source The source view.
  @param configBuilder Type safe builder to build configuration, `prepareDest` is for setting `prepareDestination` block for configuration (it's an escapting block so use weakSelf in it), `prepareModule` is for setting custom route config.
  @return A router for the destination. If the destination is not registered with this router class, return nil and get assert failure.
  */
@@ -210,6 +213,7 @@ NS_ASSUME_NONNULL_BEGIN
  Perform route on destination and prepare destination in a type safe way inferred by generic parameters. If you get a prepared destination by ZIKViewRouteTypeGetDestination, you can use this method to perform route on the destination.
  
  @param destination The destination to perform route.
+ @param source The source view.
  @param configBuilder Type safe builder to build configuration, `prepareDest` is for setting `prepareDestination` block for configuration (it's an escapting block so use weakSelf in it), `prepareModule` is for setting custom route config.
  @param removeConfigBuilder Type safe builder to build remove configuration, `prepareDest` is for setting `prepareDestination` block for configuration (it's an escapting block so use weakSelf in it).
  @return A router for the destination. If the destination is not registered with this router class, return nil and get assert failure.
