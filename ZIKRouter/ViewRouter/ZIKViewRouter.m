@@ -1743,7 +1743,6 @@ static _Nullable Class _routerClassToRegisteredView(Class viewClass) {
     if (isRoutableView) {
         BOOL routed = [(UIViewController *)self zix_routed];
         if (!routed) {
-            NSAssert(removing == NO, @"removing a not routed view is unexpected");
             UIViewController *parentMovingTo = [(UIViewController *)self zix_parentMovingTo];
             [[NSNotificationCenter defaultCenter] postNotificationName:kZIKViewRouteWillPerformRouteNotification object:destination];
             NSNumber *routeTypeFromRouter = [destination zix_routeTypeFromRouter];
@@ -3187,11 +3186,16 @@ static _Nullable Class _routerClassToRegisteredView(Class viewClass) {
         NSAssert2(NO, @"Perform route on invalid destination (%@), this view is not registered with this router (%@)",destination,self);
         return nil;
     }
-    ZIKViewRouter *router = [[self alloc] initWithConfiguring:(void(^)(ZIKPerformRouteConfiguration *))configBuilder removing:(void(^)(ZIKRemoveRouteConfiguration *))removeConfigBuilder];
+    ZIKViewRouter *router = [[self alloc] initWithConfiguring:^(ZIKPerformRouteConfiguration *config) {
+        ZIKViewRouteConfiguration *configuration = (ZIKViewRouteConfiguration *)config;
+        if (configBuilder) {
+            configBuilder(configuration);
+        }
+        if (source) {
+            configuration.source = source;
+        }
+    } removing:(void(^)(ZIKRemoveRouteConfiguration *))removeConfigBuilder];
     NSAssert([(ZIKViewRouteConfiguration *)router.original_configuration routeType] != ZIKViewRouteTypeGetDestination, @"It's meaningless to get destination when you already offer a prepared destination.");
-    if (source) {
-        [(ZIKViewRouteConfiguration *)router.original_configuration setSource:source];
-    }
     [router attachDestination:destination];
     [router performRouteOnDestination:destination configuration:router.original_configuration];
     return router;
