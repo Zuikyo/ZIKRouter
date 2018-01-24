@@ -63,15 +63,12 @@
                                };
                                config.routeCompletion = ^(id  _Nonnull destination) {
                                    NSLog(@"present as popover complete");
+                                   [weakSelf removeInfoViewController];
                                };
                                config.errorHandler = ^(ZIKRouteAction routeAction, NSError * _Nonnull error) {
                                    NSLog(@"present as popover failed: %@",error);
                                };
                            }];
-    
-    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(2 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
-        [self removeInfoViewController];
-    });
 }
 
 - (void)removeInfoViewController {

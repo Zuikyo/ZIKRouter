@@ -84,9 +84,9 @@ NS_ASSUME_NONNULL_BEGIN
 
 ///Custom route for ZIKViewRouteTypeCustom. The router must override +supportedRouteTypes to add ZIKViewRouteTypeMaskCustom.
 
-///Whether the router can perform custom route now.
+///Whether the router can perform custom route now. Default is NO.
 - (BOOL)canPerformCustomRoute;
-///Whether the router can remove custom route now.
+///Whether the router can remove custom route now. Default is NO.
 - (BOOL)canRemoveCustomRoute;
 
 ///Perform your custom route. You must maintain the router's state with methods in ZIKViewRouterInternal.h.

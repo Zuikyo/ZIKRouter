@@ -1716,13 +1716,11 @@ static _Nullable Class _routerClassToRegisteredView(Class viewClass) {
 - (void)ZIKViewRouter_hook_didMoveToParentViewController:(UIViewController *)parent {
     [self ZIKViewRouter_hook_didMoveToParentViewController:parent];
     if (parent) {
-        NSAssert([(UIViewController *)self parentViewController], @"currentParent shouldn't be nil when didMoved to parent");
 //        NSAssert([(UIViewController *)self zix_parentMovingTo] ||
 //                 [(UIViewController *)self zix_isRootViewControllerInContainer], @"parentMovingTo should be set in -ZIKViewRouter_hook_willMoveToParentViewController:. But if a container is from storyboard, it's not created with initWithRootViewController:, so rootViewController may won't call willMoveToParentViewController: before didMoveToParentViewController:.");
         
         [(UIViewController *)self setZix_parentMovingTo:nil];
     } else {
-        NSAssert([(UIViewController *)self parentViewController] == nil, @"currentParent should be nil when removed from parent");
         //If you do removeFromSuperview before removeFromParentViewController, -didMoveToParentViewController:nil in child view controller may be called twice.
         //        NSAssert([(UIViewController *)self zix_parentRemovingFrom], @"RemovingFrom should be set in -ZIKViewRouter_hook_willMoveToParentViewController.");
         
