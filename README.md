@@ -478,7 +478,7 @@ extension RoutableView where Protocol == NoteEditorInput {
 
 ```objectivec
 //Declare NoteEditorViewController is routable
-DeclareRoutableView(MasterViewController, MasterViewRouter)
+DeclareRoutableView(NoteEditorViewController, NoteEditorViewRouter)
 
 ///If the protocol inherits from ZIKViewRoutable, it's routable
 @protocol NoteEditorInput <ZIKViewRoutable>
