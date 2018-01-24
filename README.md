@@ -382,7 +382,9 @@ The demo (ZIKRouterDemo) in this repository shows how to use ZIKRouter to perfor
 
 If you want to see how it works in a VIPER architecture app, go to [ZIKViper](https://github.com/Zuikyo/ZIKViper).
 
-## Cocoapods
+## Installation
+
+### Cocoapods
 
 For Objective-C project:
 
@@ -394,6 +396,155 @@ For Swift project:
 ```
 pod 'ZRouter', '0.8.0'
 ```
+
+## How to use
+
+Quick start to use ZIKRouter.
+
+### 1.Create Router
+
+Create router subclass for your module:
+
+```swift
+import ZIKRouter.Internal
+import ZRouter
+
+class NoteEditorViewRouter: ZIKViewRouter<NoteEditorViewController, ViewRouteConfig> {
+    override class func registerRoutableDestination() {
+        registerView(NoteEditorViewController.self)
+        register(RoutableView<NoteEditorInput>())
+    }
+    
+    override func destination(with configuration: ViewRouteConfig) -> NoteEditorViewController? {
+        let destination: SwiftSampleViewController? = ... ///instantiate your view controller
+        return destination
+    }
+    
+    override func prepareDestination(_ destination: NoteEditorViewController, configuration: ViewRouteConfig) {
+        //Inject dependencies to destination
+    }
+}
+```
+
+<details><summary>Objective-C Sample</summary>
+
+```objectivec
+//NoteEditorViewRouter.h
+@import ZIKRouter;
+
+@interface NoteEditorViewRouter : ZIKViewRouter
+@end
+
+//NoteEditorViewRouter.m
+@import ZIKRouter.Internal;
+
+@implementation NoteEditorViewRouter
+
++ (void)registerRoutableDestination {
+    [self registerView:[NoteEditorViewRouter class]];
+    [self registerViewProtocol:ZIKRoutableProtocol(NoteEditorInput)];
+}
+
+- (NoteEditorViewRouter *)destinationWithConfiguration:(ZIKViewRouteConfiguration *)configuration {
+    NoteEditorViewRouter *destination = ... ///instantiate your view controller
+    return destination;
+}
+
+- (void)prepareDestination:(NoteEditorViewRouter *)destination configuration:(ZIKViewRouteConfiguration *)configuration {
+    //Inject dependencies to destination
+}
+```
+
+</details>
+
+Read the documentation for more details and more methods to override.
+
+### 2.Declare Routable Type
+
+```swift
+//Declare NoteEditorViewController is routable
+extension NoteEditorViewController: ZIKRoutableView {
+}
+
+//Declare NoteEditorInput is routable
+extension RoutableView where Protocol == NoteEditorInput {
+    init() { }
+}
+```
+
+<details><summary>Objective-C Sample</summary>
+
+```objectivec
+//Declare NoteEditorViewController is routable
+DeclareRoutableView(MasterViewController, MasterViewRouter)
+
+///If the protocol inherits from ZIKViewRoutable, it's routable
+@protocol NoteEditorInput <ZIKViewRoutable>
+@property (nonatomic, weak) id<EditorDelegate> delegate;
+- (void)constructForCreatingNewNote;
+@end
+```
+
+</details>
+
+### 3.Use
+
+```swift
+class TestViewController: UIViewController {
+
+    //Transition to editor view directly
+    func showEditorDirectly() {
+        Router.perform(to: RoutableView<NoteEditorInput>(), from: self, routeType: .push)
+        })
+    }
+    
+    //Transition to editor view, and prepare the destination with NoteEditorInput
+    func showEditor() {
+        Router.perform(
+            to: RoutableView<NoteEditorInput>(),
+            from: self,
+            configuring: { (config, prepareDestination, _) in
+                config.routeType = .push
+                //Prepare the destination before transition
+                prepareDestination({ destination in
+                    //destination is inferred as NoteEditorInput
+                    destination.delegate = self
+                    destination.constructForCreatingNewNote()
+                })
+        })
+    }
+}
+```
+
+<details><summary>Objective-C Sample</summary>
+
+```objectivec
+@implementation TestViewController
+
+//Transition to editor view directly
+- (void)showEditorDirectly {
+    //Transition to editor view directly
+    [ZIKViewRouterToView(NoteEditorInput) performFromSource:self routeType:ZIKViewRouteTypePush];
+}
+
+//Transition to editor view, and prepare the destination with NoteEditorInput
+- (void)showEditor {
+    [ZIKViewRouterToView(NoteEditorInput)
+	     performFromSource:self
+	     configuring:^(ZIKViewRouteConfig *config) {
+	         config.routeType = ZIKViewRouteTypePush;
+	         //Prepare the destination before transition
+	         config.prepareDestination = ^(id<NoteEditorInput> destination) {
+	             destination.delegate = self;
+	             [destination constructForCreatingNewNote];
+	         };
+	     }];
+}
+
+@end
+```
+
+</details>
 
 ## License
 

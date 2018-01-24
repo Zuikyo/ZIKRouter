@@ -376,7 +376,9 @@ Demo目录下的ZIKRouterDemo展示了如何用ZIKRouter进行各种界面跳转
 
 想要查看router是如何应用在VIPER架构中的，可以参考这个项目：[ZIKViper](https://github.com/Zuikyo/ZIKViper)。
 
-## Cocoapods
+## Installation
+
+### Cocoapods
 
 可以用Cocoapods安装ZIKRouter：
 
@@ -389,6 +391,155 @@ pod 'ZIKRouter', '0.12.1'
 ```
 pod 'ZRouter', '0.8.0'
 ```
+
+## How to use
+
+简单演示如何使用ZIKRouter创建路由。
+
+### 1.创建Router
+
+为你的模块创建 router 子类：
+
+```swift
+import ZIKRouter.Internal
+import ZRouter
+
+class NoteEditorViewRouter: ZIKViewRouter<NoteEditorViewController, ViewRouteConfig> {
+    override class func registerRoutableDestination() {
+        registerView(NoteEditorViewController.self)
+        register(RoutableView<NoteEditorInput>())
+    }
+    
+    override func destination(with configuration: ViewRouteConfig) -> NoteEditorViewController? {
+        let destination: SwiftSampleViewController? = ... ///实例化view controller
+        return destination
+    }
+    
+    override func prepareDestination(_ destination: NoteEditorViewController, configuration: ViewRouteConfig) {
+        //为destination注入依赖
+    }
+}
+```
+
+<details><summary>Objective-C Sample</summary>
+
+```objectivec
+//NoteEditorViewRouter.h
+@import ZIKRouter;
+
+@interface NoteEditorViewRouter : ZIKViewRouter
+@end
+
+//NoteEditorViewRouter.m
+@import ZIKRouter.Internal;
+
+@implementation NoteEditorViewRouter
+
++ (void)registerRoutableDestination {
+    [self registerView:[NoteEditorViewRouter class]];
+    [self registerViewProtocol:ZIKRoutableProtocol(NoteEditorInput)];
+}
+
+- (NoteEditorViewRouter *)destinationWithConfiguration:(ZIKViewRouteConfiguration *)configuration {
+    NoteEditorViewRouter *destination = ... ///实例化view controller
+    return destination;
+}
+
+- (void)prepareDestination:(NoteEditorViewRouter *)destination configuration:(ZIKViewRouteConfiguration *)configuration {
+    //为destination注入依赖
+}
+```
+
+</details>
+
+关于更多可用于override的方法，请参考详细文档。
+
+### 2.声明 Routable 类型
+
+```swift
+//声明 NoteEditorViewController is routable
+extension NoteEditorViewController: ZIKRoutableView {
+}
+
+//声明 NoteEditorInput is routable
+extension RoutableView where Protocol == NoteEditorInput {
+    init() { }
+}
+```
+
+<details><summary>Objective-C Sample</summary>
+
+```objectivec
+//声明 NoteEditorViewController is routable
+DeclareRoutableView(MasterViewController, MasterViewRouter)
+
+///当 protocol 继承自 ZIKViewRoutable, 就是 routable 的
+@protocol NoteEditorInput <ZIKViewRoutable>
+@property (nonatomic, weak) id<EditorDelegate> delegate;
+- (void)constructForCreatingNewNote;
+@end
+```
+
+</details>
+
+### 3.Use
+
+```swift
+class TestViewController: UIViewController {
+
+    //直接跳转
+    func showEditorDirectly() {
+        Router.perform(to: RoutableView<NoteEditorInput>(), from: self, routeType: .push)
+        })
+    }
+    
+    //跳转到editor界面；通过protocol获取对应的router类，再通过protocol配置界面
+    func showEditor() {
+        Router.perform(
+            to: RoutableView<NoteEditorInput>(),
+            from: self,
+            configuring: { (config, prepareDestination, _) in
+                config.routeType = .push
+                //跳转前配置destination
+                prepareDestination({ destination in
+                    //destination 自动推断为 NoteEditorInput 类型
+                    destination.delegate = self
+                    destination.constructForCreatingNewNote()
+                })
+        })
+    }
+}
+```
+
+<details><summary>Objective-C Sample</summary>
+
+```objectivec
+@implementation TestViewController
+
+//直接跳转
+- (void)showEditorDirectly {
+    //Transition to editor view directly
+    [ZIKViewRouterToView(NoteEditorInput) performFromSource:self routeType:ZIKViewRouteTypePush];
+}
+
+//跳转到editor界面；通过protocol获取对应的router类，再通过protocol配置界面
+- (void)showEditor {
+    [ZIKViewRouterToView(NoteEditorInput)
+	     performFromSource:self
+	     configuring:^(ZIKViewRouteConfig *config) {
+	         config.routeType = ZIKViewRouteTypePush;
+	         //跳转前配置destination
+	         config.prepareDestination = ^(id<NoteEditorInput> destination) {
+	             destination.delegate = self;
+	             [destination constructForCreatingNewNote];
+	         };
+	     }];
+}
+
+@end
+```
+
+</details>
 
 ## License
 
