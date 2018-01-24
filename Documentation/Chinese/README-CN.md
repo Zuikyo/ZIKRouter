@@ -448,6 +448,8 @@ class NoteEditorViewRouter: ZIKViewRouter<NoteEditorViewController, ViewRouteCon
 - (void)prepareDestination:(NoteEditorViewRouter *)destination configuration:(ZIKViewRouteConfiguration *)configuration {
     //为destination注入依赖
 }
+
+@end
 ```
 
 </details>

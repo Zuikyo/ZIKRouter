@@ -453,6 +453,8 @@ class NoteEditorViewRouter: ZIKViewRouter<NoteEditorViewController, ViewRouteCon
 - (void)prepareDestination:(NoteEditorViewRouter *)destination configuration:(ZIKViewRouteConfiguration *)configuration {
     //Inject dependencies to destination
 }
+
+@end
 ```
 
 </details>
