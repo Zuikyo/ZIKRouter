@@ -444,25 +444,12 @@
 				F8BCCB971F208D2B0051716B /* MasterViewRouter.m */,
 				F84239D31F0CDE78000FEE5F /* DetailViewController.h */,
 				F84239D41F0CDE78000FEE5F /* DetailViewController.m */,
-				F82ECAB51F17DC51007168AA /* TestPush */,
-				F82ECAB01F17DC51007168AA /* TestPresentModally */,
-				F82ECAAB1F17DC51007168AA /* TestPresentAsPopover */,
-				F82ECA9F1F17DC51007168AA /* TestShow */,
-				F82ECA9A1F17DC51007168AA /* TestShowDetail */,
-				F82ECAA41F17DC51007168AA /* TestPerformSegue */,
-				F82ECA951F17DC51007168AA /* TestAddAsChild */,
-				F82ECA901F17DC51007168AA /* TestAddAsSubview */,
-				F82ECA8B1F17DC51007168AA /* TestCustom */,
-				F82ECA861F17DC51007168AA /* TestGetDestination */,
-				F82ECA7D1F17DC51007168AA /* TestAutoCreate */,
-				F87317D61F924AEC00A5F5D4 /* TestCircularDependencies */,
-				F88DD3011FBB2E2700715097 /* TestClassHierarchy */,
-				F83315221F6FBE7900891004 /* TestServiceRouter */,
+				F8DFBD6A201A12BD0069841B /* TestUseCase */,
 				F820BF8E1F628A5100D570CF /* SwiftSample */,
-				F82ECA771F17DC51007168AA /* InfoViewController */,
-				F82ECA711F17DC51007168AA /* SimpleLabel */,
 				F8DFBD5B2019FDE00069841B /* Adapter */,
 				F82ECA6D1F17DC51007168AA /* CompatibleAlertView */,
+				F82ECA771F17DC51007168AA /* InfoViewController */,
+				F82ECA711F17DC51007168AA /* SimpleLabel */,
 				F84239D61F0CDE78000FEE5F /* Main.storyboard */,
 				F84239D91F0CDE78000FEE5F /* Assets.xcassets */,
 				F84239DB1F0CDE78000FEE5F /* LaunchScreen.storyboard */,
@@ -519,6 +506,27 @@
 				F8DFBD5D2019FE210069841B /* DemoRouteAdapter.m */,
 			);
 			path = Adapter;
+			sourceTree = "<group>";
+		};
+		F8DFBD6A201A12BD0069841B /* TestUseCase */ = {
+			isa = PBXGroup;
+			children = (
+				F82ECAB51F17DC51007168AA /* TestPush */,
+				F82ECAB01F17DC51007168AA /* TestPresentModally */,
+				F82ECAAB1F17DC51007168AA /* TestPresentAsPopover */,
+				F82ECA9F1F17DC51007168AA /* TestShow */,
+				F82ECA9A1F17DC51007168AA /* TestShowDetail */,
+				F82ECAA41F17DC51007168AA /* TestPerformSegue */,
+				F82ECA951F17DC51007168AA /* TestAddAsChild */,
+				F82ECA901F17DC51007168AA /* TestAddAsSubview */,
+				F82ECA8B1F17DC51007168AA /* TestCustom */,
+				F82ECA861F17DC51007168AA /* TestGetDestination */,
+				F82ECA7D1F17DC51007168AA /* TestAutoCreate */,
+				F87317D61F924AEC00A5F5D4 /* TestCircularDependencies */,
+				F88DD3011FBB2E2700715097 /* TestClassHierarchy */,
+				F83315221F6FBE7900891004 /* TestServiceRouter */,
+			);
+			path = TestUseCase;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
