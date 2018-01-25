@@ -1,5 +1,5 @@
 //
-//  ZIKTestShowDetailViewController.h
+//  TestShowDetailViewController.h
 //  ZIKRouterDemo
 //
 //  Created by zuik on 2017/7/5.
@@ -8,6 +8,6 @@
 
 #import <UIKit/UIKit.h>
 
-@interface ZIKTestShowDetailViewController : UIViewController
+@interface TestShowDetailViewController : UIViewController
 
 @end

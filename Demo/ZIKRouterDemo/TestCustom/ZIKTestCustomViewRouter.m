@@ -7,22 +7,22 @@
 //
 
 #import "ZIKTestCustomViewRouter.h"
-#import "ZIKTestCustomViewController.h"
+#import "TestCustomViewController.h"
 
-@interface ZIKTestCustomViewController (ZIKTestCustomViewRouter) <ZIKRoutableView>
+@interface TestCustomViewController (ZIKTestCustomViewRouter) <ZIKRoutableView>
 @end
-@implementation ZIKTestCustomViewController (ZIKTestCustomViewRouter)
+@implementation TestCustomViewController (ZIKTestCustomViewRouter)
 @end
 
 @implementation ZIKTestCustomViewRouter
 
 + (void)registerRoutableDestination {
-    [self registerView:[ZIKTestCustomViewController class]];
+    [self registerView:[TestCustomViewController class]];
 }
 
 - (id<ZIKRoutableView>)destinationWithConfiguration:(ZIKViewRouteConfiguration *)configuration {
     UIStoryboard *sb = [UIStoryboard storyboardWithName:@"Main" bundle:nil];
-    ZIKTestCustomViewController *destination = [sb instantiateViewControllerWithIdentifier:@"testCustom"];;
+    TestCustomViewController *destination = [sb instantiateViewControllerWithIdentifier:@"testCustom"];;
     destination.title = @"Test Custom";
     return destination;
 }

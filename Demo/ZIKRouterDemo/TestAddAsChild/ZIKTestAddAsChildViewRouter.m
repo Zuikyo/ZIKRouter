@@ -7,22 +7,22 @@
 //
 
 #import "ZIKTestAddAsChildViewRouter.h"
-#import "ZIKTestAddAsChildViewController.h"
+#import "TestAddAsChildViewController.h"
 
-@interface ZIKTestAddAsChildViewController (ZIKTestAddAsChildViewRouter) <ZIKRoutableView>
+@interface TestAddAsChildViewController (ZIKTestAddAsChildViewRouter) <ZIKRoutableView>
 @end
-@implementation ZIKTestAddAsChildViewController (ZIKTestAddAsChildViewRouter)
+@implementation TestAddAsChildViewController (ZIKTestAddAsChildViewRouter)
 @end
 
 @implementation ZIKTestAddAsChildViewRouter
 
 + (void)registerRoutableDestination {
-    [self registerView:[ZIKTestAddAsChildViewController class]];
+    [self registerView:[TestAddAsChildViewController class]];
 }
 
 - (id<ZIKRoutableView>)destinationWithConfiguration:(ZIKViewRouteConfiguration *)configuration {
     UIStoryboard *sb = [UIStoryboard storyboardWithName:@"Main" bundle:nil];
-    ZIKTestAddAsChildViewController *destination = [sb instantiateViewControllerWithIdentifier:@"testAddAsChild"];;
+    TestAddAsChildViewController *destination = [sb instantiateViewControllerWithIdentifier:@"testAddAsChild"];;
     destination.title = @"Test AddAsChild";
     return destination;
 }

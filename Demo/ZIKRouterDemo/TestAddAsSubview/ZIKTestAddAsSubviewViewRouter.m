@@ -7,22 +7,22 @@
 //
 
 #import "ZIKTestAddAsSubviewViewRouter.h"
-#import "ZIKTestAddAsSubviewViewController.h"
+#import "TestAddAsSubviewViewController.h"
 
-@interface ZIKTestAddAsSubviewViewController (ZIKTestAddAsSubviewViewRouter) <ZIKRoutableView>
+@interface TestAddAsSubviewViewController (ZIKTestAddAsSubviewViewRouter) <ZIKRoutableView>
 @end
-@implementation ZIKTestAddAsSubviewViewController (ZIKTestAddAsSubviewViewRouter)
+@implementation TestAddAsSubviewViewController (ZIKTestAddAsSubviewViewRouter)
 @end
 
 @implementation ZIKTestAddAsSubviewViewRouter
 
 + (void)registerRoutableDestination {
-    [self registerView:[ZIKTestAddAsSubviewViewController class]];
+    [self registerView:[TestAddAsSubviewViewController class]];
 }
 
 - (id<ZIKRoutableView>)destinationWithConfiguration:(ZIKViewRouteConfiguration *)configuration {
     UIStoryboard *sb = [UIStoryboard storyboardWithName:@"Main" bundle:nil];
-    ZIKTestAddAsSubviewViewController *destination = [sb instantiateViewControllerWithIdentifier:@"testAddAsSubview"];;
+    TestAddAsSubviewViewController *destination = [sb instantiateViewControllerWithIdentifier:@"testAddAsSubview"];;
     destination.title = @"Test AddAsSubview";
     return destination;
 }

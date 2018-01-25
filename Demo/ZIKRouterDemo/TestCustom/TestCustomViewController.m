@@ -1,20 +1,20 @@
 //
-//  ZIKTestCustomViewController.m
+//  TestCustomViewController.m
 //  ZIKRouterDemo
 //
 //  Created by zuik on 2017/7/5.
 //  Copyright © 2017 zuik. All rights reserved.
 //
 
-#import "ZIKTestCustomViewController.h"
+#import "TestCustomViewController.h"
 @import ZIKRouter;
 #import "RequiredCompatibleAlertConfigProtocol.h"
 
-@interface ZIKTestCustomViewController ()
+@interface TestCustomViewController ()
 @property (nonatomic, strong) ZIKViewRouter<id, ZIKViewRouteConfiguration<RequiredCompatibleAlertConfigProtocol> *> *alertViewRouter;
 @end
 
-@implementation ZIKTestCustomViewController
+@implementation TestCustomViewController
 
 - (void)viewDidLoad {
     [super viewDidLoad];

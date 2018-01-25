@@ -1,53 +1,52 @@
 //
-//  ZIKTestShowDetailViewController.m
+//  TestAddAsChildViewController.m
 //  ZIKRouterDemo
 //
 //  Created by zuik on 2017/7/5.
 //  Copyright © 2017 zuik. All rights reserved.
 //
 
-#import "ZIKTestShowDetailViewController.h"
+#import "TestAddAsChildViewController.h"
 @import ZIKRouter;
 #import "ZIKInfoViewProtocol.h"
 
-@interface ZIKTestShowDetailViewController () <ZIKInfoViewDelegate>
+@interface TestAddAsChildViewController () <ZIKInfoViewDelegate>
 @property (nonatomic, strong) ZIKViewRouter *infoViewRouter;
 @end
 
-@implementation ZIKTestShowDetailViewController
+@implementation TestAddAsChildViewController
 
 - (void)viewDidLoad {
     [super viewDidLoad];
     // Do any additional setup after loading the view.
 }
 
-- (IBAction)showDetail:(id)sender {
+- (IBAction)addAsChildViewController:(id)sender {
     __weak typeof(self) weakSelf = self;
     self.infoViewRouter = [ZIKViewRouterToView(ZIKInfoViewProtocol)
                            performFromSource:self
                            configuring:^(ZIKViewRouteConfiguration * _Nonnull config) {
-                               config.routeType = ZIKViewRouteTypeShowDetail;
-                               config.containerWrapper = ^UIViewController<ZIKViewRouteContainer> * _Nonnull(UIViewController * _Nonnull destination) {
-//                                     UINavigationController *container = [[UINavigationController alloc] initWithRootViewController:destination];
-//                                     return container;
-                                     UITabBarController *container = [[UITabBarController alloc] init];
-                                     [container setViewControllers:@[destination]];
-                                     return container;
-//                                   UISplitViewController *container = [[UISplitViewController alloc] init];
-//                                   [container setViewControllers:@[destination]];
-//                                   return container;
-                               };
-                               config.sender = sender;
+                               config.routeType = ZIKViewRouteTypeAddAsChildViewController;
                                config.prepareDestination = ^(id<ZIKInfoViewProtocol>  _Nonnull destination) {
                                    destination.delegate = weakSelf;
                                    destination.name = @"Zuik";
                                    destination.age = 18;
                                };
-                               config.routeCompletion = ^(id  _Nonnull destination) {
-                                   NSLog(@"show detail complete");
+                               config.routeCompletion = ^(UIViewController * _Nonnull destination) {
+                                    //If use containerWrapper to wrap destination in a container, router will add container as source's child, so you have to add container's view to source's view, not the destination's view, and call container's didMoveToParentViewController:
+                                   destination.view.frame = weakSelf.view.frame;
+                                   destination.view.transform = CGAffineTransformMakeScale(0.1, 0.1);
+                                   //ZIKViewRouter use UIViewController's transitionCoordinator to do completion, so this will let the router complete before animation real complete
+                                   [UIView animateWithDuration:2 animations:^{
+                                       destination.view.backgroundColor = [UIColor redColor];
+                                       [weakSelf.view addSubview:destination.view];
+                                       destination.view.transform = CGAffineTransformIdentity;
+                                   } completion:^(BOOL finished) {
+                                       [destination didMoveToParentViewController:weakSelf];
+                                   }];
                                };
                                config.errorHandler = ^(ZIKRouteAction routeAction, NSError * _Nonnull error) {
-                                   NSLog(@"show detail failed: %@",error);
+                                   NSLog(@"addChildViewController failed: %@",error);
                                };
                            }];
 }

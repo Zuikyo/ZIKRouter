@@ -351,7 +351,7 @@
         <!--Test Show Detail View Controller-->
         <scene sceneID="Te5-Ne-7kN">
             <objects>
-                <viewController storyboardIdentifier="testShowDetail" id="zK5-qE-d8r" customClass="ZIKTestShowDetailViewController" sceneMemberID="viewController">
+                <viewController storyboardIdentifier="testShowDetail" id="zK5-qE-d8r" customClass="TestShowDetailViewController" sceneMemberID="viewController">
                     <layoutGuides>
                         <viewControllerLayoutGuide type="top" id="TS2-mb-XA0"/>
                         <viewControllerLayoutGuide type="bottom" id="fqf-fg-R27"/>
@@ -379,7 +379,7 @@
         <!--Test Add As Child View Controller-->
         <scene sceneID="zzJ-LT-IjF">
             <objects>
-                <viewController storyboardIdentifier="testAddAsChild" id="NjS-UV-Jyv" customClass="ZIKTestAddAsChildViewController" sceneMemberID="viewController">
+                <viewController storyboardIdentifier="testAddAsChild" id="NjS-UV-Jyv" customClass="TestAddAsChildViewController" sceneMemberID="viewController">
                     <layoutGuides>
                         <viewControllerLayoutGuide type="top" id="hMJ-X5-pGP"/>
                         <viewControllerLayoutGuide type="bottom" id="iWY-df-GQ6"/>
@@ -407,7 +407,7 @@
         <!--Test Add As Subview View Controller-->
         <scene sceneID="EXL-WL-ou5">
             <objects>
-                <viewController storyboardIdentifier="testAddAsSubview" id="4xy-VY-bIY" customClass="ZIKTestAddAsSubviewViewController" sceneMemberID="viewController">
+                <viewController storyboardIdentifier="testAddAsSubview" id="4xy-VY-bIY" customClass="TestAddAsSubviewViewController" sceneMemberID="viewController">
                     <layoutGuides>
                         <viewControllerLayoutGuide type="top" id="CQJ-eV-wOd"/>
                         <viewControllerLayoutGuide type="bottom" id="Y5p-j8-zLU"/>
@@ -435,7 +435,7 @@
         <!--Test Custom View Controller-->
         <scene sceneID="8mH-1w-guu">
             <objects>
-                <viewController storyboardIdentifier="testCustom" id="hbl-AH-evp" customClass="ZIKTestCustomViewController" sceneMemberID="viewController">
+                <viewController storyboardIdentifier="testCustom" id="hbl-AH-evp" customClass="TestCustomViewController" sceneMemberID="viewController">
                     <layoutGuides>
                         <viewControllerLayoutGuide type="top" id="gAZ-IW-Zty"/>
                         <viewControllerLayoutGuide type="bottom" id="18D-Ic-dyf"/>

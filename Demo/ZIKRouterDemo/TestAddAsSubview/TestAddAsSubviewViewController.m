@@ -1,20 +1,20 @@
 //
-//  ZIKTestAddAsSubviewViewController.m
+//  TestAddAsSubviewViewController.m
 //  ZIKRouterDemo
 //
 //  Created by zuik on 2017/7/5.
 //  Copyright © 2017 zuik. All rights reserved.
 //
 
-#import "ZIKTestAddAsSubviewViewController.h"
+#import "TestAddAsSubviewViewController.h"
 @import ZIKRouter;
 #import "ZIKSimpleLabelProtocol.h"
 
-@interface ZIKTestAddAsSubviewViewController ()
+@interface TestAddAsSubviewViewController ()
 @property (nonatomic, strong) ZIKViewRouter *labelRouter;
 @end
 
-@implementation ZIKTestAddAsSubviewViewController
+@implementation TestAddAsSubviewViewController
 
 - (void)viewDidLoad {
     [super viewDidLoad];

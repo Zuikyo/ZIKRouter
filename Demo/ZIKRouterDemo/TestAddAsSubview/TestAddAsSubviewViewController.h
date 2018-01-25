@@ -1,5 +1,5 @@
 //
-//  ZIKTestAddAsSubviewViewController.h
+//  TestAddAsSubviewViewController.h
 //  ZIKRouterDemo
 //
 //  Created by zuik on 2017/7/5.
@@ -8,6 +8,6 @@
 
 #import <UIKit/UIKit.h>
 
-@interface ZIKTestAddAsSubviewViewController : UIViewController
+@interface TestAddAsSubviewViewController : UIViewController
 
 @end

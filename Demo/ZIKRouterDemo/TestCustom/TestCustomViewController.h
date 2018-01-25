@@ -1,5 +1,5 @@
 //
-//  ZIKTestCustomViewController.h
+//  TestCustomViewController.h
 //  ZIKRouterDemo
 //
 //  Created by zuik on 2017/7/5.
@@ -10,6 +10,6 @@
 @import ZIKRouter;
 #import "RequiredCompatibleAlertConfigProtocol.h"
 
-@interface ZIKTestCustomViewController : UIViewController
+@interface TestCustomViewController : UIViewController
 
 @end

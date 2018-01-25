@@ -7,22 +7,22 @@
 //
 
 #import "ZIKTestShowDetailViewRouter.h"
-#import "ZIKTestShowDetailViewController.h"
+#import "TestShowDetailViewController.h"
 
-@interface ZIKTestShowDetailViewController (ZIKTestShowDetailViewRouter) <ZIKRoutableView>
+@interface TestShowDetailViewController (ZIKTestShowDetailViewRouter) <ZIKRoutableView>
 @end
-@implementation ZIKTestShowDetailViewController (ZIKTestShowDetailViewRouter)
+@implementation TestShowDetailViewController (ZIKTestShowDetailViewRouter)
 @end
 
 @implementation ZIKTestShowDetailViewRouter
 
 + (void)registerRoutableDestination {
-    [self registerView:[ZIKTestShowDetailViewController class]];
+    [self registerView:[TestShowDetailViewController class]];
 }
 
 - (id<ZIKRoutableView>)destinationWithConfiguration:(ZIKViewRouteConfiguration *)configuration {
     UIStoryboard *sb = [UIStoryboard storyboardWithName:@"Main" bundle:nil];
-    ZIKTestShowDetailViewController *destination = [sb instantiateViewControllerWithIdentifier:@"testShowDetail"];;
+    TestShowDetailViewController *destination = [sb instantiateViewControllerWithIdentifier:@"testShowDetail"];;
     destination.title = @"Test ShowDetail";
     return destination;
 }
