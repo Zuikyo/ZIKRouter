@@ -8,10 +8,10 @@
 
 #import "ZIKTestCustomViewController.h"
 @import ZIKRouter;
-#import "ZIKCompatibleAlertConfigProtocol.h"
+#import "RequiredCompatibleAlertConfigProtocol.h"
 
 @interface ZIKTestCustomViewController ()
-@property (nonatomic, strong) ZIKViewRouter<id, ZIKViewRouteConfiguration<ZIKCompatibleAlertConfigProtocol> *> *alertViewRouter;
+@property (nonatomic, strong) ZIKViewRouter<id, ZIKViewRouteConfiguration<RequiredCompatibleAlertConfigProtocol> *> *alertViewRouter;
 @end
 
 @implementation ZIKTestCustomViewController
@@ -26,11 +26,11 @@
 
 - (void)showAlert {
     ///If the protocol passed to `ZIKViewRouterToModule` is changed, parameter type in `prepareModule` will also change. So it's much safer when you change the routable protocol.
-    self.alertViewRouter = [ZIKViewRouterToModule(ZIKCompatibleAlertConfigProtocol)
+    self.alertViewRouter = [ZIKViewRouterToModule(RequiredCompatibleAlertConfigProtocol)
      performFromSource:self
-     routeConfiguring:^(ZIKViewRouteConfiguration<ZIKCompatibleAlertConfigProtocol> *config,
+     routeConfiguring:^(ZIKViewRouteConfiguration<RequiredCompatibleAlertConfigProtocol> *config,
                         void (^prepareDest)(void (^)(id)),
-                        void (^prepareModule)(void (^)(ZIKViewRouteConfig<ZIKCompatibleAlertConfigProtocol> *))) {
+                        void (^prepareModule)(void (^)(ZIKViewRouteConfig<RequiredCompatibleAlertConfigProtocol> *))) {
          config.routeType = ZIKViewRouteTypeCustom;
          config.routeCompletion = ^(id _Nonnull destination) {
              NSLog(@"show custom alert complete");
@@ -39,7 +39,7 @@
              NSLog(@"show custom alert failed: %@",error);
          };
          
-         prepareModule(^(ZIKViewRouteConfig<ZIKCompatibleAlertConfigProtocol> * module){
+         prepareModule(^(ZIKViewRouteConfig<RequiredCompatibleAlertConfigProtocol> * module){
              module.title = @"Compatible Alert";
              module.message = @"Test custom route for alert with UIAlertView and UIAlertController";
              [module addCancelButtonTitle:@"Cancel" handler:^{
@@ -53,9 +53,9 @@
 }
 
 - (void)showAlert2 {
-    self.alertViewRouter = [ZIKViewRouterToModule(ZIKCompatibleAlertConfigProtocol)
+    self.alertViewRouter = [ZIKViewRouterToModule(RequiredCompatibleAlertConfigProtocol)
                             performFromSource:self
-                            configuring:^(ZIKViewRouteConfiguration<ZIKCompatibleAlertConfigProtocol> * _Nonnull config) {
+                            configuring:^(ZIKViewRouteConfiguration<RequiredCompatibleAlertConfigProtocol> * _Nonnull config) {
                                 config.routeType = ZIKViewRouteTypeCustom;
                                 config.title = @"Compatible Alert";
                                 config.message = @"Test custom route for alert with UIAlertView and UIAlertController";

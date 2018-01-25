@@ -22,10 +22,10 @@ protocol PureSwiftSampleViewInput {
 // Show how ZIKRouter working in a swifty way.
 class SwiftSampleViewController: UIViewController, PureSwiftSampleViewInput, SwiftSampleViewInput, ZIKInfoViewDelegate, UIViewControllerPreviewingDelegate {
     var infoRouter: ViewRouter<ZIKInfoViewProtocol, ViewRouteConfig>?
-    var alertRouter: ViewRouter<Any, ZIKCompatibleAlertConfigProtocol>?
+    var alertRouter: ViewRouter<Any, RequiredCompatibleAlertConfigProtocol>?
     
     //You can inject alertRouter from outside, then use the router directly
-    var injectedAlertRouter: ViewRouter<Any, ZIKCompatibleAlertConfigProtocol>?
+    var injectedAlertRouter: ViewRouter<Any, RequiredCompatibleAlertConfigProtocol>?
     
     override func viewDidLoad() {
         if #available(iOS 9.0, *) {
@@ -61,7 +61,7 @@ class SwiftSampleViewController: UIViewController, PureSwiftSampleViewInput, Swi
     
     @IBAction func testRouteForConfig(_ sender: Any) {
         alertRouter = Router.perform(
-            to: RoutableViewModule<ZIKCompatibleAlertConfigProtocol>(),
+            to: RoutableViewModule<RequiredCompatibleAlertConfigProtocol>(),
             from: self,
             configuring: { (config, _, prepareModule) in
                 config.routeCompletion = { d in

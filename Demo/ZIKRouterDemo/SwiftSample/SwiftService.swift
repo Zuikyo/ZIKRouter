@@ -21,7 +21,7 @@ class SwiftService: SwiftServiceInput, SwiftServiceInput2 {
     func swiftFunction() {
         print("this is a swift function")
         _ = Router.perform(
-            to: RoutableViewModule<ZIKCompatibleAlertConfigProtocol>(),
+            to: RoutableViewModule<RequiredCompatibleAlertConfigProtocol>(),
             from: UIApplication.shared.keyWindow?.rootViewController,
             configuring: { (config, _, prepareModule) in
                 config.routeType = .custom

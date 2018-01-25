@@ -10,4 +10,7 @@
    <FileRef
       location = "group:ZIKRouterDemo.xcodeproj">
    </FileRef>
+   <FileRef
+      location = "group:ZIKCompatibleAlert/ZIKCompatibleAlert.xcodeproj">
+   </FileRef>
 </Workspace>
