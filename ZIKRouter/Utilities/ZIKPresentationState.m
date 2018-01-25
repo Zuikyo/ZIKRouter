@@ -36,7 +36,11 @@
         }
         if (viewController.presentingViewController) {
             _presentingViewController = [NSNumber numberWithInteger:(NSInteger)viewController.presentingViewController];
+#ifdef __IPHONE_11_0
+            if (@available(iOS 8.0, *)) {
+#else
             if ([UIDevice currentDevice].systemVersion.floatValue >= 8.0) {
+#endif
                 if (viewController.modalPresentationStyle == UIModalPresentationPopover) {
                     _isModalPresentationPopover = YES;
                 }

@@ -23,7 +23,7 @@ extern ZIKRouteAction const ZIKRouteActionPerformOnDestination;
 ///Route types for view.
 typedef NS_ENUM(NSInteger,ZIKViewRouteType) {
     ///Navigation using @code-[source pushViewController:animated:]@endcode Source must be a UIViewController.
-    ZIKViewRouteTypePush,
+    ZIKViewRouteTypePush = 0,
     ///Navigation using @code-[source presentViewController:animated:completion:]@endcode Source must be a UIViewController.
     ZIKViewRouteTypePresentModally,
     ///Adaptative type. Popover for iPad, present modally for iPhone.
@@ -38,7 +38,7 @@ typedef NS_ENUM(NSInteger,ZIKViewRouteType) {
      
      Without a container, present modally.
      */
-    ZIKViewRouteTypeShow NS_ENUM_AVAILABLE_IOS(8_0),
+    ZIKViewRouteTypeShow NS_ENUM_AVAILABLE_IOS(8_0) = 4,
     /**
      Adaptative type. Navigation using @code-[source showDetailViewController:destination sender:sender]@endcode
      In UISplitViewController, replace detail with destination, if collapsed, forward to master view controller, if master is a UINavigationController, push on stack, else replace master with destination.
@@ -47,7 +47,7 @@ typedef NS_ENUM(NSInteger,ZIKViewRouteType) {
      
      Without a container, present modally.
      */
-    ZIKViewRouteTypeShowDetail NS_ENUM_AVAILABLE_IOS(8_0),
+    ZIKViewRouteTypeShowDetail NS_ENUM_AVAILABLE_IOS(8_0) = 5,
     ///Get destination viewController and do @code[source addChildViewController:destination]@endcode; You need to get destination in routeCompletion, and add it's view to your view hierarchy, and call [destination didMoveToParentViewController:source]; source must be a UIViewController.
     ZIKViewRouteTypeAddAsChildViewController,
     ///Get your custom UIView and do @code[source addSubview:destination]@endcode; source must be a UIView.
@@ -63,8 +63,8 @@ typedef NS_OPTIONS(NSInteger, ZIKViewRouteTypeMask) {
     ZIKViewRouteTypeMaskPresentModally           = (1 << ZIKViewRouteTypePresentModally),
     ZIKViewRouteTypeMaskPresentAsPopover         = (1 << ZIKViewRouteTypePresentAsPopover),
     ZIKViewRouteTypeMaskPerformSegue             = (1 << ZIKViewRouteTypePerformSegue),
-    ZIKViewRouteTypeMaskShow                     = (1 << ZIKViewRouteTypeShow),
-    ZIKViewRouteTypeMaskShowDetail               = (1 << ZIKViewRouteTypeShowDetail),
+    ZIKViewRouteTypeMaskShow                     = (1 << 4 /*ZIKViewRouteTypeShow*/),
+    ZIKViewRouteTypeMaskShowDetail               = (1 << 5 /*ZIKViewRouteTypeShowDetail*/),
     ZIKViewRouteTypeMaskAddAsChildViewController = (1 << ZIKViewRouteTypeAddAsChildViewController),
     ZIKViewRouteTypeMaskAddAsSubview             = (1 << ZIKViewRouteTypeAddAsSubview),
     ZIKViewRouteTypeMaskCustom                   = (1 << ZIKViewRouteTypeCustom),
