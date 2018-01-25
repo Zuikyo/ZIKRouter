@@ -7,22 +7,22 @@
 //
 
 #import "ZIKTestPerformSegueViewRouter.h"
-#import "ZIKTestPerformSegueViewController.h"
+#import "TestPerformSegueViewController.h"
 
-@interface ZIKTestPerformSegueViewController (ZIKTestPerformSegueViewRouter) <ZIKRoutableView>
+@interface TestPerformSegueViewController (ZIKTestPerformSegueViewRouter) <ZIKRoutableView>
 @end
-@implementation ZIKTestPerformSegueViewController (ZIKTestPerformSegueViewRouter)
+@implementation TestPerformSegueViewController (ZIKTestPerformSegueViewRouter)
 @end
 
 @implementation ZIKTestPerformSegueViewRouter
 
 + (void)registerRoutableDestination {
-    [self registerView:[ZIKTestPerformSegueViewController class]];
+    [self registerView:[TestPerformSegueViewController class]];
 }
 
 - (id<ZIKRoutableView>)destinationWithConfiguration:(ZIKViewRouteConfiguration *)configuration {
     UIStoryboard *sb = [UIStoryboard storyboardWithName:@"Main" bundle:nil];
-    ZIKTestPerformSegueViewController *destination = [sb instantiateViewControllerWithIdentifier:@"testPerformSegue"];;
+    TestPerformSegueViewController *destination = [sb instantiateViewControllerWithIdentifier:@"testPerformSegue"];;
     destination.title = @"Test PerformSegue";
     return destination;
 }

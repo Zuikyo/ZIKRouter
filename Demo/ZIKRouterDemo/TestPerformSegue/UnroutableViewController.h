@@ -1,5 +1,5 @@
 //
-//  ZIKUnroutableViewController.h
+//  UnroutableViewController.h
 //  ZIKRouterDemo
 //
 //  Created by zuik on 2017/10/10.
@@ -8,6 +8,6 @@
 
 #import <UIKit/UIKit.h>
 
-@interface ZIKUnroutableViewController : UIViewController
+@interface UnroutableViewController : UIViewController
 
 @end

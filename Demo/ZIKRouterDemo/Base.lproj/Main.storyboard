@@ -240,7 +240,7 @@
         <!--Test Perform Segue View Controller-->
         <scene sceneID="vOc-HB-x68">
             <objects>
-                <viewController storyboardIdentifier="testPerformSegue" id="mY8-l9-yaJ" customClass="ZIKTestPerformSegueViewController" sceneMemberID="viewController">
+                <viewController storyboardIdentifier="testPerformSegue" id="mY8-l9-yaJ" customClass="TestPerformSegueViewController" sceneMemberID="viewController">
                     <layoutGuides>
                         <viewControllerLayoutGuide type="top" id="lyK-z6-c3O"/>
                         <viewControllerLayoutGuide type="bottom" id="Ukr-VA-VVb"/>
@@ -289,7 +289,7 @@
         <!--Unroutable View Controller-->
         <scene sceneID="BZ5-3Y-pMj">
             <objects>
-                <viewController id="epS-95-h0s" customClass="ZIKUnroutableViewController" sceneMemberID="viewController">
+                <viewController id="epS-95-h0s" customClass="UnroutableViewController" sceneMemberID="viewController">
                     <layoutGuides>
                         <viewControllerLayoutGuide type="top" id="lk8-vV-LAb"/>
                         <viewControllerLayoutGuide type="bottom" id="pg6-TP-ZAl"/>

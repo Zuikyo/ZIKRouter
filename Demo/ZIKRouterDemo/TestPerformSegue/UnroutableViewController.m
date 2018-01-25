@@ -1,21 +1,21 @@
 //
-//  ZIKUnroutableViewController.m
+//  UnroutableViewController.m
 //  ZIKRouterDemo
 //
 //  Created by zuik on 2017/10/10.
 //  Copyright © 2017 zuik. All rights reserved.
 //
 
-#import "ZIKUnroutableViewController.h"
+#import "UnroutableViewController.h"
 @import ZIKRouter;
 #import "ZIKInfoViewProtocol.h"
 #import "ZIKSimpleLabelProtocol.h"
 
-@interface ZIKUnroutableViewController () <ZIKViewRouteSource, ZIKInfoViewDelegate>
+@interface UnroutableViewController () <ZIKViewRouteSource, ZIKInfoViewDelegate>
 
 @end
 
-@implementation ZIKUnroutableViewController
+@implementation UnroutableViewController
 
 - (void)viewDidLoad {
     [super viewDidLoad];

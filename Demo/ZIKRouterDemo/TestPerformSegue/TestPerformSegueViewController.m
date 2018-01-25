@@ -1,22 +1,22 @@
 //
-//  ZIKTestPerformSegueViewController.m
+//  TestPerformSegueViewController.m
 //  ZIKRouterDemo
 //
 //  Created by zuik on 2017/7/5.
 //  Copyright © 2017 zuik. All rights reserved.
 //
 
-#import "ZIKTestPerformSegueViewController.h"
+#import "TestPerformSegueViewController.h"
 @import ZIKRouter;
 #import "ZIKInfoViewProtocol.h"
 #import "ZIKSimpleLabelProtocol.h"
 #import "ZIKTestPerformSegueViewRouter.h"
 
-@interface ZIKTestPerformSegueViewController () <ZIKInfoViewDelegate>
+@interface TestPerformSegueViewController () <ZIKInfoViewDelegate>
 @property (nonatomic, strong) ZIKViewRouter *segueRouter;
 @end
 
-@implementation ZIKTestPerformSegueViewController
+@implementation TestPerformSegueViewController
 
 - (void)viewDidLoad {
     [super viewDidLoad];
@@ -111,7 +111,7 @@
 }
 
 - (void)perfromUnwindSegueToTestPerformSegueVCFromInfoVC:(UIViewController *)infoViewController {
-    //unwind segue from ZIKInfoViewController to ZIKTestPerformSegueViewController is define in ZIKInfoViewController, and should be used inside ZIKInfoViewController, this code is just for test
+    //unwind segue from ZIKInfoViewController to TestPerformSegueViewController is define in ZIKInfoViewController, and should be used inside ZIKInfoViewController, this code is just for test
     [ZIKTestPerformSegueViewRouter
      performFromSource:infoViewController
      configuring:^(ZIKViewRouteConfiguration * _Nonnull config) {
@@ -124,10 +124,10 @@
              destination.view.backgroundColor = [UIColor yellowColor];
          };
          config.routeCompletion = ^(id  _Nonnull destination) {
-             NSLog(@"perform unwind segue to ZIKTestPerformSegueViewController complete");
+             NSLog(@"perform unwind segue to TestPerformSegueViewController complete");
          };
          config.errorHandler = ^(ZIKRouteAction routeAction, NSError * _Nonnull error) {
-             NSLog(@"perform unwind segue to ZIKTestPerformSegueViewController failed: %@",error);
+             NSLog(@"perform unwind segue to TestPerformSegueViewController failed: %@",error);
          };
      }];
 }
