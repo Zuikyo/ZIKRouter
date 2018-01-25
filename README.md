@@ -36,6 +36,7 @@ Service router用于模块寻找，通过protocol寻找对应的模块，并用p
 - [x] Dependency injection
 - [x] Locate view and service with it's protocol
 - [x] Prepare the module with it's protocol when performing route, rather than passing a parameter dictionary
+- [x] Use different protocols inside module and module's caller to get the same module, then the caller won't couple with any protocol
 - [x] Declare routable protocol. There're compile-time checking and runtime checking to make safe routing
 - [x] Declare a specific router with generic parameters
 - [x] Decouple modules and add compatible interfaces with adapter
