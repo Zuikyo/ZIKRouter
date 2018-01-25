@@ -7,22 +7,22 @@
 //
 
 #import "ZIKTestGetDestinationViewRouter.h"
-#import "ZIKTestGetDestinationViewController.h"
+#import "TestGetDestinationViewController.h"
 
-@interface ZIKTestGetDestinationViewController (ZIKTestGetDestinationViewRouter) <ZIKRoutableView>
+@interface TestGetDestinationViewController (ZIKTestGetDestinationViewRouter) <ZIKRoutableView>
 @end
-@implementation ZIKTestGetDestinationViewController (ZIKTestGetDestinationViewRouter)
+@implementation TestGetDestinationViewController (ZIKTestGetDestinationViewRouter)
 @end
 
 @implementation ZIKTestGetDestinationViewRouter
 
 + (void)registerRoutableDestination {
-    [self registerView:[ZIKTestGetDestinationViewController class]];
+    [self registerView:[TestGetDestinationViewController class]];
 }
 
 - (id<ZIKRoutableView>)destinationWithConfiguration:(ZIKViewRouteConfiguration *)configuration {
     UIStoryboard *sb = [UIStoryboard storyboardWithName:@"Main" bundle:nil];
-    ZIKTestGetDestinationViewController *destination = [sb instantiateViewControllerWithIdentifier:@"testGetDestination"];;
+    TestGetDestinationViewController *destination = [sb instantiateViewControllerWithIdentifier:@"testGetDestination"];;
     destination.title = @"Test GetDestination";
     return destination;
 }

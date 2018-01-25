@@ -1,5 +1,5 @@
 //
-//  ZIKTestCircularDependenciesViewController.h
+//  TestCircularDependenciesViewController.h
 //  ZIKRouterDemo
 //
 //  Created by zuik on 2017/10/14.
@@ -9,7 +9,7 @@
 #import <UIKit/UIKit.h>
 #import "ZIKParentViewProtocol.h"
 
-@interface ZIKTestCircularDependenciesViewController : UIViewController <ZIKParentViewProtocol>
+@interface TestCircularDependenciesViewController : UIViewController <ZIKParentViewProtocol>
 
 @property (nonatomic, strong) UIViewController *child;
 

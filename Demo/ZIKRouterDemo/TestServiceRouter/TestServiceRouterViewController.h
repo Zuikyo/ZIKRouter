@@ -1,5 +1,5 @@
 //
-//  ZIKTestServiceRouterViewController.h
+//  TestServiceRouterViewController.h
 //  ZIKRouterDemo
 //
 //  Created by zuik on 2017/8/9.
@@ -8,6 +8,6 @@
 
 #import <UIKit/UIKit.h>
 
-@interface ZIKTestServiceRouterViewController : UIViewController
+@interface TestServiceRouterViewController : UIViewController
 
 @end

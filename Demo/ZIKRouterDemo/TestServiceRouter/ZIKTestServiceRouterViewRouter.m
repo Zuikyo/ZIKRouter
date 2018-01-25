@@ -7,22 +7,22 @@
 //
 
 #import "ZIKTestServiceRouterViewRouter.h"
-#import "ZIKTestServiceRouterViewController.h"
+#import "TestServiceRouterViewController.h"
 
-@interface ZIKTestServiceRouterViewController (ZIKTestPushViewRouter) <ZIKRoutableView>
+@interface TestServiceRouterViewController (ZIKTestPushViewRouter) <ZIKRoutableView>
 @end
-@implementation ZIKTestServiceRouterViewController (ZIKTestPushViewRouter)
+@implementation TestServiceRouterViewController (ZIKTestPushViewRouter)
 @end
 
 @implementation ZIKTestServiceRouterViewRouter
 
 + (void)registerRoutableDestination {
-    [self registerView:[ZIKTestServiceRouterViewController class]];
+    [self registerView:[TestServiceRouterViewController class]];
 }
 
 - (id<ZIKRoutableView>)destinationWithConfiguration:(ZIKViewRouteConfiguration *)configuration {
     UIStoryboard *sb = [UIStoryboard storyboardWithName:@"Main" bundle:nil];
-    ZIKTestServiceRouterViewController *destination = [sb instantiateViewControllerWithIdentifier:@"testServiceRouter"];;
+    TestServiceRouterViewController *destination = [sb instantiateViewControllerWithIdentifier:@"testServiceRouter"];;
     destination.title = @"Test ServiceRouter";
     return destination;
 }

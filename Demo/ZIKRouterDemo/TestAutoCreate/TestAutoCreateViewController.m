@@ -1,18 +1,18 @@
 //
-//  ZIKTestAutoCreateViewController.m
+//  TestAutoCreateViewController.m
 //  ZIKRouterDemo
 //
 //  Created by zuik on 2017/7/7.
 //  Copyright © 2017 zuik. All rights reserved.
 //
 
-#import "ZIKTestAutoCreateViewController.h"
+#import "TestAutoCreateViewController.h"
 
-@interface ZIKTestAutoCreateViewController ()
+@interface TestAutoCreateViewController ()
 
 @end
 
-@implementation ZIKTestAutoCreateViewController
+@implementation TestAutoCreateViewController
 
 - (void)viewDidLoad {
     [super viewDidLoad];

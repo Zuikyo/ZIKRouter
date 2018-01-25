@@ -7,22 +7,22 @@
 //
 
 #import "ZIKTestAutoCreateViewRouter.h"
-#import "ZIKTestAutoCreateViewController.h"
+#import "TestAutoCreateViewController.h"
 
-@interface ZIKTestAutoCreateViewController (ZIKTestAutoCreateViewRouter) <ZIKRoutableView>
+@interface TestAutoCreateViewController (ZIKTestAutoCreateViewRouter) <ZIKRoutableView>
 @end
-@implementation ZIKTestAutoCreateViewController (ZIKTestAutoCreateViewRouter)
+@implementation TestAutoCreateViewController (ZIKTestAutoCreateViewRouter)
 @end
 
 @implementation ZIKTestAutoCreateViewRouter
 
 + (void)registerRoutableDestination {
-    [self registerView:[ZIKTestAutoCreateViewController class]];
+    [self registerView:[TestAutoCreateViewController class]];
 }
 
 - (id<ZIKRoutableView>)destinationWithConfiguration:(ZIKViewRouteConfiguration *)configuration {
     UIStoryboard *sb = [UIStoryboard storyboardWithName:@"Main" bundle:nil];
-    ZIKTestAutoCreateViewController *destination = [sb instantiateViewControllerWithIdentifier:@"testAutoCreate"];
+    TestAutoCreateViewController *destination = [sb instantiateViewControllerWithIdentifier:@"testAutoCreate"];
     destination.title = @"Test AutoCreate";
     return destination;
 }

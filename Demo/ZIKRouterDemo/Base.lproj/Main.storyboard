@@ -463,7 +463,7 @@
         <!--Test Get Destination View Controller-->
         <scene sceneID="hBj-OX-Kwc">
             <objects>
-                <viewController storyboardIdentifier="testGetDestination" id="BQs-gf-e55" customClass="ZIKTestGetDestinationViewController" sceneMemberID="viewController">
+                <viewController storyboardIdentifier="testGetDestination" id="BQs-gf-e55" customClass="TestGetDestinationViewController" sceneMemberID="viewController">
                     <layoutGuides>
                         <viewControllerLayoutGuide type="top" id="M5d-8g-EDh"/>
                         <viewControllerLayoutGuide type="bottom" id="UMw-Ge-oiZ"/>
@@ -491,7 +491,7 @@
         <!--Test AutoCreate-->
         <scene sceneID="z2a-Xc-yov">
             <objects>
-                <tableViewController storyboardIdentifier="testAutoCreate" id="RU1-dq-v1Y" customClass="ZIKTestAutoCreateViewController" sceneMemberID="viewController">
+                <tableViewController storyboardIdentifier="testAutoCreate" id="RU1-dq-v1Y" customClass="TestAutoCreateViewController" sceneMemberID="viewController">
                     <tableView key="view" clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="static" style="plain" separatorStyle="default" rowHeight="44" sectionHeaderHeight="28" sectionFooterHeight="28" id="hoo-xC-GKC">
                         <rect key="frame" x="0.0" y="0.0" width="600" height="600"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
@@ -630,7 +630,7 @@
         <!--Test Service Router View Controller-->
         <scene sceneID="X9J-oJ-2b4">
             <objects>
-                <viewController storyboardIdentifier="testServiceRouter" id="vbM-PW-do0" customClass="ZIKTestServiceRouterViewController" sceneMemberID="viewController">
+                <viewController storyboardIdentifier="testServiceRouter" id="vbM-PW-do0" customClass="TestServiceRouterViewController" sceneMemberID="viewController">
                     <layoutGuides>
                         <viewControllerLayoutGuide type="top" id="R8o-aQ-vjj"/>
                         <viewControllerLayoutGuide type="bottom" id="GHb-Mi-TgS"/>

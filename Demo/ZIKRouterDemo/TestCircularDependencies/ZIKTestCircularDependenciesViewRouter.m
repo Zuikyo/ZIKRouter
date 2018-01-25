@@ -7,37 +7,37 @@
 //
 
 #import "ZIKTestCircularDependenciesViewRouter.h"
-#import "ZIKTestCircularDependenciesViewController.h"
+#import "TestCircularDependenciesViewController.h"
 #import "ZIKParentViewProtocol.h"
 #import "ZIKChildViewProtocol.h"
 
-@interface ZIKTestCircularDependenciesViewController (ZIKTestCircularDependenciesViewRouter) <ZIKRoutableView>
+@interface TestCircularDependenciesViewController (ZIKTestCircularDependenciesViewRouter) <ZIKRoutableView>
 @end
-@implementation ZIKTestCircularDependenciesViewController (ZIKTestCircularDependenciesViewRouter)
+@implementation TestCircularDependenciesViewController (ZIKTestCircularDependenciesViewRouter)
 @end
 
 @implementation ZIKTestCircularDependenciesViewRouter
 
 + (void)registerRoutableDestination {
-    [self registerView:[ZIKTestCircularDependenciesViewController class]];
+    [self registerView:[TestCircularDependenciesViewController class]];
     [self registerViewProtocol:ZIKRoutableProtocol(ZIKParentViewProtocol)];
 }
 
 - (id<ZIKRoutableView>)destinationWithConfiguration:(ZIKViewRouteConfiguration *)configuration {
-    ZIKTestCircularDependenciesViewController *destination = [[ZIKTestCircularDependenciesViewController alloc] init];
+    TestCircularDependenciesViewController *destination = [[TestCircularDependenciesViewController alloc] init];
     destination.title = @"Test Circular Dependencies";
     
     return destination;
 }
 
-+ (BOOL)destinationPrepared:(ZIKTestCircularDependenciesViewController *)destination {
++ (BOOL)destinationPrepared:(TestCircularDependenciesViewController *)destination {
     if (destination.child != nil) {
         return YES;
     }
     return NO;
 }
 
-- (void)prepareDestination:(ZIKTestCircularDependenciesViewController *)destination configuration:(__kindof ZIKViewRouteConfiguration *)configuration {
+- (void)prepareDestination:(TestCircularDependenciesViewController *)destination configuration:(__kindof ZIKViewRouteConfiguration *)configuration {
     //Must check to avoid unnecessary preparation
     if (destination.child == nil) {
         [ZIKViewRouterToView(ZIKChildViewProtocol)

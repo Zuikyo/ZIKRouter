@@ -1,18 +1,18 @@
 //
-//  ZIKTestCircularDependenciesViewController.m
+//  TestCircularDependenciesViewController.m
 //  ZIKRouterDemo
 //
 //  Created by zuik on 2017/10/14.
 //  Copyright © 2017 zuik. All rights reserved.
 //
 
-#import "ZIKTestCircularDependenciesViewController.h"
+#import "TestCircularDependenciesViewController.h"
 
-@interface ZIKTestCircularDependenciesViewController ()
+@interface TestCircularDependenciesViewController ()
 
 @end
 
-@implementation ZIKTestCircularDependenciesViewController
+@implementation TestCircularDependenciesViewController
 
 - (void)viewDidLoad {
     [super viewDidLoad];

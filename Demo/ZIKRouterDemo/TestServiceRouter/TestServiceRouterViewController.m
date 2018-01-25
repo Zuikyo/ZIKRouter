@@ -1,23 +1,23 @@
 //
-//  ZIKTestServiceRouterViewController.m
+//  TestServiceRouterViewController.m
 //  ZIKRouterDemo
 //
 //  Created by zuik on 2017/8/9.
 //  Copyright © 2017 zuik. All rights reserved.
 //
 
-#import "ZIKTestServiceRouterViewController.h"
+#import "TestServiceRouterViewController.h"
 #import "ZIKTimeServiceInput.h"
 @import ZIKRouter;
 #import "ZIKTimeServiceRouter.h"
 
-@interface ZIKTestServiceRouterViewController ()
+@interface TestServiceRouterViewController ()
 @property (nonatomic, strong) id<ZIKTimeServiceInput> timeService;
 @property (weak, nonatomic) IBOutlet UILabel *timeLabel;
 
 @end
 
-@implementation ZIKTestServiceRouterViewController
+@implementation TestServiceRouterViewController
 
 - (void)viewDidLoad {
     [super viewDidLoad];
