@@ -1,20 +1,20 @@
 //
-//  ZIKTestPerformSegueViewRouter.m
+//  TestPerformSegueViewRouter.m
 //  ZIKRouterDemo
 //
 //  Created by zuik on 2017/7/5.
 //  Copyright © 2017 zuik. All rights reserved.
 //
 
-#import "ZIKTestPerformSegueViewRouter.h"
+#import "TestPerformSegueViewRouter.h"
 #import "TestPerformSegueViewController.h"
 
-@interface TestPerformSegueViewController (ZIKTestPerformSegueViewRouter) <ZIKRoutableView>
+@interface TestPerformSegueViewController (TestPerformSegueViewRouter) <ZIKRoutableView>
 @end
-@implementation TestPerformSegueViewController (ZIKTestPerformSegueViewRouter)
+@implementation TestPerformSegueViewController (TestPerformSegueViewRouter)
 @end
 
-@implementation ZIKTestPerformSegueViewRouter
+@implementation TestPerformSegueViewRouter
 
 + (void)registerRoutableDestination {
     [self registerView:[TestPerformSegueViewController class]];

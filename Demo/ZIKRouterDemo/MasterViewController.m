@@ -11,7 +11,7 @@
 #import "TestPushViewRouter.h"
 #import "TestPresentModallyViewRouter.h"
 #import "TestPresentAsPopoverViewRouter.h"
-#import "ZIKTestPerformSegueViewRouter.h"
+#import "TestPerformSegueViewRouter.h"
 #import "TestShowViewRouter.h"
 #import "TestShowDetailViewRouter.h"
 #import "TestAddAsChildViewRouter.h"
@@ -75,7 +75,7 @@ typedef NS_ENUM(NSInteger,ZIKRouterTestType) {
                            [TestPushViewRouter class],
                            [TestPresentModallyViewRouter class],
                            [TestPresentAsPopoverViewRouter class],
-                           [ZIKTestPerformSegueViewRouter class],
+                           [TestPerformSegueViewRouter class],
                            [TestShowViewRouter class],
                            [TestShowDetailViewRouter class],
                            [TestAddAsChildViewRouter class],

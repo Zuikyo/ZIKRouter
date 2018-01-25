@@ -1,5 +1,5 @@
 //
-//  ZIKTestPerformSegueViewRouter.h
+//  TestPerformSegueViewRouter.h
 //  ZIKRouterDemo
 //
 //  Created by zuik on 2017/7/5.
@@ -8,6 +8,6 @@
 
 @import ZIKRouter;
 
-@interface ZIKTestPerformSegueViewRouter : ZIKAnyViewRouter
+@interface TestPerformSegueViewRouter : ZIKAnyViewRouter
 
 @end

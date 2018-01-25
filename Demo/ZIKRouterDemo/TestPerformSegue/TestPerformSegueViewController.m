@@ -10,7 +10,7 @@
 @import ZIKRouter;
 #import "ZIKInfoViewProtocol.h"
 #import "ZIKSimpleLabelProtocol.h"
-#import "ZIKTestPerformSegueViewRouter.h"
+#import "TestPerformSegueViewRouter.h"
 
 @interface TestPerformSegueViewController () <ZIKInfoViewDelegate>
 @property (nonatomic, strong) ZIKViewRouter *segueRouter;
@@ -112,7 +112,7 @@
 
 - (void)perfromUnwindSegueToTestPerformSegueVCFromInfoVC:(UIViewController *)infoViewController {
     //unwind segue from ZIKInfoViewController to TestPerformSegueViewController is define in ZIKInfoViewController, and should be used inside ZIKInfoViewController, this code is just for test
-    [ZIKTestPerformSegueViewRouter
+    [TestPerformSegueViewRouter
      performFromSource:infoViewController
      configuring:^(ZIKViewRouteConfiguration * _Nonnull config) {
          config.routeType = ZIKViewRouteTypePerformSegue;
