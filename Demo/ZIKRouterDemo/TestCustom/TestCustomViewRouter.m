@@ -1,20 +1,20 @@
 //
-//  ZIKTestCustomViewRouter.m
+//  TestCustomViewRouter.m
 //  ZIKRouterDemo
 //
 //  Created by zuik on 2017/7/5.
 //  Copyright © 2017 zuik. All rights reserved.
 //
 
-#import "ZIKTestCustomViewRouter.h"
+#import "TestCustomViewRouter.h"
 #import "TestCustomViewController.h"
 
-@interface TestCustomViewController (ZIKTestCustomViewRouter) <ZIKRoutableView>
+@interface TestCustomViewController (TestCustomViewRouter) <ZIKRoutableView>
 @end
-@implementation TestCustomViewController (ZIKTestCustomViewRouter)
+@implementation TestCustomViewController (TestCustomViewRouter)
 @end
 
-@implementation ZIKTestCustomViewRouter
+@implementation TestCustomViewRouter
 
 + (void)registerRoutableDestination {
     [self registerView:[TestCustomViewController class]];

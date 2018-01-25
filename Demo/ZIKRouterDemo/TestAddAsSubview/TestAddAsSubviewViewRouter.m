@@ -1,20 +1,20 @@
 //
-//  ZIKTestAddAsSubviewViewRouter.m
+//  TestAddAsSubviewViewRouter.m
 //  ZIKRouterDemo
 //
 //  Created by zuik on 2017/7/5.
 //  Copyright © 2017 zuik. All rights reserved.
 //
 
-#import "ZIKTestAddAsSubviewViewRouter.h"
+#import "TestAddAsSubviewViewRouter.h"
 #import "TestAddAsSubviewViewController.h"
 
-@interface TestAddAsSubviewViewController (ZIKTestAddAsSubviewViewRouter) <ZIKRoutableView>
+@interface TestAddAsSubviewViewController (TestAddAsSubviewViewRouter) <ZIKRoutableView>
 @end
-@implementation TestAddAsSubviewViewController (ZIKTestAddAsSubviewViewRouter)
+@implementation TestAddAsSubviewViewController (TestAddAsSubviewViewRouter)
 @end
 
-@implementation ZIKTestAddAsSubviewViewRouter
+@implementation TestAddAsSubviewViewRouter
 
 + (void)registerRoutableDestination {
     [self registerView:[TestAddAsSubviewViewController class]];

@@ -1,5 +1,5 @@
 //
-//  ZIKTestCustomViewRouter.h
+//  TestAddAsSubviewViewRouter.h
 //  ZIKRouterDemo
 //
 //  Created by zuik on 2017/7/5.
@@ -8,6 +8,6 @@
 
 @import ZIKRouter;
 
-@interface ZIKTestCustomViewRouter : ZIKAnyViewRouter
+@interface TestAddAsSubviewViewRouter : ZIKAnyViewRouter
 
 @end

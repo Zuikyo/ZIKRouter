@@ -1,20 +1,20 @@
 //
-//  ZIKTestAddAsChildViewRouter.m
+//  TestAddAsChildViewRouter.m
 //  ZIKRouterDemo
 //
 //  Created by zuik on 2017/7/5.
 //  Copyright © 2017 zuik. All rights reserved.
 //
 
-#import "ZIKTestAddAsChildViewRouter.h"
+#import "TestAddAsChildViewRouter.h"
 #import "TestAddAsChildViewController.h"
 
-@interface TestAddAsChildViewController (ZIKTestAddAsChildViewRouter) <ZIKRoutableView>
+@interface TestAddAsChildViewController (TestAddAsChildViewRouter) <ZIKRoutableView>
 @end
-@implementation TestAddAsChildViewController (ZIKTestAddAsChildViewRouter)
+@implementation TestAddAsChildViewController (TestAddAsChildViewRouter)
 @end
 
-@implementation ZIKTestAddAsChildViewRouter
+@implementation TestAddAsChildViewRouter
 
 + (void)registerRoutableDestination {
     [self registerView:[TestAddAsChildViewController class]];

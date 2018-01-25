@@ -1,5 +1,5 @@
 //
-//  ZIKTestAddAsChildViewRouter.h
+//  TestAddAsChildViewRouter.h
 //  ZIKRouterDemo
 //
 //  Created by zuik on 2017/7/5.
@@ -8,6 +8,6 @@
 
 @import ZIKRouter;
 
-@interface ZIKTestAddAsChildViewRouter : ZIKAnyViewRouter
+@interface TestAddAsChildViewRouter : ZIKAnyViewRouter
 
 @end

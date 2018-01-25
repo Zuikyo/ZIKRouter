@@ -13,10 +13,10 @@
 #import "TestPresentAsPopoverViewRouter.h"
 #import "ZIKTestPerformSegueViewRouter.h"
 #import "TestShowViewRouter.h"
-#import "ZIKTestShowDetailViewRouter.h"
-#import "ZIKTestAddAsChildViewRouter.h"
-#import "ZIKTestAddAsSubviewViewRouter.h"
-#import "ZIKTestCustomViewRouter.h"
+#import "TestShowDetailViewRouter.h"
+#import "TestAddAsChildViewRouter.h"
+#import "TestAddAsSubviewViewRouter.h"
+#import "TestCustomViewRouter.h"
 #import "ZIKTestGetDestinationViewRouter.h"
 #import "ZIKTestAutoCreateViewRouter.h"
 #import "ZIKTestCircularDependenciesViewRouter.h"
@@ -77,10 +77,10 @@ typedef NS_ENUM(NSInteger,ZIKRouterTestType) {
                            [TestPresentAsPopoverViewRouter class],
                            [ZIKTestPerformSegueViewRouter class],
                            [TestShowViewRouter class],
-                           [ZIKTestShowDetailViewRouter class],
-                           [ZIKTestAddAsChildViewRouter class],
-                           [ZIKTestAddAsSubviewViewRouter class],
-                           [ZIKTestCustomViewRouter class],
+                           [TestShowDetailViewRouter class],
+                           [TestAddAsChildViewRouter class],
+                           [TestAddAsSubviewViewRouter class],
+                           [TestCustomViewRouter class],
                            [ZIKTestGetDestinationViewRouter class],
                            [ZIKTestAutoCreateViewRouter class],
                            [ZIKTestCircularDependenciesViewRouter class],
