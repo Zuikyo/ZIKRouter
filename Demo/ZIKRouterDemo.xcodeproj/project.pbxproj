@@ -27,16 +27,16 @@
 		F82ECACD1F17DC51007168AA /* ZIKTestAddAsChildViewRouter.m in Sources */ = {isa = PBXBuildFile; fileRef = F82ECA991F17DC51007168AA /* ZIKTestAddAsChildViewRouter.m */; };
 		F82ECACE1F17DC51007168AA /* ZIKTestShowDetailViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = F82ECA9C1F17DC51007168AA /* ZIKTestShowDetailViewController.m */; };
 		F82ECACF1F17DC51007168AA /* ZIKTestShowDetailViewRouter.m in Sources */ = {isa = PBXBuildFile; fileRef = F82ECA9E1F17DC51007168AA /* ZIKTestShowDetailViewRouter.m */; };
-		F82ECAD01F17DC51007168AA /* ZIKTestShowViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = F82ECAA11F17DC51007168AA /* ZIKTestShowViewController.m */; };
+		F82ECAD01F17DC51007168AA /* TestShowViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = F82ECAA11F17DC51007168AA /* TestShowViewController.m */; };
 		F82ECAD11F17DC51007168AA /* ZIKTestShowViewRouter.m in Sources */ = {isa = PBXBuildFile; fileRef = F82ECAA31F17DC51007168AA /* ZIKTestShowViewRouter.m */; };
 		F82ECAD21F17DC51007168AA /* ZIKCustomTransitionSegue.m in Sources */ = {isa = PBXBuildFile; fileRef = F82ECAA61F17DC51007168AA /* ZIKCustomTransitionSegue.m */; };
 		F82ECAD31F17DC51007168AA /* ZIKTestPerformSegueViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = F82ECAA81F17DC51007168AA /* ZIKTestPerformSegueViewController.m */; };
 		F82ECAD41F17DC51007168AA /* ZIKTestPerformSegueViewRouter.m in Sources */ = {isa = PBXBuildFile; fileRef = F82ECAAA1F17DC51007168AA /* ZIKTestPerformSegueViewRouter.m */; };
-		F82ECAD51F17DC51007168AA /* ZIKTestPresentAsPopoverViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = F82ECAAD1F17DC51007168AA /* ZIKTestPresentAsPopoverViewController.m */; };
+		F82ECAD51F17DC51007168AA /* TestPresentAsPopoverViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = F82ECAAD1F17DC51007168AA /* TestPresentAsPopoverViewController.m */; };
 		F82ECAD61F17DC51007168AA /* ZIKTestPresentAsPopoverViewRouter.m in Sources */ = {isa = PBXBuildFile; fileRef = F82ECAAF1F17DC51007168AA /* ZIKTestPresentAsPopoverViewRouter.m */; };
-		F82ECAD71F17DC51007168AA /* ZIKTestPresentModallyViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = F82ECAB21F17DC51007168AA /* ZIKTestPresentModallyViewController.m */; };
+		F82ECAD71F17DC51007168AA /* TestPresentModallyViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = F82ECAB21F17DC51007168AA /* TestPresentModallyViewController.m */; };
 		F82ECAD81F17DC51007168AA /* ZIKTestPresentModallyViewRouter.m in Sources */ = {isa = PBXBuildFile; fileRef = F82ECAB41F17DC51007168AA /* ZIKTestPresentModallyViewRouter.m */; };
-		F82ECAD91F17DC51007168AA /* ZIKTestPushViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = F82ECAB71F17DC51007168AA /* ZIKTestPushViewController.m */; };
+		F82ECAD91F17DC51007168AA /* TestPushViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = F82ECAB71F17DC51007168AA /* TestPushViewController.m */; };
 		F82ECADA1F17DC51007168AA /* ZIKTestPushViewRouter.m in Sources */ = {isa = PBXBuildFile; fileRef = F82ECAB91F17DC51007168AA /* ZIKTestPushViewRouter.m */; };
 		F833152D1F6FBE7900891004 /* ZIKTestServiceRouterViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = F83315251F6FBE7900891004 /* ZIKTestServiceRouterViewController.m */; };
 		F833152E1F6FBE7900891004 /* ZIKTestServiceRouterViewRouter.m in Sources */ = {isa = PBXBuildFile; fileRef = F83315271F6FBE7900891004 /* ZIKTestServiceRouterViewRouter.m */; };
@@ -129,8 +129,8 @@
 		F82ECA9C1F17DC51007168AA /* ZIKTestShowDetailViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ZIKTestShowDetailViewController.m; sourceTree = "<group>"; };
 		F82ECA9D1F17DC51007168AA /* ZIKTestShowDetailViewRouter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ZIKTestShowDetailViewRouter.h; sourceTree = "<group>"; };
 		F82ECA9E1F17DC51007168AA /* ZIKTestShowDetailViewRouter.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ZIKTestShowDetailViewRouter.m; sourceTree = "<group>"; };
-		F82ECAA01F17DC51007168AA /* ZIKTestShowViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ZIKTestShowViewController.h; sourceTree = "<group>"; };
-		F82ECAA11F17DC51007168AA /* ZIKTestShowViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ZIKTestShowViewController.m; sourceTree = "<group>"; };
+		F82ECAA01F17DC51007168AA /* TestShowViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TestShowViewController.h; sourceTree = "<group>"; };
+		F82ECAA11F17DC51007168AA /* TestShowViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TestShowViewController.m; sourceTree = "<group>"; };
 		F82ECAA21F17DC51007168AA /* ZIKTestShowViewRouter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ZIKTestShowViewRouter.h; sourceTree = "<group>"; };
 		F82ECAA31F17DC51007168AA /* ZIKTestShowViewRouter.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ZIKTestShowViewRouter.m; sourceTree = "<group>"; };
 		F82ECAA51F17DC51007168AA /* ZIKCustomTransitionSegue.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ZIKCustomTransitionSegue.h; sourceTree = "<group>"; };
@@ -139,16 +139,16 @@
 		F82ECAA81F17DC51007168AA /* ZIKTestPerformSegueViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; lineEnding = 0; path = ZIKTestPerformSegueViewController.m; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objc; };
 		F82ECAA91F17DC51007168AA /* ZIKTestPerformSegueViewRouter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; lineEnding = 0; path = ZIKTestPerformSegueViewRouter.h; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objcpp; };
 		F82ECAAA1F17DC51007168AA /* ZIKTestPerformSegueViewRouter.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ZIKTestPerformSegueViewRouter.m; sourceTree = "<group>"; };
-		F82ECAAC1F17DC51007168AA /* ZIKTestPresentAsPopoverViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ZIKTestPresentAsPopoverViewController.h; sourceTree = "<group>"; };
-		F82ECAAD1F17DC51007168AA /* ZIKTestPresentAsPopoverViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; lineEnding = 0; path = ZIKTestPresentAsPopoverViewController.m; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objc; };
+		F82ECAAC1F17DC51007168AA /* TestPresentAsPopoverViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TestPresentAsPopoverViewController.h; sourceTree = "<group>"; };
+		F82ECAAD1F17DC51007168AA /* TestPresentAsPopoverViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; lineEnding = 0; path = TestPresentAsPopoverViewController.m; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objc; };
 		F82ECAAE1F17DC51007168AA /* ZIKTestPresentAsPopoverViewRouter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; lineEnding = 0; path = ZIKTestPresentAsPopoverViewRouter.h; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objcpp; };
 		F82ECAAF1F17DC51007168AA /* ZIKTestPresentAsPopoverViewRouter.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ZIKTestPresentAsPopoverViewRouter.m; sourceTree = "<group>"; };
-		F82ECAB11F17DC51007168AA /* ZIKTestPresentModallyViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ZIKTestPresentModallyViewController.h; sourceTree = "<group>"; };
-		F82ECAB21F17DC51007168AA /* ZIKTestPresentModallyViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; lineEnding = 0; path = ZIKTestPresentModallyViewController.m; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objc; };
+		F82ECAB11F17DC51007168AA /* TestPresentModallyViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TestPresentModallyViewController.h; sourceTree = "<group>"; };
+		F82ECAB21F17DC51007168AA /* TestPresentModallyViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; lineEnding = 0; path = TestPresentModallyViewController.m; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objc; };
 		F82ECAB31F17DC51007168AA /* ZIKTestPresentModallyViewRouter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; lineEnding = 0; path = ZIKTestPresentModallyViewRouter.h; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objcpp; };
 		F82ECAB41F17DC51007168AA /* ZIKTestPresentModallyViewRouter.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ZIKTestPresentModallyViewRouter.m; sourceTree = "<group>"; };
-		F82ECAB61F17DC51007168AA /* ZIKTestPushViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ZIKTestPushViewController.h; sourceTree = "<group>"; };
-		F82ECAB71F17DC51007168AA /* ZIKTestPushViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; lineEnding = 0; path = ZIKTestPushViewController.m; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objc; };
+		F82ECAB61F17DC51007168AA /* TestPushViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TestPushViewController.h; sourceTree = "<group>"; };
+		F82ECAB71F17DC51007168AA /* TestPushViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; lineEnding = 0; path = TestPushViewController.m; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objc; };
 		F82ECAB81F17DC51007168AA /* ZIKTestPushViewRouter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ZIKTestPushViewRouter.h; sourceTree = "<group>"; };
 		F82ECAB91F17DC51007168AA /* ZIKTestPushViewRouter.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ZIKTestPushViewRouter.m; sourceTree = "<group>"; };
 		F83315241F6FBE7900891004 /* ZIKTestServiceRouterViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ZIKTestServiceRouterViewController.h; sourceTree = "<group>"; };
@@ -334,8 +334,8 @@
 		F82ECA9F1F17DC51007168AA /* TestShow */ = {
 			isa = PBXGroup;
 			children = (
-				F82ECAA01F17DC51007168AA /* ZIKTestShowViewController.h */,
-				F82ECAA11F17DC51007168AA /* ZIKTestShowViewController.m */,
+				F82ECAA01F17DC51007168AA /* TestShowViewController.h */,
+				F82ECAA11F17DC51007168AA /* TestShowViewController.m */,
 				F82ECAA21F17DC51007168AA /* ZIKTestShowViewRouter.h */,
 				F82ECAA31F17DC51007168AA /* ZIKTestShowViewRouter.m */,
 			);
@@ -360,8 +360,8 @@
 		F82ECAAB1F17DC51007168AA /* TestPresentAsPopover */ = {
 			isa = PBXGroup;
 			children = (
-				F82ECAAC1F17DC51007168AA /* ZIKTestPresentAsPopoverViewController.h */,
-				F82ECAAD1F17DC51007168AA /* ZIKTestPresentAsPopoverViewController.m */,
+				F82ECAAC1F17DC51007168AA /* TestPresentAsPopoverViewController.h */,
+				F82ECAAD1F17DC51007168AA /* TestPresentAsPopoverViewController.m */,
 				F82ECAAE1F17DC51007168AA /* ZIKTestPresentAsPopoverViewRouter.h */,
 				F82ECAAF1F17DC51007168AA /* ZIKTestPresentAsPopoverViewRouter.m */,
 			);
@@ -371,8 +371,8 @@
 		F82ECAB01F17DC51007168AA /* TestPresentModally */ = {
 			isa = PBXGroup;
 			children = (
-				F82ECAB11F17DC51007168AA /* ZIKTestPresentModallyViewController.h */,
-				F82ECAB21F17DC51007168AA /* ZIKTestPresentModallyViewController.m */,
+				F82ECAB11F17DC51007168AA /* TestPresentModallyViewController.h */,
+				F82ECAB21F17DC51007168AA /* TestPresentModallyViewController.m */,
 				F82ECAB31F17DC51007168AA /* ZIKTestPresentModallyViewRouter.h */,
 				F82ECAB41F17DC51007168AA /* ZIKTestPresentModallyViewRouter.m */,
 			);
@@ -382,8 +382,8 @@
 		F82ECAB51F17DC51007168AA /* TestPush */ = {
 			isa = PBXGroup;
 			children = (
-				F82ECAB61F17DC51007168AA /* ZIKTestPushViewController.h */,
-				F82ECAB71F17DC51007168AA /* ZIKTestPushViewController.m */,
+				F82ECAB61F17DC51007168AA /* TestPushViewController.h */,
+				F82ECAB71F17DC51007168AA /* TestPushViewController.m */,
 				F82ECAB81F17DC51007168AA /* ZIKTestPushViewRouter.h */,
 				F82ECAB91F17DC51007168AA /* ZIKTestPushViewRouter.m */,
 			);
@@ -597,7 +597,7 @@
 				F82ECAC11F17DC51007168AA /* ZIKInfoViewRouter.m in Sources */,
 				F82ECAC91F17DC51007168AA /* ZIKTestCustomViewRouter.m in Sources */,
 				F82ECADA1F17DC51007168AA /* ZIKTestPushViewRouter.m in Sources */,
-				F82ECAD01F17DC51007168AA /* ZIKTestShowViewController.m in Sources */,
+				F82ECAD01F17DC51007168AA /* TestShowViewController.m in Sources */,
 				F82ECAC41F17DC51007168AA /* ZIKTestAutoCreateViewController.m in Sources */,
 				F82ECAC51F17DC51007168AA /* ZIKTestAutoCreateViewRouter.m in Sources */,
 				F82ECAC01F17DC51007168AA /* ZIKInfoViewController.m in Sources */,
@@ -626,13 +626,13 @@
 				F82ECAD31F17DC51007168AA /* ZIKTestPerformSegueViewController.m in Sources */,
 				F820BF931F628A9600D570CF /* SwiftSampleViewController.swift in Sources */,
 				F84239D51F0CDE78000FEE5F /* DetailViewController.m in Sources */,
-				F82ECAD91F17DC51007168AA /* ZIKTestPushViewController.m in Sources */,
+				F82ECAD91F17DC51007168AA /* TestPushViewController.m in Sources */,
 				F82ECAC71F17DC51007168AA /* ZIKTestGetDestinationViewRouter.m in Sources */,
 				F8BCCB981F208D2B0051716B /* MasterViewRouter.m in Sources */,
 				F88DD30C1FBB301600715097 /* SubclassViewController.m in Sources */,
 				F82ECAC31F17DC51007168AA /* EmptyContainerViewRouter.m in Sources */,
 				F87317DC1F924B6200A5F5D4 /* ZIKTestCircularDependenciesViewRouter.m in Sources */,
-				F82ECAD71F17DC51007168AA /* ZIKTestPresentModallyViewController.m in Sources */,
+				F82ECAD71F17DC51007168AA /* TestPresentModallyViewController.m in Sources */,
 				F83315301F6FBE7900891004 /* ZIKTimeServiceRouter.m in Sources */,
 				F87317D91F924B3C00A5F5D4 /* ZIKTestCircularDependenciesViewController.m in Sources */,
 				F82ECACD1F17DC51007168AA /* ZIKTestAddAsChildViewRouter.m in Sources */,
@@ -641,7 +641,7 @@
 				F82ECABF1F17DC51007168AA /* ZIKSimpleLabelRouter.m in Sources */,
 				F87317E21F924F0C00A5F5D4 /* ZIKChildViewController.m in Sources */,
 				F8DFBD5E2019FE210069841B /* DemoRouteAdapter.m in Sources */,
-				F82ECAD51F17DC51007168AA /* ZIKTestPresentAsPopoverViewController.m in Sources */,
+				F82ECAD51F17DC51007168AA /* TestPresentAsPopoverViewController.m in Sources */,
 				F833152D1F6FBE7900891004 /* ZIKTestServiceRouterViewController.m in Sources */,
 				F82ECABE1F17DC51007168AA /* ZIKSimpleLabel.m in Sources */,
 				F833152E1F6FBE7900891004 /* ZIKTestServiceRouterViewRouter.m in Sources */,

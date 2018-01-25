@@ -1,87 +1,79 @@
 //
-//  ZIKTestPushViewController.m
+//  TestPresentModallyViewController.m
 //  ZIKRouterDemo
 //
 //  Created by zuik on 2017/7/5.
 //  Copyright © 2017 zuik. All rights reserved.
 //
 
-#import "ZIKTestPushViewController.h"
+#import "TestPresentModallyViewController.h"
 @import ZIKRouter;
 #import "ZIKInfoViewProtocol.h"
 
-@interface ZIKTestPushViewController () <ZIKInfoViewDelegate>
-@property (nonatomic, strong) ZIKDestinationViewRouter(UIViewController<ZIKInfoViewProtocol> *) *infoViewRouter;
+@interface TestPresentModallyViewController () <ZIKInfoViewDelegate>
+@property (nonatomic, strong) ZIKViewRouter *infoViewRouter;
 @end
 
-@implementation ZIKTestPushViewController
+@implementation TestPresentModallyViewController
 
 - (void)viewDidLoad {
     [super viewDidLoad];
+    // Do any additional setup after loading the view.
     
     __weak typeof(self) weakSelf = self;
+    //provide the router
     self.infoViewRouter = [[ZIKViewRouter.classToView(ZIKRoutableProtocol(ZIKInfoViewProtocol)) alloc]
                            initWithConfiguring:^(ZIKViewRouteConfiguration * _Nonnull config) {
                                config.source = self;
-                               config.routeType = ZIKViewRouteTypePush;
+                               config.routeType = ZIKViewRouteTypePresentModally;
+                               config.containerWrapper = ^UIViewController<ZIKViewRouteContainer> * _Nonnull(UIViewController * _Nonnull destination) {
+                                   UINavigationController *container = [[UINavigationController alloc] initWithRootViewController:destination];
+                                   return container;
+                               };
                                
-                               //prepareDestination is hold in configuration, should be careful about retain cycle if this view controller will hold the router. Same with routeCompletion, successHandler, errorHandler, stateNotifier.
                                config.prepareDestination = ^(UIViewController<ZIKInfoViewProtocol> *destination) {
-                                   NSLog(@"provider: prepare destination");
                                    destination.name = @"Zuik";
                                    destination.age = 18;
                                    destination.delegate = weakSelf;
                                };
-                               config.routeCompletion = ^(UIViewController<ZIKInfoViewProtocol> *destination) {
-                                   NSLog(@"provider: push complete");
-                               };
                                config.successHandler = ^{
-                                   NSLog(@"provider: push success");
+                                   NSLog(@"provider: present modally success");
                                };
                                config.errorHandler = ^(ZIKRouteAction routeAction, NSError * _Nonnull error) {
-                                   NSLog(@"provider: push failed: %@",error);
+                                   NSLog(@"provider: present modally failed: %@",error);
                                };
-                               config.stateNotifier = ^(ZIKRouterState oldState, ZIKRouterState newState) {
-                                   NSLog(@"router change state from %@ to %@",[ZIKRouter descriptionOfState:oldState],[ZIKRouter descriptionOfState:newState]);
-                               };
-                               config.handleExternalRoute = YES;
                            }
-                           removing:^(__kindof ZIKViewRemoveConfiguration * _Nonnull config) {
+                           removing:^(ZIKViewRemoveConfiguration * _Nonnull config) {
                                config.successHandler = ^{
-                                   NSLog(@"provider: pop success");
+                                   NSLog(@"provider: dismiss success");
                                };
                                config.errorHandler = ^(ZIKRouteAction routeAction, NSError * _Nonnull error) {
-                                   NSLog(@"provider: pop failed: %@",error);
+                                   NSLog(@"provider: dismiss failed: %@",error);
                                };
-                               config.handleExternalRoute = YES;
-                               }];
+                           }];
 }
-- (IBAction)push:(id)sender {
+
+- (IBAction)presentModally:(id)sender {
     if (![self.infoViewRouter canPerform]) {
         NSLog(@"Can't perform route now:%@",self.infoViewRouter);
         return;
     }
+    //perform the router
     [self.infoViewRouter performRouteWithSuccessHandler:^{
-        NSLog(@"performer: push success");
+        NSLog(@"performer: present modally success");
     } errorHandler:^(ZIKRouteAction routeAction, NSError * _Nonnull error) {
-        NSLog(@"performer: push failed: %@",error);
+        NSLog(@"performer: present modally failed: %@",error);
     }];
 }
-- (IBAction)pushAndPop:(id)sender {
+
+- (IBAction)presentModallyAndDismiss:(id)sender {
     if (![self.infoViewRouter canPerform]) {
         NSLog(@"Can't perform route now:%@",self.infoViewRouter);
         return;
     }
     [self.infoViewRouter performRouteWithSuccessHandler:^{
-        NSLog(@"performer: push success");
-        
-        [self.infoViewRouter removeRouteWithSuccessHandler:^{
-            NSLog(@"performer: pop success");
-        } errorHandler:^(ZIKRouteAction routeAction, NSError * _Nonnull error) {
-            NSLog(@"performer: pop failed,error:%@",error);
-        }];
-        
-    } errorHandler:^(ZIKRouteAction routeAction, NSError * _Nonnull error) {
+        [self removeInfoViewController];
+    } errorHandler:^(ZIKRouteAction  _Nonnull routeAction, NSError * _Nonnull error) {
         NSLog(@"performer: push failed: %@",error);
     }];
 }
@@ -92,19 +84,14 @@
         return;
     }
     [self.infoViewRouter removeRouteWithSuccessHandler:^{
-        NSLog(@"performer: pop success");
+        NSLog(@"performer: dismiss success");
     } errorHandler:^(ZIKRouteAction routeAction, NSError * _Nonnull error) {
-        NSLog(@"performer: pop failed,error:%@",error);
+        NSLog(@"performer: dismiss failed,error:%@",error);
     }];
-}
-
-- (void)routeFromExternalForInfoViewController:(UIViewController *)infoViewController {
-    [infoViewController.navigationController popViewControllerAnimated:YES];
 }
 
 - (void)handleRemoveInfoViewController:(UIViewController *)infoViewController {
     [self removeInfoViewController];
-//    [self routeFromExternalForInfoViewController:infoViewController];
 }
 
 /*

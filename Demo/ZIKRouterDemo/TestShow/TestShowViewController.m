@@ -1,20 +1,20 @@
 //
-//  ZIKTestShowViewController.m
+//  TestShowViewController.m
 //  ZIKRouterDemo
 //
 //  Created by zuik on 2017/7/5.
 //  Copyright © 2017 zuik. All rights reserved.
 //
 
-#import "ZIKTestShowViewController.h"
+#import "TestShowViewController.h"
 @import ZIKRouter;
 #import "ZIKInfoViewProtocol.h"
 
-@interface ZIKTestShowViewController () <ZIKInfoViewDelegate>
+@interface TestShowViewController () <ZIKInfoViewDelegate>
 @property (nonatomic, strong) ZIKViewRouter *infoViewRouter;
 @end
 
-@implementation ZIKTestShowViewController
+@implementation TestShowViewController
 
 - (void)viewDidLoad {
     [super viewDidLoad];

@@ -7,22 +7,22 @@
 //
 
 #import "ZIKTestPresentAsPopoverViewRouter.h"
-#import "ZIKTestPresentAsPopoverViewController.h"
+#import "TestPresentAsPopoverViewController.h"
 
-@interface ZIKTestPresentAsPopoverViewController (ZIKTestPresentAsPopoverViewRouter) <ZIKRoutableView>
+@interface TestPresentAsPopoverViewController (ZIKTestPresentAsPopoverViewRouter) <ZIKRoutableView>
 @end
-@implementation ZIKTestPresentAsPopoverViewController (ZIKTestPresentAsPopoverViewRouter)
+@implementation TestPresentAsPopoverViewController (ZIKTestPresentAsPopoverViewRouter)
 @end
 
 @implementation ZIKTestPresentAsPopoverViewRouter
 
 + (void)registerRoutableDestination {
-    [self registerView:[ZIKTestPresentAsPopoverViewController class]];
+    [self registerView:[TestPresentAsPopoverViewController class]];
 }
 
 - (id<ZIKRoutableView>)destinationWithConfiguration:(ZIKViewRouteConfiguration *)configuration {
     UIStoryboard *sb = [UIStoryboard storyboardWithName:@"Main" bundle:nil];
-    ZIKTestPresentAsPopoverViewController *destination = [sb instantiateViewControllerWithIdentifier:@"testPresentAsPopover"];;
+    TestPresentAsPopoverViewController *destination = [sb instantiateViewControllerWithIdentifier:@"testPresentAsPopover"];;
     destination.title = @"Test PresentAsPopover";
     return destination;
 }

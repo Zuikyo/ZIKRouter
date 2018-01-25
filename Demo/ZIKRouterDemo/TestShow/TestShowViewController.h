@@ -1,5 +1,5 @@
 //
-//  ZIKTestPresentAsPopoverViewController.h
+//  TestShowViewController.h
 //  ZIKRouterDemo
 //
 //  Created by zuik on 2017/7/5.
@@ -8,6 +8,6 @@
 
 #import <UIKit/UIKit.h>
 
-@interface ZIKTestPresentAsPopoverViewController : UIViewController
+@interface TestShowViewController : UIViewController
 
 @end

@@ -7,19 +7,19 @@
 //
 
 #import "ZIKTestPushViewRouter.h"
-#import "ZIKTestPushViewController.h"
+#import "TestPushViewController.h"
 
-DeclareRoutableView(ZIKTestPushViewController, ZIKTestPushViewRouter)
+DeclareRoutableView(TestPushViewController, ZIKTestPushViewRouter)
 
 @implementation ZIKTestPushViewRouter
 
 + (void)registerRoutableDestination {
-    [self registerView:[ZIKTestPushViewController class]];
+    [self registerView:[TestPushViewController class]];
 }
 
 - (id<ZIKRoutableView>)destinationWithConfiguration:(ZIKViewRouteConfiguration *)configuration {
     UIStoryboard *sb = [UIStoryboard storyboardWithName:@"Main" bundle:nil];
-    ZIKTestPushViewController *destination = [sb instantiateViewControllerWithIdentifier:@"testPush"];
+    TestPushViewController *destination = [sb instantiateViewControllerWithIdentifier:@"testPush"];
     destination.title = @"Test Push";
     return destination;
 }

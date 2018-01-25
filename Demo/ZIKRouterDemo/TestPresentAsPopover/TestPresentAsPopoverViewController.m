@@ -1,20 +1,20 @@
 //
-//  ZIKTestPresentAsPopoverViewController.m
+//  TestPresentAsPopoverViewController.m
 //  ZIKRouterDemo
 //
 //  Created by zuik on 2017/7/5.
 //  Copyright © 2017 zuik. All rights reserved.
 //
 
-#import "ZIKTestPresentAsPopoverViewController.h"
+#import "TestPresentAsPopoverViewController.h"
 @import ZIKRouter;
 #import "ZIKInfoViewProtocol.h"
 
-@interface ZIKTestPresentAsPopoverViewController () <ZIKInfoViewDelegate, UIPopoverPresentationControllerDelegate>
+@interface TestPresentAsPopoverViewController () <ZIKInfoViewDelegate, UIPopoverPresentationControllerDelegate>
 @property (nonatomic, strong) ZIKDestinationViewRouter(id<ZIKInfoViewProtocol>) *infoViewRouter;
 @end
 
-@implementation ZIKTestPresentAsPopoverViewController
+@implementation TestPresentAsPopoverViewController
 
 - (void)viewDidLoad {
     [super viewDidLoad];

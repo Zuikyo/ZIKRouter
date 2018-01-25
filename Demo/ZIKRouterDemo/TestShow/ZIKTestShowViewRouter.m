@@ -7,22 +7,22 @@
 //
 
 #import "ZIKTestShowViewRouter.h"
-#import "ZIKTestShowViewController.h"
+#import "TestShowViewController.h"
 
-@interface ZIKTestShowViewController (ZIKTestShowViewRouter) <ZIKRoutableView>
+@interface TestShowViewController (ZIKTestShowViewRouter) <ZIKRoutableView>
 @end
-@implementation ZIKTestShowViewController (ZIKTestShowViewRouter)
+@implementation TestShowViewController (ZIKTestShowViewRouter)
 @end
 
 @implementation ZIKTestShowViewRouter
 
 + (void)registerRoutableDestination {
-    [self registerView:[ZIKTestShowViewController class]];
+    [self registerView:[TestShowViewController class]];
 }
 
 - (id<ZIKRoutableView>)destinationWithConfiguration:(ZIKViewRouteConfiguration *)configuration {
     UIStoryboard *sb = [UIStoryboard storyboardWithName:@"Main" bundle:nil];
-    ZIKTestShowViewController *destination = [sb instantiateViewControllerWithIdentifier:@"testShow"];;
+    TestShowViewController *destination = [sb instantiateViewControllerWithIdentifier:@"testShow"];;
     destination.title = @"Test Show";
     return destination;
 }

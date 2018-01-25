@@ -7,22 +7,22 @@
 //
 
 #import "ZIKTestPresentModallyViewRouter.h"
-#import "ZIKTestPresentModallyViewController.h"
+#import "TestPresentModallyViewController.h"
 
-@interface ZIKTestPresentModallyViewController (ZIKTestPresentModallyViewRouter) <ZIKRoutableView>
+@interface TestPresentModallyViewController (ZIKTestPresentModallyViewRouter) <ZIKRoutableView>
 @end
-@implementation ZIKTestPresentModallyViewController (ZIKTestPresentModallyViewRouter)
+@implementation TestPresentModallyViewController (ZIKTestPresentModallyViewRouter)
 @end
 
 @implementation ZIKTestPresentModallyViewRouter
 
 + (void)registerRoutableDestination {
-    [self registerView:[ZIKTestPresentModallyViewController class]];
+    [self registerView:[TestPresentModallyViewController class]];
 }
 
 - (id<ZIKRoutableView>)destinationWithConfiguration:(ZIKViewRouteConfiguration *)configuration {
     UIStoryboard *sb = [UIStoryboard storyboardWithName:@"Main" bundle:nil];
-    ZIKTestPresentModallyViewController *destination = [sb instantiateViewControllerWithIdentifier:@"testPresentModally"];;
+    TestPresentModallyViewController *destination = [sb instantiateViewControllerWithIdentifier:@"testPresentModally"];;
     destination.title = @"Test PresentModally";
     return destination;
 }

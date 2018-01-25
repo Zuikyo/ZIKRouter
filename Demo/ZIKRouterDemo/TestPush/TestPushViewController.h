@@ -1,5 +1,5 @@
 //
-//  ZIKTestPresentModallyViewController.h
+//  TestPushViewController.h
 //  ZIKRouterDemo
 //
 //  Created by zuik on 2017/7/5.
@@ -8,6 +8,6 @@
 
 #import <UIKit/UIKit.h>
 
-@interface ZIKTestPresentModallyViewController : UIViewController
+@interface TestPushViewController : UIViewController
 
 @end
