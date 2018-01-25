@@ -1,20 +1,20 @@
 //
-//  ZIKTestPresentModallyViewRouter.m
+//  TestPresentModallyViewRouter.m
 //  ZIKRouterDemo
 //
 //  Created by zuik on 2017/7/5.
 //  Copyright © 2017 zuik. All rights reserved.
 //
 
-#import "ZIKTestPresentModallyViewRouter.h"
+#import "TestPresentModallyViewRouter.h"
 #import "TestPresentModallyViewController.h"
 
-@interface TestPresentModallyViewController (ZIKTestPresentModallyViewRouter) <ZIKRoutableView>
+@interface TestPresentModallyViewController (TestPresentModallyViewRouter) <ZIKRoutableView>
 @end
-@implementation TestPresentModallyViewController (ZIKTestPresentModallyViewRouter)
+@implementation TestPresentModallyViewController (TestPresentModallyViewRouter)
 @end
 
-@implementation ZIKTestPresentModallyViewRouter
+@implementation TestPresentModallyViewRouter
 
 + (void)registerRoutableDestination {
     [self registerView:[TestPresentModallyViewController class]];

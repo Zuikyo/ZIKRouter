@@ -1,5 +1,5 @@
 //
-//  ZIKTestPresentAsPopoverViewRouter.h
+//  TestPresentAsPopoverViewRouter.h
 //  ZIKRouterDemo
 //
 //  Created by zuik on 2017/7/5.
@@ -8,6 +8,6 @@
 
 @import ZIKRouter;
 
-@interface ZIKTestPresentAsPopoverViewRouter : ZIKAnyViewRouter
+@interface TestPresentAsPopoverViewRouter : ZIKAnyViewRouter
 
 @end

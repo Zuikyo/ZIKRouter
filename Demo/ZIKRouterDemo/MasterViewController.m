@@ -8,11 +8,11 @@
 
 #import "MasterViewController.h"
 
-#import "ZIKTestPushViewRouter.h"
-#import "ZIKTestPresentModallyViewRouter.h"
-#import "ZIKTestPresentAsPopoverViewRouter.h"
+#import "TestPushViewRouter.h"
+#import "TestPresentModallyViewRouter.h"
+#import "TestPresentAsPopoverViewRouter.h"
 #import "ZIKTestPerformSegueViewRouter.h"
-#import "ZIKTestShowViewRouter.h"
+#import "TestShowViewRouter.h"
 #import "ZIKTestShowDetailViewRouter.h"
 #import "ZIKTestAddAsChildViewRouter.h"
 #import "ZIKTestAddAsSubviewViewRouter.h"
@@ -72,11 +72,11 @@ typedef NS_ENUM(NSInteger,ZIKRouterTestType) {
                        @"Swift Sample"
                        ];
     self.routerClasses = @[
-                           [ZIKTestPushViewRouter class],
-                           [ZIKTestPresentModallyViewRouter class],
-                           [ZIKTestPresentAsPopoverViewRouter class],
+                           [TestPushViewRouter class],
+                           [TestPresentModallyViewRouter class],
+                           [TestPresentAsPopoverViewRouter class],
                            [ZIKTestPerformSegueViewRouter class],
-                           [ZIKTestShowViewRouter class],
+                           [TestShowViewRouter class],
                            [ZIKTestShowDetailViewRouter class],
                            [ZIKTestAddAsChildViewRouter class],
                            [ZIKTestAddAsSubviewViewRouter class],

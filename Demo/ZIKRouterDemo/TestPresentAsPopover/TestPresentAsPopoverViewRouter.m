@@ -1,20 +1,20 @@
 //
-//  ZIKTestPresentAsPopoverViewRouter.m
+//  TestPresentAsPopoverViewRouter.m
 //  ZIKRouterDemo
 //
 //  Created by zuik on 2017/7/5.
 //  Copyright © 2017 zuik. All rights reserved.
 //
 
-#import "ZIKTestPresentAsPopoverViewRouter.h"
+#import "TestPresentAsPopoverViewRouter.h"
 #import "TestPresentAsPopoverViewController.h"
 
-@interface TestPresentAsPopoverViewController (ZIKTestPresentAsPopoverViewRouter) <ZIKRoutableView>
+@interface TestPresentAsPopoverViewController (TestPresentAsPopoverViewRouter) <ZIKRoutableView>
 @end
-@implementation TestPresentAsPopoverViewController (ZIKTestPresentAsPopoverViewRouter)
+@implementation TestPresentAsPopoverViewController (TestPresentAsPopoverViewRouter)
 @end
 
-@implementation ZIKTestPresentAsPopoverViewRouter
+@implementation TestPresentAsPopoverViewRouter
 
 + (void)registerRoutableDestination {
     [self registerView:[TestPresentAsPopoverViewController class]];

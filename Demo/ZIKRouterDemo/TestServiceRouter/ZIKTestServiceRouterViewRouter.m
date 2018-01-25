@@ -9,9 +9,9 @@
 #import "ZIKTestServiceRouterViewRouter.h"
 #import "TestServiceRouterViewController.h"
 
-@interface TestServiceRouterViewController (ZIKTestPushViewRouter) <ZIKRoutableView>
+@interface TestServiceRouterViewController (TestServiceRouterViewRouter) <ZIKRoutableView>
 @end
-@implementation TestServiceRouterViewController (ZIKTestPushViewRouter)
+@implementation TestServiceRouterViewController (TestServiceRouterViewRouter)
 @end
 
 @implementation ZIKTestServiceRouterViewRouter

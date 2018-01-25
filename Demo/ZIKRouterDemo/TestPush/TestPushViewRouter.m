@@ -1,17 +1,17 @@
 //
-//  ZIKTestPushViewRouter.m
+//  TestPushViewRouter.m
 //  ZIKRouterDemo
 //
 //  Created by zuik on 2017/7/5.
 //  Copyright © 2017 zuik. All rights reserved.
 //
 
-#import "ZIKTestPushViewRouter.h"
+#import "TestPushViewRouter.h"
 #import "TestPushViewController.h"
 
-DeclareRoutableView(TestPushViewController, ZIKTestPushViewRouter)
+DeclareRoutableView(TestPushViewController, TestPushViewRouter)
 
-@implementation ZIKTestPushViewRouter
+@implementation TestPushViewRouter
 
 + (void)registerRoutableDestination {
     [self registerView:[TestPushViewController class]];

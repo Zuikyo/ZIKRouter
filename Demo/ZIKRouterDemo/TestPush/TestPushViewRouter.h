@@ -1,5 +1,5 @@
 //
-//  ZIKTestPresentModallyViewRouter.h
+//  TestPushViewRouter.h
 //  ZIKRouterDemo
 //
 //  Created by zuik on 2017/7/5.
@@ -8,6 +8,6 @@
 
 @import ZIKRouter;
 
-@interface ZIKTestPresentModallyViewRouter : ZIKAnyViewRouter
+@interface TestPushViewRouter : ZIKAnyViewRouter
 
 @end
