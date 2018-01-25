@@ -17,7 +17,7 @@ public class ViewRouter<Destination, ModuleConfig> {
     /// The router type to wrap.
     public let routerType: ZIKAnyViewRouter.Type
     
-    /// The routed ZIKViewRouter.
+    /// The real routed ZIKViewRouter.
     public private(set) var routed: ZIKAnyViewRouter?
     
     internal init(routerType: ZIKAnyViewRouter.Type) {

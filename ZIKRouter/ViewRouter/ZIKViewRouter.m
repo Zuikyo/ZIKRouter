@@ -97,7 +97,7 @@ static NSMutableArray *g_preparingUIViewRouters;
     ZIKRouter_replaceMethodWithMethod([UIStoryboard class], @selector(instantiateInitialViewController), ZIKViewRouterClass, @selector(ZIKViewRouter_hook_instantiateInitialViewController));
 }
 
-+ (void)_registrationDidFinished {
++ (void)_didFinishRegistration {
     
 }
 
@@ -1576,6 +1576,25 @@ static void _enumerateRoutersForViewClass(Class viewClass,void(^handler)(Class r
 }
 
 #pragma mark Hook System Navigation
+/*
+ What did ZIKViewRouter hooked:
+ -willMoveToParentViewController:
+ -didMoveToParentViewController:
+ -viewWillAppear:
+ -viewDidAppear:
+ -viewWillDisappear:
+ -viewDidDisappear:
+ -viewDidLoad
+ -willMoveToSuperview:
+ -didMoveToSuperview
+ -willMoveToWindow:
+ -didMoveToWindow
+ all UIViewControllers' -prepareForSegue:sender:
+ all UIStoryboardSegues' -perform
+ -instantiateInitialViewController
+ 
+ ZIKViewRouter hooks these methods for AOP and storyboard. In -willMoveToSuperview, -willMoveToWindow:, -prepareForSegue:sender:, it detects if the view is registered with a router, and auto create a router if it's not routed from it's router.
+ */
 
 ///Update state when route action is not performed from router
 - (void)_handleWillPerformRouteNotification:(NSNotification *)note {

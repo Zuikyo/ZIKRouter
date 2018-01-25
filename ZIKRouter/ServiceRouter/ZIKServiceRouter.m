@@ -40,7 +40,7 @@ static dispatch_semaphore_t g_globalErrorSema;
     });
 }
 
-+ (void)_registrationDidFinished {
++ (void)_didFinishRegistration {
     
 }
 

@@ -36,7 +36,7 @@ NS_ASSUME_NONNULL_BEGIN
  The router only keep weak reference to the destination, the performer is responsible for holding it.
  */
 @interface ZIKRouter<__covariant Destination: id, __covariant RouteConfig: ZIKPerformRouteConfiguration *, __covariant RemoveConfig: ZIKRemoveRouteConfiguration *> : NSObject
-///State of route.
+///State of route. View router's state will be auto changed when the destination's state is changed.
 @property (nonatomic, readonly, assign) ZIKRouterState state;
 ///Configuration for performRoute; Return copy of configuration, so modify this won't change the real configuration inside router.
 @property (nonatomic, readonly, copy) RouteConfig configuration;
