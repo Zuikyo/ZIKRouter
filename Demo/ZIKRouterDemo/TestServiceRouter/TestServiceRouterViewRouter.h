@@ -1,5 +1,5 @@
 //
-//  ZIKTestServiceRouterViewRouter.h
+//  TestServiceRouterViewRouter.h
 //  ZIKRouterDemo
 //
 //  Created by zuik on 2017/8/9.
@@ -8,6 +8,6 @@
 
 @import ZIKRouter;
 
-@interface ZIKTestServiceRouterViewRouter : ZIKAnyViewRouter
+@interface TestServiceRouterViewRouter : ZIKAnyViewRouter
 
 @end

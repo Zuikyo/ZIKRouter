@@ -1,22 +1,22 @@
 //
-//  ZIKTestCircularDependenciesViewRouter.m
+//  TestCircularDependenciesViewRouter.m
 //  ZIKRouterDemo
 //
 //  Created by zuik on 2017/10/14.
 //  Copyright © 2017 zuik. All rights reserved.
 //
 
-#import "ZIKTestCircularDependenciesViewRouter.h"
+#import "TestCircularDependenciesViewRouter.h"
 #import "TestCircularDependenciesViewController.h"
 #import "ZIKParentViewProtocol.h"
 #import "ZIKChildViewProtocol.h"
 
-@interface TestCircularDependenciesViewController (ZIKTestCircularDependenciesViewRouter) <ZIKRoutableView>
+@interface TestCircularDependenciesViewController (TestCircularDependenciesViewRouter) <ZIKRoutableView>
 @end
-@implementation TestCircularDependenciesViewController (ZIKTestCircularDependenciesViewRouter)
+@implementation TestCircularDependenciesViewController (TestCircularDependenciesViewRouter)
 @end
 
-@implementation ZIKTestCircularDependenciesViewRouter
+@implementation TestCircularDependenciesViewRouter
 
 + (void)registerRoutableDestination {
     [self registerView:[TestCircularDependenciesViewController class]];

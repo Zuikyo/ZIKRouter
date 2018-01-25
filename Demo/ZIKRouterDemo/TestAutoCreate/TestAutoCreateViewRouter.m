@@ -1,20 +1,20 @@
 //
-//  ZIKTestAutoCreateViewRouter.m
+//  TestAutoCreateViewRouter.m
 //  ZIKRouterDemo
 //
 //  Created by zuik on 2017/7/7.
 //  Copyright © 2017 zuik. All rights reserved.
 //
 
-#import "ZIKTestAutoCreateViewRouter.h"
+#import "TestAutoCreateViewRouter.h"
 #import "TestAutoCreateViewController.h"
 
-@interface TestAutoCreateViewController (ZIKTestAutoCreateViewRouter) <ZIKRoutableView>
+@interface TestAutoCreateViewController (TestAutoCreateViewRouter) <ZIKRoutableView>
 @end
-@implementation TestAutoCreateViewController (ZIKTestAutoCreateViewRouter)
+@implementation TestAutoCreateViewController (TestAutoCreateViewRouter)
 @end
 
-@implementation ZIKTestAutoCreateViewRouter
+@implementation TestAutoCreateViewRouter
 
 + (void)registerRoutableDestination {
     [self registerView:[TestAutoCreateViewController class]];

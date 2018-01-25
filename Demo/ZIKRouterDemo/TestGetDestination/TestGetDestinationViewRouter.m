@@ -1,20 +1,20 @@
 //
-//  ZIKTestGetDestinationViewRouter.m
+//  TestGetDestinationViewRouter.m
 //  ZIKRouterDemo
 //
 //  Created by zuik on 2017/7/5.
 //  Copyright © 2017 zuik. All rights reserved.
 //
 
-#import "ZIKTestGetDestinationViewRouter.h"
+#import "TestGetDestinationViewRouter.h"
 #import "TestGetDestinationViewController.h"
 
-@interface TestGetDestinationViewController (ZIKTestGetDestinationViewRouter) <ZIKRoutableView>
+@interface TestGetDestinationViewController (TestGetDestinationViewRouter) <ZIKRoutableView>
 @end
-@implementation TestGetDestinationViewController (ZIKTestGetDestinationViewRouter)
+@implementation TestGetDestinationViewController (TestGetDestinationViewRouter)
 @end
 
-@implementation ZIKTestGetDestinationViewRouter
+@implementation TestGetDestinationViewRouter
 
 + (void)registerRoutableDestination {
     [self registerView:[TestGetDestinationViewController class]];

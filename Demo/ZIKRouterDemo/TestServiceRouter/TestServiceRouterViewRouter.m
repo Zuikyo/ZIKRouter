@@ -1,12 +1,12 @@
 //
-//  ZIKTestServiceRouterViewRouter.m
+//  TestServiceRouterViewRouter.m
 //  ZIKRouterDemo
 //
 //  Created by zuik on 2017/8/9.
 //  Copyright © 2017 zuik. All rights reserved.
 //
 
-#import "ZIKTestServiceRouterViewRouter.h"
+#import "TestServiceRouterViewRouter.h"
 #import "TestServiceRouterViewController.h"
 
 @interface TestServiceRouterViewController (TestServiceRouterViewRouter) <ZIKRoutableView>
@@ -14,7 +14,7 @@
 @implementation TestServiceRouterViewController (TestServiceRouterViewRouter)
 @end
 
-@implementation ZIKTestServiceRouterViewRouter
+@implementation TestServiceRouterViewRouter
 
 + (void)registerRoutableDestination {
     [self registerView:[TestServiceRouterViewController class]];

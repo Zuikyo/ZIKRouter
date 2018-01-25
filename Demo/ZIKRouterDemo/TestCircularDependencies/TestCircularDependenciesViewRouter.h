@@ -1,5 +1,5 @@
 //
-//  ZIKTestCircularDependenciesViewRouter.h
+//  TestCircularDependenciesViewRouter.h
 //  ZIKRouterDemo
 //
 //  Created by zuik on 2017/10/14.
@@ -8,6 +8,6 @@
 
 @import ZIKRouter;
 
-@interface ZIKTestCircularDependenciesViewRouter : ZIKAnyViewRouter
+@interface TestCircularDependenciesViewRouter : ZIKAnyViewRouter
 
 @end

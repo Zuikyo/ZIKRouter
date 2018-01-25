@@ -17,11 +17,11 @@
 #import "TestAddAsChildViewRouter.h"
 #import "TestAddAsSubviewViewRouter.h"
 #import "TestCustomViewRouter.h"
-#import "ZIKTestGetDestinationViewRouter.h"
-#import "ZIKTestAutoCreateViewRouter.h"
-#import "ZIKTestCircularDependenciesViewRouter.h"
+#import "TestGetDestinationViewRouter.h"
+#import "TestAutoCreateViewRouter.h"
+#import "TestCircularDependenciesViewRouter.h"
 #import "TestClassHierarchyViewRouter.h"
-#import "ZIKTestServiceRouterViewRouter.h"
+#import "TestServiceRouterViewRouter.h"
 #import "ZIKRouterDemo-Swift.h"
 
 typedef NS_ENUM(NSInteger,ZIKRouterTestType) {
@@ -81,11 +81,11 @@ typedef NS_ENUM(NSInteger,ZIKRouterTestType) {
                            [TestAddAsChildViewRouter class],
                            [TestAddAsSubviewViewRouter class],
                            [TestCustomViewRouter class],
-                           [ZIKTestGetDestinationViewRouter class],
-                           [ZIKTestAutoCreateViewRouter class],
-                           [ZIKTestCircularDependenciesViewRouter class],
+                           [TestGetDestinationViewRouter class],
+                           [TestAutoCreateViewRouter class],
+                           [TestCircularDependenciesViewRouter class],
                            [TestClassHierarchyViewRouter class],
-                           [ZIKTestServiceRouterViewRouter class],
+                           [TestServiceRouterViewRouter class],
                            ZIKViewRouter.classToView(ZIKRoutableProtocol(SwiftSampleViewInput))
                            ];
     NSAssert(self.cellNames.count == self.routerClasses.count, nil);

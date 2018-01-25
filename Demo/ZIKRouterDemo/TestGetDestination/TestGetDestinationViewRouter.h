@@ -1,5 +1,5 @@
 //
-//  ZIKTestGetDestinationViewRouter.h
+//  TestGetDestinationViewRouter.h
 //  ZIKRouterDemo
 //
 //  Created by zuik on 2017/7/5.
@@ -8,6 +8,6 @@
 
 @import ZIKRouter;
 
-@interface ZIKTestGetDestinationViewRouter : ZIKAnyViewRouter
+@interface TestGetDestinationViewRouter : ZIKAnyViewRouter
 
 @end
