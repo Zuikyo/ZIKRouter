@@ -199,6 +199,11 @@ public class ServiceRouter<Destination, ModuleConfig> {
         return router.canPerform()
     }
     
+    ///Perform with success handler and error handler.
+    public func performRoute(successHandler: (() -> Void)? = nil, errorHandler: ((ZIKRouteAction, Error) -> Void)? = nil) {
+        router.performRoute(successHandler: successHandler, errorHandler: errorHandler)
+    }
+    
     // MARK: Remove
     
     /// Whether the router can remove route now. Default is false.

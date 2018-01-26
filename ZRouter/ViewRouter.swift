@@ -322,7 +322,7 @@ public class ViewRouter<Destination, ModuleConfig> {
     }
     
     ///Perform with success handler and error handler.
-    public func performRoute(successHandler: (() -> Void)?, errorHandler: ((ZIKRouteAction, Error) -> Void)?) {
+    public func performRoute(successHandler: (() -> Void)? = nil, errorHandler: ((ZIKRouteAction, Error) -> Void)? = nil) {
         router.performRoute(successHandler: successHandler, errorHandler: errorHandler)
     }
     
