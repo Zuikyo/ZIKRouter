@@ -7,7 +7,6 @@
 //
 
 #import "DemoRouteAdapter.h"
-
 #import "RequiredCompatibleAlertConfigProtocol.h"
 
 @implementation DemoRouteAdapter

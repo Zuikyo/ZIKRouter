@@ -188,7 +188,7 @@ _Nullable Class _ZIKServiceRouterToModule(Protocol *configProtocol) {
     return kZIKServiceRouterErrorDomain;
 }
 
-+ (BOOL)makeDestinationSynchronously {
++ (BOOL)canMakeDestinationSynchronously {
     return YES;
 }
 

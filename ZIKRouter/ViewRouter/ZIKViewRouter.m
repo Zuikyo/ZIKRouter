@@ -227,7 +227,7 @@ static BOOL _isClassRoutable(Class class) {
     return [ZIKViewRemoveConfiguration new];
 }
 
-+ (BOOL)makeDestinationSynchronously {
++ (BOOL)canMakeDestinationSynchronously {
     return YES;
 }
 

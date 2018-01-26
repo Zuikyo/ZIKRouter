@@ -133,7 +133,7 @@ NS_ASSUME_NONNULL_BEGIN
 #pragma mark Factory
 
 ///Whether the destination is instantiated synchronously.
-+ (BOOL)makeDestinationSynchronously;
++ (BOOL)canMakeDestinationSynchronously;
 
 ///The router may can't make destination synchronously, or it's not for providing a destination but only for performing some actions.
 + (BOOL)canMakeDestination;

@@ -145,8 +145,8 @@ public class ServiceRouter<Destination, ModuleConfig> {
     // MARK: Make Destination
     
     /// Whether the destination is instantiated synchronously.
-    public var makeDestinationSynchronously: Bool {
-        return routerType.makeDestinationSynchronously()
+    public var canMakeDestinationSynchronously: Bool {
+        return routerType.canMakeDestinationSynchronously()
     }
     
     /// The router may can't make destination synchronously, or it's not for providing a destination but only for performing some actions.

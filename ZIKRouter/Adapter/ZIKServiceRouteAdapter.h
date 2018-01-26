@@ -52,7 +52,7 @@ NS_ASSUME_NONNULL_BEGIN
                                        routeRemoving:(void(NS_NOESCAPE ^ _Nullable)(ZIKPerformRouteConfiguration *config,
                                                                                     void(^prepareDest)(void(^prepare)(id dest))
                                                                                     ))removeConfigBuilder NS_UNAVAILABLE;
-+ (BOOL)makeDestinationSynchronously NS_UNAVAILABLE;
++ (BOOL)canMakeDestinationSynchronously NS_UNAVAILABLE;
 + (BOOL)canMakeDestination NS_UNAVAILABLE;
 + (nullable id)makeDestination NS_UNAVAILABLE;
 + (nullable id)makeDestinationWithPreparation:(void(^ _Nullable)(id destination))prepare NS_UNAVAILABLE;
