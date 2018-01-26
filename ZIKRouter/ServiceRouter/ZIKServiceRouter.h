@@ -115,6 +115,12 @@ NS_SWIFT_UNAVAILABLE("ZIKModuleServiceRouterType is a fake class")
 @end
 
 ///Get service router in a type safe way. There will be complie error if the service protocol is not ZIKServiceRoutable.
+#define ZIKRouterToService(ServiceProtocol) (ZIKDestinationServiceRouterType<id<ServiceProtocol>,ZIKPerformRouteConfiguration *> *)[ZIKServiceRouter<id<ServiceProtocol>,ZIKPerformRouteConfiguration *> toService](@protocol(ServiceProtocol))
+
+///Get service router in a type safe way. There will be complie error if the module protocol is not ZIKServiceModuleRoutable.
+#define ZIKRouterToServiceModule(ModuleProtocol) (ZIKModuleServiceRouterType<id,id<ModuleProtocol>,ZIKPerformRouteConfiguration<ModuleProtocol> *> *)[ZIKServiceRouter<id,ZIKPerformRouteConfiguration<ModuleProtocol> *> toModule](@protocol(ModuleProtocol))
+
+///Get service router in a type safe way. There will be complie error if the service protocol is not ZIKServiceRoutable.
 #define ZIKServiceRouterToService(ServiceProtocol) (ZIKDestinationServiceRouterType<id<ServiceProtocol>,ZIKPerformRouteConfiguration *> *)[ZIKServiceRouter<id<ServiceProtocol>,ZIKPerformRouteConfiguration *> toService](@protocol(ServiceProtocol))
 
 ///Get service router in a type safe way. There will be complie error if the module protocol is not ZIKServiceModuleRoutable.

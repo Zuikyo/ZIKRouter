@@ -30,6 +30,12 @@ NS_SWIFT_UNAVAILABLE("ZIKModuleViewRouterType is a fake class")
 @end
 
 ///Get view router in a type safe way. There will be complie error if the view protocol is not ZIKViewRoutable.
+#define ZIKRouterToView(ViewProtocol) (ZIKDestinationViewRouterType<id<ViewProtocol>,ZIKViewRouteConfiguration *> *)[ZIKViewRouter<id<ViewProtocol>,ZIKViewRouteConfiguration *> toView](@protocol(ViewProtocol))
+
+///Get view router in a type safe way. There will be complie error if the module protocol is not ZIKViewModuleRoutable.
+#define ZIKRouterToViewModule(ModuleProtocol) (ZIKModuleViewRouterType<id<ZIKRoutableView>,id<ModuleProtocol>,ZIKViewRouteConfiguration<ModuleProtocol> *> *)[ZIKViewRouter<id<ZIKRoutableView>,ZIKViewRouteConfiguration<ModuleProtocol> *> toModule](@protocol(ModuleProtocol))
+
+///Get view router in a type safe way. There will be complie error if the view protocol is not ZIKViewRoutable.
 #define ZIKViewRouterToView(ViewProtocol) (ZIKDestinationViewRouterType<id<ViewProtocol>,ZIKViewRouteConfiguration *> *)[ZIKViewRouter<id<ViewProtocol>,ZIKViewRouteConfiguration *> toView](@protocol(ViewProtocol))
 
 ///Get view router in a type safe way. There will be complie error if the module protocol is not ZIKViewModuleRoutable.

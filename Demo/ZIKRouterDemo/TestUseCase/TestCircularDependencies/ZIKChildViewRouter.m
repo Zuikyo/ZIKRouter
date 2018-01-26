@@ -40,7 +40,7 @@
 - (void)prepareDestination:(ZIKChildViewController *)destination configuration:(__kindof ZIKViewRouteConfiguration *)configuration {
     //Must check to avoid unnecessary preparation
     if (destination.parent == nil) {
-        [ZIKViewRouterToView(ZIKParentViewProtocol)
+        [ZIKRouterToView(ZIKParentViewProtocol)
          performFromSource:nil
          configuring:^(ZIKViewRouteConfiguration * _Nonnull config) {
              config.prepareDestination = ^(id<ZIKParentViewProtocol> parent) {

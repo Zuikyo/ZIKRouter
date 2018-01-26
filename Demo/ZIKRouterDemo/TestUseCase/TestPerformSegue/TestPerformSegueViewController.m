@@ -30,7 +30,7 @@
 
 - (IBAction)performSegue:(id)sender {
     __weak typeof(self) weakSelf = self;
-    self.segueRouter = [ZIKViewRouterToView(ZIKInfoViewProtocol)
+    self.segueRouter = [ZIKRouterToView(ZIKInfoViewProtocol)
                             performFromSource:self
                             configuring:^(ZIKViewRouteConfiguration * _Nonnull config) {
                                config.source = self;
@@ -54,7 +54,7 @@
 
 - (IBAction)performCustomSegue:(id)sender {
     __weak typeof(self) weakSelf = self;
-    self.segueRouter = [ZIKViewRouterToView(ZIKInfoViewProtocol)
+    self.segueRouter = [ZIKRouterToView(ZIKInfoViewProtocol)
                             performFromSource:self
                             configuring:^(ZIKViewRouteConfiguration * _Nonnull config) {
                                config.source = self;

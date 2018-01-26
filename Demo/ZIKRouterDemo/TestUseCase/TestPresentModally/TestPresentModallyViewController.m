@@ -54,16 +54,36 @@
 }
 
 - (IBAction)presentModally:(id)sender {
-    if (![self.infoViewRouter canPerform]) {
-        NSLog(@"Can't perform route now:%@",self.infoViewRouter);
-        return;
-    }
-    //perform the router
-    [self.infoViewRouter performRouteWithSuccessHandler:^{
-        NSLog(@"performer: present modally success");
-    } errorHandler:^(ZIKRouteAction routeAction, NSError * _Nonnull error) {
-        NSLog(@"performer: present modally failed: %@",error);
-    }];
+    __weak typeof(self) weakSelf = self;
+    self.infoViewRouter = [ZIKRouterToView(ZIKInfoViewProtocol)
+                           performFromSource:self
+                           configuring:^(ZIKViewRouteConfiguration * _Nonnull config) {
+                               config.routeType = ZIKViewRouteTypePresentModally;
+                               config.containerWrapper = ^UIViewController<ZIKViewRouteContainer> * _Nonnull(UIViewController * _Nonnull destination) {
+                                   UINavigationController *container = [[UINavigationController alloc] initWithRootViewController:destination];
+                                   return container;
+                               };
+                               
+                               config.prepareDestination = ^(UIViewController<ZIKInfoViewProtocol> *destination) {
+                                   destination.name = @"Zuik";
+                                   destination.age = 18;
+                                   destination.delegate = weakSelf;
+                               };
+                               config.successHandler = ^{
+                                   NSLog(@"provider: present modally success");
+                               };
+                               config.errorHandler = ^(ZIKRouteAction routeAction, NSError * _Nonnull error) {
+                                   NSLog(@"provider: present modally failed: %@",error);
+                               };
+                           }
+                           removing:^(ZIKViewRemoveConfiguration * _Nonnull config) {
+                               config.successHandler = ^{
+                                   NSLog(@"provider: dismiss success");
+                               };
+                               config.errorHandler = ^(ZIKRouteAction routeAction, NSError * _Nonnull error) {
+                                   NSLog(@"provider: dismiss failed: %@",error);
+                               };
+                           }];
 }
 
 - (IBAction)presentModallyAndDismiss:(id)sender {
