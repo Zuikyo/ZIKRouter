@@ -1,7 +1,7 @@
 Pod::Spec.new do |s|
 
   s.name         = "ZRouter"
-  s.version      = "0.8.0"
+  s.version      = "0.9.0"
   s.summary      = "Interface-Oriented iOS Swift router for discovering modules and injecting dependencies with protocol."
   s.description  = <<-DESC
                 Interface-Oriented iOS Swift router for discovering modules and injecting dependencies with protocol, designed for VIPER. The view router can perform all navigation types in UIKit through one method. The service router can discover service with protocol.
@@ -19,6 +19,6 @@ Pod::Spec.new do |s|
 
   s.requires_arc = true
 
-  s.dependency "ZIKRouter", '>= 0.12.1'
+  s.dependency "ZIKRouter", '>= 0.13.0'
 
 end

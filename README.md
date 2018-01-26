@@ -390,12 +390,12 @@ If you want to see how it works in a VIPER architecture app, go to [ZIKViper](ht
 For Objective-C project:
 
 ```
-pod 'ZIKRouter', '0.12.1'
+pod 'ZIKRouter', '0.13.0'
 ```
 For Swift project:
 
 ```
-pod 'ZRouter', '0.8.0'
+pod 'ZRouter', '0.9.0'
 ```
 
 ## How to use
