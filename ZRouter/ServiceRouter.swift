@@ -11,49 +11,20 @@
 
 import ZIKRouter.Internal
 
-/// Swift Wrapper for ZIKServiceRouter.
-public class ServiceRouter<Destination, ModuleConfig> {
+/// Swift Wrapper for ZIKServiceRouter class.
+public class ServiceRouterType<Destination, ModuleConfig> {
     
     /// The router type to wrap.
     public let routerType: ZIKAnyServiceRouter.Type
-    
-    /// The routed ZIKServiceRouter.
-    public private(set) var routed: ZIKAnyServiceRouter?
     
     internal init(routerType: ZIKAnyServiceRouter.Type) {
         self.routerType = routerType
     }
     
-    /// State of route.
-    public var state: ZIKRouterState {
-        return routed?.state ?? ZIKRouterState.notRoute
-    }
-    
-    /// Configuration for performRoute; Return copy of configuration, so modify this won't change the real configuration inside router.
-    public var configuration: PerformRouteConfig {
-        return routed?.configuration ?? routerType.defaultRouteConfiguration()
-    }
-    
-    /// Configuration for removeRoute; return copy of configuration, so modify this won't change the real configuration inside router.
-    public var removeConfiguration: RouteConfig? {
-        return routed?.removeConfiguration
-    }
-    
-    /// Latest error when route action failed.
-    public var error: Error? {
-        return routed?.error
-    }
-    
     // MARK: Perform
-    
-    /// Whether the router can perform route now.
-    public var canPerform: Bool {
-        return routed?.canPerform() ?? true
-    }
     
     public typealias DestinationPreparation = (@escaping (Destination) -> Void) -> Void
     public typealias ModulePreparation = ((ModuleConfig) -> Void) -> Void
-    public typealias RemovePreparation = ((RemoveRouteConfig) -> Void) -> Void
     
     /// Set dependencies required by destination and perform route, and you can remove the route with remove configuration later.
     ///
@@ -65,9 +36,10 @@ public class ServiceRouter<Destination, ModuleConfig> {
     ///   - removeConfigBuilder: Configure the configuration for removing route.
     ///     - config: Config for removing route.
     ///     - prepareDestination: Prepare destination before removing route. It's an escaping block, use weakSelf to avoid retain cycle.
-    public func perform(configuring configBuilder: (PerformRouteConfig, DestinationPreparation, ModulePreparation) -> Void, removing removeConfigBuilder: ((RemoveRouteConfig, DestinationPreparation, RemovePreparation) -> Void)? = nil) {
+    /// - Returns: The service router for this route.
+    public func perform(configuring configBuilder: (PerformRouteConfig, DestinationPreparation, ModulePreparation) -> Void, removing removeConfigBuilder: ((RemoveRouteConfig, DestinationPreparation) -> Void)? = nil) -> ServiceRouter<Destination, ModuleConfig>? {
         var removeBuilder: ((RemoveRouteConfig) -> Void)? = nil
-        if let configBuilder = removeConfigBuilder {
+        if let removeConfigBuilder = removeConfigBuilder {
             removeBuilder = { (config: RemoveRouteConfig) in
                 let prepareDestination = { (prepare: @escaping (Destination) -> Void) in
                     config.prepareDestination = { d in
@@ -76,17 +48,14 @@ public class ServiceRouter<Destination, ModuleConfig> {
                         }
                     }
                 }
-                let prepareModule = { (prepare: (RemoveRouteConfig) -> Void) in
-                    prepare(config)
-                }
-                configBuilder(config, prepareDestination, prepareModule)
+                removeConfigBuilder(config, prepareDestination)
             }
         }
         let routerType = self.routerType
-        routed = routerType.perform(configuring: { config in
+        let router = routerType.perform(configuring: { config in
             let prepareDestination = { (prepare: @escaping (Destination) -> Void) in
                 config.prepareDestination = { d in
-                    if let destination = ServiceRouter._castedDestination(d, routerType: routerType) {
+                    if let destination = ServiceRouterType._castedDestination(d, routerType: routerType) {
                         prepare(destination)
                     }
                 }
@@ -101,45 +70,15 @@ public class ServiceRouter<Destination, ModuleConfig> {
                 let completion = config.routeCompletion
                 config.routeCompletion = { d in
                     completion?(d)
-                    assert(ServiceRouter._castedDestination(d, routerType: routerType) != nil, "Router (\(String(describing: routerType))) returns wrong destination type (\(String(describing: d))), destination should be \(Destination.self)")
+                    assert(ServiceRouterType._castedDestination(d, routerType: routerType) != nil, "Router (\(String(describing: routerType))) returns wrong destination type (\(String(describing: d))), destination should be \(Destination.self)")
                 }
             }
         }, removing: removeBuilder)
-        
-    }
-    
-    // MARK: Remove
-    
-    /// Whether the router can remove route now. Default is false.
-    public var canRemove: Bool {
-        return routed?.canRemove() ?? false
-    }
-    
-    /// Remove with success handler and error handler. If canRemove return false, this will failed.
-    public func removeRoute(successHandler performerSuccessHandler: (() -> Void)?, errorHandler performerErrorHandler: ((ZIKRouteAction, Error) -> Void)? = nil) {
-        routed?.removeRoute(successHandler: performerSuccessHandler, errorHandler: performerErrorHandler)
-    }
-    
-    /// Remove route and prepare before removing.
-    ///
-    /// - Parameter configBuilder: Configure the configuration for removing route.
-    ///     - config: Config for removing route.
-    ///     - prepareDestination: Prepare destination before removing route. It's an escaping block, use weakSelf to avoid retain cycle.
-    public func removeRoute(configuring configBuilder: @escaping (RemoveRouteConfig, DestinationPreparation, RemovePreparation) -> Void) {
-        let removeBuilder = { (config: RemoveRouteConfig) in
-            let prepareDestination = { (prepare: @escaping (Destination) -> Void) in
-                config.prepareDestination = { d in
-                    if let destination = d as? Destination {
-                        prepare(destination)
-                    }
-                }
-            }
-            let prepareModule = { (prepare: (RemoveRouteConfig) -> Void) in
-                prepare(config)
-            }
-            configBuilder(config, prepareDestination, prepareModule)
+        if let router = router {
+            return ServiceRouter<Destination, ModuleConfig>(router: router)
+        } else {
+            return nil
         }
-        routed?.removeRoute(configuring: removeBuilder)
     }
     
     // MARK: Make Destination
@@ -158,7 +97,7 @@ public class ServiceRouter<Destination, ModuleConfig> {
     public func makeDestination() -> Destination? {
         let routerType = self.routerType
         let destination = routerType.makeDestination()
-        assert(destination == nil || ServiceRouter._castedDestination(destination!, routerType: routerType) != nil, "Router (\(routerType)) returns wrong destination type (\(String(describing: destination))), destination should be \(Destination.self)")
+        assert(destination == nil || ServiceRouterType._castedDestination(destination!, routerType: routerType) != nil, "Router (\(routerType)) returns wrong destination type (\(String(describing: destination))), destination should be \(Destination.self)")
         return destination as? Destination
     }
     
@@ -166,11 +105,11 @@ public class ServiceRouter<Destination, ModuleConfig> {
     public func makeDestination(preparation prepare: ((Destination) -> Void)? = nil) -> Destination? {
         let routerType = self.routerType
         let destination = routerType.makeDestination(preparation: { d in
-            if let destination = ServiceRouter._castedDestination(d, routerType: routerType) {
+            if let destination = ServiceRouterType._castedDestination(d, routerType: routerType) {
                 prepare?(destination)
             }
         })
-        assert(destination == nil || ServiceRouter._castedDestination(destination!, routerType: routerType) != nil, "Router (\(routerType)) returns wrong destination type (\(String(describing: destination))), destination should be \(Destination.self)")
+        assert(destination == nil || ServiceRouterType._castedDestination(destination!, routerType: routerType) != nil, "Router (\(routerType)) returns wrong destination type (\(String(describing: destination))), destination should be \(Destination.self)")
         return destination as? Destination
     }
     
@@ -186,7 +125,7 @@ public class ServiceRouter<Destination, ModuleConfig> {
         let destination = routerType.makeDestination(configuring: { config in
             let prepareDestination = { (prepare: @escaping (Destination) -> Void) in
                 config.prepareDestination = { d in
-                    if let destination = ServiceRouter._castedDestination(d, routerType: routerType) {
+                    if let destination = ServiceRouterType._castedDestination(d, routerType: routerType) {
                         prepare(destination)
                     }
                 }
@@ -198,7 +137,7 @@ public class ServiceRouter<Destination, ModuleConfig> {
             }
             configBuilder(config, prepareDestination, prepareModule)
         })
-        assert(destination == nil || ServiceRouter._castedDestination(destination!, routerType: routerType) != nil, "Router (\(routerType)) returns wrong destination type (\(String(describing: destination))), destination should be \(Destination.self)")
+        assert(destination == nil || ServiceRouterType._castedDestination(destination!, routerType: routerType) != nil, "Router (\(routerType)) returns wrong destination type (\(String(describing: destination))), destination should be \(Destination.self)")
         return destination as? Destination
     }
     
@@ -221,5 +160,75 @@ public class ServiceRouter<Destination, ModuleConfig> {
     
     public func description(of state: ZIKRouterState) -> String {
         return routerType.description(of: state)
+    }
+}
+
+/// Swift Wrapper for ZIKServiceRouter.
+public class ServiceRouter<Destination, ModuleConfig> {
+    /// The routed ZIKServiceRouter.
+    public let router: ZIKAnyServiceRouter
+    
+    internal init(router: ZIKAnyServiceRouter) {
+        self.router = router
+    }
+    
+    /// State of route.
+    public var state: ZIKRouterState {
+        return router.state
+    }
+    
+    /// Configuration for performRoute; Return copy of configuration, so modify this won't change the real configuration inside router.
+    public var configuration: PerformRouteConfig {
+        return router.configuration
+    }
+    
+    /// Configuration for removeRoute; return copy of configuration, so modify this won't change the real configuration inside router.
+    public var removeConfiguration: RouteConfig? {
+        return router.removeConfiguration
+    }
+    
+    /// Latest error when route action failed.
+    public var error: Error? {
+        return router.error
+    }
+    
+    // MARK: Perform
+    
+    /// Whether the router can perform route now.
+    public var canPerform: Bool {
+        return router.canPerform()
+    }
+    
+    // MARK: Remove
+    
+    /// Whether the router can remove route now. Default is false.
+    public var canRemove: Bool {
+        return router.canRemove()
+    }
+    
+    /// Remove with success handler and error handler. If canRemove return false, this will failed.
+    public func removeRoute(successHandler performerSuccessHandler: (() -> Void)?, errorHandler performerErrorHandler: ((ZIKRouteAction, Error) -> Void)? = nil) {
+        router.removeRoute(successHandler: performerSuccessHandler, errorHandler: performerErrorHandler)
+    }
+    
+    public typealias DestinationPreparation = (@escaping (Destination) -> Void) -> Void
+    
+    /// Remove route and prepare before removing.
+    ///
+    /// - Parameter configBuilder: Configure the configuration for removing route.
+    ///     - config: Config for removing route.
+    ///     - prepareDestination: Prepare destination before removing route. It's an escaping block, use weakSelf to avoid retain cycle.
+    public func removeRoute(configuring configBuilder: @escaping (RemoveRouteConfig, DestinationPreparation) -> Void) {
+        let removeBuilder = { (config: RemoveRouteConfig) in
+            let prepareDestination = { (prepare: @escaping (Destination) -> Void) in
+                config.prepareDestination = { d in
+                    if let destination = d as? Destination {
+                        prepare(destination)
+                    }
+                }
+            }
+            configBuilder(config, prepareDestination)
+        }
+        router.removeRoute(configuring: removeBuilder)
     }
 }

@@ -25,7 +25,7 @@ class SwiftSampleViewController: UIViewController, PureSwiftSampleViewInput, Swi
     var alertRouter: ViewRouter<Any, RequiredCompatibleAlertConfigProtocol>?
     
     //You can inject alertRouter from outside, then use the router directly
-    var injectedAlertRouter: ViewRouter<Any, RequiredCompatibleAlertConfigProtocol>?
+    var injectedAlertRouter: ViewRouterType<Any, RequiredCompatibleAlertConfigProtocol>?
     
     override func viewDidLoad() {
         if #available(iOS 9.0, *) {
@@ -93,10 +93,10 @@ class SwiftSampleViewController: UIViewController, PureSwiftSampleViewInput, Swi
             switchableView = SwitchableView(RoutableView<SwiftSampleViewInput>())
         }
         
-        _ = Router.to(switchableView)?
+        Router.to(switchableView)?
             .perform(from: self,
                      configuring: { config,_,_  in
-                        config.routeType = ViewRouteType.push
+                        config.routeType = .push
                         config.prepareDestination = { [weak self] dest in
                             switch dest {
                             case let dest as UIViewController & ZIKInfoViewProtocol:

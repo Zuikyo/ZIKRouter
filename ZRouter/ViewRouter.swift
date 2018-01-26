@@ -11,55 +11,17 @@
 
 import ZIKRouter.Internal
 
-/// Swift Wrapper for ZIKViewRouter.
-public class ViewRouter<Destination, ModuleConfig> {
+/// Swift Wrapper for ZIKViewRouter class.
+public class ViewRouterType<Destination, ModuleConfig> {
     
     /// The router type to wrap.
     public let routerType: ZIKAnyViewRouter.Type
-    
-    /// The real routed ZIKViewRouter.
-    public private(set) var routed: ZIKAnyViewRouter?
     
     internal init(routerType: ZIKAnyViewRouter.Type) {
         self.routerType = routerType
     }
     
-    /// State of route. Will be auto changed when view state is changed.
-    public var state: ZIKRouterState {
-        return routed?.state ?? ZIKRouterState.notRoute
-    }
-    
-    /// Configuration for performRoute; Return copy of configuration, so modify this won't change the real configuration inside router.
-    public var configuration: ViewRouteConfig {
-        return routed?.configuration ?? routerType.defaultRouteConfiguration()
-    }
-    
-    /// Configuration for removeRoute; return copy of configuration, so modify this won't change the real configuration inside router.
-    public var removeConfiguration: ViewRemoveConfig? {
-        return routed?.removeConfiguration
-    }
-    
-    /// Latest error when route action failed.
-    public var error: Error? {
-        return routed?.error
-    }
-    
     // MARK: Perform
-    
-    /// Whether the router can perform a view route now
-    /// - Discusstion:
-    /// Situations when return false:
-    ///
-    /// 1. State is routing, routed or removing
-    ///
-    /// 2. Source was dealloced
-    ///
-    /// 3. Source can't perform the route type: source is not in any navigation stack for push type, or source has presented a view controller for present type
-    ///
-    /// - Returns: true if source can perform route now, otherwise false
-    public var canPerform: Bool {
-        return routed?.canPerform() ?? true
-    }
     
     public typealias DestinationPreparation = (@escaping (Destination) -> Void) -> Void
     public typealias ModulePreparation = ((ModuleConfig) -> Void) -> Void
@@ -75,9 +37,10 @@ public class ViewRouter<Destination, ModuleConfig> {
     ///   - removeConfigBuilder: Configure the configuration for removing view.
     ///     - config: Config for removing view route.
     ///     - prepareDestination: Prepare destination before removing route. It's an escaping block, use weakSelf to avoid retain cycle.
-    public func perform(from source: ZIKViewRouteSource?, configuring configBuilder: (ViewRouteConfig, DestinationPreparation, ModulePreparation) -> Void, removing removeConfigBuilder: ((ViewRemoveConfig, DestinationPreparation) -> Void)? = nil) {
+    /// - Returns: The view router for this route.
+    @discardableResult public func perform(from source: ZIKViewRouteSource?, configuring configBuilder: (ViewRouteConfig, DestinationPreparation, ModulePreparation) -> Void, removing removeConfigBuilder: ((ViewRemoveConfig, DestinationPreparation) -> Void)? = nil) -> ViewRouter<Destination, ModuleConfig>? {
         var removeBuilder: ((ViewRemoveConfig) -> Void)? = nil
-        if let configBuilder = removeConfigBuilder {
+        if let removeConfigBuilder = removeConfigBuilder {
             removeBuilder = { (config: ViewRemoveConfig) in
                 let prepareDestination = { (prepare: @escaping (Destination) -> Void) in
                     config.prepareDestination = { d in
@@ -86,11 +49,11 @@ public class ViewRouter<Destination, ModuleConfig> {
                         }
                     }
                 }
-                configBuilder(config, prepareDestination)
+                removeConfigBuilder(config, prepareDestination)
             }
         }
         let routerType = self.routerType
-        routed = routerType.perform(from: source, configuring: { config in
+        let router = routerType.perform(from: source, configuring: { config in
             let prepareDestination = { (prepare: @escaping (Destination) -> Void) in
                 config.prepareDestination = { d in
                     if let destination = d as? Destination {
@@ -113,6 +76,11 @@ public class ViewRouter<Destination, ModuleConfig> {
                 }
             }
         }, removing: removeBuilder)
+        if let router = router {
+            return ViewRouter<Destination, ModuleConfig>(router: router)
+        } else {
+            return nil
+        }
     }
     
     /// If this destination doesn't need any variable to initialize, just pass source and perform route.
@@ -120,8 +88,9 @@ public class ViewRouter<Destination, ModuleConfig> {
     /// - Parameters:
     ///   - source: Source UIViewController or UIView. See ViewRouteConfig's source.
     ///   - routeType: The style of route.
-    public func perform(from source: ZIKViewRouteSource?, routeType: ViewRouteType) {
-        perform(from: source, configuring: { (config, _, _) in
+    /// - Returns: The view router for this route.
+    @discardableResult public func perform(from source: ZIKViewRouteSource?, routeType: ViewRouteType) -> ViewRouter<Destination, ModuleConfig>? {
+        return perform(from: source, configuring: { (config, _, _) in
             config.routeType = routeType
         })
     }
@@ -135,10 +104,10 @@ public class ViewRouter<Destination, ModuleConfig> {
     ///   - source: The source view.
     ///   - configBuilder: Builder for config when perform route.
     ///   - removeConfigBuilder: Builder for config when remove route.
-    /// - Returns: A new router for the destination. If the destination is not registered with this router class, return nil and get assert failure.
-    public func perform(onDestination destination: Destination, from source: ZIKViewRouteSource?, configuring configBuilder: (ViewRouteConfig, DestinationPreparation, ModulePreparation) -> Void, removing removeConfigBuilder: ((ViewRemoveConfig, DestinationPreparation) -> Void)? = nil) -> ViewRouter<Destination, ModuleConfig>? {
+    /// - Returns: The view router for this route.
+    @discardableResult public func perform(onDestination destination: Destination, from source: ZIKViewRouteSource?, configuring configBuilder: (ViewRouteConfig, DestinationPreparation, ModulePreparation) -> Void, removing removeConfigBuilder: ((ViewRemoveConfig, DestinationPreparation) -> Void)? = nil) -> ViewRouter<Destination, ModuleConfig>? {
         var removeBuilder: ((ViewRemoveConfig) -> Void)? = nil
-        if let configBuilder = removeConfigBuilder {
+        if let removeConfigBuilder = removeConfigBuilder {
             removeBuilder = { (config: ViewRemoveConfig) in
                 let prepareDestination = { (prepare: @escaping (Destination) -> Void) in
                     config.prepareDestination = { d in
@@ -147,14 +116,14 @@ public class ViewRouter<Destination, ModuleConfig> {
                         }
                     }
                 }
-                configBuilder(config, prepareDestination)
+                removeConfigBuilder(config, prepareDestination)
             }
         }
         guard let dest = destination as? ZIKRoutableView else {
             ZIKAnyViewRouter._callbackGlobalErrorHandler(with: nil, action: .init, error: ZIKAnyViewRouter.error(withCode: ZIKViewRouteError.invalidConfiguration.rawValue, localizedDescription: "Perform route on invalid destination: \(destination)"))
             return nil
         }
-        let routed = routerType.perform(onDestination: dest, from: source, configuring: { (config) in
+        let router = routerType.perform(onDestination: dest, from: source, configuring: { (config) in
             let prepareDestination = { (prepare: @escaping (Destination) -> Void) in
                 config.prepareDestination = { d in
                     if let destination = d as? Destination {
@@ -170,13 +139,11 @@ public class ViewRouter<Destination, ModuleConfig> {
             configBuilder(config, prepareDestination, prepareModule)
         }, removing: removeBuilder)
         
-        if routed == nil {
+        guard let routed = router else {
             return nil
         }
         assert(Registry.validateConformance(destination: dest, inViewRouterType: routerType))
-        let router = ViewRouter<Destination, ModuleConfig>(routerType: routerType)
-        router.routed = routed
-        return router
+        return ViewRouter<Destination, ModuleConfig>(router: routed)
     }
     
     /// Perform route on destination with route type. If you get a prepared destination by ZIKViewRouteTypeGetDestination, you can use this method to perform route on the destination.
@@ -185,8 +152,8 @@ public class ViewRouter<Destination, ModuleConfig> {
     ///   - destination: The destination to perform route.
     ///   - source: The source view.
     ///   - routeType: Route type to perform.
-    /// - Returns: A new router for the destination. If the destination is not registered with this router class, return nil and get assert failure.
-    public func perform(onDestination destination: Destination, from source: ZIKViewRouteSource?, routeType: ViewRouteType) -> ViewRouter<Destination, ModuleConfig>? {
+    /// - Returns: The view router for this route. If the destination is not registered with this router class, return nil and get assert failure.
+    @discardableResult public func perform(onDestination destination: Destination, from source: ZIKViewRouteSource?, routeType: ViewRouteType) -> ViewRouter<Destination, ModuleConfig>? {
         return perform(onDestination: destination, from: source, configuring: { (config, _, _) in
             config.routeType = routeType
         })
@@ -200,10 +167,10 @@ public class ViewRouter<Destination, ModuleConfig> {
     ///   - destination: The destination to prepare. Destination must be registered with this router class.
     ///   - configBuilder: Builder for config when perform route.
     ///   - removeConfigBuilder: Builder for config when remove route.
-    /// - Returns: A new router for the destination. If the destination is not registered with this router class, return nil and get assert failure.
-    public func prepare(destination: Destination, configuring configBuilder: @escaping (ViewRouteConfig, DestinationPreparation, ModulePreparation) -> Void, removing removeConfigBuilder: ((ViewRemoveConfig, DestinationPreparation) -> Void)? = nil) -> ViewRouter<Destination, ModuleConfig>? {
+    /// - Returns: The view router for this route. If the destination is not registered with this router class, return nil and get assert failure.
+    @discardableResult public func prepare(destination: Destination, configuring configBuilder: @escaping (ViewRouteConfig, DestinationPreparation, ModulePreparation) -> Void, removing removeConfigBuilder: ((ViewRemoveConfig, DestinationPreparation) -> Void)? = nil) -> ViewRouter<Destination, ModuleConfig>? {
         var removeBuilder: ((ViewRemoveConfig) -> Void)? = nil
-        if let configBuilder = removeConfigBuilder {
+        if let removeConfigBuilder = removeConfigBuilder {
             removeBuilder = { (config: ViewRemoveConfig) in
                 let prepareDestination = { (prepare: @escaping (Destination) -> Void) in
                     config.prepareDestination = { d in
@@ -212,14 +179,14 @@ public class ViewRouter<Destination, ModuleConfig> {
                         }
                     }
                 }
-                configBuilder(config, prepareDestination)
+                removeConfigBuilder(config, prepareDestination)
             }
         }
         guard let dest = destination as? ZIKRoutableView else {
             ZIKAnyViewRouter._callbackGlobalErrorHandler(with: nil, action: .init, error: ZIKAnyViewRouter.error(withCode: ZIKViewRouteError.invalidConfiguration.rawValue, localizedDescription: "Perform route on invalid destination: \(destination)"))
             return nil
         }
-        let routed = routerType.prepareDestination(dest, configuring: { (config) in
+        let router = routerType.prepareDestination(dest, configuring: { (config) in
             let prepareDestination = { (prepare: @escaping (Destination) -> Void) in
                 config.prepareDestination = { d in
                     if let destination = d as? Destination {
@@ -235,62 +202,11 @@ public class ViewRouter<Destination, ModuleConfig> {
             configBuilder(config, prepareDestination, prepareModule)
         }, removing: removeBuilder)
         
-        if routed == nil {
+        guard let routed = router else {
             return nil
         }
         assert(Registry.validateConformance(destination: dest, inViewRouterType: routerType))
-        let router = ViewRouter<Destination, ModuleConfig>(routerType: routerType)
-        router.routed = routed
-        return router
-    }
-    
-    // MARK: Remove
-    
-    /// Whether can remove a performed view route. Always use it in main thread, bacause state may be changed in main thread after you check the state in child thread.
-    /// -Discussion:
-    /// Situations when return false:
-    ///
-    /// 1. Router is not performed yet.
-    ///
-    /// 2. Destination was already poped/dismissed/removed/dealloced.
-    ///
-    /// 3. Use ZIKViewRouteTypeCustom and the router didn't provide removeRoute, or canRemoveCustomRoute return false.
-    ///
-    /// 4. If route type is adaptative type, it will choose different presentation for different situation (ZIKViewRouteTypePerformSegue, ZIKViewRouteTypeShow, ZIKViewRouteTypeShowDetail). Then if it's real route type is not Push/PresentModally/PresentAsPopover/AddAsChildViewController, destination can't be removed.
-    ///
-    /// 5. Router was auto created when a destination is displayed and not from storyboard, so router don't know destination's state before route, and can't analyze it's real route type to do corresponding remove action.
-    ///
-    /// 6. Destination's route type is complicated and is considered as custom route type. Such as destination is added to a UITabBarController, then added to a UINavigationController, and finally presented modally. We don't know the remove action should do dismiss or pop or remove from it's UITabBarController.
-    ///
-    /// - Note: Router should be removed be the performer, but not inside the destination. Only the performer knows how the destination was displayed (situation 6).
-    ///
-    /// - Returns: return true if can do removeRoute.
-    public var canRemove: Bool {
-        return routed?.canRemove() ?? false
-    }
-    
-    /// Remove a routed destination. Auto choose proper remove action in pop/dismiss/removeFromParentViewController/removeFromSuperview/custom. If canRemove return false, this will failed, use removeRouteWithSuccessHandler:errorHandler: to get error info. Main thread only.
-    public func removeRoute(successHandler performerSuccessHandler: (() -> Void)? = nil, errorHandler performerErrorHandler: ((ZIKRouteAction, Error) -> Void)? = nil) {
-        routed?.removeRoute(successHandler: performerSuccessHandler, errorHandler: performerErrorHandler)
-    }
-    
-    /// Remove route and prepare before removing. Auto choose proper remove action in pop/dismiss/removeFromParentViewController/removeFromSuperview/custom. If canRemove return false, this will failed, use removeRouteWithSuccessHandler:errorHandler: to get error info. Main thread only.
-    ///
-    /// - Parameter configBuilder: Configure the configuration for removing view.
-    ///     - config: Config for removing view route.
-    ///     - prepareDestination: Prepare destination before removing route. It's an escaping block, use weakSelf to avoid retain cycle.
-    public func removeRoute(configuring configBuilder: @escaping (ViewRemoveConfig, DestinationPreparation) -> Void) {
-        let removeBuilder = { (config: ViewRemoveConfig) in
-            let prepareDestination = { (prepare: @escaping (Destination) -> Void) in
-                config.prepareDestination = { d in
-                    if let destination = d as? Destination {
-                        prepare(destination)
-                    }
-                }
-            }
-            configBuilder(config, prepareDestination)
-        }
-        routed?.removeRoute(configuring: removeBuilder)
+        return ViewRouter<Destination, ModuleConfig>(router: routed)
     }
     
     // MARK: Make Destination
@@ -355,5 +271,109 @@ public class ViewRouter<Destination, ModuleConfig> {
     
     public func description(of state: ZIKRouterState) -> String {
         return routerType.description(of: state)
+    }
+}
+
+/// Swift Wrapper for ZIKViewRouter.
+public class ViewRouter<Destination, ModuleConfig> {
+    
+    /// The real routed ZIKViewRouter.
+    public private(set) var router: ZIKAnyViewRouter
+    
+    internal init(router: ZIKAnyViewRouter) {
+        self.router = router
+    }
+    
+    /// State of route. Will be auto changed when view state is changed.
+    public var state: ZIKRouterState {
+        return router.state
+    }
+    
+    /// Configuration for performRoute; Return copy of configuration, so modify this won't change the real configuration inside router.
+    public var configuration: ViewRouteConfig {
+        return router.configuration
+    }
+    
+    /// Configuration for removeRoute; return copy of configuration, so modify this won't change the real configuration inside router.
+    public var removeConfiguration: ViewRemoveConfig? {
+        return router.removeConfiguration
+    }
+    
+    /// Latest error when route action failed.
+    public var error: Error? {
+        return router.error
+    }
+    
+    // MARK: Perform
+    
+    /// Whether the router can perform a view route now
+    /// - Discusstion:
+    /// Situations when return false:
+    ///
+    /// 1. State is routing, routed or removing
+    ///
+    /// 2. Source was dealloced
+    ///
+    /// 3. Source can't perform the route type: source is not in any navigation stack for push type, or source has presented a view controller for present type
+    ///
+    /// - Returns: true if source can perform route now, otherwise false
+    public var canPerform: Bool {
+        return router.canPerform()
+    }
+    
+    ///Perform with success handler and error handler.
+    public func performRoute(successHandler: (() -> Void)?, errorHandler: ((ZIKRouteAction, Error) -> Void)?) {
+        router.performRoute(successHandler: successHandler, errorHandler: errorHandler)
+    }
+    
+    // MARK: Remove
+    
+    /// Whether can remove a performed view route. Always use it in main thread, bacause state may be changed in main thread after you check the state in child thread.
+    /// -Discussion:
+    /// Situations when return false:
+    ///
+    /// 1. Router is not performed yet.
+    ///
+    /// 2. Destination was already poped/dismissed/removed/dealloced.
+    ///
+    /// 3. Use ZIKViewRouteTypeCustom and the router didn't provide removeRoute, or canRemoveCustomRoute return false.
+    ///
+    /// 4. If route type is adaptative type, it will choose different presentation for different situation (ZIKViewRouteTypePerformSegue, ZIKViewRouteTypeShow, ZIKViewRouteTypeShowDetail). Then if it's real route type is not Push/PresentModally/PresentAsPopover/AddAsChildViewController, destination can't be removed.
+    ///
+    /// 5. Router was auto created when a destination is displayed and not from storyboard, so router don't know destination's state before route, and can't analyze it's real route type to do corresponding remove action.
+    ///
+    /// 6. Destination's route type is complicated and is considered as custom route type. Such as destination is added to a UITabBarController, then added to a UINavigationController, and finally presented modally. We don't know the remove action should do dismiss or pop or remove from it's UITabBarController.
+    ///
+    /// - Note: Router should be removed be the performer, but not inside the destination. Only the performer knows how the destination was displayed (situation 6).
+    ///
+    /// - Returns: return true if can do removeRoute.
+    public var canRemove: Bool {
+        return router.canRemove()
+    }
+    
+    /// Remove a routed destination. Auto choose proper remove action in pop/dismiss/removeFromParentViewController/removeFromSuperview/custom. If canRemove return false, this will failed, use removeRouteWithSuccessHandler:errorHandler: to get error info. Main thread only.
+    public func removeRoute(successHandler performerSuccessHandler: (() -> Void)? = nil, errorHandler performerErrorHandler: ((ZIKRouteAction, Error) -> Void)? = nil) {
+        router.removeRoute(successHandler: performerSuccessHandler, errorHandler: performerErrorHandler)
+    }
+    
+    public typealias DestinationPreparation = (@escaping (Destination) -> Void) -> Void
+    
+    /// Remove route and prepare before removing. Auto choose proper remove action in pop/dismiss/removeFromParentViewController/removeFromSuperview/custom. If canRemove return false, this will failed, use removeRouteWithSuccessHandler:errorHandler: to get error info. Main thread only.
+    ///
+    /// - Parameter configBuilder: Configure the configuration for removing view.
+    ///     - config: Config for removing view route.
+    ///     - prepareDestination: Prepare destination before removing route. It's an escaping block, use weakSelf to avoid retain cycle.
+    public func removeRoute(configuring configBuilder: @escaping (ViewRemoveConfig, DestinationPreparation) -> Void) {
+        let removeBuilder = { (config: ViewRemoveConfig) in
+            let prepareDestination = { (prepare: @escaping (Destination) -> Void) in
+                config.prepareDestination = { d in
+                    if let destination = d as? Destination {
+                        prepare(destination)
+                    }
+                }
+            }
+            configBuilder(config, prepareDestination)
+        }
+        router.removeRoute(configuring: removeBuilder)
     }
 }
