@@ -78,7 +78,7 @@ You should only use this when you really need it. If the protocol name is wrong,
 @implementation TestViewController
 
 - (void)showEditorViewController {
-	[ZIKViewRouterToView(NoteEditorInput)
+	[ZIKRouterToView(NoteEditorInput)
 	          performFromSource:self
 	          configuring:^(ZIKViewRouteConfiguration *config) {
 	              config.routeType = ZIKViewRouteTypePresentModally;
@@ -97,15 +97,15 @@ You should only use this when you really need it. If the protocol name is wrong,
 }
 ```
 
-It's much safer to prepare destination in `prepareDest` or `prepareModule` block: 
+It's much safer to prepare destination in `prepareDest` or `prepareModule` block with those strict methods: 
 
 ```objectivec
 @implementation TestViewController
 
 - (void)showEditorViewController {
-	[ZIKViewRouterToView(NoteEditorInput)
+	[ZIKRouterToView(NoteEditorInput)
 	          performFromSource:self
-	          routeConfiguring:^(ZIKViewRouteConfiguration *config,
+	          strictConfiguring:^(ZIKViewRouteConfiguration *config,
 	          					  void (^prepareDest)(void (^)(id<NoteEditorInput>)),
                         		  void (^prepareModule)(void (^)(ZIKViewRouteConfig *))) {
 	              config.routeType = ZIKViewRouteTypePresentModally;
@@ -125,7 +125,7 @@ It's much safer to prepare destination in `prepareDest` or `prepareModule` block
 }
 ```
 
-Type of `prepareDest` and `prepareModule` block changes with the router's generic parameters. So there will be compile checking when you change the protocol.
+Type of `prepareDest` and `prepareModule` block changes with the router's generic parameters. So there will be compile checking when you change the protocol in `ZIKRouterToView()`.
 
 But there is bug in Xcode auto completions. These parameters in block are not correctly completed, you have to manually fix the code.
 

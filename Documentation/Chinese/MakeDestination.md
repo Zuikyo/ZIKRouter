@@ -45,7 +45,7 @@ class TestViewController: UIViewController {
 
 - (void)callTimeService {
    //用protocol获取对应的模块
-   id<TimeServiceInput> timeService = [ZIKServiceRouterToService(TimeServiceInput) makeDestination];
+   id<TimeServiceInput> timeService = [ZIKRouterToService(TimeServiceInput) makeDestination];
    self.timeLabel.text = [timeService currentTimeString];    
 }
 

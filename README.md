@@ -131,7 +131,7 @@ class TestViewController: UIViewController {
 
 - (void)showEditorDirectly {
     //Transition to editor view directly
-    [ZIKViewRouterToView(NoteEditorInput) performFromSource:self routeType:ZIKViewRouteTypePush];
+    [ZIKRouterToView(NoteEditorInput) performFromSource:self routeType:ZIKViewRouteTypePush];
 }
 
 @end
@@ -196,7 +196,7 @@ class TestViewController: UIViewController {
 
 - (void)showEditor {
     //Transition to editor view, and prepare the destination with NoteEditorInput
-    [ZIKViewRouterToView(NoteEditorInput)
+    [ZIKRouterToView(NoteEditorInput)
 	     performFromSource:self
 	     configuring:^(ZIKViewRouteConfig *config) {
 	         //Route config
@@ -280,7 +280,7 @@ class TestViewController: UIViewController {
 
 - (void)showEditorDirectly {
     //Hold the router
-    self.router = [ZIKViewRouterToView(NoteEditorInput)
+    self.router = [ZIKRouterToView(NoteEditorInput)
 	     performFromSource:self routeType:ZIKViewRouteTypePush];
 }
 
@@ -367,7 +367,7 @@ class TestViewController: UIViewController {
 
 - (void)callTimeService {
    //Get the service for TimeServiceInput
-   id<TimeServiceInput> timeService = [ZIKServiceRouterToService(TimeServiceInput) makeDestination];
+   id<TimeServiceInput> timeService = [ZIKRouterToService(TimeServiceInput) makeDestination];
    self.timeLabel.text = [timeService currentTimeString];    
 }
 
@@ -527,12 +527,12 @@ class TestViewController: UIViewController {
 //Transition to editor view directly
 - (void)showEditorDirectly {
     //Transition to editor view directly
-    [ZIKViewRouterToView(NoteEditorInput) performFromSource:self routeType:ZIKViewRouteTypePush];
+    [ZIKRouterToView(NoteEditorInput) performFromSource:self routeType:ZIKViewRouteTypePush];
 }
 
 //Transition to editor view, and prepare the destination with NoteEditorInput
 - (void)showEditor {
-    [ZIKViewRouterToView(NoteEditorInput)
+    [ZIKRouterToView(NoteEditorInput)
 	     performFromSource:self
 	     configuring:^(ZIKViewRouteConfig *config) {
 	         config.routeType = ZIKViewRouteTypePush;

@@ -47,7 +47,7 @@ class TestViewController: UIViewController {
 @implementation TestViewController: UIViewController
 
 - (void)showEditor {
-  self.editorRouter = [ZIKViewRouterToView(NoteEditorInput) performFromSource:self routeType:ZIKViewRouteTypePush];
+  self.editorRouter = [ZIKRouterToView(NoteEditorInput) performFromSource:self routeType:ZIKViewRouteTypePush];
 }
 
 - (void)removeEditor {

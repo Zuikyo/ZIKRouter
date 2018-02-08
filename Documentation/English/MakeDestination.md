@@ -45,7 +45,7 @@ class TestViewController: UIViewController {
 
 - (void)callTimeService {
    //Get service for TimeServiceInput
-   id<TimeServiceInput> timeService = [ZIKServiceRouterToService(TimeServiceInput) makeDestination];
+   id<TimeServiceInput> timeService = [ZIKRouterToService(TimeServiceInput) makeDestination];
    //Call service
    self.timeLabel.text = [timeService currentTimeString];    
 }

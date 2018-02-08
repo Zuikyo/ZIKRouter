@@ -45,7 +45,7 @@ Router.perform(
 @end
 
 //Show login view in module A
-[ZIKViewRouterToView(ModuleARequiredLoginViewInput)
+[ZIKRouterToView(ModuleARequiredLoginViewInput)
 	          performFromSource:self
 	          configuring:^(ZIKViewRouteConfiguration *config) {
 	              config.routeType = ZIKViewRouteTypePresentModally;

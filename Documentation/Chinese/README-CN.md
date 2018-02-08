@@ -125,7 +125,7 @@ class TestViewController: UIViewController {
 
 - (void)showEditorDirectly {
     //直接跳转到editor view controller
-    [ZIKViewRouterToView(NoteEditorInput) performFromSource:self routeType:ZIKViewRouteTypePush];
+    [ZIKRouterToView(NoteEditorInput) performFromSource:self routeType:ZIKViewRouteTypePush];
 }
 
 @end
@@ -190,7 +190,7 @@ class TestViewController: UIViewController {
 
 - (void)showEditor {
     //跳转到editor界面；通过protocol获取对应的router类，再通过protocol配置界面
-    [ZIKViewRouterToView(NoteEditorInput)
+    [ZIKRouterToView(NoteEditorInput)
 	     performFromSource:self
 	     configuring:^(ZIKViewRouteConfig *config) {
 	         //路由相关的设置
@@ -274,7 +274,7 @@ class TestViewController: UIViewController {
 
 - (void)showEditorDirectly {
     //持有router
-    self.router = [ZIKViewRouterToView(NoteEditorInput)
+    self.router = [ZIKRouterToView(NoteEditorInput)
 	     performFromSource:self routeType:ZIKViewRouteTypePush];
 }
 
@@ -361,7 +361,7 @@ class TestViewController: UIViewController {
 
 - (void)callTimeService {
    //获取TimeServiceInput模块
-   id<TimeServiceInput> timeService = [ZIKServiceRouterToService(TimeServiceInput) makeDestination];
+   id<TimeServiceInput> timeService = [ZIKRouterToService(TimeServiceInput) makeDestination];
    self.timeLabel.text = [timeService currentTimeString];    
 }
 
@@ -521,12 +521,12 @@ class TestViewController: UIViewController {
 //直接跳转
 - (void)showEditorDirectly {
     //Transition to editor view directly
-    [ZIKViewRouterToView(NoteEditorInput) performFromSource:self routeType:ZIKViewRouteTypePush];
+    [ZIKRouterToView(NoteEditorInput) performFromSource:self routeType:ZIKViewRouteTypePush];
 }
 
 //跳转到editor界面；通过protocol获取对应的router类，再通过protocol配置界面
 - (void)showEditor {
-    [ZIKViewRouterToView(NoteEditorInput)
+    [ZIKRouterToView(NoteEditorInput)
 	     performFromSource:self
 	     configuring:^(ZIKViewRouteConfig *config) {
 	         config.routeType = ZIKViewRouteTypePush;

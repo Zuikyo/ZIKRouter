@@ -81,7 +81,7 @@ func handleOpenURLWithViewName(_ viewName: String) {
 
 - (void)showEditorViewController {
 	//用EditorViewInput获取router类
-	[ZIKViewRouterToView(NoteEditorInput)
+	[ZIKRouterToView(NoteEditorInput)
 	          performFromSource:self
 	          configuring:^(ZIKViewRouteConfiguration *config) {
 	              config.routeType = ZIKViewRouteTypePresentModally;
@@ -107,7 +107,7 @@ func handleOpenURLWithViewName(_ viewName: String) {
 @implementation TestViewController
 
 - (void)showEditorViewController {
-	[ZIKViewRouterToView(NoteEditorInput)
+	[ZIKRouterToView(NoteEditorInput)
 	          performFromSource:self
 	          routeConfiguring:^(ZIKViewRouteConfiguration *config,
 	          					  void (^prepareDest)(void (^)(id<NoteEditorInput>)),

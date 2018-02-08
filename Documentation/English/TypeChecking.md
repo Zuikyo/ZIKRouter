@@ -36,18 +36,18 @@ When registering and getting router with protocol, use macro `ZIKRoutableProtoco
 ZIKViewRouter.classToView(ZIKRoutableProtocol(NoteEditorInput))
 ```
 
-Use macro `ZIKViewRouterToView`, `ZIKViewRouterToModule`, `ZIKServiceRouterToService`, `ZIKServiceRouterToModule` to get router class:
+Use macro `ZIKRouterToView`, `ZIKRouterToViewModule`, `ZIKRouterToService`, `ZIKRouterToServiceModule` to get router class:
 
 ```objectivec
 //If the protocol is not inherited from ZIKViewRoutable, there will be compile error
-ZIKViewRouterToView(NoteEditorInput)
+ZIKRouterToView(NoteEditorInput)
 ```
 
 And the protocol type will affect the parameters in methods:
 
 ```objectivec
 //The 3 parameters have inheritance relationship
-[ZIKViewRouterToView(NoteEditorInput) //1
+[ZIKRouterToView(NoteEditorInput) //1
      performFromSource:self
      routeConfiguring:^(ZIKViewRouteConfig *config,
                         void (^prepareDest)(void (^)(id<NoteEditorInput>)), //2

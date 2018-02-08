@@ -36,18 +36,18 @@ Swift中，用条件extension来声明可路由的protocol，从而利用编译�
 ZIKViewRouter.classToView(ZIKRoutableProtocol(NoteEditorInput))
 ```
 
-使用宏定义 `ZIKViewRouterToView`、`ZIKViewRouterToModule`、`ZIKServiceRouterToService`、`ZIKServiceRouterToModule` 来获取router类：
+使用宏定义 `ZIKRouterToView`、`ZIKRouterToViewModule`、`ZIKRouterToService`、`ZIKRouterToServiceModule` 来获取router类：
 
 ```objectivec
 //如果protocol不是继承自ZIKViewRoutable，将会编译错误
-ZIKViewRouterToView(NoteEditorInput)
+ZIKRouterToView(NoteEditorInput)
 ```
 
 在调用方法时，方法中的参数也会自动进行编译检查：
 
 ```objectivec
 //3处地方的参数有继承关系
-[ZIKViewRouterToView(NoteEditorInput) //1
+[ZIKRouterToView(NoteEditorInput) //1
      performFromSource:self
      routeConfiguring:^(ZIKViewRouteConfig *config,
                         void (^prepareDest)(void (^)(id<NoteEditorInput>)), //2
