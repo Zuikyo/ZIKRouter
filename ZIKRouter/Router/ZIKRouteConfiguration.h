@@ -55,6 +55,10 @@ typedef void(^ZIKRouteStateNotifier)(ZIKRouterState oldState, ZIKRouterState new
  Use weakSelf in stateNotifier to avoid retain cycle.
  */
 @property (nonatomic, copy, nullable) ZIKRouteStateNotifier stateNotifier;
+
+///Initialize properties in currrent configuration class from another configuration, the other configuration must be same class or subclass of self. This is a convenient method to initialize a copy from an existing configuration in -copyWithZone:.
+- (BOOL)setPropertiesFromConfiguration:(ZIKRouteConfiguration *)configuration;
+
 @end
 
 @interface ZIKPerformRouteConfiguration : ZIKRouteConfiguration <NSCopying>

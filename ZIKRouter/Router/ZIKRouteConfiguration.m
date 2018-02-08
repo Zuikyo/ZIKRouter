@@ -38,6 +38,24 @@
     return config;
 }
 
+- (BOOL)setPropertiesFromConfiguration:(ZIKRouteConfiguration *)configuration {
+    if ([configuration isKindOfClass:[self class]] == NO) {
+        NSAssert2(NO, @"Invalid configuration (%@) to copy property values to %@",[configuration class], [self class]);
+        return NO;
+    }
+    NSMutableArray<NSString *> *keys = [NSMutableArray array];
+    unsigned int count;
+    objc_property_t *properties = class_copyPropertyList([self class], &count);
+    for (int i = 0; i < count; i++) {
+        objc_property_t property = properties[i];
+        if (property) {
+            [keys addObject:[NSString stringWithCString:property_getName(property) encoding:NSUTF8StringEncoding]];
+        }
+    }
+    [self setValuesForKeysWithDictionary:[configuration dictionaryWithValuesForKeys:keys]];
+    return YES;
+}
+
 @end
 
 @implementation ZIKPerformRouteConfiguration

@@ -91,9 +91,7 @@
 
 - (id)copyWithZone:(nullable NSZone *)zone {
     ZIKCompatibleAlertViewConfiguration *config = [super copyWithZone:zone];
-    config.title = self.title;
-    config.message = self.message;
-    config.actions = self.actions;
+    [config setPropertiesFromConfiguration:self];
     return config;
 }
 @end
