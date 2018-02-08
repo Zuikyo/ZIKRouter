@@ -48,10 +48,15 @@ NS_SWIFT_UNAVAILABLE("ZIKRouterType is a fake class")
  @param configBuilder Type safe builder to build configuration, `prepareDest` is for setting `prepareDestination` block for configuration (it's an escapting block so use weakSelf in it), `prepareModule` is for setting custom route config.
  @return The prepared destination.
  */
+- (nullable Destination)makeDestinationWithStrictConfiguring:(void(^ _Nullable)(RouteConfig config,
+                                                                                void(^prepareDest)(void(^prepare)(Destination dest)),
+                                                                                void(^prepareModule)(void(NS_NOESCAPE ^prepare)(RouteConfig module))
+                                                                                ))configBuilder;
+
 - (nullable Destination)makeDestinationWithRouteConfiguring:(void(^ _Nullable)(RouteConfig config,
                                                                                void(^prepareDest)(void(^prepare)(Destination dest)),
                                                                                void(^prepareModule)(void(NS_NOESCAPE ^prepare)(RouteConfig module))
-                                                                               ))configBuilder;
+                                                                               ))configBuilder API_DEPRECATED_WITH_REPLACEMENT("-makeDestinationWithStrictConfiguring:", ios(7.0, 7.0));
 
 @end
 

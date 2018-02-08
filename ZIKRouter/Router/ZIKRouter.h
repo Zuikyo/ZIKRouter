@@ -59,13 +59,13 @@ NS_ASSUME_NONNULL_BEGIN
  @param removeConfigBuilder Type safe builder to build remove configuration, `prepareDest` is for setting `prepareDestination` block for configuration (it's an escapting block so use weakSelf in it).
  @return The router.
  */
-- (nullable instancetype)initWithRouteConfiguring:(void(NS_NOESCAPE ^)(RouteConfig config,
-                                                                       void(^prepareDest)(void(^prepare)(Destination dest)),
-                                                                       void(^prepareModule)(void(NS_NOESCAPE ^prepare)(RouteConfig module))
-                                                                       ))configBuilder
-                                    routeRemoving:(void(NS_NOESCAPE ^ _Nullable)(RemoveConfig config,
-                                                                                 void(^prepareDest)(void(^prepare)(Destination dest))
-                                                                                 ))removeConfigBuilder;
+- (nullable instancetype)initWithStrictConfiguring:(void(NS_NOESCAPE ^)(RouteConfig config,
+                                                                        void(^prepareDest)(void(^prepare)(Destination dest)),
+                                                                        void(^prepareModule)(void(NS_NOESCAPE ^prepare)(RouteConfig module))
+                                                                        ))configBuilder
+                                    strictRemoving:(void(NS_NOESCAPE ^ _Nullable)(RemoveConfig config,
+                                                                                  void(^prepareDest)(void(^prepare)(Destination dest))
+                                                                                  ))removeConfigBuilder;
 - (instancetype)init NS_UNAVAILABLE;
 + (instancetype)new NS_UNAVAILABLE;
 
@@ -93,10 +93,10 @@ NS_ASSUME_NONNULL_BEGIN
  @param configBuilder Type safe builder to build configuration, `prepareDest` is for setting `prepareDestination` block for configuration (it's an escapting block so use weakSelf in it), `prepareModule` is for setting custom route config.
  @return The router.
  */
-+ (nullable instancetype)performWithRouteConfiguring:(void(NS_NOESCAPE ^)(RouteConfig config,
-                                                                          void(^prepareDest)(void(^prepare)(Destination dest)),
-                                                                          void(^prepareModule)(void(NS_NOESCAPE ^prepare)(RouteConfig module))
-                                                                          ))configBuilder;
++ (nullable instancetype)performWithStrictConfiguring:(void(NS_NOESCAPE ^)(RouteConfig config,
+                                                                           void(^prepareDest)(void(^prepare)(Destination dest)),
+                                                                           void(^prepareModule)(void(NS_NOESCAPE ^prepare)(RouteConfig module))
+                                                                           ))configBuilder;
 
 /**
  Convenient method to prepare destination in a type safe way inferred by generic parameters and perform route, and you can remove the route with remove configuration later.
@@ -105,13 +105,13 @@ NS_ASSUME_NONNULL_BEGIN
  @param removeConfigBuilder Type safe builder to build remove configuration, `prepareDest` is for setting `prepareDestination` block for configuration (it's an escapting block so use weakSelf in it).
  @return The router.
  */
-+ (nullable instancetype)performWithRouteConfiguring:(void(NS_NOESCAPE ^)(RouteConfig config,
-                                                                          void(^prepareDest)(void(^prepare)(Destination dest)),
-                                                                          void(^prepareModule)(void(NS_NOESCAPE ^prepare)(RouteConfig module))
-                                                                          ))configBuilder
-                                       routeRemoving:(void(NS_NOESCAPE ^ _Nullable)(RemoveConfig config,
-                                                                                    void(^prepareDest)(void(^prepare)(Destination dest))
-                                                                                    ))removeConfigBuilder;
++ (nullable instancetype)performWithStrictConfiguring:(void(NS_NOESCAPE ^)(RouteConfig config,
+                                                                           void(^prepareDest)(void(^prepare)(Destination dest)),
+                                                                           void(^prepareModule)(void(NS_NOESCAPE ^prepare)(RouteConfig module))
+                                                                           ))configBuilder
+                                       strictRemoving:(void(NS_NOESCAPE ^ _Nullable)(RemoveConfig config,
+                                                                                     void(^prepareDest)(void(^prepare)(Destination dest))
+                                                                                     ))removeConfigBuilder;
 
 #pragma mark Remove
 
@@ -126,9 +126,9 @@ NS_ASSUME_NONNULL_BEGIN
 - (void)removeRouteWithConfiguring:(void(NS_NOESCAPE ^)(RemoveConfig config))removeConfigBuilder;
 
 ///Remove route and prepare before removing.
-- (void)removeRouteWithRouteConfiguring:(void(NS_NOESCAPE ^)(RemoveConfig config,
-                                                             void(^prepareDest)(void(^prepare)(Destination dest))
-                                                             ))removeConfigBuilder;
+- (void)removeRouteWithStrictConfiguring:(void(NS_NOESCAPE ^)(RemoveConfig config,
+                                                              void(^prepareDest)(void(^prepare)(Destination dest))
+                                                              ))removeConfigBuilder;
 
 #pragma mark Factory
 
@@ -153,14 +153,42 @@ NS_ASSUME_NONNULL_BEGIN
  @param configBuilder Type safe builder to build configuration, `prepareDest` is for setting `prepareDestination` block for configuration (it's an escapting block so use weakSelf in it), `prepareModule` is for setting custom route config.
  @return The prepared destination.
  */
-+ (nullable Destination)makeDestinationWithRouteConfiguring:(void(^ _Nullable)(RouteConfig config,
-                                                                               void(^prepareDest)(void(^prepare)(Destination dest)),
-                                                                               void(^prepareModule)(void(NS_NOESCAPE ^prepare)(RouteConfig module))
-                                                                               ))configBuilder;
++ (nullable Destination)makeDestinationWithStrictConfiguring:(void(^ _Nullable)(RouteConfig config,
+                                                                                void(^prepareDest)(void(^prepare)(Destination dest)),
+                                                                                void(^prepareModule)(void(NS_NOESCAPE ^prepare)(RouteConfig module))
+                                                                                ))configBuilder;
 
 #pragma mark Debug
 
 + (NSString *)descriptionOfState:(ZIKRouterState)state;
+
+#pragma mark Deprecated
+
+- (nullable instancetype)initWithRouteConfiguring:(void(NS_NOESCAPE ^)(RouteConfig config,
+                                                                       void(^prepareDest)(void(^prepare)(Destination dest)),
+                                                                       void(^prepareModule)(void(NS_NOESCAPE ^prepare)(RouteConfig module))
+                                                                       ))configBuilder
+                                    routeRemoving:(void(NS_NOESCAPE ^ _Nullable)(RemoveConfig config,
+                                                                                 void(^prepareDest)(void(^prepare)(Destination dest))
+                                                                                 ))removeConfigBuilder API_DEPRECATED_WITH_REPLACEMENT("-initWithStrictConfiguring:strictRemoving:", ios(7.0, 7.0));
++ (nullable instancetype)performWithRouteConfiguring:(void(NS_NOESCAPE ^)(RouteConfig config,
+                                                                          void(^prepareDest)(void(^prepare)(Destination dest)),
+                                                                          void(^prepareModule)(void(NS_NOESCAPE ^prepare)(RouteConfig module))
+                                                                          ))configBuilder API_DEPRECATED_WITH_REPLACEMENT("+performWithStrictConfiguring:", ios(7.0, 7.0));
++ (nullable instancetype)performWithRouteConfiguring:(void(NS_NOESCAPE ^)(RouteConfig config,
+                                                                          void(^prepareDest)(void(^prepare)(Destination dest)),
+                                                                          void(^prepareModule)(void(NS_NOESCAPE ^prepare)(RouteConfig module))
+                                                                          ))configBuilder
+                                       routeRemoving:(void(NS_NOESCAPE ^ _Nullable)(RemoveConfig config,
+                                                                                    void(^prepareDest)(void(^prepare)(Destination dest))
+                                                                                    ))removeConfigBuilder API_DEPRECATED_WITH_REPLACEMENT("+performWithStrictConfiguring:strictRemoving:", ios(7.0, 7.0));
+- (void)removeRouteWithRouteConfiguring:(void(NS_NOESCAPE ^)(RemoveConfig config,
+                                                             void(^prepareDest)(void(^prepare)(Destination dest))
+                                                             ))removeConfigBuilder API_DEPRECATED_WITH_REPLACEMENT("-removeRouteWithStrictConfiguring:", ios(7.0, 7.0));
++ (nullable Destination)makeDestinationWithRouteConfiguring:(void(^ _Nullable)(RouteConfig config,
+                                                                               void(^prepareDest)(void(^prepare)(Destination dest)),
+                                                                               void(^prepareModule)(void(NS_NOESCAPE ^prepare)(RouteConfig module))
+                                                                               ))configBuilder API_DEPRECATED_WITH_REPLACEMENT("+makeDestinationWithStrictConfiguring:", ios(7.0, 7.0));
 @end
 
 NS_ASSUME_NONNULL_END

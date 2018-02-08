@@ -24,6 +24,13 @@ NS_ASSUME_NONNULL_BEGIN
                            removeConfiguration:(nullable __kindof ZIKViewRemoveConfiguration *)removeConfiguration NS_UNAVAILABLE;
 - (nullable instancetype)initWithConfiguring:(void(NS_NOESCAPE ^)(__kindof ZIKViewRouteConfiguration *config))configBuilder
                                     removing:(void(NS_NOESCAPE ^ _Nullable)( __kindof ZIKViewRemoveConfiguration *config))removeConfigBuilder NS_UNAVAILABLE;
+- (nullable instancetype)initWithStrictConfiguring:(void(NS_NOESCAPE ^)(ZIKViewRouteConfiguration *config,
+                                                                        void(^prepareDest)(void(^prepare)(id dest)),
+                                                                        void(^prepareModule)(void(NS_NOESCAPE ^prepare)(ZIKViewRouteConfiguration *module))
+                                                                        ))configBuilder
+                                    strictRemoving:(void(NS_NOESCAPE ^ _Nullable)(ZIKViewRemoveConfiguration *config,
+                                                                                  void(^prepareDest)(void(^prepare)(id dest))
+                                                                                  ))removeConfigBuilder NS_UNAVAILABLE;
 - (nullable instancetype)initWithRouteConfiguring:(void(NS_NOESCAPE ^)(ZIKViewRouteConfiguration *config,
                                                                        void(^prepareDest)(void(^prepare)(id dest)),
                                                                        void(^prepareModule)(void(NS_NOESCAPE ^prepare)(ZIKViewRouteConfiguration *module))
@@ -44,6 +51,19 @@ NS_ASSUME_NONNULL_BEGIN
                                configuring:(void(NS_NOESCAPE ^)(__kindof ZIKViewRouteConfiguration *config))configBuilder
                                   removing:(void(NS_NOESCAPE ^ _Nullable)(__kindof ZIKViewRemoveConfiguration *config))removeConfigBuilder NS_UNAVAILABLE;
 + (nullable instancetype)performFromSource:(nullable id<ZIKViewRouteSource>)source routeType:(ZIKViewRouteType)routeType NS_UNAVAILABLE;
++ (nullable instancetype)performFromSource:(nullable id<ZIKViewRouteSource>)source
+                         strictConfiguring:(void(NS_NOESCAPE ^)(ZIKViewRouteConfiguration *config,
+                                                                void(^prepareDest)(void(^prepare)(id dest)),
+                                                                void(^prepareModule)(void(NS_NOESCAPE ^prepare)(ZIKViewRouteConfiguration *module))
+                                                                ))configBuilder NS_UNAVAILABLE;
++ (nullable instancetype)performFromSource:(nullable id<ZIKViewRouteSource>)source
+                         strictConfiguring:(void(NS_NOESCAPE ^)(ZIKViewRouteConfiguration *config,
+                                                                void(^prepareDest)(void(^prepare)(id dest)),
+                                                                void(^prepareModule)(void(NS_NOESCAPE ^prepare)(ZIKViewRouteConfiguration *module))
+                                                                ))configBuilder
+                            strictRemoving:(void(NS_NOESCAPE ^ _Nullable)(ZIKViewRemoveConfiguration *config,
+                                                                          void(^prepareDest)(void(^prepare)(id dest))
+                                                                          ))removeConfigBuilder NS_UNAVAILABLE;
 + (nullable instancetype)performFromSource:(nullable id<ZIKViewRouteSource>)source
                           routeConfiguring:(void(NS_NOESCAPE ^)(ZIKViewRouteConfiguration *config,
                                                                 void(^prepareDest)(void(^prepare)(id dest)),
@@ -69,6 +89,21 @@ NS_ASSUME_NONNULL_BEGIN
                                     routeType:(ZIKViewRouteType)routeType NS_UNAVAILABLE;
 + (nullable instancetype)performOnDestination:(id)destination
                                    fromSource:(nullable id<ZIKViewRouteSource>)source
+                            strictConfiguring:(void(NS_NOESCAPE ^)(ZIKViewRouteConfiguration *config,
+                                                                   void(^prepareDest)(void(^prepare)(id dest)),
+                                                                   void(^prepareModule)(void(NS_NOESCAPE ^prepare)(ZIKViewRouteConfiguration *module))
+                                                                   ))configBuilder NS_UNAVAILABLE;
++ (nullable instancetype)performOnDestination:(id)destination
+                                   fromSource:(nullable id<ZIKViewRouteSource>)source
+                            strictConfiguring:(void(NS_NOESCAPE ^)(ZIKViewRouteConfiguration *config,
+                                                                   void(^prepareDest)(void(^prepare)(id dest)),
+                                                                   void(^prepareModule)(void(NS_NOESCAPE ^prepare)(ZIKViewRouteConfiguration *module))
+                                                                   ))configBuilder
+                               strictRemoving:(void(NS_NOESCAPE ^ _Nullable)(ZIKViewRemoveConfiguration *config,
+                                                                             void(^prepareDest)(void(^prepare)(id dest))
+                                                                             ))removeConfigBuilder NS_UNAVAILABLE;
++ (nullable instancetype)performOnDestination:(id)destination
+                                   fromSource:(nullable id<ZIKViewRouteSource>)source
                              routeConfiguring:(void(NS_NOESCAPE ^)(ZIKViewRouteConfiguration *config,
                                                                    void(^prepareDest)(void(^prepare)(id dest)),
                                                                    void(^prepareModule)(void(NS_NOESCAPE ^prepare)(ZIKViewRouteConfiguration *module))
@@ -88,6 +123,19 @@ NS_ASSUME_NONNULL_BEGIN
 + (nullable instancetype)prepareDestination:(id)destination
                                 configuring:(void(NS_NOESCAPE ^)(__kindof ZIKViewRouteConfiguration *config))configBuilder NS_UNAVAILABLE;
 + (nullable instancetype)prepareDestination:(id)destination
+                          strictConfiguring:(void(NS_NOESCAPE ^)(ZIKViewRouteConfiguration *config,
+                                                                 void(^prepareDest)(void(^prepare)(id dest)),
+                                                                 void(^prepareModule)(void(NS_NOESCAPE ^prepare)(ZIKViewRouteConfiguration *module))
+                                                                 ))configBuilder NS_UNAVAILABLE;
++ (nullable instancetype)prepareDestination:(id)destination
+                          strictConfiguring:(void(NS_NOESCAPE ^)(ZIKViewRouteConfiguration *config,
+                                                                 void(^prepareDest)(void(^prepare)(id dest)),
+                                                                 void(^prepareModule)(void(NS_NOESCAPE ^prepare)(ZIKViewRouteConfiguration *module))
+                                                                 ))configBuilder
+                             strictRemoving:(void(NS_NOESCAPE ^ _Nullable)(ZIKViewRemoveConfiguration *config,
+                                                                           void(^prepareDest)(void(^prepare)(id dest))
+                                                                           ))removeConfigBuilder NS_UNAVAILABLE;
++ (nullable instancetype)prepareDestination:(id)destination
                            routeConfiguring:(void(NS_NOESCAPE ^)(ZIKViewRouteConfiguration *config,
                                                                  void(^prepareDest)(void(^prepare)(id dest)),
                                                                  void(^prepareModule)(void(NS_NOESCAPE ^prepare)(ZIKViewRouteConfiguration *module))
@@ -105,6 +153,10 @@ NS_ASSUME_NONNULL_BEGIN
 + (nullable id)makeDestination NS_UNAVAILABLE;
 + (nullable id)makeDestinationWithPreparation:(void(^ _Nullable)(id destination))prepare NS_UNAVAILABLE;
 + (nullable id)makeDestinationWithConfiguring:(void(^ _Nullable)(ZIKViewRouteConfiguration *config))configBuilder NS_UNAVAILABLE;
++ (nullable id)makeDestinationWithStrictConfiguring:(void(^ _Nullable)(ZIKViewRouteConfiguration *config,
+                                                                       void(^prepareDest)(void(^prepare)(id dest)),
+                                                                       void(^prepareModule)(void(NS_NOESCAPE ^prepare)(ZIKViewRouteConfiguration *module))
+                                                                      ))configBuilder NS_UNAVAILABLE;
 + (nullable id)makeDestinationWithRouteConfiguring:(void(^ _Nullable)(ZIKViewRouteConfiguration *config,
                                                                       void(^prepareDest)(void(^prepare)(id dest)),
                                                                       void(^prepareModule)(void(NS_NOESCAPE ^prepare)(ZIKViewRouteConfiguration *module))

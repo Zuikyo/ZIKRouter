@@ -3143,13 +3143,13 @@ static _Nullable Class _routerClassToRegisteredView(Class viewClass) {
 }
 
 + (nullable instancetype)performFromSource:(id<ZIKViewRouteSource>)source
-                          routeConfiguring:(void (^)(ZIKViewRouteConfiguration * _Nonnull,
+                         strictConfiguring:(void (^)(ZIKViewRouteConfiguration * _Nonnull,
                                                      void (^ _Nonnull)(void (^ _Nonnull)(id _Nonnull)),
                                                      void (^ _Nonnull)(void (^ _Nonnull)(ZIKViewRouteConfiguration * _Nonnull))
                                                      ))configBuilder {
-    return [super performWithRouteConfiguring:^(ZIKViewRouteConfiguration * _Nonnull config,
-                                                void (^ _Nonnull prepareDest)(void (^ _Nonnull)(id _Nonnull)),
-                                                void (^ _Nonnull prepareModule)(void (^ _Nonnull)(ZIKViewRouteConfiguration * _Nonnull))) {
+    return [super performWithStrictConfiguring:^(ZIKViewRouteConfiguration * _Nonnull config,
+                                                 void (^ _Nonnull prepareDest)(void (^ _Nonnull)(id _Nonnull)),
+                                                 void (^ _Nonnull prepareModule)(void (^ _Nonnull)(ZIKViewRouteConfiguration * _Nonnull))) {
         if (configBuilder) {
             configBuilder(config,prepareDest,prepareModule);
         }
@@ -3160,23 +3160,23 @@ static _Nullable Class _routerClassToRegisteredView(Class viewClass) {
 }
 
 + (nullable instancetype)performFromSource:(id<ZIKViewRouteSource>)source
-                          routeConfiguring:(void (^)(ZIKViewRouteConfiguration * _Nonnull,
+                         strictConfiguring:(void (^)(ZIKViewRouteConfiguration * _Nonnull,
                                                      void (^ _Nonnull)(void (^ _Nonnull)(id _Nonnull)),
                                                      void (^ _Nonnull)(void (^ _Nonnull)(ZIKViewRouteConfiguration * _Nonnull))
                                                      ))configBuilder
-                             routeRemoving:(void (^)(ZIKViewRemoveConfiguration * _Nonnull,
+                            strictRemoving:(void (^)(ZIKViewRemoveConfiguration * _Nonnull,
                                                      void (^ _Nonnull)(void (^ _Nonnull)(id _Nonnull))
                                                      ))removeConfigBuilder {
-    return [super performWithRouteConfiguring:^(ZIKViewRouteConfiguration * _Nonnull config,
-                                                void (^ _Nonnull prepareDest)(void (^ _Nonnull)(id _Nonnull)),
-                                                void (^ _Nonnull prepareModule)(void (^ _Nonnull)(ZIKViewRouteConfiguration * _Nonnull))) {
+    return [super performWithStrictConfiguring:^(ZIKViewRouteConfiguration * _Nonnull config,
+                                                 void (^ _Nonnull prepareDest)(void (^ _Nonnull)(id _Nonnull)),
+                                                 void (^ _Nonnull prepareModule)(void (^ _Nonnull)(ZIKViewRouteConfiguration * _Nonnull))) {
         if (configBuilder) {
             configBuilder(config,prepareDest,prepareModule);
         }
         if (source) {
             config.source = source;
         }
-    } routeRemoving:removeConfigBuilder];
+    } strictRemoving:removeConfigBuilder];
 }
 
 @end
@@ -3228,20 +3228,20 @@ static _Nullable Class _routerClassToRegisteredView(Class viewClass) {
 
 + (nullable instancetype)performOnDestination:(id)destination
                                    fromSource:(id<ZIKViewRouteSource>)source
-                             routeConfiguring:(void (^)(ZIKViewRouteConfiguration * _Nonnull,
+                            strictConfiguring:(void (^)(ZIKViewRouteConfiguration * _Nonnull,
                                                         void (^ _Nonnull)(void (^ _Nonnull)(id _Nonnull)),
                                                         void (^ _Nonnull)(void (^ _Nonnull)(ZIKViewRouteConfiguration * _Nonnull))
                                                         ))configBuilder {
-    return [self performOnDestination:destination fromSource:source routeConfiguring:configBuilder routeRemoving:nil];
+    return [self performOnDestination:destination fromSource:source strictConfiguring:configBuilder strictRemoving:nil];
 }
 
 + (nullable instancetype)performOnDestination:(id)destination
                                    fromSource:(id<ZIKViewRouteSource>)source
-                             routeConfiguring:(void (^)(ZIKViewRouteConfiguration * _Nonnull,
+                            strictConfiguring:(void (^)(ZIKViewRouteConfiguration * _Nonnull,
                                                         void (^ _Nonnull)(void (^ _Nonnull)(id _Nonnull)),
                                                         void (^ _Nonnull)(void (^ _Nonnull)(ZIKViewRouteConfiguration * _Nonnull))
                                                         ))configBuilder
-                                routeRemoving:(void (^)(ZIKViewRemoveConfiguration * _Nonnull,
+                               strictRemoving:(void (^)(ZIKViewRemoveConfiguration * _Nonnull,
                                                         void (^ _Nonnull)(void (^ _Nonnull)(id _Nonnull))
                                                         ))removeConfigBuilder {
     return [self performOnDestination:destination fromSource:source configuring:^(ZIKViewRouteConfiguration * _Nonnull config) {
@@ -3313,16 +3313,16 @@ static _Nullable Class _routerClassToRegisteredView(Class viewClass) {
     return router;
 }
 
-+ (nullable instancetype)prepareDestination:(id)destination routeConfiguring:(void (^)(ZIKViewRouteConfiguration * _Nonnull, void (^ _Nonnull)(void (^ _Nonnull)(id _Nonnull)), void (^ _Nonnull)(void (^ _Nonnull)(ZIKViewRouteConfiguration * _Nonnull))))configBuilder {
-    return [self prepareDestination:destination routeConfiguring:configBuilder routeRemoving:nil];
++ (nullable instancetype)prepareDestination:(id)destination strictConfiguring:(void (^)(ZIKViewRouteConfiguration * _Nonnull, void (^ _Nonnull)(void (^ _Nonnull)(id _Nonnull)), void (^ _Nonnull)(void (^ _Nonnull)(ZIKViewRouteConfiguration * _Nonnull))))configBuilder {
+    return [self prepareDestination:destination strictConfiguring:configBuilder strictRemoving:nil];
 }
 
 + (nullable instancetype)prepareDestination:(id)destination
-                           routeConfiguring:(void (^)(ZIKViewRouteConfiguration * _Nonnull,
+                          strictConfiguring:(void (^)(ZIKViewRouteConfiguration * _Nonnull,
                                                       void (^ _Nonnull)(void (^ _Nonnull)(id _Nonnull)),
                                                       void (^ _Nonnull)(void (^ _Nonnull)(ZIKViewRouteConfiguration * _Nonnull))
                                                       ))configBuilder
-                              routeRemoving:(void (^ _Nullable)(ZIKViewRemoveConfiguration * _Nonnull,
+                             strictRemoving:(void (^ _Nullable)(ZIKViewRemoveConfiguration * _Nonnull,
                                                                 void (^ _Nonnull)(void (^ _Nonnull)(id _Nonnull))
                                                                 ))removeConfigBuilder {
     return [self prepareDestination:destination configuring:^(ZIKViewRouteConfiguration * _Nonnull config) {
@@ -3521,6 +3521,65 @@ _Nullable Class _swift_ZIKViewRouterToView(id viewProtocol) {
 
 _Nullable Class _swift_ZIKViewRouterToModule(id configProtocol) {
     return _ZIKViewRouterToModule(configProtocol);
+}
+
+@end
+
+@implementation ZIKViewRouter (Deprecated)
+
++ (nullable instancetype)performFromSource:(id<ZIKViewRouteSource>)source
+                          routeConfiguring:(void (^)(ZIKViewRouteConfiguration * _Nonnull,
+                                                     void (^ _Nonnull)(void (^ _Nonnull)(id _Nonnull)),
+                                                     void (^ _Nonnull)(void (^ _Nonnull)(ZIKViewRouteConfiguration * _Nonnull))
+                                                     ))configBuilder {
+    return [self performFromSource:source strictConfiguring:configBuilder];
+}
+
++ (nullable instancetype)performFromSource:(id<ZIKViewRouteSource>)source
+                          routeConfiguring:(void (^)(ZIKViewRouteConfiguration * _Nonnull,
+                                                     void (^ _Nonnull)(void (^ _Nonnull)(id _Nonnull)),
+                                                     void (^ _Nonnull)(void (^ _Nonnull)(ZIKViewRouteConfiguration * _Nonnull))
+                                                     ))configBuilder
+                             routeRemoving:(void (^)(ZIKViewRemoveConfiguration * _Nonnull,
+                                                     void (^ _Nonnull)(void (^ _Nonnull)(id _Nonnull))
+                                                     ))removeConfigBuilder {
+    return [self performFromSource:source strictConfiguring:configBuilder strictRemoving:removeConfigBuilder];
+}
+
++ (nullable instancetype)performOnDestination:(id)destination
+                                   fromSource:(id<ZIKViewRouteSource>)source
+                             routeConfiguring:(void (^)(ZIKViewRouteConfiguration * _Nonnull,
+                                                        void (^ _Nonnull)(void (^ _Nonnull)(id _Nonnull)),
+                                                        void (^ _Nonnull)(void (^ _Nonnull)(ZIKViewRouteConfiguration * _Nonnull))
+                                                        ))configBuilder {
+    return [self performOnDestination:destination fromSource:source strictConfiguring:configBuilder];
+}
+
++ (nullable instancetype)performOnDestination:(id)destination
+                                   fromSource:(id<ZIKViewRouteSource>)source
+                             routeConfiguring:(void (^)(ZIKViewRouteConfiguration * _Nonnull,
+                                                        void (^ _Nonnull)(void (^ _Nonnull)(id _Nonnull)),
+                                                        void (^ _Nonnull)(void (^ _Nonnull)(ZIKViewRouteConfiguration * _Nonnull))
+                                                        ))configBuilder
+                                routeRemoving:(void (^)(ZIKViewRemoveConfiguration * _Nonnull,
+                                                        void (^ _Nonnull)(void (^ _Nonnull)(id _Nonnull))
+                                                        ))removeConfigBuilder {
+    return [self performOnDestination:destination fromSource:source strictConfiguring:configBuilder strictRemoving:removeConfigBuilder];
+}
+
++ (nullable instancetype)prepareDestination:(id)destination routeConfiguring:(void (^)(ZIKViewRouteConfiguration * _Nonnull, void (^ _Nonnull)(void (^ _Nonnull)(id _Nonnull)), void (^ _Nonnull)(void (^ _Nonnull)(ZIKViewRouteConfiguration * _Nonnull))))configBuilder {
+    return [self prepareDestination:destination strictConfiguring:configBuilder];
+}
+
++ (nullable instancetype)prepareDestination:(id)destination
+                           routeConfiguring:(void (^)(ZIKViewRouteConfiguration * _Nonnull,
+                                                      void (^ _Nonnull)(void (^ _Nonnull)(id _Nonnull)),
+                                                      void (^ _Nonnull)(void (^ _Nonnull)(ZIKViewRouteConfiguration * _Nonnull))
+                                                      ))configBuilder
+                              routeRemoving:(void (^ _Nullable)(ZIKViewRemoveConfiguration * _Nonnull,
+                                                                void (^ _Nonnull)(void (^ _Nonnull)(id _Nonnull))
+                                                                ))removeConfigBuilder {
+    return [self prepareDestination:destination strictConfiguring:configBuilder strictRemoving:removeConfigBuilder];
 }
 
 @end
