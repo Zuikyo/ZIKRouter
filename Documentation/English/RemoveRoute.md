@@ -87,7 +87,7 @@ Service router do nothing when removing in default.
 
 Steps to support removing a service:
 
-1. Override `canRemove`, if the service can be removed, return true
+1. Override `canRemove` or `canRemoveCustomRoute`, if the service can be removed, return true
 2. Override `-removeDestination:removeConfiguration:`, check whether the destination exists, and do unload action
 3. Call `-prepareDestinationBeforeRemoving` to let the performer prepare the destination before unloading
 4. Manage the router's state with `beginRemoveRoute`、`endRemoveRouteWithSuccess`、`endRemoveRouteWithError:`

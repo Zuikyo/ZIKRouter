@@ -190,8 +190,9 @@ Steps to support custom transition:
 
 1. Override `supportedRouteTypes`, add`ZIKViewRouteTypeCustom`
 2. If the router needs to validate the configuration, override `-validateCustomRouteConfiguration:removeConfiguration:`
-3. Override `performCustomRouteOnDestination:fromSource:configuration:` to do custom transition. If the transition is performing a segue, use `_performSegueWithIdentifier:fromSource:sender:`
-4. Manage router's state with `beginPerformRoute`、`endPerformRouteWithSuccess`、`endPerformRouteWithError:`
+3. Override `canPerformCustomRoute` to check whether the router can perform route now because the default return value is false
+4. Override `performCustomRouteOnDestination:fromSource:configuration:` to do custom transition. If the transition is performing a segue, use `_performSegueWithIdentifier:fromSource:sender:`
+5. Manage router's state with `beginPerformRoute`、`endPerformRouteWithSuccess`、`endPerformRouteWithError:`
 
 ### Service Router
 

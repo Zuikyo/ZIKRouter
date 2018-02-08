@@ -85,7 +85,7 @@ class TestViewController: UIViewController {
 
 Service router默认不支持移除操作。如果要用移除操作来销毁模块，则：
 
-1. 重写`canRemove`，如果当前可以销毁模块，则返回true
+1. 重写`canRemove`或者`canRemoveCustomRoute`，如果当前可以销毁模块，则返回true
 2. 重写`-removeDestination:removeConfiguration:`，判断destination是否存在，执行销毁操作
 3. 调用`-prepareDestinationBeforeRemoving`在销毁前调用模块
 4. 用`beginRemoveRoute`、`endRemoveRouteWithSuccess`、`endRemoveRouteWithError:`改变路由状态

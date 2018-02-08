@@ -194,8 +194,9 @@ class TestViewController: UIViewController {
 
 1. 重写`supportedRouteTypes`，添加`ZIKViewRouteTypeCustom`
 2. 如果需要判断configuration是否正确，则重写`-validateCustomRouteConfiguration:removeConfiguration:`
-3. 重写`performCustomRouteOnDestination:fromSource:configuration:`，执行自定义界面跳转操作，如果自定义操作是执行segue，则在执行时需要使用`_performSegueWithIdentifier:fromSource:sender:`
-4. 用`beginPerformRoute`、`endPerformRouteWithSuccess`、`endPerformRouteWithError:`改变路由状态
+3. 重写`canPerformCustomRoute`判断当前是否可以执行路由，可以则返回true
+4. 重写`performCustomRouteOnDestination:fromSource:configuration:`，执行自定义界面跳转操作，如果自定义操作是执行segue，则在执行时需要使用`_performSegueWithIdentifier:fromSource:sender:`
+5. 用`beginPerformRoute`、`endPerformRouteWithSuccess`、`endPerformRouteWithError:`改变路由状态
 
 ### Service Router
 
