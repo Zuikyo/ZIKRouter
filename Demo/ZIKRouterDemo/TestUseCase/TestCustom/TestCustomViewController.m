@@ -29,8 +29,8 @@
     self.alertViewRouter = [ZIKRouterToViewModule(RequiredCompatibleAlertConfigProtocol)
      performFromSource:self
      strictConfiguring:^(ZIKViewRouteConfiguration<RequiredCompatibleAlertConfigProtocol> *config,
-                        void (^prepareDest)(void (^)(id)),
-                        void (^prepareModule)(void (^)(ZIKViewRouteConfig<RequiredCompatibleAlertConfigProtocol> *))) {
+                         void (^prepareDest)(void (^)(id)),
+                         void (^prepareModule)(void (^)(ZIKViewRouteConfig<RequiredCompatibleAlertConfigProtocol> *))) {
          config.routeType = ZIKViewRouteTypeCustom;
          config.routeCompletion = ^(id _Nonnull destination) {
              NSLog(@"show custom alert complete");

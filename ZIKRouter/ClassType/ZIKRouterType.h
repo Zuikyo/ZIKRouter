@@ -20,11 +20,6 @@ NS_SWIFT_UNAVAILABLE("ZIKRouterType is a fake class")
 ///Fake class to use ZIKRouter class type with compile time checking. The real object is Class of ZIKRouter, so these instance methods are actually class methods in ZIKRouter class. Don't check whether a type is kind of ZIKRouterType.
 @interface ZIKRouterType<__covariant Destination: id, __covariant RouteConfig: ZIKPerformRouteConfiguration *, __covariant RemoveConfig: ZIKRemoveRouteConfiguration *> : NSObject
 
-- (instancetype)init NS_UNAVAILABLE;
-+ (instancetype)new NS_UNAVAILABLE;
-- (BOOL)isKindOfClass:(Class)aClass NS_UNAVAILABLE;
-- (BOOL)isMemberOfClass:(Class)aClass NS_UNAVAILABLE;
-
 #pragma mark Factory
 
 ///Whether the destination is instantiated synchronously.
@@ -45,7 +40,7 @@ NS_SWIFT_UNAVAILABLE("ZIKRouterType is a fake class")
 /**
  Synchronously get destination, and prepare the destination in a type safe way inferred by generic parameters.
  
- @param configBuilder Type safe builder to build configuration, `prepareDest` is for setting `prepareDestination` block for configuration (it's an escapting block so use weakSelf in it), `prepareModule` is for setting custom route config.
+ @param configBuilder Type safe builder to build configuration, `prepareDest` is for setting `prepareDestination` block for configuration (it's an escaping block so use weakSelf in it), `prepareModule` is for setting custom route config.
  @return The prepared destination.
  */
 - (nullable Destination)makeDestinationWithStrictConfiguring:(void(^ _Nullable)(RouteConfig config,
@@ -57,6 +52,17 @@ NS_SWIFT_UNAVAILABLE("ZIKRouterType is a fake class")
                                                                                void(^prepareDest)(void(^prepare)(Destination dest)),
                                                                                void(^prepareModule)(void(NS_NOESCAPE ^prepare)(RouteConfig module))
                                                                                ))configBuilder API_DEPRECATED_WITH_REPLACEMENT("-makeDestinationWithStrictConfiguring:", ios(7.0, 7.0));
+
+#pragma mark Unavailable
+
+- (instancetype)init NS_UNAVAILABLE;
+- (id)copy NS_UNAVAILABLE;
+- (id)mutableCopy NS_UNAVAILABLE;
+- (IMP)methodForSelector:(SEL)aSelector NS_UNAVAILABLE;
+- (void)doesNotRecognizeSelector:(SEL)aSelector NS_UNAVAILABLE;
+- (id)forwardingTargetForSelector:(SEL)aSelector NS_UNAVAILABLE;
+- (void)forwardInvocation:(NSInvocation *)anInvocation NS_UNAVAILABLE;
+- (NSMethodSignature *)methodSignatureForSelector:(SEL)aSelector NS_UNAVAILABLE;
 
 @end
 
