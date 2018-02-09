@@ -384,6 +384,37 @@ static BOOL _isClassRoutable(Class class) {
     return NO;
 }
 
+- (BOOL)_canPerformPush {
+    UIViewController *source = (UIViewController *)self.original_configuration.source;
+    if (!source) {
+        return NO;
+    }
+    if ([source isKindOfClass:[UIViewController class]] == NO) {
+        return NO;
+    }
+    if ([[self class] _validateSourceInNavigationStack:source] == NO) {
+        return NO;
+    }
+    return YES;
+}
+
+- (BOOL)_canPerformPresent {
+    UIViewController *source = (UIViewController *)self.original_configuration.source;
+    if (!source) {
+        return NO;
+    }
+    if ([source isKindOfClass:[UIViewController class]] == NO) {
+        return NO;
+    }
+    if ([[self class] _validateSourceNotPresentedAnyView:source] == NO) {
+        return NO;
+    }
+    if ([[self class] _validateSourceInWindowHierarchy:source] == NO) {
+        return NO;
+    }
+    return YES;
+}
+
 - (BOOL)_canPerformWithErrorMessage:(NSString **)message {
     ZIKRouterState state = self.state;
     if (state == ZIKRouterStateRouting) {
@@ -1220,6 +1251,9 @@ destinationStateBeforeRoute:(ZIKPresentationState *)destinationStateBeforeRoute
 
 - (BOOL)_canPop {
     UIViewController *destination = self.destination;
+    if ([destination isKindOfClass:[UIViewController class]] == NO) {
+        return NO;
+    }
     if (!destination.navigationController) {
         return NO;
     }
@@ -1228,6 +1262,9 @@ destinationStateBeforeRoute:(ZIKPresentationState *)destinationStateBeforeRoute
 
 - (BOOL)_canDismiss {
     UIViewController *destination = self.destination;
+    if ([destination isKindOfClass:[UIViewController class]] == NO) {
+        return NO;
+    }
     if (!destination.presentingViewController && /*can dismiss destination itself*/
         !destination.presentedViewController /*can dismiss destination's presentedViewController*/
         ) {
@@ -1238,6 +1275,9 @@ destinationStateBeforeRoute:(ZIKPresentationState *)destinationStateBeforeRoute
 
 - (BOOL)_canRemoveFromParentViewController {
     UIViewController *destination = self.destination;
+    if ([destination isKindOfClass:[UIViewController class]] == NO) {
+        return NO;
+    }
     if (!destination.parentViewController) {
         return NO;
     }
@@ -1246,6 +1286,9 @@ destinationStateBeforeRoute:(ZIKPresentationState *)destinationStateBeforeRoute
 
 - (BOOL)_canRemoveFromSuperview {
     UIView *destination = self.destination;
+    if ([destination isKindOfClass:[UIView class]] == NO) {
+        return NO;
+    }
     if (!destination.superview) {
         return NO;
     }
@@ -2670,11 +2713,6 @@ static _Nullable Class _routerClassToRegisteredView(Class viewClass) {
 }
 
 + (BOOL)_validateRouteSourceNotMissedInConfiguration:(ZIKViewRouteConfiguration *)configuration {
-    if (!configuration.source) {
-        if (configuration.routeType != ZIKViewRouteTypeCustom && configuration.routeType != ZIKViewRouteTypeGetDestination) {
-            NSLog(@"");
-        }
-    }
     if (!configuration.source &&
         (configuration.routeType != ZIKViewRouteTypeCustom &&
         configuration.routeType != ZIKViewRouteTypeGetDestination)) {

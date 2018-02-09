@@ -44,7 +44,7 @@ NS_ASSUME_NONNULL_BEGIN
 + (void)_didFinishRegistration;
 
 /**
- Whether the destination requires the performer to prepare it. This method is for destination from storyboard and UIView from -addSubview:.
+ Whether the destination is all prepared, if not, it requires the performer to prepare it. This method is for destination from storyboard and UIView from -addSubview:.
  @discussion
  Destination created from external will use this method to determine whether the router have to search the performer to prepare itself by invoking performer's -prepareDestinationFromExternal:configuration:.
  
@@ -99,6 +99,26 @@ NS_ASSUME_NONNULL_BEGIN
 
 ///Validate the configuration for your custom route. If return NO, current perform action will be failed.
 + (BOOL)validateCustomRouteConfiguration:(RouteConfig)configuration removeConfiguration:(ZIKViewRemoveConfiguration *)removeConfiguration;
+
+#pragma mark Custom Route Checking
+
+///Check view controller state in -canPerformCustomRoute, -canRemoveCustomRoute or -performCustomRouteOnDestination:fromSource:configuration:.
+
+///Whether the source can perform push now.
+- (BOOL)_canPerformPush;
+///Whether the source can perform present now.
+- (BOOL)_canPerformPresent;
+///Whether the destination is not in navigation stack of the source. If the destination is already pushed, it can't be pushed again.
++ (BOOL)_validateDestination:(UIViewController *)destination notInNavigationStackOfSource:(UIViewController *)source;
+
+///Whether the destination can pop.
+- (BOOL)_canPop;
+///Whether the destination can dismiss.
+- (BOOL)_canDismiss;
+///Whether the destination can remove from parant.
+- (BOOL)_canRemoveFromParentViewController;
+///Whether the destination can remove from superview.
+- (BOOL)_canRemoveFromSuperview;
 
 #pragma mark Custom Route State Control
 

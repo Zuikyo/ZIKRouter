@@ -162,14 +162,7 @@
 }
 
 - (BOOL)canPerformCustomRoute {
-    UIViewController *source = (UIViewController *)self.original_configuration.source;
-    if (!source) {
-        return NO;
-    }
-    if ([source presentedViewController]) {
-        return NO;
-    }
-    return YES;
+    return [self _canPerformPresent];
 }
 
 - (BOOL)canRemoveCustomRoute {
