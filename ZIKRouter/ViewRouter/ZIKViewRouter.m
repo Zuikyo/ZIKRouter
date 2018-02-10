@@ -493,11 +493,11 @@ static BOOL _isClassRoutable(Class class) {
     
     if (!destination &&
         [[self class] _validateDestinationShouldExistInConfiguration:configuration]) {
-        [self notifyRouteState:ZIKRouterStateRouteFailed];
+        [self notifyRouteState:self.preState];
         [self _callbackError_actionFailedWithAction:ZIKRouteActionPerformRoute errorDescription:@"-destinationWithConfiguration: of router: %@ return nil when performRoute, configuration may be invalid or router has bad impletmentation in -destinationWithConfiguration. Configuration: %@",[self class],configuration];
         return;
     } else if (![[self class] _validateDestinationClass:destination inConfiguration:configuration]) {
-        [self notifyRouteState:ZIKRouterStateRouteFailed];
+        [self notifyRouteState:self.preState];
         [self _callbackError_actionFailedWithAction:ZIKRouteActionPerformRoute errorDescription:@"Bad impletment in destinationWithConfiguration: of router: %@, invalid destination: %@ !",[self class],destination];
         NSAssert(NO, @"Bad impletment in destinationWithConfiguration: of router: %@, invalid destination: %@ !",[self class],destination);
         return;
@@ -508,7 +508,7 @@ static BOOL _isClassRoutable(Class class) {
     }
 #endif
     if (![[self class] _validateRouteSourceNotMissedInConfiguration:configuration]) {
-        [self notifyRouteState:ZIKRouterStateRouteFailed];
+        [self notifyRouteState:self.preState];
         [self _callbackError_invalidSourceWithAction:ZIKRouteActionPerformRoute
                                     errorDescription:@"Source was dealloced when performRoute on (%@)",self];
         return;
@@ -564,13 +564,13 @@ static BOOL _isClassRoutable(Class class) {
     NSParameterAssert([source isKindOfClass:[UIViewController class]]);
     
     if (![[self class] _validateSourceInNavigationStack:source]) {
-        [self notifyRouteState:ZIKRouterStateRouteFailed];
+        [self notifyRouteState:self.preState];
         [self _callbackError_invalidSourceWithAction:ZIKRouteActionPerformRoute
                                     errorDescription:@"Source: (%@) is not in any navigation stack when perform push.",source];
         return;
     }
     if (![[self class] _validateDestination:destination notInNavigationStackOfSource:source]) {
-        [self notifyRouteState:ZIKRouterStateRouteFailed];
+        [self notifyRouteState:self.preState];
         [self _callbackError_overRouteWithAction:ZIKRouteActionPerformRoute
                                 errorDescription:@"Pushing the same view controller instance more than once is not supported. Source: (%@), destination: (%@), viewControllers in navigation stack: (%@)",source,destination,source.navigationController.viewControllers];
         return;
@@ -591,13 +591,13 @@ static BOOL _isClassRoutable(Class class) {
     NSParameterAssert([source isKindOfClass:[UIViewController class]]);
     
     if (![[self class] _validateSourceNotPresentedAnyView:source]) {
-        [self notifyRouteState:ZIKRouterStateRouteFailed];
+        [self notifyRouteState:self.preState];
         [self _callbackError_invalidSourceWithAction:ZIKRouteActionPerformRoute
                                     errorDescription:@"Warning: Attempt to present %@ on %@ whose view is not in the window hierarchy! %@ already presented %@.",destination,source,source,source.presentedViewController];
         return;
     }
     if (![[self class] _validateSourceInWindowHierarchy:source]) {
-        [self notifyRouteState:ZIKRouterStateRouteFailed];
+        [self notifyRouteState:self.preState];
         [self _callbackError_invalidSourceWithAction:ZIKRouteActionPerformRoute
                                     errorDescription:@"Warning: Attempt to present %@ on %@ whose view is not in the window hierarchy! %@ 's view not in any superview.",destination,source,source];
         return;
@@ -616,19 +616,19 @@ static BOOL _isClassRoutable(Class class) {
     NSParameterAssert([source isKindOfClass:[UIViewController class]]);
     
     if (!popoverConfiguration) {
-        [self notifyRouteState:ZIKRouterStateRouteFailed];
+        [self notifyRouteState:self.preState];
         [self _callbackError_invalidConfigurationWithAction:ZIKRouteActionPerformRoute
                                            errorDescription:@"Miss popoverConfiguration when perform presentAsPopover on source: (%@), router: (%@).",source,self];
         return;
     }
     if (![[self class] _validateSourceNotPresentedAnyView:source]) {
-        [self notifyRouteState:ZIKRouterStateRouteFailed];
+        [self notifyRouteState:self.preState];
         [self _callbackError_invalidSourceWithAction:ZIKRouteActionPerformRoute
                                     errorDescription:@"Warning: Attempt to present %@ on %@ whose view is not in the window hierarchy! %@ already presented %@.",destination,source,source,source.presentedViewController];
         return;
     }
     if (![[self class] _validateSourceInWindowHierarchy:source]) {
-        [self notifyRouteState:ZIKRouterStateRouteFailed];
+        [self notifyRouteState:self.preState];
         [self _callbackError_invalidSourceWithAction:ZIKRouteActionPerformRoute
                                     errorDescription:@"Warning: Attempt to present %@ on %@ whose view is not in the window hierarchy! %@ 's view not in any superview.",destination,source,source];
         return;
@@ -649,7 +649,7 @@ static BOOL _isClassRoutable(Class class) {
                 popoverPresentationController.sourceRect = popoverConfiguration.sourceRect;
             }
         } else {
-            [self notifyRouteState:ZIKRouterStateRouteFailed];
+            [self notifyRouteState:self.preState];
             [self _callbackError_invalidConfigurationWithAction:ZIKRouteActionPerformRoute
                                                errorDescription:@"Invalid popoverConfiguration: (%@) when perform presentAsPopover on source: (%@), router: (%@).",popoverConfiguration,source,self];
             
@@ -720,7 +720,7 @@ static BOOL _isClassRoutable(Class class) {
             [ZIKViewRouter AOP_notifyAll_router:self willPerformRouteOnDestination:destination fromSource:source];
             [popover presentPopoverFromRect:popoverConfiguration.sourceRect inView:popoverConfiguration.sourceView permittedArrowDirections:popoverConfiguration.permittedArrowDirections animated:configuration.animated];
         } else {
-            [self notifyRouteState:ZIKRouterStateRouteFailed];
+            [self notifyRouteState:self.preState];
             [self _callbackError_invalidConfigurationWithAction:ZIKRouteActionPerformRoute
                                                errorDescription:@"Invalid popoverConfiguration: (%@) when perform presentAsPopover on source: (%@), router: (%@).",popoverConfiguration,source,self];
             self.routingFromInternal = NO;
@@ -773,7 +773,7 @@ static BOOL _isClassRoutable(Class class) {
      This inspection relies on synchronized call -prepareForSegue:sender: and -canPerformUnwindSegueAction:fromViewController:withSender: in -performSegueWithIdentifier:sender:
      */
     if (!destination) {
-        [self notifyRouteState:ZIKRouterStateRouteFailed];
+        [self notifyRouteState:self.preState];
         [self _callbackError_segueNotPerformedWithAction:ZIKRouteActionPerformRoute errorDescription:@"destination can't perform segue identitier:%@ now",identifier];
         self.routingFromInternal = NO;
         return;
@@ -872,7 +872,7 @@ static BOOL _isClassRoutable(Class class) {
     if ([self respondsToSelector:@selector(performCustomRouteOnDestination:fromSource:configuration:)]) {
         [self performCustomRouteOnDestination:destination fromSource:source configuration:self.original_configuration];
     } else {
-        [self notifyRouteState:ZIKRouterStateRouteFailed];
+        [self notifyRouteState:self.preState];
         [self _callbackError_actionFailedWithAction:ZIKRouteActionPerformRoute errorDescription:@"Perform custom route but router(%@) didn't implement -performCustomRouteOnDestination:fromSource:configuration:",[self class]];
         NSAssert(NO, @"Perform custom route but router(%@) didn't implement -performCustomRouteOnDestination:fromSource:configuration:",[self class]);
     }
@@ -1065,7 +1065,7 @@ destinationStateBeforeRoute:(ZIKPresentationState *)destinationStateBeforeRoute
 - (void)endPerformRouteWithError:(NSError *)error {
     NSParameterAssert(error);
     NSAssert(self.state == ZIKRouterStateRouting, @"state should be routing when end route.");
-    [self notifyRouteState:ZIKRouterStateRouteFailed];
+    [self notifyRouteState:self.preState];
     self.routingFromInternal = NO;
     self.retainedSelf = nil;
     [self _callbackErrorWithAction:ZIKRouteActionPerformRoute error:error];
@@ -1332,7 +1332,7 @@ destinationStateBeforeRoute:(ZIKPresentationState *)destinationStateBeforeRoute
 - (void)removeDestination:(id)destination removeConfiguration:(__kindof ZIKRemoveRouteConfiguration *)removeConfiguration {
     [self notifyRouteState:ZIKRouterStateRemoving];
     if (!destination) {
-        [self notifyRouteState:ZIKRouterStateRemoveFailed];
+        [self notifyRouteState:self.preState];
         [self _callbackError_actionFailedWithAction:ZIKRouteActionRemoveRoute
                                    errorDescription:@"Destination was deallced when removeRoute, router:%@",self];
         return;
@@ -1386,7 +1386,7 @@ destinationStateBeforeRoute:(ZIKPresentationState *)destinationStateBeforeRoute
             break;
     }
     if (errorDescription) {
-        [self notifyRouteState:ZIKRouterStateRemoveFailed];
+        [self notifyRouteState:self.preState];
         [self _callbackError_actionFailedWithAction:ZIKRouteActionRemoveRoute
                                    errorDescription:errorDescription];
     }
@@ -1493,7 +1493,7 @@ destinationStateBeforeRoute:(ZIKPresentationState *)destinationStateBeforeRoute
 }
 
 - (void)removeCustomRouteOnDestination:(id)destination fromSource:(nullable id)source removeConfiguration:(ZIKViewRemoveConfiguration *)removeConfiguration configuration:(ZIKViewRouteConfiguration *)configuration {
-    [self notifyRouteState:ZIKRouterStateRemoveFailed];
+    [self notifyRouteState:self.preState];
     [self _callbackError_actionFailedWithAction:ZIKRouteActionRemoveRoute errorDescription:@"Remove custom route but router(%@) didn't implement -removeCustomRouteOnDestination:fromSource:removeConfiguration:configuration:",[self class]];
     NSAssert(NO, @"Subclass (%@) must override -removeCustomRouteOnDestination:fromSource:configuration: to support removing custom route.",[self class]);
 }
@@ -1533,7 +1533,7 @@ destinationStateBeforeRoute:(ZIKPresentationState *)destinationStateBeforeRoute
 - (void)endRemoveRouteWithError:(NSError *)error {
     NSParameterAssert(error);
     NSAssert(self.state == ZIKRouterStateRemoving, @"state should be removing when end remove.");
-    [self notifyRouteState:ZIKRouterStateRemoveFailed];
+    [self notifyRouteState:self.preState];
     [self _callbackErrorWithAction:ZIKRouteActionRemoveRoute error:error];
     self.routingFromInternal = NO;
     self.retainedSelf = nil;

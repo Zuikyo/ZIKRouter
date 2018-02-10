@@ -128,7 +128,7 @@ NSString *kZIKRouterErrorDomain = @"kZIKRouterErrorDomain";
 
 - (BOOL)canPerform {
     ZIKRouterState state = self.state;
-    return state == ZIKRouterStateNotRoute || state == ZIKRouterStateRemoved || state == ZIKRouterStateRouteFailed;
+    return state == ZIKRouterStateNotRoute || state == ZIKRouterStateRemoved;
 }
 
 - (void)performRoute {
@@ -566,17 +566,11 @@ NSString *kZIKRouterErrorDomain = @"kZIKRouterErrorDomain";
         case ZIKRouterStateRouted:
             description = @"Routed";
             break;
-        case ZIKRouterStateRouteFailed:
-            description = @"RouteFailed";
-            break;
         case ZIKRouterStateRemoving:
             description = @"Removing";
             break;
         case ZIKRouterStateRemoved:
             description = @"Removed";
-            break;
-        case ZIKRouterStateRemoveFailed:
-            description = @"RemoveFailed";
             break;
     }
     return description;

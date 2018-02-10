@@ -17,10 +17,8 @@ typedef NS_ENUM(NSInteger, ZIKRouterState) {
     ZIKRouterStateNotRoute,
     ZIKRouterStateRouting,
     ZIKRouterStateRouted,
-    ZIKRouterStateRouteFailed,
     ZIKRouterStateRemoving,
-    ZIKRouterStateRemoved,
-    ZIKRouterStateRemoveFailed
+    ZIKRouterStateRemoved
 };
 
 ///Route action.
