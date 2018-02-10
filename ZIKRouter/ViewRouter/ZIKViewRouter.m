@@ -136,21 +136,21 @@ static BOOL _isClassRoutable(Class class) {
             ZIKViewRouteType type = configuration.routeType;
             if (type == ZIKViewRouteTypePerformSegue) {
                 if (![[self class] _validateSegueInConfiguration:configuration]) {
-                    [self _callbackError_invalidConfigurationWithAction:ZIKRouteActionPerformRoute
+                    [self _callbackError_invalidConfigurationWithAction:ZIKRouteActionInit
                                                        errorDescription:@"SegueConfiguration : (%@) was invalid",configuration.segueConfiguration];
                     NSAssert(NO, @"SegueConfiguration : (%@) was invalid",configuration.segueConfiguration);
                     return nil;
                 }
             } else if (type == ZIKViewRouteTypePresentAsPopover) {
                 if (![[self class] _validatePopoverInConfiguration:configuration]) {
-                    [self _callbackError_invalidConfigurationWithAction:ZIKRouteActionPerformRoute
+                    [self _callbackError_invalidConfigurationWithAction:ZIKRouteActionInit
                                                        errorDescription:@"PopoverConfiguration : (%@) was invalid",configuration.popoverConfiguration];
                     NSAssert(NO, @"PopoverConfiguration : (%@) was invalid",configuration.popoverConfiguration);
                     return nil;
                 }
             } else if (type == ZIKViewRouteTypeCustom) {
                 if (![[self class] validateCustomRouteConfiguration:configuration removeConfiguration:removeConfiguration]) {
-                    [self _callbackError_invalidConfigurationWithAction:ZIKRouteActionPerformRoute
+                    [self _callbackError_invalidConfigurationWithAction:ZIKRouteActionInit
                                                        errorDescription:@"Configuration : (%@) was invalid for ZIKViewRouteTypeCustom",configuration];
                     NSAssert(NO, @"Configuration : (%@) was invalid for ZIKViewRouteTypeCustom",configuration);
                     return nil;
@@ -1940,7 +1940,7 @@ static _Nullable Class _routerClassToRegisteredView(Class viewClass) {
             }
             
             [destination setZix_parentRemovingFrom:source];
-            [ZIKViewRouter _callbackGlobalErrorHandlerWithRouter:nil action:ZIKRouteActionRemoveRoute error:[ZIKViewRouter errorWithCode:ZIKViewRouteErrorUnbalancedTransition localizedDescriptionFormat:@"Unbalanced calls to begin/end appearance transitions for destination. This error occurs when you try and display a view controller before the current view controller is finished displaying. This may cause the UIViewController skips or messes up the order calling -viewWillAppear:, -viewDidAppear:, -viewWillDisAppear: and -viewDidDisappear:, and messes up the route state. Current error reason is already removed destination but destination appears again before -viewDidDisappear:, router:(%@), callStack:%@",self,[NSThread callStackSymbols]]];
+            [ZIKViewRouter _callbackGlobalErrorHandlerWithRouter:nil action:ZIKRouteActionPerformRoute error:[ZIKViewRouter errorWithCode:ZIKViewRouteErrorUnbalancedTransition localizedDescriptionFormat:@"Unbalanced calls to begin/end appearance transitions for destination. This error occurs when you try and display a view controller before the current view controller is finished displaying. This may cause the UIViewController skips or messes up the order calling -viewWillAppear:, -viewDidAppear:, -viewWillDisAppear: and -viewDidDisappear:, and messes up the route state. Current error reason is already removed destination but destination appears again before -viewDidDisappear:, router:(%@), callStack:%@",self,[NSThread callStackSymbols]]];
             NSAssert(NO, @"Unbalanced calls to begin/end appearance transitions for destination. This error may from your custom transition.");
             break;
         }

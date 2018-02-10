@@ -19,7 +19,7 @@ typedef NS_ENUM(NSInteger, ZIKViewRouteError) {
     ZIKViewRouteErrorInvalidPerformer,
     ///If you use ZIKViewRouter.toView() or ZIKViewRouter.toModule() to fetch router with protocol, the protocol must be declared. There will be an assert failure for debugging.
     ZIKViewRouteErrorInvalidProtocol,
-    ///Configuration missed some required values, or some values were conflict. There will be an assert failure for debugging.
+    ///Configuration missed some required values, or some values were conflict, or the external destination to prepare/perform is invalid. There will be an assert failure for debugging.
     ZIKViewRouteErrorInvalidConfiguration,
     ///This router doesn't support the route type you assigned. There will be an assert failure for debugging.
     ZIKViewRouteErrorUnsupportType,
@@ -44,13 +44,17 @@ typedef NS_ENUM(NSInteger, ZIKViewRouteError) {
     /**
      Perform or remove route action failed
      @discussion
-     1. Do performRoute when the source was dealloced or removed from view hierarchy.
+     1. Do performRoute when router state is routing, routed or removing.
      
-     2. Do removeRoute but the destination was poped/dismissed/removed/dealloced.
+     2. Do performRoute when the source was dealloced or removed from view hierarchy.
      
-     3. Do removeRoute when a router is not performed yet.
+     3. Do performRoute but the router returns nil destination to make the route action fail.
      
-     4. Do removeRoute when real routeType is not supported.
+     4. Do removeRoute but the destination was poped/dismissed/removed/dealloced.
+     
+     5. Do removeRoute when a router is not performed yet.
+     
+     6. Do removeRoute when real routeType is not supported.
      */
     ZIKViewRouteErrorActionFailed,
     ///An unwind segue was aborted because -[destinationViewController canPerformUnwindSegueAction:fromViewController:withSender:] return NO or can't perform segue.

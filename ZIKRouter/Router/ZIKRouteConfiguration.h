@@ -23,10 +23,16 @@ typedef NS_ENUM(NSInteger, ZIKRouterState) {
     ZIKRouterStateRemoveFailed
 };
 
+///Route action.
 typedef NSString *ZIKRouteAction NS_EXTENSIBLE_STRING_ENUM;
 
+///Initialize router with configuration. See ZIKViewRouteErrorInvalidConfiguration, ZIKViewRouteErrorUnsupportType, ZIKViewRouteErrorInvalidSource, ZIKViewRouteErrorInvalidContainer.
 extern ZIKRouteAction const ZIKRouteActionInit;
+
+///Perform route. See ZIKViewRouteErrorActionFailed, ZIKServiceRouteErrorActionFailed, ZIKViewRouteErrorOverRoute, ZIKViewRouteErrorUnbalancedTransition, ZIKViewRouteErrorSegueNotPerformed, ZIKViewRouteErrorInfiniteRecursion, ZIKServiceRouteErrorInfiniteRecursion, ZIKServiceRouteErrorServiceUnavailable.
 extern ZIKRouteAction const ZIKRouteActionPerformRoute;
+
+///Remove route. See ZIKViewRouteErrorActionFailed, ZIKServiceRouteErrorActionFailed.
 extern ZIKRouteAction const ZIKRouteActionRemoveRoute;
 
 typedef void(^ZIKRouteErrorHandler)(ZIKRouteAction routeAction, NSError *error);

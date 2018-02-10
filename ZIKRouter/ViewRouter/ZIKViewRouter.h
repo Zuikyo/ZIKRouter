@@ -321,8 +321,6 @@ NS_ASSUME_NONNULL_BEGIN
 
 /**
  Error handler for all view router, for debugging and log.
- @discussion
- Actions: init, performRoute, removeRoute, toView, toModule, configureSegue, performOnDestination:fromSource:configuring:removing:, prepareDestination:configuring:removing:.
  
  @param router The router where error happens.
  @param routeAction The action where error happens.

@@ -15,9 +15,13 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
+///Find router with view protocol. See ZIKViewRouteErrorInvalidProtocol.
 extern ZIKRouteAction const ZIKRouteActionToView;
+///Find router with view module protocol. See ZIKViewRouteErrorInvalidProtocol.
 extern ZIKRouteAction const ZIKRouteActionToViewModule;
+///Prepare external destination with router. See ZIKViewRouteErrorInvalidConfiguration.
 extern ZIKRouteAction const ZIKRouteActionPrepareOnDestination;
+///Perform route on external destination. See ZIKViewRouteErrorInvalidConfiguration.
 extern ZIKRouteAction const ZIKRouteActionPerformOnDestination;
 
 ///Route types for view.

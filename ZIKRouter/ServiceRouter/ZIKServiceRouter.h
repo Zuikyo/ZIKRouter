@@ -15,7 +15,9 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
+///Find router with service protocol. See ZIKServiceRouteErrorInvalidProtocol.
 extern ZIKRouteAction const ZIKRouteActionToService;
+///Find router with service module protocol. See ZIKServiceRouteErrorInvalidProtocol.
 extern ZIKRouteAction const ZIKRouteActionToServiceModule;
 extern NSString *const kZIKServiceRouterErrorDomain;
 
@@ -168,7 +170,7 @@ typedef NS_ENUM(NSInteger, ZIKServiceRouteError) {
     ZIKServiceRouteErrorInvalidProtocol,
     ///Router returns nil for destination, you can't use this service now. Maybe your configuration is invalid, or there is a bug in the router.
     ZIKServiceRouteErrorServiceUnavailable,
-    ///Perform or remove route action failed. Remove route when destiantion was already dealloced.
+    ///Perform or remove route action failed. Remove route when destiantion was already dealloced. This is not implemented by default, the router subclass is responsible for checking this situation.
     ZIKServiceRouteErrorActionFailed,
     ///Infinite recursion for performing route detected. See -prepareDestination:configuration: for more detail.
     ZIKServiceRouteErrorInfiniteRecursion
