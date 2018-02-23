@@ -12,13 +12,13 @@
 #import <Foundation/Foundation.h>
 
 /**
- Protocols inheriting from ZIKServiceModuleRoutable can be used to fetch service router with ZIKServiceRouter.toModule().
+ Protocols inheriting from ZIKServiceModuleRoutable can be used to fetch service router with ZIKRouterToServiceModule().
  @discussion
  ZIKServiceModuleRoutable is for:
  1. Let module declare routable protocol in header as the module's provided interface
  1. Checking whether declared protocol is correctly supported in it's service router
  
- It's safe to use objc protocols inheriting from ZIKServiceModuleRoutable with ZIKServiceRouter.toModule() and won't get nil. ZIKServiceRouter will validate all ZIKServiceModuleRoutable protocols and registered protocols when app launchs and ZIKROUTER_CHECK is enbled.
+ It's safe to use objc protocols inheriting from ZIKServiceModuleRoutable with ZIKRouterToServiceModule() and won't get nil. ZIKServiceRouter will validate all ZIKServiceModuleRoutable protocols and registered protocols when app launchs and ZIKROUTER_CHECK is enbled.
  */
 @protocol ZIKServiceModuleRoutable
 
