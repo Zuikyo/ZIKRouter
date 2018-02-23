@@ -164,6 +164,8 @@ NS_SWIFT_UNAVAILABLE("ZIKModuleViewRouterType is a fake class")
 
 @end
 
+#pragma mark Router Type
+
 @interface ZIKViewRouterType<__covariant Destination: id, __covariant RouteConfig: ZIKViewRouteConfiguration *> (Extension)
 
 ///Router doesn't support all routeTypes, for example, router for a UIView destination can't support those UIViewController's routeTypes

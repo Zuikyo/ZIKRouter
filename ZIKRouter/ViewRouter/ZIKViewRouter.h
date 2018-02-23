@@ -308,7 +308,7 @@ NS_ASSUME_NONNULL_BEGIN
  
  6. Destination's route type is complicated and is considered as custom route type. Such as destination is added to a UITabBarController, then added to a UINavigationController, and finally presented modally. We don't know the remove action should do dismiss or pop or remove from it's UITabBarController.
  
- @note Router should be removed be the performer, but not inside the destination. Only the performer knows how the destination was displayed (situation 6).
+ @note Router should be removed by the performer, but not inside the destination. Only the performer knows how the destination was displayed (situation 6).
 
  @return return YES if can do removeRoute.
  */

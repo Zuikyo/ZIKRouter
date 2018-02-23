@@ -44,7 +44,7 @@ typedef NS_ENUM(NSInteger, ZIKViewRouteError) {
     /**
      Perform or remove route action failed
      @discussion
-     1. Do performRoute when router state is routing, routed or removing.
+     1. Do performRoute when router state is routed or removing.
      
      2. Do performRoute when the source was dealloced or removed from view hierarchy.
      
@@ -59,7 +59,7 @@ typedef NS_ENUM(NSInteger, ZIKViewRouteError) {
     ZIKViewRouteErrorActionFailed,
     ///An unwind segue was aborted because -[destinationViewController canPerformUnwindSegueAction:fromViewController:withSender:] return NO or can't perform segue.
     ZIKViewRouteErrorSegueNotPerformed,
-    ///Another same route action is performing.
+    ///Do performRoute when router state is routing, or do push but destination is already pushed.
     ZIKViewRouteErrorOverRoute,
     ///Infinite recursion for performing route detected, see -prepareDestination:configuration: for more detail.
     ZIKViewRouteErrorInfiniteRecursion
