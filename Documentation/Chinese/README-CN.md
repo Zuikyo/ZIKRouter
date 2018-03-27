@@ -244,7 +244,7 @@ class TestViewController: UIViewController {
         router.removeRoute(successHandler: {
             print("remove success")
         }, errorHandler: { (action, error) in
-            print("remove failed, error:%@",error)
+            print("remove failed, error: \(error)")
         })
         router = nil
     }

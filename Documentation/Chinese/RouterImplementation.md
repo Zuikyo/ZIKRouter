@@ -40,7 +40,7 @@ class EditorViewRouter: ZIKViewRouter<EditorViewController, ZIKViewRouteConfigur
         register(RoutableView<NoteEditorInput>())
     }
     //检查模块内使用的外部路由依赖是否有效
-    override class func _registrationDidFinished() {
+    override class func _didFinishRegistration() {
         //Make sure all routable dependencies in this module is available.
         assert(Router.to(RoutableService<SomeServiceInput>()) != nil)
     }

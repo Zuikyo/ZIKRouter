@@ -250,7 +250,7 @@ class TestViewController: UIViewController {
         router.removeRoute(successHandler: {
             print("remove success")
         }, errorHandler: { (action, error) in
-            print("remove failed, error:%@",error)
+            print("remove failed, error: \(error)")
         })
         router = nil
     }
@@ -299,7 +299,7 @@ class TestViewController: UIViewController {
     [self.router removeRouteWithSuccessHandler:^{
         NSLog(@"pop success");
     } errorHandler:^(ZIKRouteAction routeAction, NSError *error) {
-        NSLog(@"pop failed,error:%@",error);
+        NSLog(@"pop failed,error: %@",error);
     }];
     self.router = nil;
 }
