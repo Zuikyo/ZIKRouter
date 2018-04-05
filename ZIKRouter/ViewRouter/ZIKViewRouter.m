@@ -2103,7 +2103,7 @@ static _Nullable Class _routerClassToRegisteredView(Class viewClass) {
             if (destinationRouter) {
                 //This is routing from router
                 if ([g_preparingUIViewRouters containsObject:destinationRouter]) {
-                    //Didn't fine the performer of UIView until it's removing from superview, maybe it's superview was never added to any view controller
+                    //Didn't find the performer of UIView until it's removing from superview, maybe it's superview was never added to any view controller
                     [g_preparingUIViewRouters removeObject:destinationRouter];
                     NSString *description = [NSString stringWithFormat:@"Didn't fine the performer of UIView until it's removing from superview, maybe it's superview was never added to any view controller. Can't find which custom UIView or UIViewController added destination:(%@) as subview, so we can't notify the performer to config the destination. You may add destination to a UIWindow in code directly, and the UIWindow is not a custom class. Please change your code and add subview by a custom view router with ZIKViewRouteTypeAddAsSubview. Destination superview: (%@).",destination, newSuperview];
                     [destinationRouter endPerformRouteWithError:[ZIKViewRouter errorWithCode:ZIKViewRouteErrorInvalidPerformer localizedDescription:description]];
@@ -2397,14 +2397,16 @@ static _Nullable Class _routerClassToRegisteredView(Class viewClass) {
      To sovle this, we use a 'currentClassCalling' variable to mark the next class which calling -prepareForSegue:sender:, if -prepareForSegue:sender: was called again in a same call stack, fetch the original implementation in 'currentClassCalling', and just call original implementation, don't enter -ZIKViewRouter_hook_prepareForSegue:sender: again.
      
      Something else: this solution relies on correct use of [super prepareForSegue:sender:]. Every time -prepareForSegue:sender: was invoked, the 'currentClassCalling' will be updated as 'currentClassCalling = [currentClassCalling superclass]'.So these codes will lead to bug:
-     1. - (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender {
-     [super prepareForSegue:segue sender:sender];
-     [super prepareForSegue:segue sender:sender];
+     1.
+     - (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender {
+         [super prepareForSegue:segue sender:sender];
+         [super prepareForSegue:segue sender:sender];
      }
-     1. - (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender {
-     dispatch_async(dispatch_get_main_queue(), ^{
-     [super prepareForSegue:segue sender:sender];
-     });
+     2.
+     - (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender {
+         dispatch_async(dispatch_get_main_queue(), ^{
+             [super prepareForSegue:segue sender:sender];
+         });
      }
      These bad implementations should never exist in your code, so we ignore these situations.
      */
@@ -3394,39 +3396,12 @@ static _Nullable Class _routerClassToRegisteredView(Class viewClass) {
 @implementation ZIKViewRouter (Register)
 
 + (void)registerView:(Class)viewClass {
-    Class routerClass = self;
-    Class destinationClass = viewClass;
     NSParameterAssert([viewClass isSubclassOfClass:[UIView class]] ||
                       [viewClass isSubclassOfClass:[UIViewController class]]);
     NSParameterAssert(_isClassRoutable(viewClass));
     NSAssert(!ZIKViewRouteRegistry.autoRegistrationFinished, @"Only register in +registerRoutableDestination.");
     NSAssert([NSThread isMainThread], @"Call in main thread for thread safety.");
     [ZIKViewRouteRegistry registerDestination:viewClass router:self];
-    return;
-    NSParameterAssert([routerClass isSubclassOfClass:[ZIKRouter class]]);
-    NSAssert3(!ZIKViewRouteRegistry.destinationToExclusiveRouterMap ||
-              (ZIKViewRouteRegistry.destinationToExclusiveRouterMap && !CFDictionaryGetValue(ZIKViewRouteRegistry.destinationToExclusiveRouterMap, (__bridge const void *)(destinationClass))), @"There is a registered exclusive router (%@), can't register this router (%@) for this destinationClass (%@).",CFDictionaryGetValue(ZIKViewRouteRegistry.destinationToExclusiveRouterMap, (__bridge const void *)(destinationClass)), routerClass,destinationClass);
-    
-    CFMutableDictionaryRef destinationToDefaultRouterMap = ZIKViewRouteRegistry.destinationToDefaultRouterMap;
-    if (!CFDictionaryContainsKey(destinationToDefaultRouterMap, (__bridge const void *)(destinationClass))) {
-        CFDictionarySetValue(destinationToDefaultRouterMap, (__bridge const void *)(destinationClass), (__bridge const void *)(routerClass));
-    }
-    CFMutableDictionaryRef destinationToRoutersMap = ZIKViewRouteRegistry.destinationToRoutersMap;
-    CFMutableSetRef routers = (CFMutableSetRef)CFDictionaryGetValue(destinationToRoutersMap, (__bridge const void *)(destinationClass));
-    if (routers == NULL) {
-        routers = CFSetCreateMutable(kCFAllocatorDefault, 0, NULL);
-        CFDictionarySetValue(destinationToRoutersMap, (__bridge const void *)(destinationClass), routers);
-    }
-    CFSetAddValue(routers, (__bridge const void *)(routerClass));
-    
-#if ZIKROUTER_CHECK
-    CFMutableSetRef destinations = (CFMutableSetRef)CFDictionaryGetValue(ZIKViewRouteRegistry._check_routerToDestinationsMap, (__bridge const void *)(routerClass));
-    if (destinations == NULL) {
-        destinations = CFSetCreateMutable(kCFAllocatorDefault, 0, NULL);
-        CFDictionarySetValue(ZIKViewRouteRegistry._check_routerToDestinationsMap, (__bridge const void *)(routerClass), destinations);
-    }
-    CFSetAddValue(destinations, (__bridge const void *)(destinationClass));
-#endif
 }
 
 + (void)registerExclusiveView:(Class)viewClass {

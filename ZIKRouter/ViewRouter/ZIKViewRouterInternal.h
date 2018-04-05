@@ -20,7 +20,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 #pragma mark Required Override
 
-///Register the destination class with those +registerXXX: methods. ZIKViewRouter will call this method before app did finish launch. If a router was not registered with any view class, there'll be an assert failure.
+///Register the destination class with those +registerXXX: methods. ZIKViewRouter will call this method before app did finish launching. If a router was not registered with any view class, there'll be an assert failure.
 + (void)registerRoutableDestination;
 
 /**
@@ -40,7 +40,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 #pragma mark Optional Override
 
-///Invoked after all registrations are finished when ZIKROUTER_CHECK is enabled. You can override and validate whether those routable swift protocols used in your module as external dependencies have be registered with routers, because we can't enumerate swift protocols at runtime.
+///Invoked after all registrations are finished when ZIKROUTER_CHECK is enabled. You can override and validate whether those routable swift protocols used in your module as external dependencies are already registered with routers, because we can't enumerate swift protocols at runtime to auto check.
 + (void)_didFinishRegistration;
 
 /**
@@ -56,6 +56,8 @@ NS_ASSUME_NONNULL_BEGIN
 /**
  Prepare the destination with the configuration when view first appears. Unwind segue to destination won't call this method.
  @warning
+ Cycle Dependency:
+ 
  If a router(A) fetch destination(A)'s dependency destination(B) with another router(B) in router(A)'s -prepareDestination:configuration:, and the destination(A) is also the destination(B)'s dependency, so destination(B)'s router(B) will also fetch destination(A) with router(A) in it's -prepareDestination:configuration:. Then there will be an infinite recursion.
  
  To void it, when router(A) fetch destination(B) in -prepareDestination:configuration:, router(A) must inject destination(A) to destination(B) in -prepareDestination block of router(B)'s config or use custom config property. And router(B) should check in -prepareDestination:configuration: to avoid unnecessary preparation to fetch destination(A) again.
