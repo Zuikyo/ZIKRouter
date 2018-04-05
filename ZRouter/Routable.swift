@@ -17,7 +17,7 @@ import ZIKRouter
  Declare that protocol `TestViewInput` is routable as a view protocol:
  ```
  extension RoutableView where Protocol == TestViewInput {
-     init() { }
+     init() { self.init(declaredProtocol: Protocol.self) }
  }
  ```
  Now we can access to the initializer method when the generic parameter `Protocol` is `TestViewInput`, and use `TestViewInput` in router:
@@ -40,6 +40,8 @@ import ZIKRouter
  */
 public struct RoutableView<Protocol> {
     internal init() { }
+    ///Only use this in initializers in extension, never use it in other place. This is only to silence the warning of `initializer for struct 'xxx' must use "self.init(...)" or "self = ..." because it is not in module xxx`. See https://github.com/apple/swift-evolution/blob/master/proposals/0189-restrict-cross-module-struct-initializers.md
+    public init(declaredProtocol: Protocol.Type) { }
 }
 
 /**
@@ -48,7 +50,7 @@ public struct RoutableView<Protocol> {
  Declare that protocol `TestViewModuleInput` is routable as a view module protocol:
  ```
  extension RoutableViewModule where Protocol == TestViewModuleInput {
-     init() { }
+     init() { self.init(declaredProtocol: Protocol.self) }
  }
  ```
  - Warning
@@ -56,6 +58,8 @@ public struct RoutableView<Protocol> {
  */
 public struct RoutableViewModule<Protocol> {
     internal init() { }
+    ///Only use this in initializers in extension, never use it in other place. This is only to silence the warning of `initializer for struct 'xxx' must use "self.init(...)" or "self = ..." because it is not in module xxx`. See https://github.com/apple/swift-evolution/blob/master/proposals/0189-restrict-cross-module-struct-initializers.md
+    public init(declaredProtocol: Protocol.Type) { }
 }
 
 /**
@@ -64,7 +68,7 @@ public struct RoutableViewModule<Protocol> {
  Declare that protocol `TestServiceInput` is routable as a service protocol:
  ```
  extension RoutableServiceModule where Protocol == TestServiceInput {
-     init() { }
+     init() { self.init(declaredProtocol: Protocol.self) }
  }
  ```
  - Warning
@@ -72,6 +76,8 @@ public struct RoutableViewModule<Protocol> {
  */
 public struct RoutableService<Protocol> {
     internal init() { }
+    ///Only use this in initializers in extension, never use it in other place. This is only to silence the warning of `initializer for struct 'xxx' must use "self.init(...)" or "self = ..." because it is not in module xxx`. See https://github.com/apple/swift-evolution/blob/master/proposals/0189-restrict-cross-module-struct-initializers.md
+    public init(declaredProtocol: Protocol.Type) { }
 }
 
 /**
@@ -80,7 +86,7 @@ public struct RoutableService<Protocol> {
  Declare that protocol `TestServiceInput` is routable as a service protocol:
  ```
  extension RoutableServiceModule where Protocol == TestServiceModuleInput {
-     init() { }
+     init() { self.init(declaredProtocol: Protocol.self) }
  }
  ```
  - Warning
@@ -88,6 +94,8 @@ public struct RoutableService<Protocol> {
  */
 public struct RoutableServiceModule<Protocol> {
     internal init() { }
+    ///Only use this in initializers in extension, never use it in other place. This is only to silence the warning of `initializer for struct 'xxx' must use "self.init(...)" or "self = ..." because it is not in module xxx`. See https://github.com/apple/swift-evolution/blob/master/proposals/0189-restrict-cross-module-struct-initializers.md
+    public init(declaredProtocol: Protocol.Type) { }
 }
 
 ///All protocols inherited from ZIKViewRoutable are routable as view protocol.

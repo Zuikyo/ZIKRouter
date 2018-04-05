@@ -44,11 +44,11 @@ extension SwiftService: ZIKRoutableService {
 }
 //Declare SwiftServiceInput is routable
 extension RoutableService where Protocol == SwiftServiceInput {
-    init() { }
+    init() { self.init(declaredProtocol: Protocol.self) }
 }
 extension RoutableService where Protocol == SwiftServiceInput2 {
-    init() { }
+    init() { self.init(declaredProtocol: Protocol.self) }
 }
 extension RoutableServiceModule where Protocol == SwiftServiceConfig {
-    init() { }
+    init() { self.init(declaredProtocol: Protocol.self) }
 }
