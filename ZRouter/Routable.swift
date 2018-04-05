@@ -39,8 +39,12 @@ import ZIKRouter
  When there is only one declared protocol, swift complier will use that protocol as default generic parameter.
  */
 public struct RoutableView<Protocol> {
-    internal init() { }
-    ///Only use this in initializers in extension, never use it in other place. This is only to silence the warning of `initializer for struct 'xxx' must use "self.init(...)" or "self = ..." because it is not in module xxx`. See https://github.com/apple/swift-evolution/blob/master/proposals/0189-restrict-cross-module-struct-initializers.md
+    @available(*, unavailable, message: "Protocol is not declared as routable")
+    public init() { }
+    
+    /// Only use this in initializers in extension, never use it in other place. This is only to silence the warning of `initializer for struct 'xxx' must use "self.init(...)" or "self = ..." because it is not in module xxx`. See https://github.com/apple/swift-evolution/blob/master/proposals/0189-restrict-cross-module-struct-initializers.md
+    ///
+    /// - Parameter declaredProtocol: The protocol must be declared in extension.
     public init(declaredProtocol: Protocol.Type) { }
 }
 
@@ -57,8 +61,12 @@ public struct RoutableView<Protocol> {
  Never add extension for RoutableViewModule without generic constraint and expose it's initializer.
  */
 public struct RoutableViewModule<Protocol> {
-    internal init() { }
-    ///Only use this in initializers in extension, never use it in other place. This is only to silence the warning of `initializer for struct 'xxx' must use "self.init(...)" or "self = ..." because it is not in module xxx`. See https://github.com/apple/swift-evolution/blob/master/proposals/0189-restrict-cross-module-struct-initializers.md
+    @available(*, unavailable, message: "Protocol is not declared as routable")
+    public init() { }
+    
+    /// Only use this in initializers in extension, never use it in other place. This is only to silence the warning of `initializer for struct 'xxx' must use "self.init(...)" or "self = ..." because it is not in module xxx`. See https://github.com/apple/swift-evolution/blob/master/proposals/0189-restrict-cross-module-struct-initializers.md
+    ///
+    /// - Parameter declaredProtocol: The protocol must be declared in extension.
     public init(declaredProtocol: Protocol.Type) { }
 }
 
@@ -75,8 +83,12 @@ public struct RoutableViewModule<Protocol> {
  Never add extension for RoutableServiceModule without generic constraint and expose it's initializer.
  */
 public struct RoutableService<Protocol> {
-    internal init() { }
-    ///Only use this in initializers in extension, never use it in other place. This is only to silence the warning of `initializer for struct 'xxx' must use "self.init(...)" or "self = ..." because it is not in module xxx`. See https://github.com/apple/swift-evolution/blob/master/proposals/0189-restrict-cross-module-struct-initializers.md
+    @available(*, unavailable, message: "Protocol is not declared as routable")
+    public init() { }
+    
+    /// Only use this in initializers in extension, never use it in other place. This is only to silence the warning of `initializer for struct 'xxx' must use "self.init(...)" or "self = ..." because it is not in module xxx`. See https://github.com/apple/swift-evolution/blob/master/proposals/0189-restrict-cross-module-struct-initializers.md
+    ///
+    /// - Parameter declaredProtocol: The protocol must be declared in extension.
     public init(declaredProtocol: Protocol.Type) { }
 }
 
@@ -93,8 +105,12 @@ public struct RoutableService<Protocol> {
  Never add extension for RoutableServiceModule without generic constraint and expose it's initializer.
  */
 public struct RoutableServiceModule<Protocol> {
-    internal init() { }
-    ///Only use this in initializers in extension, never use it in other place. This is only to silence the warning of `initializer for struct 'xxx' must use "self.init(...)" or "self = ..." because it is not in module xxx`. See https://github.com/apple/swift-evolution/blob/master/proposals/0189-restrict-cross-module-struct-initializers.md
+    @available(*, unavailable, message: "Protocol is not declared as routable")
+    public init() { }
+    
+    /// Only use this in initializers in extension, never use it in other place. This is only to silence the warning of `initializer for struct 'xxx' must use "self.init(...)" or "self = ..." because it is not in module xxx`. See https://github.com/apple/swift-evolution/blob/master/proposals/0189-restrict-cross-module-struct-initializers.md
+    ///
+    /// - Parameter declaredProtocol: The protocol must be declared in extension.
     public init(declaredProtocol: Protocol.Type) { }
 }
 
