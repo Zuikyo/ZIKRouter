@@ -11,6 +11,7 @@
 
 #import "ZIKRouteRegistry.h"
 
+///Registry for service routers.
 @interface ZIKServiceRouteRegistry : ZIKRouteRegistry
 
 @end

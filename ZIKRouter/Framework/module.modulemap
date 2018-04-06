@@ -9,6 +9,7 @@ framework module ZIKRouter {
       header "ZIKViewRouterInternal.h"
       header "ZIKServiceRouterInternal.h"
       header "ZIKRouterRuntimeInternal.h"
+      header "ZIKRouteRegistry.h"
   }
   explicit module Private {
       header "ZIKViewRouterPrivate.h"

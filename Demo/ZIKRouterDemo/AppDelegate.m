@@ -8,7 +8,10 @@
 
 #import "AppDelegate.h"
 #import "DetailViewController.h"
+#import "AppContext.h"
+#import "AppRouteRegistry.h"
 @import ZIKRouter;
+@import ZIKRouter.Internal;
 
 @interface AppDelegate () <UISplitViewControllerDelegate>
 
@@ -17,6 +20,22 @@
 @implementation AppDelegate
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
+
+#if !AUTO_REGISTER_ROUTERS
+    // Two ways to manually register:
+    /*
+     1. Register each router
+     
+     Problems you may meet:
+     1. You have to register routers before any module reqiures them. You may don't want to register all routers at launch time, so you register some routers later. But some modules may require those routers before you register them, then there will be assert failure. 
+    */
+    [AppRouteRegistry manuallyRegisterEachRouter];
+    
+    // 2. Search routers and register
+//    [ZIKRouteRegistry registerAll];
+
+#endif
+    
     [ZIKViewRouter setGlobalErrorHandler:^(ZIKViewRouter * _Nullable router,
                                            ZIKRouteAction routeAction,
                                            NSError * _Nonnull error) {

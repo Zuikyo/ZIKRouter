@@ -13,8 +13,38 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
+///Abstract registry for router classes and protocols. In consideration of performence, methods in registry are not thread safe.
 @interface ZIKRouteRegistry : NSObject
-@property (nonatomic, class, readonly) BOOL autoRegistrationFinished;
+///Whether auto register all routers when app launchs. Default is YES. You can set this to NO before UIApplicationMain, and manually register your routers with +registerAll or call +registerRoutableDestination for each router.
+@property (nonatomic, class) BOOL autoRegister;
+///Whetehr registration is finished.
+@property (nonatomic, class, readonly) BOOL registrationFinished;
+
+#pragma mark Manually Register
+
+///Search all router classes and register.
++ (void)registerAll;
+
+///Notify that registration is finished, when you register routers by calling each router's +registerRoutableDestination. It's for rejecting any registration later and let routers call +_didFinishRegistration to check their dependency routers.
++ (void)notifyRegistrationFinished;
+
+#pragma mark Debug
+
+///Get all router class, then you can format code to register routers by calling their +registerRoutableDestination.
+
+///All routers that are not abstract router or adapter.
++ (NSArray<Class> *)allExternalRouters;
+///All objc routers that are not abstract router or adapter.
++ (NSArray<Class> *)allExternalObjcRouters;
+///All swift routers that are not abstract router or adapter.
++ (NSArray<Class> *)allExternalSwiftRouters;
+///All adapters that are not abstract.
++ (NSArray<Class> *)allAdapters;
+///All objc adapters that are not abstract.
++ (NSArray<Class> *)allObjcAdapters;
+///All swift adapters that are not abstract.
++ (NSArray<Class> *)allSwiftAdapters;
+
 @end
 
 NS_ASSUME_NONNULL_END

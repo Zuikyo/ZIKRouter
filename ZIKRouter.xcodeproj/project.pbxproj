@@ -89,7 +89,7 @@
 		F88D8B631FECF1AA00157E71 /* exec.h in Headers */ = {isa = PBXBuildFile; fileRef = F88D8B621FECF1AA00157E71 /* exec.h */; };
 		F88D8B661FECFB0900157E71 /* ZIKImageSymbol.h in Headers */ = {isa = PBXBuildFile; fileRef = F88D8B641FECFB0900157E71 /* ZIKImageSymbol.h */; };
 		F88D8B671FECFB0900157E71 /* ZIKImageSymbol.mm in Sources */ = {isa = PBXBuildFile; fileRef = F88D8B651FECFB0900157E71 /* ZIKImageSymbol.mm */; };
-		F8AD32D31FBC6B3F00186A22 /* ZIKRouteRegistry.h in Headers */ = {isa = PBXBuildFile; fileRef = F8AD32D11FBC6B3F00186A22 /* ZIKRouteRegistry.h */; };
+		F8AD32D31FBC6B3F00186A22 /* ZIKRouteRegistry.h in Headers */ = {isa = PBXBuildFile; fileRef = F8AD32D11FBC6B3F00186A22 /* ZIKRouteRegistry.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		F8AD32D41FBC6B3F00186A22 /* ZIKRouteRegistry.m in Sources */ = {isa = PBXBuildFile; fileRef = F8AD32D21FBC6B3F00186A22 /* ZIKRouteRegistry.m */; };
 		F8AD32D61FBC89F200186A22 /* ZIKRouteRegistryInternal.h in Headers */ = {isa = PBXBuildFile; fileRef = F8AD32D51FBC89F200186A22 /* ZIKRouteRegistryInternal.h */; };
 		F8AD32D91FBC8C6A00186A22 /* ZIKViewRouteRegistry.h in Headers */ = {isa = PBXBuildFile; fileRef = F8AD32D71FBC8C6A00186A22 /* ZIKViewRouteRegistry.h */; };
@@ -437,6 +437,7 @@
 				F85C584520149B3F0096821B /* ZIKRouterType.h in Headers */,
 				F85F4D221F223F0F003106C3 /* ZIKPresentationState.h in Headers */,
 				F85C584D201517040096821B /* ZIKViewRouter+Discover.h in Headers */,
+				F8AD32D31FBC6B3F00186A22 /* ZIKRouteRegistry.h in Headers */,
 				F85F4D1D1F223F0F003106C3 /* UIViewController+ZIKViewRouter.h in Headers */,
 				F85F4D1B1F223F0F003106C3 /* UIView+ZIKViewRouter.h in Headers */,
 				F85F4D1F1F223F0F003106C3 /* ZIKRouterInternal.h in Headers */,
@@ -447,7 +448,6 @@
 				F8AD32D91FBC8C6A00186A22 /* ZIKViewRouteRegistry.h in Headers */,
 				F8611F6D1F9B8E3C008F35DC /* ZIKViewRouterPrivate.h in Headers */,
 				F83315461F6FE0FA00891004 /* ZIKViewRouteConfiguration+Private.h in Headers */,
-				F8AD32D31FBC6B3F00186A22 /* ZIKRouteRegistry.h in Headers */,
 				F833153E1F6FCC3E00891004 /* UIStoryboardSegue+ZIKViewRouterPrivate.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

@@ -14,6 +14,16 @@
 NS_ASSUME_NONNULL_BEGIN
 
 @interface ZIKRouteRegistry ()
+
+///Add registry subclass.
++ (void)addRegistry:(Class)registryClass;
+
+
+
+#pragma mark Override
+
+@property (nonatomic, class, readonly) NSLock *lock;
+
 ///key: destination protocol, value: router class
 @property (nonatomic, class, readonly) CFMutableDictionaryRef destinationProtocolToRouterMap;
 ///key: module config protocol, value: router class
@@ -34,12 +44,16 @@ NS_ASSUME_NONNULL_BEGIN
 + (void)handleEnumerateClasses:(Class)aClass;
 + (void)didFinishEnumerateClasses;
 + (void)handleEnumerateProtocoles:(Protocol *)aProtocol;
-+ (void)didFinishAutoRegistration;
++ (void)didFinishRegistration;
 
-+ (void)addRegistry:(Class)registryClass;
+///Whether the class can be registered into this registry.
++ (BOOL)isRegisterableRouterClass:(Class)aClass;
+
++ (BOOL)isDestinationClassRoutable:(Class)aClass;
 
 #pragma mark Discover
 
++ (_Nullable Class)routerToRegisteredDestinationClass:(Class)destinationClass;
 + (_Nullable Class)routerToDestination:(Protocol *)destinationProtocol;
 + (_Nullable Class)routerToModule:(Protocol *)configProtocol;
 

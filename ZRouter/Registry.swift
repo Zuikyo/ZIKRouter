@@ -54,7 +54,7 @@ internal class Registry {
     ///   - router: The subclass of ZIKViewRouter.
     internal static func register<Protocol>(_ routableView: RoutableView<Protocol>, forRouter router: AnyClass) {
         let viewProtocol = Protocol.self
-        assert(ZIKAnyViewRouter._isAutoRegistrationFinished() == false, "Can't register after app did finish launch. Only register in registerRoutableDestination().")
+        assert(ZIKAnyViewRouter._isRegistrationFinished() == false, "Can't register after app did finish launch. Only register in registerRoutableDestination().")
         assert(ZIKRouter_classIsSubclassOfClass(router, ZIKAnyViewRouter.self), "This router must be subclass of ZIKViewRouter")
         if ZIKRouter_isObjcProtocol(viewProtocol) {
             (router as! ZIKAnyViewRouter.Type)._swift_registerViewProtocol(viewProtocol)
@@ -74,7 +74,7 @@ internal class Registry {
     ///   - router: The subclass of ZIKViewRouter.
     internal static func register<Protocol>(_ routableViewModule: RoutableViewModule<Protocol>, forRouter router: AnyClass) {
         let configProtocol = Protocol.self
-        assert(ZIKAnyViewRouter._isAutoRegistrationFinished() == false, "Can't register after app did finish launch. Only register in registerRoutableDestination().")
+        assert(ZIKAnyViewRouter._isRegistrationFinished() == false, "Can't register after app did finish launch. Only register in registerRoutableDestination().")
         assert(ZIKRouter_classIsSubclassOfClass(router, ZIKAnyViewRouter.self), "This router must be subclass of ZIKViewRouter")
         if ZIKRouter_isObjcProtocol(configProtocol) {
             (router as! ZIKAnyViewRouter.Type)._swift_registerConfigProtocol(configProtocol)
@@ -92,7 +92,7 @@ internal class Registry {
     ///   - router: The subclass of ZIKServiceRouter.
     internal static func register<Protocol>(_ routableService: RoutableService<Protocol>, forRouter router: AnyClass) {
         let serviceProtocol = Protocol.self
-        assert(ZIKAnyServiceRouter._isAutoRegistrationFinished() == false, "Can't register after app did finish launch. Only register in registerRoutableDestination().")
+        assert(ZIKAnyServiceRouter._isRegistrationFinished() == false, "Can't register after app did finish launch. Only register in registerRoutableDestination().")
         assert(ZIKRouter_classIsSubclassOfClass(router, ZIKAnyServiceRouter.self), "This router must be subclass of ZIKServiceRouter")
         if ZIKRouter_isObjcProtocol(serviceProtocol) {
             (router as! ZIKAnyServiceRouter.Type)._swift_registerServiceProtocol(serviceProtocol)
@@ -112,7 +112,7 @@ internal class Registry {
     ///   - router: The subclass of ZIKServiceRouter.
     internal static func register<Protocol>(_ routableServiceModule: RoutableServiceModule<Protocol>, forRouter router: AnyClass) {
         let configProtocol = Protocol.self
-        assert(ZIKAnyServiceRouter._isAutoRegistrationFinished() == false, "Can't register after app did finish launch. Only register in registerRoutableDestination().")
+        assert(ZIKAnyServiceRouter._isRegistrationFinished() == false, "Can't register after app did finish launch. Only register in registerRoutableDestination().")
         assert(ZIKRouter_classIsSubclassOfClass(router, ZIKAnyServiceRouter.self), "This router must be subclass of ZIKServiceRouter")
         if ZIKRouter_isObjcProtocol(configProtocol) {
             (router as! ZIKAnyServiceRouter.Type)._swift_registerConfigProtocol(configProtocol)
@@ -481,6 +481,9 @@ internal extension Registry {
 
 ///Make sure all registered view classes conform to their registered view protocols.
 private class _ViewRouterValidater: ZIKViewRouteAdapter {
+    override class func isAbstractRouter() -> Bool {
+        return true
+    }
     override class func registerRoutableDestination() {
         
     }
@@ -495,6 +498,9 @@ private class _ViewRouterValidater: ZIKViewRouteAdapter {
 
 ///Make sure all registered service classes conform to their registered service protocols.
 private class _ServiceRouterValidater: ZIKServiceRouteAdapter {
+    override class func isAbstractRouter() -> Bool {
+        return true
+    }
     override class func registerRoutableDestination() {
         
     }

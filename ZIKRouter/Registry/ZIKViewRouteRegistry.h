@@ -11,6 +11,7 @@
 
 #import "ZIKRouteRegistry.h"
 
+///Registry for view routers.
 @interface ZIKViewRouteRegistry : ZIKRouteRegistry
 
 + (BOOL)isDestinationClass:(Class)destinationClass registeredWithRouter:(Class)routerClass;

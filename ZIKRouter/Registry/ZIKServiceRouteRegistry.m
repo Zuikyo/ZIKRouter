@@ -30,6 +30,15 @@ static NSMutableArray<Class> *_routerClasses;
 
 @implementation ZIKServiceRouteRegistry
 
++ (NSLock *)lock {
+    static NSLock *_lock;
+    static dispatch_once_t onceToken;
+    dispatch_once(&onceToken, ^{
+        _lock = [[NSLock alloc] init];
+    });
+    return _lock;
+}
+
 + (CFMutableDictionaryRef)destinationProtocolToRouterMap {
     static dispatch_once_t onceToken;
     dispatch_once(&onceToken, ^{
@@ -121,14 +130,99 @@ static NSMutableArray<Class> *_routerClasses;
 
 + (void)didFinishEnumerateClasses {
 #if ZIKROUTER_CHECK
-    for (Class destinationClass in _routableDestinations) {
-        NSCAssert1(CFDictionaryGetValue(self.destinationToDefaultRouterMap, (__bridge const void *)(destinationClass)) != NULL, @"Routable service (%@) is not registered with any view router.",destinationClass);
-    }
+    [self _checkAllRoutableDestinations];
 #endif
 }
 
 + (void)handleEnumerateProtocoles:(Protocol *)protocol {
 #if ZIKROUTER_CHECK
+    [self _checkProtocol:protocol];
+#endif
+}
+
++ (void)didFinishRegistration {
+#if ZIKROUTER_CHECK
+    if (self.autoRegister == NO) {
+        [self _searchAllRoutersAndDestinations];
+        [self _checkAllRoutableDestinations];
+        [self _checkAllRouters];
+        [self _checkAllRoutableProtocols];
+        return;
+    }
+    [[NSNotificationCenter defaultCenter] addObserverForName:UIApplicationDidFinishLaunchingNotification object:nil queue:[NSOperationQueue mainQueue] usingBlock:^(NSNotification * _Nonnull note) {
+        [self _checkAllRouters];
+    }];
+#endif
+}
+
++ (BOOL)isRegisterableRouterClass:(Class)aClass {
+    static Class ZIKServiceRouterClass;
+    static dispatch_once_t onceToken;
+    dispatch_once(&onceToken, ^{
+        ZIKServiceRouterClass = [ZIKServiceRouter class];
+    });
+    if (ZIKRouter_classIsSubclassOfClass(aClass, ZIKServiceRouterClass)) {
+        if ([aClass isAbstractRouter]) {
+            return NO;
+        }
+        return YES;
+    }
+    return NO;
+}
+
++ (BOOL)isDestinationClassRoutable:(Class)aClass {
+    while (aClass) {
+        if (class_conformsToProtocol(aClass, @protocol(ZIKRoutableService))) {
+            return YES;
+        }
+        aClass = class_getSuperclass(aClass);
+    }
+    return NO;
+}
+
+#pragma mark Check
+
+#if ZIKROUTER_CHECK
+
++ (void)_searchAllRoutersAndDestinations {
+    _routableDestinations = [NSMutableArray array];
+    _routerClasses = [NSMutableArray array];
+    ZIKRouter_enumerateClassList(^(__unsafe_unretained Class class) {
+        if (class == nil) {
+            return;
+        }
+        if (class_conformsToProtocol(class, @protocol(ZIKRoutableService))) {
+            [_routableDestinations addObject:class];
+        } else if (ZIKRouter_classIsSubclassOfClass(class, [ZIKServiceRouter class])) {
+            CFMutableSetRef services = (CFMutableSetRef)CFDictionaryGetValue(self._check_routerToDestinationsMap, (__bridge const void *)(class));
+            NSSet *serviceSet = (__bridge NSSet *)(services);
+            NSCAssert2(serviceSet.count > 0 || [class isAbstractRouter] || [class isAdapter], @"This router class(%@) was not resgistered with any service class. Use +registerService: to register service in Router(%@)'s +registerRoutableDestination.",class,class);
+            [_routerClasses addObject:class];
+        }
+    });
+}
+
++ (void)_checkAllRoutableDestinations {
+    for (Class destinationClass in _routableDestinations) {
+        NSCAssert1(CFDictionaryGetValue(self.destinationToDefaultRouterMap, (__bridge const void *)(destinationClass)) != NULL, @"Routable service (%@) is not registered with any view router.",destinationClass);
+    }
+}
+
++ (void)_checkAllRouters {
+    for (Class class in _routerClasses) {
+        [class _didFinishRegistration];
+    }
+}
+
++ (void)_checkAllRoutableProtocols {
+    ZIKRouter_enumerateProtocolList(^(Protocol *protocol) {
+        if (protocol) {
+            [self _checkProtocol:protocol];
+        }
+    });
+}
+
++ (void)_checkProtocol:(Protocol *)protocol {
     if (protocol_conformsToProtocol(protocol, @protocol(ZIKServiceRoutable)) &&
         protocol != @protocol(ZIKServiceRoutable)) {
         Class routerClass = (Class)CFDictionaryGetValue(self.destinationProtocolToRouterMap, (__bridge const void *)(protocol));
@@ -147,17 +241,8 @@ static NSMutableArray<Class> *_routerClasses;
         ZIKRouteConfiguration *config = [routerClass defaultRouteConfiguration];
         NSCAssert3([config conformsToProtocol:protocol], @"Router(%@)'s default ZIKRouteConfiguration(%@) should conform to registered config protocol(%@)",routerClass, [config class], NSStringFromProtocol(protocol));
     }
-#endif
 }
 
-+ (void)didFinishAutoRegistration {
-#if ZIKROUTER_CHECK
-    [[NSNotificationCenter defaultCenter] addObserverForName:UIApplicationDidFinishLaunchingNotification object:nil queue:[NSOperationQueue mainQueue] usingBlock:^(NSNotification * _Nonnull note) {
-        for (Class class in _routerClasses) {
-            [class _didFinishRegistration];
-        }
-    }];
 #endif
-}
 
 @end

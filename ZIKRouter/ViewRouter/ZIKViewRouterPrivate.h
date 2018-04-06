@@ -21,7 +21,7 @@ typedef  BOOL(^ZIKViewClassValidater)(Class viewClass);
 + (BOOL)shouldCheckImplementation;
 
 ///Is auto registration all finished.
-+ (BOOL)_isAutoRegistrationFinished;
++ (BOOL)_isRegistrationFinished;
 
 ///Validate all registered view classes of this router class, return the class when the validater return false. Only available when ZIKROUTER_CHECK is true.
 + (_Nullable Class)validateRegisteredViewClasses:(ZIKViewClassValidater)handler;
