@@ -33,7 +33,7 @@ NSString *kZIKRouterErrorDomain = @"kZIKRouterErrorDomain";
 @implementation ZIKRouter
 
 - (instancetype)initWithConfiguration:(ZIKPerformRouteConfiguration *)configuration removeConfiguration:(nullable ZIKRemoveRouteConfiguration *)removeConfiguration {
-    NSParameterAssert(configuration);
+    NSParameterAssert(configuration || [[self class] isAbstractRouter]);
     
     if (self = [super init]) {
         _state = ZIKRouterStateNotRoute;
@@ -46,6 +46,7 @@ NSString *kZIKRouterErrorDomain = @"kZIKRouterErrorDomain";
 
 - (instancetype)initWithConfiguring:(void(^)(ZIKPerformRouteConfiguration *configuration))configBuilder removing:(void(^ _Nullable)(ZIKRemoveRouteConfiguration *configuration))removeConfigBuilder {
     NSParameterAssert(configBuilder);
+    
     ZIKPerformRouteConfiguration *configuration = [[self class] defaultRouteConfiguration];
     if (configBuilder) {
         configBuilder(configuration);
@@ -158,16 +159,13 @@ NSString *kZIKRouterErrorDomain = @"kZIKRouterErrorDomain";
 }
 
 + (instancetype)performRoute {
-    ZIKRouter *router = [[self alloc] initWithConfiguration:[self defaultRouteConfiguration] removeConfiguration:nil];
-    [router performRoute];
-    return router;
+    return [self performWithConfiguring:^(ZIKPerformRouteConfiguration *configuration) {
+        
+    } removing:nil];
 }
 
 + (instancetype)performWithConfiguring:(void(^)(ZIKPerformRouteConfiguration *configuration))configBuilder {
-    NSParameterAssert(configBuilder);
-    ZIKRouter *router = [[self alloc] initWithConfiguring:configBuilder removing:nil];
-    [router performRoute];
-    return router;
+    return [self performWithConfiguring:configBuilder removing:nil];
 }
 
 + (instancetype)performWithConfiguring:(void(^)(ZIKPerformRouteConfiguration *configuration))configBuilder removing:(void(^)(ZIKRemoveRouteConfiguration *configuration))removeConfigBuilder {
@@ -284,30 +282,11 @@ NSString *kZIKRouterErrorDomain = @"kZIKRouterErrorDomain";
 }
 
 + (nullable id)makeDestinationWithPreparation:(void(^ _Nullable)(id destination))prepare {
-    NSAssert(self != [ZIKRouter class], @"Only get destination from router subclass");
-    if (![self canMakeDestination]) {
-        NSAssert1(NO, @"The router (%@) doesn't support makeDestination",self);
-        return nil;
-    }
-    __block id dest;
-    ZIKRouter *router = [[self alloc] initWithConfiguring:^(ZIKPerformRouteConfiguration * _Nonnull config) {
+    return [self makeDestinationWithConfiguring:^(ZIKPerformRouteConfiguration * _Nonnull config) {
         if (prepare) {
             config.prepareDestination = prepare;
         }
-        void(^routeCompletion)(id destination) = config.routeCompletion;
-        if (routeCompletion) {
-            config.routeCompletion = ^(id  _Nonnull destination) {
-                routeCompletion(destination);
-                dest = destination;
-            };
-        } else {
-            config.routeCompletion = ^(id  _Nonnull destination) {
-                dest = destination;
-            };
-        }
-    } removing:NULL];
-    [router performRoute];
-    return dest;
+    }];
 }
 
 + (nullable id)makeDestinationWithConfiguring:(void(^ _Nullable)(ZIKPerformRouteConfiguration *config))configBuilder {
@@ -322,16 +301,12 @@ NSString *kZIKRouterErrorDomain = @"kZIKRouterErrorDomain";
             configBuilder(config);
         }
         void(^routeCompletion)(id destination) = config.routeCompletion;
-        if (routeCompletion) {
-            config.routeCompletion = ^(id  _Nonnull destination) {
+        config.routeCompletion = ^(id  _Nonnull destination) {
+            if (routeCompletion) {
                 routeCompletion(destination);
-                dest = destination;
-            };
-        } else {
-            config.routeCompletion = ^(id  _Nonnull destination) {
-                dest = destination;
-            };
-        }
+            }
+            dest = destination;
+        };
     } removing:NULL];
     [router performRoute];
     return dest;
@@ -354,16 +329,12 @@ NSString *kZIKRouterErrorDomain = @"kZIKRouterErrorDomain";
             configBuilder(config,prepareDest,prepareModule);
         }
         void(^routeCompletion)(id destination) = config.routeCompletion;
-        if (routeCompletion) {
-            config.routeCompletion = ^(id  _Nonnull destination) {
+        config.routeCompletion = ^(id  _Nonnull destination) {
+            if (routeCompletion) {
                 routeCompletion(destination);
-                dest = destination;
-            };
-        } else {
-            config.routeCompletion = ^(id  _Nonnull destination) {
-                dest = destination;
-            };
-        }
+            }
+            dest = destination;
+        };
     } strictRemoving:nil];
     [router performRoute];
     return dest;
@@ -577,7 +548,7 @@ NSString *kZIKRouterErrorDomain = @"kZIKRouterErrorDomain";
 }
 
 - (NSString *)description {
-    return [NSString stringWithFormat:@"%@: state:%@, destinaton:%@, configuration:(%@)",[super description],[[self class] descriptionOfState:self.state],self.destination,self.original_configuration];
+    return [NSString stringWithFormat:@"%@: state:%@,\ndestinaton:%@,\nconfiguration:(%@)",[super description],[[self class] descriptionOfState:self.state],self.destination,self.original_configuration];
 }
 
 @end

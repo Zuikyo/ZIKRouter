@@ -11,10 +11,10 @@
 
 #import <Foundation/Foundation.h>
 
-extern NSErrorDomain const kZIKViewRouteErrorDomain;
+extern NSErrorDomain const ZIKViewRouteErrorDomain;
 
 ///Errors for callback in ZIKRouteErrorHandler and ZIKViewRouteGlobalErrorHandler
-typedef NS_ERROR_ENUM(kZIKViewRouteErrorDomain, ZIKViewRouteError) {
+typedef NS_ERROR_ENUM(ZIKViewRouteErrorDomain, ZIKViewRouteError) {
     ///Bad implementation in code. When adding a UIView or UIViewController conforms to ZIKRoutableView in xib or storyboard, and it need preparing, you have to implement -prepareDestinationFromExternal:configuration: in the view controller which added it. There will be an assert failure for debugging.
     ZIKViewRouteErrorInvalidPerformer,
     ///If you use ZIKViewRouter.toView() or ZIKViewRouter.toModule() to fetch router with protocol, the protocol must be declared. There will be an assert failure for debugging.

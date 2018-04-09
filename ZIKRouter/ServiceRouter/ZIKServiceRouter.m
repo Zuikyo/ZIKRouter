@@ -44,48 +44,6 @@ static dispatch_semaphore_t g_globalErrorSema;
     
 }
 
-_Nullable Class _ZIKServiceRouterToService(Protocol *serviceProtocol) {
-    NSCParameterAssert(serviceProtocol);
-    if (!serviceProtocol) {
-        [ZIKServiceRouter _callbackError_invalidProtocolWithAction:ZIKRouteActionToService errorDescription:@"ZIKServiceRouter.toService() serviceProtocol is nil"];
-        NSCAssert1(NO, @"ZIKServiceRouter.toService() serviceProtocol is nil. callStackSymbols: %@",[NSThread callStackSymbols]);
-        return nil;
-    }
-    Class routerClass = [ZIKServiceRouteRegistry routerToDestination:serviceProtocol];
-    if (routerClass) {
-        return routerClass;
-    }
-    [ZIKServiceRouter _callbackError_invalidProtocolWithAction:ZIKRouteActionToService
-                                              errorDescription:@"Didn't find service router for service protocol: %@, this protocol was not registered.",serviceProtocol];
-    if (ZIKRouteRegistry.registrationFinished) {
-        NSCAssert1(NO, @"Didn't find service router for service protocol: %@, this protocol was not registered.",NSStringFromProtocol(serviceProtocol));
-    } else {
-        NSCAssert1(NO, @"❌❌❌❌warning: failed to get router for service protocol (%@), because manually registration is not finished yet! You should register it's router earlier.",NSStringFromProtocol(serviceProtocol));
-    }
-    return nil;
-}
-
-_Nullable Class _ZIKServiceRouterToModule(Protocol *configProtocol) {
-    NSCParameterAssert(configProtocol);
-    if (!configProtocol) {
-        [ZIKServiceRouter _callbackError_invalidProtocolWithAction:ZIKRouteActionToServiceModule errorDescription:@"ZIKServiceRouter.toModule() configProtocol is nil"];
-        NSCAssert1(NO, @"ZIKServiceRouter.toModule() configProtocol is nil. callStackSymbols: %@",[NSThread callStackSymbols]);
-        return nil;
-    }
-    Class routerClass = [ZIKServiceRouteRegistry routerToModule:configProtocol];
-    if (routerClass) {
-        return routerClass;
-    }
-    [ZIKServiceRouter _callbackError_invalidProtocolWithAction:ZIKRouteActionToServiceModule
-                                              errorDescription:@"Didn't find service router for config protocol: %@, this protocol was not registered.",configProtocol];
-    if (ZIKRouteRegistry.registrationFinished) {
-        NSCAssert1(NO, @"Didn't find service router for service config protocol: %@, this protocol was not registered.",NSStringFromProtocol(configProtocol));
-    } else {
-        NSCAssert1(NO, @"❌❌❌❌warning: failed to get router for service config protocol (%@), because manually registration is not finished yet! You should register it's router earlier.",NSStringFromProtocol(configProtocol));
-    }
-    return nil;
-}
-
 - (void)performWithConfiguration:(__kindof ZIKPerformRouteConfiguration *)configuration {
     [[self class] increaseRecursiveDepth];
     if ([[self class] _validateInfiniteRecursion] == NO) {
@@ -200,20 +158,12 @@ _Nullable Class _ZIKServiceRouterToModule(Protocol *configProtocol) {
 
 #pragma mark Validate
 
-- (BOOL)_validateDestinationConformance:(id)destination {
+- (void)_validateDestinationConformance:(id)destination {
 #if ZIKROUTER_CHECK
-    Class routerClass = [self class];
-    CFMutableSetRef serviceProtocols = (CFMutableSetRef)CFDictionaryGetValue(ZIKServiceRouteRegistry._check_routerToDestinationProtocolsMap, (__bridge const void *)(routerClass));
-    if (serviceProtocols != NULL) {
-        for (Protocol *serviceProtocol in (__bridge NSSet*)serviceProtocols) {
-            if (!class_conformsToProtocol([destination class], serviceProtocol)) {
-                NSAssert(NO, @"Bad implementation in router (%@)'s -destinationWithConfiguration:. The destiantion (%@) doesn't conforms to registered service protocol (%@).",routerClass, destination, NSStringFromProtocol(serviceProtocol));
-                return NO;
-            }
-        }
-    }
+    Protocol *destinationProtocol;
+    BOOL result = [ZIKServiceRouteRegistry validateDestinationConformance:[destination class] forRouter:self protocol:&destinationProtocol];
+    NSAssert(result, @"Bad implementation in router (%@)'s -destinationWithConfiguration:. The destiantion (%@) doesn't conforms to registered service protocol (%@).",self, destination, NSStringFromProtocol(destinationProtocol));
 #endif
-    return YES;
 }
 
 + (BOOL)_validateInfiniteRecursion {
@@ -237,15 +187,6 @@ _Nullable Class _ZIKServiceRouterToModule(Protocol *configProtocol) {
 - (void)_callbackErrorWithAction:(ZIKRouteAction)routeAction error:(NSError *)error {
     [[self class] _callbackGlobalErrorHandlerWithRouter:self action:routeAction error:error];
     [super notifyError:error routeAction:routeAction];
-}
-
-+ (void)_callbackError_invalidProtocolWithAction:(ZIKRouteAction)action errorDescription:(NSString *)format ,... {
-    va_list argList;
-    va_start(argList, format);
-    NSString *description = [[NSString alloc] initWithFormat:format arguments:argList];
-    va_end(argList);
-    [self _callbackGlobalErrorHandlerWithRouter:nil action:action error:[[self class] errorWithCode:ZIKServiceRouteErrorInvalidProtocol localizedDescription:description]];
-    NSAssert(NO, @"Error when get router for serviceProtocol: %@",description);
 }
 
 - (void)_callbackError_actionFailedWithAction:(ZIKRouteAction)action errorDescription:(NSString *)format ,... {
@@ -320,42 +261,6 @@ _Nullable Class _ZIKServiceRouterToModule(Protocol *configProtocol) {
     [ZIKServiceRouteRegistry registerModuleProtocol:configProtocol router:self];
 }
 
-_Nullable Class _swift_ZIKServiceRouterToService(id serviceProtocol) {
-    return _ZIKServiceRouterToService(serviceProtocol);
-}
-
-extern _Nullable Class _swift_ZIKServiceRouterToModule(id configProtocol) {
-    return _ZIKServiceRouterToModule(configProtocol);
-}
-
-@end
-
-@implementation ZIKServiceRouter (Discover)
-
-+ (ZIKDestinationServiceRouterType<id<ZIKServiceRoutable>, ZIKPerformRouteConfiguration *> *(^)(Protocol *))toService {
-    return ^(Protocol *serviceProtocol) {
-        return _ZIKServiceRouterToService(serviceProtocol);
-    };
-}
-
-+ (ZIKModuleServiceRouterType<id, id<ZIKServiceModuleRoutable>, ZIKPerformRouteConfiguration *> *(^)(Protocol *))toModule {
-    return ^(Protocol *configProtocol) {
-        return _ZIKServiceRouterToModule(configProtocol);
-    };
-}
-
-+ (Class(^)(Protocol<ZIKServiceRoutable> *))classToService {
-    return ^(Protocol *serviceProtocol) {
-        return _ZIKServiceRouterToService(serviceProtocol);
-    };
-}
-
-+ (Class(^)(Protocol<ZIKServiceModuleRoutable> *))classToModule {
-    return ^(Protocol *configProtocol) {
-        return _ZIKServiceRouterToModule(configProtocol);
-    };
-}
-
 @end
 
 @implementation ZIKServiceRouter (Private)
@@ -382,23 +287,13 @@ extern _Nullable Class _swift_ZIKServiceRouterToModule(id configProtocol) {
     [self registerModuleProtocol:configProtocol];
 }
 
-+ (_Nullable Class)validateRegisteredServiceClasses:(ZIKServiceClassValidater)handler {
-#if ZIKROUTER_CHECK
-    Class routerClass = self;
-    CFMutableSetRef services = (CFMutableSetRef)CFDictionaryGetValue(ZIKServiceRouteRegistry._check_routerToDestinationsMap, (__bridge const void *)(routerClass));
-    __block Class badClass = nil;
-    [(__bridge NSSet *)(services) enumerateObjectsUsingBlock:^(Class  _Nonnull serviceClass, BOOL * _Nonnull stop) {
-        if (handler) {
-            if (!handler(serviceClass)) {
-                badClass = serviceClass;
-                *stop = YES;
-            }
-        }
-    }];
-    return badClass;
-#else
-    return nil;
-#endif
++ (void)_callbackError_invalidProtocolWithAction:(ZIKRouteAction)action errorDescription:(NSString *)format ,... {
+    va_list argList;
+    va_start(argList, format);
+    NSString *description = [[NSString alloc] initWithFormat:format arguments:argList];
+    va_end(argList);
+    [self _callbackGlobalErrorHandlerWithRouter:nil action:action error:[[self class] errorWithCode:ZIKServiceRouteErrorInvalidProtocol localizedDescription:description]];
+    NSAssert(NO, @"Error when get router for serviceProtocol: %@",description);
 }
 
 + (void)_callbackGlobalErrorHandlerWithRouter:(nullable __kindof ZIKServiceRouter *)router action:(ZIKRouteAction)action error:(NSError *)error {
@@ -417,17 +312,3 @@ extern _Nullable Class _swift_ZIKServiceRouterToModule(id configProtocol) {
 }
 
 @end
-
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wincomplete-implementation"
-
-@implementation ZIKServiceRouterType
-@end
-
-@implementation ZIKDestinationServiceRouterType
-@end
-
-@implementation ZIKModuleServiceRouterType
-@end
-
-#pragma clang diagnostic pop

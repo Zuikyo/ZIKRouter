@@ -12,6 +12,8 @@
 #import "ZIKServiceRouteRegistry.h"
 #import "ZIKRouterInternal.h"
 #import "ZIKServiceRouterInternal.h"
+#import "ZIKBlockServiceRouter.h"
+#import "ZIKServiceRouterType.h"
 #import "ZIKRouterRuntime.h"
 #import <objc/runtime.h>
 #import <UIKit/UIKit.h>
@@ -29,6 +31,20 @@ static NSMutableArray<Class> *_routerClasses;
 #endif
 
 @implementation ZIKServiceRouteRegistry
+
++ (Class)routerTypeClass {
+    return [ZIKServiceRouterType class];
+}
+
++ (nullable id)routeKeyForRouter:(ZIKRouter *)router {
+    if ([router isKindOfClass:[ZIKServiceRouter class]] == NO) {
+        return nil;
+    }
+    if ([router isKindOfClass:[ZIKBlockServiceRouter class]]) {
+        return [(ZIKBlockServiceRouter *)router route];
+    }
+    return [router class];
+}
 
 + (NSLock *)lock {
     static NSLock *_lock;

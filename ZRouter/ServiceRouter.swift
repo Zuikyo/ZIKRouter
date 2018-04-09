@@ -15,9 +15,9 @@ import ZIKRouter.Internal
 public class ServiceRouterType<Destination, ModuleConfig> {
     
     /// The router type to wrap.
-    public let routerType: ZIKAnyServiceRouter.Type
+    public let routerType: ZIKAnyServiceRouterType
     
-    internal init(routerType: ZIKAnyServiceRouter.Type) {
+    internal init(routerType: ZIKAnyServiceRouterType) {
         self.routerType = routerType
     }
     
@@ -141,7 +141,7 @@ public class ServiceRouterType<Destination, ModuleConfig> {
         return destination as? Destination
     }
     
-    private static func _castedDestination(_ destination: Any, routerType: ZIKAnyServiceRouter.Type) -> Destination? {
+    private static func _castedDestination(_ destination: Any, routerType: ZIKAnyServiceRouterType) -> Destination? {
         if let d = destination as? Destination {
             if shouldCheckServiceRouter {
                 assert(Registry.validateConformance(destination: d, inServiceRouterType: routerType))
@@ -156,10 +156,6 @@ public class ServiceRouterType<Destination, ModuleConfig> {
             assertionFailure("Router (\(routerType)) returns wrong destination type (\(destination)), destination should be \(Destination.self)")
         }
         return nil
-    }
-    
-    public func description(of state: ZIKRouterState) -> String {
-        return routerType.description(of: state)
     }
 }
 

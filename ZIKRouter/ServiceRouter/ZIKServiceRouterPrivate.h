@@ -13,20 +13,18 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-typedef  BOOL(^ZIKServiceClassValidater)(Class serviceClass);
+@class ZIKServiceRouterType;
 
 ///Private methods.
-@interface ZIKServiceRouter (Private)
+@interface ZIKServiceRouter<__covariant Destination: id, __covariant RouteConfig: ZIKPerformRouteConfiguration *> (Private)
 
 + (BOOL)shouldCheckImplementation;
 
 ///Is registration all finished.
 + (BOOL)_isRegistrationFinished;
 
-///Validate all registered service classes of this router class, return the class when the validater return false. Only available when ZIKROUTER_CHECK is true.
-+ (_Nullable Class)validateRegisteredServiceClasses:(ZIKServiceClassValidater)handler;
-
 + (void)_callbackGlobalErrorHandlerWithRouter:(nullable __kindof ZIKServiceRouter *)router action:(ZIKRouteAction)action error:(NSError *)error;
++ (void)_callbackError_invalidProtocolWithAction:(ZIKRouteAction)action errorDescription:(NSString *)format ,...;
 
 + (void)_swift_registerServiceProtocol:(id)serviceProtocol;
 
@@ -34,13 +32,13 @@ typedef  BOOL(^ZIKServiceClassValidater)(Class serviceClass);
 
 @end
 
-extern _Nullable Class _ZIKServiceRouterToService(Protocol *serviceProtocol);
+extern ZIKServiceRouterType *_Nullable _ZIKServiceRouterToService(Protocol *serviceProtocol);
 
-extern _Nullable Class _ZIKServiceRouterToModule(Protocol *configProtocol);
+extern ZIKServiceRouterType *_Nullable _ZIKServiceRouterToModule(Protocol *configProtocol);
 
 ///Private method for ZRouter.
-extern _Nullable Class _swift_ZIKServiceRouterToService(id serviceProtocol);
+extern ZIKServiceRouterType *_Nullable _swift_ZIKServiceRouterToService(id serviceProtocol);
 ///Private method for ZRouter.
-extern _Nullable Class _swift_ZIKServiceRouterToModule(id configProtocol);
+extern ZIKServiceRouterType *_Nullable _swift_ZIKServiceRouterToModule(id configProtocol);
 
 NS_ASSUME_NONNULL_END

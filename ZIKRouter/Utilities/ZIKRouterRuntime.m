@@ -272,6 +272,13 @@ bool ZIKRouter_isObjcProtocol(id protocol) {
     return [protocol isKindOfClass:ProtocolClass];
 }
 
+Protocol *_Nullable ZIKRouter_objcProtocol(id protocol) {
+    if (ZIKRouter_isObjcProtocol(protocol)) {
+        return (Protocol *)protocol;
+    }
+    return nil;
+}
+
 #if DEBUG
 /**
  Check whether a type conforms to the given protocol. Use private C++ function inside libswiftCore.dylib:

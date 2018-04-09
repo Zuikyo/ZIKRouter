@@ -15,9 +15,9 @@ import ZIKRouter.Internal
 public class ViewRouterType<Destination, ModuleConfig> {
     
     /// The router type to wrap.
-    public let routerType: ZIKAnyViewRouter.Type
+    public let routerType: ZIKAnyViewRouterType
     
-    internal init(routerType: ZIKAnyViewRouter.Type) {
+    internal init(routerType: ZIKAnyViewRouterType) {
         self.routerType = routerType
     }
     
@@ -168,7 +168,7 @@ public class ViewRouterType<Destination, ModuleConfig> {
     ///   - configBuilder: Builder for config when perform route.
     ///   - removeConfigBuilder: Builder for config when remove route.
     /// - Returns: The view router for this route. If the destination is not registered with this router class, return nil and get assert failure.
-    @discardableResult public func prepare(destination: Destination, configuring configBuilder: @escaping (ViewRouteConfig, DestinationPreparation, ModulePreparation) -> Void, removing removeConfigBuilder: ((ViewRemoveConfig, DestinationPreparation) -> Void)? = nil) -> ViewRouter<Destination, ModuleConfig>? {
+    @discardableResult public func prepare(destination: Destination, configuring configBuilder: (ViewRouteConfig, DestinationPreparation, ModulePreparation) -> Void, removing removeConfigBuilder: ((ViewRemoveConfig, DestinationPreparation) -> Void)? = nil) -> ViewRouter<Destination, ModuleConfig>? {
         var removeBuilder: ((ViewRemoveConfig) -> Void)? = nil
         if let removeConfigBuilder = removeConfigBuilder {
             removeBuilder = { (config: ViewRemoveConfig) in
@@ -248,7 +248,7 @@ public class ViewRouterType<Destination, ModuleConfig> {
     ///     - prepareDestination: Prepare destination before performing route. It's an escaping block, use weakSelf to avoid retain cycle.
     ///     - prepareModule: Prepare custom moudle config.
     /// - Returns: Destination
-    public func makeDestination(configuring configBuilder: @escaping (ViewRouteConfig, DestinationPreparation, ModulePreparation) -> Void) -> Destination? {
+    public func makeDestination(configuring configBuilder: (ViewRouteConfig, DestinationPreparation, ModulePreparation) -> Void) -> Destination? {
         let destination = routerType.makeDestination(configuring: { config in
             let prepareDestination = { (prepare: @escaping (Destination) -> Void) in
                 config.prepareDestination = { d in
@@ -267,10 +267,6 @@ public class ViewRouterType<Destination, ModuleConfig> {
         assert(destination == nil || destination is Destination, "Router (\(routerType)) returns wrong destination type (\(String(describing: destination))), destination should be \(Destination.self)")
         assert(destination == nil || Registry.validateConformance(destination: destination!, inViewRouterType: routerType))
         return destination as? Destination
-    }
-    
-    public func description(of state: ZIKRouterState) -> String {
-        return routerType.description(of: state)
     }
 }
 
@@ -363,8 +359,8 @@ public class ViewRouter<Destination, ModuleConfig> {
     /// - Parameter configBuilder: Configure the configuration for removing view.
     ///     - config: Config for removing view route.
     ///     - prepareDestination: Prepare destination before removing route. It's an escaping block, use weakSelf to avoid retain cycle.
-    public func removeRoute(configuring configBuilder: @escaping (ViewRemoveConfig, DestinationPreparation) -> Void) {
-        let removeBuilder = { (config: ViewRemoveConfig) in
+    public func removeRoute(configuring configBuilder: (ViewRemoveConfig, DestinationPreparation) -> Void) {
+        router.removeRoute(configuring: { (config) in
             let prepareDestination = { (prepare: @escaping (Destination) -> Void) in
                 config.prepareDestination = { d in
                     if let destination = d as? Destination {
@@ -373,7 +369,6 @@ public class ViewRouter<Destination, ModuleConfig> {
                 }
             }
             configBuilder(config, prepareDestination)
-        }
-        router.removeRoute(configuring: removeBuilder)
+        })
     }
 }

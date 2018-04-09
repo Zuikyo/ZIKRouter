@@ -1,0 +1,39 @@
+//
+//  ZIKViewRoute.h
+//  ZIKRouter
+//
+//  Created by zuik on 2018/4/7.
+//  Copyright © 2018 zuik. All rights reserved.
+//
+
+#import "ZIKRoute.h"
+#import "ZIKViewRouter.h"
+
+@interface ZIKViewRoute<__covariant Destination, __covariant RouteConfig: ZIKViewRouteConfiguration *> : ZIKRoute<Destination, RouteConfig, ZIKViewRemoveConfiguration *>
+
+@property (nonatomic, readonly) ZIKViewRoute<Destination, RouteConfig> *(^registerDestination)(Class destinationClass);
+@property (nonatomic, readonly) ZIKViewRoute<Destination, RouteConfig> *(^registerDestinationProtocol)(Protocol *destinationProtocol);
+@property (nonatomic, readonly) ZIKViewRoute<Destination, RouteConfig> *(^registerModuleProtocol)(Protocol *moduleConfigProtocol);
+
+@property (nonatomic, readonly) ZIKViewRoute<Destination, RouteConfig> *(^makeDefaultConfiguration)(RouteConfig(^)(void));
+@property (nonatomic, readonly) ZIKViewRoute<Destination, RouteConfig> *(^makeDefaultRemoveConfiguration)(ZIKViewRemoveConfiguration *(^)(void));
+
+@property (nonatomic, readonly) ZIKViewRoute<Destination, RouteConfig> *(^prepareDestination)(void(^)(Destination destination, RouteConfig config, ZIKViewRouter *router));
+@property (nonatomic, readonly) ZIKViewRoute<Destination, RouteConfig> *(^didFinishPrepareDestination)(void(^)(Destination destination, RouteConfig config, ZIKViewRouter *router));
+
+@property (nonatomic, readonly) ZIKViewRoute<Destination, RouteConfig> *(^destinationFromExternalPrepared)(BOOL(^)(Destination destination, ZIKViewRouter *router));
+
+@property (nonatomic, readonly) ZIKViewRoute<Destination, RouteConfig> *(^canPerformCustomRoute)(BOOL(^)(ZIKViewRouter *router));
+
+///Whether the router can remove custom route now. Default is NO.
+@property (nonatomic, readonly) ZIKViewRoute<Destination, RouteConfig> *(^canRemoveCustomRoute)(BOOL(^)(ZIKViewRouter *router));
+
+///Perform your custom route. You must maintain the router's state with methods in ZIKViewRouterInternal.h.
+@property (nonatomic, readonly) ZIKViewRoute<Destination, RouteConfig> *(^performCustomRoute)(void(^)(Destination destination, _Nullable id source, RouteConfig config, ZIKViewRouter *router));
+
+///Remove your custom route. You must maintain the router's state with methods in ZIKViewRouterInternal.h.
+@property (nonatomic, readonly) ZIKViewRoute<Destination, RouteConfig> *(^removeCustomRoute)(void(^)(Destination destination, _Nullable id source, ZIKViewRemoveConfiguration *removeConfig, RouteConfig config, ZIKViewRouter *router));
+
+@end
+
+typedef ZIKViewRoute<id, ZIKViewRouteConfiguration *> ZIKDefaultViewRoute;

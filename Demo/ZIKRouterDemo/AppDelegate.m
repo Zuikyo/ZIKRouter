@@ -20,18 +20,22 @@
 @implementation AppDelegate
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
-
+    
 #if !AUTO_REGISTER_ROUTERS
     // Two ways to manually register:
+    
     /*
-     1. Register each router
+     1. Register each router by calling +registerRoutableDestination
      
      Problems you may meet:
-     1. You have to register routers before any module reqiures them. You may don't want to register all routers at launch time, so you register some routers later. But some modules may require those routers before you register them, then there will be assert failure. 
+     You have to register routers before any module reqiures them.
+     
+     If there're modules running before registration is finished, and modules require some routers before you register them, then there will be assert failure, you should register those required routers earlier.
+     Such as routable initial view controller from storyboard, or any routers used in this initial view controller.
     */
     [AppRouteRegistry manuallyRegisterEachRouter];
     
-    // 2. Search routers and register
+    // 2. Search all routers and register
 //    [ZIKRouteRegistry registerAll];
 
 #endif

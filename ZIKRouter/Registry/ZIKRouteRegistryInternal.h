@@ -13,32 +13,38 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
+@class ZIKRouter, ZIKRouterType;
+
 @interface ZIKRouteRegistry ()
 
 ///Add registry subclass.
 + (void)addRegistry:(Class)registryClass;
 
-
-
 #pragma mark Override
+
++ (Class)routerTypeClass;
+
++ (nullable id)routeKeyForRouter:(ZIKRouter *)router;
 
 @property (nonatomic, class, readonly) NSLock *lock;
 
-///key: destination protocol, value: router class
+///key: destination protocol, value: router class or ZIKRoute
 @property (nonatomic, class, readonly) CFMutableDictionaryRef destinationProtocolToRouterMap;
-///key: module config protocol, value: router class
+///key: module config protocol, value: router class or ZIKRoute
 @property (nonatomic, class, readonly) CFMutableDictionaryRef moduleConfigProtocolToRouterMap;
-///key: destination class, value: router class set
+///key: destination class, value: router class or ZIKRoute set
 @property (nonatomic, class, readonly) CFMutableDictionaryRef destinationToRoutersMap;
-///key: destination class, value: default router class
+///key: destination class, value: default router class or ZIKRoute
 @property (nonatomic, class, readonly) CFMutableDictionaryRef destinationToDefaultRouterMap;
-///key: destination class, value: the exclusive router class
+///key: destination class, value: the exclusive router class or ZIKRoute
 @property (nonatomic, class, readonly) CFMutableDictionaryRef destinationToExclusiveRouterMap;
 
-///key: router class, value: destination class set
+#if ZIKROUTER_CHECK
+///key: router class or ZIKRoute, value: destination class set
 @property (nonatomic, class, readonly) CFMutableDictionaryRef _check_routerToDestinationsMap;
-///key: router class, value: destination protocol set
+///key: router class or ZIKRoute, value: destination protocol set
 @property (nonatomic, class, readonly) CFMutableDictionaryRef _check_routerToDestinationProtocolsMap;
+#endif
 
 + (void)willEnumerateClasses;
 + (void)handleEnumerateClasses:(Class)aClass;
@@ -53,9 +59,11 @@ NS_ASSUME_NONNULL_BEGIN
 
 #pragma mark Discover
 
-+ (_Nullable Class)routerToRegisteredDestinationClass:(Class)destinationClass;
-+ (_Nullable Class)routerToDestination:(Protocol *)destinationProtocol;
-+ (_Nullable Class)routerToModule:(Protocol *)configProtocol;
++ (nullable ZIKRouterType *)routerToRegisteredDestinationClass:(Class)destinationClass;
++ (nullable ZIKRouterType *)routerToDestination:(Protocol *)destinationProtocol;
++ (nullable ZIKRouterType *)routerToModule:(Protocol *)configProtocol;
+
++ (void)enumerateRoutersForDestinationClass:(Class)destinationClass handler:(void(^)(ZIKRouterType * route))handler;
 
 #pragma mark Register
 
@@ -63,6 +71,21 @@ NS_ASSUME_NONNULL_BEGIN
 + (void)registerExclusiveDestination:(Class)destinationClass router:(Class)routerClass;
 + (void)registerDestinationProtocol:(Protocol *)destinationProtocol router:(Class)routerClass;
 + (void)registerModuleProtocol:(Protocol *)configProtocol router:(Class)routerClass;
+
++ (void)registerDestination:(Class)destinationClass route:(ZIKRoute *)route;
++ (void)registerExclusiveDestination:(Class)destinationClass route:(ZIKRoute *)route;
++ (void)registerDestinationProtocol:(Protocol *)destinationProtocol route:(ZIKRoute *)route;
++ (void)registerModuleProtocol:(Protocol *)configProtocol route:(ZIKRoute *)route;
+
+#pragma mark Check
+
+#if ZIKROUTER_CHECK
+
++ (BOOL)validateDestinationConformance:(Class)destinationClass forRouter:(ZIKRouter *)router protocol:(Protocol **)protocol;
+//Validate all registered view classes of this router class, return the class when the validater return false. Only available when ZIKROUTER_CHECK is true.
++ (nullable Class)validateDestinationsForRoute:(id)route handler:(BOOL(^)(Class destinationClass))handler;
+
+#endif
 
 @end
 

@@ -120,8 +120,8 @@ NS_ASSUME_NONNULL_BEGIN
 ///Remove route directly. If -canRemove return NO, this will failed.
 - (void)removeRoute;
 ///Remove with success handler and error handler.
-- (void)removeRouteWithSuccessHandler:(void(^ __nullable)(void))performerSuccessHandler
-                         errorHandler:(void(^ __nullable)(ZIKRouteAction routeAction, NSError *error))performerErrorHandler;
+- (void)removeRouteWithSuccessHandler:(void(^ _Nullable)(void))performerSuccessHandler
+                         errorHandler:(void(^ _Nullable)(ZIKRouteAction routeAction, NSError *error))performerErrorHandler;
 ///Remove route and prepare before removing.
 - (void)removeRouteWithConfiguring:(void(NS_NOESCAPE ^)(RemoveConfig config))removeConfigBuilder;
 
@@ -145,7 +145,7 @@ NS_ASSUME_NONNULL_BEGIN
 + (nullable Destination)makeDestinationWithPreparation:(void(^ _Nullable)(Destination destination))prepare;
 
 ///Synchronously get destination, and prepare the destination.
-+ (nullable Destination)makeDestinationWithConfiguring:(void(^ _Nullable)(RouteConfig config))configBuilder;
++ (nullable Destination)makeDestinationWithConfiguring:(void(NS_NOESCAPE ^ _Nullable)(RouteConfig config))configBuilder;
 
 /**
  Synchronously get destination, and prepare the destination in a type safe way inferred by generic parameters.
@@ -153,10 +153,10 @@ NS_ASSUME_NONNULL_BEGIN
  @param configBuilder Type safe builder to build configuration, `prepareDest` is for setting `prepareDestination` block for configuration (it's an escaping block so use weakSelf in it), `prepareModule` is for setting custom route config.
  @return The prepared destination.
  */
-+ (nullable Destination)makeDestinationWithStrictConfiguring:(void(^ _Nullable)(RouteConfig config,
-                                                                                void(^prepareDest)(void(^prepare)(Destination dest)),
-                                                                                void(^prepareModule)(void(NS_NOESCAPE ^prepare)(RouteConfig module))
-                                                                                ))configBuilder;
++ (nullable Destination)makeDestinationWithStrictConfiguring:(void(NS_NOESCAPE ^ _Nullable)(RouteConfig config,
+                                                                                            void(^prepareDest)(void(^prepare)(Destination dest)),
+                                                                                            void(^prepareModule)(void(NS_NOESCAPE ^prepare)(RouteConfig module))
+                                                                                            ))configBuilder;
 
 #pragma mark Debug
 

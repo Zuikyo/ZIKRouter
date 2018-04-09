@@ -69,3 +69,5 @@ extern bool ZIKRouter_classSelfImplementingMethod(Class aClass, SEL method, bool
 
 ///Check whether an object is an objc protocol.
 extern bool ZIKRouter_isObjcProtocol(id protocol);
+
+extern Protocol *_Nullable ZIKRouter_objcProtocol(id protocol);

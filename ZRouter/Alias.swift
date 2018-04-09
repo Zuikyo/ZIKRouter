@@ -32,3 +32,9 @@ public typealias AnyServiceRouter = ServiceRouter<Any, PerformRouteConfig>
 public typealias ZIKAnyServiceRouter = ZIKServiceRouter<AnyObject, PerformRouteConfig>
 public typealias DestinationServiceRouter<Destination> = ServiceRouter<Destination, PerformRouteConfig>
 public typealias ModuleServiceRouter<ModuleConfig: PerformRouteConfig> = ServiceRouter<Any, ModuleConfig>
+
+public typealias ZIKAnyViewRouterType = ZIKViewRouterType<ZIKRoutableView, ViewRouteConfig>
+public typealias ZIKAnyServiceRouterType = ZIKServiceRouterType<AnyObject, PerformRouteConfig>
+
+public typealias ZIKAnyViewRoute = ZIKViewRoute<ZIKRoutableView, ViewRouteConfig>
+public typealias ZIKAnyServiceRoute = ZIKServiceRoute<AnyObject, PerformRouteConfig>

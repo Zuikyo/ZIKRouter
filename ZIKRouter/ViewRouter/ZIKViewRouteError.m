@@ -11,4 +11,4 @@
 
 #import "ZIKViewRouteError.h"
 
-NSErrorDomain const kZIKViewRouteErrorDomain = @"kZIKViewRouteErrorDomain";
+NSErrorDomain const ZIKViewRouteErrorDomain = @"ZIKViewRouteErrorDomain";

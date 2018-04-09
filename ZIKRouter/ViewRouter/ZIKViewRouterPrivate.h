@@ -10,21 +10,17 @@
 //
 
 #import "ZIKViewRouter.h"
+#import "ZIKViewRouterType.h"
 
 NS_ASSUME_NONNULL_BEGIN
 
-typedef  BOOL(^ZIKViewClassValidater)(Class viewClass);
-
 ///Private methods.
-@interface ZIKViewRouter (Private)
+@interface ZIKViewRouter<__covariant Destination: id, __covariant RouteConfig: ZIKViewRouteConfiguration *> (Private)
 
 + (BOOL)shouldCheckImplementation;
 
 ///Is auto registration all finished.
 + (BOOL)_isRegistrationFinished;
-
-///Validate all registered view classes of this router class, return the class when the validater return false. Only available when ZIKROUTER_CHECK is true.
-+ (_Nullable Class)validateRegisteredViewClasses:(ZIKViewClassValidater)handler;
 
 + (void)_callbackGlobalErrorHandlerWithRouter:(nullable __kindof ZIKViewRouter *)router action:(ZIKRouteAction)action error:(NSError *)error;
 
@@ -32,15 +28,20 @@ typedef  BOOL(^ZIKViewClassValidater)(Class viewClass);
 
 + (void)_swift_registerConfigProtocol:(id)configProtocol;
 
+#pragma mark Internal Initializer
+
++ (instancetype)routerFromSegueIdentifier:(NSString *)identifier sender:(nullable id)sender destination:(UIViewController *)destination source:(UIViewController *)source;
++ (instancetype)routerFromView:(UIView *)destination source:(UIView *)source;
+
 @end
 
-extern _Nullable Class _ZIKViewRouterToView(Protocol *viewProtocol);
+extern ZIKAnyViewRouterType *_Nullable _ZIKViewRouterToView(Protocol *viewProtocol);
 
-extern _Nullable Class _ZIKViewRouterToModule(Protocol *configProtocol);
+extern ZIKAnyViewRouterType *_Nullable _ZIKViewRouterToModule(Protocol *configProtocol);
 
 ///Private method for ZRouter.
-extern _Nullable Class _swift_ZIKViewRouterToView(id viewProtocol);
+extern ZIKAnyViewRouterType *_Nullable _swift_ZIKViewRouterToView(id viewProtocol);
 ///Private method for ZRouter.
-extern _Nullable Class _swift_ZIKViewRouterToModule(id configProtocol);
+extern ZIKAnyViewRouterType *_Nullable _swift_ZIKViewRouterToModule(id configProtocol);
 
 NS_ASSUME_NONNULL_END

@@ -46,7 +46,7 @@ class SwiftSampleViewRouter: ZIKViewRouter<SwiftSampleViewController, SwiftSampl
         return destination
     }
     
-    override static func destinationPrepared(_ destination: SwiftSampleViewController) -> Bool {
+    override func destinationFromExternalPrepared(destination: SwiftSampleViewController) -> Bool {
         if (destination.injectedAlertRouter != nil) {
             return true
         }

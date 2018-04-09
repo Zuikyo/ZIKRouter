@@ -16,6 +16,8 @@
 #import <objc/runtime.h>
 #import <UIKit/UIKit.h>
 #import "ZIKViewRouterInternal.h"
+#import "ZIKBlockViewRouter.h"
+#import "ZIKViewRouterType.h"
 
 static CFMutableDictionaryRef _destinationProtocolToRouterMap;
 static CFMutableDictionaryRef _moduleConfigProtocolToRouterMap;
@@ -86,6 +88,20 @@ static NSMutableArray<Class> *_routerClasses;
     ZIKRouter_replaceMethodWithMethod(aClass, @selector(perform),
                                       ZIKViewRouterClass, @selector(ZIKViewRouter_hook_seguePerform));
 #pragma clang diagnostic pop
+}
+
++ (Class)routerTypeClass {
+    return [ZIKViewRouterType class];
+}
+
++ (nullable id)routeKeyForRouter:(ZIKRouter *)router {
+    if ([router isKindOfClass:[ZIKViewRouter class]] == NO) {
+        return nil;
+    }
+    if ([router isKindOfClass:[ZIKBlockViewRouter class]]) {
+        return [(ZIKBlockViewRouter *)router route];
+    }
+    return [router class];
 }
 
 + (NSLock *)lock {

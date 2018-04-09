@@ -58,12 +58,15 @@
 
 @end
 
+#import "ZIKPerformRouteConfiguration+Route.h"
+
 @implementation ZIKPerformRouteConfiguration
 
 - (id)copyWithZone:(nullable NSZone *)zone {
     ZIKPerformRouteConfiguration *config = [super copyWithZone:zone];
     config.prepareDestination = self.prepareDestination;
     config.routeCompletion = self.routeCompletion;
+    config.route = self.route;
     return config;
 }
 

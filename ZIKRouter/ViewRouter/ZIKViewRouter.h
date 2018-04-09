@@ -73,6 +73,8 @@ NS_ASSUME_NONNULL_BEGIN
 ///Router doesn't support all routeTypes, for example, router for a UIView destination can't support those UIViewController's routeTypes
 + (BOOL)supportRouteType:(ZIKViewRouteType)type;
 
+#pragma mark Unavailable
+
 + (nullable instancetype)performRoute NS_UNAVAILABLE;
 + (nullable instancetype)performWithConfiguring:(void(NS_NOESCAPE ^)(RouteConfig config))configBuilder
                                        removing:(void(NS_NOESCAPE ^ _Nullable)(ZIKViewRemoveConfiguration *config))removeConfigBuilder NS_UNAVAILABLE;
@@ -99,6 +101,8 @@ NS_ASSUME_NONNULL_BEGIN
                                        routeRemoving:(void(NS_NOESCAPE ^ _Nullable)(ZIKViewRemoveConfiguration *config,
                                                                                     void(^prepareDest)(void(^prepare)(Destination dest))
                                                                                     ))removeConfigBuilder NS_UNAVAILABLE;
+
+#pragma mark Perform
 
 /**
  Perform route from source view to destination view.
@@ -324,7 +328,7 @@ NS_ASSUME_NONNULL_BEGIN
  
  @param router The router where error happens.
  @param routeAction The action where error happens.
- @param error Error in kZIKViewRouteErrorDomain or domain from subclass router, see ZIKViewRouteError for detail.
+ @param error Error in ZIKViewRouteErrorDomain or domain from subclass router, see ZIKViewRouteError for detail.
  */
 typedef void(^ZIKViewRouteGlobalErrorHandler)(__kindof ZIKViewRouter * _Nullable router, ZIKRouteAction routeAction, NSError *error);
 

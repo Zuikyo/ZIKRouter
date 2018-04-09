@@ -13,12 +13,17 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-@class ZIKPerformRouteConfiguration;
-@class ZIKRemoveRouteConfiguration;
+@class ZIKPerformRouteConfiguration, ZIKRemoveRouteConfiguration, ZIKRoute;
 
-NS_SWIFT_UNAVAILABLE("ZIKRouterType is a fake class")
-///Fake class to use ZIKRouter class type with compile time checking. The real object is Class of ZIKRouter, so these instance methods are actually class methods in ZIKRouter class. Don't check whether a type is kind of ZIKRouterType.
+///Wrapper to use ZIKRouter class type or ZIKRoute with compile time checking. These instance methods are actually class methods in ZIKRouter class.
 @interface ZIKRouterType<__covariant Destination: id, __covariant RouteConfig: ZIKPerformRouteConfiguration *, __covariant RemoveConfig: ZIKRemoveRouteConfiguration *> : NSObject
+@property (nonatomic, strong, readonly, nullable) Class routerClass;
+@property (nonatomic, strong, readonly, nullable) ZIKRoute *route;
+
+- (nullable instancetype)initWithRouterClass:(Class)routerClass NS_DESIGNATED_INITIALIZER;
+- (nullable instancetype)initWithRoute:(ZIKRoute *)route NS_DESIGNATED_INITIALIZER;
+
++ (nullable instancetype)tryMakeRouterTypeForRoute:(id)route;
 
 #pragma mark Factory
 
@@ -35,7 +40,7 @@ NS_SWIFT_UNAVAILABLE("ZIKRouterType is a fake class")
 - (nullable Destination)makeDestinationWithPreparation:(void(^ _Nullable)(Destination destination))prepare;
 
 ///Synchronously get destination, and prepare the destination.
-- (nullable Destination)makeDestinationWithConfiguring:(void(^ _Nullable)(RouteConfig config))configBuilder;
+- (nullable Destination)makeDestinationWithConfiguring:(void(NS_NOESCAPE ^ _Nullable)(RouteConfig config))configBuilder;
 
 /**
  Synchronously get destination, and prepare the destination in a type safe way inferred by generic parameters.
@@ -43,15 +48,19 @@ NS_SWIFT_UNAVAILABLE("ZIKRouterType is a fake class")
  @param configBuilder Type safe builder to build configuration, `prepareDest` is for setting `prepareDestination` block for configuration (it's an escaping block so use weakSelf in it), `prepareModule` is for setting custom route config.
  @return The prepared destination.
  */
-- (nullable Destination)makeDestinationWithStrictConfiguring:(void(^ _Nullable)(RouteConfig config,
-                                                                                void(^prepareDest)(void(^prepare)(Destination dest)),
-                                                                                void(^prepareModule)(void(NS_NOESCAPE ^prepare)(RouteConfig module))
-                                                                                ))configBuilder;
+- (nullable Destination)makeDestinationWithStrictConfiguring:(void(NS_NOESCAPE ^ _Nullable)(RouteConfig config,
+                                                                                            void(^prepareDest)(void(^prepare)(Destination dest)),
+                                                                                            void(^prepareModule)(void(NS_NOESCAPE ^prepare)(RouteConfig module))
+                                                                                            ))configBuilder;
 
-- (nullable Destination)makeDestinationWithRouteConfiguring:(void(^ _Nullable)(RouteConfig config,
-                                                                               void(^prepareDest)(void(^prepare)(Destination dest)),
-                                                                               void(^prepareModule)(void(NS_NOESCAPE ^prepare)(RouteConfig module))
-                                                                               ))configBuilder API_DEPRECATED_WITH_REPLACEMENT("-makeDestinationWithStrictConfiguring:", ios(7.0, 7.0));
+- (nullable Destination)makeDestinationWithRouteConfiguring:(void(NS_NOESCAPE ^ _Nullable)(RouteConfig config,
+                                                                                           void(^prepareDest)(void(^prepare)(Destination dest)),
+                                                                                           void(^prepareModule)(void(NS_NOESCAPE ^prepare)(RouteConfig module))
+                                                                                           ))configBuilder API_DEPRECATED_WITH_REPLACEMENT("-makeDestinationWithStrictConfiguring:", ios(7.0, 7.0));
+
+#pragma mark 
+
++ (RemoveConfig)defaultRemoveConfiguration;
 
 #pragma mark Unavailable
 

@@ -16,25 +16,13 @@
 
 + (ZIKDestinationViewRouterType<id<ZIKViewRoutable>, ZIKViewRouteConfiguration *> *(^)(Protocol *))toView {
     return ^(Protocol *viewProtocol) {
-        return _ZIKViewRouterToView(viewProtocol);
+        return (ZIKDestinationViewRouterType *)_ZIKViewRouterToView(viewProtocol);
     };
 }
 
 + (ZIKModuleViewRouterType<id<ZIKRoutableView>, id<ZIKViewModuleRoutable>, ZIKViewRouteConfiguration *> *(^)(Protocol *))toModule {
     return ^(Protocol *configProtocol) {
-        return _ZIKViewRouterToModule(configProtocol);
-    };
-}
-
-+ (Class(^)(Protocol<ZIKViewRoutable> *))classToView {
-    return ^(Protocol *viewProtocol) {
-        return _ZIKViewRouterToView(viewProtocol);
-    };
-}
-
-+ (Class(^)(Protocol<ZIKViewModuleRoutable> *))classToModule {
-    return ^(Protocol *configProtocol) {
-        return _ZIKViewRouterToModule(configProtocol);
+        return (ZIKModuleViewRouterType *)_ZIKViewRouterToModule(configProtocol);
     };
 }
 
@@ -43,9 +31,6 @@
 
 #pragma clang diagnostic push
 #pragma clang diagnostic ignored "-Wincomplete-implementation"
-
-@implementation ZIKViewRouterType
-@end
 
 @implementation ZIKDestinationViewRouterType
 @end

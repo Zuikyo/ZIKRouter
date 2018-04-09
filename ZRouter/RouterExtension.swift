@@ -52,3 +52,51 @@ public extension ServiceRouterExtension {
 extension ZIKServiceRouter: ServiceRouterExtension {
     
 }
+
+// MARK: View Route Extension
+
+///Add Swift methods for ZIKViewRoute
+
+public protocol ViewRouteExtension: class {
+    func register<Protocol>(_ routableView: RoutableView<Protocol>) -> Self
+    func register<Protocol>(_ routableViewModule: RoutableViewModule<Protocol>) -> Self
+}
+
+public extension ViewRouteExtension {
+    func register<Protocol>(_ routableView: RoutableView<Protocol>) -> Self {
+        Registry.register(routableView, forRoute: self)
+        return self
+    }
+    func register<Protocol>(_ routableViewModule: RoutableViewModule<Protocol>) -> Self {
+        Registry.register(routableViewModule, forRoute: self)
+        return self
+    }
+}
+
+extension ZIKViewRoute: ViewRouteExtension {
+    
+}
+
+// MARK: Service Route Extension
+
+///Add Swift methods for ZIKServiceRoute
+
+public protocol ServiceRouteExtension: class {
+    func register<Protocol>(_ routableService: RoutableService<Protocol>) -> Self
+    func register<Protocol>(_ routableServiceModule: RoutableServiceModule<Protocol>) -> Self
+}
+
+public extension ServiceRouteExtension {
+    func register<Protocol>(_ routableService: RoutableService<Protocol>) -> Self {
+        Registry.register(routableService, forRoute: self)
+        return self
+    }
+    func register<Protocol>(_ routableServiceModule: RoutableServiceModule<Protocol>) -> Self {
+        Registry.register(routableServiceModule, forRoute: self)
+        return self
+    }
+}
+
+extension ZIKServiceRoute: ServiceRouteExtension {
+    
+}
