@@ -10,6 +10,7 @@
 #import "ZIKRouterInternal.h"
 #import "ZIKRouteConfiguration.h"
 #import "ZIKRouteRegistryInternal.h"
+#import "ZIKRouteConfigurationPrivate.h"
 #import "ZIKPerformRouteConfiguration+Route.h"
 
 @interface ZIKRoute()
@@ -132,22 +133,66 @@
 - (void(^)(ZIKPerformRouteConfiguration *config))_injectedConfigBuilder:(void(^)(ZIKPerformRouteConfiguration *config))builder {
     return ^(ZIKPerformRouteConfiguration *configuration) {
         configuration.route = self;
+        ZIKPerformRouteConfiguration *injected = [self defaultRouteConfigurationFromBlock];
+        if (injected && configuration->_injectable != NULL) {
+            *configuration->_injectable = injected;
+            configuration->_injectable = NULL;
+        }
         if (builder) {
-            builder(configuration);
+            builder(injected);
         }
     };
 }
 
-- (void (^)(ZIKPerformRouteConfiguration * _Nonnull, void (^ _Nonnull)(void (^ _Nonnull)(id _Nonnull)), void (^ _Nonnull)(void (^ _Nonnull)(ZIKPerformRouteConfiguration * _Nonnull))))_injectedStrictConfigBuilder:(void (^)(ZIKPerformRouteConfiguration * _Nonnull,
-                                                                                                                                                                                                                        void (^ _Nonnull)(void (^ _Nonnull)(id _Nonnull)),
-                                                                                                                                                                                                                        void (^ _Nonnull)(void (^ _Nonnull)(ZIKPerformRouteConfiguration * _Nonnull))
-                                                                                                                                                                                                                        ))builder {
+- (void(^)(ZIKRemoveRouteConfiguration *config))_injectedRemoveConfigBuilder:(void(^)(ZIKRemoveRouteConfiguration *config))builder {
+    return ^(ZIKRemoveRouteConfiguration *configuration) {
+        ZIKRemoveRouteConfiguration *injected = [self defaultRemoveRouteConfigurationFromBlock];
+        if (injected && configuration->_injectable != NULL) {
+            *configuration->_injectable = injected;
+            configuration->_injectable = NULL;
+        }
+        if (builder) {
+            builder(injected);
+        }
+    };
+}
+
+- (void (^)(ZIKPerformRouteConfiguration * _Nonnull, void (^ _Nonnull)(void (^ _Nonnull)(id _Nonnull)),
+            void (^ _Nonnull)(void (^ _Nonnull)(ZIKPerformRouteConfiguration * _Nonnull))))
+_injectedStrictConfigBuilder:
+(void (^)(ZIKPerformRouteConfiguration * _Nonnull,
+ void (^ _Nonnull)(void (^ _Nonnull)(id _Nonnull)),
+ void (^ _Nonnull)(void (^ _Nonnull)(ZIKPerformRouteConfiguration * _Nonnull)))
+ )builder {
     return ^(ZIKPerformRouteConfiguration * _Nonnull configuration,
              void (^ _Nonnull prepareDestination)(void (^ _Nonnull)(id _Nonnull)),
              void (^ _Nonnull prepareModule)(void (^ _Nonnull)(ZIKPerformRouteConfiguration * _Nonnull))) {
         configuration.route = self;
+        ZIKPerformRouteConfiguration *injected = [self defaultRouteConfigurationFromBlock];
+        if (injected && *configuration->_injectable != NULL) {
+            *configuration->_injectable = injected;
+            configuration->_injectable = NULL;
+        }
         if (builder) {
             builder(configuration, prepareDestination, prepareModule);
+        }
+    };
+}
+
+- (void (^)(ZIKRemoveRouteConfiguration * _Nonnull,
+            void (^ _Nonnull)(void (^ _Nonnull)(id _Nonnull))))
+_injectedStrictRemoveConfigBuilder:
+(void (^)(ZIKRemoveRouteConfiguration * _Nonnull,
+ void (^ _Nonnull)(void (^ _Nonnull)(id _Nonnull)))
+ )builder {
+    return ^(ZIKRemoveRouteConfiguration * _Nonnull configuration, void (^ _Nonnull prepareDestination)(void (^ _Nonnull)(id _Nonnull))) {
+        ZIKRemoveRouteConfiguration *injected = [self defaultRemoveRouteConfigurationFromBlock];
+        if (injected && *configuration->_injectable != NULL) {
+            *configuration->_injectable = injected;
+            configuration->_injectable = NULL;
+        }
+        if (builder) {
+            builder(configuration, prepareDestination);
         }
     };
 }
@@ -163,12 +208,8 @@
 }
 
 - (id)initWithConfiguring:(void(^)(ZIKPerformRouteConfiguration *configuration))configBuilder removing:(void(^ _Nullable)(ZIKRemoveRouteConfiguration *configuration))removeConfigBuilder {
-    configBuilder = ^(ZIKPerformRouteConfiguration *configuration) {
-        configuration.route = self;
-        if (configBuilder) {
-            configBuilder(configuration);
-        }
-    };
+    configBuilder = [self _injectedConfigBuilder:configBuilder];
+    removeConfigBuilder = [self _injectedRemoveConfigBuilder:removeConfigBuilder];
     return [[[self routerClass] alloc] initWithConfiguring:configBuilder removing:removeConfigBuilder];
 }
 
@@ -179,15 +220,8 @@
                  strictRemoving:(void (^ _Nullable)(ZIKRemoveRouteConfiguration * _Nonnull,
                                                     void (^ _Nonnull)(void (^ _Nonnull)(id _Nonnull))
                                                     ))removeConfigBuilder {
-    configBuilder = ^(ZIKPerformRouteConfiguration * _Nonnull configuration,
-                      void (^ _Nonnull prepareDestination)(void (^ _Nonnull)(id _Nonnull)),
-                      void (^ _Nonnull prepareModule)(void (^ _Nonnull)(ZIKPerformRouteConfiguration * _Nonnull))
-                      ) {
-        configuration.route = self;
-        if (configBuilder) {
-            configBuilder(configuration, prepareDestination, prepareModule);
-        }
-    };
+    configBuilder = [self _injectedStrictConfigBuilder:configBuilder];
+    removeConfigBuilder = [self _injectedStrictRemoveConfigBuilder:removeConfigBuilder];
     return [[[self routerClass] alloc] initWithStrictConfiguring:configBuilder strictRemoving:removeConfigBuilder];
 }
 
@@ -208,6 +242,7 @@
 
 - (id)performWithConfiguring:(void(^)(ZIKPerformRouteConfiguration *configuration))configBuilder removing:(void(^)(ZIKRemoveRouteConfiguration *configuration))removeConfigBuilder {
     configBuilder = [self _injectedConfigBuilder:configBuilder];
+    removeConfigBuilder = [self _injectedRemoveConfigBuilder:removeConfigBuilder];
     return [[self routerClass] performWithConfiguring:configBuilder removing:removeConfigBuilder];
 }
 
@@ -233,6 +268,7 @@
                                              void (^ _Nonnull)(void (^ _Nonnull)(id _Nonnull))
                                              ))removeConfigBuilder {
     configBuilder = [self _injectedStrictConfigBuilder:configBuilder];
+    removeConfigBuilder = [self _injectedStrictRemoveConfigBuilder:removeConfigBuilder];
     return [[self routerClass] performWithStrictConfiguring:configBuilder strictRemoving:removeConfigBuilder];
 }
 
@@ -243,6 +279,8 @@
                     routeRemoving:(void (^)(ZIKRemoveRouteConfiguration * _Nonnull,
                                             void (^ _Nonnull)(void (^ _Nonnull)(id _Nonnull))
                                             ))removeConfigBuilder {
+    configBuilder = [self _injectedStrictConfigBuilder:configBuilder];
+    removeConfigBuilder = [self _injectedStrictRemoveConfigBuilder:removeConfigBuilder];
     return [self performWithStrictConfiguring:configBuilder strictRemoving:removeConfigBuilder];
 }
 
@@ -281,21 +319,37 @@
 #pragma clang diagnostic pop
 
 - (ZIKPerformRouteConfiguration *)defaultRouteConfiguration {
-    ZIKPerformRouteConfiguration *config;
-    if (self.makeDefaultConfigurationBlock) {
-        config = self.makeDefaultConfigurationBlock();
-    } else {
-        config = [[self routerClass] defaultRouteConfiguration];
+    ZIKPerformRouteConfiguration *config = [self defaultRouteConfigurationFromBlock];
+    if (config) {
+        return config;
     }
+    config = [[self routerClass] defaultRouteConfiguration];
     config.route = self;
     return config;
 }
 
 - (ZIKRemoveRouteConfiguration *)defaultRemoveRouteConfiguration {
+    ZIKRemoveRouteConfiguration *config = [self defaultRemoveRouteConfigurationFromBlock];
+    if (config) {
+        return config;
+    }
+    return [[self routerClass] defaultRemoveConfiguration];
+}
+
+- (nullable ZIKPerformRouteConfiguration *)defaultRouteConfigurationFromBlock {
+    if (self.makeDefaultConfigurationBlock) {
+        ZIKPerformRouteConfiguration *config = self.makeDefaultConfigurationBlock();
+        config.route = self;
+        return config;
+    }
+    return nil;
+}
+
+- (nullable ZIKRemoveRouteConfiguration *)defaultRemoveRouteConfigurationFromBlock {
     if (self.makeDefaultRemoveConfigurationBlock) {
         return self.makeDefaultRemoveConfigurationBlock();
     }
-    return [[self routerClass] defaultRemoveConfiguration];
+    return nil;
 }
 
 - (NSString *)description {

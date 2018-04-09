@@ -1,5 +1,5 @@
 //
-//  ZIKRouteConfiguration+Private.h
+//  ZIKRouteConfigurationPrivate.h
 //  ZIKRouter
 //
 //  Created by zuik on 2017/10/26.
@@ -13,7 +13,9 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-@interface ZIKRouteConfiguration ()
+@interface ZIKRouteConfiguration () {
+    @public __strong ZIKRouteConfiguration **_injectable;
+}
 ///Error handler for router's performer, will reset to nil after perform.
 @property (nonatomic, copy, nullable) ZIKRouteErrorHandler performerErrorHandler;
 ///Success handler for router's performer, will reset to nil after perform.

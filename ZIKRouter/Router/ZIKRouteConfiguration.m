@@ -10,12 +10,12 @@
 //
 
 #import "ZIKRouteConfiguration.h"
+#import "ZIKRouteConfigurationPrivate.h"
 #import <objc/runtime.h>
 #import "ZIKRouterRuntime.h"
 
 @interface ZIKRouteConfiguration ()
-@property (nonatomic, copy, nullable) ZIKRouteErrorHandler performerErrorHandler;
-@property (nonatomic, copy, nullable) void(^performerSuccessHandler)(void);
+
 @end
 
 @implementation ZIKRouteConfiguration

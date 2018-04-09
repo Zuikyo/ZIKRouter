@@ -1,5 +1,5 @@
 //
-//  ZIKViewRouteConfiguration+Private.h
+//  ZIKViewRouteConfigurationPrivate.h
 //  ZIKRouter
 //
 //  Created by zuik on 2017/9/18.

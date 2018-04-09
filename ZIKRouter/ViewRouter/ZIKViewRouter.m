@@ -24,7 +24,7 @@
 #import "UIView+ZIKViewRouterPrivate.h"
 #import "UIViewController+ZIKViewRouterPrivate.h"
 #import "UIStoryboardSegue+ZIKViewRouterPrivate.h"
-#import "ZIKViewRouteConfiguration+Private.h"
+#import "ZIKViewRouteConfigurationPrivate.h"
 #import "ZIKViewRouterTypePrivate.h"
 
 NSNotificationName kZIKViewRouteWillPerformRouteNotification = @"kZIKViewRouteWillPerformRouteNotification";

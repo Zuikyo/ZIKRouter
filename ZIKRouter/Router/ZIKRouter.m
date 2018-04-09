@@ -10,7 +10,8 @@
 //
 
 #import "ZIKRouter.h"
-#import "ZIKRouteConfiguration+Private.h"
+#import "ZIKRouteConfigurationPrivate.h"
+
 #import <objc/runtime.h>
 
 ZIKRouteAction const ZIKRouteActionInit = @"ZIKRouteActionInit";
@@ -46,15 +47,24 @@ NSString *kZIKRouterErrorDomain = @"kZIKRouterErrorDomain";
 
 - (instancetype)initWithConfiguring:(void(^)(ZIKPerformRouteConfiguration *configuration))configBuilder removing:(void(^ _Nullable)(ZIKRemoveRouteConfiguration *configuration))removeConfigBuilder {
     NSParameterAssert(configBuilder);
-    
     ZIKPerformRouteConfiguration *configuration = [[self class] defaultRouteConfiguration];
     if (configBuilder) {
+        ZIKPerformRouteConfiguration *injected;
+        configuration->_injectable = &injected;
         configBuilder(configuration);
+        if (injected) {
+            configuration = injected;
+        }
     }
     ZIKRemoveRouteConfiguration *removeConfiguration;
     if (removeConfigBuilder) {
         removeConfiguration = [[self class] defaultRemoveConfiguration];
+        ZIKRemoveRouteConfiguration *injected;
+        removeConfiguration->_injectable = &injected;
         removeConfigBuilder(removeConfiguration);
+        if (injected) {
+            removeConfiguration = injected;
+        }
     }
     return [self initWithConfiguration:configuration removeConfiguration:removeConfiguration];
 }
@@ -69,6 +79,7 @@ NSString *kZIKRouterErrorDomain = @"kZIKRouterErrorDomain";
     NSParameterAssert(configBuilder);
     ZIKPerformRouteConfiguration *configuration = [[self class] defaultRouteConfiguration];
     if (configBuilder) {
+        configuration->_injectable = &configuration;
         void(^prepareDest)(void(^)(id)) = ^(void(^prepare)(id dest)) {
             if (prepare) {
                 configuration.prepareDestination = prepare;
@@ -84,6 +95,7 @@ NSString *kZIKRouterErrorDomain = @"kZIKRouterErrorDomain";
     ZIKRemoveRouteConfiguration *removeConfiguration;
     if (removeConfigBuilder) {
         removeConfiguration = [[self class] defaultRemoveConfiguration];
+        removeConfiguration->_injectable = &removeConfiguration;
         void(^prepareDest)(void(^)(id)) = ^(void(^prepare)(id dest)) {
             if (prepare) {
                 removeConfiguration.prepareDestination = prepare;
