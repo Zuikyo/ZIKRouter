@@ -21,7 +21,14 @@ protocol PureSwiftSampleViewInput {
 
 // Show how ZIKRouter working in a swifty way.
 class SwiftSampleViewController: UIViewController, PureSwiftSampleViewInput, SwiftSampleViewInput, ZIKInfoViewDelegate, UIViewControllerPreviewingDelegate {
-    var infoRouter: ViewRouter<ZIKInfoViewProtocol, ViewRouteConfig>?
+    
+    var anyRouter: ZIKAnyViewRouter?
+    var infoRouter: ViewRouter<ZIKInfoViewProtocol, ViewRouteConfig>? {
+        willSet { anyRouter = newValue?.router }
+    }
+    var switchableRouter: ViewRouter<Any, ViewRouteConfig>? {
+        willSet { anyRouter = newValue?.router }
+    }
     var alertRouter: ViewRouter<Any, RequiredCompatibleAlertConfigProtocol>?
     
     //You can inject alertRouter from outside, then use the router directly
@@ -34,6 +41,7 @@ class SwiftSampleViewController: UIViewController, PureSwiftSampleViewInput, Swi
     }
     
     @IBAction func testRouteForView(_ sender: Any) {
+        // Not necessary to hold the router, here is just for demonstrating
         infoRouter = Router.perform(
             to: RoutableView<ZIKInfoViewProtocol>(),
             from: self,
@@ -48,7 +56,7 @@ class SwiftSampleViewController: UIViewController, PureSwiftSampleViewInput, Swi
     }
     
     func handleRemoveInfoViewController(_ infoViewController: UIViewController!) {
-        guard let router = infoRouter, router.canRemove else {
+        guard let router = anyRouter, router.canRemove() else {
             return
         }
         router.removeRoute(successHandler: {
@@ -56,7 +64,7 @@ class SwiftSampleViewController: UIViewController, PureSwiftSampleViewInput, Swi
         }, errorHandler: { (action, error) in
             print("remove failed,error:%@",error)
         })
-        infoRouter = nil
+        anyRouter = nil
     }
     
     @IBAction func testRouteForConfig(_ sender: Any) {
@@ -93,7 +101,7 @@ class SwiftSampleViewController: UIViewController, PureSwiftSampleViewInput, Swi
             switchableView = SwitchableView(RoutableView<SwiftSampleViewInput>())
         }
         
-        Router.to(switchableView)?
+        switchableRouter = Router.to(switchableView)?
             .perform(from: self,
                      configuring: { config,_,_  in
                         config.routeType = .push

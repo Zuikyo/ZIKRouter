@@ -14,6 +14,8 @@
 
 #include <stdio.h>
 
+#if DEBUG
+
 typedef const void *ZIKImageRef;
 
 ///Get beginning address of a loaded image.
@@ -36,4 +38,6 @@ extern const char *ZIKSymbolNameForAddress(void *address);
 
 ///Get image file path of a address.
 extern const char *ZIKImagePathForAddress(void *address);
+
+#endif
 #endif

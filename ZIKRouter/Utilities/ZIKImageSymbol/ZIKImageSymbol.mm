@@ -9,6 +9,8 @@
 //  LICENSE file in the root directory of this source tree.
 //
 
+#if DEBUG
+
 #import "ZIKImageSymbol.h"
 #import "ZIKFindSymbol.h"
 
@@ -44,3 +46,4 @@
 
 @end
 
+#endif

@@ -11,6 +11,8 @@
 
 //https://github.com/r-plus/substrate/blob/master/DarwinFindSymbol.cpp
 
+#if DEBUG
+
 #include "ZIKFindSymbol.h"
 
 #include <mach/mach.h>
@@ -313,3 +315,5 @@ const char *ZIKImagePathForAddress(void *address) {
     dladdr(address, &dlinfo);
     return dlinfo.dli_fname;
 }
+
+#endif

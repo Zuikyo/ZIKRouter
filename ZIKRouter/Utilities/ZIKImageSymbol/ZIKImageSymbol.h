@@ -13,6 +13,8 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
+#if DEBUG
+
 @interface ZIKImageSymbol : NSObject
 
 typedef const void *ZIKImageRef;
@@ -38,5 +40,7 @@ typedef const void *ZIKImageRef;
 ///Get image file path of a address.
 + (nullable NSString *)imagePathForAddress:(void *)address;
 @end
+
+#endif
 
 NS_ASSUME_NONNULL_END
