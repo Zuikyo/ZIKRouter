@@ -31,7 +31,7 @@ NSNotificationName kZIKViewRouteWillPerformRouteNotification = @"kZIKViewRouteWi
 NSNotificationName kZIKViewRouteDidPerformRouteNotification = @"kZIKViewRouteDidPerformRouteNotification";
 NSNotificationName kZIKViewRouteWillRemoveRouteNotification = @"kZIKViewRouteWillRemoveRouteNotification";
 NSNotificationName kZIKViewRouteDidRemoveRouteNotification = @"kZIKViewRouteDidRemoveRouteNotification";
-NSNotificationName kZIKViewRouteRemoveRouteCanceledNotification = @"kZIKViewRouteRemoveRouteCanceledNotification";
+NSNotificationName kZIKViewRouteRemoveRouteCancelledNotification = @"kZIKViewRouteRemoveRouteCancelledNotification";
 
 static ZIKViewRouteGlobalErrorHandler g_globalErrorHandler;
 static dispatch_semaphore_t g_globalErrorSema;
@@ -152,7 +152,7 @@ static NSMutableArray *g_preparingUIViewRouters;
         [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(_handleDidPerformRouteNotification:) name:kZIKViewRouteDidPerformRouteNotification object:nil];
         [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(_handleWillRemoveRouteNotification:) name:kZIKViewRouteWillRemoveRouteNotification object:nil];
         [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(_handleDidRemoveRouteNotification:) name:kZIKViewRouteDidRemoveRouteNotification object:nil];
-        [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(_handleRemoveRouteCanceledNotification:) name:kZIKViewRouteRemoveRouteCanceledNotification object:nil];
+        [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(_handleRemoveRouteCancelledNotification:) name:kZIKViewRouteRemoveRouteCancelledNotification object:nil];
     }
     return self;
 }
@@ -309,10 +309,15 @@ static NSMutableArray *g_preparingUIViewRouters;
     return YES;
 }
 
+#pragma clang diagnostics push
+#pragma clang diagnostic ignored "-Wdeprecated-declarations"
+
 - (BOOL)destinationFromExternalPrepared:(id)destination {
     NSAssert(self != [ZIKViewRouter class], @"Check destination prepared with it's router.");
     return [[self class] destinationPrepared:destination];
 }
+
+#pragma clang diagnostics pop
 
 - (void)prepareDestination:(id)destination configuration:(__kindof ZIKViewRouteConfiguration *)configuration {
     NSAssert([self class] != [ZIKViewRouter class], @"Prepare destination with it's router.");
@@ -1659,7 +1664,7 @@ destinationStateBeforeRoute:(ZIKPresentationState *)destinationStateBeforeRoute
     }
 }
 
-- (void)_handleRemoveRouteCanceledNotification:(NSNotification *)note {
+- (void)_handleRemoveRouteCancelledNotification:(NSNotification *)note {
     id destination = note.object;
     if (!self.destination || self.destination != destination) {
         return;
@@ -1720,7 +1725,7 @@ static  ZIKViewRouterType *_Nullable _routerTypeToRegisteredView(Class viewClass
     if (removing) {
         [destination setZix_removing:NO];
         if (isRoutableView) {
-            [[NSNotificationCenter defaultCenter] postNotificationName:kZIKViewRouteRemoveRouteCanceledNotification object:destination];
+            [[NSNotificationCenter defaultCenter] postNotificationName:kZIKViewRouteRemoveRouteCancelledNotification object:destination];
         }
     }
     if (isRoutableView) {

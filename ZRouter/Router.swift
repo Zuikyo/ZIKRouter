@@ -134,7 +134,7 @@ public extension Router {
     ///   - configure: Configure the configuration for performing view route.
     ///     - config: Config for view route.
     ///     - prepareDestination: Prepare destination before performing route. It's an escaping block, use weakSelf to avoid retain cycle.
-    ///     - prepareModule: Prepare custom moudle config.
+    ///     - prepareModule: Prepare custom module config.
     ///   - removeConfigure: Configure the configuration for removing view.
     ///     - config: Config for removing view route.
     ///     - prepareDestination: Prepare destination before removing route. It's an escaping block, use weakSelf to avoid retain cycle.
@@ -142,12 +142,11 @@ public extension Router {
     @discardableResult public static func perform<Destination>(
         to routableView: RoutableView<Destination>,
         from source: ZIKViewRouteSource?,
-        configuring configure: @escaping (ViewRouteConfig, (@escaping (Destination) -> Void) -> Void, ((ViewRouteConfig) -> Void) -> Void) -> Void,
+        configuring configure: (ViewRouteConfig, (@escaping (Destination) -> Void) -> Void, ((ViewRouteConfig) -> Void) -> Void) -> Void,
         removing removeConfigure: ((ViewRemoveConfig, (@escaping (Destination) -> Void) -> Void) -> Void)? = nil
         ) -> ViewRouter<Destination, ViewRouteConfig>? {
         let routerType = Registry.router(to: routableView)
-        let router = routerType?.perform(from: source, configuring: configure, removing: removeConfigure)
-        return router
+        return routerType?.perform(from: source, configuring: configure, removing: removeConfigure)
     }
     
     /// Perform route with view protocol and route type.
@@ -160,7 +159,8 @@ public extension Router {
     @discardableResult public static func perform<Destination>(
         to routableView: RoutableView<Destination>,
         from source: ZIKViewRouteSource?,
-        routeType: ViewRouteType) -> ViewRouter<Destination, ViewRouteConfig>? {
+        routeType: ViewRouteType
+        ) -> ViewRouter<Destination, ViewRouteConfig>? {
         return perform(to: routableView, from: source, configuring: { (config, _, _) in
             config.routeType = routeType
         })
@@ -174,18 +174,17 @@ public extension Router {
     ///   - configure: Configure the configuration for view route.
     ///     - config: Config for view route.
     ///     - prepareDestination: Prepare destination before performing route. It's an escaping block, use weakSelf to avoid retain cycle.
-    ///     - prepareModule: Prepare custom moudle config.
+    ///     - prepareModule: Prepare custom module config.
     ///   - removeConfigure: Configure the configuration for removing view.
     /// - Returns: The view router.
     @discardableResult public static func perform<Module>(
         to routableViewModule: RoutableViewModule<Module>,
         from source: ZIKViewRouteSource?,
-        configuring configure: @escaping (ViewRouteConfig, (@escaping (Any) -> Void) -> Void, ((Module) -> Void) -> Void) -> Void,
+        configuring configure: (ViewRouteConfig, (@escaping (Any) -> Void) -> Void, ((Module) -> Void) -> Void) -> Void,
         removing removeConfigure: ((ViewRemoveConfig, (@escaping (Any) -> Void) -> Void) -> Void)? = nil
         ) -> ViewRouter<Any, Module>? {
         let routerType = Registry.router(to: routableViewModule)
-        let router = routerType?.perform(from: source, configuring: configure, removing: removeConfigure)
-        return router
+        return routerType?.perform(from: source, configuring: configure, removing: removeConfigure)
     }
     
     /// Perform route with view config protocol and route type.
@@ -198,7 +197,8 @@ public extension Router {
     @discardableResult public static func perform<Module>(
         to routableViewModule: RoutableViewModule<Module>,
         from source: ZIKViewRouteSource?,
-        routeType: ViewRouteType) -> ViewRouter<Any, Module>? {
+        routeType: ViewRouteType
+        ) -> ViewRouter<Any, Module>? {
         return perform(to: routableViewModule, from: source, configuring: { (config, _, _) in
             config.routeType = routeType
         })
@@ -211,17 +211,16 @@ public extension Router {
     ///   - configure: Configure the configuration for service route.
     ///     - config: Config for view route.
     ///     - prepareDestination: Prepare destination before performing route. It's an escaping block, use weakSelf to avoid retain cycle.
-    ///     - prepareModule: Prepare custom moudle config.
+    ///     - prepareModule: Prepare custom module config.
     ///   - removeConfigure: Configure the configuration for removing service.
     /// - Returns: The service router.
     @discardableResult public static func perform<Destination>(
         to routableService: RoutableService<Destination>,
-        configuring configure: @escaping (PerformRouteConfig, (@escaping (Destination) -> Void) -> Void, ((PerformRouteConfig) -> Void) -> Void) -> Void,
+        configuring configure: (PerformRouteConfig, (@escaping (Destination) -> Void) -> Void, ((PerformRouteConfig) -> Void) -> Void) -> Void,
         removing removeConfigure: ((RemoveRouteConfig, (@escaping (Any) -> Void) -> Void) -> Void)? = nil
         ) -> ServiceRouter<Destination, PerformRouteConfig>? {
         let routerType = Registry.router(to: routableService)
-        let router = routerType?.perform(configuring: configure, removing: removeConfigure)
-        return router
+        return routerType?.perform(configuring: configure, removing: removeConfigure)
     }
     
     /// Perform route with service module config protocol and prepare the module with the protocol.
@@ -231,12 +230,12 @@ public extension Router {
     ///   - configure: Configure the configuration for service route.
     ///     - config: Config for view route.
     ///     - prepareDestination: Prepare destination before performing route. It's an escaping block, use weakSelf to avoid retain cycle.
-    ///     - prepareModule: Prepare custom moudle config.
+    ///     - prepareModule: Prepare custom module config.
     ///   - removeConfigure: Configure the configuration for removing service.
     /// - Returns: The service router.
     @discardableResult public static func perform<Module>(
         to routableServiceModule: RoutableServiceModule<Module>,
-        configuring configure: @escaping (PerformRouteConfig, (@escaping (Any) -> Void) -> Void, ((Module) -> Void) -> Void) -> Void,
+        configuring configure: (PerformRouteConfig, (@escaping (Any) -> Void) -> Void, ((Module) -> Void) -> Void) -> Void,
         removing removeConfigure: ((RemoveRouteConfig, (@escaping (Any) -> Void) -> Void) -> Void)? = nil
         ) -> ServiceRouter<Any, Module>? {
         let routerType = Registry.router(to: routableServiceModule)
@@ -294,7 +293,7 @@ public extension Router {
     /// - Returns: The view destination.
     public static func makeDestination<Module>(
         to routableViewModule: RoutableViewModule<Module>,
-        configuring configure: @escaping (ViewRouteConfig, (@escaping (Any) -> Void) -> Void, ((Module) -> Void) -> Void) -> Void
+        configuring configure: (ViewRouteConfig, (@escaping (Any) -> Void) -> Void, ((Module) -> Void) -> Void) -> Void
         ) -> Any? {
         let routerClass = Registry.router(to: routableViewModule)
         return routerClass?.makeDestination(configuring: configure)
@@ -345,7 +344,7 @@ public extension Router {
     /// - Returns: The service destination.
     public static func makeDestination<Module>(
         to routableServiceModule: RoutableServiceModule<Module>,
-        configuring configure: @escaping (PerformRouteConfig, (@escaping (Any) -> Void) -> Void, ((Module) -> Void) -> Void) -> Void
+        configuring configure: (PerformRouteConfig, (@escaping (Any) -> Void) -> Void, ((Module) -> Void) -> Void) -> Void
         ) -> Any? {
         let routerClass = Registry.router(to: routableServiceModule)
         return routerClass?.makeDestination(configuring: configure)

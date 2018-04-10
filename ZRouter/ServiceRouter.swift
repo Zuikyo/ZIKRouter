@@ -11,7 +11,7 @@
 
 import ZIKRouter.Internal
 
-/// Swift Wrapper for ZIKServiceRouter class.
+/// Swift Wrapper of ZIKServiceRouter class for supporting pure Swift generic type.
 public class ServiceRouterType<Destination, ModuleConfig> {
     
     /// The router type to wrap.
@@ -32,12 +32,15 @@ public class ServiceRouterType<Destination, ModuleConfig> {
     ///   - configBuilder: Build the configuration for performing route.
     ///     - config: Config for performing route.
     ///     - prepareDestination: Prepare destination before performing route. It's an escaping block, use weakSelf to avoid retain cycle.
-    ///     - prepareModule: Prepare custom moudle config.
+    ///     - prepareModule: Prepare custom module config.
     ///   - removeConfigBuilder: Configure the configuration for removing route.
     ///     - config: Config for removing route.
     ///     - prepareDestination: Prepare destination before removing route. It's an escaping block, use weakSelf to avoid retain cycle.
     /// - Returns: The service router for this route.
-    public func perform(configuring configBuilder: (PerformRouteConfig, DestinationPreparation, ModulePreparation) -> Void, removing removeConfigBuilder: ((RemoveRouteConfig, DestinationPreparation) -> Void)? = nil) -> ServiceRouter<Destination, ModuleConfig>? {
+    public func perform(
+        configuring configBuilder: (PerformRouteConfig, DestinationPreparation, ModulePreparation) -> Void,
+        removing removeConfigBuilder: ((RemoveRouteConfig, DestinationPreparation) -> Void)? = nil
+        ) -> ServiceRouter<Destination, ModuleConfig>? {
         var removeBuilder: ((RemoveRouteConfig) -> Void)? = nil
         if let removeConfigBuilder = removeConfigBuilder {
             removeBuilder = { (config: RemoveRouteConfig) in
@@ -118,9 +121,9 @@ public class ServiceRouterType<Destination, ModuleConfig> {
     /// - Parameter configBuilder: Build the configuration for performing route.
     ///     - config: Config for performing route.
     ///     - prepareDestination: Prepare destination before performing route. It's an escaping block, use weakSelf to avoid retain cycle.
-    ///     - prepareModule: Prepare custom moudle config.
+    ///     - prepareModule: Prepare custom module config.
     /// - Returns: Destination
-    public func makeDestination(configuring configBuilder: @escaping (PerformRouteConfig, DestinationPreparation, ModulePreparation) -> Void) -> Destination? {
+    public func makeDestination(configuring configBuilder: (PerformRouteConfig, DestinationPreparation, ModulePreparation) -> Void) -> Destination? {
         let routerType = self.routerType
         let destination = routerType.makeDestination(configuring: { config in
             let prepareDestination = { (prepare: @escaping (Destination) -> Void) in
@@ -159,7 +162,7 @@ public class ServiceRouterType<Destination, ModuleConfig> {
     }
 }
 
-/// Swift Wrapper for ZIKServiceRouter.
+/// Swift Wrapper of ZIKServiceRouter for supporting pure Swift generic type.
 public class ServiceRouter<Destination, ModuleConfig> {
     /// The routed ZIKServiceRouter.
     public let router: ZIKAnyServiceRouter
@@ -208,7 +211,7 @@ public class ServiceRouter<Destination, ModuleConfig> {
     }
     
     /// Remove with success handler and error handler. If canRemove return false, this will failed.
-    public func removeRoute(successHandler performerSuccessHandler: (() -> Void)?, errorHandler performerErrorHandler: ((ZIKRouteAction, Error) -> Void)? = nil) {
+    public func removeRoute(successHandler performerSuccessHandler: (() -> Void)? = nil, errorHandler performerErrorHandler: ((ZIKRouteAction, Error) -> Void)? = nil) {
         router.removeRoute(successHandler: performerSuccessHandler, errorHandler: performerErrorHandler)
     }
     

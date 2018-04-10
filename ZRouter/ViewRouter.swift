@@ -11,7 +11,7 @@
 
 import ZIKRouter.Internal
 
-/// Swift Wrapper for ZIKViewRouter class.
+/// Swift Wrapper of ZIKViewRouter class for supporting pure Swift generic type.
 public class ViewRouterType<Destination, ModuleConfig> {
     
     /// The router type to wrap.
@@ -33,12 +33,16 @@ public class ViewRouterType<Destination, ModuleConfig> {
     ///   - configBuilder: Build the configuration for performing route.
     ///     - config: Config for view route.
     ///     - prepareDestination: Prepare destination before performing route. It's an escaping block, use weakSelf to avoid retain cycle.
-    ///     - prepareModule: Prepare custom moudle config.
+    ///     - prepareModule: Prepare custom module config.
     ///   - removeConfigBuilder: Configure the configuration for removing view.
     ///     - config: Config for removing view route.
     ///     - prepareDestination: Prepare destination before removing route. It's an escaping block, use weakSelf to avoid retain cycle.
     /// - Returns: The view router for this route.
-    @discardableResult public func perform(from source: ZIKViewRouteSource?, configuring configBuilder: (ViewRouteConfig, DestinationPreparation, ModulePreparation) -> Void, removing removeConfigBuilder: ((ViewRemoveConfig, DestinationPreparation) -> Void)? = nil) -> ViewRouter<Destination, ModuleConfig>? {
+    @discardableResult public func perform(
+        from source: ZIKViewRouteSource?,
+        configuring configBuilder: (ViewRouteConfig, DestinationPreparation, ModulePreparation) -> Void,
+        removing removeConfigBuilder: ((ViewRemoveConfig, DestinationPreparation) -> Void)? = nil
+        ) -> ViewRouter<Destination, ModuleConfig>? {
         var removeBuilder: ((ViewRemoveConfig) -> Void)? = nil
         if let removeConfigBuilder = removeConfigBuilder {
             removeBuilder = { (config: ViewRemoveConfig) in
@@ -89,7 +93,10 @@ public class ViewRouterType<Destination, ModuleConfig> {
     ///   - source: Source UIViewController or UIView. See ViewRouteConfig's source.
     ///   - routeType: The style of route.
     /// - Returns: The view router for this route.
-    @discardableResult public func perform(from source: ZIKViewRouteSource?, routeType: ViewRouteType) -> ViewRouter<Destination, ModuleConfig>? {
+    @discardableResult public func perform(
+        from source: ZIKViewRouteSource?,
+        routeType: ViewRouteType
+        ) -> ViewRouter<Destination, ModuleConfig>? {
         return perform(from: source, configuring: { (config, _, _) in
             config.routeType = routeType
         })
@@ -105,7 +112,12 @@ public class ViewRouterType<Destination, ModuleConfig> {
     ///   - configBuilder: Builder for config when perform route.
     ///   - removeConfigBuilder: Builder for config when remove route.
     /// - Returns: The view router for this route.
-    @discardableResult public func perform(onDestination destination: Destination, from source: ZIKViewRouteSource?, configuring configBuilder: (ViewRouteConfig, DestinationPreparation, ModulePreparation) -> Void, removing removeConfigBuilder: ((ViewRemoveConfig, DestinationPreparation) -> Void)? = nil) -> ViewRouter<Destination, ModuleConfig>? {
+    @discardableResult public func perform(
+        onDestination destination: Destination,
+        from source: ZIKViewRouteSource?,
+        configuring configBuilder: (ViewRouteConfig, DestinationPreparation, ModulePreparation) -> Void,
+        removing removeConfigBuilder: ((ViewRemoveConfig, DestinationPreparation) -> Void)? = nil
+        ) -> ViewRouter<Destination, ModuleConfig>? {
         var removeBuilder: ((ViewRemoveConfig) -> Void)? = nil
         if let removeConfigBuilder = removeConfigBuilder {
             removeBuilder = { (config: ViewRemoveConfig) in
@@ -153,7 +165,11 @@ public class ViewRouterType<Destination, ModuleConfig> {
     ///   - source: The source view.
     ///   - routeType: Route type to perform.
     /// - Returns: The view router for this route. If the destination is not registered with this router class, return nil and get assert failure.
-    @discardableResult public func perform(onDestination destination: Destination, from source: ZIKViewRouteSource?, routeType: ViewRouteType) -> ViewRouter<Destination, ModuleConfig>? {
+    @discardableResult public func perform(
+        onDestination destination: Destination,
+        from source: ZIKViewRouteSource?,
+        routeType: ViewRouteType
+        ) -> ViewRouter<Destination, ModuleConfig>? {
         return perform(onDestination: destination, from: source, configuring: { (config, _, _) in
             config.routeType = routeType
         })
@@ -168,7 +184,11 @@ public class ViewRouterType<Destination, ModuleConfig> {
     ///   - configBuilder: Builder for config when perform route.
     ///   - removeConfigBuilder: Builder for config when remove route.
     /// - Returns: The view router for this route. If the destination is not registered with this router class, return nil and get assert failure.
-    @discardableResult public func prepare(destination: Destination, configuring configBuilder: (ViewRouteConfig, DestinationPreparation, ModulePreparation) -> Void, removing removeConfigBuilder: ((ViewRemoveConfig, DestinationPreparation) -> Void)? = nil) -> ViewRouter<Destination, ModuleConfig>? {
+    @discardableResult public func prepare(
+        destination: Destination,
+        configuring configBuilder: (ViewRouteConfig, DestinationPreparation, ModulePreparation) -> Void,
+        removing removeConfigBuilder: ((ViewRemoveConfig, DestinationPreparation) -> Void)? = nil
+        ) -> ViewRouter<Destination, ModuleConfig>? {
         var removeBuilder: ((ViewRemoveConfig) -> Void)? = nil
         if let removeConfigBuilder = removeConfigBuilder {
             removeBuilder = { (config: ViewRemoveConfig) in
@@ -246,7 +266,7 @@ public class ViewRouterType<Destination, ModuleConfig> {
     /// - Parameter configBuilder: Build the configuration for performing route.
     ///     - config: Config for view route.
     ///     - prepareDestination: Prepare destination before performing route. It's an escaping block, use weakSelf to avoid retain cycle.
-    ///     - prepareModule: Prepare custom moudle config.
+    ///     - prepareModule: Prepare custom module config.
     /// - Returns: Destination
     public func makeDestination(configuring configBuilder: (ViewRouteConfig, DestinationPreparation, ModulePreparation) -> Void) -> Destination? {
         let destination = routerType.makeDestination(configuring: { config in
@@ -270,7 +290,7 @@ public class ViewRouterType<Destination, ModuleConfig> {
     }
 }
 
-/// Swift Wrapper for ZIKViewRouter.
+/// Swift Wrapper of ZIKViewRouter for supporting pure Swift generic type.
 public class ViewRouter<Destination, ModuleConfig> {
     
     /// The real routed ZIKViewRouter.
