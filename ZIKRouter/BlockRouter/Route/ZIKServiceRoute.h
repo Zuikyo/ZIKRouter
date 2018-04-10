@@ -9,6 +9,7 @@
 #import "ZIKRoute.h"
 #import "ZIKServiceRouter.h"
 
+///Use ZIKServiceRoute to add service route with blocks, rather than creating subclass of ZIKServiceRouter.
 @interface ZIKServiceRoute<__covariant Destination, __covariant RouteConfig: ZIKPerformRouteConfiguration *> : ZIKRoute<Destination, RouteConfig, ZIKRemoveRouteConfiguration *>
 
 @property (nonatomic, readonly) ZIKServiceRoute<Destination, RouteConfig> *(^registerDestination)(Class destinationClass);

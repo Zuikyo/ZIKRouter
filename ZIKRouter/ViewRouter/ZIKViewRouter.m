@@ -209,7 +209,6 @@ static NSMutableArray *g_preparingUIViewRouters;
 
 - (void)performWithConfiguration:(__kindof ZIKViewRouteConfiguration *)configuration {
     NSParameterAssert(configuration);
-    NSAssert([[[self class] defaultRouteConfiguration] isKindOfClass:[configuration class]], @"When using custom configuration class，you must override +defaultRouteConfiguration to return your custom configuration instance.");
     [[self class] increaseRecursiveDepth];
     if ([[self class] _validateInfiniteRecursion] == NO) {
         [self _callbackError_infiniteRecursionWithAction:ZIKRouteActionPerformRoute errorDescription:@"Infinite recursion for performing route detected, see -prepareDestination:configuration: for more detail. Recursive call stack:\n%@",[NSThread callStackSymbols]];
@@ -254,16 +253,12 @@ static NSMutableArray *g_preparingUIViewRouters;
             config.prepareDestination = prepare;
         }
         void(^routeCompletion)(id destination) = config.routeCompletion;
-        if (routeCompletion) {
-            config.routeCompletion = ^(id  _Nonnull destination) {
+        config.routeCompletion = ^(id  _Nonnull destination) {
+            if (routeCompletion) {
                 routeCompletion(destination);
-                dest = destination;
-            };
-        } else {
-            config.routeCompletion = ^(id  _Nonnull destination) {
-                dest = destination;
-            };
-        }
+            }
+            dest = destination;
+        };
     } removing:NULL];
     [router performRoute];
     return dest;
@@ -276,23 +271,20 @@ static NSMutableArray *g_preparingUIViewRouters;
         return nil;
     }
     __block id dest;
-    ZIKViewRouteConfiguration *configuration = [[self class] defaultRouteConfiguration];
-    if (configBuilder) {
-        configBuilder(configuration);
-    }
-    void(^routeCompletion)(id destination) = configuration.routeCompletion;
-    if (routeCompletion) {
+    ZIKViewRouter *router = [[self alloc] initWithConfiguring:^(ZIKPerformRouteConfiguration * _Nonnull config) {
+        ZIKViewRouteConfiguration *configuration = (ZIKViewRouteConfiguration *)config;
+        if (configBuilder) {
+            configBuilder(configuration);
+        }
+        void(^routeCompletion)(id destination) = configuration.routeCompletion;
         configuration.routeCompletion = ^(id  _Nonnull destination) {
-            routeCompletion(destination);
+            if (routeCompletion) {
+                routeCompletion(destination);
+            }
             dest = destination;
         };
-    } else {
-        configuration.routeCompletion = ^(id  _Nonnull destination) {
-            dest = destination;
-        };
-    }
-    configuration.routeType = ZIKViewRouteTypeGetDestination;
-    ZIKViewRouter *router = [[self alloc] initWithConfiguration:configuration removeConfiguration:nil];
+        configuration.routeType = ZIKViewRouteTypeGetDestination;
+    } removing:nil];
     [router performRoute];
     return dest;
 }
@@ -3239,17 +3231,13 @@ static  ZIKViewRouterType *_Nullable _routerTypeToRegisteredView(Class viewClass
         NSAssert2(NO, @"Prepare for invalid destination (%@), this view is not registered with this router (%@)",destination,self);
         return nil;
     }
-    ZIKViewRouteConfiguration *configuration = [[self class] defaultRouteConfiguration];
-    configuration.routeType = ZIKViewRouteTypeGetDestination;
-    if (configBuilder) {
-        configBuilder(configuration);
-    }
-    ZIKViewRemoveConfiguration *removeConfiguration;
-    if (removeConfigBuilder) {
-        removeConfiguration = [self defaultRemoveConfiguration];
-        removeConfigBuilder(removeConfiguration);
-    }
-    ZIKViewRouter *router =  [[self alloc] initWithConfiguration:configuration removeConfiguration:removeConfiguration];
+    ZIKViewRouter *router =  [[self alloc] initWithConfiguring:^(ZIKPerformRouteConfiguration * _Nonnull config) {
+        ZIKViewRouteConfiguration *configuration = (ZIKViewRouteConfiguration *)config;
+        configuration.routeType = ZIKViewRouteTypeGetDestination;
+        if (configBuilder) {
+            configBuilder(configuration);
+        }
+    } removing:(void(^)(ZIKRemoveRouteConfiguration *))removeConfigBuilder];
     [router attachDestination:destination];
     [router prepareForPerformRouteOnDestination:destination];
     
@@ -3388,11 +3376,12 @@ ZIKAnyViewRouterType *_Nullable _ZIKViewRouterToModule(Protocol *configProtocol)
     }
     NSAssert([self _validateSupportedRouteTypesForUIView], @"Router for UIView only suppourts ZIKViewRouteTypeAddAsSubview, ZIKViewRouteTypeGetDestination and ZIKViewRouteTypeCustom, override +supportedRouteTypes in your router.");
     
-    ZIKViewRouteConfiguration *configuration = [self defaultRouteConfiguration];
-    configuration.autoCreated = YES;
-    configuration.routeType = ZIKViewRouteTypeAddAsSubview;
-    configuration.source = source;
-    ZIKViewRouter *router = [[self alloc] initWithConfiguration:configuration removeConfiguration:nil];
+    ZIKViewRouter *router = [[self alloc] initWithConfiguring:^(ZIKPerformRouteConfiguration * _Nonnull config) {
+        ZIKViewRouteConfiguration *configuration = (ZIKViewRouteConfiguration *)config;
+        configuration.autoCreated = YES;
+        configuration.routeType = ZIKViewRouteTypeAddAsSubview;
+        configuration.source = source;
+    } removing:nil];
     [router attachDestination:destination];
     
     return router;
@@ -3402,16 +3391,16 @@ ZIKAnyViewRouterType *_Nullable _ZIKViewRouterToModule(Protocol *configProtocol)
     NSParameterAssert([destination isKindOfClass:[UIViewController class]]);
     NSParameterAssert([source isKindOfClass:[UIViewController class]]);
     
-    ZIKViewRouteConfiguration *configuration = [self defaultRouteConfiguration];
-    configuration.autoCreated = YES;
-    configuration.routeType = ZIKViewRouteTypePerformSegue;
-    configuration.source = source;
-    configuration.configureSegue(^(ZIKViewRouteSegueConfiguration * _Nonnull segueConfig) {
-        segueConfig.identifier = identifier;
-        segueConfig.sender = sender;
-    });
-    
-    ZIKViewRouter *router = [[self alloc] initWithConfiguration:configuration removeConfiguration:nil];
+    ZIKViewRouter *router = [[self alloc] initWithConfiguring:^(ZIKPerformRouteConfiguration * _Nonnull config) {
+        ZIKViewRouteConfiguration *configuration = (ZIKViewRouteConfiguration *)config;
+        configuration.autoCreated = YES;
+        configuration.routeType = ZIKViewRouteTypePerformSegue;
+        configuration.source = source;
+        configuration.configureSegue(^(ZIKViewRouteSegueConfiguration * _Nonnull segueConfig) {
+            segueConfig.identifier = identifier;
+            segueConfig.sender = sender;
+        });
+    } removing:nil];
     [router attachDestination:destination];
     return router;
     

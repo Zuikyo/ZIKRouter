@@ -11,7 +11,7 @@
 #import "ZIKInfoViewProtocol.h"
 
 @interface TestPushViewController () <ZIKInfoViewDelegate>
-@property (nonatomic, strong) ZIKDestinationViewRouter(UIViewController<ZIKInfoViewProtocol> *) *infoViewRouter;
+@property (nonatomic, strong) ZIKDestinationViewRouter(id<ZIKInfoViewProtocol>) *infoViewRouter;
 @end
 
 @implementation TestPushViewController
@@ -19,44 +19,13 @@
 - (void)viewDidLoad {
     [super viewDidLoad];
     
-    __weak typeof(self) weakSelf = self;
-//    self.infoViewRouter = [[ZIKViewRouter.classToView(ZIKRoutableProtocol(ZIKInfoViewProtocol)) alloc]
-//                           initWithConfiguring:^(ZIKViewRouteConfiguration * _Nonnull config) {
-//                               config.source = self;
-//                               config.routeType = ZIKViewRouteTypePush;
-//                               
-//                               //prepareDestination is hold in configuration, should be careful about retain cycle if this view controller will hold the router. Same with routeCompletion, successHandler, errorHandler, stateNotifier.
-//                               config.prepareDestination = ^(UIViewController<ZIKInfoViewProtocol> *destination) {
-//                                   NSLog(@"provider: prepare destination");
-//                                   destination.name = @"Zuik";
-//                                   destination.age = 18;
-//                                   destination.delegate = weakSelf;
-//                               };
-//                               config.routeCompletion = ^(UIViewController<ZIKInfoViewProtocol> *destination) {
-//                                   NSLog(@"provider: push complete");
-//                               };
-//                               config.successHandler = ^{
-//                                   NSLog(@"provider: push success");
-//                               };
-//                               config.errorHandler = ^(ZIKRouteAction routeAction, NSError * _Nonnull error) {
-//                                   NSLog(@"provider: push failed: %@",error);
-//                               };
-//                               config.stateNotifier = ^(ZIKRouterState oldState, ZIKRouterState newState) {
-//                                   NSLog(@"router change state from %@ to %@",[ZIKRouter descriptionOfState:oldState],[ZIKRouter descriptionOfState:newState]);
-//                               };
-//                               config.handleExternalRoute = YES;
-//                           }
-//                           removing:^(__kindof ZIKViewRemoveConfiguration * _Nonnull config) {
-//                               config.successHandler = ^{
-//                                   NSLog(@"provider: pop success");
-//                               };
-//                               config.errorHandler = ^(ZIKRouteAction routeAction, NSError * _Nonnull error) {
-//                                   NSLog(@"provider: pop failed: %@",error);
-//                               };
-//                               config.handleExternalRoute = YES;
-//                               }];
 }
 - (IBAction)push:(id)sender {
+    if (self.infoViewRouter == nil) {
+        [self performRoute];
+        return;
+    }
+    // Already performed once, can use the same router to show another destination
     if (![self.infoViewRouter canPerform]) {
         NSLog(@"Can't perform route now:%@",self.infoViewRouter);
         return;
@@ -67,7 +36,12 @@
         NSLog(@"performer: push failed: %@",error);
     }];
 }
+
 - (IBAction)pushAndPop:(id)sender {
+    if (self.infoViewRouter == nil) {
+        [self performRoute];
+        return;
+    }
     if (![self.infoViewRouter canPerform]) {
         NSLog(@"Can't perform route now:%@",self.infoViewRouter);
         return;
@@ -86,11 +60,49 @@
     }];
 }
 
+- (void)performRoute {
+    __weak typeof(self) weakSelf = self;
+    self.infoViewRouter = [ZIKRouterToView(ZIKInfoViewProtocol) performFromSource:self configuring:^(ZIKViewRouteConfiguration * _Nonnull config) {
+        config.routeType = ZIKViewRouteTypePush;
+        
+        //prepareDestination is hold in configuration, should be careful about retain cycle if this view controller will hold the router. Same with routeCompletion, successHandler, errorHandler, stateNotifier.
+        config.prepareDestination = ^(UIViewController<ZIKInfoViewProtocol> *destination) {
+            NSLog(@"provider: prepare destination");
+            destination.name = @"Zuik";
+            destination.age = 18;
+            destination.delegate = weakSelf;
+        };
+        config.routeCompletion = ^(UIViewController<ZIKInfoViewProtocol> *destination) {
+            NSLog(@"provider: push complete");
+        };
+        config.successHandler = ^{
+            NSLog(@"provider: push success");
+        };
+        config.errorHandler = ^(ZIKRouteAction routeAction, NSError * _Nonnull error) {
+            NSLog(@"provider: push failed: %@",error);
+        };
+        config.stateNotifier = ^(ZIKRouterState oldState, ZIKRouterState newState) {
+            NSLog(@"router change state from %@ to %@",[ZIKRouter descriptionOfState:oldState],[ZIKRouter descriptionOfState:newState]);
+        };
+        config.handleExternalRoute = YES;
+        
+    } removing:^(ZIKViewRemoveConfiguration * _Nonnull config) {
+        config.successHandler = ^{
+            NSLog(@"provider: pop success");
+        };
+        config.errorHandler = ^(ZIKRouteAction routeAction, NSError * _Nonnull error) {
+            NSLog(@"provider: pop failed: %@",error);
+        };
+        config.handleExternalRoute = YES;
+    }];
+}
+
 - (void)removeInfoViewController {
     if (![self.infoViewRouter canRemove]) {
         NSLog(@"Can't remove router now:%@",self.infoViewRouter);
         return;
     }
+    // Use the router to remove the destination
     [self.infoViewRouter removeRouteWithSuccessHandler:^{
         NSLog(@"performer: pop success");
     } errorHandler:^(ZIKRouteAction routeAction, NSError * _Nonnull error) {

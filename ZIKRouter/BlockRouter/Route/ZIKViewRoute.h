@@ -9,9 +9,13 @@
 #import "ZIKRoute.h"
 #import "ZIKViewRouter.h"
 
+///Use ZIKViewRoute to add view route with blocks, rather than creating subclass of ZIKViewRouter.
 @interface ZIKViewRoute<__covariant Destination, __covariant RouteConfig: ZIKViewRouteConfiguration *> : ZIKRoute<Destination, RouteConfig, ZIKViewRemoveConfiguration *>
 
+///Register view class with this route. See +registerView:.
 @property (nonatomic, readonly) ZIKViewRoute<Destination, RouteConfig> *(^registerDestination)(Class destinationClass);
+
+///Register view protocol with this route. See +registerViewProtocol:.
 @property (nonatomic, readonly) ZIKViewRoute<Destination, RouteConfig> *(^registerDestinationProtocol)(Protocol *destinationProtocol);
 @property (nonatomic, readonly) ZIKViewRoute<Destination, RouteConfig> *(^registerModuleProtocol)(Protocol *moduleConfigProtocol);
 

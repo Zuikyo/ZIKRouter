@@ -52,6 +52,7 @@ NSString *kZIKRouterErrorDomain = @"kZIKRouterErrorDomain";
         ZIKPerformRouteConfiguration *injected;
         configuration->_injectable = &injected;
         configBuilder(configuration);
+        configuration->_injectable = NULL;
         if (injected) {
             configuration = injected;
         }
@@ -62,6 +63,7 @@ NSString *kZIKRouterErrorDomain = @"kZIKRouterErrorDomain";
         ZIKRemoveRouteConfiguration *injected;
         removeConfiguration->_injectable = &injected;
         removeConfigBuilder(removeConfiguration);
+        removeConfiguration->_injectable = NULL;
         if (injected) {
             removeConfiguration = injected;
         }
@@ -79,7 +81,8 @@ NSString *kZIKRouterErrorDomain = @"kZIKRouterErrorDomain";
     NSParameterAssert(configBuilder);
     ZIKPerformRouteConfiguration *configuration = [[self class] defaultRouteConfiguration];
     if (configBuilder) {
-        configuration->_injectable = &configuration;
+        ZIKPerformRouteConfiguration *injected;
+        configuration->_injectable = &injected;
         void(^prepareDest)(void(^)(id)) = ^(void(^prepare)(id dest)) {
             if (prepare) {
                 configuration.prepareDestination = prepare;
@@ -91,17 +94,26 @@ NSString *kZIKRouterErrorDomain = @"kZIKRouterErrorDomain";
             }
         };
         configBuilder(configuration,prepareDest,prepareModule);
+        configuration->_injectable = NULL;
+        if (injected) {
+            configuration = injected;
+        }
     }
     ZIKRemoveRouteConfiguration *removeConfiguration;
     if (removeConfigBuilder) {
         removeConfiguration = [[self class] defaultRemoveConfiguration];
-        removeConfiguration->_injectable = &removeConfiguration;
+        ZIKRemoveRouteConfiguration *injected;
+        removeConfiguration->_injectable = &injected;
         void(^prepareDest)(void(^)(id)) = ^(void(^prepare)(id dest)) {
             if (prepare) {
                 removeConfiguration.prepareDestination = prepare;
             }
         };
         removeConfigBuilder(removeConfiguration,prepareDest);
+        removeConfiguration->_injectable = NULL;
+        if (injected) {
+            removeConfiguration = injected;
+        }
     }
     return [self initWithConfiguration:configuration removeConfiguration:removeConfiguration];
 }
@@ -163,7 +175,7 @@ NSString *kZIKRouterErrorDomain = @"kZIKRouterErrorDomain";
 }
 
 - (void)performWithConfiguration:(ZIKPerformRouteConfiguration *)configuration {
-    NSParameterAssert(configuration);
+    NSAssert([configuration isKindOfClass:[[[self class] defaultRouteConfiguration] class]], @"When using custom configuration class，you must override +defaultRouteConfiguration to return your custom configuration instance.");
     
     id destination = [self destinationWithConfiguration:configuration];
     self.destination = destination;

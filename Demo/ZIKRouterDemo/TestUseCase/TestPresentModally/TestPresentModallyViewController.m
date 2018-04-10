@@ -22,6 +22,26 @@
 }
 
 - (IBAction)presentModally:(id)sender {
+    [self performRoute];
+}
+
+- (IBAction)presentModallyAndDismiss:(id)sender {
+    if (self.infoViewRouter == nil) {
+        [self performRoute];
+        return;
+    }
+    if (![self.infoViewRouter canPerform]) {
+        NSLog(@"Can't perform route now:%@",self.infoViewRouter);
+        return;
+    }
+    [self.infoViewRouter performRouteWithSuccessHandler:^{
+        [self removeInfoViewController];
+    } errorHandler:^(ZIKRouteAction  _Nonnull routeAction, NSError * _Nonnull error) {
+        NSLog(@"performer: push failed: %@",error);
+    }];
+}
+
+- (void)performRoute {
     __weak typeof(self) weakSelf = self;
     self.infoViewRouter = [ZIKRouterToView(ZIKInfoViewProtocol)
                            performFromSource:self
@@ -52,18 +72,6 @@
                                    NSLog(@"provider: dismiss failed: %@",error);
                                };
                            }];
-}
-
-- (IBAction)presentModallyAndDismiss:(id)sender {
-    if (![self.infoViewRouter canPerform]) {
-        NSLog(@"Can't perform route now:%@",self.infoViewRouter);
-        return;
-    }
-    [self.infoViewRouter performRouteWithSuccessHandler:^{
-        [self removeInfoViewController];
-    } errorHandler:^(ZIKRouteAction  _Nonnull routeAction, NSError * _Nonnull error) {
-        NSLog(@"performer: push failed: %@",error);
-    }];
 }
 
 - (void)removeInfoViewController {

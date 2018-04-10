@@ -11,7 +11,7 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-///Wrapper to use ZIKServiceRouter class type or ZIKServiceRoute with compile time checking. These instance methods are actually class methods in ZIKServiceRouter class.
+///Proxy and wrapper to use ZIKServiceRouter class type or ZIKServiceRoute with compile time checking. These instance methods are actually class methods in ZIKServiceRouter class.
 @interface ZIKServiceRouterType<__covariant Destination: id, __covariant RouteConfig: ZIKPerformRouteConfiguration *> : ZIKRouterType<Destination, RouteConfig, ZIKRemoveRouteConfiguration *>
 
 ///If this route action doesn't need any arguments, just perform directly.

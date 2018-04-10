@@ -12,6 +12,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 @class ZIKRouter, ZIKPerformRouteConfiguration, ZIKRemoveRouteConfiguration;
 
+///Abstract class to add route with blocks, rather than subclass. Don't use this class directly.
 @interface ZIKRoute<__covariant Destination, __covariant RouteConfig: ZIKPerformRouteConfiguration *, __covariant RemoveConfig: ZIKRemoveRouteConfiguration *> : NSObject
 @property (nonatomic, copy, nullable) NSString *name;
 
