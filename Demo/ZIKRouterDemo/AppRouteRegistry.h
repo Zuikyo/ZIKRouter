@@ -8,6 +8,9 @@
 
 #import <Foundation/Foundation.h>
 
+///Auto register or manually register
+#define AUTO_REGISTER_ROUTERS 0
+
 ///Manually register routers.
 @interface AppRouteRegistry : NSObject
 

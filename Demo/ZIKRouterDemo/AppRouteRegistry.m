@@ -40,9 +40,19 @@
 
 #import "ZIKRouterDemo-Swift.h"
 
+
 @implementation AppRouteRegistry
 
 #pragma mark Manually Register
+
+#if !AUTO_REGISTER_ROUTERS
+
++ (void)load {
+    ZIKRouteRegistry.autoRegister = NO;
+    [self registerForModulesBeforeRegistrationFinished];
+}
+
+#endif
 
 + (void)registerForModulesBeforeRegistrationFinished {
     [MasterViewRouter registerRoutableDestination];

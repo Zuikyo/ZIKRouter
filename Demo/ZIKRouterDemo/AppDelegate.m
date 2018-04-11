@@ -8,7 +8,6 @@
 
 #import "AppDelegate.h"
 #import "DetailViewController.h"
-#import "AppContext.h"
 #import "AppRouteRegistry.h"
 @import ZIKRouter;
 @import ZIKRouter.Internal;
