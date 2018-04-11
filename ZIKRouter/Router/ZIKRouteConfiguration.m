@@ -73,7 +73,7 @@
     ZIKPerformRouteConfiguration *config = [super copyWithZone:zone];
     config.prepareDestination = self.prepareDestination;
     config.successHandler = self.successHandler;
-    config.completion = self.completion;
+    config.completionHandler = self.completionHandler;
     config.route = self.route;
     return config;
 }
@@ -86,7 +86,7 @@
     ZIKRemoveRouteConfiguration *config = [super copyWithZone:zone];
     config.prepareDestination = self.prepareDestination;
     config.successHandler = self.successHandler;
-    config.completion = self.completion;
+    config.completionHandler = self.completionHandler;
     return config;
 }
 

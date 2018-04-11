@@ -452,16 +452,16 @@ NSString *kZIKRouterErrorDomain = @"kZIKRouterErrorDomain";
         if (self.original_removeConfiguration.successHandler) {
             self.original_removeConfiguration.successHandler();
         }
-        if (self.original_removeConfiguration.completion) {
-            self.original_removeConfiguration.completion(YES, routeAction, nil);
+        if (self.original_removeConfiguration.completionHandler) {
+            self.original_removeConfiguration.completionHandler(YES, routeAction, nil);
         }
         return;
     }
     if (self.original_configuration.successHandler) {
         self.original_configuration.successHandler(self.destination);
     }
-    if (self.original_configuration.completion) {
-        self.original_configuration.completion(YES, self.destination, routeAction, nil);
+    if (self.original_configuration.completionHandler) {
+        self.original_configuration.completionHandler(YES, self.destination, routeAction, nil);
     }
 }
 
@@ -473,16 +473,16 @@ NSString *kZIKRouterErrorDomain = @"kZIKRouterErrorDomain";
         if (self.original_removeConfiguration.errorHandler) {
             self.original_removeConfiguration.errorHandler(routeAction, error);
         }
-        if (self.original_removeConfiguration.completion) {
-            self.original_removeConfiguration.completion(NO, routeAction, error);
+        if (self.original_removeConfiguration.completionHandler) {
+            self.original_removeConfiguration.completionHandler(NO, routeAction, error);
         }
         return;
     }
     if (self.original_configuration.errorHandler) {
         self.original_configuration.errorHandler(routeAction, error);
     }
-    if (self.original_configuration.completion) {
-        self.original_configuration.completion(NO, self.destination, routeAction, error);
+    if (self.original_configuration.completionHandler) {
+        self.original_configuration.completionHandler(NO, self.destination, routeAction, error);
     }
 }
 

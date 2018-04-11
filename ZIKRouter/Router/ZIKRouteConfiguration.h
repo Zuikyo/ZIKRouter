@@ -78,12 +78,12 @@ typedef void(^ZIKRouteStateNotifier)(ZIKRouterState oldState, ZIKRouterState new
 @property (nonatomic, copy, nullable) void(^routeCompletion)(id destination) API_DEPRECATED_WITH_REPLACEMENT("successHandler", ios(7.0, 7.0));
 
 /**
- Completion for performRoute.
+ Completion handler for performRoute.
  
  @note
  Use weakSelf in completion to avoid retain cycle.
  */
-@property (nonatomic, copy, nullable) void(^completion)(BOOL success, id _Nullable destination, ZIKRouteAction routeAction, NSError *_Nullable error);
+@property (nonatomic, copy, nullable) void(^completionHandler)(BOOL success, id _Nullable destination, ZIKRouteAction routeAction, NSError *_Nullable error);
 @end
 
 @interface ZIKRemoveRouteConfiguration : ZIKRouteConfiguration <NSCopying>
@@ -104,12 +104,12 @@ typedef void(^ZIKRouteStateNotifier)(ZIKRouterState oldState, ZIKRouterState new
 @property (nonatomic, copy, nullable) void(^successHandler)(void);
 
 /**
- Completion for removeRoute.
+ Completion handler for removeRoute.
  
  @note
  Use weakSelf in completion to avoid retain cycle.
  */
-@property (nonatomic, copy, nullable) void(^completion)(BOOL success, ZIKRouteAction routeAction, NSError *_Nullable error);
+@property (nonatomic, copy, nullable) void(^completionHandler)(BOOL success, ZIKRouteAction routeAction, NSError *_Nullable error);
 
 @end
 
