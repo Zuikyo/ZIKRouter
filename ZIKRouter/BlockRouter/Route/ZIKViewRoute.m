@@ -157,6 +157,21 @@ _injectedStrictRemoveConfigBuilder:
     } removing:nil];
 }
 
+- (id)performFromSource:(nullable id<ZIKViewRouteSource>)source routeType:(ZIKViewRouteType)routeType completion:(ZIKPerformRouteCompletion)performerCompletion {
+    return [self performFromSource:source configuring:^(ZIKViewRouteConfiguration * _Nonnull config) {
+        config.routeType = routeType;
+        if (performerCompletion == nil) {
+            return;
+        }
+        config.performerSuccessHandler = ^(id  _Nonnull destination) {
+            performerCompletion(YES, destination, ZIKRouteActionPerformRoute, nil);
+        };
+        config.performerErrorHandler = ^(ZIKRouteAction  _Nonnull routeAction, NSError * _Nonnull error) {
+            performerCompletion(NO, nil, routeAction, error);
+        };
+    }];
+}
+
 - (id)performFromSource:(nullable id<ZIKViewRouteSource>)source
             configuring:(void(NS_NOESCAPE ^)(ZIKViewRouteConfiguration *config))configBuilder
                removing:(void(NS_NOESCAPE ^ _Nullable)(ZIKViewRemoveConfiguration *config))removeConfigBuilder {

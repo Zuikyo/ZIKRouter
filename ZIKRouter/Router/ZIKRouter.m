@@ -161,7 +161,7 @@ NSString *kZIKRouterErrorDomain = @"kZIKRouterErrorDomain";
                             errorHandler:self.original_configuration.performerErrorHandler];
 }
 
-- (void)performRouteWithSuccessHandler:(void(^)(void))performerSuccessHandler
+- (void)performRouteWithSuccessHandler:(void(^)(id destination))performerSuccessHandler
                           errorHandler:(void(^)(ZIKRouteAction routeAction, NSError *error))performerErrorHandler {
     NSAssert(self.original_configuration, @"router must has configuration");
     ZIKPerformRouteConfiguration *configuration = self.original_configuration;
@@ -489,17 +489,19 @@ NSString *kZIKRouterErrorDomain = @"kZIKRouterErrorDomain";
 - (void)notifySuccessToPerformerWithAction:(ZIKRouteAction)routeAction {
     NSParameterAssert(routeAction);
     
-    ZIKRouteConfiguration *configuration;
-    if ([routeAction isEqual:ZIKRouteActionPerformRoute]) {
-        configuration = self.original_configuration;
-    } else if ([routeAction isEqual:ZIKRouteActionRemoveRoute]) {
-        configuration = self.original_removeConfiguration;
-    } else {
-        configuration = self.original_configuration;
+    if ([routeAction isEqualToString:ZIKRouteActionRemoveRoute]) {
+        ZIKRemoveRouteConfiguration *configuration = self.original_removeConfiguration;
+        if (configuration.performerSuccessHandler) {
+            configuration.performerSuccessHandler();
+        }
+        if (configuration.performerErrorHandler) {
+            configuration.performerErrorHandler = nil;
+        }
+        return;
     }
-    
+    ZIKPerformRouteConfiguration *configuration = self.original_configuration;
     if (configuration.performerSuccessHandler) {
-        configuration.performerSuccessHandler();
+        configuration.performerSuccessHandler(self.destination);
         configuration.performerSuccessHandler = nil;
     }
     if (configuration.performerErrorHandler) {
@@ -512,22 +514,25 @@ NSString *kZIKRouterErrorDomain = @"kZIKRouterErrorDomain";
     NSParameterAssert(routeAction);
     
     self.error = error;
-    ZIKRouteConfiguration *configuration;
-    if ([routeAction isEqual:ZIKRouteActionPerformRoute]) {
-        configuration = self.original_configuration;
-    } else if ([routeAction isEqual:ZIKRouteActionRemoveRoute]) {
-        configuration = self.original_removeConfiguration;
+    if (([routeAction isEqualToString:ZIKRouteActionRemoveRoute])) {
+        ZIKRemoveRouteConfiguration *configuration = self.original_removeConfiguration;
+        if (configuration.performerErrorHandler) {
+            configuration.performerErrorHandler(routeAction, error);
+            configuration.performerErrorHandler = nil;
+        }
+        if (configuration.performerSuccessHandler) {
+            configuration.performerSuccessHandler = nil;
+        }
     } else {
-        configuration = self.original_configuration;
+        ZIKPerformRouteConfiguration *configuration = self.original_configuration;
+        if (configuration.performerErrorHandler) {
+            configuration.performerErrorHandler(routeAction, error);
+            configuration.performerErrorHandler = nil;
+        }
+        if (configuration.performerSuccessHandler) {
+            configuration.performerSuccessHandler = nil;
+        }
     }
-    
-    if (configuration.performerErrorHandler) {
-        configuration.performerErrorHandler(routeAction, error);
-        configuration.performerErrorHandler = nil;
-    }
-    if (configuration.performerSuccessHandler) {
-        configuration.performerSuccessHandler = nil;
-    }    
 }
 
 #pragma mark Getter/Setter

@@ -199,8 +199,12 @@ public class ServiceRouter<Destination, ModuleConfig> {
     }
     
     ///Perform with success handler and error handler.
-    public func performRoute(successHandler: (() -> Void)? = nil, errorHandler: ((ZIKRouteAction, Error) -> Void)? = nil) {
-        router.performRoute(successHandler: successHandler, errorHandler: errorHandler)
+    public func performRoute(successHandler: ((Destination) -> Void)? = nil, errorHandler: ((ZIKRouteAction, Error) -> Void)? = nil) {
+        router.performRoute(successHandler: { (d) in
+            if let destination = d as? Destination {
+                successHandler?(destination)
+            }
+        }, errorHandler: errorHandler)
     }
     
     // MARK: Remove

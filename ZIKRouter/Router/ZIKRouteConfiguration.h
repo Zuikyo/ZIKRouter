@@ -58,6 +58,7 @@ typedef void(^ZIKRouteStateNotifier)(ZIKRouterState oldState, ZIKRouterState new
 
 @end
 
+typedef void(^ZIKPerformRouteCompletion)(BOOL success, id _Nullable destination, ZIKRouteAction routeAction, NSError *_Nullable error);
 @interface ZIKPerformRouteConfiguration : ZIKRouteConfiguration <NSCopying>
 
 /**
@@ -83,9 +84,10 @@ typedef void(^ZIKRouteStateNotifier)(ZIKRouterState oldState, ZIKRouterState new
  @note
  Use weakSelf in completion to avoid retain cycle.
  */
-@property (nonatomic, copy, nullable) void(^completionHandler)(BOOL success, id _Nullable destination, ZIKRouteAction routeAction, NSError *_Nullable error);
+@property (nonatomic, copy, nullable) ZIKPerformRouteCompletion completionHandler;
 @end
 
+typedef void(^ZIKRemoveRouteCompletion)(BOOL success, ZIKRouteAction routeAction, NSError *_Nullable error);
 @interface ZIKRemoveRouteConfiguration : ZIKRouteConfiguration <NSCopying>
 
 /**
@@ -109,7 +111,7 @@ typedef void(^ZIKRouteStateNotifier)(ZIKRouterState oldState, ZIKRouterState new
  @note
  Use weakSelf in completion to avoid retain cycle.
  */
-@property (nonatomic, copy, nullable) void(^completionHandler)(BOOL success, ZIKRouteAction routeAction, NSError *_Nullable error);
+@property (nonatomic, copy, nullable) ZIKRemoveRouteCompletion completionHandler;
 
 @end
 

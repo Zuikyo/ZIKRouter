@@ -21,7 +21,7 @@
 
 - (ZIKServiceRoute *)route {
     ZIKServiceRoute *route = (ZIKServiceRoute *)self.original_configuration.route;
-    NSAssert1(route, @"Can't find ZIKServiceRoute for block router (%@)",self);
+    NSAssert1(route, @"Can't find ZIKServiceRoute for block router (%@). If you add new class method in ZIKRouter or ZIKServiceRouter to create router, you must check your class method in ZIKRoute or ZIKServiceRoute to inject route to router.",self);
     return route;
 }
 

@@ -32,7 +32,6 @@
     ZIKRouteConfiguration *config = [[self class] new];
     config.errorHandler = self.errorHandler;
     config.performerErrorHandler = self.performerErrorHandler;
-    config.performerSuccessHandler = self.performerSuccessHandler;
     config.stateNotifier = [self.stateNotifier copy];
     return config;
 }
@@ -74,6 +73,7 @@
     config.prepareDestination = self.prepareDestination;
     config.successHandler = self.successHandler;
     config.completionHandler = self.completionHandler;
+    config.performerSuccessHandler = self.performerSuccessHandler;
     config.route = self.route;
     return config;
 }
@@ -87,6 +87,7 @@
     config.prepareDestination = self.prepareDestination;
     config.successHandler = self.successHandler;
     config.completionHandler = self.completionHandler;
+    config.performerSuccessHandler = self.performerSuccessHandler;
     return config;
 }
 

@@ -24,6 +24,7 @@
 #import "UIView+ZIKViewRouterPrivate.h"
 #import "UIViewController+ZIKViewRouterPrivate.h"
 #import "UIStoryboardSegue+ZIKViewRouterPrivate.h"
+#import "ZIKRouteConfigurationPrivate.h"
 #import "ZIKViewRouteConfigurationPrivate.h"
 #import "ZIKViewRouterTypePrivate.h"
 
@@ -184,7 +185,7 @@ static NSMutableArray *g_preparingUIViewRouters;
     return YES;
 }
 
-- (void)performRouteWithSuccessHandler:(void(^)(void))performerSuccessHandler
+- (void)performRouteWithSuccessHandler:(void(^)(id destination))performerSuccessHandler
                           errorHandler:(void(^)(ZIKRouteAction routeAction, NSError *error))performerErrorHandler {
     ZIKRouterState state = self.state;
     if (state == ZIKRouterStateRouting) {
@@ -3076,6 +3077,21 @@ static  ZIKViewRouterType *_Nullable _routerTypeToRegisteredView(Class viewClass
     return [self performFromSource:source configuring:^(ZIKViewRouteConfiguration * _Nonnull config) {
         config.routeType = routeType;
     } removing:nil];
+}
+
++ (nullable instancetype)performFromSource:(nullable id<ZIKViewRouteSource>)source routeType:(ZIKViewRouteType)routeType completion:(ZIKPerformRouteCompletion)performerCompletion {
+    return [self performFromSource:source configuring:^(ZIKViewRouteConfiguration * _Nonnull config) {
+        config.routeType = routeType;
+        if (performerCompletion == nil) {
+            return;
+        }
+        config.performerSuccessHandler = ^(id  _Nonnull destination) {
+            performerCompletion(YES, destination, ZIKRouteActionPerformRoute, nil);
+        };
+        config.performerErrorHandler = ^(ZIKRouteAction  _Nonnull routeAction, NSError * _Nonnull error) {
+            performerCompletion(NO, nil, routeAction, error);
+        };
+    }];
 }
 
 + (nullable instancetype)performFromSource:(nullable id<ZIKViewRouteSource>)source
