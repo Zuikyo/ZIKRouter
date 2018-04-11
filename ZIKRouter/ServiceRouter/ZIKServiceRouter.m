@@ -60,7 +60,7 @@ static dispatch_semaphore_t g_globalErrorSema;
 }
 
 + (void)registerRoutableDestination {
-    NSAssert1(NO, @"subclass(%@) must override +registerRoutableDestination to register destination.",self);
+    NSAssert1([self isAbstractRouter], @"subclass(%@) must override +registerRoutableDestination to register destination.",self);
 }
 
 - (void)performRouteOnDestination:(id)destination configuration:(__kindof ZIKPerformRouteConfiguration *)configuration {
@@ -74,9 +74,6 @@ static dispatch_semaphore_t g_globalErrorSema;
     [self _validateDestinationConformance:destination];
 #endif
     [self prepareForPerformRouteOnDestination:destination configuration:configuration];
-    if (configuration.routeCompletion) {
-        configuration.routeCompletion(destination);
-    }
     [self endPerformRouteWithSuccess];
 }
 

@@ -278,7 +278,7 @@ public extension Router {
             if let moduleConfig = config as? Module {
                 prepare?(moduleConfig)
             }
-            config.routeCompletion = { d in
+            config.successHandler = { d in
                 destination = d
             }
         })
@@ -329,7 +329,7 @@ public extension Router {
             if let moduleConfig = config as? Module {
                 prepare?(moduleConfig)
             }
-            config.routeCompletion = { d in
+            config.successHandler = { d in
                 destination = d
             }
         })

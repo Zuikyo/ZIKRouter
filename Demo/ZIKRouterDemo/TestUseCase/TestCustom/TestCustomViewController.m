@@ -32,7 +32,7 @@
                          void (^prepareDest)(void (^)(id)),
                          void (^prepareModule)(void (^)(ZIKViewRouteConfig<RequiredCompatibleAlertConfigProtocol> *))) {
          config.routeType = ZIKViewRouteTypeCustom;
-         config.routeCompletion = ^(id _Nonnull destination) {
+         config.successHandler = ^(id _Nonnull destination) {
              NSLog(@"show custom alert complete");
          };
          config.errorHandler = ^(ZIKRouteAction routeAction, NSError * _Nonnull error) {
@@ -66,7 +66,7 @@
                                     NSLog(@"Tap hello button");
                                 }];
                                 
-                                config.routeCompletion = ^(id _Nonnull destination) {
+                                config.successHandler = ^(id _Nonnull destination) {
                                     NSLog(@"show custom alert complete");
                                 };
                                 config.errorHandler = ^(ZIKRouteAction routeAction, NSError * _Nonnull error) {

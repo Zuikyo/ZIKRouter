@@ -31,7 +31,6 @@
 - (id)copyWithZone:(nullable NSZone *)zone {
     ZIKRouteConfiguration *config = [[self class] new];
     config.errorHandler = self.errorHandler;
-    config.successHandler = self.successHandler;
     config.performerErrorHandler = self.performerErrorHandler;
     config.performerSuccessHandler = self.performerSuccessHandler;
     config.stateNotifier = [self.stateNotifier copy];
@@ -62,10 +61,19 @@
 
 @implementation ZIKPerformRouteConfiguration
 
+- (void)setRouteCompletion:(void (^)(id _Nonnull))routeCompletion {
+    self.successHandler = routeCompletion;
+}
+
+- (void (^)(id _Nonnull))routeCompletion {
+    return self.successHandler;
+}
+
 - (id)copyWithZone:(nullable NSZone *)zone {
     ZIKPerformRouteConfiguration *config = [super copyWithZone:zone];
     config.prepareDestination = self.prepareDestination;
-    config.routeCompletion = self.routeCompletion;
+    config.successHandler = self.successHandler;
+    config.completion = self.completion;
     config.route = self.route;
     return config;
 }
@@ -77,6 +85,8 @@
 - (id)copyWithZone:(nullable NSZone *)zone {
     ZIKRemoveRouteConfiguration *config = [super copyWithZone:zone];
     config.prepareDestination = self.prepareDestination;
+    config.successHandler = self.successHandler;
+    config.completion = self.completion;
     return config;
 }
 

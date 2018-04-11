@@ -402,8 +402,6 @@
 		F85F4D011F223EB0003106C3 /* ZIKRouter */ = {
 			isa = PBXGroup;
 			children = (
-				F8B0D86E1F38D541006824F2 /* ZIKRouter-umbrella.h */,
-				F8566AE2207934D30075675C /* module.modulemap */,
 				F872F51F1FAF810400297A1D /* ZIKRouterAlias.h */,
 				F872F5071FAF5FC600297A1D /* Router */,
 				F872F5081FAF5FE200297A1D /* ViewRouter */,
@@ -415,6 +413,8 @@
 				F872F50B1FAF603E00297A1D /* Utilities */,
 				F85F4D0E1F223F0F003106C3 /* Extensions */,
 				F83315331F6FC73D00891004 /* Private */,
+				F8B0D86E1F38D541006824F2 /* ZIKRouter-umbrella.h */,
+				F8566AE2207934D30075675C /* module.modulemap */,
 				F85F4D031F223EB0003106C3 /* Info.plist */,
 			);
 			path = ZIKRouter;

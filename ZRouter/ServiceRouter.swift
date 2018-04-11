@@ -70,9 +70,9 @@ public class ServiceRouterType<Destination, ModuleConfig> {
             }
             configBuilder(config, prepareDestination, prepareModule)
             if shouldCheckServiceRouter {
-                let completion = config.routeCompletion
-                config.routeCompletion = { d in
-                    completion?(d)
+                let successHandler = config.successHandler
+                config.successHandler = { d in
+                    successHandler?(d)
                     assert(ServiceRouterType._castedDestination(d, routerType: routerType) != nil, "Router (\(String(describing: routerType))) returns wrong destination type (\(String(describing: d))), destination should be \(Destination.self)")
                 }
             }

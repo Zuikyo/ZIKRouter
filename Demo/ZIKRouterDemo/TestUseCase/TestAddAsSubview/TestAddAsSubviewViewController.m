@@ -30,7 +30,7 @@
                                 destination.text = @"this is a label from router";
                                 destination.frame = CGRectMake(50, 50, 200, 50);
                             };
-                            config.routeCompletion = ^(UIView * _Nonnull destination) {
+                            config.successHandler = ^(UIView * _Nonnull destination) {
                                 NSLog(@"add as subview complete");
                             };
                             config.errorHandler = ^(ZIKRouteAction routeAction, NSError * _Nonnull error) {

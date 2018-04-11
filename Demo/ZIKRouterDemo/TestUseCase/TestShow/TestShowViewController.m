@@ -32,7 +32,7 @@
                                    destination.name = @"Zuik";
                                    destination.age = 18;
                                };
-                               config.routeCompletion = ^(id  _Nonnull destination) {
+                               config.successHandler = ^(id  _Nonnull destination) {
                                    NSLog(@"show complete");
                                };
                                config.errorHandler = ^(ZIKRouteAction routeAction, NSError * _Nonnull error) {

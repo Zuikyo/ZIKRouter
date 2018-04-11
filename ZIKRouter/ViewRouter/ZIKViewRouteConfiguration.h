@@ -52,13 +52,13 @@ typedef NS_ENUM(NSInteger,ZIKViewRouteType) {
      Without a container, present modally.
      */
     ZIKViewRouteTypeShowDetail NS_ENUM_AVAILABLE_IOS(8_0) = 5,
-    ///Get destination viewController and do @code[source addChildViewController:destination]@endcode; You need to get destination in routeCompletion, and add it's view to your view hierarchy, and call [destination didMoveToParentViewController:source]; source must be a UIViewController.
+    ///Get destination viewController and do @code[source addChildViewController:destination]@endcode; You need to get destination in successHandler, and add it's view to your view hierarchy, and call [destination didMoveToParentViewController:source]; source must be a UIViewController.
     ZIKViewRouteTypeAddAsChildViewController,
     ///Get your custom UIView and do @code[source addSubview:destination]@endcode; source must be a UIView.
     ZIKViewRouteTypeAddAsSubview,
     ///Subclass router can provide custom presentation. Class of source and destination is specified by subclass router.
     ZIKViewRouteTypeCustom,
-    ///Just create and return a UIViewController or UIView in routeCompletion; Source is not needed for this type.
+    ///Just create and return a UIViewController or UIView in successHandler; Source is not needed for this type.
     ZIKViewRouteTypeGetDestination
 };
 
@@ -127,7 +127,7 @@ typedef void(^ZIKViewRouteSegueConfiger)(NS_NOESCAPE ZIKViewRouteSegueConfigure)
  
  For ZIKViewRouteTypeShowDetail, if source is in a collapsed UISplitViewController, and master is a UINavigationController, container can't be a UINavigationController or UISplitViewController
  
- For ZIKViewRouteTypeAddAsChildViewController, will add container as source's child, so you have to add container's view to source's view in routeCompletion, not the destination's view
+ For ZIKViewRouteTypeAddAsChildViewController, will add container as source's child, so you have to add container's view to source's view in successHandler, not the destination's view
  */
 @property (nonatomic, copy, nullable) ZIKViewRouteContainerWrapper containerWrapper;
 
@@ -147,7 +147,7 @@ typedef void(^ZIKViewRouteSegueConfiger)(NS_NOESCAPE ZIKViewRouteSegueConfigure)
 @property (nonatomic, copy, nullable) void(^prepareDestination)(id destination);
 
 /**
- Completion for performRoute.
+ Success handler for performRoute.
  
  @discussion
  For ZIKViewRouteTypePush, ZIKViewRouteTypePresentModally, ZIKViewRouteTypePresentAsPopover, ZIKViewRouteTypePerformSegue, ZIKViewRouteTypeShow, ZIKViewRouteTypeShowDetail, ZIKViewRouteTypeAddAsChildViewController, destination is a UIViewController.
@@ -157,11 +157,11 @@ typedef void(^ZIKViewRouteSegueConfiger)(NS_NOESCAPE ZIKViewRouteSegueConfigure)
  For ZIKViewRouteTypeCustom, destination is a UIViewController or UIView.
  
  @note
- Use weakSelf in routeCompletion to avoid retain cycle.
+ Use weakSelf in successHandler to avoid retain cycle.
  
- ZIKViewRouter use UIViewController's transitionCoordinator to do completion, so if you override segue's -perform or override -showViewController:sender: and provide custom transition, but didn't use a transitionCoordinator (such as use +[UIView animateWithDuration:animations:completion:] to animate), routeCompletion when be called immediately, before the animation really completes.
+ ZIKViewRouter use UIViewController's transitionCoordinator to do completion, so if you override segue's -perform or override -showViewController:sender: and provide custom transition, but didn't use a transitionCoordinator (such as use +[UIView animateWithDuration:animations:completion:] to animate), successHandler when be called immediately, before the animation really completes.
  */
-@property (nonatomic, copy, nullable) void(^routeCompletion)(id destination);
+@property (nonatomic, copy, nullable) void(^successHandler)(id destination);
 
 ///Sender for -showViewController:sender: and -showDetailViewController:sender:
 @property (nonatomic, weak, nullable) id sender;
@@ -175,7 +175,7 @@ typedef void(^ZIKViewRouteSegueConfiger)(NS_NOESCAPE ZIKViewRouteSegueConfigure)
 @property (nonatomic, readonly, strong, nullable) ZIKViewRoutePopoverConfiguration *popoverConfiguration;
 @property (nonatomic, readonly, strong, nullable) ZIKViewRouteSegueConfiguration *segueConfiguration;
 
-///When set to YES and the router still exists, if the same destination instance is routed again from external, prepareDestination, routeCompletion, successHandler, errorHandler will be called
+///When set to YES and the router still exists, if the same destination instance is routed again from external, prepareDestination, successHandler, errorHandler, completion will be called.
 @property (nonatomic, assign) BOOL handleExternalRoute;
 
 @end

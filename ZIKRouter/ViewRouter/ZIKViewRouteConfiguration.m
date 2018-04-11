@@ -44,7 +44,7 @@ ZIKRouteAction const ZIKRouteActionPerformOnDestination = @"ZIKRouteActionPerfor
 
 @implementation ZIKViewRouteConfiguration
 @dynamic prepareDestination;
-@dynamic routeCompletion;
+@dynamic successHandler;
 
 - (instancetype)init {
     if (self = [super init]) {
@@ -146,8 +146,6 @@ ZIKRouteAction const ZIKRouteActionPerformOnDestination = @"ZIKRouteActionPerfor
     config.sender = self.sender;
     config.popoverConfiguration = [self.popoverConfiguration copy];
     config.segueConfiguration = [self.segueConfiguration copy];
-    config.prepareDestination = self.prepareDestination;
-    config.routeCompletion = self.routeCompletion;
     config.handleExternalRoute = self.handleExternalRoute;
     return config;
 }

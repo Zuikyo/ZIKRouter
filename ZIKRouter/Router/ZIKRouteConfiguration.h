@@ -47,13 +47,6 @@ typedef void(^ZIKRouteStateNotifier)(ZIKRouterState oldState, ZIKRouterState new
 @property (nonatomic, copy, nullable) ZIKRouteErrorHandler errorHandler;
 
 /**
- Success handler for router's provider. Each time the router was performed or removed, success handler will be called when the operation succeed.
- @note
- Use weakSelf in successHandler to avoid retain cycle.
- */
-@property (nonatomic, copy, nullable) void(^successHandler)(void);
-
-/**
  Monitor state.
  @note
  Use weakSelf in stateNotifier to avoid retain cycle.
@@ -76,12 +69,21 @@ typedef void(^ZIKRouteStateNotifier)(ZIKRouterState oldState, ZIKRouterState new
 @property (nonatomic, copy, nullable) void(^prepareDestination)(id destination);
 
 /**
- Completion for performRoute. Default implemenation will call routeCompletion synchronously.
+ Success handler for router's provider. Each time the router was performed, success handler will be called when the operation succeed.
+ @note
+ Use weakSelf in successHandler to avoid retain cycle.
+ */
+@property (nonatomic, copy, nullable) void(^successHandler)(id destination);
+
+@property (nonatomic, copy, nullable) void(^routeCompletion)(id destination) API_DEPRECATED_WITH_REPLACEMENT("successHandler", ios(7.0, 7.0));
+
+/**
+ Completion for performRoute.
  
  @note
- Use weakSelf in routeCompletion to avoid retain cycle.
+ Use weakSelf in completion to avoid retain cycle.
  */
-@property (nonatomic, copy, nullable) void(^routeCompletion)(id destination);
+@property (nonatomic, copy, nullable) void(^completion)(BOOL success, id _Nullable destination, ZIKRouteAction routeAction, NSError *_Nullable error);
 @end
 
 @interface ZIKRemoveRouteConfiguration : ZIKRouteConfiguration <NSCopying>
@@ -93,6 +95,21 @@ typedef void(^ZIKRouteStateNotifier)(ZIKRouterState oldState, ZIKRouterState new
  Use weakSelf in prepareDestination to avoid retain cycle.
  */
 @property (nonatomic, copy, nullable) void(^prepareDestination)(id destination);
+
+/**
+ Success handler for router's provider. Each time the router was removed, success handler will be called when the operation succeed.
+ @note
+ Use weakSelf in successHandler to avoid retain cycle.
+ */
+@property (nonatomic, copy, nullable) void(^successHandler)(void);
+
+/**
+ Completion for removeRoute.
+ 
+ @note
+ Use weakSelf in completion to avoid retain cycle.
+ */
+@property (nonatomic, copy, nullable) void(^completion)(BOOL success, ZIKRouteAction routeAction, NSError *_Nullable error);
 
 @end
 

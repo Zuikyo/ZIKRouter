@@ -32,7 +32,7 @@
                                    destination.name = @"Zuik";
                                    destination.age = 18;
                                };
-                               config.routeCompletion = ^(UIViewController * _Nonnull destination) {
+                               config.successHandler = ^(UIViewController * _Nonnull destination) {
                                     //If use containerWrapper to wrap destination in a container, router will add container as source's child, so you have to add container's view to source's view, not the destination's view, and call container's didMoveToParentViewController:
                                    destination.view.frame = weakSelf.view.frame;
                                    destination.view.transform = CGAffineTransformMakeScale(0.1, 0.1);

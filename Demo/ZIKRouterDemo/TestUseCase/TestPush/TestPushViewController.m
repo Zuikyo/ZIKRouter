@@ -65,17 +65,17 @@
     self.infoViewRouter = [ZIKRouterToView(ZIKInfoViewProtocol) performFromSource:self configuring:^(ZIKViewRouteConfiguration * _Nonnull config) {
         config.routeType = ZIKViewRouteTypePush;
         
-        //prepareDestination is hold in configuration, should be careful about retain cycle if this view controller will hold the router. Same with routeCompletion, successHandler, errorHandler, stateNotifier.
+        //prepareDestination is hold in configuration, should be careful about retain cycle if this view controller will hold the router. Same with successHandler, errorHandler, completion, stateNotifier.
         config.prepareDestination = ^(UIViewController<ZIKInfoViewProtocol> *destination) {
             NSLog(@"provider: prepare destination");
             destination.name = @"Zuik";
             destination.age = 18;
             destination.delegate = weakSelf;
         };
-        config.routeCompletion = ^(UIViewController<ZIKInfoViewProtocol> *destination) {
+        config.successHandler = ^(UIViewController<ZIKInfoViewProtocol> *destination) {
             NSLog(@"provider: push complete");
         };
-        config.successHandler = ^{
+        config.successHandler = ^(id  _Nonnull destination) {
             NSLog(@"provider: push success");
         };
         config.errorHandler = ^(ZIKRouteAction routeAction, NSError * _Nonnull error) {

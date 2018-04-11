@@ -43,7 +43,7 @@
                                    destination.name = @"Zuik";
                                    destination.age = 18;
                                };
-                               config.routeCompletion = ^(id  _Nonnull destination) {
+                               config.successHandler = ^(id  _Nonnull destination) {
                                    NSLog(@"perform segue complete");
                                };
                                config.errorHandler = ^(ZIKRouteAction routeAction, NSError * _Nonnull error) {
@@ -67,7 +67,7 @@
                                    destination.name = @"Zuik";
                                    destination.age = 18;
                                };
-                               config.routeCompletion = ^(id  _Nonnull destination) {
+                               config.successHandler = ^(id  _Nonnull destination) {
                                    NSLog(@"perform segue complete");
                                };
                                config.errorHandler = ^(ZIKRouteAction routeAction, NSError * _Nonnull error) {
@@ -88,7 +88,7 @@
                             config.prepareDestination = ^(id _Nonnull destination) {
                                 NSLog(@"prepare for unroutable destination:%@",destination);
                             };
-                            config.routeCompletion = ^(id  _Nonnull destination) {
+                            config.successHandler = ^(id  _Nonnull destination) {
                                 NSLog(@"perform segue complete for destination:%@",destination);
                             };
                             config.errorHandler = ^(ZIKRouteAction routeAction, NSError * _Nonnull error) {
@@ -123,7 +123,7 @@
              NSLog(@"change destination's background color when unwind to destination:(%@)",destination);
              destination.view.backgroundColor = [UIColor yellowColor];
          };
-         config.routeCompletion = ^(id  _Nonnull destination) {
+         config.successHandler = ^(id  _Nonnull destination) {
              NSLog(@"perform unwind segue to TestPerformSegueViewController complete");
          };
          config.errorHandler = ^(ZIKRouteAction routeAction, NSError * _Nonnull error) {

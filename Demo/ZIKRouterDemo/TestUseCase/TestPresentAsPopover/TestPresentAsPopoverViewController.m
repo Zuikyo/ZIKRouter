@@ -37,7 +37,7 @@
                                    destination.age = 18;
                                    destination.delegate = weakSelf;
                                };
-                               config.routeCompletion = ^(id  _Nonnull destination) {
+                               config.successHandler = ^(id  _Nonnull destination) {
                                    NSLog(@"present as popover complete");
                                };
                                config.errorHandler = ^(ZIKRouteAction routeAction, NSError * _Nonnull error) {
@@ -61,7 +61,7 @@
                                    destination.age = 18;
                                    destination.delegate = weakSelf;
                                };
-                               config.routeCompletion = ^(id  _Nonnull destination) {
+                               config.successHandler = ^(id  _Nonnull destination) {
                                    NSLog(@"present as popover complete");
                                    [weakSelf removeInfoViewController];
                                };

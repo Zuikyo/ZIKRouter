@@ -252,10 +252,10 @@ static NSMutableArray *g_preparingUIViewRouters;
         if (prepare) {
             config.prepareDestination = prepare;
         }
-        void(^routeCompletion)(id destination) = config.routeCompletion;
-        config.routeCompletion = ^(id  _Nonnull destination) {
-            if (routeCompletion) {
-                routeCompletion(destination);
+        void(^successHandler)(id destination) = config.successHandler;
+        config.successHandler = ^(id  _Nonnull destination) {
+            if (successHandler) {
+                successHandler(destination);
             }
             dest = destination;
         };
@@ -276,10 +276,10 @@ static NSMutableArray *g_preparingUIViewRouters;
         if (configBuilder) {
             configBuilder(configuration);
         }
-        void(^routeCompletion)(id destination) = configuration.routeCompletion;
-        configuration.routeCompletion = ^(id  _Nonnull destination) {
-            if (routeCompletion) {
-                routeCompletion(destination);
+        void(^successHandler)(id destination) = configuration.successHandler;
+        configuration.successHandler = ^(id  _Nonnull destination) {
+            if (successHandler) {
+                successHandler(destination);
             }
             dest = destination;
         };
@@ -296,7 +296,7 @@ static NSMutableArray *g_preparingUIViewRouters;
 #pragma mark ZIKViewRouterSubclass
 
 + (void)registerRoutableDestination {
-    NSAssert1(NO, @"Subclass(%@) must override +registerRoutableDestination to register destination.",self);
+    NSAssert1([self isAbstractRouter], @"Subclass(%@) must override +registerRoutableDestination to register destination.",self);
 }
 
 - (id)destinationWithConfiguration:(__kindof ZIKViewRouteConfiguration *)configuration {
@@ -989,10 +989,6 @@ destinationStateBeforeRoute:(ZIKPresentationState *)destinationStateBeforeRoute
 }
 
 - (void)notifyPerformRouteSuccessWithDestination:(id)destination {
-    ZIKViewRouteConfiguration *configuration = self.original_configuration;
-    if (configuration.routeCompletion) {
-        configuration.routeCompletion(destination);
-    }
     [super notifySuccessWithAction:ZIKRouteActionPerformRoute];
 }
 

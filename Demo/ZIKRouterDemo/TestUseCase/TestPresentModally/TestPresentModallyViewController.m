@@ -57,7 +57,7 @@
                                    destination.age = 18;
                                    destination.delegate = weakSelf;
                                };
-                               config.successHandler = ^{
+                               config.successHandler = ^(id  _Nonnull destination) {
                                    NSLog(@"provider: present modally success");
                                };
                                config.errorHandler = ^(ZIKRouteAction routeAction, NSError * _Nonnull error) {

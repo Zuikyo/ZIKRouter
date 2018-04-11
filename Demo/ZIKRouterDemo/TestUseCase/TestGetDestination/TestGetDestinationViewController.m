@@ -32,7 +32,7 @@
                            destination.name = @"Zuik";
                            destination.age = 18;
                        };
-                       config.routeCompletion = ^(UIViewController * _Nonnull destination) {
+                       config.successHandler = ^(UIViewController * _Nonnull destination) {
                            NSLog(@"get destination by router complete");
                            if ([destination isKindOfClass:[UIViewController class]]) {
                                [weakSelf presentViewController:destination animated:YES completion:^{
@@ -40,13 +40,13 @@
                                }];
                            }
                        };
-                       config.successHandler = ^{
+                       config.successHandler = ^(id  _Nonnull destination) {
                            NSLog(@"get destination success");
                        };
                        config.errorHandler = ^(ZIKRouteAction routeAction, NSError * _Nonnull error) {
                            NSLog(@"get destination by router failed: %@",error);
                        };
-                       //Set handleExternalRoute to YES will let router call routeCompletion when destination is dispalyed, be cautious.
+                       //Set handleExternalRoute to YES will let router call successHandler when destination is dispalyed, be cautious.
                        //         config.handleExternalRoute = YES;
                    }];
 }

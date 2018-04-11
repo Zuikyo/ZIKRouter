@@ -324,10 +324,10 @@ NSString *kZIKRouterErrorDomain = @"kZIKRouterErrorDomain";
         if (configBuilder) {
             configBuilder(config);
         }
-        void(^routeCompletion)(id destination) = config.routeCompletion;
-        config.routeCompletion = ^(id  _Nonnull destination) {
-            if (routeCompletion) {
-                routeCompletion(destination);
+        void(^successHandler)(id destination) = config.successHandler;
+        config.successHandler = ^(id  _Nonnull destination) {
+            if (successHandler) {
+                successHandler(destination);
             }
             dest = destination;
         };
@@ -352,10 +352,10 @@ NSString *kZIKRouterErrorDomain = @"kZIKRouterErrorDomain";
         if (configBuilder) {
             configBuilder(config,prepareDest,prepareModule);
         }
-        void(^routeCompletion)(id destination) = config.routeCompletion;
-        config.routeCompletion = ^(id  _Nonnull destination) {
-            if (routeCompletion) {
-                routeCompletion(destination);
+        void(^successHandler)(id destination) = config.successHandler;
+        config.successHandler = ^(id  _Nonnull destination) {
+            if (successHandler) {
+                successHandler(destination);
             }
             dest = destination;
         };
@@ -447,17 +447,21 @@ NSString *kZIKRouterErrorDomain = @"kZIKRouterErrorDomain";
 
 - (void)notifySuccessToProviderWithAction:(ZIKRouteAction)routeAction {
     NSParameterAssert(routeAction);
-    ZIKRouteConfiguration *configuration;
-    if ([routeAction isEqual:ZIKRouteActionPerformRoute]) {
-        configuration = self.original_configuration;
-    } else if ([routeAction isEqual:ZIKRouteActionRemoveRoute]) {
-        configuration = self.original_removeConfiguration;
-    } else {
-        configuration = self.original_configuration;
+    NSParameterAssert(self.destination);
+    if ([routeAction isEqualToString:ZIKRouteActionRemoveRoute]) {
+        if (self.original_removeConfiguration.successHandler) {
+            self.original_removeConfiguration.successHandler();
+        }
+        if (self.original_removeConfiguration.completion) {
+            self.original_removeConfiguration.completion(YES, routeAction, nil);
+        }
+        return;
     }
-    
-    if (configuration.successHandler) {
-        configuration.successHandler();
+    if (self.original_configuration.successHandler) {
+        self.original_configuration.successHandler(self.destination);
+    }
+    if (self.original_configuration.completion) {
+        self.original_configuration.completion(YES, self.destination, routeAction, nil);
     }
 }
 
@@ -465,23 +469,20 @@ NSString *kZIKRouterErrorDomain = @"kZIKRouterErrorDomain";
     NSParameterAssert(error);
     NSParameterAssert(routeAction);
     self.error = error;
-    ZIKRouteConfiguration *configuration;
-    if ([routeAction isEqual:ZIKRouteActionPerformRoute]) {
-        configuration = self.original_configuration;
-    } else if ([routeAction isEqual:ZIKRouteActionRemoveRoute]) {
-        configuration = self.original_removeConfiguration;
-    } else {
-        configuration = self.original_configuration;
-    }
-    if (!configuration.errorHandler) {
+    if ([routeAction isEqualToString:ZIKRouteActionRemoveRoute]) {
+        if (self.original_removeConfiguration.errorHandler) {
+            self.original_removeConfiguration.errorHandler(routeAction, error);
+        }
+        if (self.original_removeConfiguration.completion) {
+            self.original_removeConfiguration.completion(NO, routeAction, error);
+        }
         return;
     }
-    if ([NSThread isMainThread]) {
-        configuration.errorHandler(routeAction, error);
-    } else {
-        dispatch_async(dispatch_get_main_queue(), ^{
-            configuration.errorHandler(routeAction, error);
-        });
+    if (self.original_configuration.errorHandler) {
+        self.original_configuration.errorHandler(routeAction, error);
+    }
+    if (self.original_configuration.completion) {
+        self.original_configuration.completion(NO, self.destination, routeAction, error);
     }
 }
 

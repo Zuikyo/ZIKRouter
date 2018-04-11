@@ -10,6 +10,6 @@
 #define AppContext_h
 
 ///Auto register or manually register
-#define AUTO_REGISTER_ROUTERS 0
+#define AUTO_REGISTER_ROUTERS 1
 
 #endif

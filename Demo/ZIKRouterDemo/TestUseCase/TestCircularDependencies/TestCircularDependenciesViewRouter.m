@@ -49,7 +49,7 @@
             config.prepareDestination = ^(id<ZIKChildViewProtocol> child) {
                 child.parent = destination;
             };
-            config.routeCompletion = ^(id  _Nonnull child) {
+            config.successHandler = ^(id  _Nonnull child) {
                 destination.child = child;
             };
         }];

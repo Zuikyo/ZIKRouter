@@ -187,7 +187,7 @@ NS_ASSUME_NONNULL_BEGIN
  @discussion
  Invoked time:
  
- For UIViewController routing from router or storyboard, invoked after route animation is finished. See -routeCompletion.
+ For UIViewController routing from router or storyboard, invoked after route animation is finished. See -successHandler.
  For UIViewController not routing from router, or routed by ZIKViewRouteTypeAddAsChildViewController or ZIKViewRouteTypeGetDestination then displayed manually, invoked in -viewDidAppear:. The parameter `router` is nil.
  For UIView routing by ZIKViewRouteTypeAddAsSubview type, invoked after -addSubview: is called.
  For UIView routing from xib or from manually addSubview: or routed by ZIKViewRouteTypeGetDestination, invoked after destination is visible (did move to window), but not in -didMoveToSuperview:. See comments inside -ZIKViewRouter_hook_willMoveToSuperview: for more detial.

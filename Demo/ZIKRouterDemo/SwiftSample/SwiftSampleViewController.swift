@@ -72,7 +72,7 @@ class SwiftSampleViewController: UIViewController, PureSwiftSampleViewInput, Swi
             to: RoutableViewModule<RequiredCompatibleAlertConfigProtocol>(),
             from: self,
             configuring: { (config, _, prepareModule) in
-                config.routeCompletion = { d in
+                config.successHandler = { d in
                     print("show custom alert complete")
                 }
                 config.errorHandler = { (action, error) in
@@ -135,7 +135,7 @@ class SwiftSampleViewController: UIViewController, PureSwiftSampleViewInput, Swi
                     })
                 })
                 
-                config.routeCompletion = { d in
+                config.successHandler = { d in
                     print("show custom alert complete")
                 }
                 config.errorHandler = { (action, error) in
