@@ -23,6 +23,7 @@ NS_ASSUME_NONNULL_BEGIN
 - (instancetype)new NS_UNAVAILABLE;
 
 @property (nonatomic, readonly) ZIKRoute<Destination, RouteConfig, RemoveConfig> *(^registerDestination)(Class destinationClass);
+@property (nonatomic, readonly) ZIKRoute<Destination, RouteConfig, RemoveConfig> *(^registerExclusiveDestination)(Class destinationClass);
 @property (nonatomic, readonly) ZIKRoute<Destination, RouteConfig, RemoveConfig> *(^registerDestinationProtocol)(Protocol *destinationProtocol);
 @property (nonatomic, readonly) ZIKRoute<Destination, RouteConfig, RemoveConfig> *(^registerModuleProtocol)(Protocol *moduleConfigProtocol);
 

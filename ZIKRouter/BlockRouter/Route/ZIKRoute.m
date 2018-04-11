@@ -58,6 +58,15 @@
     };
 };
 
+- (ZIKRoute<id, ZIKPerformRouteConfiguration *, ZIKRemoveRouteConfiguration *> *(^)(Class))registerExclusiveDestination {
+    return ^(Class destinationClass) {
+        //register class with route
+        [[[self class] registryClass] registerExclusiveDestination:destinationClass route:self];
+        self.destinationClass = destinationClass;
+        return self;
+    };
+};
+
 - (ZIKRoute<id, ZIKPerformRouteConfiguration *, ZIKRemoveRouteConfiguration *> *(^)(Protocol *))registerDestinationProtocol {
     return ^(Protocol *destinationProtocol) {
         //register destination protocol with route
