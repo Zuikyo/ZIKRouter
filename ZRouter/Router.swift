@@ -277,6 +277,8 @@ public extension Router {
             config.routeType = ViewRouteType.getDestination
             if let moduleConfig = config as? Module {
                 prepare?(moduleConfig)
+            } else {
+                assertionFailure("Bad implementation in router, configuration (\(config)) should be type (\(Module.self))")
             }
             config.successHandler = { d in
                 destination = d
@@ -328,6 +330,8 @@ public extension Router {
         _ = routerClass?.perform(configuring: { config,_,_  in
             if let moduleConfig = config as? Module {
                 prepare?(moduleConfig)
+            } else {
+                assertionFailure("Bad implementation in router, configuration (\(config)) should be type (\(Module.self))")
             }
             config.successHandler = { d in
                 destination = d

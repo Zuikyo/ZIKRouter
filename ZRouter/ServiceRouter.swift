@@ -64,9 +64,11 @@ public class ServiceRouterType<Destination, ModuleConfig> {
                 }
             }
             let prepareModule = { (prepare: (ModuleConfig) -> Void) in
-                if let moduleConfig = config as? ModuleConfig {
-                    prepare(moduleConfig)
+                guard let moduleConfig = config as? ModuleConfig else {
+                    assertionFailure("Bad implementation in router, configuration (\(config)) should be type (\(ModuleConfig.self))")
+                    return
                 }
+                prepare(moduleConfig)
             }
             configBuilder(config, prepareDestination, prepareModule)
             if shouldCheckServiceRouter {
@@ -134,9 +136,11 @@ public class ServiceRouterType<Destination, ModuleConfig> {
                 }
             }
             let prepareModule = { (prepare: (ModuleConfig) -> Void) in
-                if let moduleConfig = config as? ModuleConfig {
-                    prepare(moduleConfig)
+                guard let moduleConfig = config as? ModuleConfig else {
+                    assertionFailure("Bad implementation in router, configuration (\(config)) should be type (\(ModuleConfig.self))")
+                    return
                 }
+                prepare(moduleConfig)
             }
             configBuilder(config, prepareDestination, prepareModule)
         })

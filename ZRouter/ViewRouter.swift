@@ -48,9 +48,11 @@ public class ViewRouterType<Destination, ModuleConfig> {
             removeBuilder = { (config: ViewRemoveConfig) in
                 let prepareDestination = { (prepare: @escaping (Destination) -> Void) in
                     config.prepareDestination = { d in
-                        if let destination = d as? Destination {
-                            prepare(destination)
+                        guard let destination = d as? Destination else {
+                            assertionFailure("Bad implementation in router, destination (\(d)) should be type (\(Destination.self))")
+                            return
                         }
+                        prepare(destination)
                     }
                 }
                 removeConfigBuilder(config, prepareDestination)
@@ -60,15 +62,19 @@ public class ViewRouterType<Destination, ModuleConfig> {
         let router = routerType.perform(from: source, configuring: { config in
             let prepareDestination = { (prepare: @escaping (Destination) -> Void) in
                 config.prepareDestination = { d in
-                    if let destination = d as? Destination {
-                        prepare(destination)
+                    guard let destination = d as? Destination else {
+                        assertionFailure("Bad implementation in router, destination (\(d)) should be type (\(Destination.self))")
+                        return
                     }
+                    prepare(destination)
                 }
             }
             let prepareModule = { (prepare: (ModuleConfig) -> Void) in
-                if let moduleConfig = config as? ModuleConfig {
-                    prepare(moduleConfig)
+                guard let moduleConfig = config as? ModuleConfig else {
+                    assertionFailure("Bad implementation in router, configuration (\(config)) should be type (\(ModuleConfig.self))")
+                    return
                 }
+                prepare(moduleConfig)
             }
             configBuilder(config, prepareDestination, prepareModule)
             if shouldCheckServiceRouter {
@@ -123,9 +129,11 @@ public class ViewRouterType<Destination, ModuleConfig> {
             removeBuilder = { (config: ViewRemoveConfig) in
                 let prepareDestination = { (prepare: @escaping (Destination) -> Void) in
                     config.prepareDestination = { d in
-                        if let destination = d as? Destination {
-                            prepare(destination)
+                        guard let destination = d as? Destination else {
+                            assertionFailure("Bad implementation in router, destination (\(d)) should be type (\(Destination.self))")
+                            return
                         }
+                        prepare(destination)
                     }
                 }
                 removeConfigBuilder(config, prepareDestination)
@@ -138,15 +146,19 @@ public class ViewRouterType<Destination, ModuleConfig> {
         let router = routerType.perform(onDestination: dest, from: source, configuring: { (config) in
             let prepareDestination = { (prepare: @escaping (Destination) -> Void) in
                 config.prepareDestination = { d in
-                    if let destination = d as? Destination {
-                        prepare(destination)
+                    guard let destination = d as? Destination else {
+                        assertionFailure("Bad implementation in router, destination (\(d)) should be type (\(Destination.self))")
+                        return
                     }
+                    prepare(destination)
                 }
             }
             let prepareModule = { (prepare: (ModuleConfig) -> Void) in
-                if let moduleConfig = config as? ModuleConfig {
-                    prepare(moduleConfig)
+                guard let moduleConfig = config as? ModuleConfig else {
+                    assertionFailure("Bad implementation in router, configuration (\(config)) should be type (\(ModuleConfig.self))")
+                    return
                 }
+                prepare(moduleConfig)
             }
             configBuilder(config, prepareDestination, prepareModule)
         }, removing: removeBuilder)
@@ -194,9 +206,11 @@ public class ViewRouterType<Destination, ModuleConfig> {
             removeBuilder = { (config: ViewRemoveConfig) in
                 let prepareDestination = { (prepare: @escaping (Destination) -> Void) in
                     config.prepareDestination = { d in
-                        if let destination = d as? Destination {
-                            prepare(destination)
+                        guard let destination = d as? Destination else {
+                            assertionFailure("Bad implementation in router, destination (\(d)) should be type (\(Destination.self))")
+                            return
                         }
+                        prepare(destination)
                     }
                 }
                 removeConfigBuilder(config, prepareDestination)
@@ -209,15 +223,19 @@ public class ViewRouterType<Destination, ModuleConfig> {
         let router = routerType.prepareDestination(dest, configuring: { (config) in
             let prepareDestination = { (prepare: @escaping (Destination) -> Void) in
                 config.prepareDestination = { d in
-                    if let destination = d as? Destination {
-                        prepare(destination)
+                    guard let destination = d as? Destination else {
+                        assertionFailure("Bad implementation in router, destination (\(d)) should be type (\(Destination.self))")
+                        return
                     }
+                    prepare(destination)
                 }
             }
             let prepareModule = { (prepare: (ModuleConfig) -> Void) in
-                if let moduleConfig = config as? ModuleConfig {
-                    prepare(moduleConfig)
+                guard let moduleConfig = config as? ModuleConfig else {
+                    assertionFailure("Bad implementation in router, configuration (\(config)) should be type (\(ModuleConfig.self))")
+                    return
                 }
+                prepare(moduleConfig)
             }
             configBuilder(config, prepareDestination, prepareModule)
         }, removing: removeBuilder)
@@ -252,9 +270,11 @@ public class ViewRouterType<Destination, ModuleConfig> {
     /// Synchronously get destination, and prepare the destination with destination protocol. Preparation is an escaping block, use weakSelf to avoid retain cycle.
     public func makeDestination(preparation prepare: ((Destination) -> Void)? = nil) -> Destination? {
         let destination = routerType.makeDestination(preparation: { d in
-            if let destination = d as? Destination {
-                prepare?(destination)
+            guard let destination = d as? Destination else {
+                assertionFailure("Bad implementation in router, destination (\(d)) should be type (\(Destination.self))")
+                return
             }
+            prepare?(destination)
         })
         assert(destination == nil || destination is Destination, "Router (\(routerType)) returns wrong destination type (\(String(describing: destination))), destination should be \(Destination.self)")
         assert(destination == nil || Registry.validateConformance(destination: destination!, inViewRouterType: routerType))
@@ -272,15 +292,19 @@ public class ViewRouterType<Destination, ModuleConfig> {
         let destination = routerType.makeDestination(configuring: { config in
             let prepareDestination = { (prepare: @escaping (Destination) -> Void) in
                 config.prepareDestination = { d in
-                    if let destination = d as? Destination {
-                        prepare(destination)
+                    guard let destination = d as? Destination else {
+                        assertionFailure("Bad implementation in router, destination (\(d)) should be type (\(Destination.self))")
+                        return
                     }
+                    prepare(destination)
                 }
             }
             let prepareModule = { (prepare: (ModuleConfig) -> Void) in
-                if let moduleConfig = config as? ModuleConfig {
-                    prepare(moduleConfig)
+                guard let moduleConfig = config as? ModuleConfig else {
+                    assertionFailure("Bad implementation in router, configuration (\(config)) should be type (\(ModuleConfig.self))")
+                    return
                 }
+                prepare(moduleConfig)
             }
             configBuilder(config, prepareDestination, prepareModule)
         })
@@ -340,9 +364,11 @@ public class ViewRouter<Destination, ModuleConfig> {
     ///Perform with success handler and error handler.
     public func performRoute(successHandler: ((Destination) -> Void)? = nil, errorHandler: ((ZIKRouteAction, Error) -> Void)? = nil) {
         router.performRoute(successHandler: { (d) in
-            if let destination = d as? Destination {
-                successHandler?(destination)
+            guard let destination = d as? Destination else {
+                assertionFailure("Bad implementation in router, destination (\(d)) should be type (\(Destination.self))")
+                return
             }
+            successHandler?(destination)
         }, errorHandler: errorHandler)
     }
     
@@ -387,9 +413,11 @@ public class ViewRouter<Destination, ModuleConfig> {
         router.removeRoute(configuring: { (config) in
             let prepareDestination = { (prepare: @escaping (Destination) -> Void) in
                 config.prepareDestination = { d in
-                    if let destination = d as? Destination {
-                        prepare(destination)
+                    guard let destination = d as? Destination else {
+                        assertionFailure("Bad implementation in router, destination (\(d)) should be type (\(Destination.self))")
+                        return
                     }
+                    prepare(destination)
                 }
             }
             configBuilder(config, prepareDestination)

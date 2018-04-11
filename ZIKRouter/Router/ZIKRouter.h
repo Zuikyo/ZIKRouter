@@ -75,9 +75,11 @@ NS_ASSUME_NONNULL_BEGIN
 - (BOOL)canPerform;
 ///Perform route directly.
 - (void)performRoute;
-///Perform with success handler and error handler.
+///Perform with success handler and error handler. Blocks are only for currrent performing.
 - (void)performRouteWithSuccessHandler:(void(^ _Nullable)(Destination destination))performerSuccessHandler
                           errorHandler:(void(^ _Nullable)(ZIKRouteAction routeAction, NSError *error))performerErrorHandler;
+///Perform with completion. The completion is only for currrent performing.
+- (void)performRouteWithCompletion:(void(^)(BOOL success, Destination _Nullable destination, ZIKRouteAction routeAction, NSError *_Nullable error))performerCompletion;
 
 ///If this route action doesn't need any arguments, just perform directly.
 + (nullable instancetype)performRoute;

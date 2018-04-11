@@ -174,6 +174,19 @@ NSString *kZIKRouterErrorDomain = @"kZIKRouterErrorDomain";
     [self performWithConfiguration:configuration];
 }
 
+///Perform with completion. The completion is only for currrent performing.
+- (void)performRouteWithCompletion:(void(^)(BOOL success, id _Nullable destination, ZIKRouteAction routeAction, NSError *_Nullable error))performerCompletion {
+    [self performRouteWithSuccessHandler:^(id  _Nonnull destination) {
+        if (performerCompletion) {
+            performerCompletion(YES, destination, ZIKRouteActionPerformRoute, nil);
+        }
+    } errorHandler:^(ZIKRouteAction  _Nonnull routeAction, NSError * _Nonnull error) {
+        if (performerCompletion) {
+            performerCompletion(NO, nil, routeAction, error);
+        }
+    }];
+}
+
 - (void)performWithConfiguration:(ZIKPerformRouteConfiguration *)configuration {
     NSAssert([configuration isKindOfClass:[[[self class] defaultRouteConfiguration] class]], @"When using custom configuration class，you must override +defaultRouteConfiguration to return your custom configuration instance.");
     

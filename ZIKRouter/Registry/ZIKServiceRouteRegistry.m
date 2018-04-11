@@ -10,10 +10,12 @@
 //
 
 #import "ZIKServiceRouteRegistry.h"
+#import "ZIKRouteRegistryInternal.h"
 #import "ZIKRouterInternal.h"
 #import "ZIKServiceRouterInternal.h"
 #import "ZIKBlockServiceRouter.h"
 #import "ZIKServiceRouterType.h"
+#import "ZIKServiceRoute.h"
 #import "ZIKRouterRuntime.h"
 #import <objc/runtime.h>
 #import <UIKit/UIKit.h>
@@ -257,6 +259,52 @@ static NSMutableArray<Class> *_routerClasses;
         ZIKRouteConfiguration *config = [routerClass defaultRouteConfiguration];
         NSCAssert3([config conformsToProtocol:protocol], @"Router(%@)'s default ZIKRouteConfiguration(%@) should conform to registered config protocol(%@)",routerClass, [config class], NSStringFromProtocol(protocol));
     }
+}
+
+#endif
+
+#pragma mark Check Override
+
+#if ZIKROUTER_CHECK
+
++ (void)registerDestination:(Class)destinationClass router:(Class)routerClass {
+    NSParameterAssert([routerClass isSubclassOfClass:[ZIKServiceRouter class]]);
+    [super registerDestination:destinationClass router:routerClass];
+}
+
++ (void)registerExclusiveDestination:(Class)destinationClass router:(Class)routerClass {
+    NSParameterAssert([routerClass isSubclassOfClass:[ZIKServiceRouter class]]);
+    [super registerExclusiveDestination:destinationClass router:routerClass];
+}
+
++ (void)registerDestinationProtocol:(Protocol *)destinationProtocol router:(Class)routerClass {
+    NSParameterAssert([routerClass isSubclassOfClass:[ZIKServiceRouter class]]);
+    [super registerDestinationProtocol:destinationProtocol router:routerClass];
+}
+
++ (void)registerModuleProtocol:(Protocol *)configProtocol router:(Class)routerClass {
+    NSParameterAssert([routerClass isSubclassOfClass:[ZIKServiceRouter class]]);
+    [super registerModuleProtocol:configProtocol router:routerClass];
+}
+
++ (void)registerDestination:(Class)destinationClass route:(ZIKRoute *)route {
+    NSParameterAssert([route isKindOfClass:[ZIKServiceRoute class]]);
+    [super registerDestination:destinationClass route:route];
+}
+
++ (void)registerExclusiveDestination:(Class)destinationClass route:(ZIKRoute *)route {
+    NSParameterAssert([route isKindOfClass:[ZIKServiceRoute class]]);
+    [super registerExclusiveDestination:destinationClass route:route];
+}
+
++ (void)registerDestinationProtocol:(Protocol *)destinationProtocol route:(ZIKRoute *)route {
+    NSParameterAssert([route isKindOfClass:[ZIKServiceRoute class]]);
+    [super registerDestinationProtocol:destinationProtocol route:route];
+}
+
++ (void)registerModuleProtocol:(Protocol *)configProtocol route:(ZIKRoute *)route {
+    NSParameterAssert([route isKindOfClass:[ZIKServiceRoute class]]);
+    [super registerModuleProtocol:configProtocol route:route];
 }
 
 #endif

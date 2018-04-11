@@ -802,7 +802,6 @@ static NSMutableArray *g_preparingUIViewRouters;
     [destination setZix_routeTypeFromRouter:@(ZIKViewRouteTypeAddAsChildViewController)];
     [source addChildViewController:wrappedDestination];
     
-//    self.realRouteType = ZIKViewRouteRealTypeAddAsChildViewController;
     self.realRouteType = ZIKViewRouteRealTypeUnknown;
 //    [self endPerformRouteWithSuccess];
     [self notifyRouteState:ZIKRouterStateRouted];
@@ -1022,11 +1021,6 @@ destinationStateBeforeRoute:(ZIKPresentationState *)destinationStateBeforeRoute
     self.retainedSelf = nil;
     [self _callbackErrorWithAction:ZIKRouteActionPerformRoute error:error];
 }
-
-//+ (ZIKViewRouteRealType)_realRouteTypeForViewController:(UIViewController *)destination {
-//    ZIKViewRouteType routeType = [destination zix_routeType];
-//    return [self _realRouteTypeForRouteTypeFromViewController:routeType];
-//}
 
 ///routeType must from -[viewController zix_routeType]
 + (ZIKViewRouteRealType)_realRouteTypeForRouteTypeFromViewController:(ZIKViewRouteType)routeType {
@@ -3079,18 +3073,13 @@ static  ZIKViewRouterType *_Nullable _routerTypeToRegisteredView(Class viewClass
     } removing:nil];
 }
 
-+ (nullable instancetype)performFromSource:(nullable id<ZIKViewRouteSource>)source routeType:(ZIKViewRouteType)routeType completion:(ZIKPerformRouteCompletion)performerCompletion {
++ (nullable instancetype)performFromSource:(nullable id<ZIKViewRouteSource>)source routeType:(ZIKViewRouteType)routeType completion:(ZIKPerformRouteCompletion)completionHandler {
     return [self performFromSource:source configuring:^(ZIKViewRouteConfiguration * _Nonnull config) {
         config.routeType = routeType;
-        if (performerCompletion == nil) {
+        if (completionHandler == nil) {
             return;
         }
-        config.performerSuccessHandler = ^(id  _Nonnull destination) {
-            performerCompletion(YES, destination, ZIKRouteActionPerformRoute, nil);
-        };
-        config.performerErrorHandler = ^(ZIKRouteAction  _Nonnull routeAction, NSError * _Nonnull error) {
-            performerCompletion(NO, nil, routeAction, error);
-        };
+        config.completionHandler = completionHandler;
     }];
 }
 

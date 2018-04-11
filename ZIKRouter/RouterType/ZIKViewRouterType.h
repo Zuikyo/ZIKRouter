@@ -42,8 +42,10 @@ NS_ASSUME_NONNULL_BEGIN
 ///If this destination doesn't need any variable to initialize, just pass source and perform route.
 - (nullable ZIKViewRouter<Destination, RouteConfig> *)performFromSource:(nullable id<ZIKViewRouteSource>)source routeType:(ZIKViewRouteType)routeType;
 
-///If this destination doesn't need any variable to initialize, just pass source and perform route.
-- (nullable ZIKViewRouter<Destination, RouteConfig> *)performFromSource:(nullable id<ZIKViewRouteSource>)source routeType:(ZIKViewRouteType)routeType completion:(ZIKPerformRouteCompletion)performerCompletion;
+///If this destination doesn't need any variable to initialize, just pass source and perform route. The escaping completionHandler will be set to configuration.
+- (nullable ZIKViewRouter<Destination, RouteConfig> *)performFromSource:(nullable id<ZIKViewRouteSource>)source
+                                                              routeType:(ZIKViewRouteType)routeType
+                                                             completion:(void(^)(BOOL success, Destination _Nullable destination, ZIKRouteAction routeAction, NSError *_Nullable error))completionHandler;
 
 /**
  Perform route on destination. If you get a prepared destination by ZIKViewRouteTypeGetDestination, you can use this method to perform route on the destination.

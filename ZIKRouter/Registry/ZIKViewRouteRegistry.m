@@ -324,4 +324,50 @@ static NSMutableArray<Class> *_routerClasses;
 }
 #endif
 
+#pragma mark Check Override
+
+#if ZIKROUTER_CHECK
+
++ (void)registerDestination:(Class)destinationClass router:(Class)routerClass {
+    NSParameterAssert([routerClass isSubclassOfClass:[ZIKViewRouter class]]);
+    [super registerDestination:destinationClass router:routerClass];
+}
+
++ (void)registerExclusiveDestination:(Class)destinationClass router:(Class)routerClass {
+    NSParameterAssert([routerClass isSubclassOfClass:[ZIKViewRouter class]]);
+    [super registerExclusiveDestination:destinationClass router:routerClass];
+}
+
++ (void)registerDestinationProtocol:(Protocol *)destinationProtocol router:(Class)routerClass {
+    NSParameterAssert([routerClass isSubclassOfClass:[ZIKViewRouter class]]);
+    [super registerDestinationProtocol:destinationProtocol router:routerClass];
+}
+
++ (void)registerModuleProtocol:(Protocol *)configProtocol router:(Class)routerClass {
+    NSParameterAssert([routerClass isSubclassOfClass:[ZIKViewRouter class]]);
+    [super registerModuleProtocol:configProtocol router:routerClass];
+}
+
++ (void)registerDestination:(Class)destinationClass route:(ZIKRoute *)route {
+    NSParameterAssert([route isKindOfClass:[ZIKViewRoute class]]);
+    [super registerDestination:destinationClass route:route];
+}
+
++ (void)registerExclusiveDestination:(Class)destinationClass route:(ZIKRoute *)route {
+    NSParameterAssert([route isKindOfClass:[ZIKViewRoute class]]);
+    [super registerExclusiveDestination:destinationClass route:route];
+}
+
++ (void)registerDestinationProtocol:(Protocol *)destinationProtocol route:(ZIKRoute *)route {
+    NSParameterAssert([route isKindOfClass:[ZIKViewRoute class]]);
+    [super registerDestinationProtocol:destinationProtocol route:route];
+}
+
++ (void)registerModuleProtocol:(Protocol *)configProtocol route:(ZIKRoute *)route {
+    NSParameterAssert([route isKindOfClass:[ZIKViewRoute class]]);
+    [super registerModuleProtocol:configProtocol route:route];
+}
+
+#endif
+
 @end
