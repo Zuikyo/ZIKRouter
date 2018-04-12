@@ -34,7 +34,7 @@
         NSLog(@"Can't perform route now:%@",self.infoViewRouter);
         return;
     }
-    [self.infoViewRouter performRouteWithSuccessHandler:^{
+    [self.infoViewRouter performRouteWithSuccessHandler:^(id<ZIKInfoViewProtocol> destination) {
         [self removeInfoViewController];
     } errorHandler:^(ZIKRouteAction  _Nonnull routeAction, NSError * _Nonnull error) {
         NSLog(@"performer: push failed: %@",error);
