@@ -15,11 +15,10 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-///Find router with service protocol. See ZIKServiceRouteErrorInvalidProtocol.
+///Find router with service protocol. See ZIKRouteErrorInvalidProtocol.
 extern ZIKRouteAction const ZIKRouteActionToService;
-///Find router with service module protocol. See ZIKServiceRouteErrorInvalidProtocol.
+///Find router with service module protocol. See ZIKRouteErrorInvalidProtocol.
 extern ZIKRouteAction const ZIKRouteActionToServiceModule;
-extern NSString *const kZIKServiceRouterErrorDomain;
 
 @class ZIKServiceRouter;
 /**
@@ -29,7 +28,7 @@ extern NSString *const kZIKServiceRouterErrorDomain;
  
  @param router The router where error happens
  @param routeAction The action where error happens
- @param error Error in kZIKServiceRouterErrorDomain or domain from subclass router, see ZIKServiceRouteError for detail
+ @param error Error in ZIKRouteErrorDomain or domain from subclass router, see ZIKServiceRouteError for detail
  */
 typedef void(^ZIKServiceRouteGlobalErrorHandler)(__kindof ZIKServiceRouter * _Nullable router, ZIKRouteAction routeAction, NSError *error);
 
@@ -50,8 +49,8 @@ typedef void(^ZIKServiceRouteGlobalErrorHandler)(__kindof ZIKServiceRouter * _Nu
 
 @interface ZIKServiceRouter (ErrorHandle)
 
-///Set error callback for all service router instance. Use this to debug and log.
-+ (void)setGlobalErrorHandler:(ZIKServiceRouteGlobalErrorHandler)globalErrorHandler;
+//Set error handler for all service router instance. Use this to debug and log.
+@property (class, copy, nullable) void(^globalErrorHandler)(__kindof ZIKServiceRouter *_Nullable router, ZIKRouteAction action, NSError *error);
 
 @end
 
@@ -91,17 +90,6 @@ typedef void(^ZIKServiceRouteGlobalErrorHandler)(__kindof ZIKServiceRouter * _Nu
 + (void)registerModuleProtocol:(Protocol<ZIKServiceModuleRoutable> *)configProtocol  NS_SWIFT_UNAVAILABLE("Use `register<Protocol>(_ routableServiceModule: RoutableServiceModule<Protocol>)`  in ZRouter instead");
 
 @end
-
-typedef NS_ENUM(NSInteger, ZIKServiceRouteError) {
-    ///The protocol you use to fetch the router is not registered.
-    ZIKServiceRouteErrorInvalidProtocol,
-    ///Router returns nil for destination, you can't use this service now. Maybe your configuration is invalid, or there is a bug in the router.
-    ZIKServiceRouteErrorServiceUnavailable,
-    ///Perform or remove route action failed. Remove route when destiantion was already dealloced. This is not implemented by default, the router subclass is responsible for checking this situation.
-    ZIKServiceRouteErrorActionFailed,
-    ///Infinite recursion for performing route detected. See -prepareDestination:configuration: for more detail.
-    ZIKServiceRouteErrorInfiniteRecursion
-};
 
 ///If a class conforms to ZIKRoutableService, there must be a router for it and it's subclass. Don't use it in other place.
 @protocol ZIKRoutableService

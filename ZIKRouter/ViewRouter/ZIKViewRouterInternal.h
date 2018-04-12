@@ -141,23 +141,26 @@ NS_ASSUME_NONNULL_BEGIN
 
 #pragma mark Custom Route State Control
 
-///Maintain the route state when you implement custom route or remove route by overriding -performRouteOnDestination:configuration: or -removeDestination:removeConfiguration:.
-///Call it when route will perform.
+///when you implement custom route or remove route by overriding -performRouteOnDestination:configuration: or -removeDestination:removeConfiguration:, maintain the route state with these methods, and state control methods in ZIKRouterInternal.h.
+
+///Call it when route will perform custom route.
 - (void)beginPerformRoute;
-///Call it when route is successfully performed.
-- (void)endPerformRouteWithSuccess;
-///Call it when route perform failed.
-- (void)endPerformRouteWithError:(NSError *)error;
 
 ///If your custom route type is performing a segue, use this to perform the segue, don't need to use -beginPerformRoute and -endPerformRouteWithSuccess. `source` is the view controller to perform the segue.
 - (void)_performSegueWithIdentifier:(NSString *)identifier fromSource:(UIViewController *)source sender:(nullable id)sender;
 
-///Call it when route will remove.
+///Call it when route will begin custom remove.
 - (void)beginRemoveRouteFromSource:(nullable id)source;
 ///Call it when route is successfully removed.
 - (void)endRemoveRouteWithSuccessOnDestination:(Destination)destination fromSource:(nullable id)source;
 ///Call it when route remove failed.
 - (void)endRemoveRouteWithError:(NSError *)error;
+
+- (void)endRemoveRouteWithSuccess NS_UNAVAILABLE
+;
+#pragma mark Notify Error
+
++ (void)notifyGlobalErrorWithRouter:(nullable __kindof ZIKViewRouter *)router action:(ZIKRouteAction)action error:(NSError *)error;
 
 #pragma mark AOP
 

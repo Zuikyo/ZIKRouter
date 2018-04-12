@@ -431,11 +431,10 @@ internal extension Registry {
         }
         if NSProtocolFromString(viewProtocolName) == nil {
             ZIKAnyViewRouter
-                ._callbackGlobalErrorHandler(
+                .notifyGlobalError(
                     with: nil,
                     action: .toView,
-                    error: ZIKAnyViewRouter.error(withCode:ZIKViewRouteError.invalidProtocol.rawValue,
-                                                  localizedDescription:"Swift view protocol name (\(viewProtocolName)) is invalid, maybe it was not registered with any view router, or not a protocol type name."))
+                    error: ZIKAnyViewRouter.routeError(withCode:.invalidProtocol, localizedDescription:"Swift view protocol name (\(viewProtocolName)) is invalid, maybe it was not registered with any view router, or not a protocol type name."))
             assertionFailure("Swift view protocol name (\(viewProtocolName)) is invalid, maybe it was not registered with any view router, or not a protocol type name.")
         }
         return nil
@@ -455,11 +454,10 @@ internal extension Registry {
         }
         if NSProtocolFromString(configProtocolName) == nil {
             ZIKAnyViewRouter
-                ._callbackGlobalErrorHandler(
+                .notifyGlobalError(
                     with: nil,
                     action: .toViewModule,
-                    error: ZIKAnyViewRouter.error(withCode:ZIKViewRouteError.invalidProtocol.rawValue,
-                                                  localizedDescription:"Swift view module protocol name (\(configProtocolName)) is invalid, maybe it was not registered with any view router, or not a protocol type name."))
+                    error: ZIKAnyViewRouter.routeError(withCode:.invalidProtocol, localizedDescription:"Swift view module protocol name (\(configProtocolName)) is invalid, maybe it was not registered with any view router, or not a protocol type name."))
             assertionFailure("Swift view module protocol name (\(configProtocolName)) is invalid, maybe it was not registered with any view router, or not a protocol type name.")
         }
         return nil
@@ -479,11 +477,10 @@ internal extension Registry {
         }
         if NSProtocolFromString(serviceProtocolName) == nil {
             ZIKAnyServiceRouter
-                ._callbackGlobalErrorHandler(
+                .notifyGlobalError(
                     with: nil,
                     action: .toService,
-                    error: ZIKAnyServiceRouter.error(withCode:ZIKServiceRouteError.invalidProtocol.rawValue,
-                                                    localizedDescription:"Swift service protocol name (\(serviceProtocolName)) is invalid, maybe it was not registered with any service router, or not a protocol name."))
+                    error: ZIKAnyServiceRouter.routeError(withCode:.invalidProtocol, localizedDescription:"Swift service protocol name (\(serviceProtocolName)) is invalid, maybe it was not registered with any service router, or not a protocol name."))
             assertionFailure("Swift service protocol name (\(serviceProtocolName)) is invalid, maybe it was not registered with any service router, or not a protocol name.")
         }
         return nil
@@ -503,11 +500,10 @@ internal extension Registry {
         }
         if NSProtocolFromString(configProtocolName) == nil {
             ZIKAnyServiceRouter
-                ._callbackGlobalErrorHandler(
+                .notifyGlobalError(
                     with: nil,
                     action: .toServiceModule,
-                    error: ZIKAnyServiceRouter.error(withCode:ZIKServiceRouteError.invalidProtocol.rawValue,
-                                                     localizedDescription:"Swift service module protocol name (\(configProtocolName)) is invalid, maybe it was not registered with any service router, or not a protocol name."))
+                    error: ZIKAnyServiceRouter.routeError(withCode:.invalidProtocol, localizedDescription:"Swift service module protocol name (\(configProtocolName)) is invalid, maybe it was not registered with any service router, or not a protocol name."))
             assertionFailure("Swift service module protocol name (\(configProtocolName)) is invalid, maybe it was not registered with any service router, or not a protocol name.")
         }
         return nil
@@ -531,11 +527,10 @@ fileprivate extension Registry {
         }
         if !ZIKRouter_isObjcProtocol(viewProtocol) {
             ZIKAnyViewRouter
-                ._callbackGlobalErrorHandler(
+                .notifyGlobalError(
                     with: nil,
                     action: .toView,
-                    error: ZIKAnyViewRouter.error(withCode:ZIKViewRouteError.invalidProtocol.rawValue,
-                                                  localizedDescription:"Swift view protocol (\(viewProtocol)) was not registered with any view router."))
+                    error: ZIKAnyViewRouter.routeError(withCode:.invalidProtocol, localizedDescription:"Swift view protocol (\(viewProtocol)) was not registered with any view router."))
             assertionFailure("Swift view protocol (\(viewProtocol)) was not registered with any view router.")
         }
         return nil
@@ -555,11 +550,10 @@ fileprivate extension Registry {
         
         if !ZIKRouter_isObjcProtocol(configProtocol) {
             ZIKAnyViewRouter
-                ._callbackGlobalErrorHandler(
+                .notifyGlobalError(
                     with: nil,
                     action: .toViewModule,
-                    error: ZIKAnyViewRouter.error(withCode:ZIKViewRouteError.invalidProtocol.rawValue,
-                                                  localizedDescription:"Swift module config protocol (\(configProtocol)) was not registered with any view router."))
+                    error: ZIKAnyViewRouter.routeError(withCode:.invalidProtocol, localizedDescription:"Swift module config protocol (\(configProtocol)) was not registered with any view router."))
             assertionFailure("Swift module config protocol (\(configProtocol)) was not registered with any view router.")
         }
         return nil
@@ -578,11 +572,10 @@ fileprivate extension Registry {
         }
         if !ZIKRouter_isObjcProtocol(serviceProtocol) {
             ZIKAnyServiceRouter
-                ._callbackGlobalErrorHandler(
+                .notifyGlobalError(
                     with: nil,
                     action: .toService,
-                    error: ZIKAnyServiceRouter.error(withCode:ZIKServiceRouteError.invalidProtocol.rawValue,
-                                                     localizedDescription:"Swift service protocol (\(serviceProtocol)) was not registered with any service router."))
+                    error: ZIKAnyServiceRouter.routeError(withCode:.invalidProtocol, localizedDescription:"Swift service protocol (\(serviceProtocol)) was not registered with any service router."))
             assertionFailure("Swift service protocol (\(serviceProtocol)) was not registered with any service router.")
         }
         return nil
@@ -601,11 +594,10 @@ fileprivate extension Registry {
         }
         if !ZIKRouter_isObjcProtocol(configProtocol) {
             ZIKAnyServiceRouter
-                ._callbackGlobalErrorHandler(
+                .notifyGlobalError(
                     with: nil,
                     action: .toServiceModule,
-                    error: ZIKAnyServiceRouter.error(withCode:ZIKServiceRouteError.invalidProtocol.rawValue,
-                                                     localizedDescription:"Swift module config protocol (\(configProtocol)) was not registered with any service router."))
+                    error: ZIKAnyServiceRouter.routeError(withCode:.invalidProtocol, localizedDescription:"Swift module config protocol (\(configProtocol)) was not registered with any service router."))
             assertionFailure("Swift module config protocol (\(configProtocol)) was not registered with any service router.")
         }
         return nil

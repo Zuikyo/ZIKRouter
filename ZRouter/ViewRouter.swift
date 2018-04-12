@@ -140,7 +140,7 @@ public class ViewRouterType<Destination, ModuleConfig> {
             }
         }
         guard let dest = destination as? ZIKRoutableView else {
-            ZIKAnyViewRouter._callbackGlobalErrorHandler(with: nil, action: .init, error: ZIKAnyViewRouter.error(withCode: ZIKViewRouteError.invalidConfiguration.rawValue, localizedDescription: "Perform route on invalid destination: \(destination)"))
+            ZIKAnyViewRouter.notifyGlobalError(with: nil, action: .init, error: ZIKAnyViewRouter.routeError(withCode: .invalidConfiguration, localizedDescription: "Perform route on invalid destination: \(destination)"))
             return nil
         }
         let router = routerType.perform(onDestination: dest, from: source, configuring: { (config) in
@@ -217,7 +217,7 @@ public class ViewRouterType<Destination, ModuleConfig> {
             }
         }
         guard let dest = destination as? ZIKRoutableView else {
-            ZIKAnyViewRouter._callbackGlobalErrorHandler(with: nil, action: .init, error: ZIKAnyViewRouter.error(withCode: ZIKViewRouteError.invalidConfiguration.rawValue, localizedDescription: "Perform route on invalid destination: \(destination)"))
+            ZIKAnyViewRouter.notifyGlobalError(with: nil, action: .init, error: ZIKAnyViewRouter.routeError(withCode: .invalidConfiguration, localizedDescription: "Perform route on invalid destination: \(destination)"))
             return nil
         }
         let router = routerType.prepareDestination(dest, configuring: { (config) in

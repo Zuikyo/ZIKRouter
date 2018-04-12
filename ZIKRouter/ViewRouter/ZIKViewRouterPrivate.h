@@ -22,8 +22,6 @@ NS_ASSUME_NONNULL_BEGIN
 ///Is auto registration all finished.
 + (BOOL)_isRegistrationFinished;
 
-+ (void)_callbackGlobalErrorHandlerWithRouter:(nullable __kindof ZIKViewRouter *)router action:(ZIKRouteAction)action error:(NSError *)error;
-
 + (void)_swift_registerViewProtocol:(id)viewProtocol;
 
 + (void)_swift_registerConfigProtocol:(id)configProtocol;

@@ -18,7 +18,7 @@ ZIKRouteAction const ZIKRouteActionInit = @"ZIKRouteActionInit";
 ZIKRouteAction const ZIKRouteActionPerformRoute = @"ZIKRouteActionPerformRoute";
 ZIKRouteAction const ZIKRouteActionRemoveRoute = @"ZIKRouteActionRemoveRoute";
 
-NSString *kZIKRouterErrorDomain = @"kZIKRouterErrorDomain";
+NSErrorDomain const ZIKRouteErrorDomain = @"ZIKRouteErrorDomain";
 
 @interface ZIKRouter () {
     dispatch_semaphore_t _stateSema;
@@ -32,12 +32,13 @@ NSString *kZIKRouterErrorDomain = @"kZIKRouterErrorDomain";
 @end
 
 @implementation ZIKRouter
+@dynamic globalErrorHandler;
 
 - (instancetype)initWithConfiguration:(ZIKPerformRouteConfiguration *)configuration removeConfiguration:(nullable ZIKRemoveRouteConfiguration *)removeConfiguration {
     NSParameterAssert(configuration || [[self class] isAbstractRouter]);
     
     if (self = [super init]) {
-        _state = ZIKRouterStateNotRoute;
+        _state = ZIKRouterStateUnrouted;
         _configuration = [configuration copy];
         _removeConfiguration = [removeConfiguration copy];
         _stateSema = dispatch_semaphore_create(1);
@@ -130,7 +131,6 @@ NSString *kZIKRouterErrorDomain = @"kZIKRouterErrorDomain";
 
 - (void)attachDestination:(id)destination {
     NSParameterAssert(destination);
-//    NSAssert(!self.destination, @"destination exists!");
     if (destination) {
         self.destination = destination;
     }
@@ -139,13 +139,23 @@ NSString *kZIKRouterErrorDomain = @"kZIKRouterErrorDomain";
 - (void)notifyRouteState:(ZIKRouterState)state {
     dispatch_semaphore_wait(_stateSema, DISPATCH_TIME_FOREVER);
     ZIKRouterState oldState = self.state;
+    if (oldState == state) {
+        dispatch_semaphore_signal(_stateSema);
+        return;
+    }
+    if (state == ZIKRouterStateRouting || state == ZIKRouterStateRemoving) {
+        [[self class] increaseRecursiveDepth];
+    }
+    
     self.preState = oldState;
     self.state = state;
     
     if (self.original_configuration.stateNotifier) {
         self.original_configuration.stateNotifier(oldState, state);
     }
-    
+    if (state != ZIKRouterStateRouting && state != ZIKRouterStateRemoving) {
+        [[self class] decreaseRecursiveDepth];
+    }
     dispatch_semaphore_signal(_stateSema);
 }
 
@@ -153,7 +163,19 @@ NSString *kZIKRouterErrorDomain = @"kZIKRouterErrorDomain";
 
 - (BOOL)canPerform {
     ZIKRouterState state = self.state;
-    return state == ZIKRouterStateNotRoute || state == ZIKRouterStateRemoved;
+    return state == ZIKRouterStateUnrouted;
+}
+
+- (void)performWithConfiguration:(ZIKPerformRouteConfiguration *)configuration {
+    NSAssert(self.state == ZIKRouterStateRouting, @"State should be routing in -performWithConfiguration:");
+    NSAssert([configuration isKindOfClass:[[[self class] defaultRouteConfiguration] class]], @"When using custom configuration class，you must override +defaultRouteConfiguration to return your custom configuration instance.");
+    id destination = [self destinationWithConfiguration:configuration];
+    self.destination = destination;
+    if (destination == nil) {
+        [self endPerformRouteWithError:[ZIKRouter errorWithCode:ZIKRouteErrorDestinationUnavailable localizedDescriptionFormat:@"Destination from router is nil. Maybe your configuration is invalid (%@), or there is a bug in the router."]];
+        return;
+    }
+    [self performRouteOnDestination:destination configuration:configuration];
 }
 
 - (void)performRoute {
@@ -164,6 +186,34 @@ NSString *kZIKRouterErrorDomain = @"kZIKRouterErrorDomain";
 - (void)performRouteWithSuccessHandler:(void(^)(id destination))performerSuccessHandler
                           errorHandler:(void(^)(ZIKRouteAction routeAction, NSError *error))performerErrorHandler {
     NSAssert(self.original_configuration, @"router must has configuration");
+    ZIKRouterState state = self.state;
+    if (state == ZIKRouterStateRouted) {
+        [self notifyError_actionFailedWithAction:ZIKRouteActionPerformRoute
+                                errorDescription:@"%@ 's state is routed, can't perform route again",self];
+        return;
+    } else if (state == ZIKRouterStateRouting) {
+        ZIKRouteAction action = ZIKRouteActionPerformRoute;
+        NSError *error = [ZIKRouter errorWithCode:ZIKRouteErrorOverRoute localizedDescriptionFormat:@"%@ is routing, can't perform route again",self];
+        if (performerErrorHandler) {
+            performerErrorHandler(action,error);
+        }
+        [[self class] notifyGlobalErrorWithRouter:self action:action error:error];
+        return;
+    } else if (state == ZIKRouterStateRemoving) {
+        ZIKRouteAction action = ZIKRouteActionPerformRoute;
+        NSError *error = [ZIKRouter errorWithCode:ZIKRouteErrorActionFailed localizedDescriptionFormat:@"%@ 's state is removing, can't perform route again",self];
+        if (performerErrorHandler) {
+            performerErrorHandler(action,error);
+        }
+        [[self class] notifyGlobalErrorWithRouter:self action:action error:error];
+        return;
+    }
+    if ([[self class] _validateInfiniteRecursion] == NO) {
+        [self notifyError_infiniteRecursionWithAction:ZIKRouteActionPerformRoute errorDescription:@"Infinite recursion for performing route detected. There may be cycle dependencies. Recursive call stack:\n%@",[NSThread callStackSymbols]];
+        [[self class] decreaseRecursiveDepth];
+        return;
+    }
+    [self notifyRouteState:ZIKRouterStateRouting];
     ZIKPerformRouteConfiguration *configuration = self.original_configuration;
     if (performerSuccessHandler) {
         configuration.performerSuccessHandler = performerSuccessHandler;
@@ -174,7 +224,6 @@ NSString *kZIKRouterErrorDomain = @"kZIKRouterErrorDomain";
     [self performWithConfiguration:configuration];
 }
 
-///Perform with completion. The completion is only for currrent performing.
 - (void)performRouteWithCompletion:(void(^)(BOOL success, id _Nullable destination, ZIKRouteAction routeAction, NSError *_Nullable error))performerCompletion {
     [self performRouteWithSuccessHandler:^(id  _Nonnull destination) {
         if (performerCompletion) {
@@ -185,14 +234,6 @@ NSString *kZIKRouterErrorDomain = @"kZIKRouterErrorDomain";
             performerCompletion(NO, nil, routeAction, error);
         }
     }];
-}
-
-- (void)performWithConfiguration:(ZIKPerformRouteConfiguration *)configuration {
-    NSAssert([configuration isKindOfClass:[[[self class] defaultRouteConfiguration] class]], @"When using custom configuration class，you must override +defaultRouteConfiguration to return your custom configuration instance.");
-    
-    id destination = [self destinationWithConfiguration:configuration];
-    self.destination = destination;
-    [self performRouteOnDestination:destination configuration:configuration];
 }
 
 + (instancetype)performRoute {
@@ -252,16 +293,48 @@ NSString *kZIKRouterErrorDomain = @"kZIKRouterErrorDomain";
 #pragma mark Remove
 
 - (BOOL)canRemove {
-    return NO;
+    return [self checkCanRemove] == nil;
+}
+
+- (NSString *)checkCanRemove {
+    if (!self.destination) {
+        if (self.state != ZIKRouterStateRemoved) {
+            [self notifyRouteState:ZIKRouterStateRemoved];
+        }
+        return [NSString stringWithFormat:@"Router can't remove, destination is dealloced. router:%@",self];
+    }
+    if (self.state != ZIKRouterStateRouted || !self.original_configuration) {
+        return [NSString stringWithFormat:@"Router can't remove, it's not performed, current state:%ld router:%@",(long)self.state,self];
+    }
+    return nil;
 }
 
 - (void)removeRoute {
-    [self removeRouteWithSuccessHandler:nil errorHandler:nil];
+    [self removeRouteWithSuccessHandler:self.original_removeConfiguration.performerSuccessHandler errorHandler:self.original_removeConfiguration.performerErrorHandler];
 }
 
 - (void)removeRouteWithSuccessHandler:(void(^)(void))performerSuccessHandler
                          errorHandler:(void(^)(ZIKRouteAction routeAction, NSError *error))performerErrorHandler {
-    NSAssert([self canRemove], @"Can't remove route for router now: (%@).", self);
+    if (self.state != ZIKRouterStateRouted || !self.original_configuration) {
+        ZIKRouteAction action = ZIKRouteActionRemoveRoute;
+        NSError *error = [ZIKRouter errorWithCode:ZIKRouteErrorActionFailed localizedDescriptionFormat:@"State should be ZIKRouterStateRouted when removeRoute, current state:%ld, configuration:%@",self.state,self.original_configuration];
+        if (performerErrorHandler) {
+            performerErrorHandler(action,error);
+        }
+        [[self class] notifyGlobalErrorWithRouter:self action:action error:error];
+        return;
+    }
+    NSString *errorMessage = [self checkCanRemove];
+    if (errorMessage != nil) {
+        NSString *description = [NSString stringWithFormat:@"%@, configuration:%@",errorMessage,self.original_configuration];
+        [self notifyError_actionFailedWithAction:ZIKRouteActionRemoveRoute
+                                errorDescription:description];
+        if (performerErrorHandler) {
+            performerErrorHandler(ZIKRouteActionRemoveRoute,[ZIKRouter errorWithCode:ZIKRouteErrorActionFailed localizedDescription:description]);
+        }
+        return;
+    }
+    [self notifyRouteState:ZIKRouterStateRemoving];
     ZIKRemoveRouteConfiguration *configuration = self.original_removeConfiguration;
     if (!configuration) {
         configuration = [[self class] defaultRemoveConfiguration];
@@ -276,7 +349,20 @@ NSString *kZIKRouterErrorDomain = @"kZIKRouterErrorDomain";
 }
 
 - (void)removeRouteWithConfiguring:(void(NS_NOESCAPE ^)(ZIKRemoveRouteConfiguration *config))removeConfigBuilder {
-    NSAssert([self canRemove], @"Can't remove route for router now: (%@).", self);
+    if (self.state != ZIKRouterStateRouted || !self.original_configuration) {
+        ZIKRouteAction action = ZIKRouteActionRemoveRoute;
+        NSError *error = [ZIKRouter errorWithCode:ZIKRouteErrorActionFailed localizedDescriptionFormat:@"State should be ZIKRouterStateRouted when removeRoute, current state:%ld, configuration:%@",self.state,self.original_configuration];
+        [[self class] notifyGlobalErrorWithRouter:self action:action error:error];
+        return;
+    }
+    NSString *errorMessage = [self checkCanRemove];
+    if (errorMessage != nil) {
+        NSString *description = [NSString stringWithFormat:@"%@, configuration:%@",errorMessage,self.original_configuration];
+        [self notifyError_actionFailedWithAction:ZIKRouteActionRemoveRoute
+                                errorDescription:description];
+        return;
+    }
+    [self notifyRouteState:ZIKRouterStateRemoving];
     ZIKRemoveRouteConfiguration *configuration = self.original_removeConfiguration;
     if (!configuration) {
         configuration = [[self class] defaultRemoveConfiguration];
@@ -290,7 +376,20 @@ NSString *kZIKRouterErrorDomain = @"kZIKRouterErrorDomain";
 - (void)removeRouteWithStrictConfiguring:(void (^)(ZIKRemoveRouteConfiguration * _Nonnull,
                                                    void (^ _Nonnull)(void (^ _Nonnull)(id _Nonnull))
                                                    ))removeConfigBuilder {
-    NSAssert([self canRemove], @"Can't remove route for router now: (%@).", self);
+    if (self.state != ZIKRouterStateRouted || !self.original_configuration) {
+        ZIKRouteAction action = ZIKRouteActionRemoveRoute;
+        NSError *error = [ZIKRouter errorWithCode:ZIKRouteErrorActionFailed localizedDescriptionFormat:@"State should be ZIKRouterStateRouted when removeRoute, current state:%ld, configuration:%@",self.state,self.original_configuration];
+        [[self class] notifyGlobalErrorWithRouter:self action:action error:error];
+        return;
+    }
+    NSString *errorMessage = [self checkCanRemove];
+    if (errorMessage != nil) {
+        NSString *description = [NSString stringWithFormat:@"%@, configuration:%@",errorMessage,self.original_configuration];
+        [self notifyError_actionFailedWithAction:ZIKRouteActionRemoveRoute
+                                errorDescription:description];
+        return;
+    }
+    [self notifyRouteState:ZIKRouterStateRemoving];
     ZIKRemoveRouteConfiguration *configuration = self.original_removeConfiguration;
     if (!configuration) {
         configuration = [[self class] defaultRemoveConfiguration];
@@ -399,25 +498,33 @@ NSString *kZIKRouterErrorDomain = @"kZIKRouterErrorDomain";
 }
 
 - (void)performRouteOnDestination:(id)destination configuration:(ZIKPerformRouteConfiguration *)configuration {
-    NSAssert(NO, @"Router: %@ must overrode %@!",[self class],NSStringFromSelector(_cmd));
+    NSAssert(NO, @"Router: %@ must override %@!",[self class],NSStringFromSelector(_cmd));
 }
 
 - (void)removeDestination:(id)destination removeConfiguration:(ZIKRemoveRouteConfiguration *)removeConfiguration {
-    NSAssert(NO, @"Router: %@ must overrode %@!",[self class],NSStringFromSelector(_cmd));
+    NSAssert(NO, @"Router: %@ must override %@!",[self class],NSStringFromSelector(_cmd));
 }
 
 - (id)destinationWithConfiguration:(ZIKPerformRouteConfiguration *)configuration {
-    NSAssert(NO, @"Router: %@ must overrode %@!",[self class],NSStringFromSelector(_cmd));
+    NSAssert(NO, @"Router: %@ must override %@!",[self class],NSStringFromSelector(_cmd));
     return nil;
 }
 
+- (void)prepareDestination:(id)destination configuration:(ZIKPerformRouteConfiguration *)configuration {
+    NSAssert([self class] != [ZIKRouter class], @"Prepare destination with it's router.");
+}
+
+- (void)didFinishPrepareDestination:(id)destination configuration:(ZIKPerformRouteConfiguration *)configuration {
+    NSAssert([self class] != [ZIKRouter class], @"Prepare destination with it's router.");
+}
+
 + (ZIKPerformRouteConfiguration *)defaultRouteConfiguration {
-    NSAssert(NO, @"Router: %@ must overrode %@!",[self class],NSStringFromSelector(_cmd));
+    NSAssert(NO, @"Router: %@ must override %@!",[self class],NSStringFromSelector(_cmd));
     return nil;
 }
 
 + (ZIKRemoveRouteConfiguration *)defaultRemoveConfiguration {
-    NSAssert(NO, @"Router: %@ must overrode %@!",[self class],NSStringFromSelector(_cmd));
+    NSAssert(NO, @"Router: %@ must override %@!",[self class],NSStringFromSelector(_cmd));
     return nil;
 }
 
@@ -425,10 +532,52 @@ NSString *kZIKRouterErrorDomain = @"kZIKRouterErrorDomain";
     return YES;
 }
 
+#pragma mark State Control
+
+- (void)prepareForPerformRouteOnDestination:(id)destination configuration:(__kindof ZIKPerformRouteConfiguration *)configuration {
+    if (configuration.prepareDestination) {
+        configuration.prepareDestination(destination);
+    }
+    [self prepareDestination:destination configuration:configuration];
+    [self didFinishPrepareDestination:destination configuration:configuration];
+}
+
+- (void)endPerformRouteWithSuccess {
+    NSAssert(self.state == ZIKRouterStateRouting, @"state should be routing when end to route.");
+    [self notifyRouteState:ZIKRouterStateRouted];
+    [self notifySuccessWithAction:ZIKRouteActionPerformRoute];
+}
+
+- (void)endPerformRouteWithError:(NSError *)error {
+    NSAssert(self.state == ZIKRouterStateRouting, @"state should be routing when end to route.");
+    [self notifyRouteState:self.preState];
+    [self notifyError:error routeAction:ZIKRouteActionPerformRoute];
+}
+
+- (void)prepareDestinationBeforeRemoving {
+    id destination = self.destination;
+    ZIKRemoveRouteConfiguration *configuration = self.original_removeConfiguration;
+    if (configuration.prepareDestination && destination) {
+        configuration.prepareDestination(destination);
+    }
+}
+
+- (void)endRemoveRouteWithSuccess {
+    NSAssert(self.state == ZIKRouterStateRemoving, @"state should be removing when end remove route.");
+    [self notifyRouteState:ZIKRouterStateRemoved];
+    [self notifySuccessWithAction:ZIKRouteActionRemoveRoute];
+}
+
+- (void)endRemoveRouteWithError:(NSError *)error {
+    NSAssert(self.state == ZIKRouterStateRemoving, @"state should be removing when end remove route.");
+    [self notifyRouteState:self.preState];
+    [self notifyError:error routeAction:ZIKRouteActionRemoveRoute];
+}
+
 #pragma mark Error Handle
 
 + (NSString *)errorDomain {
-    return kZIKRouterErrorDomain;
+    return ZIKRouteErrorDomain;
 }
 
 + (NSError *)errorWithCode:(NSInteger)code userInfo:(nullable NSDictionary *)userInfo {
@@ -454,8 +603,10 @@ NSString *kZIKRouterErrorDomain = @"kZIKRouterErrorDomain";
 }
 
 - (void)notifyError:(NSError *)error routeAction:(ZIKRouteAction)routeAction {
+    NSAssert(self.state != ZIKRouterStateRouting && self.state != ZIKRouterStateRemoving, @"State should not be routing or removing when action failed.");
     [self notifyErrorToProvider:error routeAction:routeAction];
     [self notifyErrorToPerformer:error routeAction:routeAction];
+    [[self class] notifyGlobalErrorWithRouter:self action:routeAction error:error];
 }
 
 - (void)notifySuccessToProviderWithAction:(ZIKRouteAction)routeAction {
@@ -501,7 +652,7 @@ NSString *kZIKRouterErrorDomain = @"kZIKRouterErrorDomain";
 
 - (void)notifySuccessToPerformerWithAction:(ZIKRouteAction)routeAction {
     NSParameterAssert(routeAction);
-    
+    NSParameterAssert(self.destination);
     if ([routeAction isEqualToString:ZIKRouteActionRemoveRoute]) {
         ZIKRemoveRouteConfiguration *configuration = self.original_removeConfiguration;
         if (configuration.performerSuccessHandler) {
@@ -548,6 +699,95 @@ NSString *kZIKRouterErrorDomain = @"kZIKRouterErrorDomain";
     }
 }
 
++ (void)notifyError_invalidProtocolWithAction:(ZIKRouteAction)action errorDescription:(NSString *)format ,... {
+    va_list argList;
+    va_start(argList, format);
+    NSString *description = [[NSString alloc] initWithFormat:format arguments:argList];
+    va_end(argList);
+    [[self class] notifyGlobalErrorWithRouter:nil action:action error:[ZIKRouter errorWithCode:ZIKRouteErrorInvalidProtocol localizedDescription:description]];
+}
+
+- (void)notifyError_invalidConfigurationWithAction:(ZIKRouteAction)action errorDescription:(NSString *)format ,... {
+    va_list argList;
+    va_start(argList, format);
+    NSString *description = [[NSString alloc] initWithFormat:format arguments:argList];
+    va_end(argList);
+    [self notifyError:[ZIKRouter errorWithCode:ZIKRouteErrorInvalidConfiguration localizedDescription:description] routeAction:action];
+}
+
+- (void)notifyError_destinationUnavailableWithAction:(ZIKRouteAction)action errorDescription:(NSString *)format ,... {
+    va_list argList;
+    va_start(argList, format);
+    NSString *description = [[NSString alloc] initWithFormat:format arguments:argList];
+    va_end(argList);
+    [self notifyError:[ZIKRouter errorWithCode:ZIKRouteErrorDestinationUnavailable localizedDescription:description] routeAction:action];
+}
+
+- (void)notifyError_actionFailedWithAction:(ZIKRouteAction)action errorDescription:(NSString *)format ,... {
+    va_list argList;
+    va_start(argList, format);
+    NSString *description = [[NSString alloc] initWithFormat:format arguments:argList];
+    va_end(argList);
+    [self notifyError:[ZIKRouter errorWithCode:ZIKRouteErrorActionFailed localizedDescription:description] routeAction:action];
+}
+
+- (void)notifyError_overRouteWithAction:(ZIKRouteAction)action errorDescription:(NSString *)format ,... {
+    va_list argList;
+    va_start(argList, format);
+    NSString *description = [[NSString alloc] initWithFormat:format arguments:argList];
+    va_end(argList);
+    [self notifyError:[ZIKRouter errorWithCode:ZIKRouteErrorOverRoute localizedDescription:description] routeAction:action];
+}
+
+- (void)notifyError_infiniteRecursionWithAction:(ZIKRouteAction)action errorDescription:(NSString *)format ,... {
+    va_list argList;
+    va_start(argList, format);
+    NSString *description = [[NSString alloc] initWithFormat:format arguments:argList];
+    va_end(argList);
+    [self notifyError:[ZIKRouter errorWithCode:ZIKRouteErrorInfiniteRecursion localizedDescription:description] routeAction:action];
+}
+
++ (void)notifyGlobalErrorWithRouter:(nullable __kindof ZIKRouter *)router action:(ZIKRouteAction)action error:(NSError *)error {
+    void(^errorHandler)(__kindof ZIKRouter *_Nullable router, ZIKRouteAction action, NSError *error) = self.globalErrorHandler;
+    if (errorHandler) {
+        errorHandler(router, action, error);
+    } else {
+#ifdef DEBUG
+        NSLog(@"❌ZIKRouter Error: router's action (%@) catch error: (%@),\nrouter:(%@)", action, error,router);
+#endif
+    }
+}
+
++ (BOOL)_validateInfiniteRecursion {
+    NSUInteger maxRecursiveDepth = 200;
+    if ([self recursiveDepth] > maxRecursiveDepth) {
+        return NO;
+    }
+    return YES;
+}
+
++ (void)increaseRecursiveDepth {
+    NSUInteger depth = [self recursiveDepth];
+    [self setRecursiveDepth:++depth];
+}
+
++ (void)decreaseRecursiveDepth {
+    NSUInteger depth = [self recursiveDepth];
+    [self setRecursiveDepth:--depth];
+}
+
++ (NSUInteger)recursiveDepth {
+    NSNumber *depth = objc_getAssociatedObject(self, @"ZIKRouter_recursiveDepth");
+    if ([depth isKindOfClass:[NSNumber class]]) {
+        return [depth unsignedIntegerValue];
+    }
+    return 0;
+}
+
++ (void)setRecursiveDepth:(NSUInteger)depth {
+    objc_setAssociatedObject(self, @"ZIKRouter_recursiveDepth", @(depth), OBJC_ASSOCIATION_RETAIN_NONATOMIC);
+}
+
 #pragma mark Getter/Setter
 
 - (ZIKPerformRouteConfiguration *)configuration {
@@ -571,7 +811,7 @@ NSString *kZIKRouterErrorDomain = @"kZIKRouterErrorDomain";
 + (NSString *)descriptionOfState:(ZIKRouterState)state {
     NSString *description;
     switch (state) {
-        case ZIKRouterStateNotRoute:
+        case ZIKRouterStateUnrouted:
             description = @"NotRoute";
             break;
         case ZIKRouterStateRouting:

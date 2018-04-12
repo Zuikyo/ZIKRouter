@@ -21,7 +21,6 @@ ZIKRouteAction const ZIKRouteActionPrepareOnDestination = @"ZIKRouteActionPrepar
 ZIKRouteAction const ZIKRouteActionPerformOnDestination = @"ZIKRouteActionPerformOnDestination";
 
 @interface ZIKViewRouter()
-+ (void)_callbackGlobalErrorHandlerWithRouter:(__kindof ZIKViewRouter *)router action:(SEL)action error:(NSError *)error;
 + (NSString *)descriptionOfRouteType:(ZIKViewRouteType)routeType;
 @end
 
@@ -74,27 +73,27 @@ ZIKRouteAction const ZIKRouteActionPerformOnDestination = @"ZIKRouteActionPerfor
             return;
         }
         if (strongSelf.segueConfiguration) {
-            [ZIKViewRouter _callbackGlobalErrorHandlerWithRouter:nil
-                                                            action:@selector(configureSegue)
-                                                             error:[ZIKViewRouter errorWithCode:ZIKViewRouteErrorInvalidConfiguration
-                                                                     localizedDescriptionFormat:@"segueConfiguration for configuration: %@ should only configure once",self]];
+            [ZIKViewRouter notifyGlobalErrorWithRouter:nil
+                                                action:ZIKRouteActionPerformRoute
+                                                 error:[ZIKRouter errorWithCode:ZIKRouteErrorInvalidConfiguration
+                                                        localizedDescriptionFormat:@"segueConfiguration for configuration: %@ should only configure once",self]];
             NSAssert(NO, @"segueConfiguration for configuration: %@ should only configure once",self);
         }
         ZIKViewRouteSegueConfiguration *segueConfiguration = [ZIKViewRouteSegueConfiguration new];
         if (configure) {
             configure(segueConfiguration);
         } else {
-            [ZIKViewRouter _callbackGlobalErrorHandlerWithRouter:nil
-                                                            action:@selector(configureSegue)
-                                                             error:[ZIKViewRouter errorWithCode:ZIKViewRouteErrorInvalidConfiguration
-                                                                     localizedDescriptionFormat:@"When configureSegue for configuration : %@, configure block should not be nil !",self]];
+            [ZIKViewRouter notifyGlobalErrorWithRouter:nil
+                                                action:ZIKRouteActionPerformRoute
+                                                 error:[ZIKRouter errorWithCode:ZIKRouteErrorInvalidConfiguration
+                                                        localizedDescriptionFormat:@"When configureSegue for configuration : %@, configure block should not be nil !",self]];
             NSAssert(NO, @"When configureSegue for configuration : %@, configure block should not be nil !",self);
         }
         if (!segueConfiguration.identifier && !strongSelf.autoCreated) {
-            [ZIKViewRouter _callbackGlobalErrorHandlerWithRouter:nil
-                                                            action:@selector(configureSegue)
-                                                             error:[ZIKViewRouter errorWithCode:ZIKViewRouteErrorInvalidConfiguration
-                                                                     localizedDescriptionFormat:@"configureSegue didn't assign segue identifier for configuration: %@", self]];
+            [ZIKViewRouter notifyGlobalErrorWithRouter:nil
+                                                action:ZIKRouteActionPerformRoute
+                                                 error:[ZIKRouter errorWithCode:ZIKRouteErrorInvalidConfiguration
+                                                        localizedDescriptionFormat:@"configureSegue didn't assign segue identifier for configuration: %@", self]];
             NSAssert(NO, @"configureSegue didn't assign segue identifier for configuration: %@", self);
         }
         strongSelf.segueConfiguration = segueConfiguration;
@@ -109,27 +108,27 @@ ZIKRouteAction const ZIKRouteActionPerformOnDestination = @"ZIKRouteActionPerfor
             return;
         }
         if (strongSelf.popoverConfiguration) {
-            [ZIKViewRouter _callbackGlobalErrorHandlerWithRouter:nil
-                                                            action:@selector(configureSegue)
-                                                             error:[ZIKViewRouter errorWithCode:ZIKViewRouteErrorInvalidConfiguration
-                                                                     localizedDescriptionFormat:@"popoverConfiguration for configuration: %@ should only configure once",self]];
+            [ZIKViewRouter notifyGlobalErrorWithRouter:nil
+                                                action:ZIKRouteActionPerformRoute
+                                                 error:[ZIKViewRouter errorWithCode:ZIKRouteErrorInvalidConfiguration
+                                                        localizedDescriptionFormat:@"popoverConfiguration for configuration: %@ should only configure once",self]];
             NSAssert(NO, @"popoverConfiguration for configuration: %@ should only configure once",self);
         }
         ZIKViewRoutePopoverConfiguration *popoverConfiguration = [ZIKViewRoutePopoverConfiguration new];
         if (configure) {
             configure(popoverConfiguration);
         } else {
-            [ZIKViewRouter _callbackGlobalErrorHandlerWithRouter:nil
-                                                            action:@selector(configureSegue)
-                                                             error:[ZIKViewRouter errorWithCode:ZIKViewRouteErrorInvalidConfiguration
-                                                                     localizedDescriptionFormat:@"When configurePopover for configuration : %@, configure should not be nil !",self]];
+            [ZIKViewRouter notifyGlobalErrorWithRouter:nil
+                                                action:ZIKRouteActionPerformRoute
+                                                 error:[ZIKViewRouter errorWithCode:ZIKRouteErrorInvalidConfiguration
+                                                        localizedDescriptionFormat:@"When configurePopover for configuration : %@, configure should not be nil !",self]];
             NSAssert(NO, @"When configurePopover for configuration : %@, configure should not be nil !",self);
         }
         if (!popoverConfiguration.sourceView && !popoverConfiguration.barButtonItem) {
-            [ZIKViewRouter _callbackGlobalErrorHandlerWithRouter:nil
-                                                            action:@selector(configureSegue)
-                                                             error:[ZIKViewRouter errorWithCode:ZIKViewRouteErrorInvalidConfiguration
-                                                                     localizedDescriptionFormat:@"configurePopover didn't assign sourceView or barButtonItem for configuration: %@", self]];
+            [ZIKViewRouter notifyGlobalErrorWithRouter:nil
+                                                action:ZIKRouteActionPerformRoute
+                                                 error:[ZIKViewRouter errorWithCode:ZIKRouteErrorInvalidConfiguration
+                                                        localizedDescriptionFormat:@"configurePopover didn't assign sourceView or barButtonItem for configuration: %@", self]];
             NSAssert(NO, @"configurePopover didn't assign sourceView or barButtonItem for configuration: %@", self);
         }
         strongSelf.popoverConfiguration = popoverConfiguration;

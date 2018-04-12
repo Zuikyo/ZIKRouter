@@ -7,6 +7,7 @@
 //
 
 #import "ZIKServiceRouter+Discover.h"
+#import "ZIKRouterInternal.h"
 #import "ZIKServiceRouterPrivate.h"
 #import "ZIKServiceRouteRegistry.h"
 #import "ZIKRouteRegistryInternal.h"
@@ -15,7 +16,7 @@
 ZIKServiceRouterType *_Nullable _ZIKServiceRouterToService(Protocol *serviceProtocol) {
     NSCParameterAssert(serviceProtocol);
     if (!serviceProtocol) {
-        [ZIKServiceRouter _callbackError_invalidProtocolWithAction:ZIKRouteActionToService errorDescription:@"ZIKServiceRouter.toService() serviceProtocol is nil"];
+        [ZIKServiceRouter notifyError_invalidProtocolWithAction:ZIKRouteActionToService errorDescription:@"ZIKServiceRouter.toService() serviceProtocol is nil"];
         NSCAssert1(NO, @"ZIKServiceRouter.toService() serviceProtocol is nil. callStackSymbols: %@",[NSThread callStackSymbols]);
         return nil;
     }
@@ -23,8 +24,8 @@ ZIKServiceRouterType *_Nullable _ZIKServiceRouterToService(Protocol *serviceProt
     if ([route isKindOfClass:[ZIKServiceRouterType class]]) {
         return (ZIKServiceRouterType *)route;
     }
-    [ZIKServiceRouter _callbackError_invalidProtocolWithAction:ZIKRouteActionToService
-                                              errorDescription:@"Didn't find service router for service protocol: %@, this protocol was not registered.",serviceProtocol];
+    [ZIKServiceRouter notifyError_invalidProtocolWithAction:ZIKRouteActionToService
+                                           errorDescription:@"Didn't find service router for service protocol: %@, this protocol was not registered.",serviceProtocol];
     if (ZIKRouteRegistry.registrationFinished) {
         NSCAssert1(NO, @"Didn't find service router for service protocol: %@, this protocol was not registered.",NSStringFromProtocol(serviceProtocol));
     } else {
@@ -36,7 +37,7 @@ ZIKServiceRouterType *_Nullable _ZIKServiceRouterToService(Protocol *serviceProt
 ZIKServiceRouterType *_Nullable _ZIKServiceRouterToModule(Protocol *configProtocol) {
     NSCParameterAssert(configProtocol);
     if (!configProtocol) {
-        [ZIKServiceRouter _callbackError_invalidProtocolWithAction:ZIKRouteActionToServiceModule errorDescription:@"ZIKServiceRouter.toModule() configProtocol is nil"];
+        [ZIKServiceRouter notifyError_invalidProtocolWithAction:ZIKRouteActionToServiceModule errorDescription:@"ZIKServiceRouter.toModule() configProtocol is nil"];
         NSCAssert1(NO, @"ZIKServiceRouter.toModule() configProtocol is nil. callStackSymbols: %@",[NSThread callStackSymbols]);
         return nil;
     }
@@ -44,8 +45,8 @@ ZIKServiceRouterType *_Nullable _ZIKServiceRouterToModule(Protocol *configProtoc
     if ([route isKindOfClass:[ZIKServiceRouterType class]]) {
         return (ZIKServiceRouterType *)route;
     }
-    [ZIKServiceRouter _callbackError_invalidProtocolWithAction:ZIKRouteActionToServiceModule
-                                              errorDescription:@"Didn't find service router for config protocol: %@, this protocol was not registered.",configProtocol];
+    [ZIKServiceRouter notifyError_invalidProtocolWithAction:ZIKRouteActionToServiceModule
+                                           errorDescription:@"Didn't find service router for config protocol: %@, this protocol was not registered.",configProtocol];
     if (ZIKRouteRegistry.registrationFinished) {
         NSCAssert1(NO, @"Didn't find service router for service config protocol: %@, this protocol was not registered.",NSStringFromProtocol(configProtocol));
     } else {

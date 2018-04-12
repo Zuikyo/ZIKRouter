@@ -44,6 +44,8 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic, readonly, copy ,nullable) RemoveConfig removeConfiguration;
 ///Latest error when route action failed.
 @property (nonatomic, readonly, strong, nullable) NSError *error;
+//Set error handler for all router instance. Use this to debug and log.
+@property (class, copy, nullable) void(^globalErrorHandler)(__kindof ZIKRouter *_Nullable router, ZIKRouteAction action, NSError *error);
 
 - (nullable instancetype)initWithConfiguration:(RouteConfig)configuration
                            removeConfiguration:(nullable RemoveConfig)removeConfiguration NS_DESIGNATED_INITIALIZER;
@@ -192,5 +194,22 @@ NS_ASSUME_NONNULL_BEGIN
                                                                                void(^prepareModule)(void(NS_NOESCAPE ^prepare)(RouteConfig module))
                                                                                ))configBuilder API_DEPRECATED_WITH_REPLACEMENT("+makeDestinationWithStrictConfiguring:", ios(7.0, 7.0));
 @end
+
+extern NSErrorDomain const ZIKRouteErrorDomain;
+
+typedef NS_ERROR_ENUM(ZIKRouteErrorDomain, ZIKRouteError) {
+    ///The protocol to fetch the router is not registered.
+    ZIKRouteErrorInvalidProtocol        = 0,
+    ///Configuration missed some required values, or some values were conflict, or the external destination to prepare/perform is invalid. There will be an assert failure for debugging.
+    ZIKRouteErrorInvalidConfiguration   = 1,
+    ///Router returns nil for destination, you can't use this service now. Maybe your configuration is invalid, or there is a bug in the router.
+    ZIKRouteErrorDestinationUnavailable = 2,
+    ///Perform or remove route action failed. Remove route when destiantion was already dealloced.
+    ZIKRouteErrorActionFailed           = 3,
+    ///Do performRoute when router state is routing, or do push but destination is already pushed.
+    ZIKRouteErrorOverRoute              = 4,
+    ///Infinite recursion for performing route detected. See -prepareDestination:configuration: for more detail.
+    ZIKRouteErrorInfiniteRecursion      = 5
+};
 
 NS_ASSUME_NONNULL_END

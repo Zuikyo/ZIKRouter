@@ -23,9 +23,6 @@ NS_ASSUME_NONNULL_BEGIN
 ///Is registration all finished.
 + (BOOL)_isRegistrationFinished;
 
-+ (void)_callbackGlobalErrorHandlerWithRouter:(nullable __kindof ZIKServiceRouter *)router action:(ZIKRouteAction)action error:(NSError *)error;
-+ (void)_callbackError_invalidProtocolWithAction:(ZIKRouteAction)action errorDescription:(NSString *)format ,...;
-
 + (void)_swift_registerServiceProtocol:(id)serviceProtocol;
 
 + (void)_swift_registerConfigProtocol:(id)configProtocol;

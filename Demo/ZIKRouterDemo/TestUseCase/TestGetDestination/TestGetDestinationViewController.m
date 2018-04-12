@@ -33,15 +33,12 @@
                            destination.age = 18;
                        };
                        config.successHandler = ^(UIViewController * _Nonnull destination) {
-                           NSLog(@"get destination by router complete");
+                           NSLog(@"get destination by router success");
                            if ([destination isKindOfClass:[UIViewController class]]) {
                                [weakSelf presentViewController:destination animated:YES completion:^{
                                    NSLog(@"present manually complete");
                                }];
                            }
-                       };
-                       config.successHandler = ^(id  _Nonnull destination) {
-                           NSLog(@"get destination success");
                        };
                        config.errorHandler = ^(ZIKRouteAction routeAction, NSError * _Nonnull error) {
                            NSLog(@"get destination by router failed: %@",error);

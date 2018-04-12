@@ -14,7 +14,7 @@
 NS_ASSUME_NONNULL_BEGIN
 
 typedef NS_ENUM(NSInteger, ZIKRouterState) {
-    ZIKRouterStateNotRoute,
+    ZIKRouterStateUnrouted,
     ZIKRouterStateRouting,
     ZIKRouterStateRouted,
     ZIKRouterStateRemoving,
@@ -24,13 +24,13 @@ typedef NS_ENUM(NSInteger, ZIKRouterState) {
 ///Route action.
 typedef NSString *ZIKRouteAction NS_EXTENSIBLE_STRING_ENUM;
 
-///Initialize router with configuration. See ZIKViewRouteErrorInvalidConfiguration, ZIKViewRouteErrorUnsupportType, ZIKViewRouteErrorInvalidSource, ZIKViewRouteErrorInvalidContainer.
+///Initialize router with configuration. See ZIKRouteErrorInvalidConfiguration, ZIKViewRouteErrorUnsupportType, ZIKViewRouteErrorInvalidSource, ZIKViewRouteErrorInvalidContainer.
 extern ZIKRouteAction const ZIKRouteActionInit;
 
-///Perform route. See ZIKViewRouteErrorActionFailed, ZIKServiceRouteErrorActionFailed, ZIKViewRouteErrorOverRoute, ZIKViewRouteErrorUnbalancedTransition, ZIKViewRouteErrorSegueNotPerformed, ZIKViewRouteErrorInfiniteRecursion, ZIKServiceRouteErrorInfiniteRecursion, ZIKServiceRouteErrorServiceUnavailable.
+///Perform route. See ZIKRouteErrorActionFailed, ZIKRouteErrorOverRoute, ZIKViewRouteErrorUnbalancedTransition, ZIKViewRouteErrorSegueNotPerformed, ZIKRouteErrorInfiniteRecursion, ZIKRouteErrorInfiniteRecursion, ZIKRouteErrorDestinationUnavailable.
 extern ZIKRouteAction const ZIKRouteActionPerformRoute;
 
-///Remove route. See ZIKViewRouteErrorActionFailed, ZIKServiceRouteErrorActionFailed.
+///Remove route. See ZIKRouteErrorActionFailed.
 extern ZIKRouteAction const ZIKRouteActionRemoveRoute;
 
 typedef void(^ZIKRouteErrorHandler)(ZIKRouteAction routeAction, NSError *error);
