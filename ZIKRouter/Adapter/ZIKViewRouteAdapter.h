@@ -42,6 +42,7 @@ NS_ASSUME_NONNULL_BEGIN
 - (void)performRoute NS_UNAVAILABLE;
 - (void)performRouteWithSuccessHandler:(void(^ __nullable)(void))performerSuccessHandler
                           errorHandler:(void(^ __nullable)(ZIKRouteAction routeAction, NSError *error))performerErrorHandler NS_UNAVAILABLE;
+- (void)performRouteWithCompletion:(void(^)(BOOL success, id _Nullable destination, ZIKRouteAction routeAction, NSError *_Nullable error))performerCompletion NS_UNAVAILABLE;
 - (BOOL)canRemove NS_UNAVAILABLE;
 - (void)removeRoute NS_UNAVAILABLE;
 - (void)removeRouteWithSuccessHandler:(void(^ __nullable)(void))performerSuccessHandler
@@ -51,6 +52,9 @@ NS_ASSUME_NONNULL_BEGIN
                                configuring:(void(NS_NOESCAPE ^)(__kindof ZIKViewRouteConfiguration *config))configBuilder
                                   removing:(void(NS_NOESCAPE ^ _Nullable)(__kindof ZIKViewRemoveConfiguration *config))removeConfigBuilder NS_UNAVAILABLE;
 + (nullable instancetype)performFromSource:(nullable id<ZIKViewRouteSource>)source routeType:(ZIKViewRouteType)routeType NS_UNAVAILABLE;
++ (nullable instancetype)performFromSource:(nullable id<ZIKViewRouteSource>)source
+                                 routeType:(ZIKViewRouteType)routeType
+                                completion:(void(^)(BOOL success, id _Nullable destination, ZIKRouteAction routeAction, NSError *_Nullable error))completionHandler NS_UNAVAILABLE;
 + (nullable instancetype)performFromSource:(nullable id<ZIKViewRouteSource>)source
                          strictConfiguring:(void(NS_NOESCAPE ^)(ZIKViewRouteConfiguration *config,
                                                                 void(^prepareDest)(void(^prepare)(id dest)),
