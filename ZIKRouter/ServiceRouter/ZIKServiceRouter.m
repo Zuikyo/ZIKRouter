@@ -54,7 +54,7 @@ static dispatch_semaphore_t g_globalErrorSema;
 #if ZIKROUTER_CHECK
     [self _validateDestinationConformance:destination];
 #endif
-    [self prepareForPerformRouteOnDestination:destination configuration:configuration];
+    [self prepareDestinationForPerforming];
     [self endPerformRouteWithSuccess];
 }
 

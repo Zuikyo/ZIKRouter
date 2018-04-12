@@ -72,18 +72,18 @@ NS_ASSUME_NONNULL_BEGIN
 
 ///Maintain the route state when you implement custom route or remove route by overriding -performRouteOnDestination:configuration: or -removeDestination:removeConfiguration:.
 
-///Prepare the destination with the -prepareDestination block in configuration, call -prepareDestination:configuration: and -didFinishPrepareDestination:configuration:.
-- (void)prepareForPerformRouteOnDestination:(Destination)destination configuration:(RouteConfig)configuration;
+///Prepare the destination before really performing. Use the -prepareDestination block in configuration, and call -prepareDestination:configuration: and -didFinishPrepareDestination:configuration:.
+- (void)prepareDestinationForPerforming;
 
 ///Call it when route is successfully performed.
 - (void)endPerformRouteWithSuccess;
 ///Call it when route perform failed.
 - (void)endPerformRouteWithError:(NSError *)error;
 
-///If the router can remove, override -canRemove, and do removal in -removeDestination:removeConfiguration:, prepare the destination before removing with -prepareDestinationBeforeRemoving.
+///If the router can remove, override -canRemove, and do removal in -removeDestination:removeConfiguration:, prepare the destination before removing with -prepareDestinationForRemoving.
 
-///Prepare the destination with the -prepareDestination block in removeConfiguration before removing the destination when you override -removeDestination:removeConfiguration:.
-- (void)prepareDestinationBeforeRemoving;
+///Prepare the destination with the -prepareDestination block in removeConfiguration before really removing the destination when you override -removeDestination:removeConfiguration:.
+- (void)prepareDestinationForRemoving;
 ///Call it when route is successfully removed.
 - (void)endRemoveRouteWithSuccess;
 ///Call it when route remove failed.

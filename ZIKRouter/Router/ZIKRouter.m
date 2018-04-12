@@ -534,7 +534,13 @@ NSErrorDomain const ZIKRouteErrorDomain = @"ZIKRouteErrorDomain";
 
 #pragma mark State Control
 
-- (void)prepareForPerformRouteOnDestination:(id)destination configuration:(__kindof ZIKPerformRouteConfiguration *)configuration {
+- (void)prepareDestinationForPerforming {
+    NSAssert(self.destination, @"Destination should not be nil when prepare it.");
+    id destination = self.destination;
+    if (destination == nil) {
+        return;
+    }
+    ZIKPerformRouteConfiguration *configuration = self.original_configuration;
     if (configuration.prepareDestination) {
         configuration.prepareDestination(destination);
     }
@@ -554,8 +560,12 @@ NSErrorDomain const ZIKRouteErrorDomain = @"ZIKRouteErrorDomain";
     [self notifyError:error routeAction:ZIKRouteActionPerformRoute];
 }
 
-- (void)prepareDestinationBeforeRemoving {
+- (void)prepareDestinationForRemoving {
+    NSAssert(self.destination, @"Destination should not be nil when prepare it.");
     id destination = self.destination;
+    if (destination == nil) {
+        return;
+    }
     ZIKRemoveRouteConfiguration *configuration = self.original_removeConfiguration;
     if (configuration.prepareDestination && destination) {
         configuration.prepareDestination(destination);
