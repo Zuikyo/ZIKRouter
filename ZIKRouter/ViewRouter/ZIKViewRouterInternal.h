@@ -12,6 +12,7 @@
 #import "ZIKViewRouter.h"
 #import "ZIKViewRoute.h"
 #import "ZIKViewRouteError.h"
+#import "ZIKViewRouterType.h"
 
 NS_ASSUME_NONNULL_BEGIN
 
@@ -223,6 +224,10 @@ NS_ASSUME_NONNULL_BEGIN
 + (void)router:(nullable ZIKViewRouter *)router didRemoveRouteOnDestination:(Destination)destination fromSource:(nullable id)source;
 
 @end
+
+extern ZIKAnyViewRouterType *_Nullable _ZIKViewRouterToView(Protocol *viewProtocol);
+
+extern ZIKAnyViewRouterType *_Nullable _ZIKViewRouterToModule(Protocol *configProtocol);
 
 extern Protocol<ZIKViewRoutable> *_Nullable _routableViewProtocolFromObject(id object);
 

@@ -11,7 +11,6 @@
 #import "ZIKViewRoutePrivate.h"
 #import "ZIKRouterInternal.h"
 #import "ZIKViewRouterInternal.h"
-#import "ZIKViewRouterPrivate.h"
 #import "ZIKPerformRouteConfiguration+Route.h"
 
 @interface ZIKBlockViewRouter()

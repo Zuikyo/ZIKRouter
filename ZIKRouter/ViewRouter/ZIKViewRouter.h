@@ -359,6 +359,9 @@ typedef void(^ZIKViewRouteGlobalErrorHandler)(__kindof ZIKViewRouter * _Nullable
  @param configProtocol The protocol conformed by default configuration of the routerClass. Should inherit from ZIKViewModuleRoutable when ZIKROUTER_CHECK is enabled. Use macro `ZIKRoutableProtocol` to check whether the protocol is routable.
  */
 + (void)registerModuleProtocol:(Protocol<ZIKViewModuleRoutable> *)configProtocol;
+
+///Is registration all finished.
++ (BOOL)isRegistrationFinished;
 @end
 
 ///If a UIViewController or UIView conforms to ZIKRoutableView, there must be a router for it and it's subclass. Don't use it in other place.

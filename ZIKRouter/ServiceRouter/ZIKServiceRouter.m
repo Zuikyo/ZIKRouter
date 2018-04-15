@@ -11,7 +11,6 @@
 
 #import "ZIKServiceRouter.h"
 #import "ZIKRouterInternal.h"
-#import "ZIKServiceRouterPrivate.h"
 #import "ZIKServiceRouteRegistry.h"
 #import "ZIKRouteRegistryInternal.h"
 #import <objc/runtime.h>
@@ -124,6 +123,10 @@ static dispatch_semaphore_t g_globalErrorSema;
 
 @implementation ZIKServiceRouter (Register)
 
++ (BOOL)isRegistrationFinished {
+    return ZIKServiceRouteRegistry.registrationFinished;
+}
+
 + (void)registerService:(Class)serviceClass {
     NSParameterAssert(serviceClass);
     NSParameterAssert([serviceClass conformsToProtocol:@protocol(ZIKRoutableService)]);
@@ -162,10 +165,6 @@ static dispatch_semaphore_t g_globalErrorSema;
 #else
     return NO;
 #endif
-}
-
-+ (BOOL)_isRegistrationFinished {
-    return ZIKServiceRouteRegistry.registrationFinished;
 }
 
 Protocol<ZIKServiceRoutable> *_Nullable _routableServiceProtocolFromObject(id object) {

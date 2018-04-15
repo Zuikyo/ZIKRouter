@@ -89,6 +89,9 @@ typedef void(^ZIKServiceRouteGlobalErrorHandler)(__kindof ZIKServiceRouter * _Nu
  */
 + (void)registerModuleProtocol:(Protocol<ZIKServiceModuleRoutable> *)configProtocol;
 
+///Is registration all finished.
++ (BOOL)isRegistrationFinished;
+
 @end
 
 ///If a class conforms to ZIKRoutableService, there must be a router for it and it's subclass. Don't use it in other place.

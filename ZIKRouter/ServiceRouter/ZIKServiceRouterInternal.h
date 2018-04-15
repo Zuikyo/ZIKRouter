@@ -10,6 +10,7 @@
 //
 
 #import "ZIKServiceRouter.h"
+#import "ZIKServiceRouterType.h"
 
 NS_ASSUME_NONNULL_BEGIN
 
@@ -37,6 +38,10 @@ NS_ASSUME_NONNULL_BEGIN
 + (void)notifyGlobalErrorWithRouter:(nullable __kindof ZIKServiceRouter *)router action:(ZIKRouteAction)action error:(NSError *)error;
 
 @end
+
+extern ZIKServiceRouterType *_Nullable _ZIKServiceRouterToService(Protocol *serviceProtocol);
+
+extern ZIKServiceRouterType *_Nullable _ZIKServiceRouterToModule(Protocol *configProtocol);
 
 extern Protocol<ZIKServiceRoutable> *_Nullable _routableServiceProtocolFromObject(id object);
 

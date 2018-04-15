@@ -90,7 +90,7 @@ internal class Registry {
             return
         }
         let destinationProtocol = Protocol.self
-        assert(ZIKAnyViewRouter._isRegistrationFinished() == false, "Can't register after app did finish launch. Only register in registerRoutableDestination().")
+        assert(ZIKAnyViewRouter.isRegistrationFinished() == false, "Can't register after app did finish launch. Only register in registerRoutableDestination().")
         assert(ZIKRouter_classIsSubclassOfClass(router, ZIKAnyViewRouter.self), "This router must be subclass of ZIKViewRouter")
         if let routableProtocol = _routableViewProtocolFromObject(destinationProtocol) {
             router.registerViewProtocol(routableProtocol)
@@ -114,7 +114,7 @@ internal class Registry {
             return
         }
         let configProtocol = Protocol.self
-        assert(ZIKAnyViewRouter._isRegistrationFinished() == false, "Can't register after app did finish launch. Only register in registerRoutableDestination().")
+        assert(ZIKAnyViewRouter.isRegistrationFinished() == false, "Can't register after app did finish launch. Only register in registerRoutableDestination().")
         assert(ZIKRouter_classIsSubclassOfClass(router, ZIKAnyViewRouter.self), "This router must be subclass of ZIKViewRouter")
         if let routableProtocol = _routableViewModuleProtocolFromObject(configProtocol) {
             router.registerModuleProtocol(routableProtocol)
@@ -136,7 +136,7 @@ internal class Registry {
             return
         }
         let destinationProtocol = Protocol.self
-        assert(ZIKAnyServiceRouter._isRegistrationFinished() == false, "Can't register after app did finish launch. Only register in registerRoutableDestination().")
+        assert(ZIKAnyServiceRouter.isRegistrationFinished() == false, "Can't register after app did finish launch. Only register in registerRoutableDestination().")
         assert(ZIKRouter_classIsSubclassOfClass(router, ZIKAnyServiceRouter.self), "This router must be subclass of ZIKServiceRouter")
         if let routableProtocol = _routableServiceProtocolFromObject(destinationProtocol) {
             router.registerServiceProtocol(routableProtocol)
@@ -160,7 +160,7 @@ internal class Registry {
             return
         }
         let configProtocol = Protocol.self
-        assert(ZIKAnyServiceRouter._isRegistrationFinished() == false, "Can't register after app did finish launch. Only register in registerRoutableDestination().")
+        assert(ZIKAnyServiceRouter.isRegistrationFinished() == false, "Can't register after app did finish launch. Only register in registerRoutableDestination().")
         assert(ZIKRouter_classIsSubclassOfClass(router, ZIKAnyServiceRouter.self), "This router must be subclass of ZIKServiceRouter")
         if let routableProtocol = _routableServiceModuleProtocolFromObject(configProtocol) {
             router.registerModuleProtocol(routableProtocol)
@@ -182,7 +182,7 @@ internal class Registry {
             return
         }
         let destinationProtocol = Protocol.self
-        assert(ZIKAnyViewRouter._isRegistrationFinished() == false, "Can't register after app did finish launch. Only register in registerRoutableDestination().")
+        assert(ZIKAnyViewRouter.isRegistrationFinished() == false, "Can't register after app did finish launch. Only register in registerRoutableDestination().")
         if let destinationProtocol = ZIKRouter_objcProtocol(destinationProtocol) {
             _ = route.registerDestinationProtocol(destinationProtocol)
             return
@@ -205,7 +205,7 @@ internal class Registry {
             return
         }
         let configProtocol = Protocol.self
-        assert(ZIKAnyViewRouter._isRegistrationFinished() == false, "Can't register after app did finish launch. Only register in registerRoutableDestination().")
+        assert(ZIKAnyViewRouter.isRegistrationFinished() == false, "Can't register after app did finish launch. Only register in registerRoutableDestination().")
         if let configProtocol = ZIKRouter_objcProtocol(configProtocol) {
             _ = route.registerModuleProtocol(configProtocol)
             return
@@ -226,7 +226,7 @@ internal class Registry {
             return
         }
         let destinationProtocol = Protocol.self
-        assert(ZIKAnyServiceRouter._isRegistrationFinished() == false, "Can't register after app did finish launch. Only register in registerRoutableDestination().")
+        assert(ZIKAnyServiceRouter.isRegistrationFinished() == false, "Can't register after app did finish launch. Only register in registerRoutableDestination().")
         if let destinationProtocol = ZIKRouter_objcProtocol(destinationProtocol) {
             _ = route.registerDestinationProtocol(destinationProtocol)
             return
@@ -249,7 +249,7 @@ internal class Registry {
             return
         }
         let configProtocol = Protocol.self
-        assert(ZIKAnyServiceRouter._isRegistrationFinished() == false, "Can't register after app did finish launch. Only register in registerRoutableDestination().")
+        assert(ZIKAnyServiceRouter.isRegistrationFinished() == false, "Can't register after app did finish launch. Only register in registerRoutableDestination().")
         if let configProtocol = ZIKRouter_objcProtocol(configProtocol) {
             _ = route.registerModuleProtocol(configProtocol)
             return

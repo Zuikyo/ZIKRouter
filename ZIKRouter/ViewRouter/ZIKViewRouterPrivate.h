@@ -10,15 +10,11 @@
 //
 
 #import "ZIKViewRouter.h"
-#import "ZIKViewRouterType.h"
 
 NS_ASSUME_NONNULL_BEGIN
 
 ///Private methods.
 @interface ZIKViewRouter<__covariant Destination: id, __covariant RouteConfig: ZIKViewRouteConfiguration *> (Private)
-
-///Is registration all finished.
-+ (BOOL)_isRegistrationFinished;
 
 #pragma mark Internal Initializer
 
@@ -27,9 +23,5 @@ NS_ASSUME_NONNULL_BEGIN
 + (instancetype)routerFromView:(UIView *)destination source:(UIView *)source;
 
 @end
-
-extern ZIKAnyViewRouterType *_Nullable _ZIKViewRouterToView(Protocol *viewProtocol);
-
-extern ZIKAnyViewRouterType *_Nullable _ZIKViewRouterToModule(Protocol *configProtocol);
 
 NS_ASSUME_NONNULL_END
