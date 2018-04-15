@@ -11,7 +11,6 @@
 #import "ZIKRouteConfiguration.h"
 #import "ZIKRouteRegistryInternal.h"
 #import "ZIKRouteConfigurationPrivate.h"
-#import "ZIKPerformRouteConfiguration+Route.h"
 
 @interface ZIKRoute()
 @property (nonatomic, strong) ZIKRoute *retainedSelf;

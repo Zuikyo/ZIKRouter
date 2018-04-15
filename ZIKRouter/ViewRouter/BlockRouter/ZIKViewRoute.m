@@ -13,7 +13,6 @@
 #import "ZIKViewRouterPrivate.h"
 #import "ZIKBlockViewRouter.h"
 #import "ZIKRouteConfigurationPrivate.h"
-#import "ZIKPerformRouteConfiguration+Route.h"
 
 @interface ZIKViewRoute()
 @property (nonatomic, copy, nullable) BOOL(^destinationFromExternalPreparedBlock)(id destination, ZIKViewRouter *router);

@@ -10,7 +10,7 @@
 #import "ZIKRoutePrivate.h"
 #import "ZIKServiceRoute.h"
 #import "ZIKRouterInternal.h"
-#import "ZIKPerformRouteConfiguration+Route.h"
+#import "ZIKRouteConfigurationPrivate.h"
 
 @implementation ZIKBlockServiceRouter
 

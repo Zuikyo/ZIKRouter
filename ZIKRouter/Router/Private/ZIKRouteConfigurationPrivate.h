@@ -21,9 +21,11 @@ NS_ASSUME_NONNULL_BEGIN
 
 @end
 
+@class ZIKRoute;
 @interface ZIKPerformRouteConfiguration()
 ///Success handler for router's performer, will reset to nil after performed.
 @property (nonatomic, copy, nullable) void(^performerSuccessHandler)(id destination);
+@property (nonatomic, strong, nullable) ZIKRoute *route;
 @end
 
 @interface ZIKRemoveRouteConfiguration()
