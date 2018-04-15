@@ -14,6 +14,4 @@
 ///Registry for view routers.
 @interface ZIKViewRouteRegistry : ZIKRouteRegistry
 
-+ (BOOL)isDestinationClass:(Class)destinationClass registeredWithRouter:(Class)routerClass;
-
 @end

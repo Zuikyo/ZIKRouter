@@ -15,6 +15,7 @@
 #import "ZIKViewRouterPrivate.h"
 #import "ZIKViewRouteRegistry.h"
 #import "ZIKRouteRegistryInternal.h"
+#import "ZIKViewRouteRegistryPrivate.h"
 #import "ZIKViewRouteError.h"
 #import <objc/runtime.h>
 #import "ZIKRouterRuntime.h"
