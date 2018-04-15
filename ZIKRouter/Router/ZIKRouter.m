@@ -10,6 +10,7 @@
 //
 
 #import "ZIKRouter.h"
+#import "ZIKRouterInternal.h"
 #import "ZIKRouteConfigurationPrivate.h"
 
 #import <objc/runtime.h>
@@ -22,13 +23,13 @@ NSErrorDomain const ZIKRouteErrorDomain = @"ZIKRouteErrorDomain";
 
 @interface ZIKRouter () {
     dispatch_semaphore_t _stateSema;
+    __weak id _destination;
+    ZIKRouterState _preState;
 }
 @property (nonatomic, assign) ZIKRouterState state;
-@property (nonatomic, assign) ZIKRouterState preState;
 @property (nonatomic, strong, nullable) NSError *error;
 @property (nonatomic, copy) ZIKPerformRouteConfiguration *configuration;
 @property (nonatomic, copy, nullable) ZIKRemoveRouteConfiguration *removeConfiguration;
-@property (nonatomic, weak) id destination;
 @end
 
 @implementation ZIKRouter
@@ -130,10 +131,9 @@ NSErrorDomain const ZIKRouteErrorDomain = @"ZIKRouteErrorDomain";
 }
 
 - (void)attachDestination:(id)destination {
-    NSParameterAssert(destination);
-    if (destination) {
-        self.destination = destination;
-    }
+    [self willChangeValueForKey:@"destination"];
+    _destination = destination;
+    [self didChangeValueForKey:@"destination"];
 }
 
 - (void)notifyRouteState:(ZIKRouterState)state {
@@ -147,7 +147,9 @@ NSErrorDomain const ZIKRouteErrorDomain = @"ZIKRouteErrorDomain";
         [[self class] increaseRecursiveDepth];
     }
     
-    self.preState = oldState;
+    [self willChangeValueForKey:@"preState"];
+    _preState = oldState;
+    [self didChangeValueForKey:@"preState"];
     self.state = state;
     
     if (self.original_configuration.stateNotifier) {
@@ -170,7 +172,7 @@ NSErrorDomain const ZIKRouteErrorDomain = @"ZIKRouteErrorDomain";
     NSAssert(self.state == ZIKRouterStateRouting, @"State should be routing in -performWithConfiguration:");
     NSAssert([configuration isKindOfClass:[[[self class] defaultRouteConfiguration] class]], @"When using custom configuration class，you must override +defaultRouteConfiguration to return your custom configuration instance.");
     id destination = [self destinationWithConfiguration:configuration];
-    self.destination = destination;
+    [self attachDestination:destination];
     if (destination == nil) {
         [self endPerformRouteWithError:[ZIKRouter errorWithCode:ZIKRouteErrorDestinationUnavailable localizedDescriptionFormat:@"Destination from router is nil. Maybe your configuration is invalid (%@), or there is a bug in the router."]];
         return;
@@ -590,12 +592,22 @@ NSErrorDomain const ZIKRouteErrorDomain = @"ZIKRouteErrorDomain";
     return ZIKRouteErrorDomain;
 }
 
++ (NSError *)routeErrorWithCode:(ZIKRouteError)code localizedDescription:(NSString *)description {
+    if (description == nil) {
+        description = @"";
+    }
+    return [NSError errorWithDomain:ZIKRouteErrorDomain code:code userInfo:@{NSLocalizedDescriptionKey:description}];
+}
+
 + (NSError *)errorWithCode:(NSInteger)code userInfo:(nullable NSDictionary *)userInfo {
     return [NSError errorWithDomain:[self errorDomain] code:code userInfo:userInfo];
 }
 
 + (NSError *)errorWithCode:(NSInteger)code localizedDescription:(NSString *)description {
     NSParameterAssert(description);
+    if (description == nil) {
+        description = @"";
+    }
     return [NSError errorWithDomain:[self errorDomain] code:code userInfo:@{NSLocalizedDescriptionKey:description}];
 }
 
@@ -604,7 +616,7 @@ NSErrorDomain const ZIKRouteErrorDomain = @"ZIKRouteErrorDomain";
     va_start(argList, format);
     NSString *description = [[NSString alloc] initWithFormat:format arguments:argList];
     va_end(argList);
-    return [NSError errorWithDomain:[self errorDomain] code:code userInfo:@{NSLocalizedDescriptionKey:description}];
+    return [self errorWithCode:code localizedDescription:description];
 }
 
 - (void)notifySuccessWithAction:(ZIKRouteAction)routeAction {

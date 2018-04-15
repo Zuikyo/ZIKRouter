@@ -21,7 +21,7 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic, readonly, copy) RouteConfig original_configuration;
 @property (nonatomic, readonly, copy) RemoveConfig original_removeConfiguration;
 ///Destination after performed. Router won't hold the destination, the performer is responsible for holding it.
-@property (nonatomic, readonly, weak) Destination destination;
+@property (nonatomic, readonly, weak, nullable) Destination destination;
 
 #pragma mark Required Override
 ///Methods for ZIKRouter subclass.
@@ -60,7 +60,7 @@ NS_ASSUME_NONNULL_BEGIN
 ///If you can undo your route action, such as dismiss a routed view, do remove in this. The destination was hold as weak in router, so you should check whether the destination still exists.
 - (void)removeDestination:(nullable Destination)destination removeConfiguration:(RemoveConfig)removeConfiguration;
 
-- (NSString *)errorDomain;
++ (NSString *)errorDomain;
 
 ///Whether this router is an abstract router.
 + (BOOL)isAbstractRouter;
@@ -92,7 +92,7 @@ NS_ASSUME_NONNULL_BEGIN
 #pragma mark Internal Methods
 
 ///Attach a destination not created from router.
-- (void)attachDestination:(Destination)destination;
+- (void)attachDestination:(nullable Destination)destination;
 
 ///Change state.
 - (void)notifyRouteState:(ZIKRouterState)state;
@@ -115,9 +115,13 @@ NS_ASSUME_NONNULL_BEGIN
 
 - (void)notifyError_infiniteRecursionWithAction:(ZIKRouteAction)action errorDescription:(NSString *)format ,...;
 
+///error from ZIKRouteErrorDomain.
 + (NSError *)routeErrorWithCode:(ZIKRouteError)code localizedDescription:(NSString *)description;
+///error with domain from +errorDomain.
 + (NSError *)errorWithCode:(NSInteger)code userInfo:(nullable NSDictionary *)userInfo;
+///error with domain from +errorDomain.
 + (NSError *)errorWithCode:(NSInteger)code localizedDescription:(NSString *)description;
+///error with domain from +errorDomain.
 + (NSError *)errorWithCode:(NSInteger)code localizedDescriptionFormat:(NSString *)format ,...;
 
 @end
