@@ -51,6 +51,9 @@
 		F84239D81F0CDE78000FEE5F /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = F84239D61F0CDE78000FEE5F /* Main.storyboard */; };
 		F84239DA1F0CDE78000FEE5F /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = F84239D91F0CDE78000FEE5F /* Assets.xcassets */; };
 		F84239DD1F0CDE78000FEE5F /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = F84239DB1F0CDE78000FEE5F /* LaunchScreen.storyboard */; };
+		F846AEFE207DE13400EC7418 /* AViewRouter.m in Sources */ = {isa = PBXBuildFile; fileRef = F846AEFA207DE13400EC7418 /* AViewRouter.m */; };
+		F846AF00207DE13400EC7418 /* AViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = F846AEFC207DE13400EC7418 /* AViewController.m */; };
+		F846AF01207DE13400EC7418 /* ZIKViewRouterPerformTests.m in Sources */ = {isa = PBXBuildFile; fileRef = F846AEFD207DE13400EC7418 /* ZIKViewRouterPerformTests.m */; };
 		F85283B21F8CF43F0093C812 /* UnroutableViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = F85283B11F8CF43F0093C812 /* UnroutableViewController.m */; };
 		F87317D01F922EB100A5F5D4 /* SwiftServiceRouter.swift in Sources */ = {isa = PBXBuildFile; fileRef = F87317CF1F922EB100A5F5D4 /* SwiftServiceRouter.swift */; };
 		F87317D41F923E2000A5F5D4 /* SwiftService.swift in Sources */ = {isa = PBXBuildFile; fileRef = F87317D31F923E2000A5F5D4 /* SwiftService.swift */; };
@@ -62,6 +65,8 @@
 		F88DD3091FBB2F0400715097 /* TestClassHierarchyViewRouter.m in Sources */ = {isa = PBXBuildFile; fileRef = F88DD3081FBB2F0400715097 /* TestClassHierarchyViewRouter.m */; };
 		F88DD30C1FBB301600715097 /* SubclassViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = F88DD30B1FBB301600715097 /* SubclassViewController.m */; };
 		F88DD30F1FBB303B00715097 /* SubclassViewRouter.m in Sources */ = {isa = PBXBuildFile; fileRef = F88DD30E1FBB303B00715097 /* SubclassViewRouter.m */; };
+		F8BC9A0D207E386B00971352 /* SourceViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = F8BC9A0C207E386B00971352 /* SourceViewController.m */; };
+		F8BC9A10207E387A00971352 /* SourceViewRouter.m in Sources */ = {isa = PBXBuildFile; fileRef = F8BC9A0F207E387A00971352 /* SourceViewRouter.m */; };
 		F8BCCB981F208D2B0051716B /* MasterViewRouter.m in Sources */ = {isa = PBXBuildFile; fileRef = F8BCCB971F208D2B0051716B /* MasterViewRouter.m */; };
 		F8C7F7F22019F95100B48365 /* ZIKRouter.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F8C7F7F12019F95100B48365 /* ZIKRouter.framework */; };
 		F8C7F7F32019F95100B48365 /* ZIKRouter.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = F8C7F7F12019F95100B48365 /* ZIKRouter.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
@@ -71,6 +76,16 @@
 		F8DFBD602019FE530069841B /* ZIKCompatibleAlert.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F8DFBD5F2019FE530069841B /* ZIKCompatibleAlert.framework */; };
 		F8DFBD612019FE530069841B /* ZIKCompatibleAlert.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = F8DFBD5F2019FE530069841B /* ZIKCompatibleAlert.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 /* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		F846AEF1207D4F1600EC7418 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = F84239BF1F0CDE78000FEE5F /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = F84239C61F0CDE78000FEE5F;
+			remoteInfo = ZIKRouterDemo;
+		};
+/* End PBXContainerItemProxy section */
 
 /* Begin PBXCopyFilesBuildPhase section */
 		F85F4D4C1F22535D003106C3 /* Embed Frameworks */ = {
@@ -162,7 +177,6 @@
 		F833152A1F6FBE7900891004 /* ZIKTimeServiceInput.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ZIKTimeServiceInput.h; sourceTree = "<group>"; };
 		F833152B1F6FBE7900891004 /* ZIKTimeServiceRouter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ZIKTimeServiceRouter.h; sourceTree = "<group>"; };
 		F833152C1F6FBE7900891004 /* ZIKTimeServiceRouter.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ZIKTimeServiceRouter.m; sourceTree = "<group>"; };
-		F83D25CC2077CA8800639E22 /* AppContext.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppContext.h; sourceTree = "<group>"; };
 		F83D25CD2077CCEB00639E22 /* AppRouteRegistry.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppRouteRegistry.h; sourceTree = "<group>"; };
 		F83D25CE2077CCEB00639E22 /* AppRouteRegistry.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AppRouteRegistry.m; sourceTree = "<group>"; };
 		F83D25D02077D79C00639E22 /* AppSwiftRouteRegistry.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppSwiftRouteRegistry.swift; sourceTree = "<group>"; };
@@ -178,6 +192,14 @@
 		F84239D91F0CDE78000FEE5F /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		F84239DC1F0CDE78000FEE5F /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		F84239DE1F0CDE78000FEE5F /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		F846AEEC207D4F1600EC7418 /* ZIKRouterDemoTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = ZIKRouterDemoTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		F846AEF0207D4F1600EC7418 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		F846AEF6207DE13300EC7418 /* AViewInput.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AViewInput.h; sourceTree = "<group>"; };
+		F846AEF7207DE13400EC7418 /* AViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AViewController.h; sourceTree = "<group>"; };
+		F846AEF8207DE13400EC7418 /* AViewRouter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AViewRouter.h; sourceTree = "<group>"; };
+		F846AEFA207DE13400EC7418 /* AViewRouter.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AViewRouter.m; sourceTree = "<group>"; };
+		F846AEFC207DE13400EC7418 /* AViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AViewController.m; sourceTree = "<group>"; };
+		F846AEFD207DE13400EC7418 /* ZIKViewRouterPerformTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ZIKViewRouterPerformTests.m; sourceTree = "<group>"; };
 		F85283B01F8CF43F0093C812 /* UnroutableViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = UnroutableViewController.h; sourceTree = "<group>"; };
 		F85283B11F8CF43F0093C812 /* UnroutableViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = UnroutableViewController.m; sourceTree = "<group>"; };
 		F87317CF1F922EB100A5F5D4 /* SwiftServiceRouter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SwiftServiceRouter.swift; sourceTree = "<group>"; };
@@ -200,6 +222,10 @@
 		F88DD30B1FBB301600715097 /* SubclassViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = SubclassViewController.m; sourceTree = "<group>"; };
 		F88DD30D1FBB303B00715097 /* SubclassViewRouter.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SubclassViewRouter.h; sourceTree = "<group>"; };
 		F88DD30E1FBB303B00715097 /* SubclassViewRouter.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = SubclassViewRouter.m; sourceTree = "<group>"; };
+		F8BC9A0B207E386B00971352 /* SourceViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SourceViewController.h; sourceTree = "<group>"; };
+		F8BC9A0C207E386B00971352 /* SourceViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = SourceViewController.m; sourceTree = "<group>"; };
+		F8BC9A0E207E387A00971352 /* SourceViewRouter.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SourceViewRouter.h; sourceTree = "<group>"; };
+		F8BC9A0F207E387A00971352 /* SourceViewRouter.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = SourceViewRouter.m; sourceTree = "<group>"; };
 		F8BCCB961F208D2B0051716B /* MasterViewRouter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; lineEnding = 0; path = MasterViewRouter.h; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objcpp; };
 		F8BCCB971F208D2B0051716B /* MasterViewRouter.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MasterViewRouter.m; sourceTree = "<group>"; };
 		F8C7F7F12019F95100B48365 /* ZIKRouter.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = ZIKRouter.framework; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -217,6 +243,13 @@
 				F8C7F7F52019F95800B48365 /* ZRouter.framework in Frameworks */,
 				F8C7F7F22019F95100B48365 /* ZIKRouter.framework in Frameworks */,
 				F8DFBD602019FE530069841B /* ZIKCompatibleAlert.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		F846AEE9207D4F1600EC7418 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -428,6 +461,7 @@
 				F8C7F7F42019F95800B48365 /* ZRouter.framework */,
 				F8C7F7F12019F95100B48365 /* ZIKRouter.framework */,
 				F84239C91F0CDE78000FEE5F /* ZIKRouterDemo */,
+				F846AEED207D4F1600EC7418 /* ZIKRouterDemoTests */,
 				F84239C81F0CDE78000FEE5F /* Products */,
 			);
 			sourceTree = "<group>";
@@ -436,6 +470,7 @@
 			isa = PBXGroup;
 			children = (
 				F84239C71F0CDE78000FEE5F /* ZIKRouterDemo.app */,
+				F846AEEC207D4F1600EC7418 /* ZIKRouterDemoTests.xctest */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -443,7 +478,6 @@
 		F84239C91F0CDE78000FEE5F /* ZIKRouterDemo */ = {
 			isa = PBXGroup;
 			children = (
-				F83D25CC2077CA8800639E22 /* AppContext.h */,
 				F84239CD1F0CDE78000FEE5F /* AppDelegate.h */,
 				F84239CE1F0CDE78000FEE5F /* AppDelegate.m */,
 				F83D25CD2077CCEB00639E22 /* AppRouteRegistry.h */,
@@ -475,6 +509,24 @@
 				F84239CB1F0CDE78000FEE5F /* main.m */,
 			);
 			name = "Supporting Files";
+			sourceTree = "<group>";
+		};
+		F846AEED207D4F1600EC7418 /* ZIKRouterDemoTests */ = {
+			isa = PBXGroup;
+			children = (
+				F846AEF7207DE13400EC7418 /* AViewController.h */,
+				F846AEFC207DE13400EC7418 /* AViewController.m */,
+				F846AEF6207DE13300EC7418 /* AViewInput.h */,
+				F846AEF8207DE13400EC7418 /* AViewRouter.h */,
+				F846AEFA207DE13400EC7418 /* AViewRouter.m */,
+				F8BC9A0B207E386B00971352 /* SourceViewController.h */,
+				F8BC9A0C207E386B00971352 /* SourceViewController.m */,
+				F8BC9A0E207E387A00971352 /* SourceViewRouter.h */,
+				F8BC9A0F207E387A00971352 /* SourceViewRouter.m */,
+				F846AEFD207DE13400EC7418 /* ZIKViewRouterPerformTests.m */,
+				F846AEF0207D4F1600EC7418 /* Info.plist */,
+			);
+			path = ZIKRouterDemoTests;
 			sourceTree = "<group>";
 		};
 		F87317D61F924AEC00A5F5D4 /* TestCircularDependencies */ = {
@@ -560,6 +612,24 @@
 			productReference = F84239C71F0CDE78000FEE5F /* ZIKRouterDemo.app */;
 			productType = "com.apple.product-type.application";
 		};
+		F846AEEB207D4F1600EC7418 /* ZIKRouterDemoTests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = F846AEF5207D4F1600EC7418 /* Build configuration list for PBXNativeTarget "ZIKRouterDemoTests" */;
+			buildPhases = (
+				F846AEE8207D4F1600EC7418 /* Sources */,
+				F846AEE9207D4F1600EC7418 /* Frameworks */,
+				F846AEEA207D4F1600EC7418 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				F846AEF2207D4F1600EC7418 /* PBXTargetDependency */,
+			);
+			name = ZIKRouterDemoTests;
+			productName = ZIKRouterDemoTests;
+			productReference = F846AEEC207D4F1600EC7418 /* ZIKRouterDemoTests.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
+		};
 /* End PBXNativeTarget section */
 
 /* Begin PBXProject section */
@@ -573,6 +643,12 @@
 						CreatedOnToolsVersion = 8.3.2;
 						LastSwiftMigration = 0900;
 						ProvisioningStyle = Automatic;
+					};
+					F846AEEB207D4F1600EC7418 = {
+						CreatedOnToolsVersion = 9.3;
+						DevelopmentTeam = 8FE9268LAG;
+						ProvisioningStyle = Automatic;
+						TestTargetID = F84239C61F0CDE78000FEE5F;
 					};
 				};
 			};
@@ -590,6 +666,7 @@
 			projectRoot = "";
 			targets = (
 				F84239C61F0CDE78000FEE5F /* ZIKRouterDemo */,
+				F846AEEB207D4F1600EC7418 /* ZIKRouterDemoTests */,
 			);
 		};
 /* End PBXProject section */
@@ -602,6 +679,13 @@
 				F84239DD1F0CDE78000FEE5F /* LaunchScreen.storyboard in Resources */,
 				F84239DA1F0CDE78000FEE5F /* Assets.xcassets in Resources */,
 				F84239D81F0CDE78000FEE5F /* Main.storyboard in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		F846AEEA207D4F1600EC7418 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -669,7 +753,27 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		F846AEE8207D4F1600EC7418 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				F8BC9A10207E387A00971352 /* SourceViewRouter.m in Sources */,
+				F846AF00207DE13400EC7418 /* AViewController.m in Sources */,
+				F8BC9A0D207E386B00971352 /* SourceViewController.m in Sources */,
+				F846AEFE207DE13400EC7418 /* AViewRouter.m in Sources */,
+				F846AF01207DE13400EC7418 /* ZIKViewRouterPerformTests.m in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		F846AEF2207D4F1600EC7418 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = F84239C61F0CDE78000FEE5F /* ZIKRouterDemo */;
+			targetProxy = F846AEF1207D4F1600EC7418 /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
 
 /* Begin PBXVariantGroup section */
 		F84239D61F0CDE78000FEE5F /* Main.storyboard */ = {
@@ -839,6 +943,54 @@
 			};
 			name = Release;
 		};
+		F846AEF3207D4F1600EC7418 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_TEAM = 8FE9268LAG;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				INFOPLIST_FILE = ZIKRouterDemoTests/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 11.3;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
+				PRODUCT_BUNDLE_IDENTIFIER = com.zuik.ZIKRouterDemoTests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/ZIKRouterDemo.app/ZIKRouterDemo";
+			};
+			name = Debug;
+		};
+		F846AEF4207D4F1600EC7418 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_TEAM = 8FE9268LAG;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				INFOPLIST_FILE = ZIKRouterDemoTests/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 11.3;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
+				PRODUCT_BUNDLE_IDENTIFIER = com.zuik.ZIKRouterDemoTests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/ZIKRouterDemo.app/ZIKRouterDemo";
+			};
+			name = Release;
+		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
@@ -856,6 +1008,15 @@
 			buildConfigurations = (
 				F84239E21F0CDE78000FEE5F /* Debug */,
 				F84239E31F0CDE78000FEE5F /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		F846AEF5207D4F1600EC7418 /* Build configuration list for PBXNativeTarget "ZIKRouterDemoTests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				F846AEF3207D4F1600EC7418 /* Debug */,
+				F846AEF4207D4F1600EC7418 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;

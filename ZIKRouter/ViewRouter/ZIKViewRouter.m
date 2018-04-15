@@ -2641,7 +2641,7 @@ static  ZIKViewRouterType *_Nullable _routerTypeToRegisteredView(Class viewClass
 
 + (BOOL)_validateSourceInWindowHierarchy:(UIViewController *)source {
     if (!source.isViewLoaded) {
-        return NO;
+        return YES;
     }
     if (!source.view.superview) {
         return NO;

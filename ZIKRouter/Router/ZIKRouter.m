@@ -833,7 +833,7 @@ NSErrorDomain const ZIKRouteErrorDomain = @"ZIKRouteErrorDomain";
     NSString *description;
     switch (state) {
         case ZIKRouterStateUnrouted:
-            description = @"NotRoute";
+            description = @"Unrouted";
             break;
         case ZIKRouterStateRouting:
             description = @"Routing";
