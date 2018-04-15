@@ -17,17 +17,12 @@ NS_ASSUME_NONNULL_BEGIN
 ///Private methods.
 @interface ZIKViewRouter<__covariant Destination: id, __covariant RouteConfig: ZIKViewRouteConfiguration *> (Private)
 
-+ (BOOL)shouldCheckImplementation;
-
-///Is auto registration all finished.
+///Is registration all finished.
 + (BOOL)_isRegistrationFinished;
-
-+ (void)_swift_registerViewProtocol:(id)viewProtocol;
-
-+ (void)_swift_registerConfigProtocol:(id)configProtocol;
 
 #pragma mark Internal Initializer
 
+//TODO: really private
 + (instancetype)routerFromSegueIdentifier:(NSString *)identifier sender:(nullable id)sender destination:(UIViewController *)destination source:(UIViewController *)source;
 + (instancetype)routerFromView:(UIView *)destination source:(UIView *)source;
 
@@ -36,10 +31,5 @@ NS_ASSUME_NONNULL_BEGIN
 extern ZIKAnyViewRouterType *_Nullable _ZIKViewRouterToView(Protocol *viewProtocol);
 
 extern ZIKAnyViewRouterType *_Nullable _ZIKViewRouterToModule(Protocol *configProtocol);
-
-///Private method for ZRouter.
-extern ZIKAnyViewRouterType *_Nullable _swift_ZIKViewRouterToView(id viewProtocol);
-///Private method for ZRouter.
-extern ZIKAnyViewRouterType *_Nullable _swift_ZIKViewRouterToModule(id configProtocol);
 
 NS_ASSUME_NONNULL_END

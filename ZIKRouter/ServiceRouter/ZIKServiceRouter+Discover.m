@@ -55,14 +55,6 @@ ZIKServiceRouterType *_Nullable _ZIKServiceRouterToModule(Protocol *configProtoc
     return nil;
 }
 
-ZIKServiceRouterType *_Nullable _swift_ZIKServiceRouterToService(id serviceProtocol) {
-    return _ZIKServiceRouterToService(serviceProtocol);
-}
-
-ZIKServiceRouterType *_Nullable _swift_ZIKServiceRouterToModule(id configProtocol) {
-    return _ZIKServiceRouterToModule(configProtocol);
-}
-
 @implementation ZIKServiceRouter (Discover)
 
 + (ZIKDestinationServiceRouterType<id<ZIKServiceRoutable>, ZIKPerformRouteConfiguration *> *(^)(Protocol *))toService {

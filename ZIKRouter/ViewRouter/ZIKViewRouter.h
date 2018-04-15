@@ -345,7 +345,7 @@ typedef void(^ZIKViewRouteGlobalErrorHandler)(__kindof ZIKViewRouter * _Nullable
  
  @param viewProtocol The protocol conformed by view to identify the routerClass. Should inherit from ZIKViewRoutable when ZIKROUTER_CHECK is enabled. Use macro `ZIKRoutableProtocol` to check whether the protocol is routable.
  */
-+ (void)registerViewProtocol:(Protocol<ZIKViewRoutable> *)viewProtocol NS_SWIFT_UNAVAILABLE("Use `register<Protocol>(_ routableView: RoutableView<Protocol>)` instead");
++ (void)registerViewProtocol:(Protocol<ZIKViewRoutable> *)viewProtocol;
 
 /**
  Register a module config protocol the router's default configuration conforms, then use ZIKViewRouterToModule() to get the router class.
@@ -358,7 +358,7 @@ typedef void(^ZIKViewRouteGlobalErrorHandler)(__kindof ZIKViewRouter * _Nullable
  
  @param configProtocol The protocol conformed by default configuration of the routerClass. Should inherit from ZIKViewModuleRoutable when ZIKROUTER_CHECK is enabled. Use macro `ZIKRoutableProtocol` to check whether the protocol is routable.
  */
-+ (void)registerModuleProtocol:(Protocol<ZIKViewModuleRoutable> *)configProtocol  NS_SWIFT_UNAVAILABLE("Use `register<Protocol>(_ routableViewModule: RoutableViewModule<Protocol>)` instead");
++ (void)registerModuleProtocol:(Protocol<ZIKViewModuleRoutable> *)configProtocol;
 @end
 
 ///If a UIViewController or UIView conforms to ZIKRoutableView, there must be a router for it and it's subclass. Don't use it in other place.

@@ -79,6 +79,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 #pragma mark Check
 
+//Validate whether the destination conforms to all destination protocols of the router. Only available when ZIKROUTER_CHECK is true.
 + (BOOL)validateDestinationConformance:(Class)destinationClass forRouter:(ZIKRouter *)router protocol:(Protocol **)protocol;
 //Validate all registered view classes of this router class, return the class when the validater return false. Only available when ZIKROUTER_CHECK is true.
 + (nullable Class)validateDestinationsForRoute:(id)route handler:(BOOL(^)(Class destinationClass))handler;

@@ -14,10 +14,16 @@
 NS_ASSUME_NONNULL_BEGIN
 
 typedef NS_ENUM(NSInteger, ZIKRouterState) {
-    ZIKRouterStateUnrouted,
+    ZIKRouterStateNotRoute  NS_ENUM_DEPRECATED_IOS(7.0, 7.0, "Use ZIKRouterStateUnrouted instead") = 0,
+    ///Didn't perform any route yet.
+    ZIKRouterStateUnrouted = 0,
+    ///Performing a route.
     ZIKRouterStateRouting,
+    ///successfully performing a route.
     ZIKRouterStateRouted,
+    ///Removing a performed route.
     ZIKRouterStateRemoving,
+    ///The router was performed and removed, now it can perform again.
     ZIKRouterStateRemoved
 };
 

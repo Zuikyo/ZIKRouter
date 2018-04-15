@@ -201,6 +201,16 @@ static NSMutableArray *g_preparingUIViewRouters;
     }
 }
 
+- (void)attachDestination:(id)destination {
+    NSAssert2([ZIKViewRouteRegistry isDestinationClass:[destination class] registeredWithRouter:[self class]], @"Destination (%@) attached to router (%@) doesn't conforms to protocol.", [destination class], [self class]);
+#if ZIKROUTER_CHECK
+    if (destination) {
+        [self _validateDestinationConformance:destination];
+    }
+#endif
+    [super attachDestination:destination];
+}
+
 - (void)removeRouteWithSuccessHandler:(void(^)(void))performerSuccessHandler
                          errorHandler:(void(^)(ZIKRouteAction routeAction, NSError *error))performerErrorHandler {
     if ([NSThread isMainThread]) {
@@ -979,41 +989,6 @@ destinationStateBeforeRoute:(ZIKPresentationState *)destinationStateBeforeRoute
     self.routingFromInternal = NO;
     self.retainedSelf = nil;
     [self notifyError:error routeAction:ZIKRouteActionPerformRoute];
-}
-
-///routeType must from -[viewController zix_routeType]
-+ (ZIKViewRouteRealType)_realRouteTypeForRouteTypeFromViewController:(ZIKViewRouteType)routeType {
-    ZIKViewRouteRealType realRouteType;
-    switch (routeType) {
-        case ZIKViewRouteTypePush:
-            realRouteType = ZIKViewRouteRealTypePush;
-            break;
-            
-        case ZIKViewRouteTypePresentModally:
-            realRouteType = ZIKViewRouteRealTypePresentModally;
-            break;
-            
-        case ZIKViewRouteTypePresentAsPopover:
-            realRouteType = ZIKViewRouteRealTypePresentAsPopover;
-            break;
-            
-        case ZIKViewRouteTypeAddAsChildViewController:
-            realRouteType = ZIKViewRouteRealTypeAddAsChildViewController;
-            break;
-            
-        case ZIKViewRouteTypeShow:
-            realRouteType = ZIKViewRouteRealTypeCustom;
-            break;
-            
-        case ZIKViewRouteTypeShowDetail:
-            realRouteType = ZIKViewRouteRealTypeCustom;
-            break;
-            
-        default:
-            realRouteType = ZIKViewRouteRealTypeCustom;
-            break;
-    }
-    return realRouteType;
 }
 
 + (ZIKViewRouteRealType)_realRouteTypeFromDetailType:(ZIKViewRouteDetailType)detailType {
@@ -2708,6 +2683,13 @@ static  ZIKViewRouterType *_Nullable _routerTypeToRegisteredView(Class viewClass
     return ZIKViewRouteErrorDomain;
 }
 
++ (NSError *)viewRouteErrorWithCode:(ZIKViewRouteError)code localizedDescription:(NSString *)description {
+    if (description == nil) {
+        description = @"";
+    }
+    return [NSError errorWithDomain:ZIKViewRouteErrorDomain code:code userInfo:@{NSLocalizedDescriptionKey:description}];
+}
+
 + (void)setGlobalErrorHandler:(ZIKViewRouteGlobalErrorHandler)globalErrorHandler {
     dispatch_semaphore_wait(g_globalErrorSema, DISPATCH_TIME_FOREVER);
     g_globalErrorHandler = globalErrorHandler;
@@ -2738,7 +2720,7 @@ static  ZIKViewRouterType *_Nullable _routerTypeToRegisteredView(Class viewClass
     va_start(argList, format);
     NSString *description = [[NSString alloc] initWithFormat:format arguments:argList];
     va_end(argList);
-    NSError *error = [[self class] errorWithCode:code localizedDescription:description];
+    NSError *error = [ZIKViewRouter errorWithCode:code localizedDescription:description];
     if (errorHandler) {
         errorHandler(action,error);
     }
@@ -2750,7 +2732,7 @@ static  ZIKViewRouterType *_Nullable _routerTypeToRegisteredView(Class viewClass
     va_start(argList, format);
     NSString *description = [[NSString alloc] initWithFormat:format arguments:argList];
     va_end(argList);
-    [self notifyGlobalErrorWithRouter:nil action:action error:[[self class] errorWithCode:ZIKViewRouteErrorInvalidPerformer localizedDescription:description]];
+    [self notifyGlobalErrorWithRouter:nil action:action error:[ZIKViewRouter errorWithCode:ZIKViewRouteErrorInvalidPerformer localizedDescription:description]];
 }
 
 - (void)notifyError_unsupportTypeWithAction:(ZIKRouteAction)action errorDescription:(NSString *)format ,... {
@@ -2766,7 +2748,7 @@ static  ZIKViewRouterType *_Nullable _routerTypeToRegisteredView(Class viewClass
     va_start(argList, format);
     NSString *description = [[NSString alloc] initWithFormat:format arguments:argList];
     va_end(argList);
-    [[self class] notifyGlobalErrorWithRouter:self action:action error:[[self class] errorWithCode:ZIKViewRouteErrorUnbalancedTransition localizedDescription:description]];
+    [[self class] notifyGlobalErrorWithRouter:self action:action error:[ZIKViewRouter errorWithCode:ZIKViewRouteErrorUnbalancedTransition localizedDescription:description]];
     NSAssert(NO, @"Unbalanced calls to begin/end appearance transitions for destination. This error occurs when you try and display a view controller before the current view controller is finished displaying. This may cause the UIViewController skips or messes up the order calling -viewWillAppear:, -viewDidAppear:, -viewWillDisAppear: and -viewDidDisappear:, and messes up the route state.");
 }
 
@@ -3240,34 +3222,30 @@ ZIKAnyViewRouterType *_Nullable _ZIKViewRouterToModule(Protocol *configProtocol)
     
 }
 
-+ (BOOL)shouldCheckImplementation {
-#if ZIKROUTER_CHECK
-    return YES;
-#else
-    return NO;
-#endif
-}
-
 + (BOOL)_isRegistrationFinished {
     return ZIKViewRouteRegistry.registrationFinished;
 }
 
-+ (void)_swift_registerViewProtocol:(id)viewProtocol {
-    NSCParameterAssert(ZIKRouter_isObjcProtocol(viewProtocol));
-    [self registerViewProtocol:viewProtocol];
+Protocol<ZIKViewRoutable> *_Nullable _routableViewProtocolFromObject(id object) {
+    if (ZIKRouter_isObjcProtocol(object) == NO) {
+        return nil;
+    }
+    Protocol *p = object;
+    if (protocol_conformsToProtocol(p, @protocol(ZIKViewRoutable))) {
+        return object;
+    }
+    return nil;
 }
 
-+ (void)_swift_registerConfigProtocol:(id)configProtocol {
-    NSCParameterAssert(ZIKRouter_isObjcProtocol(configProtocol));
-    [self registerModuleProtocol:configProtocol];
-}
-
-ZIKAnyViewRouterType *_Nullable _swift_ZIKViewRouterToView(id viewProtocol) {
-    return _ZIKViewRouterToView(viewProtocol);
-}
-
-ZIKAnyViewRouterType *_Nullable _swift_ZIKViewRouterToModule(id configProtocol) {
-    return _ZIKViewRouterToModule(configProtocol);
+Protocol<ZIKViewModuleRoutable> *_Nullable _routableViewModuleProtocolFromObject(id object) {
+    if (ZIKRouter_isObjcProtocol(object) == NO) {
+        return nil;
+    }
+    Protocol *p = object;
+    if (protocol_conformsToProtocol(p, @protocol(ZIKViewModuleRoutable))) {
+        return object;
+    }
+    return nil;
 }
 
 @end

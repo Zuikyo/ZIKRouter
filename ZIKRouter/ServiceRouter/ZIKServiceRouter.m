@@ -58,6 +58,15 @@ static dispatch_semaphore_t g_globalErrorSema;
     [self endPerformRouteWithSuccess];
 }
 
+- (void)attachDestination:(id)destination {
+#if ZIKROUTER_CHECK
+    if (destination) {
+        [self _validateDestinationConformance:destination];
+    }
+#endif
+    [super attachDestination:destination];
+}
+
 - (void)prepareDestination:(id)destination configuration:(__kindof ZIKPerformRouteConfiguration *)configuration {
     NSAssert([self class] != [ZIKServiceRouter class], @"Prepare destination with it's router.");
 }
@@ -159,14 +168,26 @@ static dispatch_semaphore_t g_globalErrorSema;
     return ZIKServiceRouteRegistry.registrationFinished;
 }
 
-+ (void)_swift_registerServiceProtocol:(id)serviceProtocol {
-    NSCParameterAssert(ZIKRouter_isObjcProtocol(serviceProtocol));
-    [self registerServiceProtocol:serviceProtocol];
+Protocol<ZIKServiceRoutable> *_Nullable _routableServiceProtocolFromObject(id object) {
+    if (ZIKRouter_isObjcProtocol(object) == NO) {
+        return nil;
+    }
+    Protocol *p = object;
+    if (protocol_conformsToProtocol(p, @protocol(ZIKServiceRoutable))) {
+        return object;
+    }
+    return nil;
 }
 
-+ (void)_swift_registerConfigProtocol:(id)configProtocol {
-    NSCParameterAssert(ZIKRouter_isObjcProtocol(configProtocol));
-    [self registerModuleProtocol:configProtocol];
+Protocol<ZIKServiceModuleRoutable> *_Nullable _routableServiceModuleProtocolFromObject(id object) {
+    if (ZIKRouter_isObjcProtocol(object) == NO) {
+        return nil;
+    }
+    Protocol *p = object;
+    if (protocol_conformsToProtocol(p, @protocol(ZIKServiceModuleRoutable))) {
+        return object;
+    }
+    return nil;
 }
 
 @end

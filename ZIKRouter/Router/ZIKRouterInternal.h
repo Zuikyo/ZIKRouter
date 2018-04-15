@@ -91,7 +91,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 #pragma mark Internal Methods
 
-///Attach a destination not created from router.
+///Attach a destination not created from router. The destination class should be registered with
 - (void)attachDestination:(nullable Destination)destination;
 
 ///Change state.
@@ -123,6 +123,10 @@ NS_ASSUME_NONNULL_BEGIN
 + (NSError *)errorWithCode:(NSInteger)code localizedDescription:(NSString *)description;
 ///error with domain from +errorDomain.
 + (NSError *)errorWithCode:(NSInteger)code localizedDescriptionFormat:(NSString *)format ,...;
+
+#pragma mark Internal
+
++ (BOOL)shouldCheckImplementation;
 
 @end
 

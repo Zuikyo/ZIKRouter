@@ -18,24 +18,13 @@ NS_ASSUME_NONNULL_BEGIN
 ///Private methods.
 @interface ZIKServiceRouter<__covariant Destination: id, __covariant RouteConfig: ZIKPerformRouteConfiguration *> (Private)
 
-+ (BOOL)shouldCheckImplementation;
-
 ///Is registration all finished.
 + (BOOL)_isRegistrationFinished;
-
-+ (void)_swift_registerServiceProtocol:(id)serviceProtocol;
-
-+ (void)_swift_registerConfigProtocol:(id)configProtocol;
 
 @end
 
 extern ZIKServiceRouterType *_Nullable _ZIKServiceRouterToService(Protocol *serviceProtocol);
 
 extern ZIKServiceRouterType *_Nullable _ZIKServiceRouterToModule(Protocol *configProtocol);
-
-///Private method for ZRouter.
-extern ZIKServiceRouterType *_Nullable _swift_ZIKServiceRouterToService(id serviceProtocol);
-///Private method for ZRouter.
-extern ZIKServiceRouterType *_Nullable _swift_ZIKServiceRouterToModule(id configProtocol);
 
 NS_ASSUME_NONNULL_END

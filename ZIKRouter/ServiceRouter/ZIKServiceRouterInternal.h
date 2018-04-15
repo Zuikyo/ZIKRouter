@@ -38,4 +38,8 @@ NS_ASSUME_NONNULL_BEGIN
 
 @end
 
+extern Protocol<ZIKServiceRoutable> *_Nullable _routableServiceProtocolFromObject(id object);
+
+extern Protocol<ZIKServiceModuleRoutable> *_Nullable _routableServiceModuleProtocolFromObject(id object);
+
 NS_ASSUME_NONNULL_END

@@ -11,6 +11,7 @@
 
 #import "ZIKViewRouter.h"
 #import "ZIKViewRoute.h"
+#import "ZIKViewRouteError.h"
 
 NS_ASSUME_NONNULL_BEGIN
 
@@ -158,7 +159,9 @@ NS_ASSUME_NONNULL_BEGIN
 
 - (void)endRemoveRouteWithSuccess NS_UNAVAILABLE
 ;
-#pragma mark Notify Error
+#pragma mark Error Handle
+
++ (NSError *)viewRouteErrorWithCode:(ZIKViewRouteError)code localizedDescription:(NSString *)description;
 
 + (void)notifyGlobalErrorWithRouter:(nullable __kindof ZIKViewRouter *)router action:(ZIKRouteAction)action error:(NSError *)error;
 
@@ -220,5 +223,9 @@ NS_ASSUME_NONNULL_BEGIN
 + (void)router:(nullable ZIKViewRouter *)router didRemoveRouteOnDestination:(Destination)destination fromSource:(nullable id)source;
 
 @end
+
+extern Protocol<ZIKViewRoutable> *_Nullable _routableViewProtocolFromObject(id object);
+
+extern Protocol<ZIKViewModuleRoutable> *_Nullable _routableViewModuleProtocolFromObject(id object);
 
 NS_ASSUME_NONNULL_END
