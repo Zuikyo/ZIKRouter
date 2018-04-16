@@ -658,10 +658,13 @@ static NSMutableArray *g_preparingUIViewRouters;
             [ZIKViewRouter AOP_notifyAll_router:self willPerformRouteOnDestination:destination fromSource:source];
             [popover presentPopoverFromRect:popoverConfiguration.sourceRect inView:popoverConfiguration.sourceView permittedArrowDirections:popoverConfiguration.permittedArrowDirections animated:configuration.animated];
         } else {
-            [self notifyRouteState:self.preState];
+            ZIKRouterState preState = self.preState;
+            [self notifyRouteState:preState];
             [self notifyError_invalidConfigurationWithAction:ZIKRouteActionPerformRoute
                                             errorDescription:@"Invalid popoverConfiguration: (%@) when perform presentAsPopover on source: (%@), router: (%@).",popoverConfiguration,source,self];
-            self.routingFromInternal = NO;
+            if (self.state == preState) {
+                self.routingFromInternal = NO;
+            }
             return;
         }
         
@@ -711,9 +714,12 @@ static NSMutableArray *g_preparingUIViewRouters;
      This inspection relies on synchronized call -prepareForSegue:sender: and -canPerformUnwindSegueAction:fromViewController:withSender: in -performSegueWithIdentifier:sender:
      */
     if (!destination) {
-        [self notifyRouteState:self.preState];
+        ZIKRouterState preState = self.preState;
+        [self notifyRouteState:preState];
         [self notifyError_segueNotPerformedWithAction:ZIKRouteActionPerformRoute errorDescription:@"destination can't perform segue identitier:%@ now",identifier];
-        self.routingFromInternal = NO;
+        if (self.state == preState) {
+            self.routingFromInternal = NO;
+        }
         return;
     }
 #if ZIKROUTER_CHECK
@@ -787,8 +793,10 @@ static NSMutableArray *g_preparingUIViewRouters;
     self.realRouteType = ZIKViewRouteRealTypeUnknown;
 //    [self endPerformRouteWithSuccess];
     [self notifyRouteState:ZIKRouterStateRouted];
-    self.routingFromInternal = NO;
     [self notifyPerformRouteSuccessWithDestination:destination];
+    if (self.state == ZIKRouterStateRouted) {
+        self.routingFromInternal = NO;
+    }
 }
 
 - (void)_performAddSubviewOnDestination:(UIView *)destination fromSource:(UIView *)source {
@@ -822,8 +830,10 @@ static NSMutableArray *g_preparingUIViewRouters;
     self.stateBeforeRoute = [destination zix_presentationState];
     self.realRouteType = ZIKViewRouteRealTypeUnknown;
     [self notifyRouteState:ZIKRouterStateRouted];
-    self.routingFromInternal = NO;
     [self notifyPerformRouteSuccessWithDestination:destination];
+    if (self.state == ZIKRouterStateRouted) {
+        self.routingFromInternal = NO;
+    }
 }
 
 - (void)performCustomRouteOnDestination:(id)destination fromSource:(nullable id)source configuration:(ZIKViewRouteConfiguration *)configuration {
@@ -980,18 +990,23 @@ destinationStateBeforeRoute:(ZIKPresentationState *)destinationStateBeforeRoute
     id source = self.original_configuration.source;
     [self notifyRouteState:ZIKRouterStateRouted];
     [ZIKViewRouter AOP_notifyAll_router:self didPerformRouteOnDestination:destination fromSource:source];
-    self.routingFromInternal = NO;
-    self.retainedSelf = nil;
     [self notifyPerformRouteSuccessWithDestination:destination];
+    if (self.state == ZIKRouterStateRouted) {
+        self.routingFromInternal = NO;
+        self.retainedSelf = nil;
+    }
 }
 
 - (void)endPerformRouteWithError:(NSError *)error {
     NSParameterAssert(error);
     NSAssert(self.state == ZIKRouterStateRouting, @"state should be routing when end route.");
-    [self notifyRouteState:self.preState];
-    self.routingFromInternal = NO;
-    self.retainedSelf = nil;
+    ZIKRouterState preState = self.preState;
+    [self notifyRouteState:preState];
     [self notifyError:error routeAction:ZIKRouteActionPerformRoute];
+    if (self.state == preState) {
+        self.routingFromInternal = NO;
+        self.retainedSelf = nil;
+    }
 }
 
 + (ZIKViewRouteRealType)_realRouteTypeFromDetailType:(ZIKViewRouteDetailType)detailType {
@@ -1339,9 +1354,11 @@ destinationStateBeforeRoute:(ZIKPresentationState *)destinationStateBeforeRoute
     } else {
         NSAssert([self isMemberOfClass:[ZIKViewRouter class]] && self.original_configuration.routeType == ZIKViewRouteTypePerformSegue, @"Only ZIKViewRouteTypePerformSegue's destination can not conform to ZIKRoutableView");
     }
-    self.routingFromInternal = NO;
-    self.container = nil;
-    self.retainedSelf = nil;
+    if (self.state == ZIKRouterStateRemoved) {
+        self.routingFromInternal = NO;
+        self.container = nil;
+        self.retainedSelf = nil;
+    }
 }
 
 - (void)endRemoveRouteWithError:(NSError *)error {
@@ -1349,8 +1366,10 @@ destinationStateBeforeRoute:(ZIKPresentationState *)destinationStateBeforeRoute
     NSAssert(self.state == ZIKRouterStateRemoving, @"state should be removing when end remove.");
     [self notifyRouteState:self.preState];
     [self notifyError:error routeAction:ZIKRouteActionRemoveRoute];
-    self.routingFromInternal = NO;
-    self.retainedSelf = nil;
+    if (self.state == ZIKRouterStateRemoved) {
+        self.routingFromInternal = NO;
+        self.retainedSelf = nil;
+    }
 }
 
 #pragma mark AOP

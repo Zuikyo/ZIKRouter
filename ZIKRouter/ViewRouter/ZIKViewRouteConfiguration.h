@@ -147,7 +147,7 @@ typedef void(^ZIKViewRouteSegueConfiger)(NS_NOESCAPE ZIKViewRouteSegueConfigure)
 @property (nonatomic, copy, nullable) void(^prepareDestination)(id destination);
 
 /**
- Success handler for performRoute.
+ Success handler for performRoute. Each time the router was performed, success handler will be called when the operation succeed.
  
  @discussion
  For ZIKViewRouteTypePush, ZIKViewRouteTypePresentModally, ZIKViewRouteTypePresentAsPopover, ZIKViewRouteTypePerformSegue, ZIKViewRouteTypeShow, ZIKViewRouteTypeShowDetail, ZIKViewRouteTypeAddAsChildViewController, destination is a UIViewController.

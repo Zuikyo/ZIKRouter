@@ -52,6 +52,9 @@ typedef void(^ZIKRouteStateNotifier)(ZIKRouterState oldState, ZIKRouterState new
  */
 @property (nonatomic, copy, nullable) ZIKRouteErrorHandler errorHandler;
 
+///Error handler for current performing, will reset to nil after performed.
+@property (nonatomic, copy, nullable) ZIKRouteErrorHandler performerErrorHandler;
+
 /**
  Monitor state.
  @note
@@ -81,6 +84,9 @@ typedef void(^ZIKPerformRouteCompletion)(BOOL success, id _Nullable destination,
  Use weakSelf in successHandler to avoid retain cycle.
  */
 @property (nonatomic, copy, nullable) void(^successHandler)(id destination);
+
+///Success handler for current performing, will reset to nil after performed.
+@property (nonatomic, copy, nullable) void(^performerSuccessHandler)(id destination);
 
 @property (nonatomic, copy, nullable) void(^routeCompletion)(id destination) API_DEPRECATED_WITH_REPLACEMENT("successHandler", ios(7.0, 7.0));
 
@@ -118,6 +124,9 @@ typedef void(^ZIKRemoveRouteCompletion)(BOOL success, ZIKRouteAction routeAction
  Use weakSelf in completion to avoid retain cycle.
  */
 @property (nonatomic, copy, nullable) ZIKRemoveRouteCompletion completionHandler;
+
+///Success handler for current removing, will reset to nil after removed.
+@property (nonatomic, copy, nullable) void(^performerSuccessHandler)(void);
 
 @end
 

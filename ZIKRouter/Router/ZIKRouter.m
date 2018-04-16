@@ -180,8 +180,7 @@ NSErrorDomain const ZIKRouteErrorDomain = @"ZIKRouteErrorDomain";
 }
 
 - (void)performRoute {
-    [self performRouteWithSuccessHandler:self.original_configuration.performerSuccessHandler
-                            errorHandler:self.original_configuration.performerErrorHandler];
+    [self performRouteWithSuccessHandler:nil errorHandler:nil];
 }
 
 - (void)performRouteWithSuccessHandler:(void(^)(id destination))performerSuccessHandler
@@ -217,9 +216,23 @@ NSErrorDomain const ZIKRouteErrorDomain = @"ZIKRouteErrorDomain";
     [self notifyRouteState:ZIKRouterStateRouting];
     ZIKPerformRouteConfiguration *configuration = self.original_configuration;
     if (performerSuccessHandler) {
+        void(^ori_performerSuccessHandler)(id) = configuration.performerSuccessHandler;
+        if (ori_performerSuccessHandler) {
+            performerSuccessHandler = ^(id destination) {
+                ori_performerSuccessHandler(destination);
+                performerSuccessHandler(destination);
+            };
+        }
         configuration.performerSuccessHandler = performerSuccessHandler;
     }
     if (performerErrorHandler) {
+        ZIKRouteErrorHandler ori_performerErrorHandler = configuration.performerErrorHandler;
+        if (ori_performerErrorHandler) {
+            performerErrorHandler = ^(ZIKRouteAction routeAction, NSError *error) {
+                ori_performerErrorHandler(routeAction, error);
+                performerErrorHandler(routeAction, error);
+            };
+        }
         configuration.performerErrorHandler = performerErrorHandler;
     }
     [self performWithConfiguration:configuration];
@@ -311,7 +324,7 @@ NSErrorDomain const ZIKRouteErrorDomain = @"ZIKRouteErrorDomain";
 }
 
 - (void)removeRoute {
-    [self removeRouteWithSuccessHandler:self.original_removeConfiguration.performerSuccessHandler errorHandler:self.original_removeConfiguration.performerErrorHandler];
+    [self removeRouteWithSuccessHandler:nil errorHandler:nil];
 }
 
 - (void)removeRouteWithSuccessHandler:(void(^)(void))performerSuccessHandler
@@ -341,9 +354,23 @@ NSErrorDomain const ZIKRouteErrorDomain = @"ZIKRouteErrorDomain";
         configuration = [[self class] defaultRemoveConfiguration];
     }
     if (performerSuccessHandler) {
+        void(^ori_performerSuccessHandler)(void) = configuration.performerSuccessHandler;
+        if (ori_performerSuccessHandler) {
+            performerSuccessHandler = ^{
+                ori_performerSuccessHandler();
+                performerSuccessHandler();
+            };
+        }
         configuration.performerSuccessHandler = performerSuccessHandler;
     }
     if (performerErrorHandler) {
+        void(^ori_performerErrorHandler)(ZIKRouteAction routeAction, NSError *error) = configuration.performerErrorHandler;
+        if (ori_performerErrorHandler) {
+            performerErrorHandler = ^(ZIKRouteAction routeAction, NSError *error){
+                ori_performerErrorHandler(routeAction, error);
+                performerErrorHandler(routeAction, error);
+            };
+        }
         configuration.performerErrorHandler = performerErrorHandler;
     }
     [self removeDestination:self.destination removeConfiguration:configuration];

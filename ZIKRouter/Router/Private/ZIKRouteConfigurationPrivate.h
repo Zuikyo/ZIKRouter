@@ -16,21 +16,11 @@ NS_ASSUME_NONNULL_BEGIN
 @interface ZIKRouteConfiguration () {
     @public __strong ZIKRouteConfiguration **_injectable;
 }
-///Error handler for router's performer, will reset to nil after perform.
-@property (nonatomic, copy, nullable) ZIKRouteErrorHandler performerErrorHandler;
-
 @end
 
 @class ZIKRoute;
 @interface ZIKPerformRouteConfiguration()
-///Success handler for router's performer, will reset to nil after performed.
-@property (nonatomic, copy, nullable) void(^performerSuccessHandler)(id destination);
 @property (nonatomic, strong, nullable) ZIKRoute *route;
-@end
-
-@interface ZIKRemoveRouteConfiguration()
-///Success handler for router's performer, will reset to nil after removed.
-@property (nonatomic, copy, nullable) void(^performerSuccessHandler)(void);
 @end
 
 NS_ASSUME_NONNULL_END
