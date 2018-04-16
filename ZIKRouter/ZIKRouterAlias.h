@@ -29,5 +29,5 @@ typedef ZIKServiceRouter<id, ZIKPerformRouteConfig *> ZIKAnyServiceRouter;
 #define ZIKDestinationServiceRouter(Destination) ZIKServiceRouter<Destination, ZIKPerformRouteConfig *>
 #define ZIKModuleServiceRouter(ModuleConfigProtocol) ZIKServiceRouter<id, ZIKPerformRouteConfig<ModuleConfigProtocol> *>
 
-///Check whether the protocol is routable at complie time when passing protocols to `+registerViewProtocol:`, `+registerServiceProtocol:`, `+registerModuleProtocol:`, `classToView`, `classToService`, `classToModule`.
+///Check whether the protocol is routable at complie time when passing protocols to `+registerViewProtocol:`, `+registerServiceProtocol:`, `+registerModuleProtocol:`.
 #define ZIKRoutableProtocol(RoutableProtocol) (Protocol<RoutableProtocol>*)@protocol(RoutableProtocol)

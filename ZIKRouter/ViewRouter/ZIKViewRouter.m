@@ -115,13 +115,11 @@ static NSMutableArray *g_preparingUIViewRouters;
         if (![[self class] _validateRouteTypeInConfiguration:configuration]) {
             [self notifyError_unsupportTypeWithAction:ZIKRouteActionInit
                                      errorDescription:@"%@ doesn't support routeType:%ld, supported types: %ld",[self class],configuration.routeType,[[self class] supportedRouteTypes]];
-            NSAssert(NO, @"%@ doesn't support routeType:%ld, supported types: %ld",[self class],(long)configuration.routeType,(long)[[self class] supportedRouteTypes]);
             return nil;
         } else if (![[self class] _validateRouteSourceNotMissedInConfiguration:configuration] ||
                    ![[self class] _validateRouteSourceClassInConfiguration:configuration]) {
             [self notifyError_invalidSourceWithAction:ZIKRouteActionInit
                                      errorDescription:@"Source: (%@) is invalid for configuration: (%@)",configuration.source,configuration];
-            NSAssert(NO, @"Source: (%@) is invalid for configuration: (%@)",configuration.source,configuration);
             return nil;
         } else {
             ZIKViewRouteType type = configuration.routeType;
@@ -129,21 +127,18 @@ static NSMutableArray *g_preparingUIViewRouters;
                 if (![[self class] _validateSegueInConfiguration:configuration]) {
                     [self notifyError_invalidConfigurationWithAction:ZIKRouteActionInit
                                                     errorDescription:@"SegueConfiguration : (%@) was invalid",configuration.segueConfiguration];
-                    NSAssert(NO, @"SegueConfiguration : (%@) was invalid",configuration.segueConfiguration);
                     return nil;
                 }
             } else if (type == ZIKViewRouteTypePresentAsPopover) {
                 if (![[self class] _validatePopoverInConfiguration:configuration]) {
                     [self notifyError_invalidConfigurationWithAction:ZIKRouteActionInit
                                                     errorDescription:@"PopoverConfiguration : (%@) was invalid",configuration.popoverConfiguration];
-                    NSAssert(NO, @"PopoverConfiguration : (%@) was invalid",configuration.popoverConfiguration);
                     return nil;
                 }
             } else if (type == ZIKViewRouteTypeCustom) {
                 if (![[self class] validateCustomRouteConfiguration:configuration removeConfiguration:removeConfiguration]) {
                     [self notifyError_invalidConfigurationWithAction:ZIKRouteActionInit
                                                     errorDescription:@"Configuration : (%@) was invalid for ZIKViewRouteTypeCustom",configuration];
-                    NSAssert(NO, @"Configuration : (%@) was invalid for ZIKViewRouteTypeCustom",configuration);
                     return nil;
                 }
             }
@@ -437,7 +432,6 @@ static NSMutableArray *g_preparingUIViewRouters;
     } else if (![[self class] _validateDestinationClass:destination inConfiguration:configuration]) {
         [self notifyRouteState:self.preState];
         [self notifyError_actionFailedWithAction:ZIKRouteActionPerformRoute errorDescription:@"Bad impletment in destinationWithConfiguration: of router: %@, invalid destination: %@ !",[self class],destination];
-        NSAssert(NO, @"Bad impletment in destinationWithConfiguration: of router: %@, invalid destination: %@ !",[self class],destination);
         return;
     }
 #if ZIKROUTER_CHECK
@@ -819,7 +813,6 @@ static NSMutableArray *g_preparingUIViewRouters;
     } else {
         [self notifyRouteState:self.preState];
         [self notifyError_actionFailedWithAction:ZIKRouteActionPerformRoute errorDescription:@"Perform custom route but router(%@) didn't implement -performCustomRouteOnDestination:fromSource:configuration:",[self class]];
-        NSAssert(NO, @"Perform custom route but router(%@) didn't implement -performCustomRouteOnDestination:fromSource:configuration:",[self class]);
     }
 }
 
@@ -888,7 +881,6 @@ static NSMutableArray *g_preparingUIViewRouters;
     }
     if (errorDescription) {
         [self notifyError_invalidContainerWithAction:ZIKRouteActionPerformRoute errorDescription:@"containerWrapper returns invalid container: %@",errorDescription];
-        NSAssert(NO, @"containerWrapper returns invalid container");
         return destination;
     }
     self.container = container;
@@ -903,7 +895,6 @@ static NSMutableArray *g_preparingUIViewRouters;
         if (!performer) {
             NSString *description = [NSString stringWithFormat:@"Can't find which custom UIView or UIViewController added destination:(%@) as subview, so we can't notify the performer to config the destination. You may add destination to a superview in code directly, and the superview is not a custom class. Please change your code and add subview by a custom view router with ZIKViewRouteTypeAddAsSubview. CallStack: %@",destination, [NSThread callStackSymbols]];
             [self notifyError_invalidPerformerWithAction:ZIKRouteActionPerformRoute errorDescription:description];
-            NSAssert(NO, description);
         }
         
         if ([performer respondsToSelector:@selector(prepareDestinationFromExternal:configuration:)]) {
@@ -927,7 +918,6 @@ static NSMutableArray *g_preparingUIViewRouters;
             }
         } else {
             [router notifyError_invalidSourceWithAction:ZIKRouteActionPerformRoute errorDescription:@"Destination %@ 's performer :%@ missed -prepareDestinationFromExternal:configuration: to config destination.",destination, performer];
-            NSAssert(NO, @"Destination %@ 's performer :%@ missed -prepareDestinationFromExternal:configuration: to config destination.",destination, performer);
         }
     }
     
@@ -1747,7 +1737,6 @@ static  ZIKViewRouterType *_Nullable _routerTypeToRegisteredView(Class viewClass
             
             [destination setZix_parentRemovingFrom:source];
             [ZIKViewRouter notifyGlobalErrorWithRouter:nil action:ZIKRouteActionPerformRoute error:[ZIKViewRouter errorWithCode:ZIKViewRouteErrorUnbalancedTransition localizedDescriptionFormat:@"Unbalanced calls to begin/end appearance transitions for destination. This error occurs when you try and display a view controller before the current view controller is finished displaying. This may cause the UIViewController skips or messes up the order calling -viewWillAppear:, -viewDidAppear:, -viewWillDisAppear: and -viewDidDisappear:, and messes up the route state. Current error reason is already removed destination but destination appears again before -viewDidDisappear:, router:(%@), callStack:%@",self,[NSThread callStackSymbols]]];
-            NSAssert(NO, @"Unbalanced calls to begin/end appearance transitions for destination. This error may from your custom transition.");
             break;
         }
     }
@@ -1913,7 +1902,6 @@ static  ZIKViewRouterType *_Nullable _routerTypeToRegisteredView(Class viewClass
                     [g_preparingUIViewRouters removeObject:destinationRouter];
                     NSString *description = [NSString stringWithFormat:@"Didn't fine the performer of UIView until it's removing from superview, maybe it's superview was never added to any view controller. Can't find which custom UIView or UIViewController added destination:(%@) as subview, so we can't notify the performer to config the destination. You may add destination to a UIWindow in code directly, and the UIWindow is not a custom class. Please change your code and add subview by a custom view router with ZIKViewRouteTypeAddAsSubview. Destination superview: (%@).",destination, newSuperview];
                     [destinationRouter endPerformRouteWithError:[ZIKViewRouter errorWithCode:ZIKViewRouteErrorInvalidPerformer localizedDescription:description]];
-                    NSAssert(NO, description);
                 }
                 //Destination don't need prepare, but it's superview never be added to a view controller, so destination is never on a window
                 if (destinationRouter.state == ZIKRouterStateRouting &&
@@ -1957,7 +1945,6 @@ static  ZIKViewRouterType *_Nullable _routerTypeToRegisteredView(Class viewClass
                         if (!performer && (newSuperview.window || [newSuperview isKindOfClass:[UIWindow class]])) {
                             NSString *description = [NSString stringWithFormat:@"Adding to a superview on screen. Can't find which custom UIView or UIViewController added destination:(%@) as subview, so we can't notify the performer to config the destination. You may add destination to a UIWindow in code directly. Please fix your code and add subview by a custom view router with ZIKViewRouteTypeAddAsSubview. Destination superview: (%@).",destination, newSuperview];
                             [ZIKViewRouter notifyError_invalidPerformerWithAction:ZIKRouteActionPerformRoute errorDescription:description];
-                            NSAssert(NO, description);
                         }
                     }
                     if (needPrepare) {
@@ -2074,7 +2061,6 @@ static  ZIKViewRouterType *_Nullable _routerTypeToRegisteredView(Class viewClass
                                             description = [NSString stringWithFormat:@"Can't find which custom UIView or UIViewController added destination:(%@) as subview, so we can't notify the performer to config the destination. You may add destination to a UIWindow in code directly, and the UIWindow is not a custom class. Please change your code and add subview by a custom view router with ZIKViewRouteTypeAddAsSubview. Destination superview: %@.",destination, destination.superview];
                                         }
                                         [ZIKViewRouter notifyError_invalidPerformerWithAction:ZIKRouteActionPerformRoute errorDescription:description];
-                                        NSAssert(NO, description);
                                     }
                                     NSAssert(ZIKRouter_classIsCustomClass(performer), @"performer should be a subclass of UIViewController in your project.");
                                 }
@@ -2137,7 +2123,6 @@ static  ZIKViewRouterType *_Nullable _routerTypeToRegisteredView(Class viewClass
                         } else {
                             NSString *description = [NSString stringWithFormat:@"Didn't find performer when UIView is already on screen. Can't find which custom UIView or UIViewController added destination:(%@) as subview, so we can't notify the performer to config the destination. You may add destination to a UIWindow in code directly, and the UIWindow is not a custom class. Please change your code and add subview by a custom view router with ZIKViewRouteTypeAddAsSubview. Destination superview: %@.",destination, destination.superview];
                             [ZIKViewRouter notifyError_invalidPerformerWithAction:ZIKRouteActionPerformRoute errorDescription:description];
-                            NSAssert(NO, description);
                         }
                         [[NSNotificationCenter defaultCenter] postNotificationName:kZIKViewRouteWillPerformRouteNotification object:destination];
                         if (!routeTypeFromRouter ||
@@ -2771,7 +2756,6 @@ static  ZIKViewRouterType *_Nullable _routerTypeToRegisteredView(Class viewClass
     NSString *description = [[NSString alloc] initWithFormat:format arguments:argList];
     va_end(argList);
     [[self class] notifyGlobalErrorWithRouter:self action:action error:[ZIKViewRouter errorWithCode:ZIKViewRouteErrorUnbalancedTransition localizedDescription:description]];
-    NSAssert(NO, @"Unbalanced calls to begin/end appearance transitions for destination. This error occurs when you try and display a view controller before the current view controller is finished displaying. This may cause the UIViewController skips or messes up the order calling -viewWillAppear:, -viewDidAppear:, -viewWillDisAppear: and -viewDidDisappear:, and messes up the route state.");
 }
 
 - (void)notifyError_invalidSourceWithAction:(ZIKRouteAction)action errorDescription:(NSString *)format ,... {

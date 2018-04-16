@@ -200,7 +200,7 @@ extern NSErrorDomain const ZIKRouteErrorDomain;
 typedef NS_ERROR_ENUM(ZIKRouteErrorDomain, ZIKRouteError) {
     ///The protocol to fetch the router is not registered.
     ZIKRouteErrorInvalidProtocol        = 0,
-    ///Configuration missed some required values, or some values were conflict, or the external destination to prepare/perform is invalid. There will be an assert failure for debugging.
+    ///Configuration missed some required values, or some values were conflict, or the external destination to prepare/perform is invalid.
     ZIKRouteErrorInvalidConfiguration   = 1,
     ///Router returns nil for destination, you can't use this service now. Maybe your configuration is invalid, or there is a bug in the router.
     ZIKRouteErrorDestinationUnavailable = 2,

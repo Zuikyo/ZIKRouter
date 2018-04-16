@@ -97,6 +97,12 @@
 
 - (void)leaveTest {
     if (self.router == nil) {
+        [self.leaveTestViewExpectation fulfill];
+        [self leaveSourceView];
+        return;
+    }
+    if (self.router.state == ZIKRouterStateUnrouted || self.router.state == ZIKRouterStateRemoved) {
+        [self.leaveTestViewExpectation fulfill];
         [self leaveSourceView];
         return;
     }

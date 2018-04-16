@@ -237,4 +237,28 @@
     }];
 }
 
+- (void)testPerformWithError {
+    XCTestExpectation *expectation = [self expectationWithDescription:@"errorHandler"];
+    {
+        [self enterTest:^(UIViewController *source) {
+            self.router = [ZIKRouterToView(AViewInput) performFromSource:nil configuring:^(ZIKViewRouteConfiguration * _Nonnull config) {
+                config.routeType = self.routeType;
+                config.animated = YES;
+                config.successHandler = ^(id  _Nonnull destination) {
+                    XCTAssert(NO, @"successHandler should not be called");
+                };
+                config.errorHandler = ^(ZIKRouteAction  _Nonnull routeAction, NSError * _Nonnull error) {
+                    XCTAssertNotNil(error);
+                    [expectation fulfill];
+                    [self leaveTest];
+                };
+            }];
+        }];
+    }
+    
+    [self waitForExpectationsWithTimeout:5 handler:^(NSError * _Nullable error) {
+        !error? : NSLog(@"%@", error);
+    }];
+}
+
 @end

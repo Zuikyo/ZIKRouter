@@ -15,16 +15,16 @@ extern NSErrorDomain const ZIKViewRouteErrorDomain;
 
 ///Errors for callback in ZIKRouteErrorHandler and ZIKViewRouteGlobalErrorHandler
 typedef NS_ERROR_ENUM(ZIKViewRouteErrorDomain, ZIKViewRouteError) {
-    ///Bad implementation in code. When adding a UIView or UIViewController conforms to ZIKRoutableView in xib or storyboard, and it need preparing, you have to implement -prepareDestinationFromExternal:configuration: in the view controller which added it. There will be an assert failure for debugging.
+    ///Bad implementation in code. When adding a UIView or UIViewController conforms to ZIKRoutableView in xib or storyboard, and it need preparing, you have to implement -prepareDestinationFromExternal:configuration: in the view controller which added it.
     ZIKViewRouteErrorInvalidPerformer     = 10,
-    ///This router doesn't support the route type you assigned. There will be an assert failure for debugging.
+    ///This router doesn't support the route type you assigned.
     ZIKViewRouteErrorUnsupportType        = 11,
     /**
-     Unbalanced calls to begin/end appearance transitions for destination. This error occurs when you try and display a view controller before the current view controller is finished displaying. This may cause the UIViewController skips or messes up the order calling -viewWillAppear:, -viewDidAppear:, -viewWillDisAppear: and -viewDidDisappear:, and messes up the route state. There will be an assert failure for debugging.
+     Unbalanced calls to begin/end appearance transitions for destination. This error occurs when you try and display a view controller before the current view controller is finished displaying. This may cause the UIViewController skips or messes up the order calling -viewWillAppear:, -viewDidAppear:, -viewWillDisAppear: and -viewDidDisappear:, and messes up the route state.
      */
     ZIKViewRouteErrorUnbalancedTransition = 12,
     /**
-     1. Source can't perform action with corresponding route type, maybe it's missed or is wrong class, see ZIKViewRouteConfiguration.source. There will be an assert failure for debugging.
+     1. Source can't perform action with corresponding route type, maybe it's missed or is wrong class, see ZIKViewRouteConfiguration.source.
      
      2. Source is dealloced when perform route.
      
