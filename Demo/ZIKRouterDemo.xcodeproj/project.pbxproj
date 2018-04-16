@@ -193,7 +193,7 @@
 		F84239D91F0CDE78000FEE5F /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		F84239DC1F0CDE78000FEE5F /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		F84239DE1F0CDE78000FEE5F /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		F846AEEC207D4F1600EC7418 /* ZIKRouterDemoTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = ZIKRouterDemoTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		F846AEEC207D4F1600EC7418 /* ZIKViewRouterTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = ZIKViewRouterTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		F846AEF0207D4F1600EC7418 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		F846AEF6207DE13300EC7418 /* AViewInput.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AViewInput.h; sourceTree = "<group>"; };
 		F846AEF7207DE13400EC7418 /* AViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AViewController.h; sourceTree = "<group>"; };
@@ -464,7 +464,7 @@
 				F8C7F7F42019F95800B48365 /* ZRouter.framework */,
 				F8C7F7F12019F95100B48365 /* ZIKRouter.framework */,
 				F84239C91F0CDE78000FEE5F /* ZIKRouterDemo */,
-				F846AEED207D4F1600EC7418 /* ZIKRouterDemoTests */,
+				F846AEED207D4F1600EC7418 /* ZIKViewRouterTests */,
 				F84239C81F0CDE78000FEE5F /* Products */,
 			);
 			sourceTree = "<group>";
@@ -473,7 +473,7 @@
 			isa = PBXGroup;
 			children = (
 				F84239C71F0CDE78000FEE5F /* ZIKRouterDemo.app */,
-				F846AEEC207D4F1600EC7418 /* ZIKRouterDemoTests.xctest */,
+				F846AEEC207D4F1600EC7418 /* ZIKViewRouterTests.xctest */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -514,7 +514,7 @@
 			name = "Supporting Files";
 			sourceTree = "<group>";
 		};
-		F846AEED207D4F1600EC7418 /* ZIKRouterDemoTests */ = {
+		F846AEED207D4F1600EC7418 /* ZIKViewRouterTests */ = {
 			isa = PBXGroup;
 			children = (
 				F846AEF7207DE13400EC7418 /* AViewController.h */,
@@ -531,7 +531,7 @@
 				F846AEFD207DE13400EC7418 /* ZIKViewRouterPerformTests.m */,
 				F846AEF0207D4F1600EC7418 /* Info.plist */,
 			);
-			path = ZIKRouterDemoTests;
+			path = ZIKViewRouterTests;
 			sourceTree = "<group>";
 		};
 		F87317D61F924AEC00A5F5D4 /* TestCircularDependencies */ = {
@@ -617,9 +617,9 @@
 			productReference = F84239C71F0CDE78000FEE5F /* ZIKRouterDemo.app */;
 			productType = "com.apple.product-type.application";
 		};
-		F846AEEB207D4F1600EC7418 /* ZIKRouterDemoTests */ = {
+		F846AEEB207D4F1600EC7418 /* ZIKViewRouterTests */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = F846AEF5207D4F1600EC7418 /* Build configuration list for PBXNativeTarget "ZIKRouterDemoTests" */;
+			buildConfigurationList = F846AEF5207D4F1600EC7418 /* Build configuration list for PBXNativeTarget "ZIKViewRouterTests" */;
 			buildPhases = (
 				F846AEE8207D4F1600EC7418 /* Sources */,
 				F846AEE9207D4F1600EC7418 /* Frameworks */,
@@ -630,9 +630,9 @@
 			dependencies = (
 				F846AEF2207D4F1600EC7418 /* PBXTargetDependency */,
 			);
-			name = ZIKRouterDemoTests;
+			name = ZIKViewRouterTests;
 			productName = ZIKRouterDemoTests;
-			productReference = F846AEEC207D4F1600EC7418 /* ZIKRouterDemoTests.xctest */;
+			productReference = F846AEEC207D4F1600EC7418 /* ZIKViewRouterTests.xctest */;
 			productType = "com.apple.product-type.bundle.unit-test";
 		};
 /* End PBXNativeTarget section */
@@ -671,7 +671,7 @@
 			projectRoot = "";
 			targets = (
 				F84239C61F0CDE78000FEE5F /* ZIKRouterDemo */,
-				F846AEEB207D4F1600EC7418 /* ZIKRouterDemoTests */,
+				F846AEEB207D4F1600EC7418 /* ZIKViewRouterTests */,
 			);
 		};
 /* End PBXProject section */
@@ -1018,7 +1018,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		F846AEF5207D4F1600EC7418 /* Build configuration list for PBXNativeTarget "ZIKRouterDemoTests" */ = {
+		F846AEF5207D4F1600EC7418 /* Build configuration list for PBXNativeTarget "ZIKViewRouterTests" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				F846AEF3207D4F1600EC7418 /* Debug */,
