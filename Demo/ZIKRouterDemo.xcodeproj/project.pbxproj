@@ -55,6 +55,7 @@
 		F846AF00207DE13400EC7418 /* AViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = F846AEFC207DE13400EC7418 /* AViewController.m */; };
 		F846AF01207DE13400EC7418 /* ZIKViewRouterPerformTests.m in Sources */ = {isa = PBXBuildFile; fileRef = F846AEFD207DE13400EC7418 /* ZIKViewRouterPerformTests.m */; };
 		F85283B21F8CF43F0093C812 /* UnroutableViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = F85283B11F8CF43F0093C812 /* UnroutableViewController.m */; };
+		F86F0F132084980F00A81DC3 /* ZIKViewRouterTestCase.m in Sources */ = {isa = PBXBuildFile; fileRef = F86F0F122084980F00A81DC3 /* ZIKViewRouterTestCase.m */; };
 		F87317D01F922EB100A5F5D4 /* SwiftServiceRouter.swift in Sources */ = {isa = PBXBuildFile; fileRef = F87317CF1F922EB100A5F5D4 /* SwiftServiceRouter.swift */; };
 		F87317D41F923E2000A5F5D4 /* SwiftService.swift in Sources */ = {isa = PBXBuildFile; fileRef = F87317D31F923E2000A5F5D4 /* SwiftService.swift */; };
 		F87317D91F924B3C00A5F5D4 /* TestCircularDependenciesViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = F87317D81F924B3C00A5F5D4 /* TestCircularDependenciesViewController.m */; };
@@ -202,6 +203,8 @@
 		F846AEFD207DE13400EC7418 /* ZIKViewRouterPerformTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ZIKViewRouterPerformTests.m; sourceTree = "<group>"; };
 		F85283B01F8CF43F0093C812 /* UnroutableViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = UnroutableViewController.h; sourceTree = "<group>"; };
 		F85283B11F8CF43F0093C812 /* UnroutableViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = UnroutableViewController.m; sourceTree = "<group>"; };
+		F86F0F122084980F00A81DC3 /* ZIKViewRouterTestCase.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ZIKViewRouterTestCase.m; sourceTree = "<group>"; };
+		F86F0F142084987200A81DC3 /* ZIKViewRouterTestCase.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ZIKViewRouterTestCase.h; sourceTree = "<group>"; };
 		F87317CF1F922EB100A5F5D4 /* SwiftServiceRouter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SwiftServiceRouter.swift; sourceTree = "<group>"; };
 		F87317D31F923E2000A5F5D4 /* SwiftService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SwiftService.swift; sourceTree = "<group>"; };
 		F87317D71F924B3C00A5F5D4 /* TestCircularDependenciesViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = TestCircularDependenciesViewController.h; sourceTree = "<group>"; };
@@ -523,6 +526,8 @@
 				F8BC9A0C207E386B00971352 /* SourceViewController.m */,
 				F8BC9A0E207E387A00971352 /* SourceViewRouter.h */,
 				F8BC9A0F207E387A00971352 /* SourceViewRouter.m */,
+				F86F0F142084987200A81DC3 /* ZIKViewRouterTestCase.h */,
+				F86F0F122084980F00A81DC3 /* ZIKViewRouterTestCase.m */,
 				F846AEFD207DE13400EC7418 /* ZIKViewRouterPerformTests.m */,
 				F846AEF0207D4F1600EC7418 /* Info.plist */,
 			);
@@ -759,6 +764,7 @@
 			files = (
 				F8BC9A10207E387A00971352 /* SourceViewRouter.m in Sources */,
 				F846AF00207DE13400EC7418 /* AViewController.m in Sources */,
+				F86F0F132084980F00A81DC3 /* ZIKViewRouterTestCase.m in Sources */,
 				F8BC9A0D207E386B00971352 /* SourceViewController.m in Sources */,
 				F846AEFE207DE13400EC7418 /* AViewRouter.m in Sources */,
 				F846AF01207DE13400EC7418 /* ZIKViewRouterPerformTests.m in Sources */,

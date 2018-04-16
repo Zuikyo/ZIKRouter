@@ -102,6 +102,6 @@ NS_ASSUME_NONNULL_BEGIN
 
 @end
 
-typedef ZIKViewRouterType<id<ZIKRoutableView>, ZIKViewRouteConfiguration *> ZIKAnyViewRouterType;
+typedef ZIKViewRouterType<id, ZIKViewRouteConfiguration *> ZIKAnyViewRouterType;
 
 NS_ASSUME_NONNULL_END

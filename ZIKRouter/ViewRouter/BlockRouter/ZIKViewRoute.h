@@ -40,4 +40,4 @@
 
 @end
 
-typedef ZIKViewRoute<id, ZIKViewRouteConfiguration *> ZIKDefaultViewRoute;
+typedef ZIKViewRoute<id, ZIKViewRouteConfiguration *> ZIKAnyViewRoute;

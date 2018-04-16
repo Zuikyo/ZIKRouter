@@ -24,4 +24,4 @@
 
 @end
 
-typedef ZIKServiceRoute<id, ZIKPerformRouteConfiguration *> ZIKDefaultServiceRoute;
+typedef ZIKServiceRoute<id, ZIKPerformRouteConfiguration *> ZIKAnyServiceRoute;
