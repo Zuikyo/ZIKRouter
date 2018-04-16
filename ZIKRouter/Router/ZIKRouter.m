@@ -188,8 +188,13 @@ NSErrorDomain const ZIKRouteErrorDomain = @"ZIKRouteErrorDomain";
     NSAssert(self.original_configuration, @"router must has configuration");
     ZIKRouterState state = self.state;
     if (state == ZIKRouterStateRouted) {
-        [self notifyError_actionFailedWithAction:ZIKRouteActionPerformRoute
-                                errorDescription:@"%@ 's state is routed, can't perform route again",self];
+        ZIKRouteAction action = ZIKRouteActionPerformRoute;
+        NSString *description = [NSString stringWithFormat:@"%@ 's state is routed, can't perform route again",self];
+        NSError *error = [ZIKRouter errorWithCode:ZIKRouteErrorOverRoute localizedDescription:description];
+        [self notifyError_actionFailedWithAction:action errorDescription:@"%@", description];
+        if (performerErrorHandler) {
+            performerErrorHandler(action,error);
+        }
         return;
     } else if (state == ZIKRouterStateRouting) {
         ZIKRouteAction action = ZIKRouteActionPerformRoute;
@@ -209,8 +214,14 @@ NSErrorDomain const ZIKRouteErrorDomain = @"ZIKRouteErrorDomain";
         return;
     }
     if ([[self class] _validateInfiniteRecursion] == NO) {
-        [self notifyError_infiniteRecursionWithAction:ZIKRouteActionPerformRoute errorDescription:@"Infinite recursion for performing route detected. There may be cycle dependencies. Recursive call stack:\n%@",[NSThread callStackSymbols]];
+        ZIKRouteAction action = ZIKRouteActionPerformRoute;
+        NSString *description = [NSString stringWithFormat:@"Infinite recursion for performing route detected. There may be cycle dependencies. Recursive call stack:\n%@",[NSThread callStackSymbols]];
+        NSError *error = [ZIKRouter errorWithCode:ZIKRouteErrorOverRoute localizedDescription:description];
+        [self notifyError_infiniteRecursionWithAction:ZIKRouteActionPerformRoute errorDescription:@"%@", description];
         [[self class] decreaseRecursiveDepth];
+        if (performerErrorHandler) {
+            performerErrorHandler(action,error);
+        }
         return;
     }
     [self notifyRouteState:ZIKRouterStateRouting];
@@ -254,6 +265,48 @@ NSErrorDomain const ZIKRouteErrorDomain = @"ZIKRouteErrorDomain";
     return [self performWithConfiguring:^(ZIKPerformRouteConfiguration *configuration) {
         
     } removing:nil];
+}
+
++ (instancetype)performWithSuccessHandler:(void(^ _Nullable)(id destination))performerSuccessHandler
+                             errorHandler:(void(^ _Nullable)(ZIKRouteAction routeAction, NSError *error))performerErrorHandler {
+    return [self performWithConfiguring:^(ZIKPerformRouteConfiguration * _Nonnull config) {
+        if (performerSuccessHandler) {
+            void(^successHandler)(id) = config.performerSuccessHandler;
+            if (successHandler) {
+                successHandler = ^(id destination) {
+                    successHandler(destination);
+                    performerSuccessHandler(destination);
+                };
+            } else {
+                successHandler = performerSuccessHandler;
+            }
+            config.performerSuccessHandler = successHandler;
+        }
+        if (performerErrorHandler) {
+            void(^errorHandler)(ZIKRouteAction, NSError *) = config.performerErrorHandler;
+            if (errorHandler) {
+                errorHandler = ^(ZIKRouteAction routeAction, NSError *error) {
+                    errorHandler(routeAction, error);
+                    performerErrorHandler(routeAction, error);
+                };
+            } else {
+                errorHandler = performerErrorHandler;
+            }
+            config.performerErrorHandler = errorHandler;
+        }
+    }];
+}
+
++ (nullable instancetype)performWithCompletion:(void(^)(BOOL success, id _Nullable destination, ZIKRouteAction routeAction, NSError *_Nullable error))performerCompletion {
+    return [self performWithSuccessHandler:^(id  _Nonnull destination) {
+        if (performerCompletion) {
+            performerCompletion(YES, destination, ZIKRouteActionPerformRoute, nil);
+        }
+    } errorHandler:^(ZIKRouteAction  _Nonnull routeAction, NSError * _Nonnull error) {
+        if (performerCompletion) {
+            performerCompletion(NO, nil, routeAction, error);
+        }
+    }];
 }
 
 + (instancetype)performWithConfiguring:(void(^)(ZIKPerformRouteConfiguration *configuration))configBuilder {
@@ -376,18 +429,58 @@ NSErrorDomain const ZIKRouteErrorDomain = @"ZIKRouteErrorDomain";
     [self removeDestination:self.destination removeConfiguration:configuration];
 }
 
+- (void)removeRouteWithCompletion:(void(^)(BOOL success, ZIKRouteAction routeAction, NSError *_Nullable error))performerCompletion {
+    [self removeRouteWithSuccessHandler:^{
+        if (performerCompletion) {
+            performerCompletion(YES, ZIKRouteActionRemoveRoute, nil);
+        }
+    } errorHandler:^(ZIKRouteAction routeAction, NSError *error) {
+        if (performerCompletion) {
+            performerCompletion(NO, routeAction, error);
+        }
+    }];
+}
+
 - (void)removeRouteWithConfiguring:(void(NS_NOESCAPE ^)(ZIKRemoveRouteConfiguration *config))removeConfigBuilder {
     if (self.state != ZIKRouterStateRouted || !self.original_configuration) {
         ZIKRouteAction action = ZIKRouteActionRemoveRoute;
         NSError *error = [ZIKRouter errorWithCode:ZIKRouteErrorActionFailed localizedDescriptionFormat:@"State should be ZIKRouterStateRouted when removeRoute, current state:%ld, configuration:%@",self.state,self.original_configuration];
         [[self class] notifyGlobalErrorWithRouter:self action:action error:error];
+        if (removeConfigBuilder) {
+            ZIKRemoveRouteConfiguration *configuration = [self.original_removeConfiguration copy];
+            removeConfigBuilder(configuration);
+            if (configuration.errorHandler) {
+                configuration.errorHandler(action, error);
+            }
+            if (configuration.performerErrorHandler) {
+                configuration.performerErrorHandler(action, error);
+            }
+            if (configuration.completionHandler) {
+                configuration.completionHandler(NO, action, error);
+            }
+        }
         return;
     }
     NSString *errorMessage = [self checkCanRemove];
     if (errorMessage != nil) {
+        ZIKRouteAction action = ZIKRouteActionRemoveRoute;
         NSString *description = [NSString stringWithFormat:@"%@, configuration:%@",errorMessage,self.original_configuration];
-        [self notifyError_actionFailedWithAction:ZIKRouteActionRemoveRoute
+        [self notifyError_actionFailedWithAction:action
                                 errorDescription:description];
+        if (removeConfigBuilder) {
+            NSError *error = [ZIKRouter errorWithCode:ZIKRouteErrorActionFailed localizedDescription:description];
+            ZIKRemoveRouteConfiguration *configuration = [self.original_removeConfiguration copy];
+            removeConfigBuilder(configuration);
+            if (configuration.errorHandler) {
+                configuration.errorHandler(action, error);
+            }
+            if (configuration.performerErrorHandler) {
+                configuration.performerErrorHandler(action, error);
+            }
+            if (configuration.completionHandler) {
+                configuration.completionHandler(NO, action, error);
+            }
+        }
         return;
     }
     [self notifyRouteState:ZIKRouterStateRemoving];
@@ -703,21 +796,24 @@ NSErrorDomain const ZIKRouteErrorDomain = @"ZIKRouteErrorDomain";
     NSParameterAssert(self.destination);
     if ([routeAction isEqualToString:ZIKRouteActionRemoveRoute]) {
         ZIKRemoveRouteConfiguration *configuration = self.original_removeConfiguration;
-        if (configuration.performerSuccessHandler) {
-            configuration.performerSuccessHandler();
-        }
         if (configuration.performerErrorHandler) {
             configuration.performerErrorHandler = nil;
+        }
+        void(^performerSuccessHandler)(void) = configuration.performerSuccessHandler;
+        if (performerSuccessHandler) {
+            configuration.performerSuccessHandler = nil;
+            performerSuccessHandler();
         }
         return;
     }
     ZIKPerformRouteConfiguration *configuration = self.original_configuration;
-    if (configuration.performerSuccessHandler) {
-        configuration.performerSuccessHandler(self.destination);
-        configuration.performerSuccessHandler = nil;
-    }
     if (configuration.performerErrorHandler) {
         configuration.performerErrorHandler = nil;
+    }
+    void(^performerSuccessHandler)(id) = configuration.performerSuccessHandler;
+    if (performerSuccessHandler) {
+        configuration.performerSuccessHandler = nil;
+        performerSuccessHandler(self.destination);
     }
 }
 
@@ -728,21 +824,23 @@ NSErrorDomain const ZIKRouteErrorDomain = @"ZIKRouteErrorDomain";
     self.error = error;
     if (([routeAction isEqualToString:ZIKRouteActionRemoveRoute])) {
         ZIKRemoveRouteConfiguration *configuration = self.original_removeConfiguration;
-        if (configuration.performerErrorHandler) {
-            configuration.performerErrorHandler(routeAction, error);
-            configuration.performerErrorHandler = nil;
-        }
         if (configuration.performerSuccessHandler) {
             configuration.performerSuccessHandler = nil;
+        }
+        ZIKRouteErrorHandler performerErrorHandler = configuration.performerErrorHandler;
+        if (performerErrorHandler) {
+            configuration.performerErrorHandler = nil;
+            performerErrorHandler(routeAction, error);
         }
     } else {
         ZIKPerformRouteConfiguration *configuration = self.original_configuration;
-        if (configuration.performerErrorHandler) {
-            configuration.performerErrorHandler(routeAction, error);
-            configuration.performerErrorHandler = nil;
-        }
         if (configuration.performerSuccessHandler) {
             configuration.performerSuccessHandler = nil;
+        }
+        ZIKRouteErrorHandler performerErrorHandler = configuration.performerErrorHandler;
+        if (performerErrorHandler) {
+            configuration.performerErrorHandler = nil;
+            performerErrorHandler(routeAction, error);
         }
     }
 }
@@ -801,7 +899,7 @@ NSErrorDomain const ZIKRouteErrorDomain = @"ZIKRouteErrorDomain";
         errorHandler(router, action, error);
     } else {
 #ifdef DEBUG
-        NSLog(@"❌ZIKRouter Error: router's action (%@) catch error: (%@),\nrouter:(%@)", action, error,router);
+        NSLog(@"❌ZIKRouter Error: router's action (%@) catch error: (%@),\nrouter:(%@)", action, error, router);
 #endif
     }
 }

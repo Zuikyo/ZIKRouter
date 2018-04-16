@@ -75,6 +75,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 ///Whether the router can perform route now.
 - (BOOL)canPerform;
+
 ///Perform route directly.
 - (void)performRoute;
 ///Perform with success handler and error handler. Blocks are only for currrent performing.
@@ -85,6 +86,12 @@ NS_ASSUME_NONNULL_BEGIN
 
 ///If this route action doesn't need any arguments, just perform directly.
 + (nullable instancetype)performRoute;
+///If this route action doesn't need any arguments, perform directly with successHandler and errorHandler for current performing.
++ (nullable instancetype)performWithSuccessHandler:(void(^ _Nullable)(Destination destination))performerSuccessHandler
+                                      errorHandler:(void(^ _Nullable)(ZIKRouteAction routeAction, NSError *error))performerErrorHandler;
+///If this route action doesn't need any arguments, perform directly with completion for current performing.
++ (nullable instancetype)performWithCompletion:(void(^)(BOOL success, Destination _Nullable destination, ZIKRouteAction routeAction, NSError *_Nullable error))performerCompletion;
+
 ///Convenient method to prepare destination and perform route.
 + (nullable instancetype)performWithConfiguring:(void(NS_NOESCAPE ^)(RouteConfig config))configBuilder;
 ///Convenient method to prepare destination and perform route, and you can remove the route with remove configuration later.
@@ -123,9 +130,11 @@ NS_ASSUME_NONNULL_BEGIN
 - (BOOL)canRemove;
 ///Remove route directly. If -canRemove return NO, this will failed.
 - (void)removeRoute;
-///Remove with success handler and error handler.
+///Remove with success handler and error handler for current removing.
 - (void)removeRouteWithSuccessHandler:(void(^ _Nullable)(void))performerSuccessHandler
                          errorHandler:(void(^ _Nullable)(ZIKRouteAction routeAction, NSError *error))performerErrorHandler;
+///Remove route with completion for current removing.
+- (void)removeRouteWithCompletion:(void(^)(BOOL success, ZIKRouteAction routeAction, NSError *_Nullable error))performerCompletion;
 ///Remove route and prepare before removing.
 - (void)removeRouteWithConfiguring:(void(NS_NOESCAPE ^)(RemoveConfig config))removeConfigBuilder;
 

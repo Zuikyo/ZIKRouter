@@ -248,6 +248,48 @@ _injectedStrictRemoveConfigBuilder:
     } removing:nil];
 }
 
+- (id)performWithSuccessHandler:(void(^ _Nullable)(id destination))performerSuccessHandler
+                   errorHandler:(void(^ _Nullable)(ZIKRouteAction routeAction, NSError *error))performerErrorHandler {
+    return [self performWithConfiguring:^(ZIKPerformRouteConfiguration * _Nonnull config) {
+        if (performerSuccessHandler) {
+            void(^successHandler)(id) = config.performerSuccessHandler;
+            if (successHandler) {
+                successHandler = ^(id destination) {
+                    successHandler(destination);
+                    performerSuccessHandler(destination);
+                };
+            } else {
+                successHandler = performerSuccessHandler;
+            }
+            config.performerSuccessHandler = successHandler;
+        }
+        if (performerErrorHandler) {
+            void(^errorHandler)(ZIKRouteAction, NSError *) = config.performerErrorHandler;
+            if (errorHandler) {
+                errorHandler = ^(ZIKRouteAction routeAction, NSError *error) {
+                    errorHandler(routeAction, error);
+                    performerErrorHandler(routeAction, error);
+                };
+            } else {
+                errorHandler = performerErrorHandler;
+            }
+            config.performerErrorHandler = errorHandler;
+        }
+    }];
+}
+
+- (id)performWithCompletion:(void(^)(BOOL success, id _Nullable destination, ZIKRouteAction routeAction, NSError *_Nullable error))performerCompletion {
+    return [self performWithSuccessHandler:^(id  _Nonnull destination) {
+        if (performerCompletion) {
+            performerCompletion(YES, destination, ZIKRouteActionPerformRoute, nil);
+        }
+    } errorHandler:^(ZIKRouteAction  _Nonnull routeAction, NSError * _Nonnull error) {
+        if (performerCompletion) {
+            performerCompletion(NO, nil, routeAction, error);
+        }
+    }];
+}
+
 - (id)performWithConfiguring:(void(^)(ZIKPerformRouteConfiguration *configuration))configBuilder {
     return [self performWithConfiguring:configBuilder removing:nil];
 }

@@ -16,6 +16,12 @@ NS_ASSUME_NONNULL_BEGIN
 
 ///If this route action doesn't need any arguments, just perform directly.
 - (nullable ZIKServiceRouter<Destination, RouteConfig> *)performRoute;
+///If this route action doesn't need any arguments, perform directly with successHandler and errorHandler for current performing.
++ (nullable ZIKServiceRouter<Destination, RouteConfig> *)performWithSuccessHandler:(void(^ _Nullable)(Destination destination))performerSuccessHandler
+                                                                      errorHandler:(void(^ _Nullable)(ZIKRouteAction routeAction, NSError *error))performerErrorHandler;
+///If this route action doesn't need any arguments, perform directly with completion for current performing.
++ (nullable ZIKServiceRouter<Destination, RouteConfig> *)performWithCompletion:(void(^)(BOOL success, Destination _Nullable destination, ZIKRouteAction routeAction, NSError *_Nullable error))performerCompletion;
+
 ///Set dependencies required by destination and perform route.
 - (nullable ZIKServiceRouter<Destination, RouteConfig> *)performWithConfiguring:(void(NS_NOESCAPE ^)(RouteConfig config))configBuilder;
 ///Set dependencies required by destination and perform route, and you can remove the route with remove configuration later.

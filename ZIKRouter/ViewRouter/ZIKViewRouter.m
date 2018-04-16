@@ -2889,13 +2889,48 @@ static  ZIKViewRouterType *_Nullable _routerTypeToRegisteredView(Class viewClass
     } removing:nil];
 }
 
-+ (nullable instancetype)performFromSource:(nullable id<ZIKViewRouteSource>)source routeType:(ZIKViewRouteType)routeType completion:(ZIKPerformRouteCompletion)completionHandler {
++ (nullable instancetype)performFromSource:(nullable id<ZIKViewRouteSource>)source
+                                 routeType:(ZIKViewRouteType)routeType
+                            successHandler:(void(^ _Nullable)(id destination))performerSuccessHandler
+                              errorHandler:(void(^ _Nullable)(ZIKRouteAction routeAction, NSError *error))performerErrorHandler {
     return [self performFromSource:source configuring:^(ZIKViewRouteConfiguration * _Nonnull config) {
         config.routeType = routeType;
-        if (completionHandler == nil) {
-            return;
+        if (performerSuccessHandler) {
+            void(^successHandler)(id) = config.performerSuccessHandler;
+            if (successHandler) {
+                successHandler = ^(id destination) {
+                    successHandler(destination);
+                    performerSuccessHandler(destination);
+                };
+            } else {
+                successHandler = performerSuccessHandler;
+            }
+            config.performerSuccessHandler = successHandler;
         }
-        config.completionHandler = completionHandler;
+        if (performerErrorHandler) {
+            void(^errorHandler)(ZIKRouteAction, NSError *) = config.performerErrorHandler;
+            if (errorHandler) {
+                errorHandler = ^(ZIKRouteAction routeAction, NSError *error) {
+                    errorHandler(routeAction, error);
+                    performerErrorHandler(routeAction, error);
+                };
+            } else {
+                errorHandler = performerErrorHandler;
+            }
+            config.performerErrorHandler = errorHandler;
+        }
+    }];
+}
+
++ (nullable instancetype)performFromSource:(nullable id<ZIKViewRouteSource>)source routeType:(ZIKViewRouteType)routeType completion:(ZIKPerformRouteCompletion)performerCompletion {
+    return [self performFromSource:source routeType:routeType successHandler:^(id destination) {
+        if (performerCompletion) {
+            performerCompletion(YES, destination, ZIKRouteActionPerformRoute, nil);
+        }
+    } errorHandler:^(ZIKRouteAction routeAction, NSError *error) {
+        if (performerCompletion) {
+            performerCompletion(NO, nil, routeAction, error);
+        }
     }];
 }
 

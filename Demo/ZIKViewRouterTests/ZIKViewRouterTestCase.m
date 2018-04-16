@@ -44,12 +44,18 @@
     
     self.routeType = ZIKViewRouteTypePresentModally;
     self.leaveTestViewExpectation = [self expectationWithDescription:@"Remove test View Controller"];
+    ZIKViewRouter.globalErrorHandler = ^(__kindof ZIKViewRouter * _Nullable router,
+                                         ZIKRouteAction  _Nonnull action,
+                                         NSError * _Nonnull error) {
+        NSLog(@"❌ZIKRouter Error: router's action (%@) catch error! code:%@, description: %@,\nrouter:(%@)", action, @(error.code), error.localizedDescription,router);
+    };
 }
 
 - (void)tearDown {
     [super tearDown];
     self.leaveSourceViewExpectation = nil;
     self.leaveTestViewExpectation = nil;
+    ZIKViewRouter.globalErrorHandler = nil;
 }
 
 - (void)enterTest:(void(^)(UIViewController *source))testBlock {
