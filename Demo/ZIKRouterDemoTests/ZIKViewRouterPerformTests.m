@@ -36,6 +36,8 @@
 
 - (void)setUp {
     [super setUp];
+    NSAssert(self.sourceRouter == nil, @"Last test didn't leave source view controler");
+    NSAssert(self.router == nil, @"Last test didn't leave test view");
     if (self.masterViewController == nil) {
         UISplitViewController *root = (UISplitViewController *)[UIApplication sharedApplication].keyWindow.rootViewController;
         XCTAssertTrue([root isKindOfClass:[UISplitViewController class]]);
@@ -52,8 +54,10 @@
     [super tearDown];
     self.leaveSourceViewExpectation = nil;
     self.leaveTestViewExpectation = nil;
-    self.sourceRouter = nil;
-    self.router = nil;
+}
+
+- (void)enterTest:(void(^)(UIViewController *source))testBlock {
+    [self enterSourceViewWithSuccess:testBlock];
 }
 
 - (void)enterSourceViewWithSuccess:(void(^)(UIViewController *source))successHandler {
@@ -63,6 +67,7 @@
         config.routeType = ZIKViewRouteTypePush;
         config.animated = NO;
         config.successHandler = ^(id  _Nonnull destination) {
+            NSLog(@"%@: enterSourceView succeed", destination);
             [expectation fulfill];
             if (successHandler) {
                 successHandler(destination);
@@ -75,26 +80,31 @@
     [self.sourceRouter removeRouteWithConfiguring:^(ZIKViewRemoveConfiguration * _Nonnull config) {
         config.animated = NO;
         config.successHandler = ^{
+            NSLog(@"LeaveSourceView succeed");
             [self.leaveSourceViewExpectation fulfill];
         };
     }];
     self.sourceRouter = nil;
 }
 
-- (void)leaveTestViewWithSuccess:(void(^)(void))successHandler {
+- (void)leaveTestViewWithCompletion:(void(^)(BOOL success, ZIKRouteAction  _Nonnull routeAction, NSError * _Nullable error))completion {
     XCTAssertNotNil(self.router);
-    [self.router removeRouteWithSuccessHandler:^{
-        XCTAssertNil(self.router);
-        [self.leaveTestViewExpectation fulfill];
-        if (successHandler) {
-            successHandler();
-        }
-    } errorHandler:nil];
+    [self.router removeRouteWithConfiguring:^(ZIKViewRemoveConfiguration * _Nonnull config) {
+        config.successHandler = ^{
+            NSLog(@"leaveTestView succeed");
+            [self.leaveTestViewExpectation fulfill];
+        };
+        config.completionHandler = completion;
+    }];
     self.router = nil;
 }
 
 - (void)leaveTest {
-    [self leaveTestViewWithSuccess:^{
+    if (self.router == nil) {
+        [self leaveSourceView];
+        return;
+    }
+    [self leaveTestViewWithCompletion:^(BOOL success, ZIKRouteAction  _Nonnull routeAction, NSError * _Nullable error) {
         [self leaveSourceView];
     }];
 }
@@ -102,7 +112,7 @@
 - (void)testPerformWithCompletionHandler {
     XCTestExpectation *expectation = [self expectationWithDescription:@"completionHandler"];
     {
-        [self enterSourceViewWithSuccess:^(UIViewController *source) {
+        [self enterTest:^(UIViewController *source) {
             self.router = [ZIKRouterToView(AViewInput) performFromSource:source configuring:^(ZIKViewRouteConfiguration * _Nonnull config) {
                 config.routeType = self.routeType;
                 config.completionHandler = ^(BOOL success, id  _Nullable destination, ZIKRouteAction  _Nonnull routeAction, NSError * _Nullable error) {
@@ -124,7 +134,7 @@
 - (void)testPerformWithSuccess {
     XCTestExpectation *expectation = [self expectationWithDescription:@"completionHandler"];
     {
-        [self enterSourceViewWithSuccess:^(UIViewController *source) {
+        [self enterTest:^(UIViewController *source) {
             self.router = [ZIKRouterToView(AViewInput) performFromSource:source configuring:^(ZIKViewRouteConfiguration * _Nonnull config) {
                 config.routeType = self.routeType;
                 config.successHandler = ^(id  _Nonnull destination) {
@@ -144,7 +154,7 @@
 - (void)testPerformWithPrepareDestination {
     XCTestExpectation *expectation = [self expectationWithDescription:@"completionHandler"];
     {
-        [self enterSourceViewWithSuccess:^(UIViewController *source) {
+        [self enterTest:^(UIViewController *source) {
             self.router = [ZIKRouterToView(AViewInput) performFromSource:source configuring:^(ZIKViewRouteConfiguration * _Nonnull config) {
                 config.routeType = self.routeType;
                 config.prepareDestination = ^(id<AViewInput>  _Nonnull destination) {

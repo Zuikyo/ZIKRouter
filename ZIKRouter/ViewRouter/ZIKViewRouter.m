@@ -949,7 +949,9 @@ destinationStateBeforeRoute:(ZIKPresentationState *)destinationStateBeforeRoute
     NSParameterAssert(completion);
     //If user use a custom transition from source to destination, such as methods in UIView(UIViewAnimationWithBlocks) or UIView (UIViewKeyframeAnimations), the transitionCoordinator will be nil, route will complete before animation complete
     if (!transitionCoordinator) {
-        completion();
+        dispatch_async(dispatch_get_main_queue(), ^{
+            completion();
+        });
         return;
     }
     [transitionCoordinator animateAlongsideTransition:nil completion:^(id<UIViewControllerTransitionCoordinatorContext>  _Nonnull context) {

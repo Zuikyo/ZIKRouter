@@ -847,6 +847,9 @@ NSErrorDomain const ZIKRouteErrorDomain = @"ZIKRouteErrorDomain";
         case ZIKRouterStateRemoved:
             description = @"Removed";
             break;
+        default:
+            description = @"Unrouted";
+            break;
     }
     return description;
 }
