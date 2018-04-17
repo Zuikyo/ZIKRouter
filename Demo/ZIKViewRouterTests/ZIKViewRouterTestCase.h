@@ -20,6 +20,7 @@
 - (void)enterSourceViewWithSuccess:(void(^)(UIViewController *source))successHandler;
 - (void)leaveSourceView;
 - (void)leaveTestViewWithCompletion:(void(^)(BOOL success, ZIKRouteAction  _Nonnull routeAction, NSError * _Nullable error))completion;
++ (BOOL)allowLeaveTestViewFailing;
 - (void)leaveTest;
 
 @end

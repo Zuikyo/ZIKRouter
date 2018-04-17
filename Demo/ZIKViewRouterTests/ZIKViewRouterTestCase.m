@@ -98,9 +98,18 @@
             NSLog(@"LeaveTestView succeed");
             [self.leaveTestViewExpectation fulfill];
         };
+        config.errorHandler = ^(ZIKRouteAction  _Nonnull routeAction, NSError * _Nonnull error) {
+            NSLog(@"LeaveTestView failed");
+            if ([[self class] allowLeaveTestViewFailing]) {
+                [self.leaveTestViewExpectation fulfill];
+            }
+        };
         config.completionHandler = completion;
     }];
-    self.router = nil;
+}
+
++ (BOOL)allowLeaveTestViewFailing {
+    return NO;
 }
 
 - (void)leaveTest {

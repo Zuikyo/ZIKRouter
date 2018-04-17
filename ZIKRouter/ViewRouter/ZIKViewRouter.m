@@ -1449,14 +1449,13 @@ destinationStateBeforeRoute:(ZIKPresentationState *)destinationStateBeforeRoute
     if (!self.routingFromInternal && state != ZIKRouterStateRouting) {
         ZIKViewRouteConfiguration *configuration = self.original_configuration;
         BOOL isFromAddAsChild = (configuration.routeType == ZIKViewRouteTypeAddAsChildViewController);
+        if (isFromAddAsChild && self.realRouteType == ZIKViewRouteRealTypeUnknown) {
+            self.realRouteType = ZIKViewRouteRealTypeAddAsChildViewController;
+            return;
+        }
         if (state != ZIKRouterStateRouted ||
-            (self.stateBeforeRoute &&
-             configuration.routeType == ZIKViewRouteTypeGetDestination) ||
-            (isFromAddAsChild &&
-             self.realRouteType == ZIKViewRouteRealTypeUnknown)) {
-                if (isFromAddAsChild) {
-                    self.realRouteType = ZIKViewRouteRealTypeAddAsChildViewController;
-                }
+            (self.stateBeforeRoute && configuration.routeType == ZIKViewRouteTypeGetDestination)
+             ) {
             [self notifyRouteState:ZIKRouterStateRouting];//not performed from router (dealed by system, or your code)
             if (configuration.handleExternalRoute) {
                 [self prepareDestinationForPerforming];
