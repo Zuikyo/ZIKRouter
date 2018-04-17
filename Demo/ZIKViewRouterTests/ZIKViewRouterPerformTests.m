@@ -7,9 +7,8 @@
 //
 
 #import "ZIKViewRouterTestCase.h"
-@import ZIKRouter.Internal;
+@import ZIKRouter;
 #import "AViewInput.h"
-#import "AViewRouter.h"
 
 @interface ZIKViewRouterPerformTests : ZIKViewRouterTestCase
 
@@ -21,38 +20,17 @@
     [super setUp];
 }
 
+- (void)configRouteConfiguration:(ZIKViewRouteConfiguration *)configuration {
+    configuration.animated = YES;
+}
+
 - (void)testPerformWithPrepareDestination {
     XCTestExpectation *expectation = [self expectationWithDescription:@"prepareDestination"];
     {
         [self enterTest:^(UIViewController *source) {
             self.router = [ZIKRouterToView(AViewInput) performFromSource:source configuring:^(ZIKViewRouteConfiguration * _Nonnull config) {
+                [self configRouteConfiguration:config];
                 config.routeType = self.routeType;
-                config.animated = YES;
-                config.prepareDestination = ^(id<AViewInput>  _Nonnull destination) {
-                    destination.title = @"test title";
-                };
-                config.successHandler = ^(id<AViewInput>  _Nonnull destination) {
-                    XCTAssertNotNil(destination);
-                    XCTAssert([destination.title isEqualToString:@"test title"]);
-                    [expectation fulfill];
-                    [self leaveTest];
-                };
-            }];
-        }];
-    }
-    
-    [self waitForExpectationsWithTimeout:5 handler:^(NSError * _Nullable error) {
-        !error? : NSLog(@"%@", error);
-    }];
-}
-
-- (void)testPerformWithPrepareDestinationAndNoAnimation {
-    XCTestExpectation *expectation = [self expectationWithDescription:@"prepareDestination without animation"];
-    {
-        [self enterTest:^(UIViewController *source) {
-            self.router = [ZIKRouterToView(AViewInput) performFromSource:source configuring:^(ZIKViewRouteConfiguration * _Nonnull config) {
-                config.routeType = self.routeType;
-                config.animated = NO;
                 config.prepareDestination = ^(id<AViewInput>  _Nonnull destination) {
                     destination.title = @"test title";
                 };
@@ -76,30 +54,8 @@
     {
         [self enterTest:^(UIViewController *source) {
             self.router = [ZIKRouterToView(AViewInput) performFromSource:source configuring:^(ZIKViewRouteConfiguration * _Nonnull config) {
+                [self configRouteConfiguration:config];
                 config.routeType = self.routeType;
-                config.animated = YES;
-                config.completionHandler = ^(BOOL success, id  _Nullable destination, ZIKRouteAction  _Nonnull routeAction, NSError * _Nullable error) {
-                    XCTAssertTrue(success);
-                    XCTAssertNil(error);
-                    [expectation fulfill];
-                    [self leaveTest];
-                };
-            }];
-        }];
-    }
-    
-    [self waitForExpectationsWithTimeout:5 handler:^(NSError * _Nullable error) {
-        !error? : NSLog(@"%@", error);
-    }];
-}
-
-- (void)testPerformWithSuccessCompletionHandlerAndNoAnimation {
-    XCTestExpectation *expectation = [self expectationWithDescription:@"completionHandler without animation"];
-    {
-        [self enterTest:^(UIViewController *source) {
-            self.router = [ZIKRouterToView(AViewInput) performFromSource:source configuring:^(ZIKViewRouteConfiguration * _Nonnull config) {
-                config.routeType = self.routeType;
-                config.animated = NO;
                 config.completionHandler = ^(BOOL success, id  _Nullable destination, ZIKRouteAction  _Nonnull routeAction, NSError * _Nullable error) {
                     XCTAssertTrue(success);
                     XCTAssertNil(error);
@@ -120,31 +76,8 @@
     {
         [self enterTest:^(UIViewController *source) {
             self.router = [ZIKRouterToView(AViewInput) performFromSource:nil configuring:^(ZIKViewRouteConfiguration * _Nonnull config) {
+                [self configRouteConfiguration:config];
                 config.routeType = self.routeType;
-                config.animated = YES;
-                config.completionHandler = ^(BOOL success, id  _Nullable destination, ZIKRouteAction  _Nonnull routeAction, NSError * _Nullable error) {
-                    XCTAssertFalse(success);
-                    XCTAssertNotNil(error);
-                    XCTAssertNil(self.router);
-                    [expectation fulfill];
-                    [self leaveTest];
-                };
-            }];
-        }];
-    }
-    
-    [self waitForExpectationsWithTimeout:5 handler:^(NSError * _Nullable error) {
-        !error? : NSLog(@"%@", error);
-    }];
-}
-
-- (void)testPerformWithErrorCompletionHandlerAndNoAnimation {
-    XCTestExpectation *expectation = [self expectationWithDescription:@"completionHandler without animation"];
-    {
-        [self enterTest:^(UIViewController *source) {
-            self.router = [ZIKRouterToView(AViewInput) performFromSource:nil configuring:^(ZIKViewRouteConfiguration * _Nonnull config) {
-                config.routeType = self.routeType;
-                config.animated = NO;
                 config.completionHandler = ^(BOOL success, id  _Nullable destination, ZIKRouteAction  _Nonnull routeAction, NSError * _Nullable error) {
                     XCTAssertFalse(success);
                     XCTAssertNotNil(error);
@@ -254,28 +187,6 @@
         [self enterTest:^(UIViewController *source) {
             self.router = [ZIKRouterToView(AViewInput) performFromSource:source configuring:^(ZIKViewRouteConfiguration * _Nonnull config) {
                 config.routeType = self.routeType;
-                config.animated = YES;
-                config.successHandler = ^(id  _Nonnull destination) {
-                    XCTAssertNotNil(destination);
-                    [expectation fulfill];
-                    [self leaveTest];
-                };
-            }];
-        }];
-    }
-    
-    [self waitForExpectationsWithTimeout:5 handler:^(NSError * _Nullable error) {
-        !error? : NSLog(@"%@", error);
-    }];
-}
-
-- (void)testPerformWithSuccessAndNoAnimation {
-    XCTestExpectation *expectation = [self expectationWithDescription:@"successHandler without animation"];
-    {
-        [self enterTest:^(UIViewController *source) {
-            self.router = [ZIKRouterToView(AViewInput) performFromSource:source configuring:^(ZIKViewRouteConfiguration * _Nonnull config) {
-                config.routeType = self.routeType;
-                config.animated = NO;
                 config.successHandler = ^(id  _Nonnull destination) {
                     XCTAssertNotNil(destination);
                     [expectation fulfill];
@@ -298,47 +209,8 @@
     {
         [self enterTest:^(UIViewController *source) {
             self.router = [ZIKRouterToView(AViewInput) performFromSource:source configuring:^(ZIKViewRouteConfiguration * _Nonnull config) {
+                [self configRouteConfiguration:config];
                 config.routeType = self.routeType;
-                config.animated = YES;
-                config.successHandler = ^(id  _Nonnull destination) {
-                    XCTAssertNotNil(destination);
-                    [successHandlerExpectation fulfill];
-                };
-                config.performerSuccessHandler = ^(id  _Nonnull destination) {
-                    XCTAssertNotNil(destination);
-                    [performerSuccessHandlerExpectation fulfill];
-                    
-                    [self.router removeRouteWithSuccessHandler:^{
-                        
-                        [self.router performRouteWithSuccessHandler:^(id<AViewInput>  _Nonnull destination) {
-                            XCTAssertNotNil(destination);
-                            [self leaveTest];
-                        } errorHandler:^(ZIKRouteAction  _Nonnull routeAction, NSError * _Nonnull error) {
-                            
-                        }];
-                        
-                    } errorHandler:nil];
-                    
-                };
-            }];
-        }];
-    }
-    
-    [self waitForExpectationsWithTimeout:5 handler:^(NSError * _Nullable error) {
-        !error? : NSLog(@"%@", error);
-    }];
-}
-
-- (void)testPerformWithPerformerSuccessAndNoAnimation {
-    XCTestExpectation *successHandlerExpectation = [self expectationWithDescription:@"successHandler"];
-    successHandlerExpectation.expectedFulfillmentCount = 2;
-    XCTestExpectation *performerSuccessHandlerExpectation = [self expectationWithDescription:@"performerSuccessHandler once"];
-    performerSuccessHandlerExpectation.assertForOverFulfill = YES;
-    {
-        [self enterTest:^(UIViewController *source) {
-            self.router = [ZIKRouterToView(AViewInput) performFromSource:source configuring:^(ZIKViewRouteConfiguration * _Nonnull config) {
-                config.routeType = self.routeType;
-                config.animated = NO;
                 config.successHandler = ^(id  _Nonnull destination) {
                     XCTAssertNotNil(destination);
                     [successHandlerExpectation fulfill];
@@ -374,40 +246,8 @@
     {
         [self enterTest:^(UIViewController *source) {
             self.router = [ZIKRouterToView(AViewInput) performFromSource:nil configuring:^(ZIKViewRouteConfiguration * _Nonnull config) {
+                [self configRouteConfiguration:config];
                 config.routeType = self.routeType;
-                config.animated = YES;
-                config.successHandler = ^(id  _Nonnull destination) {
-                    XCTAssert(NO, @"successHandler should not be called");
-                };
-                config.performerSuccessHandler = ^(id  _Nonnull destination) {
-                    XCTAssert(NO, @"successHandler should not be called");
-                };
-                config.errorHandler = ^(ZIKRouteAction  _Nonnull routeAction, NSError * _Nonnull error) {
-                    XCTAssertNotNil(error);
-                    [providerErrorExpectation fulfill];
-                };
-                config.performerErrorHandler = ^(ZIKRouteAction  _Nonnull routeAction, NSError * _Nonnull error) {
-                    XCTAssertNotNil(error);
-                    [performerErrorExpectation fulfill];
-                    [self leaveTest];
-                };
-            }];
-        }];
-    }
-    
-    [self waitForExpectationsWithTimeout:5 handler:^(NSError * _Nullable error) {
-        !error? : NSLog(@"%@", error);
-    }];
-}
-
-- (void)testPerformWithErrorAndNoAnimation {
-    XCTestExpectation *providerErrorExpectation = [self expectationWithDescription:@"providerErrorHandler"];
-    XCTestExpectation *performerErrorExpectation = [self expectationWithDescription:@"performerErrorHandler"];
-    {
-        [self enterTest:^(UIViewController *source) {
-            self.router = [ZIKRouterToView(AViewInput) performFromSource:nil configuring:^(ZIKViewRouteConfiguration * _Nonnull config) {
-                config.routeType = self.routeType;
-                config.animated = NO;
                 config.successHandler = ^(id  _Nonnull destination) {
                     XCTAssert(NO, @"successHandler should not be called");
                 };
@@ -443,37 +283,8 @@
                            strictConfiguring:^(ZIKViewRouteConfiguration * _Nonnull config,
                                                void (^prepareDest)(void (^)(id<AViewInput> destination)),
                                                void (^prepareModule)(void (^)(ZIKViewRouteConfig *config))) {
+                               [self configRouteConfiguration:config];
                                config.routeType = self.routeType;
-                               config.animated = YES;
-                               prepareDest(^(id<AViewInput> destination) {
-                                   destination.title = @"test title";
-                               });
-                               config.successHandler = ^(id<AViewInput>  _Nonnull destination) {
-                                   XCTAssertNotNil(destination);
-                                   XCTAssert([destination.title isEqualToString:@"test title"]);
-                                   [expectation fulfill];
-                                   [self leaveTest];
-                };
-            }];
-        }];
-    }
-    
-    [self waitForExpectationsWithTimeout:5 handler:^(NSError * _Nullable error) {
-        !error? : NSLog(@"%@", error);
-    }];
-}
-
-- (void)testStrictPerformWithPrepareDestinationAndNoAnimation {
-    XCTestExpectation *expectation = [self expectationWithDescription:@"prepareDestination without animation"];
-    {
-        [self enterTest:^(UIViewController *source) {
-            self.router = [ZIKRouterToView(AViewInput)
-                           performFromSource:source
-                           strictConfiguring:^(ZIKViewRouteConfiguration * _Nonnull config,
-                                               void (^prepareDest)(void (^)(id<AViewInput> destination)),
-                                               void (^prepareModule)(void (^)(ZIKViewRouteConfig *config))) {
-                               config.routeType = self.routeType;
-                               config.animated = NO;
                                prepareDest(^(id<AViewInput> destination) {
                                    destination.title = @"test title";
                                });
@@ -501,34 +312,8 @@
                            strictConfiguring:^(ZIKViewRouteConfiguration * _Nonnull config,
                                                void (^prepareDest)(void (^)(id<AViewInput> destination)),
                                                void (^prepareModule)(void (^)(ZIKViewRouteConfig *config))) {
+                               [self configRouteConfiguration:config];
                                config.routeType = self.routeType;
-                               config.animated = YES;
-                               config.completionHandler = ^(BOOL success, id  _Nullable destination, ZIKRouteAction  _Nonnull routeAction, NSError * _Nullable error) {
-                                   XCTAssertTrue(success);
-                                   XCTAssertNil(error);
-                                   [expectation fulfill];
-                                   [self leaveTest];
-                               };
-            }];
-        }];
-    }
-    
-    [self waitForExpectationsWithTimeout:5 handler:^(NSError * _Nullable error) {
-        !error? : NSLog(@"%@", error);
-    }];
-}
-
-- (void)testStrictPerformWithSuccessCompletionHandlerAndNoAnimation {
-    XCTestExpectation *expectation = [self expectationWithDescription:@"completionHandler without animation"];
-    {
-        [self enterTest:^(UIViewController *source) {
-            self.router = [ZIKRouterToView(AViewInput)
-                           performFromSource:source
-                           strictConfiguring:^(ZIKViewRouteConfiguration * _Nonnull config,
-                                               void (^prepareDest)(void (^)(id<AViewInput> destination)),
-                                               void (^prepareModule)(void (^)(ZIKViewRouteConfig *config))) {
-                               config.routeType = self.routeType;
-                               config.animated = NO;
                                config.completionHandler = ^(BOOL success, id  _Nullable destination, ZIKRouteAction  _Nonnull routeAction, NSError * _Nullable error) {
                                    XCTAssertTrue(success);
                                    XCTAssertNil(error);
@@ -553,35 +338,8 @@
                            strictConfiguring:^(ZIKViewRouteConfiguration * _Nonnull config,
                                                void (^prepareDest)(void (^)(id<AViewInput> destination)),
                                                void (^prepareModule)(void (^)(ZIKViewRouteConfig *config))) {
+                               [self configRouteConfiguration:config];
                                config.routeType = self.routeType;
-                               config.animated = YES;
-                               config.completionHandler = ^(BOOL success, id  _Nullable destination, ZIKRouteAction  _Nonnull routeAction, NSError * _Nullable error) {
-                                   XCTAssertFalse(success);
-                                   XCTAssertNotNil(error);
-                                   XCTAssertNil(self.router);
-                                   [expectation fulfill];
-                                   [self leaveTest];
-                               };
-            }];
-        }];
-    }
-    
-    [self waitForExpectationsWithTimeout:5 handler:^(NSError * _Nullable error) {
-        !error? : NSLog(@"%@", error);
-    }];
-}
-
-- (void)testStrictPerformWithErrorCompletionHandlerAndNoAnimation {
-    XCTestExpectation *expectation = [self expectationWithDescription:@"completionHandler without animation"];
-    {
-        [self enterTest:^(UIViewController *source) {
-            self.router = [ZIKRouterToView(AViewInput)
-                           performFromSource:nil
-                           strictConfiguring:^(ZIKViewRouteConfiguration * _Nonnull config,
-                                               void (^prepareDest)(void (^)(id<AViewInput> destination)),
-                                               void (^prepareModule)(void (^)(ZIKViewRouteConfig *config))) {
-                               config.routeType = self.routeType;
-                               config.animated = NO;
                                config.completionHandler = ^(BOOL success, id  _Nullable destination, ZIKRouteAction  _Nonnull routeAction, NSError * _Nullable error) {
                                    XCTAssertFalse(success);
                                    XCTAssertNotNil(error);
@@ -607,33 +365,8 @@
                            strictConfiguring:^(ZIKViewRouteConfiguration * _Nonnull config,
                                                void (^prepareDest)(void (^)(id<AViewInput> destination)),
                                                void (^prepareModule)(void (^)(ZIKViewRouteConfig *config))) {
+                               [self configRouteConfiguration:config];
                                config.routeType = self.routeType;
-                               config.animated = YES;
-                               config.successHandler = ^(id  _Nonnull destination) {
-                                   XCTAssertNotNil(destination);
-                                   [expectation fulfill];
-                                   [self leaveTest];
-                               };
-            }];
-        }];
-    }
-    
-    [self waitForExpectationsWithTimeout:5 handler:^(NSError * _Nullable error) {
-        !error? : NSLog(@"%@", error);
-    }];
-}
-
-- (void)testStrictPerformWithSuccessAndNoAnimation {
-    XCTestExpectation *expectation = [self expectationWithDescription:@"successHandler without animation"];
-    {
-        [self enterTest:^(UIViewController *source) {
-            self.router = [ZIKRouterToView(AViewInput)
-                           performFromSource:source
-                           strictConfiguring:^(ZIKViewRouteConfiguration * _Nonnull config,
-                                               void (^prepareDest)(void (^)(id<AViewInput> destination)),
-                                               void (^prepareModule)(void (^)(ZIKViewRouteConfig *config))) {
-                               config.routeType = self.routeType;
-                               config.animated = NO;
                                config.successHandler = ^(id  _Nonnull destination) {
                                    XCTAssertNotNil(destination);
                                    [expectation fulfill];
@@ -660,51 +393,8 @@
                            strictConfiguring:^(ZIKViewRouteConfiguration * _Nonnull config,
                                                void (^prepareDest)(void (^)(id<AViewInput> destination)),
                                                void (^prepareModule)(void (^)(ZIKViewRouteConfig *config))) {
+                               [self configRouteConfiguration:config];
                                config.routeType = self.routeType;
-                               config.animated = YES;
-                               config.successHandler = ^(id  _Nonnull destination) {
-                                   XCTAssertNotNil(destination);
-                                   [successHandlerExpectation fulfill];
-                               };
-                               config.performerSuccessHandler = ^(id  _Nonnull destination) {
-                                   XCTAssertNotNil(destination);
-                                   [performerSuccessHandlerExpectation fulfill];
-                                   
-                                   [self.router removeRouteWithSuccessHandler:^{
-                                       
-                                       [self.router performRouteWithSuccessHandler:^(id<AViewInput>  _Nonnull destination) {
-                                           XCTAssertNotNil(destination);
-                                           [self leaveTest];
-                                       } errorHandler:^(ZIKRouteAction  _Nonnull routeAction, NSError * _Nonnull error) {
-                                           
-                                       }];
-                                       
-                                   } errorHandler:nil];
-                                   
-                               };
-            }];
-        }];
-    }
-    
-    [self waitForExpectationsWithTimeout:5 handler:^(NSError * _Nullable error) {
-        !error? : NSLog(@"%@", error);
-    }];
-}
-
-- (void)testStrictPerformWithPerformerSuccessAndNoAnimation {
-    XCTestExpectation *successHandlerExpectation = [self expectationWithDescription:@"successHandler"];
-    successHandlerExpectation.expectedFulfillmentCount = 2;
-    XCTestExpectation *performerSuccessHandlerExpectation = [self expectationWithDescription:@"performerSuccessHandler once"];
-    performerSuccessHandlerExpectation.assertForOverFulfill = YES;
-    {
-        [self enterTest:^(UIViewController *source) {
-            self.router = [ZIKRouterToView(AViewInput)
-                           performFromSource:source
-                           strictConfiguring:^(ZIKViewRouteConfiguration * _Nonnull config,
-                                               void (^prepareDest)(void (^)(id<AViewInput> destination)),
-                                               void (^prepareModule)(void (^)(ZIKViewRouteConfig *config))) {
-                               config.routeType = self.routeType;
-                               config.animated = NO;
                                config.successHandler = ^(id  _Nonnull destination) {
                                    XCTAssertNotNil(destination);
                                    [successHandlerExpectation fulfill];
@@ -744,8 +434,8 @@
                            strictConfiguring:^(ZIKViewRouteConfiguration * _Nonnull config,
                                                void (^prepareDest)(void (^)(id<AViewInput> destination)),
                                                void (^prepareModule)(void (^)(ZIKViewRouteConfig *config))) {
+                               [self configRouteConfiguration:config];
                                config.routeType = self.routeType;
-                               config.animated = YES;
                                config.successHandler = ^(id  _Nonnull destination) {
                                    XCTAssert(NO, @"successHandler should not be called");
                                };
@@ -770,40 +460,17 @@
     }];
 }
 
-- (void)testStrictPerformWithErrorAndNoAnimation {
-    XCTestExpectation *providerErrorExpectation = [self expectationWithDescription:@"providerErrorHandler"];
-    XCTestExpectation *performerErrorExpectation = [self expectationWithDescription:@"performerErrorHandler"];
-    {
-        [self enterTest:^(UIViewController *source) {
-            self.router = [ZIKRouterToView(AViewInput)
-                           performFromSource:nil
-                           strictConfiguring:^(ZIKViewRouteConfiguration * _Nonnull config,
-                                               void (^prepareDest)(void (^)(id<AViewInput> destination)),
-                                               void (^prepareModule)(void (^)(ZIKViewRouteConfig *config))) {
-                               config.routeType = self.routeType;
-                               config.animated = NO;
-                               config.successHandler = ^(id  _Nonnull destination) {
-                                   XCTAssert(NO, @"successHandler should not be called");
-                               };
-                               config.performerSuccessHandler = ^(id  _Nonnull destination) {
-                                   XCTAssert(NO, @"successHandler should not be called");
-                               };
-                               config.errorHandler = ^(ZIKRouteAction  _Nonnull routeAction, NSError * _Nonnull error) {
-                                   XCTAssertNotNil(error);
-                                   [providerErrorExpectation fulfill];
-                               };
-                               config.performerErrorHandler = ^(ZIKRouteAction  _Nonnull routeAction, NSError * _Nonnull error) {
-                                   XCTAssertNotNil(error);
-                                   [performerErrorExpectation fulfill];
-                                   [self leaveTest];
-                               };
-                           }];
-        }];
-    }
-    
-    [self waitForExpectationsWithTimeout:5 handler:^(NSError * _Nullable error) {
-        !error? : NSLog(@"%@", error);
-    }];
+@end
+
+@interface ZIKViewRouterPerformWithoutAnimationTests : ZIKViewRouterPerformTests
+
+@end
+
+@implementation ZIKViewRouterPerformWithoutAnimationTests
+
+- (void)configRouteConfiguration:(ZIKViewRouteConfiguration *)configuration {
+    [super configRouteConfiguration:configuration];
+    configuration.animated = NO;
 }
 
 @end
@@ -817,6 +484,45 @@
 - (void)setUp {
     [super setUp];
     self.routeType = ZIKViewRouteTypePush;
+}
+
+@end
+
+@interface ZIKViewRouterPerformPushWithoutAnimationTests : ZIKViewRouterPerformWithoutAnimationTests
+
+@end
+
+@implementation ZIKViewRouterPerformPushWithoutAnimationTests
+
+- (void)setUp {
+    [super setUp];
+    self.routeType = ZIKViewRouteTypePush;
+}
+
+@end
+
+@interface ZIKViewRouterPerformShowTests : ZIKViewRouterPerformTests
+
+@end
+
+@implementation ZIKViewRouterPerformShowTests
+
+- (void)setUp {
+    [super setUp];
+    self.routeType = ZIKViewRouteTypeShow;
+}
+
+@end
+
+@interface ZIKViewRouterPerformShowWithoutAnimationTests : ZIKViewRouterPerformWithoutAnimationTests
+
+@end
+
+@implementation ZIKViewRouterPerformShowWithoutAnimationTests
+
+- (void)setUp {
+    [super setUp];
+    self.routeType = ZIKViewRouteTypeShow;
 }
 
 @end

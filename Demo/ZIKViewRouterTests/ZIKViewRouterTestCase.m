@@ -32,8 +32,6 @@
 
 - (void)setUp {
     [super setUp];
-    NSAssert(self.sourceRouter == nil, @"Last test didn't leave source view controler");
-    NSAssert(self.router == nil, @"Last test didn't leave test view");
     if (self.masterViewController == nil) {
         UISplitViewController *root = (UISplitViewController *)[UIApplication sharedApplication].keyWindow.rootViewController;
         XCTAssertTrue([root isKindOfClass:[UISplitViewController class]]);
@@ -53,24 +51,28 @@
 
 - (void)tearDown {
     [super tearDown];
+    NSAssert(self.sourceRouter == nil, @"Didn't leave source view controler");
+    NSAssert(self.router == nil, @"Didn't leave test view");
+    self.sourceRouter = nil;
+    self.router = nil;
+    self.strongRouter = nil;
     self.leaveSourceViewExpectation = nil;
     self.leaveTestViewExpectation = nil;
     ZIKViewRouter.globalErrorHandler = nil;
 }
 
 - (void)enterTest:(void(^)(UIViewController *source))testBlock {
+    self.leaveSourceViewExpectation = [self expectationWithDescription:@"Remove source View Controller"];
+    self.leaveSourceViewExpectation.assertForOverFulfill = NO;
     [self enterSourceViewWithSuccess:testBlock];
 }
 
 - (void)enterSourceViewWithSuccess:(void(^)(UIViewController *source))successHandler {
-    XCTestExpectation *expectation = [self expectationWithDescription:@"Show source View Controller"];
-    self.leaveSourceViewExpectation = [self expectationWithDescription:@"Remove source View Controller"];
     self.sourceRouter = [SourceViewRouter performFromSource:self.masterViewController configuring:^(ZIKViewRouteConfig * _Nonnull config) {
         config.routeType = ZIKViewRouteTypePush;
         config.animated = NO;
         config.successHandler = ^(id  _Nonnull destination) {
             NSLog(@"%@: enterSourceView succeed", destination);
-            [expectation fulfill];
             if (successHandler) {
                 successHandler(destination);
             }

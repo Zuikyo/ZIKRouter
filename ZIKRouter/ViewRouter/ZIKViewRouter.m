@@ -198,9 +198,9 @@ static NSMutableArray *g_preparingUIViewRouters;
 }
 
 - (void)attachDestination:(id)destination {
-    NSAssert2([ZIKViewRouteRegistry isDestinationClass:[destination class] registeredWithRouter:[self class]], @"Destination (%@) attached to router (%@) doesn't conforms to protocol.", [destination class], [self class]);
+    NSAssert2(self.original_configuration.routeType == ZIKViewRouteTypePerformSegue || [ZIKViewRouteRegistry isDestinationClass:[destination class] registeredWithRouter:[self class]], @"Destination (%@) attached to router (%@) doesn't conforms to protocol.", [destination class], [self class]);
 #if ZIKROUTER_CHECK
-    if (destination) {
+    if (self.original_configuration.routeType != ZIKViewRouteTypePerformSegue && destination) {
         [self _validateDestinationConformance:destination];
     }
 #endif
@@ -787,10 +787,8 @@ static NSMutableArray *g_preparingUIViewRouters;
     self.realRouteType = ZIKViewRouteRealTypeUnknown;
 //    [self endPerformRouteWithSuccess];
     [self notifyRouteState:ZIKRouterStateRouted];
+    self.routingFromInternal = NO;
     [self notifyPerformRouteSuccessWithDestination:destination];
-    if (self.state == ZIKRouterStateRouted) {
-        self.routingFromInternal = NO;
-    }
 }
 
 - (void)_performAddSubviewOnDestination:(UIView *)destination fromSource:(UIView *)source {

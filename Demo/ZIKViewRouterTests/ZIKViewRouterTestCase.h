@@ -14,6 +14,7 @@
 
 @property (nonatomic, weak) ZIKAnyViewRouter *router;
 @property (nonatomic) ZIKViewRouteType routeType;
+@property (nonatomic, strong) ZIKAnyViewRouter *strongRouter;
 
 - (void)enterTest:(void(^)(UIViewController *source))testBlock;
 - (void)enterSourceViewWithSuccess:(void(^)(UIViewController *source))successHandler;
