@@ -357,14 +357,12 @@ static NSMutableArray *g_preparingUIViewRouters;
             *message = @"Router is routing.";
         }
         return NO;
-    }
-    if (state == ZIKRouterStateRemoving) {
+    } else if (state == ZIKRouterStateRemoving) {
         if (message) {
             *message = @"Router is removing.";
         }
         return NO;
-    }
-    if (state == ZIKRouterStateRouted) {
+    } else if (state == ZIKRouterStateRouted && [self shouldRemoveBeforePerform]) {
         if (message) {
             *message = @"Router is routed, can't perform route after remove.";
         }
@@ -419,6 +417,9 @@ static NSMutableArray *g_preparingUIViewRouters;
         }
         default:
             break;
+    }
+    if (message) {
+        *message = nil;
     }
     return YES;
 }
@@ -1033,6 +1034,14 @@ destinationStateBeforeRoute:(ZIKPresentationState *)destinationStateBeforeRoute
 }
 
 #pragma mark Remove Route
+
+- (BOOL)shouldRemoveBeforePerform {
+    ZIKViewRouteType routeType = self.original_configuration.routeType;
+    if (routeType == ZIKViewRouteTypeGetDestination) {
+        return NO;
+    }
+    return YES;
+}
 
 - (BOOL)canRemove {
     NSAssert([NSThread isMainThread], @"Always check state in main thread, bacause state may change in main thread after you check the state in child thread.");

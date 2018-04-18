@@ -117,7 +117,7 @@
                     XCTAssertNotNil(error);
                     [expectation fulfill];
                     [self handle:^{
-                        XCTAssertNil(self.router);
+                        XCTAssert(self.router == nil || self.router.state == ZIKRouterStateUnrouted);
                         [self leaveTest];
                     }];
                 };
@@ -163,7 +163,7 @@
                 XCTAssertNotNil(error);
                 [expectation fulfill];
                 [self handle:^{
-                    XCTAssertNil(self.router);
+                    XCTAssert(self.router == nil || self.router.state == ZIKRouterStateUnrouted);
                     [self leaveTest];
                 }];
             }];
@@ -335,7 +335,7 @@
                     XCTAssertNotNil(error);
                     [performerErrorExpectation fulfill];
                     [self handle:^{
-                        XCTAssertNil(self.router);
+                        XCTAssert(self.router == nil || self.router.state == ZIKRouterStateUnrouted);
                         [self leaveTest];
                     }];
                 };
@@ -433,7 +433,7 @@
                                    XCTAssertNotNil(error);
                                    [expectation fulfill];
                                    [self handle:^{
-                                       XCTAssertNil(self.router);
+                                       XCTAssert(self.router == nil || self.router.state == ZIKRouterStateUnrouted);
                                        [self leaveTest];
                                    }];
                                };
@@ -554,7 +554,7 @@
                                    XCTAssertNotNil(error);
                                    [performerErrorExpectation fulfill];
                                    [self handle:^{
-                                       XCTAssertNil(self.router);
+                                       XCTAssert(self.router == nil || self.router.state == ZIKRouterStateUnrouted);
                                        [self leaveTest];
                                    }];
                                };

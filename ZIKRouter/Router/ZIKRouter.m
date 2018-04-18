@@ -164,7 +164,12 @@ NSErrorDomain const ZIKRouteErrorDomain = @"ZIKRouteErrorDomain";
 
 - (BOOL)canPerform {
     ZIKRouterState state = self.state;
-    return state == ZIKRouterStateUnrouted;
+    if (state == ZIKRouterStateUnrouted) {
+        return YES;
+    } else if (state == ZIKRouterStateRouted) {
+        return ![self shouldRemoveBeforePerform];
+    }
+    return NO;
 }
 
 - (void)performWithConfiguration:(ZIKPerformRouteConfiguration *)configuration {
@@ -173,7 +178,7 @@ NSErrorDomain const ZIKRouteErrorDomain = @"ZIKRouteErrorDomain";
     id destination = [self destinationWithConfiguration:configuration];
     [self attachDestination:destination];
     if (destination == nil) {
-        [self endPerformRouteWithError:[ZIKRouter errorWithCode:ZIKRouteErrorDestinationUnavailable localizedDescriptionFormat:@"Destination from router is nil. Maybe your configuration is invalid (%@), or there is a bug in the router."]];
+        [self endPerformRouteWithError:[ZIKRouter errorWithCode:ZIKRouteErrorDestinationUnavailable localizedDescriptionFormat:@"Destination from router is nil. Maybe your configuration is invalid (%@), or there is a bug in the router.", configuration]];
         return;
     }
     [self performRouteOnDestination:destination configuration:configuration];
@@ -187,10 +192,10 @@ NSErrorDomain const ZIKRouteErrorDomain = @"ZIKRouteErrorDomain";
                           errorHandler:(void(^)(ZIKRouteAction routeAction, NSError *error))performerErrorHandler {
     NSAssert(self.original_configuration, @"router must has configuration");
     ZIKRouterState state = self.state;
-    if (state == ZIKRouterStateRouted) {
+    if (state == ZIKRouterStateRouted && [self shouldRemoveBeforePerform]) {
         ZIKRouteAction action = ZIKRouteActionPerformRoute;
-        NSString *description = [NSString stringWithFormat:@"%@ 's state is routed, can't perform route again",self];
-        NSError *error = [ZIKRouter errorWithCode:ZIKRouteErrorOverRoute localizedDescription:description];
+        NSString *description = [NSString stringWithFormat:@"%@ 's state is routed, can't perform route before it's removed",self];
+        NSError *error = [ZIKRouter errorWithCode:ZIKRouteErrorActionFailed localizedDescription:description];
         [self notifyError_actionFailedWithAction:action errorDescription:@"%@", description];
         if (performerErrorHandler) {
             performerErrorHandler(action,error);
@@ -216,7 +221,7 @@ NSErrorDomain const ZIKRouteErrorDomain = @"ZIKRouteErrorDomain";
     if ([[self class] _validateInfiniteRecursion] == NO) {
         ZIKRouteAction action = ZIKRouteActionPerformRoute;
         NSString *description = [NSString stringWithFormat:@"Infinite recursion for performing route detected. There may be cycle dependencies. Recursive call stack:\n%@",[NSThread callStackSymbols]];
-        NSError *error = [ZIKRouter errorWithCode:ZIKRouteErrorOverRoute localizedDescription:description];
+        NSError *error = [ZIKRouter errorWithCode:ZIKRouteErrorInfiniteRecursion localizedDescription:description];
         [self notifyError_infiniteRecursionWithAction:ZIKRouteActionPerformRoute errorDescription:@"%@", description];
         [[self class] decreaseRecursiveDepth];
         if (performerErrorHandler) {
@@ -358,6 +363,10 @@ NSErrorDomain const ZIKRouteErrorDomain = @"ZIKRouteErrorDomain";
 }
 
 #pragma mark Remove
+
+- (BOOL)shouldRemoveBeforePerform {
+    return NO;
+}
 
 - (BOOL)canRemove {
     return [self checkCanRemove] == nil;

@@ -13,7 +13,7 @@ NS_ASSUME_NONNULL_BEGIN
 @class ZIKViewRoute;
 
 ///Wrapper view router for ZIKViewRoute.
-@interface ZIKBlockViewRouter : ZIKViewRouter<id<ZIKRoutableView>, ZIKViewRouteConfiguration *>
+@interface ZIKBlockViewRouter : ZIKViewRouter<id, ZIKViewRouteConfiguration *>
 
 - (ZIKViewRoute *)route;
 

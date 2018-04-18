@@ -41,13 +41,12 @@ typedef NS_ERROR_ENUM(ZIKViewRouteErrorDomain, ZIKViewRouteError) {
     ZIKViewRouteErrorSegueNotPerformed    = 15
     
     /**
-     ZIKRouteErrorActionFailed:
+     ZIKRouteErrorActionFailed for ZIKViewRouter:
      
-     Perform or remove route action failed
      @discussion
-     1. Do performRoute when router state is routed or removing.
+     1. Do performRoute when the source was dealloced or removed from view hierarchy.
      
-     2. Do performRoute when the source was dealloced or removed from view hierarchy.
+     2. Do performOnDestination but the destination can perform the route type.
      
      3. Do removeRoute but the destination was poped/dismissed/removed/dealloced.
      

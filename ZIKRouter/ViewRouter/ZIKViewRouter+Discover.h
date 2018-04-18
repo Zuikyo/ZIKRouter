@@ -28,13 +28,13 @@ NS_SWIFT_UNAVAILABLE("ZIKModuleViewRouterType is a fake class")
 #define ZIKRouterToView(ViewProtocol) (ZIKDestinationViewRouterType<id<ViewProtocol>,ZIKViewRouteConfiguration *> *)[ZIKViewRouter<id<ViewProtocol>,ZIKViewRouteConfiguration *> toView](@protocol(ViewProtocol))
 
 ///Get view router in a type safe way. There will be complie error if the module protocol is not ZIKViewModuleRoutable.
-#define ZIKRouterToViewModule(ModuleProtocol) (ZIKModuleViewRouterType<id<ZIKRoutableView>,id<ModuleProtocol>,ZIKViewRouteConfiguration<ModuleProtocol> *> *)[ZIKViewRouter<id<ZIKRoutableView>,ZIKViewRouteConfiguration<ModuleProtocol> *> toModule](@protocol(ModuleProtocol))
+#define ZIKRouterToViewModule(ModuleProtocol) (ZIKModuleViewRouterType<id<ZIKRoutableView>,id<ModuleProtocol>,ZIKViewRouteConfiguration<ModuleProtocol> *> *)[ZIKViewRouter<id,ZIKViewRouteConfiguration<ModuleProtocol> *> toModule](@protocol(ModuleProtocol))
 
 ///Get view router in a type safe way. There will be complie error if the view protocol is not ZIKViewRoutable.
 #define ZIKViewRouterToView(ViewProtocol) (ZIKDestinationViewRouterType<id<ViewProtocol>,ZIKViewRouteConfiguration *> *)[ZIKViewRouter<id<ViewProtocol>,ZIKViewRouteConfiguration *> toView](@protocol(ViewProtocol))
 
 ///Get view router in a type safe way. There will be complie error if the module protocol is not ZIKViewModuleRoutable.
-#define ZIKViewRouterToModule(ModuleProtocol) (ZIKModuleViewRouterType<id<ZIKRoutableView>,id<ModuleProtocol>,ZIKViewRouteConfiguration<ModuleProtocol> *> *)[ZIKViewRouter<id<ZIKRoutableView>,ZIKViewRouteConfiguration<ModuleProtocol> *> toModule](@protocol(ModuleProtocol))
+#define ZIKViewRouterToModule(ModuleProtocol) (ZIKModuleViewRouterType<id<ZIKRoutableView>,id<ModuleProtocol>,ZIKViewRouteConfiguration<ModuleProtocol> *> *)[ZIKViewRouter<id,ZIKViewRouteConfiguration<ModuleProtocol> *> toModule](@protocol(ModuleProtocol))
 
 @interface ZIKViewRouter<__covariant Destination: id, __covariant RouteConfig: ZIKViewRouteConfiguration *> (Discover)
 
@@ -144,90 +144,6 @@ NS_SWIFT_UNAVAILABLE("ZIKModuleViewRouterType is a fake class")
 @end
 
 #pragma mark Router Type
-
-@interface ZIKViewRouterType<__covariant Destination: id, __covariant RouteConfig: ZIKViewRouteConfiguration *> (Extension)
-
-///Router doesn't support all routeTypes, for example, router for a UIView destination can't support those UIViewController's routeTypes
-- (BOOL)supportRouteType:(ZIKViewRouteType)type;
-
-/**
- Perform route from source view to destination view.
- 
- @param source Source UIViewController or UIView. See ZIKViewRouteConfiguration's source.
- @param configBuilder Build the configuration in the block.
- @return The view router for this route.
- */
-- (nullable ZIKViewRouter<Destination, RouteConfig> *)performFromSource:(nullable id<ZIKViewRouteSource>)source configuring:(void(NS_NOESCAPE ^)(RouteConfig config))configBuilder;
-
-/**
- Perform route from source view to destination view, and config the remove route.
- 
- @param source Source UIViewController or UIView. See ZIKViewRouteConfiguration's source.
- @param configBuilder Build the configuration in the block.
- @param removeConfigBuilder Build the remove configuration in the block.
- @return The view router for this route.
- */
-- (nullable ZIKViewRouter<Destination, RouteConfig> *)performFromSource:(nullable id<ZIKViewRouteSource>)source
-                                                            configuring:(void(NS_NOESCAPE ^)(RouteConfig config))configBuilder
-                                                               removing:(void(NS_NOESCAPE ^ _Nullable)(ZIKViewRemoveConfiguration *config))removeConfigBuilder;
-
-///If this destination doesn't need any variable to initialize, just pass source and perform route.
-- (nullable ZIKViewRouter<Destination, RouteConfig> *)performFromSource:(nullable id<ZIKViewRouteSource>)source routeType:(ZIKViewRouteType)routeType;
-
-/**
- Perform route on destination. If you get a prepared destination by ZIKViewRouteTypeGetDestination, you can use this method to perform route on the destination.
- 
- @param destination The destination to perform route.
- @param configBuilder Builder for config when perform route.
- @return A router for the destination. If the destination is not registered with this router class, return nil and get assert failure.
- */
-- (nullable ZIKViewRouter<Destination, RouteConfig> *)performOnDestination:(Destination)destination fromSource:(nullable id<ZIKViewRouteSource>)source configuring:(void(NS_NOESCAPE ^)(RouteConfig config))configBuilder;
-
-/**
- Perform route on destination. If you get a prepared destination by ZIKViewRouteTypeGetDestination, you can use this method to perform route on the destination.
- 
- @param destination The destination to perform route.
- @param configBuilder Builder for config when perform route.
- @param removeConfigBuilder Builder for config when remove route.
- @return A router for the destination. If the destination is not registered with this router class, return nil and get assert failure.
- */
-- (nullable ZIKViewRouter<Destination, RouteConfig> *)performOnDestination:(Destination)destination
-                                                                fromSource:(nullable id<ZIKViewRouteSource>)source
-                                                               configuring:(void(NS_NOESCAPE ^)(RouteConfig config))configBuilder
-                                                                  removing:(void(NS_NOESCAPE ^ _Nullable)(ZIKViewRemoveConfiguration *config))removeConfigBuilder;
-
-/**
- Perform route on destination. If you get a prepared destination by ZIKViewRouteTypeGetDestination, you can use this method to perform route on the destination.
- 
- @param destination The destination to perform route.
- @param source The source view.
- @param routeType Route type to perform.
- @return A router for the destination. If the destination is not registered with this router class, return nil and get assert failure.
- */
-- (nullable ZIKViewRouter<Destination, RouteConfig> *)performOnDestination:(Destination)destination fromSource:(nullable id<ZIKViewRouteSource>)source routeType:(ZIKViewRouteType)routeType;
-
-/**
- Prepare destination from external, then you can use the router to perform route. You can also use this as a builder to prepare view created from external.
- 
- @param destination The destination to prepare. Destination must be registered with this router class.
- @param configBuilder Builder for config when perform route.
- @return A router for the destination. If the destination is not registered with this router class, return nil and get assert failure.
- */
-- (nullable ZIKViewRouter<Destination, RouteConfig> *)prepareDestination:(Destination)destination configuring:(void(NS_NOESCAPE ^)(RouteConfig config))configBuilder;
-
-/**
- Prepare destination from external, then you can use the router to perform route. You can also use this as a builder to prepare view created from external.
- 
- @param destination The destination to prepare. Destination must be registered with this router class.
- @param configBuilder Builder for config when perform route.
- @param removeConfigBuilder Builder for config when remove route.
- @return A router for the destination. If the destination is not registered with this router class, return nil and get assert failure.
- */
-- (nullable ZIKViewRouter<Destination, RouteConfig> *)prepareDestination:(Destination)destination
-                                                             configuring:(void(NS_NOESCAPE ^)(RouteConfig config))configBuilder
-                                                                removing:(void(NS_NOESCAPE ^ _Nullable)(ZIKViewRemoveConfiguration *config))removeConfigBuilder;
-
-@end
 
 @interface ZIKDestinationViewRouterType<__covariant Destination: id<ZIKViewRoutable>, __covariant RouteConfig: ZIKViewRouteConfiguration *> (Extension)
 

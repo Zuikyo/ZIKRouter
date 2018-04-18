@@ -23,7 +23,7 @@ typedef ZIKViewRoutePopoverConfiguration ZIKViewRoutePopoverConfig;
 
 typedef ZIKViewRouter<id, ZIKViewRouteConfig *> ZIKAnyViewRouter;
 #define ZIKDestinationViewRouter(Destination) ZIKViewRouter<Destination, ZIKViewRouteConfig *>
-#define ZIKModuleViewRouter(ModuleConfigProtocol) ZIKViewRouter<id<ZIKRoutableView>, ZIKViewRouteConfig<ModuleConfigProtocol> *>
+#define ZIKModuleViewRouter(ModuleConfigProtocol) ZIKViewRouter<id, ZIKViewRouteConfig<ModuleConfigProtocol> *>
 
 typedef ZIKServiceRouter<id, ZIKPerformRouteConfig *> ZIKAnyServiceRouter;
 #define ZIKDestinationServiceRouter(Destination) ZIKServiceRouter<Destination, ZIKPerformRouteConfig *>

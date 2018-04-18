@@ -89,7 +89,7 @@
                     XCTAssertNotNil(error);
                     [expectation fulfill];
                     [self handle:^{
-                        XCTAssertNil(self.router);
+                        XCTAssert(self.router == nil || self.router.state == ZIKRouterStateUnrouted);
                         [self leaveTest];
                     }];
                 };
@@ -132,8 +132,7 @@
                 XCTAssertNotNil(error);
                 [expectation fulfill];
                 [self handle:^{
-                    XCTAssert(self.router.state == ZIKRouterStateUnrouted);
-                    XCTAssertNil(self.router);
+                    XCTAssert(self.router == nil || self.router.state == ZIKRouterStateUnrouted);
                     [self leaveTest];
                 }];
             }];
@@ -294,7 +293,7 @@
                     XCTAssertNotNil(error);
                     [performerErrorExpectation fulfill];
                     [self handle:^{
-                        XCTAssert(self.router.state == ZIKRouterStateUnrouted);
+                        XCTAssert(self.router == nil || self.router.state == ZIKRouterStateUnrouted);
                         [self leaveTest];
                     }];
                 };
@@ -385,7 +384,7 @@
                                config.completionHandler = ^(BOOL success, id  _Nullable destination, ZIKRouteAction  _Nonnull routeAction, NSError * _Nullable error) {
                                    XCTAssertFalse(success);
                                    XCTAssertNotNil(error);
-                                   XCTAssertNil(self.router);
+                                   XCTAssert(self.router == nil || self.router.state == ZIKRouterStateUnrouted);
                                    [expectation fulfill];
                                    [self handle:^{
                                        [self leaveTest];
@@ -500,7 +499,7 @@
                                    XCTAssertNotNil(error);
                                    [performerErrorExpectation fulfill];
                                    [self handle:^{
-                                       XCTAssertNil(self.router);
+                                       XCTAssert(self.router == nil || self.router.state == ZIKRouterStateUnrouted);
                                        [self leaveTest];
                                    }];
                                };

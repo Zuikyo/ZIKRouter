@@ -49,6 +49,10 @@ static dispatch_semaphore_t g_globalErrorSema;
     NSAssert1([self isAbstractRouter], @"subclass(%@) must override +registerRoutableDestination to register destination.",self);
 }
 
+- (BOOL)shouldRemoveBeforePerform {
+    return NO;
+}
+
 - (void)performRouteOnDestination:(id)destination configuration:(__kindof ZIKPerformRouteConfiguration *)configuration {
 #if ZIKROUTER_CHECK
     if ([[self class] isAbstractRouter] == NO) {

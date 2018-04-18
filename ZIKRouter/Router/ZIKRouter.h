@@ -126,6 +126,9 @@ NS_ASSUME_NONNULL_BEGIN
 
 #pragma mark Remove
 
+///Whether the router should be removed before another performing, when the router was performed already.
+- (BOOL)shouldRemoveBeforePerform;
+
 ///Whether the router can remove route now.
 - (BOOL)canRemove;
 ///Remove route directly. If -canRemove return NO, this will failed.
@@ -213,9 +216,17 @@ typedef NS_ERROR_ENUM(ZIKRouteErrorDomain, ZIKRouteError) {
     ZIKRouteErrorInvalidConfiguration   = 1,
     ///Router returns nil for destination, you can't use this service now. Maybe your configuration is invalid, or there is a bug in the router.
     ZIKRouteErrorDestinationUnavailable = 2,
-    ///Perform or remove route action failed. Remove route when destiantion was already dealloced.
+    /*
+     Perform or remove route action failed.
+     @discussion
+     1. Do performRoute when router state is removing, or is routed and should be removed first.
+     
+     2. Do removeRoute but the destination was already dealloced.
+     
+     3. Do removeRoute when a router is not performed yet.
+     */
     ZIKRouteErrorActionFailed           = 3,
-    ///Do performRoute when router state is routing, or do push but destination is already pushed.
+    ///Do performRoute when router state is routing.
     ZIKRouteErrorOverRoute              = 4,
     ///Infinite recursion for performing route detected. See -prepareDestination:configuration: for more detail.
     ZIKRouteErrorInfiniteRecursion      = 5
