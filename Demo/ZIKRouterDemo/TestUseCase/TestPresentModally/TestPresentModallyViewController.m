@@ -22,12 +22,14 @@
 }
 
 - (IBAction)presentModally:(id)sender {
-    [self performRoute];
+    [self performRouteWithSuccessHandler:nil];
 }
 
 - (IBAction)presentModallyAndDismiss:(id)sender {
     if (self.infoViewRouter == nil) {
-        [self performRoute];
+        [self performRouteWithSuccessHandler:^{
+            [self removeInfoViewController];
+        }];
         return;
     }
     if (![self.infoViewRouter canPerform]) {
@@ -41,7 +43,7 @@
     }];
 }
 
-- (void)performRoute {
+- (void)performRouteWithSuccessHandler:(void(^)(void))successHandler {
     __weak typeof(self) weakSelf = self;
     self.infoViewRouter = [ZIKRouterToView(ZIKInfoViewProtocol)
                            performFromSource:self
@@ -56,6 +58,11 @@
                                    destination.name = @"Zuik";
                                    destination.age = 18;
                                    destination.delegate = weakSelf;
+                               };
+                               config.performerSuccessHandler = ^(id  _Nonnull destination) {
+                                   if (successHandler) {
+                                       successHandler();
+                                   }
                                };
                                config.successHandler = ^(id  _Nonnull destination) {
                                    NSLog(@"provider: present modally success");

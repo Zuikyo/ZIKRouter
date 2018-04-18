@@ -22,7 +22,7 @@
 }
 - (IBAction)push:(id)sender {
     if (self.infoViewRouter == nil) {
-        [self performRoute];
+        [self performRouteWithSuccessHandler:nil];
         return;
     }
     // Already performed once, can use the same router to show another destination
@@ -39,7 +39,9 @@
 
 - (IBAction)pushAndPop:(id)sender {
     if (self.infoViewRouter == nil) {
-        [self performRoute];
+        [self performRouteWithSuccessHandler:^{
+            [self removeInfoViewController];
+        }];
         return;
     }
     if (![self.infoViewRouter canPerform]) {
@@ -60,7 +62,7 @@
     }];
 }
 
-- (void)performRoute {
+- (void)performRouteWithSuccessHandler:(void(^)(void))successHandler {
     __weak typeof(self) weakSelf = self;
     self.infoViewRouter = [ZIKRouterToView(ZIKInfoViewProtocol) performFromSource:self configuring:^(ZIKViewRouteConfiguration * _Nonnull config) {
         config.routeType = ZIKViewRouteTypePush;
@@ -72,8 +74,10 @@
             destination.age = 18;
             destination.delegate = weakSelf;
         };
-        config.successHandler = ^(UIViewController<ZIKInfoViewProtocol> *destination) {
-            NSLog(@"provider: push complete");
+        config.performerSuccessHandler = ^(id  _Nonnull destination) {
+            if (successHandler) {
+                successHandler();
+            }
         };
         config.successHandler = ^(id  _Nonnull destination) {
             NSLog(@"provider: push success");
