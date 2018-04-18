@@ -335,13 +335,6 @@
 		F81A33A7208726B6001D176A /* ZIKRouterTests */ = {
 			isa = PBXGroup;
 			children = (
-				F81A33B82087301E001D176A /* TestRouteRegistry.h */,
-				F81A33B92087301E001D176A /* TestRouteRegistry.m */,
-				F81A33B72087278D001D176A /* AServiceInput.h */,
-				F81A33B420872714001D176A /* AService.h */,
-				F81A33B520872714001D176A /* AService.m */,
-				F81A33B1208726DF001D176A /* AServiceRouter.h */,
-				F81A33B2208726DF001D176A /* AServiceRouter.m */,
 				F8A2B7132087D1D7001F9B57 /* TestRouters */,
 				F81A33BB2087302F001D176A /* TestConfig.h */,
 				F8A2B70C2087867E001F9B57 /* TestConfig.m */,
@@ -616,6 +609,13 @@
 		F8A2B7132087D1D7001F9B57 /* TestRouters */ = {
 			isa = PBXGroup;
 			children = (
+				F81A33B82087301E001D176A /* TestRouteRegistry.h */,
+				F81A33B92087301E001D176A /* TestRouteRegistry.m */,
+				F81A33B72087278D001D176A /* AServiceInput.h */,
+				F81A33B420872714001D176A /* AService.h */,
+				F81A33B520872714001D176A /* AService.m */,
+				F81A33B1208726DF001D176A /* AServiceRouter.h */,
+				F81A33B2208726DF001D176A /* AServiceRouter.m */,
 			);
 			path = TestRouters;
 			sourceTree = "<group>";
