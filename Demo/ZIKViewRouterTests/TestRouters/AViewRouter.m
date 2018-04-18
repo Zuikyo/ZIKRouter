@@ -8,6 +8,7 @@
 
 #import "AViewRouter.h"
 @import ZIKRouter.Internal;
+#import "TestConfig.h"
 
 DeclareRoutableView(AViewController, TestAViewRouter)
 
@@ -15,7 +16,9 @@ DeclareRoutableView(AViewController, TestAViewRouter)
 
 + (void)registerRoutableDestination {
     [self registerView:[AViewController class]];
+#if !TEST_BLOCK_ROUTE
     [self registerViewProtocol:ZIKRoutableProtocol(AViewInput)];
+#endif
 }
 
 - (id)destinationWithConfiguration:(ZIKViewRouteConfiguration *)configuration {

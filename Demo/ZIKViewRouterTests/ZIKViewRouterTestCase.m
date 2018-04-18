@@ -12,6 +12,7 @@
 @import ZIKRouter.Internal;
 
 @interface ZIKViewRouterTestCase()
+@property (nonatomic, strong) ZIKAnyViewRouter *strongRouter;
 @property (nonatomic, strong) UIViewController *masterViewController;
 @property (nonatomic, strong) SourceViewRouter *sourceRouter;
 @property (nonatomic, strong) XCTestExpectation *leaveSourceViewExpectation;
@@ -49,6 +50,28 @@
     self.leaveSourceViewExpectation = nil;
     self.leaveTestViewExpectation = nil;
     ZIKViewRouter.globalErrorHandler = nil;
+}
+
+- (void)setRouter:(ZIKAnyViewRouter *)router {
+    _router = router;
+    self.strongRouter = router;
+}
+
++ (BOOL)completeSynchronously {
+    return NO;
+}
+
+- (void)handle:(void(^)(void))block {
+    if (block == nil) {
+        return;
+    }
+    if ([[self class] completeSynchronously]) {
+        dispatch_async(dispatch_get_main_queue(), ^{
+            block();
+        });
+    } else {
+        block();
+    }
 }
 
 - (void)enterTest:(void(^)(UIViewController *source))testBlock {
@@ -96,6 +119,7 @@
         };
         config.completionHandler = completion;
     }];
+    self.strongRouter = nil;
 }
 
 + (BOOL)allowLeaveTestViewFailing {
@@ -104,11 +128,13 @@
 
 - (void)leaveTest {
     if (self.router == nil) {
+        self.strongRouter = nil;
         [self.leaveTestViewExpectation fulfill];
         [self leaveSourceView];
         return;
     }
     if (self.router.state == ZIKRouterStateUnrouted || self.router.state == ZIKRouterStateRemoved) {
+        self.strongRouter = nil;
         [self.leaveTestViewExpectation fulfill];
         [self leaveSourceView];
         return;

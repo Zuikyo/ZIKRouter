@@ -35,11 +35,13 @@
                     destination.title = @"test title";
                 };
                 config.successHandler = ^(id<AViewInput>  _Nonnull destination) {
-                    XCTAssert(self.router.state == ZIKRouterStateRouted);
                     XCTAssertNotNil(destination);
                     XCTAssert([destination.title isEqualToString:@"test title"]);
                     [expectation fulfill];
-                    [self leaveTest];
+                    [self handle:^{
+                        XCTAssert(self.router.state == ZIKRouterStateRouted);
+                        [self leaveTest];
+                    }];
                 };
             }];
         }];
@@ -58,11 +60,13 @@
                 [self configRouteConfiguration:config source:source];
                 config.routeType = self.routeType;
                 config.completionHandler = ^(BOOL success, id  _Nullable destination, ZIKRouteAction  _Nonnull routeAction, NSError * _Nullable error) {
-                    XCTAssert(self.router.state == ZIKRouterStateRouted);
                     XCTAssertTrue(success);
                     XCTAssertNil(error);
                     [expectation fulfill];
-                    [self leaveTest];
+                    [self handle:^{
+                        XCTAssert(self.router.state == ZIKRouterStateRouted);
+                        [self leaveTest];
+                    }];
                 };
             }];
         }];
@@ -81,12 +85,13 @@
                 [self configRouteConfiguration:config source:source];
                 config.routeType = self.routeType;
                 config.completionHandler = ^(BOOL success, id  _Nullable destination, ZIKRouteAction  _Nonnull routeAction, NSError * _Nullable error) {
-                    XCTAssert(self.router.state == ZIKRouterStateUnrouted);
                     XCTAssertFalse(success);
                     XCTAssertNotNil(error);
-                    XCTAssertNil(self.router);
                     [expectation fulfill];
-                    [self leaveTest];
+                    [self handle:^{
+                        XCTAssertNil(self.router);
+                        [self leaveTest];
+                    }];
                 };
             }];
         }];
@@ -102,11 +107,13 @@
     {
         [self enterTest:^(UIViewController *source) {
             self.router = [ZIKRouterToView(AViewInput) performFromSource:source routeType:self.routeType completion:^(BOOL success, id<AViewInput>  _Nullable destination, ZIKRouteAction  _Nonnull routeAction, NSError * _Nullable error) {
-                XCTAssert(self.router.state == ZIKRouterStateRouted);
                 XCTAssertTrue(success);
                 XCTAssertNil(error);
                 [expectation fulfill];
-                [self leaveTest];
+                [self handle:^{
+                    XCTAssert(self.router.state == ZIKRouterStateRouted);
+                    [self leaveTest];
+                }];
             }];
         }];
     }
@@ -121,12 +128,14 @@
     {
         [self enterTest:^(UIViewController *source) {
             self.router = [ZIKRouterToView(AViewInput) performFromSource:nil routeType:self.routeType completion:^(BOOL success, id<AViewInput>  _Nullable destination, ZIKRouteAction  _Nonnull routeAction, NSError * _Nullable error) {
-                XCTAssert(self.router.state == ZIKRouterStateUnrouted);
                 XCTAssertFalse(success);
                 XCTAssertNotNil(error);
-                XCTAssertNil(self.router);
                 [expectation fulfill];
-                [self leaveTest];
+                [self handle:^{
+                    XCTAssert(self.router.state == ZIKRouterStateUnrouted);
+                    XCTAssertNil(self.router);
+                    [self leaveTest];
+                }];
             }];
         }];
     }
@@ -142,21 +151,24 @@
     {
         [self enterTest:^(UIViewController *source) {
             self.router = [ZIKRouterToView(AViewInput) performFromSource:source routeType:self.routeType completion:^(BOOL success, id<AViewInput>  _Nullable destination, ZIKRouteAction  _Nonnull routeAction, NSError * _Nullable error) {
-                XCTAssert(self.router.state == ZIKRouterStateRouted);
                 XCTAssertTrue(success);
                 XCTAssertNil(error);
                 
-                [self.router removeRouteWithSuccessHandler:^{
-                    XCTAssert(self.router.state == ZIKRouterStateRemoved);
-                    [self.router performRouteWithCompletion:^(BOOL success, id  _Nullable destination, ZIKRouteAction  _Nonnull routeAction, NSError * _Nullable error) {
-                        XCTAssert(self.router.state == ZIKRouterStateRouted);
-                        XCTAssertTrue(success);
-                        XCTAssertNil(error);
-                        [expectation fulfill];
-                        [self leaveTest];
-                    }];
-                    
-                } errorHandler:nil];
+                [self handle:^{
+                    XCTAssert(self.router.state == ZIKRouterStateRouted);
+                    [self.router removeRouteWithSuccessHandler:^{
+                        XCTAssert(self.router.state == ZIKRouterStateRemoved);
+                        [self.router performRouteWithCompletion:^(BOOL success, id  _Nullable destination, ZIKRouteAction  _Nonnull routeAction, NSError * _Nullable error) {
+                            XCTAssert(self.router.state == ZIKRouterStateRouted);
+                            XCTAssertTrue(success);
+                            XCTAssertNil(error);
+                            [expectation fulfill];
+                            [self leaveTest];
+                        }];
+                        
+                    } errorHandler:nil];
+                }];
+                
             }];
         }];
     }
@@ -172,15 +184,19 @@
     {
         [self enterTest:^(UIViewController *source) {
             self.router = [ZIKRouterToView(AViewInput) performFromSource:source routeType:self.routeType completion:^(BOOL success, id<AViewInput>  _Nullable destination, ZIKRouteAction  _Nonnull routeAction, NSError * _Nullable error) {
-                XCTAssert(self.router.state == ZIKRouterStateRouted);
                 XCTAssertTrue(success);
-                [self.router performRouteWithCompletion:^(BOOL success, id  _Nullable destination, ZIKRouteAction  _Nonnull routeAction, NSError * _Nullable error) {
+                
+                [self handle:^{
                     XCTAssert(self.router.state == ZIKRouterStateRouted);
-                    XCTAssertFalse(success);
-                    XCTAssertNotNil(error);
-                    [expectation fulfill];
-                    [self leaveTest];
+                    [self.router performRouteWithCompletion:^(BOOL success, id  _Nullable destination, ZIKRouteAction  _Nonnull routeAction, NSError * _Nullable error) {
+                        XCTAssert(self.router.state == ZIKRouterStateRouted);
+                        XCTAssertFalse(success);
+                        XCTAssertNotNil(error);
+                        [expectation fulfill];
+                        [self leaveTest];
+                    }];
                 }];
+                
             }];
         }];
     }
@@ -197,10 +213,12 @@
             self.router = [ZIKRouterToView(AViewInput) performFromSource:source configuring:^(ZIKViewRouteConfiguration * _Nonnull config) {
                 config.routeType = self.routeType;
                 config.successHandler = ^(id  _Nonnull destination) {
-                    XCTAssert(self.router.state == ZIKRouterStateRouted);
                     XCTAssertNotNil(destination);
                     [expectation fulfill];
-                    [self leaveTest];
+                    [self handle:^{
+                        XCTAssert(self.router.state == ZIKRouterStateRouted);
+                        [self leaveTest];
+                    }];
                 };
             }];
         }];
@@ -222,26 +240,27 @@
                 [self configRouteConfiguration:config source:source];
                 config.routeType = self.routeType;
                 config.successHandler = ^(id  _Nonnull destination) {
-                    XCTAssert(self.router.state == ZIKRouterStateRouted);
                     XCTAssertNotNil(destination);
                     [successHandlerExpectation fulfill];
                 };
                 config.performerSuccessHandler = ^(id  _Nonnull destination) {
-                    XCTAssert(self.router.state == ZIKRouterStateRouted);
                     XCTAssertNotNil(destination);
                     [performerSuccessHandlerExpectation fulfill];
                     
-                    [self.router removeRouteWithSuccessHandler:^{
-                        XCTAssert(self.router.state == ZIKRouterStateRemoved);
-                        [self.router performRouteWithSuccessHandler:^(id<AViewInput>  _Nonnull destination) {
-                            XCTAssert(self.router.state == ZIKRouterStateRouted);
-                            XCTAssertNotNil(destination);
-                            [self leaveTest];
-                        } errorHandler:^(ZIKRouteAction  _Nonnull routeAction, NSError * _Nonnull error) {
+                    [self handle:^{
+                        XCTAssert(self.router.state == ZIKRouterStateRouted);
+                        [self.router removeRouteWithSuccessHandler:^{
+                            XCTAssert(self.router.state == ZIKRouterStateRemoved);
+                            [self.router performRouteWithSuccessHandler:^(id<AViewInput>  _Nonnull destination) {
+                                XCTAssert(self.router.state == ZIKRouterStateRouted);
+                                XCTAssertNotNil(destination);
+                                [self leaveTest];
+                            } errorHandler:^(ZIKRouteAction  _Nonnull routeAction, NSError * _Nonnull error) {
+                                
+                            }];
                             
-                        }];
-                        
-                    } errorHandler:nil];
+                        } errorHandler:nil];
+                    }];
                     
                 };
             }];
@@ -268,15 +287,16 @@
                     XCTAssert(NO, @"successHandler should not be called");
                 };
                 config.errorHandler = ^(ZIKRouteAction  _Nonnull routeAction, NSError * _Nonnull error) {
-                    XCTAssert(self.router.state == ZIKRouterStateUnrouted);
                     XCTAssertNotNil(error);
                     [providerErrorExpectation fulfill];
                 };
                 config.performerErrorHandler = ^(ZIKRouteAction  _Nonnull routeAction, NSError * _Nonnull error) {
-                    XCTAssert(self.router.state == ZIKRouterStateUnrouted);
                     XCTAssertNotNil(error);
                     [performerErrorExpectation fulfill];
-                    [self leaveTest];
+                    [self handle:^{
+                        XCTAssert(self.router.state == ZIKRouterStateUnrouted);
+                        [self leaveTest];
+                    }];
                 };
             }];
         }];
@@ -304,11 +324,14 @@
                                    destination.title = @"test title";
                                });
                                config.successHandler = ^(id<AViewInput>  _Nonnull destination) {
-                                   XCTAssert(self.router.state == ZIKRouterStateRouted);
                                    XCTAssertNotNil(destination);
                                    XCTAssert([destination.title isEqualToString:@"test title"]);
                                    [expectation fulfill];
-                                   [self leaveTest];
+                                   [self handle:^{
+                                       XCTAssert(self.router.state == ZIKRouterStateRouted);
+                                       [self leaveTest];
+                                   }];
+                                   
                 };
             }];
         }];
@@ -331,11 +354,13 @@
                                [self configRouteConfiguration:config source:source];
                                config.routeType = self.routeType;
                                config.completionHandler = ^(BOOL success, id  _Nullable destination, ZIKRouteAction  _Nonnull routeAction, NSError * _Nullable error) {
-                                   XCTAssert(self.router.state == ZIKRouterStateRouted);
                                    XCTAssertTrue(success);
                                    XCTAssertNil(error);
                                    [expectation fulfill];
-                                   [self leaveTest];
+                                   [self handle:^{
+                                       XCTAssert(self.router.state == ZIKRouterStateRouted);
+                                       [self leaveTest];
+                                   }];
                                };
             }];
         }];
@@ -358,12 +383,13 @@
                                [self configRouteConfiguration:config source:source];
                                config.routeType = self.routeType;
                                config.completionHandler = ^(BOOL success, id  _Nullable destination, ZIKRouteAction  _Nonnull routeAction, NSError * _Nullable error) {
-                                   XCTAssert(self.router.state == ZIKRouterStateUnrouted);
                                    XCTAssertFalse(success);
                                    XCTAssertNotNil(error);
                                    XCTAssertNil(self.router);
                                    [expectation fulfill];
-                                   [self leaveTest];
+                                   [self handle:^{
+                                       [self leaveTest];
+                                   }];
                                };
             }];
         }];
@@ -386,10 +412,12 @@
                                [self configRouteConfiguration:config source:source];
                                config.routeType = self.routeType;
                                config.successHandler = ^(id  _Nonnull destination) {
-                                   XCTAssert(self.router.state == ZIKRouterStateRouted);
                                    XCTAssertNotNil(destination);
                                    [expectation fulfill];
-                                   [self leaveTest];
+                                   [self handle:^{
+                                       XCTAssert(self.router.state == ZIKRouterStateRouted);
+                                       [self leaveTest];
+                                   }];
                                };
             }];
         }];
@@ -415,26 +443,26 @@
                                [self configRouteConfiguration:config source:source];
                                config.routeType = self.routeType;
                                config.successHandler = ^(id  _Nonnull destination) {
-                                   XCTAssert(self.router.state == ZIKRouterStateRouted);
                                    XCTAssertNotNil(destination);
                                    [successHandlerExpectation fulfill];
                                };
                                config.performerSuccessHandler = ^(id  _Nonnull destination) {
-                                   XCTAssert(self.router.state == ZIKRouterStateRouted);
                                    XCTAssertNotNil(destination);
                                    [performerSuccessHandlerExpectation fulfill];
                                    
-                                   [self.router removeRouteWithSuccessHandler:^{
-                                       XCTAssert(self.router.state == ZIKRouterStateRemoved);
-                                       [self.router performRouteWithSuccessHandler:^(id<AViewInput>  _Nonnull destination) {
-                                           XCTAssert(self.router.state == ZIKRouterStateRouted);
-                                           XCTAssertNotNil(destination);
-                                           [self leaveTest];
-                                       } errorHandler:^(ZIKRouteAction  _Nonnull routeAction, NSError * _Nonnull error) {
+                                   [self handle:^{
+                                       [self.router removeRouteWithSuccessHandler:^{
+                                           XCTAssert(self.router.state == ZIKRouterStateRemoved);
+                                           [self.router performRouteWithSuccessHandler:^(id<AViewInput>  _Nonnull destination) {
+                                               XCTAssert(self.router.state == ZIKRouterStateRouted);
+                                               XCTAssertNotNil(destination);
+                                               [self leaveTest];
+                                           } errorHandler:^(ZIKRouteAction  _Nonnull routeAction, NSError * _Nonnull error) {
+                                               
+                                           }];
                                            
-                                       }];
-                                       
-                                   } errorHandler:nil];
+                                       } errorHandler:nil];
+                                   }];
                                    
                                };
             }];
@@ -465,15 +493,16 @@
                                    XCTAssert(NO, @"successHandler should not be called");
                                };
                                config.errorHandler = ^(ZIKRouteAction  _Nonnull routeAction, NSError * _Nonnull error) {
-                                   XCTAssert(self.router.state == ZIKRouterStateUnrouted);
                                    XCTAssertNotNil(error);
                                    [providerErrorExpectation fulfill];
                                };
                                config.performerErrorHandler = ^(ZIKRouteAction  _Nonnull routeAction, NSError * _Nonnull error) {
-                                   XCTAssert(self.router.state == ZIKRouterStateUnrouted);
                                    XCTAssertNotNil(error);
                                    [performerErrorExpectation fulfill];
-                                   [self leaveTest];
+                                   [self handle:^{
+                                       XCTAssertNil(self.router);
+                                       [self leaveTest];
+                                   }];
                                };
             }];
         }];

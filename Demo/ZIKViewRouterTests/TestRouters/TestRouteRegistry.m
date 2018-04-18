@@ -10,7 +10,9 @@
 #import "SourceViewRouter.h"
 #import "AViewRouter.h"
 #import "AViewInput.h"
+#import "BSubviewRouter.h"
 @import ZIKRouter.Internal;
+#import "TestConfig.h"
 
 @implementation TestRouteRegistry
 
@@ -24,6 +26,7 @@
 
 + (void)registerRoutes {
     [AViewRouter registerRoutableDestination];
+    [BSubviewRouter registerRoutableDestination];
     [SourceViewRouter registerRoutableDestination];
     
     ZIKDestinationViewRoute(id<AViewInput>) *route;
@@ -34,7 +37,9 @@
              }];
     route.name = @"Route for AViewController<AViewInput>";
     route
+#if TEST_BLOCK_ROUTE
     .registerDestinationProtocol(ZIKRoutableProtocol(AViewInput))
+#endif
     .prepareDestination(^(id<AViewInput> destination, ZIKViewRouteConfig *config, ZIKViewRouter *router) {
         
     })

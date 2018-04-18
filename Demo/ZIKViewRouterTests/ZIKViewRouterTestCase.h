@@ -14,13 +14,18 @@
 
 @property (nonatomic, weak) ZIKAnyViewRouter *router;
 @property (nonatomic) ZIKViewRouteType routeType;
-@property (nonatomic, strong) ZIKAnyViewRouter *strongRouter;
 
 - (void)enterTest:(void(^)(UIViewController *source))testBlock;
 - (void)enterSourceViewWithSuccess:(void(^)(UIViewController *source))successHandler;
 - (void)leaveSourceView;
 - (void)leaveTestViewWithCompletion:(void(^)(BOOL success, ZIKRouteAction  _Nonnull routeAction, NSError * _Nullable error))completion;
-+ (BOOL)allowLeaveTestViewFailing;
 - (void)leaveTest;
 
+#pragma mark Override
+
++ (BOOL)allowLeaveTestViewFailing;
++ (BOOL)completeSynchronously;
+
+///If the router complete synchronously, self.router is not set when completion handler is called, then access self.router in handler block will fail. Use this to access self.router in block.
+- (void)handle:(void(^)(void))block;
 @end
