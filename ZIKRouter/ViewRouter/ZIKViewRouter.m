@@ -269,6 +269,20 @@ static NSMutableArray *g_preparingUIViewRouters;
     }];
 }
 
++ (nullable id)makeDestinationWithStrictConfiguring:(void (^)(ZIKPerformRouteConfiguration * _Nonnull,
+                                                              void (^ _Nonnull)(void (^ _Nonnull)(id _Nonnull)),
+                                                              void (^ _Nonnull)(void (^ _Nonnull)(ZIKPerformRouteConfiguration * _Nonnull))))configBuilder {
+    return [super makeDestinationWithStrictConfiguring:^(ZIKPerformRouteConfiguration * _Nonnull config,
+                                                         void (^ _Nonnull prepareDest)(void (^ _Nonnull)(id _Nonnull)),
+                                                         void (^ _Nonnull prepareModule)(void (^ _Nonnull)(ZIKPerformRouteConfiguration * _Nonnull))) {
+        ZIKViewRouteConfiguration *configuration = (ZIKViewRouteConfiguration *)config;
+        configuration.routeType = ZIKViewRouteTypeGetDestination;
+        if (configBuilder) {
+            configBuilder(config, prepareDest, prepareModule);
+        }
+    }];
+}
+
 + (BOOL)isAbstractRouter {
     return self == [ZIKViewRouter class];
 }

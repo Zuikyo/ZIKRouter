@@ -25,6 +25,8 @@
 #endif
 
 + (void)registerRoutes {
+    ZIKRouteRegistry.autoRegister = NO;
+    
     [AViewRouter registerRoutableDestination];
     [BSubviewRouter registerRoutableDestination];
     [SourceViewRouter registerRoutableDestination];
@@ -46,6 +48,8 @@
     .didFinishPrepareDestination(^(id<AViewInput> destination, ZIKViewRouteConfig *config, ZIKViewRouter *router) {
         
     });
+    
+    [ZIKRouteRegistry registrationFinished];
 }
 
 @end

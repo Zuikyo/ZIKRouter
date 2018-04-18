@@ -550,6 +550,8 @@
 			isa = PBXGroup;
 			children = (
 				F81A33A1208719E7001D176A /* TestConfig.h */,
+				F81A3395208674EF001D176A /* TestRouteRegistry.h */,
+				F81A3396208674EF001D176A /* TestRouteRegistry.m */,
 				F846AEF7207DE13400EC7418 /* AViewController.h */,
 				F846AEFC207DE13400EC7418 /* AViewController.m */,
 				F846AEF6207DE13300EC7418 /* AViewInput.h */,
@@ -564,8 +566,6 @@
 				F8BC9A0C207E386B00971352 /* SourceViewController.m */,
 				F8BC9A0E207E387A00971352 /* SourceViewRouter.h */,
 				F8BC9A0F207E387A00971352 /* SourceViewRouter.m */,
-				F81A3395208674EF001D176A /* TestRouteRegistry.h */,
-				F81A3396208674EF001D176A /* TestRouteRegistry.m */,
 			);
 			path = TestRouters;
 			sourceTree = "<group>";
