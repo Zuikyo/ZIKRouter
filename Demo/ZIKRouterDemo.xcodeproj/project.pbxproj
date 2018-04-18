@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		F81A3397208674EF001D176A /* TestRouteRegistry.m in Sources */ = {isa = PBXBuildFile; fileRef = F81A3396208674EF001D176A /* TestRouteRegistry.m */; };
 		F820BF931F628A9600D570CF /* SwiftSampleViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F820BF921F628A9600D570CF /* SwiftSampleViewController.swift */; };
 		F820BF951F628EF300D570CF /* SwiftSampleViewRouter.swift in Sources */ = {isa = PBXBuildFile; fileRef = F820BF941F628EF300D570CF /* SwiftSampleViewRouter.swift */; };
 		F82ECABE1F17DC51007168AA /* ZIKSimpleLabel.m in Sources */ = {isa = PBXBuildFile; fileRef = F82ECA731F17DC51007168AA /* ZIKSimpleLabel.m */; };
@@ -107,6 +108,8 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		F81A3395208674EF001D176A /* TestRouteRegistry.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = TestRouteRegistry.h; sourceTree = "<group>"; };
+		F81A3396208674EF001D176A /* TestRouteRegistry.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = TestRouteRegistry.m; sourceTree = "<group>"; };
 		F820BF911F628A9600D570CF /* ZIKRouterDemo-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "ZIKRouterDemo-Bridging-Header.h"; sourceTree = "<group>"; };
 		F820BF921F628A9600D570CF /* SwiftSampleViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SwiftSampleViewController.swift; sourceTree = "<group>"; };
 		F820BF941F628EF300D570CF /* SwiftSampleViewRouter.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SwiftSampleViewRouter.swift; sourceTree = "<group>"; };
@@ -544,6 +547,8 @@
 				F8BC9A0C207E386B00971352 /* SourceViewController.m */,
 				F8BC9A0E207E387A00971352 /* SourceViewRouter.h */,
 				F8BC9A0F207E387A00971352 /* SourceViewRouter.m */,
+				F81A3395208674EF001D176A /* TestRouteRegistry.h */,
+				F81A3396208674EF001D176A /* TestRouteRegistry.m */,
 			);
 			path = TestRouters;
 			sourceTree = "<group>";
@@ -781,6 +786,7 @@
 				F846AF00207DE13400EC7418 /* AViewController.m in Sources */,
 				F86F0F132084980F00A81DC3 /* ZIKViewRouterTestCase.m in Sources */,
 				F8BC9A0D207E386B00971352 /* SourceViewController.m in Sources */,
+				F81A3397208674EF001D176A /* TestRouteRegistry.m in Sources */,
 				F846AEFE207DE13400EC7418 /* AViewRouter.m in Sources */,
 				F846AF01207DE13400EC7418 /* ZIKViewRouterPerformTests.m in Sources */,
 			);
