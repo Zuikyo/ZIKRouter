@@ -38,12 +38,11 @@
 //    [ZIKRouteRegistry registerAll];
 
 #endif
-    
-    [ZIKViewRouter setGlobalErrorHandler:^(ZIKViewRouter * _Nullable router,
-                                           ZIKRouteAction routeAction,
-                                           NSError * _Nonnull error) {
-        NSLog(@"❌ZIKRouter Error: router's action (%@) catch error! code:%@, description: %@,\nrouter:(%@)", routeAction, @(error.code), error.localizedDescription,router);
-    }];
+    ZIKViewRouter.globalErrorHandler = ^(__kindof ZIKViewRouter * _Nullable router,
+                                         ZIKRouteAction  _Nonnull action,
+                                         NSError * _Nonnull error) {
+        NSLog(@"❌ZIKRouter Error: router's action (%@) catch error! code:%@, description: %@,\nrouter:(%@)", action, @(error.code), error.localizedDescription,router);
+    };
     
     UISplitViewController *splitViewController = (UISplitViewController *)self.window.rootViewController;
     UINavigationController *navigationController = [splitViewController.viewControllers lastObject];

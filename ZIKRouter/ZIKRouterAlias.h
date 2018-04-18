@@ -16,6 +16,10 @@ typedef ZIKRouteConfiguration ZIKRouteConfig;
 typedef ZIKPerformRouteConfiguration ZIKPerformRouteConfig;
 typedef ZIKRemoveRouteConfiguration ZIKRemoveRouteConfig;
 
+typedef ZIKServiceRouter<id, ZIKPerformRouteConfig *> ZIKAnyServiceRouter;
+#define ZIKDestinationServiceRouter(Destination) ZIKServiceRouter<Destination, ZIKPerformRouteConfig *>
+#define ZIKModuleServiceRouter(ModuleConfigProtocol) ZIKServiceRouter<id, ZIKPerformRouteConfig<ModuleConfigProtocol> *>
+
 typedef ZIKViewRouteConfiguration ZIKViewRouteConfig;
 typedef ZIKViewRemoveConfiguration ZIKViewRemoveConfig;
 typedef ZIKViewRouteSegueConfiguration ZIKViewRouteSegueConfig;
@@ -24,10 +28,6 @@ typedef ZIKViewRoutePopoverConfiguration ZIKViewRoutePopoverConfig;
 typedef ZIKViewRouter<id, ZIKViewRouteConfig *> ZIKAnyViewRouter;
 #define ZIKDestinationViewRouter(Destination) ZIKViewRouter<Destination, ZIKViewRouteConfig *>
 #define ZIKModuleViewRouter(ModuleConfigProtocol) ZIKViewRouter<id, ZIKViewRouteConfig<ModuleConfigProtocol> *>
-
-typedef ZIKServiceRouter<id, ZIKPerformRouteConfig *> ZIKAnyServiceRouter;
-#define ZIKDestinationServiceRouter(Destination) ZIKServiceRouter<Destination, ZIKPerformRouteConfig *>
-#define ZIKModuleServiceRouter(ModuleConfigProtocol) ZIKServiceRouter<id, ZIKPerformRouteConfig<ModuleConfigProtocol> *>
 
 ///Check whether the protocol is routable at complie time when passing protocols to `+registerViewProtocol:`, `+registerServiceProtocol:`, `+registerModuleProtocol:`.
 #define ZIKRoutableProtocol(RoutableProtocol) (Protocol<RoutableProtocol>*)@protocol(RoutableProtocol)

@@ -6,15 +6,17 @@ framework module ZIKRouter {
   
   explicit module Internal {
       header "ZIKRoute.h"
-      header "ZIKViewRoute.h"
-      header "ZIKServiceRoute.h"
       header "ZIKRouterInternal.h"
-      header "ZIKViewRouterInternal.h"
-      header "ZIKServiceRouterInternal.h"
-      header "ZIKRouterRuntimeInternal.h"
       header "ZIKRouteRegistry.h"
-      header "ZIKViewRouteRegistry.h"
+      header "ZIKRouterRuntimeInternal.h"
+      
+      header "ZIKServiceRoute.h"
+      header "ZIKServiceRouterInternal.h"
       header "ZIKServiceRouteRegistry.h"
+      
+      header "ZIKViewRoute.h"
+      header "ZIKViewRouterInternal.h"
+      header "ZIKViewRouteRegistry.h"
   }
   explicit module Private {
       header "ZIKRouteRegistryInternal.h"

@@ -121,7 +121,6 @@
     XCTAssertTrue(canMakeDestination);
     id<AServiceInput> destination = [ZIKRouterToService(AServiceInput) makeDestinationWithConfiguring:^(ZIKPerformRouteConfiguration * _Nonnull config) {
         config.successHandler = ^(id  _Nonnull destination) {
-            
             XCTAssert(NO, @"successHandler should not be called");
         };
         config.performerSuccessHandler = ^(id  _Nonnull destination) {

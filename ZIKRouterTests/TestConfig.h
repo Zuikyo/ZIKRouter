@@ -10,7 +10,7 @@
 
 #define AUTO_REGISTER_ROUTERS 0
 
-#define TEST_BLOCK_ROUTE 0
+#define TEST_BLOCK_ROUTE 1
 
 @interface TestConfig: NSObject
 @property (nonatomic, class) BOOL routeShouldFail;
