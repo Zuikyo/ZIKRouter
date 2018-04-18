@@ -520,6 +520,27 @@
 
 @end
 
+@interface ZIKViewRouterPerformPresentAsPopoverWithoutAnimationTests : ZIKViewRouterPerformWithoutAnimationTests
+
+@end
+
+@implementation ZIKViewRouterPerformPresentAsPopoverWithoutAnimationTests
+
+- (void)setUp {
+    [super setUp];
+    self.routeType = ZIKViewRouteTypePresentModally;
+}
+
+- (void)configRouteConfiguration:(ZIKViewRouteConfiguration *)configuration source:(UIViewController *)source {
+    [super configRouteConfiguration:configuration source:source];
+    configuration.configurePopover(^(ZIKViewRoutePopoverConfiguration * _Nonnull popoverConfig) {
+        popoverConfig.sourceView = source.view;
+        popoverConfig.sourceRect = CGRectMake(0, 0, 50, 10);
+    });
+}
+
+@end
+
 @interface ZIKViewRouterPerformPushTests : ZIKViewRouterPerformTests
 
 @end

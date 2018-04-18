@@ -9,12 +9,14 @@
 #import "ZIKRoute.h"
 #import "ZIKServiceRouter.h"
 
+NS_ASSUME_NONNULL_BEGIN
+
 ///Use ZIKServiceRoute to add service route with blocks, rather than creating subclass of ZIKServiceRouter.
 @interface ZIKServiceRoute<__covariant Destination, __covariant RouteConfig: ZIKPerformRouteConfiguration *> : ZIKRoute<Destination, RouteConfig, ZIKRemoveRouteConfiguration *>
 
 @property (nonatomic, readonly) ZIKServiceRoute<Destination, RouteConfig> *(^registerDestination)(Class destinationClass);
-@property (nonatomic, readonly) ZIKServiceRoute<Destination, RouteConfig> *(^registerDestinationProtocol)(Protocol *destinationProtocol);
-@property (nonatomic, readonly) ZIKServiceRoute<Destination, RouteConfig> *(^registerModuleProtocol)(Protocol *moduleConfigProtocol);
+@property (nonatomic, readonly) ZIKServiceRoute<Destination, RouteConfig> *(^registerDestinationProtocol)(Protocol<ZIKServiceRoutable> *destinationProtocol);
+@property (nonatomic, readonly) ZIKServiceRoute<Destination, RouteConfig> *(^registerModuleProtocol)(Protocol<ZIKServiceModuleRoutable> *moduleConfigProtocol);
 
 @property (nonatomic, readonly) ZIKServiceRoute<Destination, RouteConfig> *(^makeDefaultConfiguration)(RouteConfig(^)(void));
 @property (nonatomic, readonly) ZIKServiceRoute<Destination, RouteConfig> *(^makeDefaultRemoveConfiguration)(ZIKRemoveRouteConfiguration *(^)(void));
@@ -25,3 +27,7 @@
 @end
 
 typedef ZIKServiceRoute<id, ZIKPerformRouteConfiguration *> ZIKAnyServiceRoute;
+#define ZIKDestinationServiceRoute(Destination) ZIKServiceRoute<Destination, ZIKPerformRouteConfig *>
+#define ZIKModuleServiceRoute(ModuleConfigProtocol) ZIKServiceRoute<id, ZIKPerformRouteConfig<ModuleConfigProtocol> *>
+
+NS_ASSUME_NONNULL_END

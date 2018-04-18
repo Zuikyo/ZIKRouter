@@ -9,7 +9,6 @@
 #import "ZIKViewRouterTestCase.h"
 #import "AppRouteRegistry.h"
 #import "SourceViewRouter.h"
-#import "AViewRouter.h"
 @import ZIKRouter.Internal;
 
 @interface ZIKViewRouterTestCase()
@@ -20,15 +19,6 @@
 @end
 
 @implementation ZIKViewRouterTestCase
-
-#if !AUTO_REGISTER_ROUTERS
-
-+ (void)load {
-    [AViewRouter registerRoutableDestination];
-    [SourceViewRouter registerRoutableDestination];
-}
-
-#endif
 
 - (void)setUp {
     [super setUp];

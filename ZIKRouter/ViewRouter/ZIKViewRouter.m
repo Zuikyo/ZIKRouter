@@ -198,9 +198,9 @@ static NSMutableArray *g_preparingUIViewRouters;
 }
 
 - (void)attachDestination:(id)destination {
-    NSAssert2(self.original_configuration.routeType == ZIKViewRouteTypePerformSegue || [ZIKViewRouteRegistry isDestinationClass:[destination class] registeredWithRouter:[self class]], @"Destination (%@) attached to router (%@) doesn't conforms to protocol.", [destination class], [self class]);
+    NSAssert2([[self class] isAbstractRouter] || self.original_configuration.routeType == ZIKViewRouteTypePerformSegue || [ZIKViewRouteRegistry isDestinationClass:[destination class] registeredWithRouter:[self class]], @"Destination (%@) attached to router (%@) doesn't conforms to protocol.", [destination class], [self class]);
 #if ZIKROUTER_CHECK
-    if (self.original_configuration.routeType != ZIKViewRouteTypePerformSegue && destination) {
+    if ([[self class] isAbstractRouter] == NO && self.original_configuration.routeType != ZIKViewRouteTypePerformSegue && destination) {
         [self _validateDestinationConformance:destination];
     }
 #endif

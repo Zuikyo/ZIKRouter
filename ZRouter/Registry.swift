@@ -183,7 +183,7 @@ internal class Registry {
         }
         let destinationProtocol = Protocol.self
         assert(ZIKAnyViewRouter.isRegistrationFinished() == false, "Can't register after app did finish launch. Only register in registerRoutableDestination().")
-        if let destinationProtocol = ZIKRouter_objcProtocol(destinationProtocol) {
+        if let destinationProtocol = _routableViewProtocolFromObject(destinationProtocol) {
             _ = route.registerDestinationProtocol(destinationProtocol)
             return
         }
@@ -206,7 +206,7 @@ internal class Registry {
         }
         let configProtocol = Protocol.self
         assert(ZIKAnyViewRouter.isRegistrationFinished() == false, "Can't register after app did finish launch. Only register in registerRoutableDestination().")
-        if let configProtocol = ZIKRouter_objcProtocol(configProtocol) {
+        if let configProtocol = _routableViewModuleProtocolFromObject(configProtocol) {
             _ = route.registerModuleProtocol(configProtocol)
             return
         }
@@ -227,7 +227,7 @@ internal class Registry {
         }
         let destinationProtocol = Protocol.self
         assert(ZIKAnyServiceRouter.isRegistrationFinished() == false, "Can't register after app did finish launch. Only register in registerRoutableDestination().")
-        if let destinationProtocol = ZIKRouter_objcProtocol(destinationProtocol) {
+        if let destinationProtocol = _routableServiceProtocolFromObject(destinationProtocol) {
             _ = route.registerDestinationProtocol(destinationProtocol)
             return
         }
@@ -250,7 +250,7 @@ internal class Registry {
         }
         let configProtocol = Protocol.self
         assert(ZIKAnyServiceRouter.isRegistrationFinished() == false, "Can't register after app did finish launch. Only register in registerRoutableDestination().")
-        if let configProtocol = ZIKRouter_objcProtocol(configProtocol) {
+        if let configProtocol = _routableServiceModuleProtocolFromObject(configProtocol) {
             _ = route.registerModuleProtocol(configProtocol)
             return
         }

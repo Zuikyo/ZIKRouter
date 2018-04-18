@@ -51,7 +51,9 @@ static dispatch_semaphore_t g_globalErrorSema;
 
 - (void)performRouteOnDestination:(id)destination configuration:(__kindof ZIKPerformRouteConfiguration *)configuration {
 #if ZIKROUTER_CHECK
-    [self _validateDestinationConformance:destination];
+    if ([[self class] isAbstractRouter] == NO) {
+        [self _validateDestinationConformance:destination];
+    }
 #endif
     [self prepareDestinationForPerforming];
     [self endPerformRouteWithSuccess];
@@ -59,7 +61,7 @@ static dispatch_semaphore_t g_globalErrorSema;
 
 - (void)attachDestination:(id)destination {
 #if ZIKROUTER_CHECK
-    if (destination) {
+    if ([[self class] isAbstractRouter] == NO && destination) {
         [self _validateDestinationConformance:destination];
     }
 #endif

@@ -292,20 +292,3 @@
 }
 
 @end
-
-@interface ZIKViewRouterRemoveShowWithoutAnimationTests : ZIKViewRouterRemoveWithoutAnimationTests
-
-@end
-
-@implementation ZIKViewRouterRemoveShowWithoutAnimationTests
-
-- (void)setUp {
-    [super setUp];
-    self.routeType = ZIKViewRouteTypeShow;
-}
-
-- (void)tearDown {
-    [super tearDown];
-}
-
-@end
