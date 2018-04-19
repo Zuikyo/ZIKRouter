@@ -108,9 +108,6 @@ static NSMutableArray *g_preparingUIViewRouters;
 - (nullable instancetype)initWithConfiguration:(__kindof ZIKViewRouteConfiguration *)configuration removeConfiguration:(nullable __kindof ZIKViewRemoveConfiguration *)removeConfiguration {
     NSParameterAssert([configuration isKindOfClass:[ZIKViewRouteConfiguration class]]);
     
-    if (!removeConfiguration) {
-        removeConfiguration = self.original_removeConfiguration;
-    }
     if (self = [super initWithConfiguration:configuration removeConfiguration:removeConfiguration]) {
         if (![[self class] _validateRouteTypeInConfiguration:configuration]) {
             [self notifyError_unsupportTypeWithAction:ZIKRouteActionInit
@@ -136,7 +133,7 @@ static NSMutableArray *g_preparingUIViewRouters;
                     return nil;
                 }
             } else if (type == ZIKViewRouteTypeCustom) {
-                if (![[self class] validateCustomRouteConfiguration:configuration removeConfiguration:removeConfiguration]) {
+                if (![[self class] validateCustomRouteConfiguration:configuration removeConfiguration:self.original_removeConfiguration]) {
                     [self notifyError_invalidConfigurationWithAction:ZIKRouteActionInit
                                                     errorDescription:@"Configuration : (%@) was invalid for ZIKViewRouteTypeCustom",configuration];
                     return nil;
@@ -266,6 +263,10 @@ static NSMutableArray *g_preparingUIViewRouters;
         if (configBuilder) {
             configBuilder(config);
         }
+        if (configuration.injected) {
+            configuration = (ZIKViewRouteConfiguration *)configuration.injected;
+        }
+        configuration.routeType = ZIKViewRouteTypeGetDestination;
     }];
 }
 
@@ -280,6 +281,10 @@ static NSMutableArray *g_preparingUIViewRouters;
         if (configBuilder) {
             configBuilder(config, prepareDest, prepareModule);
         }
+        if (configuration.injected) {
+            configuration = (ZIKViewRouteConfiguration *)configuration.injected;
+        }
+        configuration.routeType = ZIKViewRouteTypeGetDestination;
     }];
 }
 
@@ -3021,6 +3026,10 @@ static  ZIKViewRouterType *_Nullable _routerTypeToRegisteredView(Class viewClass
         if (configBuilder) {
             configBuilder(configuration);
         }
+        if (configuration.injected) {
+            configuration = (ZIKViewRouteConfiguration *)configuration.injected;
+        }
+        configuration.routeType = ZIKViewRouteTypeGetDestination;
         if (configuration.errorHandler) {
             configuration.errorHandler(ZIKRouteActionPrepareOnDestination, error);
         }
@@ -3129,6 +3138,10 @@ static  ZIKViewRouterType *_Nullable _routerTypeToRegisteredView(Class viewClass
         if (configBuilder) {
             configBuilder(configuration);
         }
+        if (configuration.injected) {
+            configuration = (ZIKViewRouteConfiguration *)configuration.injected;
+        }
+        configuration.routeType = ZIKViewRouteTypeGetDestination;
         if (configuration.errorHandler) {
             configuration.errorHandler(ZIKRouteActionPrepareOnDestination, error);
         }
@@ -3158,6 +3171,9 @@ static  ZIKViewRouterType *_Nullable _routerTypeToRegisteredView(Class viewClass
         configuration.routeType = ZIKViewRouteTypeGetDestination;
         if (configBuilder) {
             configBuilder(configuration);
+        }
+        if (configuration.injected) {
+            configuration = (ZIKViewRouteConfiguration *)configuration.injected;
         }
         configuration.routeType = ZIKViewRouteTypeGetDestination;
     } removing:(void(^)(ZIKRemoveRouteConfiguration *))removeConfigBuilder];

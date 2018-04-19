@@ -64,7 +64,7 @@ ZIKAnyViewRouterType *_Nullable _ZIKViewRouterToModule(Protocol *configProtocol)
     };
 }
 
-+ (ZIKModuleViewRouterType<id<ZIKRoutableView>, id<ZIKViewModuleRoutable>, ZIKViewRouteConfiguration *> *(^)(Protocol *))toModule {
++ (ZIKModuleViewRouterType<id, id<ZIKViewModuleRoutable>, ZIKViewRouteConfiguration *> *(^)(Protocol *))toModule {
     return ^(Protocol *configProtocol) {
         return (ZIKModuleViewRouterType *)_ZIKViewRouterToModule(configProtocol);
     };

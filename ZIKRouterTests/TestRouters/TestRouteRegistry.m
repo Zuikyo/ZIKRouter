@@ -17,9 +17,14 @@
 #import "AViewRouter.h"
 #import "AViewInput.h"
 #import "AViewController.h"
+#import "AViewModuleInput.h"
+#import "AViewModuleRouter.h"
+
 #import "BSubviewRouter.h"
 #import "BSubviewInput.h"
 #import "BSubview.h"
+#import "BSubviewModuleInput.h"
+#import "BSubviewModuleRouter.h"
 @import ZIKRouter.Internal;
 
 @implementation TestRouteRegistry
@@ -28,8 +33,9 @@
 
 + (void)load {
     ZIKRouteRegistry.autoRegister = NO;
-    [AServiceRouter registerRoutableDestination];
     
+    //Service router
+    [AServiceRouter registerRoutableDestination];
     {
         ZIKDestinationServiceRoute(id<AServiceInput>) *route;
         route = [ZIKDestinationServiceRoute(id<AServiceInput>)
@@ -53,6 +59,7 @@
         });
     }
     
+    //Service module router
     [AServiceModuleRouter registerRoutableDestination];
     {
         ZIKModuleServiceRoute(AServiceModuleInput) *route;
@@ -82,6 +89,7 @@
         });
     }
     
+    //View router
     [AViewRouter registerRoutableDestination];
     {
         ZIKDestinationViewRoute(id<AViewInput>) *route;
@@ -106,6 +114,37 @@
         });
     }
     
+    //View module router
+    [AViewModuleRouter registerRoutableDestination];
+    {
+        ZIKModuleViewRoute(AViewModuleInput) *route;
+        route = [ZIKModuleViewRoute(AViewModuleInput)
+                 makeRouteWithDestination:[AViewController class]
+                 makeDestination:^id _Nullable(ZIKViewRouteConfig<AViewModuleInput> * _Nonnull config, ZIKRouter * _Nonnull router) {
+                     if (TestConfig.routeShouldFail) {
+                         return nil;
+                     }
+                     AViewController *destination = [[AViewController alloc] init];
+                     destination.title = config.title;
+                     return destination;
+                 }];
+        route.name = @"Route for AViewModuleInput module (AViewController)";
+        route
+#if TEST_BLOCK_ROUTE
+        .registerModuleProtocol(ZIKRoutableProtocol(AViewModuleInput))
+#endif
+        .makeDefaultConfiguration(^ZIKViewRouteConfig<AViewModuleInput> * _Nonnull{
+            return [[AViewModuleConfiguration alloc] init];
+        })
+        .prepareDestination(^(id destination, ZIKViewRouteConfig *config, ZIKViewRouter *router) {
+            
+        })
+        .didFinishPrepareDestination(^(id destination, ZIKViewRouteConfig *config, ZIKViewRouter *router) {
+            
+        });
+    }
+    
+    //Subview router
     [BSubviewRouter registerRoutableDestination];
     {
         ZIKDestinationViewRoute(id<BSubviewInput>) *route;
@@ -117,7 +156,7 @@
                      }
                      return [[BSubview alloc] init];
                  }];
-        route.name = @"Route for AViewController<AViewInput>";
+        route.name = @"Route for BSubview<BSubviewInput>";
         route
 #if TEST_BLOCK_ROUTE
         .registerDestinationProtocol(ZIKRoutableProtocol(BSubviewInput))
@@ -126,6 +165,36 @@
             
         })
         .didFinishPrepareDestination(^(id<BSubviewInput> destination, ZIKViewRouteConfig *config, ZIKViewRouter *router) {
+            
+        });
+    }
+    
+    //Subview module router
+    [BSubviewModuleRouter registerRoutableDestination];
+    {
+        ZIKModuleViewRoute(BSubviewModuleInput) *route;
+        route = [ZIKModuleViewRoute(BSubviewModuleInput)
+                 makeRouteWithDestination:[BSubview class]
+                 makeDestination:^id _Nullable(ZIKViewRouteConfig<BSubviewModuleInput> * _Nonnull config, ZIKRouter * _Nonnull router) {
+                     if (TestConfig.routeShouldFail) {
+                         return nil;
+                     }
+                     BSubview *destination = [[BSubview alloc] init];
+                     destination.title = config.title;
+                     return destination;
+                 }];
+        route.name = @"Route for BSubviewModuleInput module (BSubview)";
+        route
+#if TEST_BLOCK_ROUTE
+        .registerModuleProtocol(ZIKRoutableProtocol(BSubviewModuleInput))
+#endif
+        .makeDefaultConfiguration(^ZIKViewRouteConfig<BSubviewModuleInput> * _Nonnull{
+            return [[BSubviewModuleConfiguration alloc] init];
+        })
+        .prepareDestination(^(id destination, ZIKViewRouteConfig *config, ZIKViewRouter *router) {
+            
+        })
+        .didFinishPrepareDestination(^(id destination, ZIKViewRouteConfig *config, ZIKViewRouter *router) {
             
         });
     }

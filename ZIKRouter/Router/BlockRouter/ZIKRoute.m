@@ -142,10 +142,9 @@
     return ^(ZIKPerformRouteConfiguration *configuration) {
         configuration.route = self;
         ZIKPerformRouteConfiguration *injected = [self defaultRouteConfigurationFromBlock];
-        ZIKRouteConfiguration *__strong*_injectable = configuration->_injectable;
-        if (injected && _injectable != NULL) {
+        if (injected) {
+            configuration.injected = injected;
             configuration = injected;
-            *_injectable = injected;
         }
         if (builder) {
             builder(configuration);
@@ -156,10 +155,9 @@
 - (void(^)(ZIKRemoveRouteConfiguration *config))_injectedRemoveConfigBuilder:(void(^)(ZIKRemoveRouteConfiguration *config))builder {
     return ^(ZIKRemoveRouteConfiguration *configuration) {
         ZIKRemoveRouteConfiguration *injected = [self defaultRemoveRouteConfigurationFromBlock];
-        ZIKRouteConfiguration *__strong*_injectable = configuration->_injectable;
-        if (injected && _injectable != NULL) {
+        if (injected) {
+            configuration.injected = injected;
             configuration = injected;
-            *_injectable = injected;
         }
         if (builder) {
             builder(configuration);
@@ -179,10 +177,9 @@ _injectedStrictConfigBuilder:
              void (^ _Nonnull prepareModule)(void (^ _Nonnull)(ZIKPerformRouteConfiguration * _Nonnull))) {
         configuration.route = self;
         ZIKPerformRouteConfiguration *injected = [self defaultRouteConfigurationFromBlock];
-        ZIKRouteConfiguration *__strong*_injectable = configuration->_injectable;
-        if (injected && _injectable != NULL) {
+        if (injected) {
+            configuration.injected = injected;
             configuration = injected;
-            *_injectable = injected;
         }
         if (builder) {
             builder(configuration, prepareDestination, prepareModule);
@@ -198,10 +195,9 @@ _injectedStrictRemoveConfigBuilder:
  )builder {
     return ^(ZIKRemoveRouteConfiguration * _Nonnull configuration, void (^ _Nonnull prepareDestination)(void (^ _Nonnull)(id _Nonnull))) {
         ZIKRemoveRouteConfiguration *injected = [self defaultRemoveRouteConfigurationFromBlock];
-        ZIKRouteConfiguration *__strong*_injectable = configuration->_injectable;
-        if (injected && _injectable != NULL) {
+        if (injected) {
+            configuration.injected = injected;
             configuration = injected;
-            *_injectable = injected;
         }
         if (builder) {
             builder(configuration, prepareDestination);

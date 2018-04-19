@@ -51,31 +51,19 @@ NSErrorDomain const ZIKRouteErrorDomain = @"ZIKRouteErrorDomain";
     NSParameterAssert(configBuilder);
     ZIKPerformRouteConfiguration *configuration = [[self class] defaultRouteConfiguration];
     if (configBuilder) {
-        ZIKPerformRouteConfiguration *injected;
-        configuration->_injectable = &injected;
         configBuilder(configuration);
-        configuration->_injectable = NULL;
-        if (injected) {
-            if ([injected isKindOfClass:[ZIKPerformRouteConfiguration class]]) {
-                configuration = injected;
-            } else {
-                NSAssert(NO, @"Inject invalid perform route configuration (%@)",injected);
-            }
+        if (configuration.injected) {
+            configuration = configuration.injected;
         }
     }
+    _configuration = configuration;
+    
     ZIKRemoveRouteConfiguration *removeConfiguration;
     if (removeConfigBuilder) {
         removeConfiguration = self.original_removeConfiguration;
-        ZIKRemoveRouteConfiguration *injected;
-        removeConfiguration->_injectable = &injected;
         removeConfigBuilder(removeConfiguration);
-        removeConfiguration->_injectable = NULL;
-        if (injected) {
-            if ([injected isKindOfClass:[ZIKRemoveRouteConfiguration class]]) {
-                removeConfiguration = injected;
-            } else {
-                NSAssert(NO, @"Inject invalid remove route configuration (%@)",injected);
-            }
+        if (removeConfiguration.injected) {
+            removeConfiguration = removeConfiguration.injected;
         }
     }
     return [self initWithConfiguration:configuration removeConfiguration:removeConfiguration];
@@ -90,44 +78,47 @@ NSErrorDomain const ZIKRouteErrorDomain = @"ZIKRouteErrorDomain";
                                                               ))removeConfigBuilder {
     NSParameterAssert(configBuilder);
     ZIKPerformRouteConfiguration *configuration = [[self class] defaultRouteConfiguration];
-    self->_configuration = configuration;
     if (configBuilder) {
-        configuration->_injectable = &self->_configuration;
-        __weak typeof(self) weakSelf = self;
         void(^prepareDest)(void(^)(id)) = ^(void(^prepare)(id dest)) {
-            __strong typeof(weakSelf) strongSelf = weakSelf;
             if (prepare) {
-                strongSelf->_configuration.prepareDestination = prepare;
+                ZIKPerformRouteConfiguration *config = configuration;
+                if (configuration.injected) {
+                    config = configuration.injected;
+                }
+                config.prepareDestination = prepare;
             }
         };
         void(^prepareModule)(void(^)(id)) = ^(void(^prepare)(ZIKPerformRouteConfiguration *module)) {
-            __strong typeof(weakSelf) strongSelf = weakSelf;
             if (prepare) {
-                prepare(strongSelf->_configuration);
+                ZIKPerformRouteConfiguration *config = configuration;
+                if (configuration.injected) {
+                    config = configuration.injected;
+                }
+                prepare(config);
             }
         };
         configBuilder(configuration,prepareDest,prepareModule);
-        configuration->_injectable = NULL;
-        if (self->_configuration) {
-            configuration = self->_configuration;
+        if (configuration.injected) {
+            configuration = configuration.injected;
         }
     }
+    _configuration = configuration;
+    
     ZIKRemoveRouteConfiguration *removeConfiguration;
     if (removeConfigBuilder) {
         removeConfiguration = self.original_removeConfiguration;
-        self->_removeConfiguration = removeConfiguration;
-        removeConfiguration->_injectable = &self->_removeConfiguration;
-        __weak typeof(self) weakSelf = self;
         void(^prepareDest)(void(^)(id)) = ^(void(^prepare)(id dest)) {
-            __strong typeof(weakSelf) strongSelf = weakSelf;
             if (prepare) {
-                strongSelf->_removeConfiguration.prepareDestination = prepare;
+                ZIKRemoveRouteConfiguration *config = removeConfiguration;
+                if (removeConfiguration.injected) {
+                    config = removeConfiguration.injected;
+                }
+                config.prepareDestination = prepare;
             }
         };
         removeConfigBuilder(removeConfiguration,prepareDest);
-        removeConfiguration->_injectable = NULL;
-        if (self->_removeConfiguration) {
-            removeConfiguration = self->_removeConfiguration;
+        if (removeConfiguration.injected) {
+            removeConfiguration = removeConfiguration.injected;
         }
     }
     return [self initWithConfiguration:configuration removeConfiguration:removeConfiguration];
@@ -571,16 +562,8 @@ NSErrorDomain const ZIKRouteErrorDomain = @"ZIKRouteErrorDomain";
         if (configBuilder) {
             configBuilder(config);
         }
-        ZIKRouteConfiguration *__strong*_injectable = config->_injectable;
-        if (_injectable != NULL) {
-            ZIKRouteConfiguration *injected = *_injectable;
-            if (injected) {
-                if ([injected isKindOfClass:[ZIKPerformRouteConfiguration class]]) {
-                    config = (ZIKPerformRouteConfiguration *)injected;
-                } else {
-                    NSAssert(NO, @"Inject invalid perform route configuration (%@)",injected);
-                }
-            }
+        if (config.injected) {
+            config = config.injected;
         }
         void(^successHandler)(id destination) = config.successHandler;
         config.successHandler = ^(id  _Nonnull destination) {
@@ -610,16 +593,8 @@ NSErrorDomain const ZIKRouteErrorDomain = @"ZIKRouteErrorDomain";
         if (configBuilder) {
             configBuilder(config,prepareDest,prepareModule);
         }
-        ZIKRouteConfiguration *__strong*_injectable = config->_injectable;
-        if (_injectable != NULL) {
-            ZIKRouteConfiguration *injected = *_injectable;
-            if (injected) {
-                if ([injected isKindOfClass:[ZIKPerformRouteConfiguration class]]) {
-                    config = (ZIKPerformRouteConfiguration *)injected;
-                } else {
-                    NSAssert(NO, @"Inject invalid perform route configuration (%@)",injected);
-                }
-            }
+        if (config.injected) {
+            config = config.injected;
         }
         void(^successHandler)(id destination) = config.successHandler;
         config.successHandler = ^(id  _Nonnull destination) {

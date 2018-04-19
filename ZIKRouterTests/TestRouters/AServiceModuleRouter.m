@@ -30,6 +30,7 @@
 
 @end
 
+DeclareRoutableService(AService, AServiceModuleRouter)
 @implementation AServiceModuleRouter
 
 + (void)registerRoutableDestination {

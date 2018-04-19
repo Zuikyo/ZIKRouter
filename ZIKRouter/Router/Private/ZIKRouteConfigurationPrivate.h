@@ -13,14 +13,14 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-@interface ZIKRouteConfiguration () {
-    @public ZIKRouteConfiguration *__strong*_injectable;
-}
-@end
-
 @class ZIKRoute;
 @interface ZIKPerformRouteConfiguration()
 @property (nonatomic, strong, nullable) ZIKRoute *route;
+@property (nonatomic, strong, nullable) ZIKPerformRouteConfiguration *injected;
+@end
+
+@interface ZIKRemoveRouteConfiguration()
+@property (nonatomic, strong, nullable) ZIKRemoveRouteConfiguration *injected;
 @end
 
 NS_ASSUME_NONNULL_END

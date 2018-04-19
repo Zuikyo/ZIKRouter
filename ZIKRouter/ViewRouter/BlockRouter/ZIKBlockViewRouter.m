@@ -98,6 +98,7 @@
 
 - (ZIKRemoveRouteConfiguration *)original_removeConfiguration {
     if (_removeConfiguration == nil) {
+        NSAssert(self.original_configuration, @"Configuration shouldn't be nil when lazy get removeConfiguration");
         ZIKRoute *route = self.original_configuration.route;
         if (route && route.makeDefaultRemoveConfigurationBlock) {
             _removeConfiguration = route.makeDefaultRemoveConfigurationBlock();

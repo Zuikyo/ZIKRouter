@@ -79,10 +79,9 @@
     return ^(ZIKViewRouteConfiguration *configuration) {
         configuration.route = self;
         ZIKViewRouteConfiguration *injected = [self defaultRouteConfigurationFromBlock];
-        ZIKRouteConfiguration *__strong*_injectable = configuration->_injectable;
-        if (injected && _injectable != NULL) {
+        if (injected) {
+            configuration.injected = injected;
             configuration = injected;
-            *_injectable = injected;
         }
         if (builder) {
             builder(configuration);
@@ -93,10 +92,9 @@
 - (void(^)(ZIKViewRemoveConfiguration *config))_injectedRemoveConfigBuilder:(void(^)(ZIKViewRemoveConfiguration *config))builder {
     return ^(ZIKViewRemoveConfiguration *configuration) {
         ZIKViewRemoveConfiguration *injected = [self defaultRemoveRouteConfigurationFromBlock];
-        ZIKRouteConfiguration *__strong*_injectable = configuration->_injectable;
-        if (injected && _injectable != NULL) {
+        if (injected) {
+            configuration.injected = injected;
             configuration = injected;
-            *_injectable = injected;
         }
         if (builder) {
             builder(configuration);
@@ -116,10 +114,9 @@ _injectedStrictConfigBuilder:
              void (^ _Nonnull prepareModule)(void (^ _Nonnull)(ZIKViewRouteConfiguration * _Nonnull))) {
         configuration.route = self;
         ZIKViewRouteConfiguration *injected = [self defaultRouteConfigurationFromBlock];
-        ZIKRouteConfiguration *__strong*_injectable = configuration->_injectable;
-        if (injected && _injectable != NULL) {
+        if (injected) {
+            configuration.injected = injected;
             configuration = injected;
-            *_injectable = injected;
         }
         if (builder) {
             builder(configuration, prepareDestination, prepareModule);
@@ -135,10 +132,9 @@ _injectedStrictRemoveConfigBuilder:
  )builder {
     return ^(ZIKViewRemoveConfiguration * _Nonnull configuration, void (^ _Nonnull prepareDestination)(void (^ _Nonnull)(id _Nonnull))) {
         ZIKViewRemoveConfiguration *injected = [self defaultRemoveRouteConfigurationFromBlock];
-        ZIKRouteConfiguration *__strong*_injectable = configuration->_injectable;
-        if (injected && _injectable != NULL) {
+        if (injected) {
+            configuration.injected = injected;
             configuration = injected;
-            *_injectable = injected;
         }
         if (builder) {
             builder(configuration, prepareDestination);
