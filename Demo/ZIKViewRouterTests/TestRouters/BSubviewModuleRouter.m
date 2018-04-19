@@ -42,9 +42,6 @@ DeclareRoutableView(BSubview, BSubviewModuleRouter)
 }
 
 - (BSubview *)destinationWithConfiguration:(BSubviewModuleConfiguration *)configuration {
-    if (TestConfig.routeShouldFail) {
-        return nil;
-    }
     BSubview *destination = [[BSubview alloc] init];
     destination.title = configuration.title;
     return destination;

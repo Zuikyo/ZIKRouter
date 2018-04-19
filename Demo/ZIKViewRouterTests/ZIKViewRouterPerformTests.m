@@ -210,6 +210,7 @@
     {
         [self enterTest:^(UIViewController *source) {
             self.router = [ZIKRouterToView(AViewInput) performFromSource:source configuring:^(ZIKViewRouteConfiguration * _Nonnull config) {
+                [self configRouteConfiguration:config source:source];
                 config.routeType = self.routeType;
                 config.successHandler = ^(id  _Nonnull destination) {
                     XCTAssertNotNil(destination);

@@ -2972,6 +2972,9 @@ static  ZIKViewRouterType *_Nullable _routerTypeToRegisteredView(Class viewClass
         if (configBuilder) {
             configBuilder(config);
         }
+        if (config.injected) {
+            config = (ZIKViewRouteConfiguration *)config.injected;
+        }
         if (source) {
             config.source = source;
         }
@@ -2999,6 +3002,9 @@ static  ZIKViewRouterType *_Nullable _routerTypeToRegisteredView(Class viewClass
                                                  void (^ _Nonnull prepareModule)(void (^ _Nonnull)(ZIKViewRouteConfiguration * _Nonnull))) {
         if (configBuilder) {
             configBuilder(config,prepareDest,prepareModule);
+        }
+        if (config.injected) {
+            config = (ZIKViewRouteConfiguration *)config.injected;
         }
         if (source) {
             config.source = source;
@@ -3057,6 +3063,9 @@ static  ZIKViewRouterType *_Nullable _routerTypeToRegisteredView(Class viewClass
         if (configBuilder) {
             configBuilder(configuration);
         }
+        if (configuration.injected) {
+            configuration = (ZIKViewRouteConfiguration *)configuration.injected;
+        }
         if (source) {
             configuration.source = source;
         }
@@ -3098,12 +3107,20 @@ static  ZIKViewRouterType *_Nullable _routerTypeToRegisteredView(Class viewClass
         if (configBuilder) {
             void(^prepareDest)(void(^)(id)) = ^(void(^prepare)(id dest)) {
                 if (prepare) {
-                    config.prepareDestination = prepare;
+                    ZIKViewRouteConfiguration *configuration = config;
+                    if (config.injected) {
+                        configuration = (ZIKViewRouteConfiguration *)config.injected;
+                    }
+                    configuration.prepareDestination = prepare;
                 }
             };
             void(^prepareModule)(void(^)(id)) = ^(void(^prepare)(ZIKViewRouteConfiguration *module)) {
                 if (prepare) {
-                    prepare(config);
+                    ZIKViewRouteConfiguration *configuration = config;
+                    if (config.injected) {
+                        configuration = (ZIKViewRouteConfiguration *)config.injected;
+                    }
+                    prepare(configuration);
                 }
             };
             configBuilder(config,prepareDest,prepareModule);
@@ -3112,7 +3129,11 @@ static  ZIKViewRouterType *_Nullable _routerTypeToRegisteredView(Class viewClass
         if (removeConfigBuilder) {
             void(^prepareDest)(void(^)(id)) = ^(void(^prepare)(id dest)) {
                 if (prepare) {
-                    config.prepareDestination = prepare;
+                    ZIKViewRemoveConfiguration *configuration = config;
+                    if (config.injected) {
+                        configuration = (ZIKViewRemoveConfiguration *)config.injected;
+                    }
+                    configuration.prepareDestination = prepare;
                 }
             };
             removeConfigBuilder(config,prepareDest);
@@ -3204,12 +3225,20 @@ static  ZIKViewRouterType *_Nullable _routerTypeToRegisteredView(Class viewClass
         if (configBuilder) {
             void(^prepareDest)(void(^)(id)) = ^(void(^prepare)(id dest)) {
                 if (prepare) {
-                    config.prepareDestination = prepare;
+                    ZIKViewRouteConfiguration *configuration = config;
+                    if (config.injected) {
+                        configuration = (ZIKViewRouteConfiguration *)config.injected;
+                    }
+                    configuration.prepareDestination = prepare;
                 }
             };
             void(^prepareModule)(void(^)(id)) = ^(void(^prepare)(ZIKViewRouteConfiguration *module)) {
                 if (prepare) {
-                    prepare(config);
+                    ZIKViewRouteConfiguration *configuration = config;
+                    if (config.injected) {
+                        configuration = (ZIKViewRouteConfiguration *)config.injected;
+                    }
+                    prepare(configuration);
                 }
             };
             configBuilder(config,prepareDest,prepareModule);
@@ -3218,7 +3247,11 @@ static  ZIKViewRouterType *_Nullable _routerTypeToRegisteredView(Class viewClass
         if (removeConfigBuilder) {
             void(^prepareDest)(void(^)(id)) = ^(void(^prepare)(id dest)) {
                 if (prepare) {
-                    config.prepareDestination = prepare;
+                    ZIKViewRemoveConfiguration *configuration = config;
+                    if (config.injected) {
+                        configuration = (ZIKViewRemoveConfiguration *)config.injected;
+                    }
+                    configuration.prepareDestination = prepare;
                 }
             };
             removeConfigBuilder(config,prepareDest);

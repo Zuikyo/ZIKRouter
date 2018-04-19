@@ -10,13 +10,16 @@
 #import "BSubviewInput.h"
 #import "BSubview.h"
 @import ZIKRouter.Internal;
+#import "TestConfig.h"
 
 DeclareRoutableView(BSubview, BSubviewRouter)
 @implementation BSubviewRouter
 
 + (void)registerRoutableDestination {
     [self registerView:[BSubview class]];
+#if !TEST_BLOCK_ROUTE
     [self registerViewProtocol:ZIKRoutableProtocol(BSubviewInput)];
+#endif
 }
 
 - (id)destinationWithConfiguration:(ZIKViewRouteConfiguration *)configuration {
