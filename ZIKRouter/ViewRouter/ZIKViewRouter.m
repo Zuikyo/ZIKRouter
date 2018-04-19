@@ -109,7 +109,7 @@ static NSMutableArray *g_preparingUIViewRouters;
     NSParameterAssert([configuration isKindOfClass:[ZIKViewRouteConfiguration class]]);
     
     if (!removeConfiguration) {
-        removeConfiguration = [[self class] defaultRemoveConfiguration];
+        removeConfiguration = self.original_removeConfiguration;
     }
     if (self = [super initWithConfiguration:configuration removeConfiguration:removeConfiguration]) {
         if (![[self class] _validateRouteTypeInConfiguration:configuration]) {

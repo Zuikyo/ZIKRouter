@@ -14,7 +14,7 @@
 NS_ASSUME_NONNULL_BEGIN
 
 @interface ZIKRouteConfiguration () {
-    @public __strong ZIKRouteConfiguration **_injectable;
+    @public ZIKRouteConfiguration *__strong*_injectable;
 }
 @end
 

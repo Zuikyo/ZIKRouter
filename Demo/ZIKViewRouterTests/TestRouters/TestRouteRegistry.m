@@ -48,8 +48,6 @@
     .didFinishPrepareDestination(^(id<AViewInput> destination, ZIKViewRouteConfig *config, ZIKViewRouter *router) {
         
     });
-    
-    [ZIKRouteRegistry registrationFinished];
 }
 
 @end

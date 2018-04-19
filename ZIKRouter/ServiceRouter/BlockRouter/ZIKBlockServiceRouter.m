@@ -7,6 +7,7 @@
 //
 
 #import "ZIKBlockServiceRouter.h"
+#import "ZIKRouterPrivate.h"
 #import "ZIKRoutePrivate.h"
 #import "ZIKServiceRoute.h"
 #import "ZIKRouterInternal.h"
@@ -40,6 +41,18 @@
     if (didFinishPrepareDestinationBlock) {
         didFinishPrepareDestinationBlock(destination, configuration, self);
     }
+}
+
+- (ZIKRemoveRouteConfiguration *)original_removeConfiguration {
+    if (_removeConfiguration == nil) {
+        ZIKRoute *route = self.original_configuration.route;
+        if (route && route.makeDefaultRemoveConfigurationBlock) {
+            _removeConfiguration = route.makeDefaultRemoveConfigurationBlock();
+        } else {
+            _removeConfiguration = [[self class] defaultRemoveConfiguration];
+        }
+    }
+    return _removeConfiguration;
 }
 
 - (NSString *)description {

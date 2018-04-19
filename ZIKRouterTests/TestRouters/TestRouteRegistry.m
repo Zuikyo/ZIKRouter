@@ -11,6 +11,8 @@
 #import "AServiceRouter.h"
 #import "AServiceInput.h"
 #import "AService.h"
+#import "AServiceModuleRouter.h"
+#import "AServiceModuleInput.h"
 
 #import "AViewRouter.h"
 #import "AViewInput.h"
@@ -43,6 +45,35 @@
 #if TEST_BLOCK_ROUTE
         .registerDestinationProtocol(ZIKRoutableProtocol(AServiceInput))
 #endif
+        .prepareDestination(^(id<AServiceInput> destination, ZIKPerformRouteConfig *config, ZIKServiceRouter *router) {
+            
+        })
+        .didFinishPrepareDestination(^(id<AServiceInput> destination, ZIKPerformRouteConfig *config, ZIKServiceRouter *router) {
+            
+        });
+    }
+    
+    [AServiceModuleRouter registerRoutableDestination];
+    {
+        ZIKModuleServiceRoute(AServiceModuleInput) *route;
+        route = [ZIKModuleServiceRoute(AServiceModuleInput)
+                 makeRouteWithDestination:[AService class]
+                 makeDestination:^id _Nullable(ZIKPerformRouteConfig<AServiceModuleInput> * _Nonnull config, ZIKRouter * _Nonnull router) {
+                     if (TestConfig.routeShouldFail) {
+                         return nil;
+                     }
+                     AService *destination = [[AService alloc] init];
+                     destination.title = config.title;
+                     return destination;
+                 }];
+        route.name = @"Route for AServiceModuleInput module (AService)";
+        route
+#if TEST_BLOCK_ROUTE
+        .registerModuleProtocol(ZIKRoutableProtocol(AServiceModuleInput))
+#endif
+        .makeDefaultConfiguration(^ZIKPerformRouteConfig<AServiceModuleInput> * _Nonnull{
+            return [[AServiceModuleConfiguration alloc] init];
+        })
         .prepareDestination(^(id<AServiceInput> destination, ZIKPerformRouteConfig *config, ZIKServiceRouter *router) {
             
         })
@@ -99,7 +130,7 @@
         });
     }
     
-    [ZIKRouteRegistry registrationFinished];
+    [ZIKRouteRegistry notifyRegistrationFinished];
 }
 
 #endif
