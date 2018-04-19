@@ -65,7 +65,7 @@ static dispatch_semaphore_t g_globalErrorSema;
 
 - (void)attachDestination:(id)destination {
 #if ZIKROUTER_CHECK
-    if ([[self class] isAbstractRouter] == NO && destination) {
+    if (destination && [[self class] isAbstractRouter] == NO) {
         [self _validateDestinationConformance:destination];
     }
 #endif

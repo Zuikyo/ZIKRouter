@@ -8,13 +8,13 @@
 #import "ZIKRouterTestCase.h"
 
 @interface ZIKRouterTestCase()
-@property (nonatomic, strong, nullable) ZIKAnyServiceRouter *strongRouter;
+@property (nonatomic, strong, nullable) ZIKRouter *strongRouter;
 @property (nonatomic, strong) XCTestExpectation *leaveTestExpectation;
 @end
 
 @implementation ZIKRouterTestCase
 
-- (void)setRouter:(ZIKAnyServiceRouter *)router {
+- (void)setRouter:(ZIKRouter *)router {
     _router = router;
     self.strongRouter = router;
 }

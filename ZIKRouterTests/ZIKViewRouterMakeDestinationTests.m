@@ -183,7 +183,7 @@
     XCTAssertTrue([(id)destination conformsToProtocol:@protocol(AViewInput)]);
     XCTAssert([destination.title isEqualToString:@"test title"]);
     
-    [self waitForExpectationsWithTimeout:500 handler:^(NSError * _Nullable error) {
+    [self waitForExpectationsWithTimeout:5 handler:^(NSError * _Nullable error) {
         !error? : NSLog(@"%@", error);
     }];
 }

@@ -10,7 +10,7 @@
 @import ZIKRouter;
 
 @interface ZIKRouterTestCase : XCTestCase
-@property (nonatomic, weak, nullable) ZIKAnyServiceRouter *router;
+@property (nonatomic, weak, nullable) ZIKRouter *router;
 
 - (void)enterTest;
 - (void)leaveTest;

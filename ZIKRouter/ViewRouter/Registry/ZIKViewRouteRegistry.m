@@ -239,7 +239,7 @@ static NSMutableArray<Class> *_routerClasses;
     CFDictionaryRef destinationToExclusiveRouterMap = ZIKViewRouteRegistry.destinationToExclusiveRouterMap;
     CFDictionaryRef destinationToRoutersMap = ZIKViewRouteRegistry.destinationToRoutersMap;
     Class UIResponderClass = [UIResponder class];
-    while (destinationClass != UIResponderClass) {
+    while (destinationClass && destinationClass != UIResponderClass) {
         Class exclusiveRouter = (Class)CFDictionaryGetValue(destinationToExclusiveRouterMap, (__bridge const void *)(destinationClass));
         if (exclusiveRouter == routerClass) {
             return YES;
