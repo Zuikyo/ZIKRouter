@@ -15,6 +15,9 @@
 #import "AViewRouter.h"
 #import "AViewInput.h"
 #import "AViewController.h"
+#import "BSubviewRouter.h"
+#import "BSubviewInput.h"
+#import "BSubview.h"
 @import ZIKRouter.Internal;
 
 @implementation TestRouteRegistry
@@ -68,6 +71,30 @@
             
         })
         .didFinishPrepareDestination(^(id<AViewInput> destination, ZIKViewRouteConfig *config, ZIKViewRouter *router) {
+            
+        });
+    }
+    
+    [BSubviewRouter registerRoutableDestination];
+    {
+        ZIKDestinationViewRoute(id<BSubviewInput>) *route;
+        route = [ZIKDestinationViewRoute(id<BSubviewInput>)
+                 makeRouteWithDestination:[BSubview class]
+                 makeDestination:^id<BSubviewInput> _Nullable(ZIKViewRouteConfig * _Nonnull config, ZIKRouter * _Nonnull router) {
+                     if (TestConfig.routeShouldFail) {
+                         return nil;
+                     }
+                     return [[BSubview alloc] init];
+                 }];
+        route.name = @"Route for AViewController<AViewInput>";
+        route
+#if TEST_BLOCK_ROUTE
+        .registerDestinationProtocol(ZIKRoutableProtocol(BSubviewInput))
+#endif
+        .prepareDestination(^(id<BSubviewInput> destination, ZIKViewRouteConfig *config, ZIKViewRouter *router) {
+            
+        })
+        .didFinishPrepareDestination(^(id<BSubviewInput> destination, ZIKViewRouteConfig *config, ZIKViewRouter *router) {
             
         });
     }
