@@ -58,10 +58,6 @@ NS_ASSUME_NONNULL_BEGIN
                                                                                            void(^prepareModule)(void(NS_NOESCAPE ^prepare)(RouteConfig module))
                                                                                            ))configBuilder API_DEPRECATED_WITH_REPLACEMENT("-makeDestinationWithStrictConfiguring:", ios(7.0, 7.0));
 
-#pragma mark 
-
-+ (RemoveConfig)defaultRemoveConfiguration;
-
 #pragma mark Unavailable
 
 - (instancetype)init NS_UNAVAILABLE;

@@ -30,7 +30,7 @@
 }
 
 + (ZIKViewRouteTypeMask)supportedRouteTypes {
-    return ZIKViewRouteTypeMaskUIViewControllerDefault | ZIKViewRouteTypeMaskUIViewDefault;
+    return ZIKViewRouteTypeMaskUIViewControllerDefault;
 }
 
 - (nullable id)destinationWithConfiguration:(ZIKViewRouteConfiguration *)configuration {
@@ -57,14 +57,18 @@
     void(^prepareDestinationBlock)(id destination, ZIKPerformRouteConfiguration *config, ZIKRouter *router) = self.route.prepareDestinationBlock;
     if (prepareDestinationBlock) {
         prepareDestinationBlock(destination, configuration, self);
+        return;
     }
+    [super prepareDestination:destination configuration:configuration];
 }
 
 - (void)didFinishPrepareDestination:(id)destination configuration:(ZIKViewRouteConfiguration *)configuration {
     void(^didFinishPrepareDestinationBlock)(id destination, ZIKPerformRouteConfiguration *config, ZIKRouter *router) = self.route.didFinishPrepareDestinationBlock;
     if (didFinishPrepareDestinationBlock) {
         didFinishPrepareDestinationBlock(destination, configuration, self);
+        return;
     }
+    [super didFinishPrepareDestination:destination configuration:configuration];
 }
 
 - (BOOL)canPerformCustomRoute {
@@ -87,13 +91,17 @@
     void(^performCustomRouteBlock)(id destination, _Nullable id source, ZIKViewRouteConfiguration *config, ZIKViewRouter *router) = self.route.performCustomRouteBlock;
     if (performCustomRouteBlock) {
         performCustomRouteBlock(destination, source, configuration, self);
+        return;
     }
+    [super performCustomRouteOnDestination:destination fromSource:source configuration:configuration];
 }
 - (void)removeCustomRouteOnDestination:(id)destination fromSource:(nullable id)source removeConfiguration:(ZIKViewRemoveConfiguration *)removeConfiguration configuration:(ZIKViewRouteConfiguration *)configuration {
     void(^removeCustomRouteBlock)(id destination, _Nullable id source, ZIKViewRemoveConfiguration *removeConfig, ZIKViewRouteConfiguration *config, ZIKViewRouter *router) = self.route.removeCustomRouteBlock;
     if (removeCustomRouteBlock) {
         removeCustomRouteBlock(destination, source, removeConfiguration, configuration,self);
+        return;
     }
+    [super removeCustomRouteOnDestination:destination fromSource:source removeConfiguration:removeConfiguration configuration:configuration];
 }
 
 - (ZIKRemoveRouteConfiguration *)original_removeConfiguration {

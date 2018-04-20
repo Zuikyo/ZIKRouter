@@ -328,10 +328,6 @@ static NSMutableArray *g_preparingUIViewRouters;
              @"Only ZIKViewRouteTypePerformSegue can use ZIKViewRouter class to perform route, otherwise, use a subclass of ZIKViewRouter for destination.");
 }
 
-+ (ZIKViewRouteTypeMask)supportedRouteTypes {
-    return ZIKViewRouteTypeMaskUIViewControllerDefault;
-}
-
 #pragma mark Perform Route
 
 - (BOOL)canPerformCustomRoute {
@@ -1088,6 +1084,8 @@ destinationStateBeforeRoute:(ZIKPresentationState *)destinationStateBeforeRoute
     if (routeType == ZIKViewRouteTypeCustom) {
         if (![self canRemoveCustomRoute]) {
             return @"canRemoveCustomRoute return NO";
+        } else {
+            return nil;
         }
     }
     
@@ -2899,6 +2897,10 @@ static  ZIKViewRouterType *_Nullable _routerTypeToRegisteredView(Class viewClass
 
 - (BOOL)canPerform {
     return [self _canPerformWithErrorMessage:NULL];
+}
+
++ (ZIKViewRouteTypeMask)supportedRouteTypes {
+    return ZIKViewRouteTypeMaskUIViewControllerDefault;
 }
 
 + (BOOL)supportRouteType:(ZIKViewRouteType)type {

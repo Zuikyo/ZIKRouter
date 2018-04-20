@@ -25,10 +25,6 @@
     [super tearDown];
 }
 
-+ (BOOL)completeSynchronously {
-    return YES;
-}
-
 - (void)configRouteConfiguration:(ZIKViewRouteConfiguration *)configuration source:(UIViewController *)source {
     configuration.animated = YES;
 }

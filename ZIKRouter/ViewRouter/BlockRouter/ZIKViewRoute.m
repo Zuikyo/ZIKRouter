@@ -11,11 +11,18 @@
 #import "ZIKViewRouteRegistry.h"
 #import "ZIKViewRouterInternal.h"
 #import "ZIKViewRouterPrivate.h"
-#import "ZIKBlockViewRouter.h"
 #import "ZIKRouteConfigurationPrivate.h"
+#import "ZIKBlockViewRouter.h"
+#import "ZIKBlockCustomViewRouter.h"
+#import "ZIKBlockSubviewRouter.h"
+#import "ZIKBlockCustomSubviewRouter.h"
+#import "ZIKBlockCustomOnlyViewRouter.h"
+#import "ZIKBlockAnyViewRouter.h"
+#import "ZIKBlockAllViewRouter.h"
 
 @interface ZIKViewRoute()
 @property (nonatomic, copy, nullable) BOOL(^destinationFromExternalPreparedBlock)(id destination, ZIKViewRouter *router);
+@property (nonatomic, copy, nullable) ZIKBlockViewRouteTypeMask(^makeSupportedRouteTypesBlock)(void);
 @property (nonatomic, copy, nullable) BOOL(^canPerformCustomRouteBlock)(ZIKViewRouter *router);
 @property (nonatomic, copy, nullable) BOOL(^canRemoveCustomRouteBlock)(ZIKViewRouter *router);
 @property (nonatomic, copy, nullable) void(^performCustomRouteBlock)(id destination, _Nullable id source, ZIKViewRouteConfiguration *config, ZIKViewRouter *router);
@@ -38,12 +45,20 @@
     };
 }
 
+- (ZIKViewRoute<id, ZIKViewRouteConfiguration *> *(^)(ZIKBlockViewRouteTypeMask(^)(void)))makeSupportedRouteTypes {
+    return ^(ZIKBlockViewRouteTypeMask(^block)(void)) {
+        self.makeSupportedRouteTypesBlock = block;
+        return self;
+    };
+}
+
 - (ZIKViewRoute<id, ZIKViewRouteConfiguration *> *(^)(BOOL(^)(ZIKViewRouter *router)))canPerformCustomRoute {
     return ^(BOOL(^block)(ZIKViewRouter *router)) {
         self.canPerformCustomRouteBlock = block;
         return self;
     };
 }
+
 - (ZIKViewRoute<id, ZIKViewRouteConfiguration *> *(^)(BOOL(^)(ZIKViewRouter *router)))canRemoveCustomRoute {
     return ^(BOOL(^block)(ZIKViewRouter *router)) {
         self.canRemoveCustomRouteBlock = block;
@@ -66,6 +81,9 @@
 }
 
 - (Class)routerClass {
+    if (self.makeSupportedRouteTypesBlock) {
+        return [self routerClassForSupportedRouteTypes:self.makeSupportedRouteTypesBlock()];
+    }
     return [ZIKBlockViewRouter class];
 }
 
@@ -202,7 +220,7 @@ _injectedStrictRemoveConfigBuilder:
                removing:(void(NS_NOESCAPE ^ _Nullable)(ZIKViewRemoveConfiguration *config))removeConfigBuilder {
     configBuilder = [self _injectedConfigBuilder:configBuilder];
     removeConfigBuilder = [self _injectedRemoveConfigBuilder:removeConfigBuilder];
-    return [ZIKBlockViewRouter performFromSource:source configuring:configBuilder removing:removeConfigBuilder];
+    return [[self routerClass] performFromSource:source configuring:configBuilder removing:removeConfigBuilder];
 }
 
 - (id)performFromSource:(id<ZIKViewRouteSource>)source
@@ -223,7 +241,7 @@ _injectedStrictRemoveConfigBuilder:
                                                      ))removeConfigBuilder {
     configBuilder = [self _injectedStrictConfigBuilder:configBuilder];
     removeConfigBuilder = [self _injectedStrictRemoveConfigBuilder:removeConfigBuilder];
-    return [ZIKBlockViewRouter performFromSource:source strictConfiguring:configBuilder strictRemoving:removeConfigBuilder];
+    return [[self routerClass] performFromSource:source strictConfiguring:configBuilder strictRemoving:removeConfigBuilder];
 }
 
 - (id)performOnDestination:(id)destination
@@ -238,7 +256,7 @@ _injectedStrictRemoveConfigBuilder:
                   removing:(void(NS_NOESCAPE ^ _Nullable)(ZIKViewRemoveConfiguration *config))removeConfigBuilder {
     configBuilder = [self _injectedConfigBuilder:configBuilder];
     removeConfigBuilder = [self _injectedRemoveConfigBuilder:removeConfigBuilder];
-    return [ZIKBlockViewRouter performOnDestination:destination fromSource:source configuring:configBuilder removing:removeConfigBuilder];
+    return [[self routerClass] performOnDestination:destination fromSource:source configuring:configBuilder removing:removeConfigBuilder];
 }
 
 - (id)performOnDestination:(id)destination
@@ -269,7 +287,7 @@ _injectedStrictRemoveConfigBuilder:
                                      ))removeConfigBuilder {
     configBuilder = [self _injectedStrictConfigBuilder:configBuilder];
     removeConfigBuilder = [self _injectedStrictRemoveConfigBuilder:removeConfigBuilder];
-    return [ZIKBlockViewRouter performOnDestination:destination fromSource:source strictConfiguring:configBuilder strictRemoving:removeConfigBuilder];
+    return [[self routerClass] performOnDestination:destination fromSource:source strictConfiguring:configBuilder strictRemoving:removeConfigBuilder];
 }
 
 - (id)prepareDestination:(id)destination
@@ -282,7 +300,7 @@ _injectedStrictRemoveConfigBuilder:
                 removing:(void(NS_NOESCAPE ^ _Nullable)(ZIKViewRemoveConfiguration *config))removeConfigBuilder {
     configBuilder = [self _injectedConfigBuilder:configBuilder];
     removeConfigBuilder = [self _injectedRemoveConfigBuilder:removeConfigBuilder];
-    return [ZIKBlockViewRouter prepareDestination:destination configuring:configBuilder removing:removeConfigBuilder];
+    return [[self routerClass] prepareDestination:destination configuring:configBuilder removing:removeConfigBuilder];
 }
 
 - (id)prepareDestination:(id)destination strictConfiguring:(void (^)(ZIKViewRouteConfiguration * _Nonnull, void (^ _Nonnull)(void (^ _Nonnull)(id _Nonnull)), void (^ _Nonnull)(void (^ _Nonnull)(ZIKViewRouteConfiguration * _Nonnull))))configBuilder {
@@ -299,16 +317,16 @@ _injectedStrictRemoveConfigBuilder:
                                                                 ))removeConfigBuilder {
     configBuilder = [self _injectedStrictConfigBuilder:configBuilder];
     removeConfigBuilder = [self _injectedStrictRemoveConfigBuilder:removeConfigBuilder];
-    return [ZIKBlockViewRouter prepareDestination:destination strictConfiguring:configBuilder strictRemoving:removeConfigBuilder];
+    return [[self routerClass] prepareDestination:destination strictConfiguring:configBuilder strictRemoving:removeConfigBuilder];
 }
 
 - (id)routerFromSegueIdentifier:(NSString *)identifier sender:(nullable id)sender destination:(UIViewController *)destination source:(UIViewController *)source {
-    ZIKBlockViewRouter *router = [ZIKBlockViewRouter routerFromSegueIdentifier:identifier sender:sender destination:destination source:source];
+    ZIKBlockViewRouter *router = [[self routerClass] routerFromSegueIdentifier:identifier sender:sender destination:destination source:source];
     router.original_configuration.route = self;
     return router;
 }
 - (id)routerFromView:(UIView *)destination source:(UIView *)source {
-    ZIKBlockViewRouter *router = [ZIKBlockViewRouter routerFromView:destination source:source];
+    ZIKBlockViewRouter *router = [[self routerClass] routerFromView:destination source:source];
     router.original_configuration.route = self;
     return router;
 }
@@ -327,6 +345,49 @@ _injectedStrictRemoveConfigBuilder:
         return self.makeDefaultRemoveConfigurationBlock();
     }
     return nil;
+}
+
+- (ZIKViewRouteTypeMask)supportedRouteTypes {
+    if (self.makeSupportedRouteTypesBlock) {
+        return (ZIKViewRouteTypeMask)self.makeSupportedRouteTypesBlock();
+    }
+    return [[self routerClass] supportedRouteTypes];
+}
+
+- (BOOL)supportRouteType:(ZIKViewRouteType)type {
+    ZIKViewRouteTypeMask supportedRouteTypes = [self supportedRouteTypes];
+    ZIKViewRouteTypeMask mask = 1 << type;
+    if ((supportedRouteTypes & mask) == mask) {
+        return YES;
+    }
+    return NO;
+}
+
+- (Class)routerClassForSupportedRouteTypes:(ZIKBlockViewRouteTypeMask)supportedTypes {
+    switch (supportedTypes) {
+        case ZIKBlockViewRouteTypeMaskUIViewControllerDefault:
+            return [ZIKBlockViewRouter class];
+            break;
+        case ZIKBlockViewRouteTypeMaskUIViewControllerDefault | ZIKBlockViewRouteTypeMaskCustom:
+            return [ZIKBlockCustomViewRouter class];
+            break;
+        case ZIKBlockViewRouteTypeMaskUIViewDefault:
+            return [ZIKBlockSubviewRouter class];
+            break;
+        case ZIKBlockViewRouteTypeMaskUIViewDefault | ZIKBlockViewRouteTypeMaskCustom:
+            return [ZIKBlockCustomSubviewRouter class];
+            break;
+        case ZIKBlockViewRouteTypeMaskCustom:
+            return [ZIKBlockCustomOnlyViewRouter class];
+            break;
+        case ZIKViewRouteTypeMaskUIViewControllerDefault | ZIKViewRouteTypeMaskUIViewDefault:
+            return [ZIKBlockAnyViewRouter class];
+            break;
+        case ZIKBlockViewRouteTypeMaskUIViewControllerDefault | ZIKBlockViewRouteTypeMaskUIViewDefault | ZIKBlockViewRouteTypeMaskCustom:
+            return [ZIKBlockAllViewRouter class];
+            break;
+    }
+    return [ZIKBlockViewRouter class];
 }
 
 @end

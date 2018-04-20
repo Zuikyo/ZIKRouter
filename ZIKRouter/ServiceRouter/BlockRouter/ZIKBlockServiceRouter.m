@@ -11,6 +11,7 @@
 #import "ZIKRoutePrivate.h"
 #import "ZIKServiceRoute.h"
 #import "ZIKRouterInternal.h"
+#import "ZIKServiceRouterInternal.h"
 #import "ZIKRouteConfigurationPrivate.h"
 
 @implementation ZIKBlockServiceRouter
@@ -33,14 +34,18 @@
     void(^prepareDestinationBlock)(id destination, ZIKPerformRouteConfiguration *config, ZIKRouter *router) = self.route.prepareDestinationBlock;
     if (prepareDestinationBlock) {
         prepareDestinationBlock(destination, configuration, self);
+        return;
     }
+    [super prepareDestination:destination configuration:configuration];
 }
 
 - (void)didFinishPrepareDestination:(id)destination configuration:(ZIKPerformRouteConfiguration *)configuration {
     void(^didFinishPrepareDestinationBlock)(id destination, ZIKPerformRouteConfiguration *config, ZIKRouter *router) = self.route.didFinishPrepareDestinationBlock;
     if (didFinishPrepareDestinationBlock) {
         didFinishPrepareDestinationBlock(destination, configuration, self);
+        return;
     }
+    [super didFinishPrepareDestination:destination configuration:configuration];
 }
 
 - (ZIKRemoveRouteConfiguration *)original_removeConfiguration {

@@ -107,7 +107,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 ///Whether the router can perform custom route now. Default is NO.
 - (BOOL)canPerformCustomRoute;
-///Whether the router can remove custom route now. Default is NO.
+///Whether the router can remove custom route now. Default is NO. Check the states of destination and source, return NO if they can't be removed.
 - (BOOL)canRemoveCustomRoute;
 
 ///Perform your custom route. You must maintain the router's state with methods in ZIKViewRouterInternal.h.

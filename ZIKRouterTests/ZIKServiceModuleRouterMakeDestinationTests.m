@@ -47,14 +47,19 @@
 }
 
 - (void)testMakeDestinationWithPrepareDestination {
+    XCTestExpectation *prepareDestinationExpectation = [self expectationWithDescription:@"prepareDestination"];
     XCTestExpectation *successHandlerExpectation = [self expectationWithDescription:@"successHandler"];
     XCTestExpectation *performerSuccessHandlerExpectation = [self expectationWithDescription:@"performerSuccessHandler"];
     XCTestExpectation *completionHandlerExpectation = [self expectationWithDescription:@"completionHandler"];
     BOOL canMakeDestination = [ZIKRouterToServiceModule(AServiceModuleInput) canMakeDestination];
     XCTAssertTrue(canMakeDestination);
-    id<AServiceInput> destination = [ZIKRouterToServiceModule(AServiceModuleInput) makeDestinationWithConfiguring:^(ZIKPerformRouteConfiguration * _Nonnull config) {
+    id<AServiceInput> destination = [ZIKRouterToServiceModule(AServiceModuleInput) makeDestinationWithConfiguring:^(ZIKPerformRouteConfiguration<AServiceModuleInput> * _Nonnull config) {
+        config.title = @"test title";
+        [config makeDestinationCompletion:^(id<AServiceInput> destination) {
+            XCTAssert([destination.title isEqualToString:@"test title"]);
+        }];
         config.prepareDestination = ^(id<AServiceInput>  _Nonnull destination) {
-            destination.title = @"test title";
+            [prepareDestinationExpectation fulfill];
         };
         config.successHandler = ^(id  _Nonnull destination) {
             [successHandlerExpectation fulfill];
@@ -88,7 +93,11 @@
     XCTestExpectation *completionHandlerExpectation = [self expectationWithDescription:@"completionHandler"];
     BOOL canMakeDestination = [ZIKRouterToServiceModule(AServiceModuleInput) canMakeDestination];
     XCTAssertTrue(canMakeDestination);
-    id<AServiceInput> destination = [ZIKRouterToServiceModule(AServiceModuleInput) makeDestinationWithConfiguring:^(ZIKPerformRouteConfiguration * _Nonnull config) {
+    id<AServiceInput> destination = [ZIKRouterToServiceModule(AServiceModuleInput) makeDestinationWithConfiguring:^(ZIKPerformRouteConfiguration<AServiceModuleInput> * _Nonnull config) {
+        config.title = @"test title";
+        [config makeDestinationCompletion:^(id<AServiceInput> destination) {
+            XCTAssert([destination.title isEqualToString:@"test title"]);
+        }];
         config.successHandler = ^(id  _Nonnull destination) {
             [successHandlerExpectation fulfill];
         };
@@ -121,7 +130,11 @@
     TestConfig.routeShouldFail = YES;
     BOOL canMakeDestination = [ZIKRouterToServiceModule(AServiceModuleInput) canMakeDestination];
     XCTAssertTrue(canMakeDestination);
-    id<AServiceInput> destination = [ZIKRouterToServiceModule(AServiceModuleInput) makeDestinationWithConfiguring:^(ZIKPerformRouteConfiguration * _Nonnull config) {
+    id<AServiceInput> destination = [ZIKRouterToServiceModule(AServiceModuleInput) makeDestinationWithConfiguring:^(ZIKPerformRouteConfiguration<AServiceModuleInput> * _Nonnull config) {
+        config.title = @"test title";
+        [config makeDestinationCompletion:^(id<AServiceInput> destination) {
+            XCTAssert([destination.title isEqualToString:@"test title"]);
+        }];
         config.successHandler = ^(id  _Nonnull destination) {
             XCTAssert(NO, @"successHandler should not be called");
         };
@@ -156,13 +169,14 @@
     BOOL canMakeDestination = [ZIKRouterToServiceModule(AServiceModuleInput) canMakeDestination];
     XCTAssertTrue(canMakeDestination);
     id<AServiceInput> destination = [ZIKRouterToServiceModule(AServiceModuleInput)
-                                     makeDestinationWithStrictConfiguring:^(ZIKPerformRouteConfiguration * _Nonnull config,
+                                     makeDestinationWithStrictConfiguring:^(ZIKPerformRouteConfiguration<AServiceModuleInput> * _Nonnull config,
                                                                             void (^ _Nonnull prepareDest)(void (^ _Nonnull)(id<AServiceInput> _Nonnull)),
-                                                                            void (^ _Nonnull prepareModule)(void (^ _Nonnull)(ZIKPerformRouteConfiguration * _Nonnull))) {
-                                         prepareDest(^(id<AServiceInput> destination){
-                                             destination.title = @"test title";
-                                         });
-                                         prepareModule(^(ZIKPerformRouteConfiguration *config) {
+                                                                            void (^ _Nonnull prepareModule)(void (^ _Nonnull)(ZIKPerformRouteConfiguration<AServiceModuleInput> * _Nonnull))) {
+                                         prepareModule(^(ZIKPerformRouteConfiguration<AServiceModuleInput> *config) {
+                                             config.title = @"test title";
+                                             [config makeDestinationCompletion:^(id<AServiceInput> destination) {
+                                                 XCTAssert([destination.title isEqualToString:@"test title"]);
+                                             }];
                                              config.successHandler = ^(id  _Nonnull destination) {
                                                  [successHandlerExpectation fulfill];
                                              };
@@ -197,10 +211,14 @@
     BOOL canMakeDestination = [ZIKRouterToServiceModule(AServiceModuleInput) canMakeDestination];
     XCTAssertTrue(canMakeDestination);
     id<AServiceInput> destination = [ZIKRouterToServiceModule(AServiceModuleInput)
-                                     makeDestinationWithStrictConfiguring:^(ZIKPerformRouteConfiguration * _Nonnull config,
+                                     makeDestinationWithStrictConfiguring:^(ZIKPerformRouteConfiguration<AServiceModuleInput> * _Nonnull config,
                                                                             void (^ _Nonnull prepareDest)(void (^ _Nonnull)(id<AServiceInput> _Nonnull)),
-                                                                            void (^ _Nonnull prepareModule)(void (^ _Nonnull)(ZIKPerformRouteConfiguration * _Nonnull))) {
-                                         prepareModule(^(ZIKPerformRouteConfiguration *config) {
+                                                                            void (^ _Nonnull prepareModule)(void (^ _Nonnull)(ZIKPerformRouteConfiguration<AServiceModuleInput> * _Nonnull))) {
+                                         prepareModule(^(ZIKPerformRouteConfiguration<AServiceModuleInput> *config) {
+                                             config.title = @"test title";
+                                             [config makeDestinationCompletion:^(id<AServiceInput> destination) {
+                                                 XCTAssert([destination.title isEqualToString:@"test title"]);
+                                             }];
                                              config.successHandler = ^(id  _Nonnull destination) {
                                                  [successHandlerExpectation fulfill];
                                              };
@@ -235,12 +253,15 @@
     BOOL canMakeDestination = [ZIKRouterToServiceModule(AServiceModuleInput) canMakeDestination];
     XCTAssertTrue(canMakeDestination);
     id<AServiceInput> destination = [ZIKRouterToServiceModule(AServiceModuleInput)
-                                     makeDestinationWithStrictConfiguring:^(ZIKPerformRouteConfiguration * _Nonnull config,
+                                     makeDestinationWithStrictConfiguring:^(ZIKPerformRouteConfiguration<AServiceModuleInput> * _Nonnull config,
                                                                             void (^ _Nonnull prepareDest)(void (^ _Nonnull)(id<AServiceInput> _Nonnull)),
-                                                                            void (^ _Nonnull prepareModule)(void (^ _Nonnull)(ZIKPerformRouteConfiguration * _Nonnull))) {
-                                         prepareModule(^(ZIKPerformRouteConfiguration *config) {
+                                                                            void (^ _Nonnull prepareModule)(void (^ _Nonnull)(ZIKPerformRouteConfiguration<AServiceModuleInput> * _Nonnull))) {
+                                         prepareModule(^(ZIKPerformRouteConfiguration<AServiceModuleInput> *config) {
+                                             config.title = @"test title";
+                                             [config makeDestinationCompletion:^(id<AServiceInput> destination) {
+                                                 XCTAssert([destination.title isEqualToString:@"test title"]);
+                                             }];
                                              config.successHandler = ^(id  _Nonnull destination) {
-                                                 
                                                  XCTAssert(NO, @"successHandler should not be called");
                                              };
                                              config.performerSuccessHandler = ^(id  _Nonnull destination) {

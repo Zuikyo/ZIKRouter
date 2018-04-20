@@ -777,15 +777,36 @@
 
 @end
 
-@interface ZIKViewRouterPerformShowWithoutAnimationTests : ZIKViewRouterPerformWithoutAnimationTests
+@interface ZIKViewRouterPerformShowDetailTests : ZIKViewRouterPerformTests
 
 @end
 
-@implementation ZIKViewRouterPerformShowWithoutAnimationTests
+@implementation ZIKViewRouterPerformShowDetailTests
 
 - (void)setUp {
     [super setUp];
-    self.routeType = ZIKViewRouteTypeShow;
+    self.routeType = ZIKViewRouteTypeShowDetail;
+}
+
++ (BOOL)allowLeaveTestViewFailing {
+    if (UIUserInterfaceIdiomPad == UI_USER_INTERFACE_IDIOM()) {
+        return YES;
+    }
+    return NO;
 }
 
 @end
+
+@interface ZIKViewRouterPerformCustomTests : ZIKViewRouterPerformTests
+
+@end
+
+@implementation ZIKViewRouterPerformCustomTests
+
+- (void)setUp {
+    [super setUp];
+    self.routeType = ZIKViewRouteTypeCustom;
+}
+
+@end
+

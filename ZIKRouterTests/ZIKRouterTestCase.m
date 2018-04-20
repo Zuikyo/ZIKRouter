@@ -28,21 +28,13 @@
     [self.leaveTestExpectation fulfill];
 }
 
-+ (BOOL)completeSynchronously {
-    return YES;
-}
-
 - (void)handle:(void(^)(void))block {
     if (block == nil) {
         return;
     }
-    if ([[self class] completeSynchronously]) {
-        dispatch_async(dispatch_get_main_queue(), ^{
-            block();
-        });
-    } else {
+    dispatch_async(dispatch_get_main_queue(), ^{
         block();
-    }
+    });
 }
 
 - (void)setUp {

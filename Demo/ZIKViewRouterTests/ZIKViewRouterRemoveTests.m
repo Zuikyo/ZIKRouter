@@ -25,6 +25,10 @@
     [super tearDown];
 }
 
+- (void)configRouteConfiguration:(ZIKViewRouteConfiguration *)configuration source:(UIViewController *)source {
+    configuration.animated = NO;
+}
+
 - (void)configRemoveConfiguration:(ZIKViewRemoveConfiguration *)configuration {
     configuration.animated = YES;
 }
@@ -36,6 +40,7 @@
     {
         [self enterTest:^(UIViewController *source) {
             self.router = [ZIKRouterToView(AViewInput) performFromSource:source configuring:^(ZIKViewRouteConfiguration * _Nonnull config) {
+                [self configRouteConfiguration:config source:source];
                 config.routeType = self.routeType;
                 
                 config.performerSuccessHandler = ^(id  _Nonnull destination) {
@@ -77,6 +82,7 @@
     {
         [self enterTest:^(UIViewController *source) {
             self.router = [ZIKRouterToView(AViewInput) performFromSource:source configuring:^(ZIKViewRouteConfiguration * _Nonnull config) {
+                [self configRouteConfiguration:config source:source];
                 config.routeType = self.routeType;
                 
                 config.performerSuccessHandler = ^(id  _Nonnull destination) {
@@ -122,6 +128,7 @@
     {
         [self enterTest:^(UIViewController *source) {
             self.router = [ZIKRouterToView(AViewInput) performFromSource:source configuring:^(ZIKViewRouteConfiguration * _Nonnull config) {
+                [self configRouteConfiguration:config source:source];
                 config.routeType = self.routeType;
                 
                 config.performerSuccessHandler = ^(id  _Nonnull destination) {
@@ -167,6 +174,7 @@
     {
         [self enterTest:^(UIViewController *source) {
             self.router = [ZIKRouterToView(AViewInput) performFromSource:source configuring:^(ZIKViewRouteConfiguration * _Nonnull config) {
+                [self configRouteConfiguration:config source:source];
                 config.routeType = self.routeType;
                 
                 config.performerSuccessHandler = ^(id  _Nonnull destination) {
@@ -240,6 +248,56 @@
     [super configRemoveConfiguration:configuration];
     configuration.animated = NO;
 }
+@end
+
+@interface ZIKViewRouterRemovePresentAsPopoverTests : ZIKViewRouterRemoveTests
+
+@end
+
+@implementation ZIKViewRouterRemovePresentAsPopoverTests
+
+- (void)setUp {
+    [super setUp];
+    self.routeType = ZIKViewRouteTypePresentAsPopover;
+}
+
+- (void)tearDown {
+    [super tearDown];
+}
+
+- (void)configRouteConfiguration:(ZIKViewRouteConfiguration *)configuration source:(UIViewController *)source {
+    [super configRouteConfiguration:configuration source:source];
+    configuration.configurePopover(^(ZIKViewRoutePopoverConfiguration * _Nonnull popoverConfig) {
+        popoverConfig.sourceView = source.view;
+        popoverConfig.sourceRect = CGRectMake(0, 0, 50, 10);
+    });
+}
+
+@end
+
+@interface ZIKViewRouterRemovePresentAsPopoverWithoutAnimationTests : ZIKViewRouterRemoveWithoutAnimationTests
+
+@end
+
+@implementation ZIKViewRouterRemovePresentAsPopoverWithoutAnimationTests
+
+- (void)setUp {
+    [super setUp];
+    self.routeType = ZIKViewRouteTypePresentAsPopover;
+}
+
+- (void)tearDown {
+    [super tearDown];
+}
+
+- (void)configRouteConfiguration:(ZIKViewRouteConfiguration *)configuration source:(UIViewController *)source {
+    [super configRouteConfiguration:configuration source:source];
+    configuration.configurePopover(^(ZIKViewRoutePopoverConfiguration * _Nonnull popoverConfig) {
+        popoverConfig.sourceView = source.view;
+        popoverConfig.sourceRect = CGRectMake(0, 0, 50, 10);
+    });
+}
+
 @end
 
 @interface ZIKViewRouterRemovePushTests : ZIKViewRouterRemoveTests

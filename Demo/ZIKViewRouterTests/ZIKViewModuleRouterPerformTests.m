@@ -211,7 +211,7 @@
         }];
     }
     
-    [self waitForExpectationsWithTimeout:500 handler:^(NSError * _Nullable error) {
+    [self waitForExpectationsWithTimeout:5 handler:^(NSError * _Nullable error) {
         !error? : NSLog(@"%@", error);
     }];
 }
@@ -849,15 +849,35 @@
 
 @end
 
-@interface ZIKViewModuleRouterPerformShowWithoutAnimationTests : ZIKViewModuleRouterPerformWithoutAnimationTests
+@interface ZIKViewModuleRouterPerformShowDetailTests : ZIKViewModuleRouterPerformTests
 
 @end
 
-@implementation ZIKViewModuleRouterPerformShowWithoutAnimationTests
+@implementation ZIKViewModuleRouterPerformShowDetailTests
 
 - (void)setUp {
     [super setUp];
-    self.routeType = ZIKViewRouteTypeShow;
+    self.routeType = ZIKViewRouteTypeShowDetail;
+}
+
++ (BOOL)allowLeaveTestViewFailing {
+    if (UIUserInterfaceIdiomPad == UI_USER_INTERFACE_IDIOM()) {
+        return YES;
+    }
+    return NO;
+}
+
+@end
+
+@interface ZIKViewModuleRouterPerformCustomTests : ZIKViewModuleRouterPerformTests
+
+@end
+
+@implementation ZIKViewModuleRouterPerformCustomTests
+
+- (void)setUp {
+    [super setUp];
+    self.routeType = ZIKViewRouteTypeCustom;
 }
 
 @end

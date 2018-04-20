@@ -57,21 +57,13 @@
     self.strongRouter = router;
 }
 
-+ (BOOL)completeSynchronously {
-    return NO;
-}
-
 - (void)handle:(void(^)(void))block {
     if (block == nil) {
         return;
     }
-    if ([[self class] completeSynchronously]) {
-        dispatch_async(dispatch_get_main_queue(), ^{
-            block();
-        });
-    } else {
+    dispatch_async(dispatch_get_main_queue(), ^{
         block();
-    }
+    });
 }
 
 - (void)enterTest:(void(^)(UIViewController *source))testBlock {

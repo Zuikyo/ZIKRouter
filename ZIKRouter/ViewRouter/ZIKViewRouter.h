@@ -48,9 +48,6 @@ NS_ASSUME_NONNULL_BEGIN
 ///Real route type performed for those adaptative types in ZIKViewRouteType
 @property (nonatomic, readonly, assign) ZIKViewRouteRealType realRouteType;
 
-///Default is ZIKViewRouteTypeMaskUIViewControllerDefault for UIViewController type destination, if your destination is a UIView, override this and return ZIKViewRouteTypeMaskUIViewDefault. Router subclass can also limit the route type.
-+ (ZIKViewRouteTypeMask)supportedRouteTypes;
-
 @end
 
 @interface ZIKViewRouter<__covariant Destination: id, __covariant RouteConfig: ZIKViewRouteConfiguration *> (Perform)
@@ -69,6 +66,9 @@ NS_ASSUME_NONNULL_BEGIN
  @return YES if source can perform route now, otherwise NO
  */
 - (BOOL)canPerform;
+
+///Default is ZIKViewRouteTypeMaskUIViewControllerDefault for UIViewController type destination, if your destination is a UIView, override this and return ZIKViewRouteTypeMaskUIViewDefault. Router subclass can also limit the route type.
++ (ZIKViewRouteTypeMask)supportedRouteTypes;
 
 ///Router doesn't support all routeTypes, for example, router for a UIView destination can't support those UIViewController's routeTypes
 + (BOOL)supportRouteType:(ZIKViewRouteType)type;

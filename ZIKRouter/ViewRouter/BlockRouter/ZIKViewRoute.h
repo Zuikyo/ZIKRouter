@@ -11,6 +11,12 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
+typedef NS_ENUM(NSInteger, ZIKBlockViewRouteTypeMask) {
+    ZIKBlockViewRouteTypeMaskUIViewControllerDefault = ZIKViewRouteTypeMaskUIViewControllerDefault,
+    ZIKBlockViewRouteTypeMaskUIViewDefault = ZIKViewRouteTypeMaskUIViewDefault,
+    ZIKBlockViewRouteTypeMaskCustom = ZIKViewRouteTypeMaskCustom
+};
+
 ///Use ZIKViewRoute to add view route with blocks, rather than creating subclass of ZIKViewRouter.
 @interface ZIKViewRoute<__covariant Destination, __covariant RouteConfig: ZIKViewRouteConfiguration *> : ZIKRoute<Destination, RouteConfig, ZIKViewRemoveConfiguration *>
 
@@ -28,6 +34,8 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic, readonly) ZIKViewRoute<Destination, RouteConfig> *(^didFinishPrepareDestination)(void(^)(Destination destination, RouteConfig config, ZIKViewRouter *router));
 
 @property (nonatomic, readonly) ZIKViewRoute<Destination, RouteConfig> *(^destinationFromExternalPrepared)(BOOL(^)(Destination destination, ZIKViewRouter *router));
+
+@property (nonatomic, readonly) ZIKViewRoute<Destination, RouteConfig> *(^makeSupportedRouteTypes)(ZIKBlockViewRouteTypeMask(^)(void));
 
 @property (nonatomic, readonly) ZIKViewRoute<Destination, RouteConfig> *(^canPerformCustomRoute)(BOOL(^)(ZIKViewRouter *router));
 

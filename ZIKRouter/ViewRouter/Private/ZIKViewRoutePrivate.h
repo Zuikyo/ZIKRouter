@@ -10,6 +10,7 @@
 
 @interface ZIKViewRoute<__covariant Destination, __covariant RouteConfig: ZIKViewRouteConfiguration *> ()
 @property (nonatomic, copy, nullable) BOOL(^destinationFromExternalPreparedBlock)(Destination destination, ZIKViewRouter *router);
+@property (nonatomic, copy, readonly, nullable) ZIKViewRouteTypeMask(^makeSupportedRouteTypesBlock)(void);
 @property (nonatomic, copy, readonly, nullable) BOOL(^canPerformCustomRouteBlock)(ZIKViewRouter *router);
 @property (nonatomic, copy, readonly, nullable) BOOL(^canRemoveCustomRouteBlock)(ZIKViewRouter *router);
 @property (nonatomic, copy, readonly, nullable) void(^performCustomRouteBlock)(Destination destination, _Nullable id source, RouteConfig config, ZIKViewRouter *router);
