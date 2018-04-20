@@ -729,6 +729,14 @@ NSErrorDomain const ZIKRouteErrorDomain = @"ZIKRouteErrorDomain";
     return [NSError errorWithDomain:ZIKRouteErrorDomain code:code userInfo:@{NSLocalizedDescriptionKey:description}];
 }
 
++ (NSError *)routeErrorWithCode:(ZIKRouteError)code localizedDescriptionFormat:(NSString *)format ,... {
+    va_list argList;
+    va_start(argList, format);
+    NSString *description = [[NSString alloc] initWithFormat:format arguments:argList];
+    va_end(argList);
+    return [self routeErrorWithCode:code localizedDescription:description];
+}
+
 + (NSError *)errorWithCode:(NSInteger)code userInfo:(nullable NSDictionary *)userInfo {
     return [NSError errorWithDomain:[self errorDomain] code:code userInfo:userInfo];
 }

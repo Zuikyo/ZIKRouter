@@ -11,6 +11,7 @@
 
 #import "ZIKViewRouter.h"
 #import "ZIKRouterInternal.h"
+#import "ZIKRouterPrivate.h"
 #import "ZIKViewRouterInternal.h"
 #import "ZIKViewRouterPrivate.h"
 #import "ZIKViewRouteRegistry.h"
@@ -2724,6 +2725,14 @@ static  ZIKViewRouterType *_Nullable _routerTypeToRegisteredView(Class viewClass
         description = @"";
     }
     return [NSError errorWithDomain:ZIKViewRouteErrorDomain code:code userInfo:@{NSLocalizedDescriptionKey:description}];
+}
+
++ (NSError *)viewRouteErrorWithCode:(ZIKViewRouteError)code localizedDescriptionFormat:(NSString *)format ,... {
+    va_list argList;
+    va_start(argList, format);
+    NSString *description = [[NSString alloc] initWithFormat:format arguments:argList];
+    va_end(argList);
+    return [self viewRouteErrorWithCode:code localizedDescription:description];
 }
 
 + (void)setGlobalErrorHandler:(ZIKViewRouteGlobalErrorHandler)globalErrorHandler {

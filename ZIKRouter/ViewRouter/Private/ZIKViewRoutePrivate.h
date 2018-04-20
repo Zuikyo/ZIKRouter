@@ -15,4 +15,7 @@
 @property (nonatomic, copy, readonly, nullable) BOOL(^canRemoveCustomRouteBlock)(ZIKViewRouter *router);
 @property (nonatomic, copy, readonly, nullable) void(^performCustomRouteBlock)(Destination destination, _Nullable id source, RouteConfig config, ZIKViewRouter *router);
 @property (nonatomic, copy, readonly, nullable) void(^removeCustomRouteBlock)(Destination destination, _Nullable id source, ZIKViewRemoveConfiguration *removeConfig, RouteConfig config, ZIKViewRouter *router);
+
+- (BOOL)supportRouteType:(ZIKViewRouteType)type;
+
 @end

@@ -186,7 +186,7 @@ NS_ASSUME_NONNULL_BEGIN
                                                                        ))configBuilder
                                     routeRemoving:(void(NS_NOESCAPE ^ _Nullable)(RemoveConfig config,
                                                                                  void(^prepareDest)(void(^prepare)(Destination dest))
-                                                                                 ))removeConfigBuilder API_DEPRECATED_WITH_REPLACEMENT("-initWithStrictConfiguring:strictRemoving:", ios(7.0, 7.0));
+                                                                                 ))removeConfigBuilder API_DEPRECATED_WITH_REPLACEMENT("initWithStrictConfiguring:strictRemoving:", ios(7.0, 7.0));
 + (nullable instancetype)performWithRouteConfiguring:(void(NS_NOESCAPE ^)(RouteConfig config,
                                                                           void(^prepareDest)(void(^prepare)(Destination dest)),
                                                                           void(^prepareModule)(void(NS_NOESCAPE ^prepare)(RouteConfig module))
@@ -200,7 +200,7 @@ NS_ASSUME_NONNULL_BEGIN
                                                                                     ))removeConfigBuilder API_DEPRECATED_WITH_REPLACEMENT("+performWithStrictConfiguring:strictRemoving:", ios(7.0, 7.0));
 - (void)removeRouteWithRouteConfiguring:(void(NS_NOESCAPE ^)(RemoveConfig config,
                                                              void(^prepareDest)(void(^prepare)(Destination dest))
-                                                             ))removeConfigBuilder API_DEPRECATED_WITH_REPLACEMENT("-removeRouteWithStrictConfiguring:", ios(7.0, 7.0));
+                                                             ))removeConfigBuilder API_DEPRECATED_WITH_REPLACEMENT("removeRouteWithStrictConfiguring:", ios(7.0, 7.0));
 + (nullable Destination)makeDestinationWithRouteConfiguring:(void(^ _Nullable)(RouteConfig config,
                                                                                void(^prepareDest)(void(^prepare)(Destination dest)),
                                                                                void(^prepareModule)(void(NS_NOESCAPE ^prepare)(RouteConfig module))
@@ -210,16 +210,16 @@ NS_ASSUME_NONNULL_BEGIN
 extern NSErrorDomain const ZIKRouteErrorDomain;
 
 typedef NS_ERROR_ENUM(ZIKRouteErrorDomain, ZIKRouteError) {
-    ///The protocol to fetch the router is not registered.
+    ///The protocol to fetch the router is not registered. Fix this error in the development phase.
     ZIKRouteErrorInvalidProtocol        = 0,
-    ///Configuration missed some required values, or some values were conflict, or the external destination to prepare/perform is invalid.
+    ///Configuration missed some required values, or some values were conflict, or the external destination to prepare/perform is invalid. Fix this error in the development phase.
     ZIKRouteErrorInvalidConfiguration   = 1,
     ///Router returns nil for destination, you can't use this service now. Maybe your configuration is invalid, or there is a bug in the router.
     ZIKRouteErrorDestinationUnavailable = 2,
     /*
      Perform or remove route action failed.
      @discussion
-     1. Do performRoute when router state is removing, or is routed and should be removed first.
+     1. Do performRoute when router state is removing, or is routed and should be removed first before another performing.
      
      2. Do removeRoute but the destination was already dealloced.
      
@@ -228,7 +228,7 @@ typedef NS_ERROR_ENUM(ZIKRouteErrorDomain, ZIKRouteError) {
     ZIKRouteErrorActionFailed           = 3,
     ///Do performRoute when router state is routing.
     ZIKRouteErrorOverRoute              = 4,
-    ///Infinite recursion for performing route detected. See -prepareDestination:configuration: for more detail.
+    ///Infinite recursion for performing route detected. See -prepareDestination:configuration: for more detail. Fix this error in the development phase.
     ZIKRouteErrorInfiniteRecursion      = 5
 };
 

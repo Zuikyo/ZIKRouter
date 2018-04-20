@@ -8,6 +8,7 @@
 
 #import "ZIKServiceRouter+Discover.h"
 #import "ZIKRouterInternal.h"
+#import "ZIKRouterPrivate.h"
 #import "ZIKServiceRouteRegistry.h"
 #import "ZIKRouteRegistryInternal.h"
 

@@ -237,8 +237,6 @@
         if (router.state == ZIKRouterStateRemoving) {
             [router endRemoveRouteWithSuccessOnDestination:alertView fromSource:router.original_configuration.source];
         }
-    } else {
-        [router notifyRouteState:ZIKRouterStateRemoved];
     }
 }
 @end

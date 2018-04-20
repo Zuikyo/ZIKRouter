@@ -15,7 +15,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 @class ZIKPerformRouteConfiguration, ZIKRemoveRouteConfiguration, ZIKRoute;
 
-///Proxy and wrapper to use ZIKRouter class type or ZIKRoute with compile time checking. These instance methods are actually class methods in ZIKRouter class.
+///Proxy to use ZIKRouter class type or ZIKRoute with compile time checking. These instance methods are actually class methods in ZIKRouter class.
 @interface ZIKRouterType<__covariant Destination: id, __covariant RouteConfig: ZIKPerformRouteConfiguration *, __covariant RemoveConfig: ZIKRemoveRouteConfiguration *> : NSObject
 @property (nonatomic, strong, readonly, nullable) Class routerClass;
 @property (nonatomic, strong, readonly, nullable) ZIKRoute *route;
@@ -56,7 +56,11 @@ NS_ASSUME_NONNULL_BEGIN
 - (nullable Destination)makeDestinationWithRouteConfiguring:(void(NS_NOESCAPE ^ _Nullable)(RouteConfig config,
                                                                                            void(^prepareDest)(void(^prepare)(Destination dest)),
                                                                                            void(^prepareModule)(void(NS_NOESCAPE ^prepare)(RouteConfig module))
-                                                                                           ))configBuilder API_DEPRECATED_WITH_REPLACEMENT("-makeDestinationWithStrictConfiguring:", ios(7.0, 7.0));
+                                                                                           ))configBuilder API_DEPRECATED_WITH_REPLACEMENT("makeDestinationWithStrictConfiguring:", ios(7.0, 7.0));
+
+#pragma mark Internal
+
+- (RouteConfig)defaultRouteConfiguration;
 
 #pragma mark Unavailable
 

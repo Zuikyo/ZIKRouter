@@ -60,8 +60,6 @@ NS_ASSUME_NONNULL_BEGIN
 ///If you can undo your route action, such as dismiss a routed view, do remove in this. The destination was hold as weak in router, so you should check whether the destination still exists.
 - (void)removeDestination:(nullable Destination)destination removeConfiguration:(RemoveConfig)removeConfiguration;
 
-+ (NSString *)errorDomain;
-
 ///Whether this router is an abstract router.
 + (BOOL)isAbstractRouter;
 
@@ -89,40 +87,23 @@ NS_ASSUME_NONNULL_BEGIN
 ///Call it when route remove failed.
 - (void)endRemoveRouteWithError:(NSError *)error;
 
-#pragma mark Internal Methods
-
-///Attach a destination not created from router. The destination class should be registered with
+///Attach a destination not created from router. The destination class should be registered with this router.
 - (void)attachDestination:(nullable Destination)destination;
 
-///Change state.
-- (void)notifyRouteState:(ZIKRouterState)state;
-
-///Call sucessHandler and performerSuccessHandler.
-- (void)notifySuccessWithAction:(ZIKRouteAction)routeAction;
-
-#pragma mark NotifyError
-
-///Call errorHandler and performerErrorHandler.
-- (void)notifyError:(NSError *)error routeAction:(ZIKRouteAction)routeAction;
-
-+ (void)notifyError_invalidProtocolWithAction:(ZIKRouteAction)action errorDescription:(NSString *)format ,...;
-
-- (void)notifyError_invalidConfigurationWithAction:(ZIKRouteAction)action errorDescription:(NSString *)format ,...;
-
-- (void)notifyError_actionFailedWithAction:(ZIKRouteAction)action errorDescription:(NSString *)format ,...;
-
-- (void)notifyError_overRouteWithAction:(ZIKRouteAction)action errorDescription:(NSString *)format ,...;
-
-- (void)notifyError_infiniteRecursionWithAction:(ZIKRouteAction)action errorDescription:(NSString *)format ,...;
+#pragma mark Error Handle
 
 ///error from ZIKRouteErrorDomain.
 + (NSError *)routeErrorWithCode:(ZIKRouteError)code localizedDescription:(NSString *)description;
+///error from ZIKRouteErrorDomain.
++ (NSError *)routeErrorWithCode:(ZIKRouteError)code localizedDescriptionFormat:(NSString *)format ,...;
 ///error with domain from +errorDomain.
 + (NSError *)errorWithCode:(NSInteger)code userInfo:(nullable NSDictionary *)userInfo;
 ///error with domain from +errorDomain.
 + (NSError *)errorWithCode:(NSInteger)code localizedDescription:(NSString *)description;
 ///error with domain from +errorDomain.
 + (NSError *)errorWithCode:(NSInteger)code localizedDescriptionFormat:(NSString *)format ,...;
+
++ (NSString *)errorDomain;
 
 #pragma mark Internal
 

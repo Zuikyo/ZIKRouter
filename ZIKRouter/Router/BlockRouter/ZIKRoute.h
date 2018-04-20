@@ -20,9 +20,9 @@ NS_ASSUME_NONNULL_BEGIN
 @interface ZIKRoute<__covariant Destination, __covariant RouteConfig: ZIKPerformRouteConfiguration *, __covariant RemoveConfig: ZIKRemoveRouteConfiguration *> : NSObject
 @property (nonatomic, copy, nullable) NSString *name;
 
-+ (instancetype)makeRouteWithDestination:(Class)destinationClass makeDestination:(_Nullable Destination(^)(RouteConfig config, ZIKRouter *router))makeDestination;
++ (instancetype)makeRouteWithDestination:(Class)destinationClass makeDestination:(_Nullable Destination(^)(RouteConfig config, __kindof ZIKRouter<Destination, RouteConfig, RemoveConfig> *router))makeDestination;
 
-- (instancetype)initWithDestination:(Class)destinationClass makeDestination:(_Nullable Destination(^)(RouteConfig config, ZIKRouter *router))makeDestination NS_DESIGNATED_INITIALIZER;
+- (instancetype)initWithDestination:(Class)destinationClass makeDestination:(_Nullable Destination(^)(RouteConfig config, __kindof ZIKRouter<Destination, RouteConfig, RemoveConfig> *router))makeDestination NS_DESIGNATED_INITIALIZER;
 - (instancetype)init NS_UNAVAILABLE;
 - (instancetype)new NS_UNAVAILABLE;
 

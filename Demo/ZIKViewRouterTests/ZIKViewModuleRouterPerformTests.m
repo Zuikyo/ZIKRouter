@@ -21,6 +21,8 @@
 }
 
 - (void)configRouteConfiguration:(ZIKViewRouteConfiguration *)configuration source:(UIViewController *)source {
+    BOOL supportRouteType = [ZIKRouterToViewModule(AViewModuleInput) supportRouteType:self.routeType];
+    XCTAssertTrue(supportRouteType);
     configuration.animated = YES;
 }
 

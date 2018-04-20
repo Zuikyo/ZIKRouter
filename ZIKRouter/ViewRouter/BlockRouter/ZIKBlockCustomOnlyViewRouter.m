@@ -3,7 +3,7 @@
 //  ZIKRouter
 //
 //  Created by zuik on 2018/4/20.
-//  Copyright © 2018年 zuik. All rights reserved.
+//  Copyright © 2018 zuik. All rights reserved.
 //
 
 #import "ZIKBlockCustomOnlyViewRouter.h"

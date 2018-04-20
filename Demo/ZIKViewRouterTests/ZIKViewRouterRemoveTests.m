@@ -350,3 +350,20 @@
 }
 
 @end
+
+@interface ZIKViewRouterRemoveCustomTests : ZIKViewRouterRemoveTests
+
+@end
+
+@implementation ZIKViewRouterRemoveCustomTests
+
+- (void)setUp {
+    [super setUp];
+    self.routeType = ZIKViewRouteTypeCustom;
+}
+
+- (void)tearDown {
+    [super tearDown];
+}
+
+@end

@@ -24,7 +24,7 @@
 
 @implementation ZIKRoute
 
-- (instancetype)initWithDestination:(Class)destinationClass makeDestination:(id  _Nullable (^)(ZIKPerformRouteConfiguration * _Nonnull, ZIKRouter * _Nonnull))makeDestination {
+- (instancetype)initWithDestination:(Class)destinationClass makeDestination:(id  _Nullable (^)(ZIKPerformRouteConfiguration * _Nonnull, __kindof ZIKRouter<id, ZIKPerformRouteConfiguration *, ZIKRemoveRouteConfiguration *> * _Nonnull))makeDestination {
     if (self = [super init]) {
         self.retainedSelf = self;
         self.makeDestinationBlock = makeDestination;
@@ -40,7 +40,7 @@
     return _name;
 }
 
-+ (instancetype)makeRouteWithDestination:(Class)destinationClass makeDestination:(id  _Nullable (^)(ZIKPerformRouteConfiguration * _Nonnull, ZIKRouter * _Nonnull))makeDestination {
++ (instancetype)makeRouteWithDestination:(Class)destinationClass makeDestination:(id  _Nullable (^)(ZIKPerformRouteConfiguration * _Nonnull, __kindof ZIKRouter<id, ZIKPerformRouteConfiguration *, ZIKRemoveRouteConfiguration *> * _Nonnull))makeDestination {
     return [[self alloc] initWithDestination:destinationClass makeDestination:makeDestination];
 }
 
@@ -136,6 +136,10 @@
 
 - (instancetype)allocWithZone:(struct _NSZone *)zone {
     return self;
+}
+
+- (id)new {
+    return [[self routerClass] new];
 }
 
 - (void(^)(ZIKPerformRouteConfiguration *config))_injectedConfigBuilder:(void(^)(ZIKPerformRouteConfiguration *config))builder {

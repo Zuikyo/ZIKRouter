@@ -11,6 +11,7 @@
 
 #import "ZIKViewRouter+Discover.h"
 #import "ZIKRouterInternal.h"
+#import "ZIKRouterPrivate.h"
 #import "ZIKViewRouterInternal.h"
 #import "ZIKViewRouteRegistry.h"
 #import "ZIKRouteRegistryInternal.h"

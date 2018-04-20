@@ -17,6 +17,7 @@
 #import <UIKit/UIKit.h>
 #import "ZIKViewRouterInternal.h"
 #import "ZIKBlockViewRouter.h"
+#import "ZIKViewRoutePrivate.h"
 #import "ZIKViewRouterType.h"
 
 static CFMutableDictionaryRef _destinationProtocolToRouterMap;
@@ -330,6 +331,9 @@ static NSMutableArray<Class> *_routerClasses;
 
 + (void)registerDestination:(Class)destinationClass router:(Class)routerClass {
     NSParameterAssert([routerClass isSubclassOfClass:[ZIKViewRouter class]]);
+    if (ZIKRouter_classIsSubclassOfClass(destinationClass, [UIView class])) {
+        NSAssert([routerClass supportRouteType:ZIKViewRouteTypeAddAsSubview] || [routerClass supportRouteType:ZIKViewRouteTypeCustom], @"If the destination is UIView type, the router must support ZIKViewRouteTypeAddAsSubview or ZIKViewRouteTypeCustom.");
+    }
     [super registerDestination:destinationClass router:routerClass];
 }
 
@@ -348,8 +352,11 @@ static NSMutableArray<Class> *_routerClasses;
     [super registerModuleProtocol:configProtocol router:routerClass];
 }
 
-+ (void)registerDestination:(Class)destinationClass route:(ZIKRoute *)route {
++ (void)registerDestination:(Class)destinationClass route:(ZIKViewRoute *)route {
     NSParameterAssert([route isKindOfClass:[ZIKViewRoute class]]);
+    if (ZIKRouter_classIsSubclassOfClass(destinationClass, [UIView class])) {
+        NSAssert([route supportRouteType:ZIKViewRouteTypeAddAsSubview] || [route supportRouteType:ZIKViewRouteTypeCustom], @"If the destination is UIView type, the router must support ZIKViewRouteTypeAddAsSubview or ZIKViewRouteTypeCustom.");
+    }
     [super registerDestination:destinationClass route:route];
 }
 

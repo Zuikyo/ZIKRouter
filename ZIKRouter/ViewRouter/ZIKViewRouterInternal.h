@@ -57,7 +57,7 @@ NS_ASSUME_NONNULL_BEGIN
  @param destination The view from external, such as UIViewController from storyboard and UIView from -addSubview:.
  @return If the destination requires the performer to prepare it, return NO, then router will call performer's -prepareDestinationFromExternal:configuration:. Default is YES.
  */
-+ (BOOL)destinationPrepared:(Destination)destination API_DEPRECATED_WITH_REPLACEMENT("-destinationFromExternalPrepared:", ios(7.0, 7.0));;
++ (BOOL)destinationPrepared:(Destination)destination API_DEPRECATED_WITH_REPLACEMENT("destinationFromExternalPrepared:", ios(7.0, 7.0));;
 
 /**
  Whether the destination is all prepared, if not, it requires the performer to prepare it. This method is for destination from storyboard and UIView from -addSubview:.
@@ -162,7 +162,10 @@ NS_ASSUME_NONNULL_BEGIN
 ;
 #pragma mark Error Handle
 
+///error from ZIKViewRouteErrorDomain.
 + (NSError *)viewRouteErrorWithCode:(ZIKViewRouteError)code localizedDescription:(NSString *)description;
+///error from ZIKViewRouteErrorDomain.
++ (NSError *)viewRouteErrorWithCode:(ZIKViewRouteError)code localizedDescriptionFormat:(NSString *)format ,...;
 
 + (void)notifyGlobalErrorWithRouter:(nullable __kindof ZIKViewRouter *)router action:(ZIKRouteAction)action error:(NSError *)error;
 

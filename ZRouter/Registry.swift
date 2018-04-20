@@ -210,7 +210,7 @@ internal class Registry {
             _ = route.registerModuleProtocol(configProtocol)
             return
         }
-        assert(ZIKAnyViewRouterType.tryMakeType(forRoute: route)!.perform(#selector(ZIKRouter<AnyObject, ZIKPerformRouteConfiguration, ZIKRemoveRouteConfiguration>.defaultRouteConfiguration)) is Protocol, "The router (\(route))'s default configuration must conform to the config protocol (\(configProtocol)) to register.")
+        assert(ZIKAnyViewRouterType.tryMakeType(forRoute: route)!.defaultRouteConfiguration() is Protocol, "The router (\(route))'s default configuration must conform to the config protocol (\(configProtocol)) to register.")
         assert(viewConfigContainer[_RouteKey(type:configProtocol)] == nil, "view config protocol (\(configProtocol)) was already registered with router (\(String(describing: viewConfigContainer[_RouteKey(type:configProtocol)]))).")
         viewConfigContainer[_RouteKey(type:configProtocol)] = route
     }
@@ -254,7 +254,7 @@ internal class Registry {
             _ = route.registerModuleProtocol(configProtocol)
             return
         }
-        assert(ZIKAnyServiceRouterType.tryMakeType(forRoute: route)!.perform(#selector(ZIKRouter<AnyObject, ZIKPerformRouteConfiguration, ZIKRemoveRouteConfiguration>.defaultRouteConfiguration)) is Protocol, "The router (\(route))'s default configuration must conform to the config protocol (\(configProtocol)) to register.")
+        assert(ZIKAnyServiceRouterType.tryMakeType(forRoute: route)!.defaultRouteConfiguration() is Protocol, "The router (\(route))'s default configuration must conform to the config protocol (\(configProtocol)) to register.")
         assert(serviceConfigContainer[_RouteKey(type:configProtocol)] == nil, "service config protocol (\(configProtocol)) was already registered with router (\(String(describing: serviceConfigContainer[_RouteKey(type:configProtocol)]))).")
         serviceConfigContainer[_RouteKey(type:configProtocol)] = route
     }

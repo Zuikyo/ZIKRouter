@@ -12,10 +12,10 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-///Proxy and wrapper to use ZIKViewRouter class type or ZIKViewRoute with compile time checking. These instance methods are actually class methods in ZIKViewRouter class.
+///Proxy to use ZIKViewRouter class type or ZIKViewRoute with compile time checking. These instance methods are actually class methods in ZIKViewRouter class.
 @interface ZIKViewRouterType<__covariant Destination: id, __covariant RouteConfig: ZIKViewRouteConfiguration *> : ZIKRouterType<Destination, RouteConfig, ZIKViewRemoveConfiguration *>
 
-///Router doesn't support all routeTypes, for example, router for a UIView destination can't support those UIViewController's routeTypes
+///Router doesn't support all routeTypes, for example, router for a UIView destination can't support those UIViewController's routeTypes.
 - (BOOL)supportRouteType:(ZIKViewRouteType)type;
 
 /**

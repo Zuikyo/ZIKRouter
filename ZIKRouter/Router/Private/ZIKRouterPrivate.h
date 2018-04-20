@@ -12,4 +12,21 @@
     @protected ZIKRemoveRouteConfiguration *_removeConfiguration;
 }
 
+#pragma mark Internal Methods
+
+///Change state.
+- (void)notifyRouteState:(ZIKRouterState)state;
+
+///Call sucessHandler and performerSuccessHandler. You should use `-endPerformRouteWithSuccess` and `-endRemoveRouteWithSuccess` instead of this method, unless you wan't to write custom state control.
+- (void)notifySuccessWithAction:(ZIKRouteAction)routeAction;
+
+///Call errorHandler and performerErrorHandler. You should use `-endPerformRouteWithError:` instead of this method.
+- (void)notifyError:(NSError *)error routeAction:(ZIKRouteAction)routeAction;
+
++ (void)notifyError_invalidProtocolWithAction:(ZIKRouteAction)action errorDescription:(NSString *)format ,...;
+- (void)notifyError_invalidConfigurationWithAction:(ZIKRouteAction)action errorDescription:(NSString *)format ,...;
+- (void)notifyError_actionFailedWithAction:(ZIKRouteAction)action errorDescription:(NSString *)format ,...;
+- (void)notifyError_overRouteWithAction:(ZIKRouteAction)action errorDescription:(NSString *)format ,...;
+- (void)notifyError_infiniteRecursionWithAction:(ZIKRouteAction)action errorDescription:(NSString *)format ,...;
+
 @end
