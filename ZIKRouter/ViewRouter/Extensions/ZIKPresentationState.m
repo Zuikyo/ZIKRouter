@@ -81,10 +81,10 @@
 }
 
 + (ZIKViewRouteDetailType)detailRouteTypeFromStateBeforeRoute:(ZIKPresentationState *)before stateAfterRoute:(ZIKPresentationState *)after {
-    NSParameterAssert([before.viewController isEqual:after.viewController]);
+    NSAssert([before.viewController isEqual:after.viewController], @"Analyze route type from before state and after state must created from same view controller !");
     
     if (![before.viewController isEqual:after.viewController]) {
-        [[NSException exceptionWithName:NSInvalidArgumentException reason:@"Analyze route type from before state and after state must created from same view controller !" userInfo:nil] raise];
+        return ZIKViewRouteDetailTypeCustom;
     }
     NSNumber *viewController = before.viewController;
     

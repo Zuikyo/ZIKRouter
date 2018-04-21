@@ -23,17 +23,8 @@ NS_ASSUME_NONNULL_BEGIN
 
 /**
  Abstract superclass for router that can perform route and remove route.
- @discussion
- ## Features:
- 
- 1. Prepare module with protocol in block, instead of directly configuring the destination or in delegate method (in -prepareForSegue:sender: you have to distinguish different destinations).
- 
- 2. Specify a router with generic and protocol, then you can hide subclass but still can get routers with different functions.
- 
- See sample code in ZIKServiceRouter and ZIKViewRouter for more detail.
- 
  @note
- The router only keep weak reference to the destination, the performer is responsible for holding it.
+ The router only keep weak reference to the destination, the performer is responsible for holding it if needed.
  */
 @interface ZIKRouter<__covariant Destination: id, __covariant RouteConfig: ZIKPerformRouteConfiguration *, __covariant RemoveConfig: ZIKRemoveRouteConfiguration *> : NSObject
 ///State of route. View router's state will be auto changed when the destination's state is changed.
@@ -126,7 +117,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 #pragma mark Remove
 
-///Whether the router should be removed before another performing, when the router was performed already.
+///Whether the router should be removed before another performing, when the router is performed already.
 - (BOOL)shouldRemoveBeforePerform;
 
 ///Whether the router can remove route now.
@@ -209,6 +200,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 extern NSErrorDomain const ZIKRouteErrorDomain;
 
+///Error code for ZIKRouter.
 typedef NS_ERROR_ENUM(ZIKRouteErrorDomain, ZIKRouteError) {
     ///The protocol to fetch the router is not registered. Fix this error in the development phase.
     ZIKRouteErrorInvalidProtocol        = 0,

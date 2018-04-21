@@ -448,7 +448,7 @@ static NSMutableArray *g_preparingUIViewRouters;
         return;
     } else if (![[self class] _validateDestinationClass:destination inConfiguration:configuration]) {
         [self notifyRouteState:self.preState];
-        [self notifyError_actionFailedWithAction:ZIKRouteActionPerformRoute errorDescription:@"Bad impletment in destinationWithConfiguration: of router: %@, invalid destination: %@ !",[self class],destination];
+        [self notifyError_actionFailedWithAction:ZIKRouteActionPerformRoute errorDescription:@"Bad impletment in destinationWithConfiguration: of router: %@, invalid destination (%@) for configuration (%@) !",[self class],destination,configuration];
         return;
     }
 #if ZIKROUTER_CHECK
@@ -2616,16 +2616,16 @@ static  ZIKViewRouterType *_Nullable _routerTypeToRegisteredView(Class viewClass
     switch (configuration.routeType) {
         case ZIKViewRouteTypeAddAsSubview:
             if ([destination isKindOfClass:[UIView class]]) {
-                NSAssert([[self class] _validateSupportedRouteTypesForUIView], @"%@ 's +supportedRouteTypes returns error types, if destination is a UIView, %@ only support ZIKViewRouteTypeAddAsSubview and ZIKViewRouteTypeCustom",[self class], [self class]);
+                NSAssert([[self class] _validateSupportedRouteTypesForUIView], @"%@ 's +supportedRouteTypes returns error types, if destination is a UIView, %@ should support ZIKViewRouteTypeAddAsSubview or ZIKViewRouteTypeCustom",[self class], [self class]);
                 return YES;
             }
             break;
         case ZIKViewRouteTypeCustom:
             if ([destination isKindOfClass:[UIView class]]) {
-                NSAssert([[self class] _validateSupportedRouteTypesForUIView], @"%@ 's +supportedRouteTypes returns error types, if destination is a UIView, %@ only support ZIKViewRouteTypeAddAsSubview and ZIKViewRouteTypeCustom, if use ZIKViewRouteTypeCustom, router must implement -performCustomRouteOnDestination:fromSource:configuration:.",[self class], [self class]);
+                NSAssert([[self class] _validateSupportedRouteTypesForUIView], @"%@ 's +supportedRouteTypes returns error types, if destination is a UIView, %@ should support ZIKViewRouteTypeAddAsSubview or ZIKViewRouteTypeCustom, if use ZIKViewRouteTypeCustom, router must implement -performCustomRouteOnDestination:fromSource:configuration:.",[self class], [self class]);
                 return YES;
             } else if ([destination isKindOfClass:[UIViewController class]]) {
-                NSAssert([[self class] _validateSupportedRouteTypesForUIViewController], @"%@ 's +supportedRouteTypes returns error types, if destination is a UIViewController, %@ can't support ZIKViewRouteTypeAddAsSubview, if use ZIKViewRouteTypeCustom, router must implement -performCustomRouteOnDestination:fromSource:configuration:.",[self class], [self class]);
+                NSAssert([[self class] _validateSupportedRouteTypesForUIViewController], @"%@ 's +supportedRouteTypes returns error types, if destination is a UIViewController, %@ can't only support ZIKViewRouteTypeAddAsSubview, if use ZIKViewRouteTypeCustom, router must implement -performCustomRouteOnDestination:fromSource:configuration:.",[self class], [self class]);
                 return YES;
             }
             break;
@@ -2643,7 +2643,7 @@ static  ZIKViewRouterType *_Nullable _routerTypeToRegisteredView(Class viewClass
             
         default:
             if ([destination isKindOfClass:[UIViewController class]]) {
-                NSAssert([[self class] _validateSupportedRouteTypesForUIViewController], @"%@ 's +supportedRouteTypes returns error types, if destination is a UIViewController, %@ can't support ZIKViewRouteTypeAddAsSubview",[self class], [self class]);
+                NSAssert([[self class] _validateSupportedRouteTypesForUIViewController], @"%@ 's +supportedRouteTypes returns error types, if destination is a UIViewController, %@ can't only support ZIKViewRouteTypeAddAsSubview",[self class], [self class]);
                 return YES;
             }
             break;
@@ -2695,7 +2695,9 @@ static  ZIKViewRouterType *_Nullable _routerTypeToRegisteredView(Class viewClass
             return NO;
         }
     }
-    if ((supportedRouteTypes & ZIKViewRouteTypeMaskAddAsSubview & ZIKViewRouteTypeMaskGetDestination & ZIKViewRouteTypeMaskCustom) != 0) {
+    if ([self supportRouteType:ZIKViewRouteTypeAddAsSubview] == NO &&
+        [self supportRouteType:ZIKViewRouteTypeGetDestination] == NO &&
+        [self supportRouteType:ZIKViewRouteTypeCustom] == NO) {
         return NO;
     }
     return YES;
@@ -2708,7 +2710,7 @@ static  ZIKViewRouterType *_Nullable _routerTypeToRegisteredView(Class viewClass
             return NO;
         }
     }
-    if ([self isAbstractRouter] == NO && (supportedRouteTypes & ZIKViewRouteTypeMaskAddAsSubview) == ZIKViewRouteTypeMaskAddAsSubview) {
+    if (supportedRouteTypes == ZIKViewRouteTypeMaskAddAsSubview) {
         return NO;
     }
     return YES;

@@ -184,9 +184,9 @@ NS_SWIFT_UNAVAILABLE("ZIKModuleViewRouterType is a fake class")
 /**
  Perform route on destination and prepare destination in a type safe way inferred by generic parameters. If you get a prepared destination by ZIKViewRouteTypeGetDestination, you can use this method to perform route on the destination.
  
- @param destination The destination to perform route.
+ @param destination The destination to perform route, the destination class should be registered with this router class.
  @param configBuilder Type safe builder to build configuration, `prepareDest` is for setting `prepareDestination` block for configuration (it's an escaping block so use weakSelf in it), `prepareModule` is for setting custom route config.
- @return A router for the destination. If the destination is not registered with this router class, return nil and get assert failure.
+ @return A router for the destination. If the destination is not registered with this router class, return nil.
  */
 - (nullable ZIKViewRouter<Destination, RouteConfig> *)performOnDestination:(Destination)destination
                                                                 fromSource:(nullable id<ZIKViewRouteSource>)source
@@ -198,10 +198,10 @@ NS_SWIFT_UNAVAILABLE("ZIKModuleViewRouterType is a fake class")
 /**
  Perform route on destination and prepare destination in a type safe way inferred by generic parameters. If you get a prepared destination by ZIKViewRouteTypeGetDestination, you can use this method to perform route on the destination.
  
- @param destination The destination to perform route.
+ @param destination The destination to perform route, the destination class should be registered with this router class.
  @param configBuilder Type safe builder to build configuration, `prepareDest` is for setting `prepareDestination` block for configuration (it's an escaping block so use weakSelf in it), `prepareModule` is for setting custom route config.
  @param removeConfigBuilder Type safe builder to build remove configuration, `prepareDest` is for setting `prepareDestination` block for configuration (it's an escaping block so use weakSelf in it).
- @return A router for the destination. If the destination is not registered with this router class, return nil and get assert failure.
+ @return A router for the destination. If the destination is not registered with this router class, return nil.
  */
 - (nullable ZIKViewRouter<Destination, RouteConfig> *)performOnDestination:(Destination)destination
                                                                 fromSource:(nullable id<ZIKViewRouteSource>)source
@@ -218,7 +218,7 @@ NS_SWIFT_UNAVAILABLE("ZIKModuleViewRouterType is a fake class")
  
  @param destination The destination to prepare. Destination must be registered with this router class.
  @param configBuilder Type safe builder to build configuration, `prepareDest` is for setting `prepareDestination` block for configuration (it's an escaping block so use weakSelf in it), `prepareModule` is for setting custom route config.
- @return A router for the destination. If the destination is not registered with this router class, return nil and get assert failure.
+ @return A router for the destination. If the destination is not registered with this router class, return nil.
  */
 - (nullable ZIKViewRouter<Destination, RouteConfig> *)prepareDestination:(Destination)destination
                                                        strictConfiguring:(void(NS_NOESCAPE ^)(RouteConfig config,
@@ -232,7 +232,7 @@ NS_SWIFT_UNAVAILABLE("ZIKModuleViewRouterType is a fake class")
  @param destination The destination to prepare. Destination must be registered with this router class.
  @param configBuilder Type safe builder to build configuration, `prepareDest` is for setting `prepareDestination` block for configuration (it's an escaping block so use weakSelf in it), `prepareModule` is for setting custom route config.
  @param removeConfigBuilder Type safe builder to build remove configuration, `prepareDest` is for setting `prepareDestination` block for configuration (it's an escaping block so use weakSelf in it).
- @return A router for the destination. If the destination is not registered with this router class, return nil and get assert failure.
+ @return A router for the destination. If the destination is not registered with this router class, return nil.
  */
 - (nullable ZIKViewRouter<Destination, RouteConfig> *)prepareDestination:(Destination)destination
                                                        strictConfiguring:(void(NS_NOESCAPE ^)(RouteConfig config,
@@ -284,9 +284,9 @@ NS_SWIFT_UNAVAILABLE("ZIKModuleViewRouterType is a fake class")
 /**
  Perform route on destination and prepare destination in a type safe way inferred by generic parameters. If you get a prepared destination by ZIKViewRouteTypeGetDestination, you can use this method to perform route on the destination.
  
- @param destination The destination to perform route.
+ @param destination The destination to perform route, the destination class should be registered with this router class.
  @param configBuilder Type safe builder to build configuration, `prepareDest` is for setting `prepareDestination` block for configuration (it's an escaping block so use weakSelf in it), `prepareModule` is for setting custom route config.
- @return A router for the destination. If the destination is not registered with this router class, return nil and get assert failure.
+ @return A router for the destination. If the destination is not registered with this router class, return nil.
  */
 - (nullable ZIKViewRouter<Destination, RouteConfig> *)performOnDestination:(Destination)destination
                                                                 fromSource:(nullable id<ZIKViewRouteSource>)source
@@ -298,10 +298,10 @@ NS_SWIFT_UNAVAILABLE("ZIKModuleViewRouterType is a fake class")
 /**
  Perform route on destination and prepare destination in a type safe way inferred by generic parameters. If you get a prepared destination by ZIKViewRouteTypeGetDestination, you can use this method to perform route on the destination.
  
- @param destination The destination to perform route.
+ @param destination The destination to perform route, the destination class should be registered with this router class.
  @param configBuilder Type safe builder to build configuration, `prepareDest` is for setting `prepareDestination` block for configuration (it's an escaping block so use weakSelf in it), `prepareModule` is for setting custom route config.
  @param removeConfigBuilder Type safe builder to build remove configuration, `prepareDest` is for setting `prepareDestination` block for configuration (it's an escaping block so use weakSelf in it).
- @return A router for the destination. If the destination is not registered with this router class, return nil and get assert failure.
+ @return A router for the destination. If the destination is not registered with this router class, return nil.
  */
 - (nullable ZIKViewRouter<Destination, RouteConfig> *)performOnDestination:(Destination)destination
                                                                 fromSource:(nullable id<ZIKViewRouteSource>)source
@@ -318,7 +318,7 @@ NS_SWIFT_UNAVAILABLE("ZIKModuleViewRouterType is a fake class")
  
  @param destination The destination to prepare. Destination must be registered with this router class.
  @param configBuilder Type safe builder to build configuration, `prepareDest` is for setting `prepareDestination` block for configuration (it's an escaping block so use weakSelf in it), `prepareModule` is for setting custom route config.
- @return A router for the destination. If the destination is not registered with this router class, return nil and get assert failure.
+ @return A router for the destination. If the destination is not registered with this router class, return nil.
  */
 - (nullable ZIKViewRouter<Destination, RouteConfig> *)prepareDestination:(Destination)destination
                                                        strictConfiguring:(void(NS_NOESCAPE ^)(ZIKViewRouteConfiguration *config,
@@ -332,7 +332,7 @@ NS_SWIFT_UNAVAILABLE("ZIKModuleViewRouterType is a fake class")
  @param destination The destination to prepare. Destination must be registered with this router class.
  @param configBuilder Type safe builder to build configuration, `prepareDest` is for setting `prepareDestination` block for configuration (it's an escaping block so use weakSelf in it), `prepareModule` is for setting custom route config.
  @param removeConfigBuilder Type safe builder to build remove configuration, `prepareDest` is for setting `prepareDestination` block for configuration (it's an escaping block so use weakSelf in it).
- @return A router for the destination. If the destination is not registered with this router class, return nil and get assert failure.
+ @return A router for the destination. If the destination is not registered with this router class, return nil.
  */
 - (nullable ZIKViewRouter<Destination, RouteConfig> *)prepareDestination:(Destination)destination
                                                        strictConfiguring:(void(NS_NOESCAPE ^)(ZIKViewRouteConfiguration *config,

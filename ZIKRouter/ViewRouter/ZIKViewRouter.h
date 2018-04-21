@@ -21,23 +21,11 @@ NS_ASSUME_NONNULL_BEGIN
  Subclass it and override those methods in `ZIKRouterInternal` and `ZIKViewRouterInternal` to make router of your view.
  
  @discussion
- ## Features:
- 
- 1. Find router subclasses with registered protocols.
- 
- 2. Support all transition types in UIKit, and can remove the destination without using -popViewControllerAnimated:/-dismissViewControllerAnimated:completion:/removeFromParentViewController/removeFromSuperview in different sistuation. Router can choose the proper method.
- 
- 3. Support storyboard. UIViewController and UIView from a segue can auto create it's registered router.
- 
- 4. Error checking for routing.
- 
- 5. AOP support for destination's route action.
- 
  ## About auto create:
  
- When a UIViewController conforms to ZIKRoutableView, and is routing from storyboard segue or from -instantiateInitialViewController, a router will be auto created to prepare the UIViewController. If the destination needs preparing (+destinationPrepared: returns NO), the segue's performer is responsible for preparing in delegate method -prepareDestinationFromExternal:configuration:. But if a UIViewController is displayed from code manually, ZIKViewRouter won't auto create router, only get AOP notify, because we can't find the performer to prepare the destination. So if you use a router as a dependency injector for preparing the UIViewController, you should avoid display the UIViewController instance from code manually.
+ When a UIViewController conforms to ZIKRoutableView, and is routing from storyboard segue or from -instantiateInitialViewController, a router will be auto created to prepare the UIViewController. If the destination needs preparing (-destinationFromExternalPrepared: returns NO), the segue's performer view controller is responsible for preparing in delegate method -prepareDestinationFromExternal:configuration:. But if a UIViewController is displayed from code manually, ZIKViewRouter won't auto create router, only get AOP notify, because we can't find the performer to prepare the destination. So if you use a router as a dependency injector for preparing the UIViewController, you should avoid display the UIViewController instance from code manually.
  
- When Adding a registered UIView by code or xib, a router will be auto created. We search the view controller of custom class (not system class like native UINavigationController, or any container view controller) in it's responder hierarchy as the performer. If the registered UIView needs preparing (+destinationPrepared: returns NO), you have to add the view to a superview in a view controller before it's removed from superview. There will be an assert failure if there is no view controller to prepare it (such as: 1. add it to a superview, and the superview is never added to a view controller; 2. add it to a UIWindow). If your custom class view use a routable view as it's subview, the custom view should use a router to add and prepare the routable view, then the routable view doesn't need to search performer because it's already prepared.
+ When Adding a registered UIView by code or xib, a router will be auto created. We search the view controller of custom class (not system class like native UINavigationController, or any container view controller) in it's responder hierarchy as the performer. If the registered UIView needs preparing (-destinationFromExternalPrepared: returns NO), you have to add the view to a superview in a view controller before it's removed from superview. There will be an assert failure if there is no view controller to prepare it (such as: 1. add it to a superview, and the superview is never added to a view controller; 2. add it to a UIWindow). If your custom class view use a routable view as it's subview, the custom view should use a router to add and prepare the routable view, then the routable view doesn't need to search performer because it's already prepared.
  */
 @interface ZIKViewRouter<__covariant Destination: id, __covariant RouteConfig: ZIKViewRouteConfiguration *> : ZIKRouter<Destination, RouteConfig, ZIKViewRemoveConfiguration *>
 
@@ -70,7 +58,7 @@ NS_ASSUME_NONNULL_BEGIN
 ///Default is ZIKViewRouteTypeMaskUIViewControllerDefault for UIViewController type destination, if your destination is a UIView, override this and return ZIKViewRouteTypeMaskUIViewDefault. Router subclass can also limit the route type.
 + (ZIKViewRouteTypeMask)supportedRouteTypes;
 
-///Router doesn't support all routeTypes, for example, router for a UIView destination can't support those UIViewController's routeTypes
+///Check whether the router support a route type.
 + (BOOL)supportRouteType:(ZIKViewRouteType)type;
 
 #pragma mark Perform
@@ -150,10 +138,10 @@ NS_ASSUME_NONNULL_BEGIN
 /**
  Perform route on destination. If you get a prepared destination by ZIKViewRouteTypeGetDestination, you can use this method to perform route on the destination.
  
- @param destination The destination to perform route.
+ @param destination The destination to perform route, the destination class should be registered with this router class.
  @param source The source view.
  @param configBuilder Builder for config when perform route.
- @return A router for the destination. If the destination is not registered with this router class, return nil and get assert failure.
+ @return A router for the destination. If the destination is not registered with this router class, return nil.
  */
 + (nullable instancetype)performOnDestination:(Destination)destination
                                    fromSource:(nullable id<ZIKViewRouteSource>)source
@@ -162,11 +150,11 @@ NS_ASSUME_NONNULL_BEGIN
 /**
  Perform route on destination. If you get a prepared destination by ZIKViewRouteTypeGetDestination, you can use this method to perform route on the destination.
 
- @param destination The destination to perform route.
+ @param destination The destination to perform route, the destination class should be registered with this router class.
  @param source The source view.
  @param configBuilder Builder for config when perform route.
  @param removeConfigBuilder Builder for config when remove route.
- @return A router for the destination. If the destination is not registered with this router class, return nil and get assert failure.
+ @return A router for the destination. If the destination is not registered with this router class, return nil.
  */
 + (nullable instancetype)performOnDestination:(Destination)destination
                                    fromSource:(nullable id<ZIKViewRouteSource>)source
@@ -176,10 +164,10 @@ NS_ASSUME_NONNULL_BEGIN
 /**
  Perform route on destination. If you get a prepared destination by ZIKViewRouteTypeGetDestination, you can use this method to perform route on the destination.
 
- @param destination The destination to perform route.
+ @param destination The destination to perform route, the destination class should be registered with this router class.
  @param source The source view.
  @param routeType Route type to perform.
- @return A router for the destination. If the destination is not registered with this router class, return nil and get assert failure.
+ @return A router for the destination. If the destination is not registered with this router class, return nil.
  */
 + (nullable instancetype)performOnDestination:(Destination)destination
                                    fromSource:(nullable id<ZIKViewRouteSource>)source
@@ -188,10 +176,10 @@ NS_ASSUME_NONNULL_BEGIN
 /**
  Perform route on destination and prepare destination in a type safe way inferred by generic parameters. If you get a prepared destination by ZIKViewRouteTypeGetDestination, you can use this method to perform route on the destination.
  
- @param destination The destination to perform route.
+ @param destination The destination to perform route, the destination class should be registered with this router class.
  @param source The source view.
  @param configBuilder Type safe builder to build configuration, `prepareDest` is for setting `prepareDestination` block for configuration (it's an escaping block so use weakSelf in it), `prepareModule` is for setting custom route config.
- @return A router for the destination. If the destination is not registered with this router class, return nil and get assert failure.
+ @return A router for the destination. If the destination is not registered with this router class, return nil.
  */
 + (nullable instancetype)performOnDestination:(Destination)destination
                                    fromSource:(nullable id<ZIKViewRouteSource>)source
@@ -203,11 +191,11 @@ NS_ASSUME_NONNULL_BEGIN
 /**
  Perform route on destination and prepare destination in a type safe way inferred by generic parameters. If you get a prepared destination by ZIKViewRouteTypeGetDestination, you can use this method to perform route on the destination.
  
- @param destination The destination to perform route.
+ @param destination The destination to perform route, the destination class should be registered with this router class.
  @param source The source view.
  @param configBuilder Type safe builder to build configuration, `prepareDest` is for setting `prepareDestination` block for configuration (it's an escaping block so use weakSelf in it), `prepareModule` is for setting custom route config.
  @param removeConfigBuilder Type safe builder to build remove configuration, `prepareDest` is for setting `prepareDestination` block for configuration (it's an escaping block so use weakSelf in it).
- @return A router for the destination. If the destination is not registered with this router class, return nil and get assert failure.
+ @return A router for the destination. If the destination is not registered with this router class, return nil.
  */
 + (nullable instancetype)performOnDestination:(Destination)destination
                                    fromSource:(nullable id<ZIKViewRouteSource>)source
@@ -227,7 +215,7 @@ NS_ASSUME_NONNULL_BEGIN
  
  @param destination The destination to prepare. Destination must be registered with this router class.
  @param configBuilder Builder for config when perform route.
- @return A router for the destination. If the destination is not registered with this router class, return nil and get assert failure.
+ @return A router for the destination. If the destination is not registered with this router class, return nil.
  */
 + (nullable instancetype)prepareDestination:(Destination)destination
                                 configuring:(void(NS_NOESCAPE ^)(RouteConfig config))configBuilder;
@@ -238,7 +226,7 @@ NS_ASSUME_NONNULL_BEGIN
  @param destination The destination to prepare. Destination must be registered with this router class.
  @param configBuilder Builder for config when perform route.
  @param removeConfigBuilder Builder for config when remove route.
- @return A router for the destination. If the destination is not registered with this router class, return nil and get assert failure.
+ @return A router for the destination. If the destination is not registered with this router class, return nil.
  */
 + (nullable instancetype)prepareDestination:(Destination)destination
                                 configuring:(void(NS_NOESCAPE ^)(RouteConfig config))configBuilder
@@ -249,7 +237,7 @@ NS_ASSUME_NONNULL_BEGIN
  
  @param destination The destination to prepare. Destination must be registered with this router class.
  @param configBuilder Type safe builder to build configuration, `prepareDest` is for setting `prepareDestination` block for configuration (it's an escaping block so use weakSelf in it), `prepareModule` is for setting custom route config.
- @return A router for the destination. If the destination is not registered with this router class, return nil and get assert failure.
+ @return A router for the destination. If the destination is not registered with this router class, return nil.
  */
 + (nullable instancetype)prepareDestination:(Destination)destination
                           strictConfiguring:(void(NS_NOESCAPE ^)(RouteConfig config,
@@ -263,7 +251,7 @@ NS_ASSUME_NONNULL_BEGIN
  @param destination The destination to prepare. Destination must be registered with this router class.
  @param configBuilder Type safe builder to build configuration, `prepareDest` is for setting `prepareDestination` block for configuration (it's an escaping block so use weakSelf in it), `prepareModule` is for setting custom route config.
  @param removeConfigBuilder Type safe builder to build remove configuration, `prepareDest` is for setting `prepareDestination` block for configuration (it's an escaping block so use weakSelf in it).
- @return A router for the destination. If the destination is not registered with this router class, return nil and get assert failure.
+ @return A router for the destination. If the destination is not registered with this router class, return nil.
  */
 + (nullable instancetype)prepareDestination:(Destination)destination
                           strictConfiguring:(void(NS_NOESCAPE ^)(RouteConfig config,
@@ -292,7 +280,7 @@ NS_ASSUME_NONNULL_BEGIN
  
  5. Router was auto created when a destination is displayed and not from storyboard, so router don't know destination's state before route, and can't analyze it's real route type to do corresponding remove action.
  
- 6. Destination's route type is complicated and is considered as custom route type. Such as destination is added to a UITabBarController, then added to a UINavigationController, and finally presented modally. We don't know the remove action should do dismiss or pop or remove from it's UITabBarController.
+ 6. Destination's route type is complicated and is considered as custom route type. Such as destination is added to a UITabBarController, then pushed into a UINavigationController, and finally presented modally. We don't know the remove action should do dismiss or pop or remove from it's UITabBarController.
  
  @note Router should be removed by the performer, but not inside the destination. Only the performer knows how the destination was displayed (situation 6).
 
@@ -324,53 +312,43 @@ typedef void(^ZIKViewRouteGlobalErrorHandler)(__kindof ZIKViewRouter * _Nullable
 
 @interface ZIKViewRouter (Register)
 /**
- Register a viewClass with it's router's class, so we can create the router of a view and it's subclass when view is not created from router(UIViewController from storyboard or UIView added with -addSubview:, can't detect UIViewController displayed from code because we can't get the performer vc), then require the performer to config the view, and get AOP notified for some route actions.
+ Register a UIViewController or UIView class with this router class, then we can find the view's router class when we need to auto create router for a view.
  @note
  One view may be registered with multi routers, when view is routed from storyboard or -addSubview:, a router will be auto created from one of the registered router classes randomly. If you want to use a certain router, see +registerExclusiveView:.
  One router may manage multi views. You can register multi view classes to a same router class.
  
- @param viewClass The view class managed by router.
+ @param viewClass The view class registered with this router class.
  */
 + (void)registerView:(Class)viewClass;
 
 /**
- Register viewClass with a unique routerClass, then no other routerClass can be used for this viewClass.
+ Register a UIViewController or UIView class with this router class, then no other router class can be registered for this view class.
  @discussion
- If the view will hold and use it's router, or you inject dependencies in the router, that means the view is coupled with the router. Then use this method to register viewClass and routerClass. If another routerClass try to register with the viewClass, there will be an assert failure.
+ If the view will hold and use it's router, or you inject dependencies in the router, that means the view is coupled with the router. Then use this method to register. If another router class try to register with the view class, there will be an assert failure.
  
- @param viewClass The view class requiring a unique router class.
+ @param viewClass The view class uniquely registered with this router class.
  */
 + (void)registerExclusiveView:(Class)viewClass;
 
 /**
- Register a view protocol that all views registered with the router conform to, then use ZIKViewRouterToView() to get the router class.
- @discussion
- If there're multi router classes for same view, and those routers is designed for preparing different part of the view when perform route (for example, a router is for presenting actionsheet style for UIAlertController, another router is for presenting alert style for UIAlertController), then each router has to register a unique protocol for the view and get the right router class with their protocol, or just import the router class your want to use directly.
+ Register a view protocol that all views registered with the router conform to, then use ZIKRouterToView() to get the router class. In Swift, use `register(RoutableView<ViewProtocol>())` in ZRouter instead.
  
- You can register your protocol and let the view conforms to the protocol in category in your interface adapter.
- 
- @param viewProtocol The protocol conformed by view to identify the routerClass. Should inherit from ZIKViewRoutable when ZIKROUTER_CHECK is enabled. Use macro `ZIKRoutableProtocol` to check whether the protocol is routable.
+ @param viewProtocol The protocol conformed by the view. Should inherit from ZIKViewRoutable. Use macro `ZIKRoutableProtocol` to wrap the parameter.
  */
 + (void)registerViewProtocol:(Protocol<ZIKViewRoutable> *)viewProtocol;
 
 /**
- Register a module config protocol the router's default configuration conforms, then use ZIKViewRouterToModule() to get the router class.
+ Register a module config protocol conformed by the router's default route configuration, then use ZIKRouterToModule() to get the router class. In Swift, use `register(RoutableViewModule<ModuleProtocol>())` in ZRouter instead.
  
- When the view module contains not only a single UIViewController, but also other internal services, and you can't prepare the module with a simple view protocol, then you need a module config protocol.
- @discussion
- If there're multi router classes for same view, and those routers provide different functions and use their subclass of ZIKViewRouteConfiguration (for example, your add a third-party library to your project, the library has a router for quickly presenting a UIAlertController, and in your project, there's a router for integrating UIAlertView and UIAlertController), then each router has to register a unique protocol for their configurations and get the right router class with this protocol, or just import the router class your want to use directly.
- 
- You can register your protocol and let the configuration conforms to the protocol in category in your interface adapter.
- 
- @param configProtocol The protocol conformed by default configuration of the routerClass. Should inherit from ZIKViewModuleRoutable when ZIKROUTER_CHECK is enabled. Use macro `ZIKRoutableProtocol` to check whether the protocol is routable.
+ @param configProtocol The protocol conformed by default route configuration of this router class. Should inherit from ZIKViewModuleRoutable. Use macro `ZIKRoutableProtocol` to wrap the parameter.
  */
 + (void)registerModuleProtocol:(Protocol<ZIKViewModuleRoutable> *)configProtocol;
 
-///Is registration all finished.
+///Is registration all finished. Can't register any router after registration is finished.
 + (BOOL)isRegistrationFinished;
 @end
 
-///If a UIViewController or UIView conforms to ZIKRoutableView, there must be a router for it and it's subclass. Don't use it in other place.
+///If a UIViewController or UIView conforms to ZIKRoutableView, there must be a router for it and it's subclass, then we can auto create it's router. Don't use it in other place.
 @protocol ZIKRoutableView <NSObject>
 
 @end

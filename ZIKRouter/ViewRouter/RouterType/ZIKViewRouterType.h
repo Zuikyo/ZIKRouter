@@ -15,7 +15,7 @@ NS_ASSUME_NONNULL_BEGIN
 ///Proxy to use ZIKViewRouter class type or ZIKViewRoute with compile time checking. These instance methods are actually class methods in ZIKViewRouter class.
 @interface ZIKViewRouterType<__covariant Destination: id, __covariant RouteConfig: ZIKViewRouteConfiguration *> : ZIKRouterType<Destination, RouteConfig, ZIKViewRemoveConfiguration *>
 
-///Router doesn't support all routeTypes, for example, router for a UIView destination can't support those UIViewController's routeTypes.
+///Check whether the router support a route type.
 - (BOOL)supportRouteType:(ZIKViewRouteType)type;
 
 /**
@@ -56,19 +56,19 @@ NS_ASSUME_NONNULL_BEGIN
 /**
  Perform route on destination. If you get a prepared destination by ZIKViewRouteTypeGetDestination, you can use this method to perform route on the destination.
  
- @param destination The destination to perform route.
+ @param destination The destination to perform route, the destination class should be registered with this router class.
  @param configBuilder Builder for config when perform route.
- @return A router for the destination. If the destination is not registered with this router class, return nil and get assert failure.
+ @return A router for the destination. If the destination is not registered with this router class, return nil.
  */
 - (nullable ZIKViewRouter<Destination, RouteConfig> *)performOnDestination:(Destination)destination fromSource:(nullable id<ZIKViewRouteSource>)source configuring:(void(NS_NOESCAPE ^)(RouteConfig config))configBuilder;
 
 /**
  Perform route on destination. If you get a prepared destination by ZIKViewRouteTypeGetDestination, you can use this method to perform route on the destination.
  
- @param destination The destination to perform route.
+ @param destination The destination to perform route, the destination class should be registered with this router class.
  @param configBuilder Builder for config when perform route.
  @param removeConfigBuilder Builder for config when remove route.
- @return A router for the destination. If the destination is not registered with this router class, return nil and get assert failure.
+ @return A router for the destination. If the destination is not registered with this router class, return nil.
  */
 - (nullable ZIKViewRouter<Destination, RouteConfig> *)performOnDestination:(Destination)destination
                                                                 fromSource:(nullable id<ZIKViewRouteSource>)source
@@ -78,10 +78,10 @@ NS_ASSUME_NONNULL_BEGIN
 /**
  Perform route on destination. If you get a prepared destination by ZIKViewRouteTypeGetDestination, you can use this method to perform route on the destination.
  
- @param destination The destination to perform route.
+ @param destination The destination to perform route, the destination class should be registered with this router class.
  @param source The source view.
  @param routeType Route type to perform.
- @return A router for the destination. If the destination is not registered with this router class, return nil and get assert failure.
+ @return A router for the destination. If the destination is not registered with this router class, return nil.
  */
 - (nullable ZIKViewRouter<Destination, RouteConfig> *)performOnDestination:(Destination)destination fromSource:(nullable id<ZIKViewRouteSource>)source routeType:(ZIKViewRouteType)routeType;
 
@@ -90,7 +90,7 @@ NS_ASSUME_NONNULL_BEGIN
  
  @param destination The destination to prepare. Destination must be registered with this router class.
  @param configBuilder Builder for config when perform route.
- @return A router for the destination. If the destination is not registered with this router class, return nil and get assert failure.
+ @return A router for the destination. If the destination is not registered with this router class, return nil.
  */
 - (nullable ZIKViewRouter<Destination, RouteConfig> *)prepareDestination:(Destination)destination configuring:(void(NS_NOESCAPE ^)(RouteConfig config))configBuilder;
 
@@ -100,7 +100,7 @@ NS_ASSUME_NONNULL_BEGIN
  @param destination The destination to prepare. Destination must be registered with this router class.
  @param configBuilder Builder for config when perform route.
  @param removeConfigBuilder Builder for config when remove route.
- @return A router for the destination. If the destination is not registered with this router class, return nil and get assert failure.
+ @return A router for the destination. If the destination is not registered with this router class, return nil.
  */
 - (nullable ZIKViewRouter<Destination, RouteConfig> *)prepareDestination:(Destination)destination
                                                              configuring:(void(NS_NOESCAPE ^)(RouteConfig config))configBuilder

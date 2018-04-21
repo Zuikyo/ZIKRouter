@@ -113,7 +113,7 @@ public class ViewRouterType<Destination, ModuleConfig> {
     /// Perform route on destination. If you get a prepared destination by ZIKViewRouteTypeGetDestination, you can use this method to perform route on the destination.
     ///
     /// - Parameters:
-    ///   - destination: The destination to perform route.
+    ///   - destination: The destination to perform route, the destination class should be registered with this router class.
     ///   - source: The source view.
     ///   - configBuilder: Builder for config when perform route.
     ///   - removeConfigBuilder: Builder for config when remove route.
@@ -173,10 +173,10 @@ public class ViewRouterType<Destination, ModuleConfig> {
     /// Perform route on destination with route type. If you get a prepared destination by ZIKViewRouteTypeGetDestination, you can use this method to perform route on the destination.
     ///
     /// - Parameters:
-    ///   - destination: The destination to perform route.
+    ///   - destination: The destination to perform route, the destination class should be registered with this router class.
     ///   - source: The source view.
     ///   - routeType: Route type to perform.
-    /// - Returns: The view router for this route. If the destination is not registered with this router class, return nil and get assert failure.
+    /// - Returns: The view router for this route. If the destination is not registered with this router class, return nil.
     @discardableResult public func perform(
         onDestination destination: Destination,
         from source: ZIKViewRouteSource?,
@@ -195,7 +195,7 @@ public class ViewRouterType<Destination, ModuleConfig> {
     ///   - destination: The destination to prepare. Destination must be registered with this router class.
     ///   - configBuilder: Builder for config when perform route.
     ///   - removeConfigBuilder: Builder for config when remove route.
-    /// - Returns: The view router for this route. If the destination is not registered with this router class, return nil and get assert failure.
+    /// - Returns: The view router for this route. If the destination is not registered with this router class, return nil.
     @discardableResult public func prepare(
         destination: Destination,
         configuring configBuilder: (ViewRouteConfig, DestinationPreparation, ModulePreparation) -> Void,

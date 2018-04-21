@@ -37,7 +37,7 @@ typedef void(^ZIKServiceRouteGlobalErrorHandler)(__kindof ZIKServiceRouter * _Nu
  
  @code
  id<LoginServiceInput> loginService;
- loginService = [ZIKServiceRouterToService(LoginServiceInput)
+ loginService = [ZIKRouterToService(LoginServiceInput)
                     makeDestinationWithPreparation:^(id<LoginServiceInput> destination) {
                       //Prepare service
                 }];
@@ -57,39 +57,39 @@ typedef void(^ZIKServiceRouteGlobalErrorHandler)(__kindof ZIKServiceRouter * _Nu
 @interface ZIKServiceRouter (Register)
 
 /**
- Register a service class with it's router's class.
+ Register a service class with this router class.
  One router may manage multi services. You can register multi service classes to a same router class.
  
- @param serviceClass The service class managed by router.
+ @param serviceClass The service class registered with this router class.
  */
 + (void)registerService:(Class)serviceClass;
 
 /**
- combine serviceClass with a specific routerClass, then no other routerClass can be used for this serviceClass.
+ Combine service class with this router class, then no other router class can be registered for this service class.
  @discussion
- If the service will hold and use it's router, and the router has it's custom functions for this service, that means the service is coupled with the router. You can use this method to register viewClass and routerClass. If another routerClass try to register with the serviceClass, there will be an assert failure.
+ If the service will hold and use it's router, and the router has it's custom functions for this service, that means the service is coupled with the router. You can use this method to register. If another router class try to register with the service class, there will be an assert failure.
  
- @param serviceClass The service class requiring a specific router class.
+ @param serviceClass The service class uniquely registered with this router class.
  */
 + (void)registerExclusiveService:(Class)serviceClass;
 
 /**
- Register a service protocol that all services registered with the router conform to, then use ZIKServiceRouterToService() to get the router class.You can register your protocol and let the service conforms to the protocol in category in your interface adapter.
+ Register a service protocol that all services registered with the router conform to, then use ZIKRouterToService() to get the router class. In Swift, use `register(RoutableService<ServiceProtocol>())` in ZRouter instead.
  
- @param serviceProtocol The protocol conformed by service to identify the routerClass. Should inherit from ZIKServiceRoutable when ZIKROUTER_CHECK is enabled. Use macro `ZIKRoutableProtocol` to check whether the protocol is routable.
+ @param serviceProtocol The protocol conformed by service. Should inherit from ZIKServiceRoutable. Use macro `ZIKRoutableProtocol` to wrap the parameter.
  */
 + (void)registerServiceProtocol:(Protocol<ZIKServiceRoutable> *)serviceProtocol;
 
 /**
- Register a module config protocol the router's default configuration conforms, then use ZIKServiceRouterToModule() to get the router class. You can register your protocol and let the configuration conforms to the protocol in category in your interface adapter.
+ Register a module config protocol the router's default configuration conforms, then use ZIKRouterToModule() to get the router class. In Swift, use `register(RoutableServiceModule<ModuleProtocol>())` in ZRouter instead.
  
- When the service module contains not only a single service class, but also other internal services, and you can't prepare the module with a simple service protocol, then you need a module config protocol.
+ When the service module is not only a single service class, but also other internal services, and you can't prepare the module with a simple service protocol, then you need a module config protocol, and let router prepare the module inside..
  
- @param configProtocol The protocol conformed by default configuration of the routerClass. Should inherit from ZIKServiceModuleRoutable when ZIKROUTER_CHECK is enabled. Use macro `ZIKRoutableProtocol` to check whether the protocol is routable.
+ @param configProtocol The protocol conformed by default route configuration of this router class. Should inherit from ZIKServiceModuleRoutable. Use macro `ZIKRoutableProtocol` to wrap the parameter.
  */
 + (void)registerModuleProtocol:(Protocol<ZIKServiceModuleRoutable> *)configProtocol;
 
-///Is registration all finished.
+///Is registration all finished. Can't register any router after registration is finished.
 + (BOOL)isRegistrationFinished;
 
 @end
