@@ -291,18 +291,23 @@ static bool(*swift_conformsToProtocols())(void *, void *, void *, void *) {
     static dispatch_once_t onceToken;
     dispatch_once(&onceToken, ^{
         NSString *libswiftCorePath = [[[NSBundle mainBundle] bundlePath] stringByAppendingPathComponent:@"Frameworks/libswiftCore.dylib"];
-        long address;
         NSLog(@"\nZIKRouter:: _swift_typeConformsToProtocol():\nStart searching function pointer for\n`bool _conformsToProtocols(const OpaqueValue *value, const Metadata *type, const ExistentialTypeMetadata *existentialType, const WitnessTable **conformances)` in libswiftCore.dylib to validate swift type.\n");
         
         ZIKImageRef libswiftCoreImage = [ZIKImageSymbol imageByName:libswiftCorePath.UTF8String];
-        _conformsToProtocols = [ZIKImageSymbol findSymbolInImage:libswiftCoreImage name:"_conformsToProtocols" matchAsSubstring:YES];
+        _conformsToProtocols = [ZIKImageSymbol findSymbolInImage:libswiftCoreImage matching:^BOOL(const char * _Nonnull symbolName) {
+            if(strstr(symbolName, "_conformsToProtocols") &&
+               strstr(symbolName, "OpaqueValue") &&
+               strstr(symbolName, "ExistentialTypeMetadata") &&
+               strstr(symbolName, "WitnessTable")) {
+                return YES;
+            }
+            return NO;
+        }];
         NSCAssert1([[ZIKImageSymbol symbolNameForAddress:_conformsToProtocols] containsString:@"OpaqueValue"] &&
                   [[ZIKImageSymbol symbolNameForAddress:_conformsToProtocols] containsString:@"ExistentialTypeMetadata"] &&
                   [[ZIKImageSymbol symbolNameForAddress:_conformsToProtocols] containsString:@"WitnessTable"]
                   , @"The symbol name is not matched: %@", [ZIKImageSymbol symbolNameForAddress:_conformsToProtocols]);
-        
-        address = (long)_conformsToProtocols;
-        NSLog(@"\n✅ZIKRouter: function pointer address 0x%lx is found for `_conformsToProtocols`.\n",address);
+        NSLog(@"\n✅ZIKRouter: function pointer address 0x%lx is found for `_conformsToProtocols`.\n",(long)_conformsToProtocols);
     });
     
     return (bool(*)(void *, void *, void *, void *))_conformsToProtocols;

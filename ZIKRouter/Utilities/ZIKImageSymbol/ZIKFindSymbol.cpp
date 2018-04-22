@@ -64,7 +64,7 @@ static const uint32_t LC_SEGMENT_XX = LC_SEGMENT;
 static const uint32_t MH_MAGIC_XX = MH_MAGIC;
 #endif
 
-static ssize_t MSMachONameList_(const void *stuff, struct MSSymbolData *list, size_t nreq, bool matchAsSubstring) {
+static ssize_t MSMachONameList_(const void *stuff, struct MSSymbolData *list, size_t nreq, bool(^matching)(const char *)) {
     //get slide
     size_t slide(0);
     for (uint32_t image(0), images(_dyld_image_count()); image != images; ++image)
@@ -201,13 +201,17 @@ thin:
         
         for (size_t item(0); item != nreq; ++item) {
             struct MSSymbolData *p(list + item);
-            if (p->name_ == NULL) {
-                continue;
-            }
-            if (matchAsSubstring && strstr(nambuf, p->name_) == 0) {
-                continue;
-            } else if (!matchAsSubstring && strcmp(p->name_, nambuf) != 0) {
-                continue;
+            if (matching) {
+                if (!matching(nambuf)) {
+                    continue;
+                }
+            } else {
+                if (p->name_ == NULL) {
+                    continue;
+                }
+                if (strcmp(p->name_, nambuf) != 0) {
+                    continue;
+                }
             }
             
             p->name_ = NULL;
@@ -247,13 +251,15 @@ static bool string_ends_with(const char * str, const char * suffix) {
     return NULL;
 }
 
-static void ZIKFindSymbols(ZIKImageRef image, size_t count, const char *names[], void *values[], bool matchAsSubstring) {
+static void ZIKFindSymbols(ZIKImageRef image, size_t count, const char *names[], void *values[], bool(^matching)(const char *)) {
     MSSymbolData items[count];
     
     for (size_t index(0); index != count; ++index) {
         MSSymbolData &item(items[index]);
         
-        item.name_ = names[index];
+        if (names) {
+            item.name_ = names[index];
+        }
         item.type_ = 0;
         item.sect_ = 0;
         item.desc_ = 0;
@@ -261,14 +267,14 @@ static void ZIKFindSymbols(ZIKImageRef image, size_t count, const char *names[],
     }
     
     if (image != NULL)
-        MSMachONameList_(image, items, count, matchAsSubstring);
+        MSMachONameList_(image, items, count, matching);
     else {
         size_t remain(count);
         
         for (uint32_t image(0), images(_dyld_image_count()); image != images; ++image) {
             //fprintf(stderr, ":: %s\n", _dyld_get_image_name(image));
             
-            ssize_t result(MSMachONameList_(_dyld_get_image_header(image), items, count, matchAsSubstring));
+            ssize_t result(MSMachONameList_(_dyld_get_image_header(image), items, count, matching));
             if (result == -1)
                 continue;
             
@@ -298,9 +304,15 @@ static void ZIKFindSymbols(ZIKImageRef image, size_t count, const char *names[],
     }
 }
 
- void *ZIKFindSymbol(ZIKImageRef image, const char *name, bool matchAsSubstring) {
+void *ZIKFindSymbol(ZIKImageRef image, const char *name) {
     void *value;
-    ZIKFindSymbols(image, 1, &name, &value, matchAsSubstring);
+    ZIKFindSymbols(image, 1, &name, &value, NULL);
+    return value;
+}
+
+void *ZIKFindSymbol(ZIKImageRef image, bool(^matchingBlock)(const char *)) {
+    void *value;
+    ZIKFindSymbols(image, 1, NULL, &value, matchingBlock);
     return value;
 }
 

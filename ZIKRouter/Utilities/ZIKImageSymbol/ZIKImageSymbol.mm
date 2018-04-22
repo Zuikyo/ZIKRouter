@@ -21,15 +21,28 @@
     return image;
 }
 
-+(void *)findSymbolInImage:(ZIKImageRef)image name:(const char *)symbolName matchAsSubstring:(BOOL)matchAsSubstring {
++(void *)findSymbolInImage:(ZIKImageRef)image name:(const char *)symbolName {
     NSParameterAssert(image);
     NSParameterAssert(symbolName);
-    void *symbol = ZIKFindSymbol(image, symbolName, matchAsSubstring);
+    void *symbol = ZIKFindSymbol(image, symbolName);
+    return symbol;
+}
+
++(void *)findSymbolInImage:(ZIKImageRef)image matching:(BOOL(^)(const char *symbolName))matchingBlock {
+    NSParameterAssert(image);
+    NSParameterAssert(matchingBlock);
+    void *symbol = ZIKFindSymbol(image, matchingBlock);
     return symbol;
 }
 
 + (nullable NSString *)symbolNameForAddress:(void *)address {
+    if (address == NULL) {
+        return nil;
+    }
     const char *name = ZIKSymbolNameForAddress(address);
+    if (name == NULL) {
+        return nil;
+    }
     if (strlen(name) == 0) {
         return nil;
     }
@@ -37,7 +50,13 @@
 }
 
 + (nullable NSString *)imagePathForAddress:(void *)address {
+    if (address == NULL) {
+        return nil;
+    }
     const char *imageFile = ZIKImagePathForAddress(address);
+    if (imageFile == NULL) {
+        return nil;
+    }
     if (strlen(imageFile) == 0) {
         return nil;
     }
