@@ -22,7 +22,7 @@
 
 - (instancetype)init {
     if (self = [super init]) {
-        NSAssert1(ZIKRouter_classSelfImplementingMethod([self class], @selector(copyWithZone:), false), @"configuration (%@) must override -copyWithZone:, because it will be deep copied when router is initialized.",[self class]);
+        NSAssert1(ZIKRouter_classSelfImplementingMethod([self class], @selector(copyWithZone:), false), @"configuration (%@) must override -copyWithZone:, because it will be deep copied when router is initialized. You can use -setPropertiesFromConfiguration: to quickly set properties to copy object in Objective-C.",[self class]);
         
     }
     return self;
@@ -32,7 +32,7 @@
     ZIKRouteConfiguration *config = [[self class] new];
     config.errorHandler = self.errorHandler;
     config.performerErrorHandler = self.performerErrorHandler;
-    config.stateNotifier = [self.stateNotifier copy];
+    config.stateNotifier = self.stateNotifier;
     return config;
 }
 
@@ -42,14 +42,31 @@
         return NO;
     }
     NSMutableArray<NSString *> *keys = [NSMutableArray array];
-    unsigned int count;
-    objc_property_t *properties = class_copyPropertyList([self class], &count);
-    for (int i = 0; i < count; i++) {
-        objc_property_t property = properties[i];
-        if (property) {
-            [keys addObject:[NSString stringWithCString:property_getName(property) encoding:NSUTF8StringEncoding]];
+    Class configClass = [self class];
+    while (configClass && configClass != [ZIKRouteConfiguration class]) {
+        unsigned int count = 0;
+        objc_property_t *properties = class_copyPropertyList(configClass, &count);
+        for (int i = 0; i < count; i++) {
+            objc_property_t property = properties[i];
+            if (property) {
+                const char *readonly = property_copyAttributeValue(property, "R");
+                if (readonly) {
+                    continue;
+                }
+                const char *propertyName = property_getName(property);
+                if (propertyName == NULL) {
+                    continue;
+                }
+                NSString *name = [NSString stringWithUTF8String:propertyName];
+                if (name == nil) {
+                    continue;
+                }
+                [keys addObject:name];
+            }
         }
+        configClass = class_getSuperclass(configClass);
     }
+    
     [self setValuesForKeysWithDictionary:[configuration dictionaryWithValuesForKeys:keys]];
     return YES;
 }

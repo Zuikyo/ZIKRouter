@@ -63,7 +63,7 @@ typedef void(^ZIKRouteStateNotifier)(ZIKRouterState oldState, ZIKRouterState new
 @property (nonatomic, copy, nullable) ZIKRouteStateNotifier stateNotifier;
 
 ///Initialize properties in currrent configuration class from another configuration, the other configuration must be same class or subclass of self. This is a convenient method to initialize a copy from an existing configuration in -copyWithZone:.
-- (BOOL)setPropertiesFromConfiguration:(ZIKRouteConfiguration *)configuration;
+- (BOOL)setPropertiesFromConfiguration:(ZIKRouteConfiguration *)configuration NS_SWIFT_UNAVAILABLE("Can't get properties for Swift");
 
 @end
 
