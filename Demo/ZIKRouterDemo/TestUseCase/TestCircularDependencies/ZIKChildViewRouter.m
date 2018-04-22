@@ -20,7 +20,7 @@
 
 + (void)registerRoutableDestination {
     [self registerView:[ZIKChildViewController class]];
-    [self registerViewProtocol:ZIKRoutableProtocol(ZIKChildViewProtocol)];
+    [self registerViewProtocol:ZIKRoutable(ZIKChildViewProtocol)];
 }
 
 - (id<ZIKRoutableView>)destinationWithConfiguration:(ZIKViewRouteConfiguration *)configuration {

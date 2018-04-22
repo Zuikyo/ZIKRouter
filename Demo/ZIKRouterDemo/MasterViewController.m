@@ -86,7 +86,7 @@ typedef NS_ENUM(NSInteger,ZIKRouterTestType) {
                            [TestCircularDependenciesViewRouter class],
                            [TestClassHierarchyViewRouter class],
                            [TestServiceRouterViewRouter class],
-                           ZIKViewRouter.toView(ZIKRoutableProtocol(SwiftSampleViewInput))
+                           ZIKViewRouter.toView(ZIKRoutable(SwiftSampleViewInput))
                            ];
     NSAssert(self.cellNames.count == self.routerClasses.count, nil);
 }

@@ -18,7 +18,7 @@
 
 + (void)registerRoutableDestination {
     [self registerView:[ZIKSimpleLabel class]];
-    [self registerViewProtocol:ZIKRoutableProtocol(ZIKSimpleLabelProtocol)];
+    [self registerViewProtocol:ZIKRoutable(ZIKSimpleLabelProtocol)];
 }
 
 - (id<ZIKRoutableView>)destinationWithConfiguration:(ZIKViewRouteConfiguration *)configuration {

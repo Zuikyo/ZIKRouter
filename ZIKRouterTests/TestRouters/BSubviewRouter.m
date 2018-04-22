@@ -18,7 +18,7 @@ DeclareRoutableView(BSubview, BSubviewRouter)
 + (void)registerRoutableDestination {
     [self registerView:[BSubview class]];
 #if !TEST_BLOCK_ROUTE
-    [self registerViewProtocol:ZIKRoutableProtocol(BSubviewInput)];
+    [self registerViewProtocol:ZIKRoutable(BSubviewInput)];
 #endif
 }
 

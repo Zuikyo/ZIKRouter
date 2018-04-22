@@ -30,4 +30,5 @@ typedef ZIKViewRouter<id, ZIKViewRouteConfig *> ZIKAnyViewRouter;
 #define ZIKModuleViewRouter(ModuleConfigProtocol) ZIKViewRouter<id, ZIKViewRouteConfig<ModuleConfigProtocol> *>
 
 ///Check whether the protocol is routable at complie time when passing protocols to `+registerViewProtocol:`, `+registerServiceProtocol:`, `+registerModuleProtocol:`.
+#define ZIKRoutable(RoutableProtocol) (Protocol<RoutableProtocol>*)@protocol(RoutableProtocol)
 #define ZIKRoutableProtocol(RoutableProtocol) (Protocol<RoutableProtocol>*)@protocol(RoutableProtocol)

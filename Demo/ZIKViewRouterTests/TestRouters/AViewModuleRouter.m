@@ -37,7 +37,7 @@ DeclareRoutableView(AViewController, AViewModuleRouter)
 + (void)registerRoutableDestination {
     [self registerView:[AViewController class]];
 #if !TEST_BLOCK_ROUTE
-    [self registerModuleProtocol:ZIKRoutableProtocol(AViewModuleInput)];
+    [self registerModuleProtocol:ZIKRoutable(AViewModuleInput)];
 #endif
 }
 

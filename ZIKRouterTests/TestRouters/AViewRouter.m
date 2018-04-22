@@ -17,7 +17,7 @@ DeclareRoutableView(AViewController, TestAViewRouter)
 + (void)registerRoutableDestination {
     [self registerView:[AViewController class]];
 #if !TEST_BLOCK_ROUTE
-    [self registerViewProtocol:ZIKRoutableProtocol(AViewInput)];
+    [self registerViewProtocol:ZIKRoutable(AViewInput)];
 #endif
 }
 

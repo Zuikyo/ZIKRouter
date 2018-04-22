@@ -57,7 +57,7 @@
     route.name = @"Route for AService<AServiceInput>";
     route
 #if TEST_BLOCK_ROUTE
-    .registerDestinationProtocol(ZIKRoutableProtocol(AServiceInput))
+    .registerDestinationProtocol(ZIKRoutable(AServiceInput))
 #endif
     .prepareDestination(^(id<AServiceInput> destination, ZIKPerformRouteConfig *config, ZIKServiceRouter *router) {
         
@@ -84,7 +84,7 @@
     route.name = @"Route for AServiceModuleInput module (AService)";
     route
 #if TEST_BLOCK_ROUTE
-    .registerModuleProtocol(ZIKRoutableProtocol(AServiceModuleInput))
+    .registerModuleProtocol(ZIKRoutable(AServiceModuleInput))
 #endif
     .makeDefaultConfiguration(^ZIKPerformRouteConfig<AServiceModuleInput> * _Nonnull{
         return [[AServiceModuleConfiguration alloc] init];
@@ -112,7 +112,7 @@
     route.name = @"Route for AViewController<AViewInput>";
     route
 #if TEST_BLOCK_ROUTE
-    .registerDestinationProtocol(ZIKRoutableProtocol(AViewInput))
+    .registerDestinationProtocol(ZIKRoutable(AViewInput))
 #endif
     .makeSupportedRouteTypes(^ZIKBlockViewRouteTypeMask{
         return ZIKBlockViewRouteTypeMaskUIViewControllerDefault | ZIKBlockViewRouteTypeMaskCustom;
@@ -184,7 +184,7 @@
     route.name = @"Route for AViewModuleInput module (AViewController)";
     route
 #if TEST_BLOCK_ROUTE
-    .registerModuleProtocol(ZIKRoutableProtocol(AViewModuleInput))
+    .registerModuleProtocol(ZIKRoutable(AViewModuleInput))
 #endif
     .makeDefaultConfiguration(^ZIKViewRouteConfig<AViewModuleInput> * _Nonnull{
         return [[AViewModuleConfiguration alloc] init];
@@ -257,7 +257,7 @@
     route.name = @"Route for BSubview<BSubviewInput>";
     route
 #if TEST_BLOCK_ROUTE
-    .registerDestinationProtocol(ZIKRoutableProtocol(BSubviewInput))
+    .registerDestinationProtocol(ZIKRoutable(BSubviewInput))
 #endif
     .makeSupportedRouteTypes(^ZIKBlockViewRouteTypeMask{
         return ZIKBlockViewRouteTypeMaskUIViewDefault | ZIKBlockViewRouteTypeMaskCustom;
@@ -311,7 +311,7 @@
     route.name = @"Route for BSubviewModuleInput module (BSubview)";
     route
 #if TEST_BLOCK_ROUTE
-    .registerModuleProtocol(ZIKRoutableProtocol(BSubviewModuleInput))
+    .registerModuleProtocol(ZIKRoutable(BSubviewModuleInput))
 #endif
     .makeDefaultConfiguration(^ZIKViewRouteConfig<BSubviewModuleInput> * _Nonnull{
         return [[BSubviewModuleConfiguration alloc] init];

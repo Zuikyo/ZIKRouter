@@ -18,7 +18,7 @@ DeclareRoutableService(AService, AServiceRouter)
 + (void)registerRoutableDestination {
     [self registerService:[AService class]];
 #if !TEST_BLOCK_ROUTE
-    [self registerServiceProtocol:ZIKRoutableProtocol(AServiceInput)];
+    [self registerServiceProtocol:ZIKRoutable(AServiceInput)];
 #endif
 }
 

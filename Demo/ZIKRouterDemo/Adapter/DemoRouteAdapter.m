@@ -13,7 +13,7 @@
 
 + (void)registerRoutableDestination {
     //Let ZIKCompatibleAlertViewRouter support RequiredCompatibleAlertConfigProtocol
-    [ZIKCompatibleAlertViewRouter registerModuleProtocol:ZIKRoutableProtocol(RequiredCompatibleAlertConfigProtocol)];
+    [ZIKCompatibleAlertViewRouter registerModuleProtocol:ZIKRoutable(RequiredCompatibleAlertConfigProtocol)];
 }
 
 @end

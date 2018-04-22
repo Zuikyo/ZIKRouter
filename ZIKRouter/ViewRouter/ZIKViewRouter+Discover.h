@@ -67,7 +67,7 @@ NS_SWIFT_UNAVAILABLE("ZIKModuleViewRouterType is a fake class")
  @implementation ZIKLoginViewRouter
  + (void)registerRoutableDestination {
      [self registerView:[ZIKLoginViewController class]];
-     [self registerViewProtocol:ZIKRoutableProtocol(ZIKLoginViewProtocol)];
+     [self registerViewProtocol:ZIKRoutable(ZIKLoginViewProtocol)];
  }
  @end
  
@@ -119,7 +119,7 @@ NS_SWIFT_UNAVAILABLE("ZIKModuleViewRouterType is a fake class")
  @implementation ZIKLoginViewRouter
  + (void)registerRoutableDestination {
      [self registerView:[ZIKLoginViewController class]];
-     [self registerModuleProtocol:ZIKRoutableProtocol(ZIKLoginViewConfigProtocol)];
+     [self registerModuleProtocol:ZIKRoutable(ZIKLoginViewConfigProtocol)];
  }
  - (id)destinationWithConfiguration:(ZIKLoginViewConfiguration *)configuration {
      ZIKLoginViewController *destination = [ZIKLoginViewController new];
