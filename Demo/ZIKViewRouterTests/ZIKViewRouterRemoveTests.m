@@ -18,7 +18,6 @@
 
 - (void)setUp {
     [super setUp];
-    
 }
 
 - (void)tearDown {
@@ -261,10 +260,6 @@
     self.routeType = ZIKViewRouteTypePresentAsPopover;
 }
 
-- (void)tearDown {
-    [super tearDown];
-}
-
 - (void)configRouteConfiguration:(ZIKViewRouteConfiguration *)configuration source:(UIViewController *)source {
     [super configRouteConfiguration:configuration source:source];
     configuration.configurePopover(^(ZIKViewRoutePopoverConfiguration * _Nonnull popoverConfig) {
@@ -284,10 +279,6 @@
 - (void)setUp {
     [super setUp];
     self.routeType = ZIKViewRouteTypePresentAsPopover;
-}
-
-- (void)tearDown {
-    [super tearDown];
 }
 
 - (void)configRouteConfiguration:(ZIKViewRouteConfiguration *)configuration source:(UIViewController *)source {
@@ -311,10 +302,6 @@
     self.routeType = ZIKViewRouteTypePush;
 }
 
-- (void)tearDown {
-    [super tearDown];
-}
-
 @end
 
 @interface ZIKViewRouterRemovePushWithoutAnimationTests : ZIKViewRouterRemoveWithoutAnimationTests
@@ -326,10 +313,6 @@
 - (void)setUp {
     [super setUp];
     self.routeType = ZIKViewRouteTypePush;
-}
-
-- (void)tearDown {
-    [super tearDown];
 }
 
 @end
@@ -345,8 +328,28 @@
     self.routeType = ZIKViewRouteTypeShow;
 }
 
-- (void)tearDown {
-    [super tearDown];
+@end
+
+@interface ZIKViewRouterRemoveShowDetailTests : ZIKViewRouterRemoveTests
+
+@end
+
+@implementation ZIKViewRouterRemoveShowDetailTests
+
+- (void)setUp {
+    [super setUp];
+    self.routeType = ZIKViewRouteTypeShowDetail;
+    if (UIUserInterfaceIdiomPad == UI_USER_INTERFACE_IDIOM()) {
+        //Can't remove show detail in iPad, don't need to test
+        self.routeType = ZIKViewRouteTypeShow;
+    }
+}
+
++ (BOOL)allowLeaveTestViewFailing {
+    if (UIUserInterfaceIdiomPad == UI_USER_INTERFACE_IDIOM()) {
+        return YES;
+    }
+    return NO;
 }
 
 @end
@@ -360,10 +363,6 @@
 - (void)setUp {
     [super setUp];
     self.routeType = ZIKViewRouteTypeCustom;
-}
-
-- (void)tearDown {
-    [super tearDown];
 }
 
 @end

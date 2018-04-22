@@ -16,6 +16,7 @@
 		F81A339A2086F4E0001D176A /* BSubviewRouter.m in Sources */ = {isa = PBXBuildFile; fileRef = F81A33992086F4E0001D176A /* BSubviewRouter.m */; };
 		F81A339E2086F58A001D176A /* BSubview.m in Sources */ = {isa = PBXBuildFile; fileRef = F81A339D2086F58A001D176A /* BSubview.m */; };
 		F81A33A02086F625001D176A /* ZIKViewRouterPerformAddAsSubviewTests.m in Sources */ = {isa = PBXBuildFile; fileRef = F81A339F2086F625001D176A /* ZIKViewRouterPerformAddAsSubviewTests.m */; };
+		F81E818C208D021B0005BC95 /* ZIKViewRouterPerformSegueTests.m in Sources */ = {isa = PBXBuildFile; fileRef = F81E818B208D021B0005BC95 /* ZIKViewRouterPerformSegueTests.m */; };
 		F820BF931F628A9600D570CF /* SwiftSampleViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F820BF921F628A9600D570CF /* SwiftSampleViewController.swift */; };
 		F820BF951F628EF300D570CF /* SwiftSampleViewRouter.swift in Sources */ = {isa = PBXBuildFile; fileRef = F820BF941F628EF300D570CF /* SwiftSampleViewRouter.swift */; };
 		F82ECABE1F17DC51007168AA /* ZIKSimpleLabel.m in Sources */ = {isa = PBXBuildFile; fileRef = F82ECA731F17DC51007168AA /* ZIKSimpleLabel.m */; };
@@ -134,6 +135,7 @@
 		F81A339D2086F58A001D176A /* BSubview.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = BSubview.m; sourceTree = "<group>"; };
 		F81A339F2086F625001D176A /* ZIKViewRouterPerformAddAsSubviewTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ZIKViewRouterPerformAddAsSubviewTests.m; sourceTree = "<group>"; };
 		F81A33A1208719E7001D176A /* TestConfig.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = TestConfig.h; sourceTree = "<group>"; };
+		F81E818B208D021B0005BC95 /* ZIKViewRouterPerformSegueTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ZIKViewRouterPerformSegueTests.m; sourceTree = "<group>"; };
 		F820BF911F628A9600D570CF /* ZIKRouterDemo-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "ZIKRouterDemo-Bridging-Header.h"; sourceTree = "<group>"; };
 		F820BF921F628A9600D570CF /* SwiftSampleViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SwiftSampleViewController.swift; sourceTree = "<group>"; };
 		F820BF941F628EF300D570CF /* SwiftSampleViewRouter.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SwiftSampleViewRouter.swift; sourceTree = "<group>"; };
@@ -558,6 +560,7 @@
 				F810F65D208935C80020382E /* ZIKViewModuleRouterPerformAddAsChildTests.m */,
 				F81A339F2086F625001D176A /* ZIKViewRouterPerformAddAsSubviewTests.m */,
 				F810F65F208938590020382E /* ZIKViewModuleRouterPerformAddAsSubviewTests.m */,
+				F81E818B208D021B0005BC95 /* ZIKViewRouterPerformSegueTests.m */,
 				F86F0F1520852C1900A81DC3 /* ZIKViewRouterRemoveTests.m */,
 				F846AEF0207D4F1600EC7418 /* Info.plist */,
 			);
@@ -836,6 +839,7 @@
 				F81A3397208674EF001D176A /* TestRouteRegistry.m in Sources */,
 				F810F65920892C8B0020382E /* BSubviewModuleRouter.m in Sources */,
 				F846AEFE207DE13400EC7418 /* AViewRouter.m in Sources */,
+				F81E818C208D021B0005BC95 /* ZIKViewRouterPerformSegueTests.m in Sources */,
 				F846AF01207DE13400EC7418 /* ZIKViewRouterPerformTests.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

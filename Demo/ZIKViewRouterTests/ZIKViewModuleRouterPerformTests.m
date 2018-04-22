@@ -869,6 +869,27 @@
     return NO;
 }
 
+- (void)testPerformWithPerformerSuccess {
+    [self leaveTest];
+    [self waitForExpectationsWithTimeout:5 handler:^(NSError * _Nullable error) {
+        !error? : NSLog(@"%@", error);
+    }];
+}
+
+- (void)testPerformRouteWithSuccessCompletion {
+    [self leaveTest];
+    [self waitForExpectationsWithTimeout:5 handler:^(NSError * _Nullable error) {
+        !error? : NSLog(@"%@", error);
+    }];
+}
+
+- (void)testStrictPerformWithPerformerSuccess {
+    [self leaveTest];
+    [self waitForExpectationsWithTimeout:5 handler:^(NSError * _Nullable error) {
+        !error? : NSLog(@"%@", error);
+    }];
+}
+
 @end
 
 @interface ZIKViewModuleRouterPerformCustomTests : ZIKViewModuleRouterPerformTests
