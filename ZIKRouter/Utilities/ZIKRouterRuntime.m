@@ -218,15 +218,14 @@ bool ZIKRouter_classIsCustomClass(Class aClass) {
     if (!aClass) {
         return false;
     }
-    static NSString *mainBundlePath;
-    static dispatch_once_t onceToken;
-    dispatch_once(&onceToken, ^{
-        mainBundlePath = [[NSBundle mainBundle] bundlePath];
-    });
-    if ([[[NSBundle bundleForClass:aClass] bundlePath] isEqualToString:mainBundlePath]) {
-        return true;
+    NSString *bundlePath = [[NSBundle bundleForClass:aClass] bundlePath];
+    if ([bundlePath containsString:@"System/Library/"]) {
+        return false;
     }
-    return false;
+    if ([bundlePath containsString:@"usr/"]) {
+        return false;
+    }
+    return true;
 }
 
 bool ZIKRouter_classSelfImplementingMethod(Class aClass, SEL method, bool isClassMethod) {

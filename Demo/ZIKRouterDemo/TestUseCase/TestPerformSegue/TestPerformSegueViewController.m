@@ -138,6 +138,9 @@
 }
 
 - (void)prepareDestinationFromExternal:(id)destination configuration:(__kindof ZIKViewRouteConfiguration *)configuration {
+    if (self.prepareDestinationFromExternalMonitor) {
+        self.self.prepareDestinationFromExternalMonitor(destination, configuration);
+    }
     if ([destination conformsToProtocol:@protocol(ZIKInfoViewProtocol)]) {
         id<ZIKInfoViewProtocol> infoView = destination;
         infoView.name = @"Zuik";
@@ -159,6 +162,9 @@
 - (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender {
     // Get the new view controller using [segue destinationViewController].
     // Pass the selected object to the new view controller.
+    if (self.prepareForSegueMonitor) {
+        self.prepareForSegueMonitor(segue);
+    }
 }
 
 - (BOOL)canPerformUnwindSegueAction:(SEL)action fromViewController:(UIViewController *)fromViewController withSender:(id)sender {

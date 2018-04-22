@@ -7,6 +7,7 @@
 //
 
 #import "SourceViewController.h"
+#import "BSubviewInput.h"
 
 @interface SourceViewController ()
 
@@ -30,9 +31,16 @@
     NSLog(@"%@: %@", self, NSStringFromSelector(_cmd));
 }
 
-- (void)didReceiveMemoryWarning {
-    [super didReceiveMemoryWarning];
-    // Dispose of any resources that can be recreated.
+- (void)prepareDestinationFromExternal:(id)destination configuration:(__kindof ZIKViewRouteConfiguration *)configuration {
+    if (self.prepareDestinationFromExternalMonitor) {
+        self.self.prepareDestinationFromExternalMonitor(destination, configuration);
+    }
+    if ([destination conformsToProtocol:@protocol(BSubviewInput)]) {
+        id<BSubviewInput> dest = destination;
+        dest.title = PREPARE_DESTINATION_TITLE;
+        return;
+    }
+    NSAssert(NO, @"Can't prepare for unknown destination.");
 }
 
 @end

@@ -22,6 +22,13 @@ DeclareRoutableView(BSubview, BSubviewRouter)
 #endif
 }
 
+- (BOOL)destinationFromExternalPrepared:(BSubview *)destination {
+    if (destination.title == nil) {
+        return NO;
+    }
+    return YES;
+}
+
 - (id)destinationWithConfiguration:(ZIKViewRouteConfiguration *)configuration {
     BSubview *destination = [[BSubview alloc] init];
     destination.backgroundColor = [UIColor yellowColor];

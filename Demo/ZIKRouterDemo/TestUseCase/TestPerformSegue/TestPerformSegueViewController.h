@@ -8,6 +8,12 @@
 
 #import <UIKit/UIKit.h>
 
+@class ZIKViewRouteConfiguration;
 @interface TestPerformSegueViewController : UIViewController
+
+@property (nonatomic) void(^prepareDestinationFromExternalMonitor)(id destination, ZIKViewRouteConfiguration *config);
+@property (nonatomic) void(^prepareForSegueMonitor)(UIStoryboardSegue *segue);
+
+
 
 @end

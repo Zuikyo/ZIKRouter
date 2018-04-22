@@ -200,6 +200,12 @@
     .makeSupportedRouteTypes(^ZIKBlockViewRouteTypeMask{
         return ZIKBlockViewRouteTypeMaskUIViewDefault | ZIKBlockViewRouteTypeMaskCustom;
     })
+    .destinationFromExternalPrepared(^BOOL(id<BSubviewInput> destination, ZIKViewRouter *router) {
+        if (destination.title == nil) {
+            return NO;
+        }
+        return YES;
+    })
     .canPerformCustomRoute(^BOOL(ZIKViewRouter * _Nonnull router) {
         return YES;
     })
@@ -253,6 +259,12 @@
     })
     .makeSupportedRouteTypes(^ZIKBlockViewRouteTypeMask{
         return ZIKBlockViewRouteTypeMaskUIViewDefault | ZIKBlockViewRouteTypeMaskCustom;
+    })
+    .destinationFromExternalPrepared(^BOOL(id<BSubviewInput> destination, ZIKViewRouter *router) {
+        if (destination.title == nil) {
+            return NO;
+        }
+        return YES;
     })
     .canPerformCustomRoute(^BOOL(ZIKViewRouter * _Nonnull router) {
         return YES;

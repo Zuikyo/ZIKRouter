@@ -41,6 +41,13 @@ DeclareRoutableView(BSubview, BSubviewModuleRouter)
 #endif
 }
 
+- (BOOL)destinationFromExternalPrepared:(BSubview *)destination {
+    if (destination.title == nil) {
+        return NO;
+    }
+    return YES;
+}
+
 - (BSubview *)destinationWithConfiguration:(BSubviewModuleConfiguration *)configuration {
     BSubview *destination = [[BSubview alloc] init];
     destination.title = configuration.title;
