@@ -94,7 +94,7 @@
         return;
     }
     [self beginPerformRoute];
-    [self endPerformRouteWithError:[ZIKViewRouter viewRouteErrorWithCode:ZIKViewRouteErrorUnsupportType localizedDescriptionFormat:@"The route (%@) supports ZIKBlockViewRouteTypeMaskCustom, but it didn't implement the custom perform route logic."]];
+    [self endPerformRouteWithError:[ZIKViewRouter viewRouteErrorWithCode:ZIKViewRouteErrorUnsupportType localizedDescriptionFormat:@"The route (%@) supports ZIKBlockViewRouteTypeMaskCustom, but it didn't implement the custom perform route logic with -performCustomRoute.", self]];
 }
 - (void)removeCustomRouteOnDestination:(id)destination fromSource:(nullable id)source removeConfiguration:(ZIKViewRemoveConfiguration *)removeConfiguration configuration:(ZIKViewRouteConfiguration *)configuration {
     void(^removeCustomRouteBlock)(id destination, _Nullable id source, ZIKViewRemoveConfiguration *removeConfig, ZIKViewRouteConfiguration *config, ZIKViewRouter *router) = self.route.removeCustomRouteBlock;
@@ -103,7 +103,7 @@
         return;
     }
     [self beginRemoveRouteFromSource:source];
-    [self endPerformRouteWithError:[ZIKViewRouter viewRouteErrorWithCode:ZIKViewRouteErrorUnsupportType localizedDescriptionFormat:@"The route (%@) supports ZIKBlockViewRouteTypeMaskCustom, but it didn't implement the custom remove route logic."]];
+    [self endRemoveRouteWithError:[ZIKViewRouter viewRouteErrorWithCode:ZIKViewRouteErrorUnsupportType localizedDescriptionFormat:@"The route (%@) supports ZIKBlockViewRouteTypeMaskCustom, but it didn't implement the custom remove route logic with -removeCustomRoute.", self]];
 }
 
 - (ZIKRemoveRouteConfiguration *)original_removeConfiguration {

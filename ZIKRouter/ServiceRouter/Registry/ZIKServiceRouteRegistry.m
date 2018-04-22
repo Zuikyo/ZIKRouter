@@ -164,11 +164,13 @@ static NSMutableArray<Class> *_routerClasses;
         [self _searchAllRoutersAndDestinations];
         [self _checkAllRoutableDestinations];
         [self _checkAllRouters];
+        [self _checkAllModuleConfigProtocols];
         [self _checkAllRoutableProtocols];
         return;
     }
     [[NSNotificationCenter defaultCenter] addObserverForName:UIApplicationDidFinishLaunchingNotification object:nil queue:[NSOperationQueue mainQueue] usingBlock:^(NSNotification * _Nonnull note) {
         [self _checkAllRouters];
+        [self _checkAllModuleConfigProtocols];
     }];
 #endif
 }
@@ -230,6 +232,13 @@ static NSMutableArray<Class> *_routerClasses;
     for (Class class in _routerClasses) {
         [class _didFinishRegistration];
     }
+}
+
++ (void)_checkAllModuleConfigProtocols {
+    NSDictionary<Protocol *, id> *configProtocolToRouterMap = (__bridge NSDictionary *)self.moduleConfigProtocolToRouterMap;
+    [configProtocolToRouterMap enumerateKeysAndObjectsUsingBlock:^(Protocol * _Nonnull protocol, id  _Nonnull router, BOOL * _Nonnull stop) {
+        NSAssert3([[router defaultRouteConfiguration] conformsToProtocol:protocol], @"Module config protocol (%@) should be conformed by this router (%@)'s defaultRouteConfiguration (%@).", NSStringFromProtocol(protocol), router, [router defaultRouteConfiguration]);
+    }];
 }
 
 + (void)_checkAllRoutableProtocols {

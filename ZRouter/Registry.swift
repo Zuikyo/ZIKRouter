@@ -210,7 +210,6 @@ internal class Registry {
             _ = route.registerModuleProtocol(configProtocol)
             return
         }
-        assert(ZIKAnyViewRouterType.tryMakeType(forRoute: route)!.defaultRouteConfiguration() is Protocol, "The router (\(route))'s default configuration must conform to the config protocol (\(configProtocol)) to register.")
         assert(viewConfigContainer[_RouteKey(type:configProtocol)] == nil, "view config protocol (\(configProtocol)) was already registered with router (\(String(describing: viewConfigContainer[_RouteKey(type:configProtocol)]))).")
         viewConfigContainer[_RouteKey(type:configProtocol)] = route
     }
@@ -254,7 +253,6 @@ internal class Registry {
             _ = route.registerModuleProtocol(configProtocol)
             return
         }
-        assert(ZIKAnyServiceRouterType.tryMakeType(forRoute: route)!.defaultRouteConfiguration() is Protocol, "The router (\(route))'s default configuration must conform to the config protocol (\(configProtocol)) to register.")
         assert(serviceConfigContainer[_RouteKey(type:configProtocol)] == nil, "service config protocol (\(configProtocol)) was already registered with router (\(String(describing: serviceConfigContainer[_RouteKey(type:configProtocol)]))).")
         serviceConfigContainer[_RouteKey(type:configProtocol)] = route
     }
@@ -652,6 +650,21 @@ private class _ViewRouterValidater: ZIKViewRouteAdapter {
             })
             assert(badDestinationClass == nil, "Registered view class (\(String(describing: badDestinationClass)) for router (\(route)) should conform to registered view protocol (\(viewProtocol)).")
         }
+        
+        for (routeKey, route) in Registry.viewConfigContainer {
+            let configProtocol = routeKey.type!
+            if let route =  route as? ZIKAnyViewRouter.Type {
+                let configType = type(of: route.defaultRouteConfiguration())
+                assert(_swift_typeIsTargetType(configType, configProtocol), "The router (\(route))'s default configuration (\(configType)) must conform to the registered config protocol (\(configProtocol)).")
+            } else {
+                guard let config = ZIKAnyViewRouterType.tryMakeType(forRoute: route)?.defaultRouteConfiguration() else {
+                    assertionFailure("Invalid route (\(route))")
+                    return
+                }
+                let configType = type(of: config)
+                assert(_swift_typeIsTargetType(configType, configProtocol), "The router (\(route))'s default configuration (\(configType)) must conform to the registered config protocol (\(configProtocol)).")
+            }
+        }
     }
 }
 
@@ -670,6 +683,21 @@ private class _ServiceRouterValidater: ZIKServiceRouteAdapter {
                 return _swift_typeIsTargetType(destinationClass, serviceProtocol)
             })
             assert(badDestinationClass == nil, "Registered service class (\(String(describing: badDestinationClass)) for router (\(route)) should conform to registered service protocol (\(serviceProtocol)).")
+        }
+        
+        for (routeKey, route) in Registry.serviceConfigContainer {
+            let configProtocol = routeKey.type!
+            if let route =  route as? ZIKAnyServiceRouter.Type {
+                let configType = type(of: route.defaultRouteConfiguration())
+                assert(_swift_typeIsTargetType(configType, configProtocol), "The router (\(route))'s default configuration (\(configType)) must conform to the registered config protocol (\(configProtocol)).")
+            } else {
+                guard let config = ZIKAnyServiceRouterType.tryMakeType(forRoute: route)?.defaultRouteConfiguration() else {
+                    assertionFailure("Invalid route (\(route))")
+                    return
+                }
+                let configType = type(of: config)
+                assert(_swift_typeIsTargetType(configType, configProtocol), "The router (\(route))'s default configuration (\(configType)) must conform to the registered config protocol (\(configProtocol)).")
+            }
         }
     }
 }

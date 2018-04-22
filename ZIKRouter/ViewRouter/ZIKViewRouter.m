@@ -198,7 +198,7 @@ static NSMutableArray *g_preparingUIViewRouters;
 - (void)attachDestination:(id)destination {
     NSAssert2(destination == nil || [[self class] isAbstractRouter] || self.original_configuration.routeType == ZIKViewRouteTypePerformSegue || [ZIKViewRouteRegistry isDestinationClass:[destination class] registeredWithRouter:[self class]], @"Destination (%@) attached to router (%@) doesn't conforms to protocol.", [destination class], [self class]);
 #if ZIKROUTER_CHECK
-    if (destination && [[self class] isAbstractRouter] == NO && self.original_configuration.routeType != ZIKViewRouteTypePerformSegue) {
+    if (destination && self.original_configuration.routeType != ZIKViewRouteTypePerformSegue) {
         [self _validateDestinationConformance:destination];
     }
 #endif
@@ -847,6 +847,8 @@ static NSMutableArray *g_preparingUIViewRouters;
 }
 
 - (void)performCustomRouteOnDestination:(id)destination fromSource:(nullable id)source configuration:(ZIKViewRouteConfiguration *)configuration {
+    [self beginPerformRoute];
+    [self endPerformRouteWithError:[ZIKViewRouter viewRouteErrorWithCode:ZIKViewRouteErrorUnsupportType localizedDescriptionFormat:@"Subclass (%@) must override -performCustomRouteOnDestination:fromSource:configuration: to support custom route", [self class]]];
     NSAssert(NO, @"Subclass (%@) must override -performCustomRouteOnDestination:fromSource:configuration: to support custom route", [self class]);
 }
 
@@ -1339,8 +1341,8 @@ destinationStateBeforeRoute:(ZIKPresentationState *)destinationStateBeforeRoute
 }
 
 - (void)removeCustomRouteOnDestination:(id)destination fromSource:(nullable id)source removeConfiguration:(ZIKViewRemoveConfiguration *)removeConfiguration configuration:(ZIKViewRouteConfiguration *)configuration {
-    [self notifyRouteState:self.preState];
-    [self notifyError_actionFailedWithAction:ZIKRouteActionRemoveRoute errorDescription:@"Remove custom route but router(%@) didn't implement -removeCustomRouteOnDestination:fromSource:removeConfiguration:configuration:",[self class]];
+    [self beginRemoveRouteFromSource:source];
+    [self endRemoveRouteWithError:[ZIKViewRouter viewRouteErrorWithCode:ZIKViewRouteErrorUnsupportType localizedDescriptionFormat:@"Subclass (%@) must override -removeCustomRouteOnDestination:fromSource:configuration: to support removing custom route.",[self class]]];
     NSAssert(NO, @"Subclass (%@) must override -removeCustomRouteOnDestination:fromSource:configuration: to support removing custom route.",[self class]);
 }
 

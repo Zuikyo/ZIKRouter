@@ -11,6 +11,7 @@
 
 #import "ZIKServiceRouter.h"
 #import "ZIKRouterInternal.h"
+#import "ZIKServiceRouterInternal.h"
 #import "ZIKServiceRouteRegistry.h"
 #import "ZIKRouteRegistryInternal.h"
 #import <objc/runtime.h>
@@ -55,7 +56,7 @@ static dispatch_semaphore_t g_globalErrorSema;
 
 - (void)performRouteOnDestination:(id)destination configuration:(__kindof ZIKPerformRouteConfiguration *)configuration {
 #if ZIKROUTER_CHECK
-    if ([[self class] isAbstractRouter] == NO) {
+    if (destination) {
         [self _validateDestinationConformance:destination];
     }
 #endif
@@ -65,7 +66,7 @@ static dispatch_semaphore_t g_globalErrorSema;
 
 - (void)attachDestination:(id)destination {
 #if ZIKROUTER_CHECK
-    if (destination && [[self class] isAbstractRouter] == NO) {
+    if (destination) {
         [self _validateDestinationConformance:destination];
     }
 #endif

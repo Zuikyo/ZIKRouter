@@ -200,11 +200,13 @@ static NSMutableArray<Class> *_routerClasses;
         [self _searchAllRoutersAndDestinations];
         [self _checkAllRoutableDestinations];
         [self _checkAllRouters];
+        [self _checkAllModuleConfigProtocols];
         [self _checkAllRoutableProtocols];
         return;
     }
     [[NSNotificationCenter defaultCenter] addObserverForName:UIApplicationDidFinishLaunchingNotification object:nil queue:[NSOperationQueue mainQueue] usingBlock:^(NSNotification * _Nonnull note) {
         [self _checkAllRouters];
+        [self _checkAllModuleConfigProtocols];
     }];
 #endif
 }
@@ -293,6 +295,31 @@ static NSMutableArray<Class> *_routerClasses;
     for (Class class in _routerClasses) {
         [class _didFinishRegistration];
     }
+    
+    NSDictionary<Class, NSSet *> *destinationToRoutersMap = (__bridge NSDictionary *)self.destinationToRoutersMap;
+    [destinationToRoutersMap enumerateKeysAndObjectsUsingBlock:^(Class  _Nonnull key, NSSet * _Nonnull obj, BOOL * _Nonnull stop) {
+        [obj enumerateObjectsUsingBlock:^(id  _Nonnull obj, BOOL * _Nonnull stop) {
+            if (obj == [obj class]) {
+                return;
+            }
+            NSAssert([obj isKindOfClass:[ZIKViewRoute class]], @"The object is either a ZIKViewRouter class or a ZIKViewRoute");
+            ZIKViewRoute *route = obj;
+            if (ZIKRouter_classIsSubclassOfClass(key, [UIView class])) {
+                NSAssert1([route supportRouteType:ZIKViewRouteTypeAddAsSubview] || [route supportRouteType:ZIKViewRouteTypeCustom], @"If the destination is UIView type, the router (%@) must support ZIKViewRouteTypeAddAsSubview or ZIKViewRouteTypeCustom.", route);
+            }
+            if ([route supportRouteType:ZIKViewRouteTypeCustom]) {
+                NSAssert1(route.canPerformCustomRouteBlock != nil, @"The route (%@) supports ZIKViewRouteTypeCustom, but missing  -canPerformCustomRoute.", route);
+                NSAssert1(route.performCustomRouteBlock != nil, @"The route (%@) supports ZIKViewRouteTypeCustom, but missing  -performCustomRoute.", route);
+            }
+        }];
+    }];
+}
+
++ (void)_checkAllModuleConfigProtocols {
+    NSDictionary<Protocol *, id> *configProtocolToRouterMap = (__bridge NSDictionary *)self.moduleConfigProtocolToRouterMap;
+    [configProtocolToRouterMap enumerateKeysAndObjectsUsingBlock:^(Protocol * _Nonnull protocol, id  _Nonnull router, BOOL * _Nonnull stop) {
+        NSAssert3([[router defaultRouteConfiguration] conformsToProtocol:protocol], @"Module config protocol (%@) should be conformed by this router (%@)'s defaultRouteConfiguration (%@).", NSStringFromProtocol(protocol), router, [router defaultRouteConfiguration]);
+    }];
 }
 
 + (void)_checkAllRoutableProtocols {
@@ -354,9 +381,6 @@ static NSMutableArray<Class> *_routerClasses;
 
 + (void)registerDestination:(Class)destinationClass route:(ZIKViewRoute *)route {
     NSParameterAssert([route isKindOfClass:[ZIKViewRoute class]]);
-    if (ZIKRouter_classIsSubclassOfClass(destinationClass, [UIView class])) {
-        NSAssert([route supportRouteType:ZIKViewRouteTypeAddAsSubview] || [route supportRouteType:ZIKViewRouteTypeCustom], @"If the destination is UIView type, the router must support ZIKViewRouteTypeAddAsSubview or ZIKViewRouteTypeCustom.");
-    }
     [super registerDestination:destinationClass route:route];
 }
 

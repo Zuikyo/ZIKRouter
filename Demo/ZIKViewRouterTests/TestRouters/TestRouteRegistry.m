@@ -61,12 +61,6 @@
     .makeSupportedRouteTypes(^ZIKBlockViewRouteTypeMask{
         return ZIKBlockViewRouteTypeMaskUIViewControllerDefault | ZIKBlockViewRouteTypeMaskCustom;
     })
-    .prepareDestination(^(id<AViewInput> destination, ZIKViewRouteConfig *config, ZIKViewRouter *router) {
-        
-    })
-    .didFinishPrepareDestination(^(id<AViewInput> destination, ZIKViewRouteConfig *config, ZIKViewRouter *router) {
-        
-    })
     .canPerformCustomRoute(^BOOL(ZIKViewRouter * _Nonnull router) {
         return YES;
     })
@@ -108,6 +102,12 @@
             [destination removeFromParentViewController];
             [router endRemoveRouteWithSuccessOnDestination:destination fromSource:source];
         }];
+    })
+    .prepareDestination(^(id<AViewInput> destination, ZIKViewRouteConfig *config, ZIKViewRouter *router) {
+        
+    })
+    .didFinishPrepareDestination(^(id<AViewInput> destination, ZIKViewRouteConfig *config, ZIKViewRouter *router) {
+        
     });
 }
 
@@ -127,17 +127,11 @@
 #if TEST_BLOCK_ROUTE
     .registerModuleProtocol(ZIKRoutableProtocol(AViewModuleInput))
 #endif
-    .makeSupportedRouteTypes(^ZIKBlockViewRouteTypeMask{
-        return ZIKBlockViewRouteTypeMaskUIViewControllerDefault | ZIKBlockViewRouteTypeMaskCustom;
-    })
     .makeDefaultConfiguration(^ZIKViewRouteConfig<AViewModuleInput> * _Nonnull{
         return [[AViewModuleConfiguration alloc] init];
     })
-    .prepareDestination(^(id destination, ZIKViewRouteConfig *config, ZIKViewRouter *router) {
-        
-    })
-    .didFinishPrepareDestination(^(id destination, ZIKViewRouteConfig *config, ZIKViewRouter *router) {
-        
+    .makeSupportedRouteTypes(^ZIKBlockViewRouteTypeMask{
+        return ZIKBlockViewRouteTypeMaskUIViewControllerDefault | ZIKBlockViewRouteTypeMaskCustom;
     })
     .canPerformCustomRoute(^BOOL(ZIKViewRouter * _Nonnull router) {
         return YES;
@@ -180,7 +174,13 @@
             [destination removeFromParentViewController];
             [router endRemoveRouteWithSuccessOnDestination:destination fromSource:source];
         }];
-    });;
+    })
+    .prepareDestination(^(id destination, ZIKViewRouteConfig *config, ZIKViewRouter *router) {
+        
+    })
+    .didFinishPrepareDestination(^(id destination, ZIKViewRouteConfig *config, ZIKViewRouter *router) {
+        
+    });
 }
 
 + (void)registerSubviewRoute {
@@ -199,6 +199,30 @@
 #endif
     .makeSupportedRouteTypes(^ZIKBlockViewRouteTypeMask{
         return ZIKBlockViewRouteTypeMaskUIViewDefault | ZIKBlockViewRouteTypeMaskCustom;
+    })
+    .canPerformCustomRoute(^BOOL(ZIKViewRouter * _Nonnull router) {
+        return YES;
+    })
+    .performCustomRoute(^(BSubview *destination, UIView *_Nullable source, ZIKViewRouteConfig *config, ZIKViewRouter *router) {
+        [router beginPerformRoute];
+        if ([source isKindOfClass:[UIView class]] == NO) {
+            [router endPerformRouteWithError:[ZIKViewRouter viewRouteErrorWithCode:ZIKViewRouteErrorInvalidSource localizedDescriptionFormat:@"Invalid source: %@", source]];
+            return;
+        }
+        [source addSubview:destination];
+        [router endPerformRouteWithSuccess];
+    })
+    .canRemoveCustomRoute(^BOOL(ZIKViewRouter * _Nonnull router) {
+        return [router _canRemoveFromSuperview];
+    })
+    .removeCustomRoute(^(BSubview *destination, UIView *_Nullable source, ZIKViewRemoveConfiguration *removeConfig, ZIKViewRouteConfig *config, ZIKViewRouter *router) {
+        [router beginRemoveRouteFromSource:source];
+        if ([source isKindOfClass:[UIView class]] == NO) {
+            [router endRemoveRouteWithError:[ZIKViewRouter viewRouteErrorWithCode:ZIKViewRouteErrorInvalidSource localizedDescriptionFormat:@"Invalid source: %@", source]];
+            return;
+        }
+        [destination removeFromSuperview];
+        [router endRemoveRouteWithSuccessOnDestination:destination fromSource:source];
     })
     .prepareDestination(^(id<BSubviewInput> destination, ZIKViewRouteConfig *config, ZIKViewRouter *router) {
         
@@ -224,11 +248,35 @@
 #if TEST_BLOCK_ROUTE
     .registerModuleProtocol(ZIKRoutableProtocol(BSubviewModuleInput))
 #endif
+    .makeDefaultConfiguration(^ZIKViewRouteConfig<BSubviewModuleInput> * _Nonnull{
+        return [[BSubviewModuleConfiguration alloc] init];
+    })
     .makeSupportedRouteTypes(^ZIKBlockViewRouteTypeMask{
         return ZIKBlockViewRouteTypeMaskUIViewDefault | ZIKBlockViewRouteTypeMaskCustom;
     })
-    .makeDefaultConfiguration(^ZIKViewRouteConfig<BSubviewModuleInput> * _Nonnull{
-        return [[BSubviewModuleConfiguration alloc] init];
+    .canPerformCustomRoute(^BOOL(ZIKViewRouter * _Nonnull router) {
+        return YES;
+    })
+    .performCustomRoute(^(BSubview *destination, UIView *_Nullable source, ZIKViewRouteConfig *config, ZIKViewRouter *router) {
+        [router beginPerformRoute];
+        if ([source isKindOfClass:[UIView class]] == NO) {
+            [router endPerformRouteWithError:[ZIKViewRouter viewRouteErrorWithCode:ZIKViewRouteErrorInvalidSource localizedDescriptionFormat:@"Invalid source: %@", source]];
+            return;
+        }
+        [source addSubview:destination];
+        [router endPerformRouteWithSuccess];
+    })
+    .canRemoveCustomRoute(^BOOL(ZIKViewRouter * _Nonnull router) {
+        return [router _canRemoveFromSuperview];
+    })
+    .removeCustomRoute(^(BSubview *destination, UIView *_Nullable source, ZIKViewRemoveConfiguration *removeConfig, ZIKViewRouteConfig *config, ZIKViewRouter *router) {
+        [router beginRemoveRouteFromSource:source];
+        if ([source isKindOfClass:[UIView class]] == NO) {
+            [router endRemoveRouteWithError:[ZIKViewRouter viewRouteErrorWithCode:ZIKViewRouteErrorInvalidSource localizedDescriptionFormat:@"Invalid source: %@", source]];
+            return;
+        }
+        [destination removeFromSuperview];
+        [router endRemoveRouteWithSuccessOnDestination:destination fromSource:source];
     })
     .prepareDestination(^(id destination, ZIKViewRouteConfig *config, ZIKViewRouter *router) {
         
