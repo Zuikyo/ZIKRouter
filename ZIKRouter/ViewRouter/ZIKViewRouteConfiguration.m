@@ -84,7 +84,7 @@ ZIKRouteAction const ZIKRouteActionPerformOnDestination = @"ZIKRouteActionPerfor
 
 + (ZIKViewRoutePath *(^)(void))makeDestination {
     return ^ {
-        return [[ZIKViewRoutePath alloc] initWithRouteType:ZIKViewRouteTypeGetDestination source:nil];
+        return [[ZIKViewRoutePath alloc] initWithRouteType:ZIKViewRouteTypeMakeDestination source:nil];
     };
 }
 

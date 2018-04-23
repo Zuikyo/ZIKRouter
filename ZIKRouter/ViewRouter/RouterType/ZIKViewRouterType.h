@@ -54,7 +54,7 @@ NS_ASSUME_NONNULL_BEGIN
                                                        completion:(void(^)(BOOL success, Destination _Nullable destination, ZIKRouteAction routeAction, NSError *_Nullable error))performerCompletion;
 
 /**
- Perform route on destination. If you get a prepared destination by ZIKViewRouteTypeGetDestination, you can use this method to perform route on the destination.
+ Perform route on destination. If you get a prepared destination by ZIKViewRouteTypeMakeDestination, you can use this method to perform route on the destination.
  
  @param destination The destination to perform route, the destination class should be registered with this router class.
  @param path The route path with source and route type.
@@ -66,7 +66,7 @@ NS_ASSUME_NONNULL_BEGIN
                                                                configuring:(void(NS_NOESCAPE ^)(RouteConfig config))configBuilder;
 
 /**
- Perform route on destination. If you get a prepared destination by ZIKViewRouteTypeGetDestination, you can use this method to perform route on the destination.
+ Perform route on destination. If you get a prepared destination by ZIKViewRouteTypeMakeDestination, you can use this method to perform route on the destination.
  
  @param destination The destination to perform route, the destination class should be registered with this router class.
  @param path The route path with source and route type.
@@ -80,7 +80,7 @@ NS_ASSUME_NONNULL_BEGIN
                                                                   removing:(void(NS_NOESCAPE ^ _Nullable)(ZIKViewRemoveConfiguration *config))removeConfigBuilder;
 
 /**
- Perform route on destination. If you get a prepared destination by ZIKViewRouteTypeGetDestination, you can use this method to perform route on the destination.
+ Perform route on destination. If you get a prepared destination by ZIKViewRouteTypeMakeDestination, you can use this method to perform route on the destination.
  
  @param destination The destination to perform route, the destination class should be registered with this router class.
  @param path The route path with source and route type.

@@ -182,7 +182,7 @@ NS_SWIFT_UNAVAILABLE("ZIKModuleViewRouterType is a fake class")
                                                                                                  ))removeConfigBuilder;
 
 /**
- Perform route on destination and prepare destination in a type safe way inferred by generic parameters. If you get a prepared destination by ZIKViewRouteTypeGetDestination, you can use this method to perform route on the destination.
+ Perform route on destination and prepare destination in a type safe way inferred by generic parameters. If you get a prepared destination by ZIKViewRouteTypeMakeDestination, you can use this method to perform route on the destination.
  
  @param destination The destination to perform route, the destination class should be registered with this router class.
  @param path The route path with source and route type.
@@ -197,7 +197,7 @@ NS_SWIFT_UNAVAILABLE("ZIKModuleViewRouterType is a fake class")
                                                                                                 ))configBuilder;
 
 /**
- Perform route on destination and prepare destination in a type safe way inferred by generic parameters. If you get a prepared destination by ZIKViewRouteTypeGetDestination, you can use this method to perform route on the destination.
+ Perform route on destination and prepare destination in a type safe way inferred by generic parameters. If you get a prepared destination by ZIKViewRouteTypeMakeDestination, you can use this method to perform route on the destination.
  
  @param destination The destination to perform route, the destination class should be registered with this router class.
  @param path The route path with source and route type.
@@ -284,7 +284,7 @@ NS_SWIFT_UNAVAILABLE("ZIKModuleViewRouterType is a fake class")
                                                                                                  ))removeConfigBuilder;
 
 /**
- Perform route on destination and prepare destination in a type safe way inferred by generic parameters. If you get a prepared destination by ZIKViewRouteTypeGetDestination, you can use this method to perform route on the destination.
+ Perform route on destination and prepare destination in a type safe way inferred by generic parameters. If you get a prepared destination by ZIKViewRouteTypeMakeDestination, you can use this method to perform route on the destination.
  
  @param destination The destination to perform route, the destination class should be registered with this router class.
  @param path The route path with source and route type.
@@ -299,7 +299,7 @@ NS_SWIFT_UNAVAILABLE("ZIKModuleViewRouterType is a fake class")
                                                                                                 ))configBuilder;
 
 /**
- Perform route on destination and prepare destination in a type safe way inferred by generic parameters. If you get a prepared destination by ZIKViewRouteTypeGetDestination, you can use this method to perform route on the destination.
+ Perform route on destination and prepare destination in a type safe way inferred by generic parameters. If you get a prepared destination by ZIKViewRouteTypeMakeDestination, you can use this method to perform route on the destination.
  
  @param destination The destination to perform route, the destination class should be registered with this router class.
  @param path The route path with source and route type.

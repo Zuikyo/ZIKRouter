@@ -21,7 +21,7 @@ public enum ViewRoutePath {
     case addAsChildViewController(from: UIViewController)
     case addAsSubview(from: UIView)
     case custom(from: ZIKViewRouteSource?)
-    case getDestination
+    case makeDestination
 
     public var source: ZIKViewRouteSource? {
         let source: ZIKViewRouteSource?
@@ -38,7 +38,7 @@ public enum ViewRoutePath {
             source = s
         case .custom(from: let s):
             source = s
-        case .getDestination:
+        case .makeDestination:
             source = nil
         }
         return source
@@ -64,8 +64,8 @@ public enum ViewRoutePath {
             return .addAsSubview
         case .custom(from: _):
             return .custom
-        case .getDestination:
-            return .getDestination
+        case .makeDestination:
+            return .makeDestination
         }
     }
 }
@@ -190,7 +190,7 @@ public class ViewRouterType<Destination, ModuleConfig> {
     
     // MARK: Perform on Destination
     
-    /// Perform route on destination. If you get a prepared destination by ZIKViewRouteTypeGetDestination, you can use this method to perform route on the destination.
+    /// Perform route on destination. If you get a prepared destination by ZIKViewRouteTypeMakeDestination, you can use this method to perform route on the destination.
     ///
     /// - Parameters:
     ///   - destination: The destination to perform route, the destination class should be registered with this router class.
@@ -251,7 +251,7 @@ public class ViewRouterType<Destination, ModuleConfig> {
         return ViewRouter<Destination, ModuleConfig>(router: routed)
     }
     
-    /// Perform route on destination with route type. If you get a prepared destination by ZIKViewRouteTypeGetDestination, you can use this method to perform route on the destination.
+    /// Perform route on destination with route type. If you get a prepared destination by ZIKViewRouteTypeMakeDestination, you can use this method to perform route on the destination.
     ///
     /// - Parameters:
     ///   - destination: The destination to perform route, the destination class should be registered with this router class.

@@ -332,7 +332,7 @@ public extension Router {
         var destination: Any?
         let routerClass = Registry.router(to: routableViewModule)
         _ = routerClass?.makeDestination(configuring: { config,_,_  in
-            config.routeType = ViewRouteType.getDestination
+            config.routeType = ViewRouteType.makeDestination
             if let moduleConfig = config as? Module {
                 prepare?(moduleConfig)
             } else {

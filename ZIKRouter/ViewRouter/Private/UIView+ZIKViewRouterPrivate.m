@@ -29,7 +29,7 @@
 }
 - (void)setZix_routeTypeFromRouter:(nullable NSNumber *)routeType {
     NSParameterAssert(!routeType ||
-                      [routeType integerValue] <= ZIKViewRouteTypeGetDestination);
+                      [routeType integerValue] <= ZIKViewRouteTypeMakeDestination);
     objc_setAssociatedObject(self, "zix_routeTypeFromRouter", routeType, OBJC_ASSOCIATION_RETAIN);
 }
 

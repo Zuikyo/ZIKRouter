@@ -59,7 +59,8 @@ typedef NS_ENUM(NSInteger,ZIKViewRouteType) {
     ///Subclass router can provide custom presentation. Class of source and destination is specified by subclass router.
     ZIKViewRouteTypeCustom,
     ///Just create and return a UIViewController or UIView in successHandler; Source is not needed for this type.
-    ZIKViewRouteTypeGetDestination
+    ZIKViewRouteTypeMakeDestination = 9,
+    ZIKViewRouteTypeGetDestination NS_ENUM_DEPRECATED_IOS(7.0, 7.0, "Use ZIKViewRouteTypeMakeDestination instead") = 9
 };
 
 typedef NS_OPTIONS(NSInteger, ZIKViewRouteTypeMask) {
@@ -72,9 +73,10 @@ typedef NS_OPTIONS(NSInteger, ZIKViewRouteTypeMask) {
     ZIKViewRouteTypeMaskAddAsChildViewController = (1 << ZIKViewRouteTypeAddAsChildViewController),
     ZIKViewRouteTypeMaskAddAsSubview             = (1 << ZIKViewRouteTypeAddAsSubview),
     ZIKViewRouteTypeMaskCustom                   = (1 << ZIKViewRouteTypeCustom),
-    ZIKViewRouteTypeMaskGetDestination           = (1 << ZIKViewRouteTypeGetDestination),
-    ZIKViewRouteTypeMaskUIViewControllerDefault  = (ZIKViewRouteTypeMaskPush | ZIKViewRouteTypeMaskPresentModally | ZIKViewRouteTypeMaskPresentAsPopover | ZIKViewRouteTypeMaskPerformSegue | ZIKViewRouteTypeMaskShow | ZIKViewRouteTypeMaskShowDetail | ZIKViewRouteTypeMaskAddAsChildViewController | ZIKViewRouteTypeMaskGetDestination),
-    ZIKViewRouteTypeMaskUIViewDefault            = (ZIKViewRouteTypeMaskAddAsSubview | ZIKViewRouteTypeMaskGetDestination)
+    ZIKViewRouteTypeMaskMakeDestination          = (1 << ZIKViewRouteTypeMakeDestination),
+    ZIKViewRouteTypeMaskUIViewControllerDefault  = (ZIKViewRouteTypeMaskPush | ZIKViewRouteTypeMaskPresentModally | ZIKViewRouteTypeMaskPresentAsPopover | ZIKViewRouteTypeMaskPerformSegue | ZIKViewRouteTypeMaskShow | ZIKViewRouteTypeMaskShowDetail | ZIKViewRouteTypeMaskAddAsChildViewController | ZIKViewRouteTypeMaskMakeDestination),
+    ZIKViewRouteTypeMaskUIViewDefault            = (ZIKViewRouteTypeMaskAddAsSubview | ZIKViewRouteTypeMaskMakeDestination),
+    ZIKViewRouteTypeMaskGetDestination NS_ENUM_DEPRECATED_IOS(7.0, 7.0, "Use ZIKViewRouteTypeMaskMakeDestination instead") = (1 << ZIKViewRouteTypeMakeDestination)
 };
 
 ///Real route type performed for those adaptative types in ZIKViewRouteType
@@ -111,7 +113,7 @@ typedef void(^ZIKViewRouteSegueConfiger)(NS_NOESCAPE ZIKViewRouteSegueConfigure)
  
  For ZIKViewRouteTypeAddAsSubview, source must be a UIView.
  
- For ZIKViewRouteTypeGetDestination, source is not needed.
+ For ZIKViewRouteTypeMakeDestination, source is not needed.
  */
 @property (nonatomic, weak, nullable) id<ZIKViewRouteSource> source;
 ///The style of route, default is ZIKViewRouteTypePresentModally. Subclass router may return other default value.

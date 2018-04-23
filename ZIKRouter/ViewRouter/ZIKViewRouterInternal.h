@@ -84,7 +84,7 @@ NS_ASSUME_NONNULL_BEGIN
  @note
  When it's removed and routed again, it's alse treated as first appearance, so this method may be called more than once. You should check whether the destination is already prepared to avoid unnecessary preparation.
  
- If you get a prepared destination by ZIKViewRouteTypeGetDestination or -prepareDestination:configuring:removing:, this method will be called. When the destination is routed, this method will also be called, because the destination may be changed.
+ If you get a prepared destination by ZIKViewRouteTypeMakeDestination or -prepareDestination:configuring:removing:, this method will be called. When the destination is routed, this method will also be called, because the destination may be changed.
  
  @param destination The view to perform route.
  @param configuration The configuration for route.
@@ -173,7 +173,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 /**
  AOP support.
- Route with ZIKViewRouteTypeAddAsChildViewController and ZIKViewRouteTypeGetDestination won't get AOP notification, because they are not complete route for displaying the destination, the destination will get AOP notification when it's really displayed.
+ Route with ZIKViewRouteTypeAddAsChildViewController and ZIKViewRouteTypeMakeDestination won't get AOP notification, because they are not complete route for displaying the destination, the destination will get AOP notification when it's really displayed.
  
  Router will be nil when route is from external or AddAsChildViewController/GetDestination route type.
  
@@ -186,9 +186,9 @@ NS_ASSUME_NONNULL_BEGIN
  Invoked time:
  
  For UIViewController routing from router or storyboard, invoked after destination is preapared and about to do route action.
- For UIViewController not routing from router, or routed by ZIKViewRouteTypeGetDestination or ZIKViewRouteTypeAddAsChildViewController then displayed manually, invoked in -viewWillAppear:. The parameter `router` is nil.
+ For UIViewController not routing from router, or routed by ZIKViewRouteTypeMakeDestination or ZIKViewRouteTypeAddAsChildViewController then displayed manually, invoked in -viewWillAppear:. The parameter `router` is nil.
  For UIView routing by ZIKViewRouteTypeAddAsSubview type, invoked after destination is prepared and before -addSubview: is called.
- For UIView routing from xib or from manually addSubview: or routed by ZIKViewRouteTypeGetDestination, invoked after destination is prepared, and is about to be visible (moving to window), but not in -willMoveToSuperview:. Beacuse we need to auto create router and search performer in responder hierarchy. In some situation, the responder is only available when the UIView is on a window. See comments inside -ZIKViewRouter_hook_willMoveToSuperview: for more detial.
+ For UIView routing from xib or from manually addSubview: or routed by ZIKViewRouteTypeMakeDestination, invoked after destination is prepared, and is about to be visible (moving to window), but not in -willMoveToSuperview:. Beacuse we need to auto create router and search performer in responder hierarchy. In some situation, the responder is only available when the UIView is on a window. See comments inside -ZIKViewRouter_hook_willMoveToSuperview: for more detial.
  */
 + (void)router:(nullable ZIKViewRouter *)router willPerformRouteOnDestination:(Destination)destination fromSource:(nullable id)source;
 
@@ -198,9 +198,9 @@ NS_ASSUME_NONNULL_BEGIN
  Invoked time:
  
  For UIViewController routing from router or storyboard, invoked after route animation is finished. See -successHandler.
- For UIViewController not routing from router, or routed by ZIKViewRouteTypeAddAsChildViewController or ZIKViewRouteTypeGetDestination then displayed manually, invoked in -viewDidAppear:. The parameter `router` is nil.
+ For UIViewController not routing from router, or routed by ZIKViewRouteTypeAddAsChildViewController or ZIKViewRouteTypeMakeDestination then displayed manually, invoked in -viewDidAppear:. The parameter `router` is nil.
  For UIView routing by ZIKViewRouteTypeAddAsSubview type, invoked after -addSubview: is called.
- For UIView routing from xib or from manually addSubview: or routed by ZIKViewRouteTypeGetDestination, invoked after destination is visible (did move to window), but not in -didMoveToSuperview:. See comments inside -ZIKViewRouter_hook_willMoveToSuperview: for more detial.
+ For UIView routing from xib or from manually addSubview: or routed by ZIKViewRouteTypeMakeDestination, invoked after destination is visible (did move to window), but not in -didMoveToSuperview:. See comments inside -ZIKViewRouter_hook_willMoveToSuperview: for more detial.
  */
 + (void)router:(nullable ZIKViewRouter *)router didPerformRouteOnDestination:(Destination)destination fromSource:(nullable id)source;
 
