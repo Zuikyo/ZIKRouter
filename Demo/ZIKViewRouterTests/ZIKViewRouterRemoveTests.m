@@ -38,9 +38,8 @@
     XCTestExpectation *completionHandlerExpectation = [self expectationWithDescription:@"completionHandler"];
     {
         [self enterTest:^(UIViewController *source) {
-            self.router = [ZIKRouterToView(AViewInput) performFromSource:source configuring:^(ZIKViewRouteConfiguration * _Nonnull config) {
+            self.router = [ZIKRouterToView(AViewInput) performPath:[self pathFromSource:source] configuring:^(ZIKViewRouteConfiguration * _Nonnull config) {
                 [self configRouteConfiguration:config source:source];
-                config.routeType = self.routeType;
                 
                 config.performerSuccessHandler = ^(id  _Nonnull destination) {
                     
@@ -80,9 +79,8 @@
     XCTestExpectation *completionHandlerExpectation = [self expectationWithDescription:@"completionHandler"];
     {
         [self enterTest:^(UIViewController *source) {
-            self.router = [ZIKRouterToView(AViewInput) performFromSource:source configuring:^(ZIKViewRouteConfiguration * _Nonnull config) {
+            self.router = [ZIKRouterToView(AViewInput) performPath:[self pathFromSource:source] configuring:^(ZIKViewRouteConfiguration * _Nonnull config) {
                 [self configRouteConfiguration:config source:source];
-                config.routeType = self.routeType;
                 
                 config.performerSuccessHandler = ^(id  _Nonnull destination) {
                     
@@ -126,9 +124,8 @@
     XCTestExpectation *completionHandlerExpectation = [self expectationWithDescription:@"completionHandler"];
     {
         [self enterTest:^(UIViewController *source) {
-            self.router = [ZIKRouterToView(AViewInput) performFromSource:source configuring:^(ZIKViewRouteConfiguration * _Nonnull config) {
+            self.router = [ZIKRouterToView(AViewInput) performPath:[self pathFromSource:source] configuring:^(ZIKViewRouteConfiguration * _Nonnull config) {
                 [self configRouteConfiguration:config source:source];
-                config.routeType = self.routeType;
                 
                 config.performerSuccessHandler = ^(id  _Nonnull destination) {
                     
@@ -172,9 +169,8 @@
     XCTestExpectation *completionHandlerExpectation = [self expectationWithDescription:@"completionHandler"];
     {
         [self enterTest:^(UIViewController *source) {
-            self.router = [ZIKRouterToView(AViewInput) performFromSource:source configuring:^(ZIKViewRouteConfiguration * _Nonnull config) {
+            self.router = [ZIKRouterToView(AViewInput) performPath:[self pathFromSource:source] configuring:^(ZIKViewRouteConfiguration * _Nonnull config) {
                 [self configRouteConfiguration:config source:source];
-                config.routeType = self.routeType;
                 
                 config.performerSuccessHandler = ^(id  _Nonnull destination) {
                     

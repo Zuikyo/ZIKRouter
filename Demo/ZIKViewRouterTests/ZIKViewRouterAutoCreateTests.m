@@ -23,8 +23,7 @@
 @implementation ZIKViewRouterAutoCreateTests
 
 - (void)enterSourceViewWithSuccess:(void(^)(UIViewController *source))successHandler {
-    self.sourceRouter = [TestPerformSegueViewRouter performFromSource:self.masterViewController configuring:^(ZIKViewRouteConfig * _Nonnull config) {
-        config.routeType = ZIKViewRouteTypePush;
+    self.sourceRouter = [TestPerformSegueViewRouter performPath:ZIKViewRoutePath.pushFrom(self.masterViewController) configuring:^(ZIKViewRouteConfig * _Nonnull config) {
         config.animated = NO;
         config.successHandler = ^(id  _Nonnull destination) {
             NSLog(@"%@: enterSourceView succeed", destination);

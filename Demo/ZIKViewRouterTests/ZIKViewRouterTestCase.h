@@ -10,9 +10,11 @@
 @import ZIKRouter;
 #import "AViewInput.h"
 
+NS_ASSUME_NONNULL_BEGIN
+
 @interface ZIKViewRouterTestCase : XCTestCase
 
-@property (nonatomic, weak) ZIKAnyViewRouter *router;
+@property (nonatomic, weak, nullable) ZIKAnyViewRouter *router;
 @property (nonatomic) ZIKViewRouteType routeType;
 
 - (void)enterTest:(void(^)(UIViewController *source))testBlock;
@@ -30,3 +32,5 @@
 ///If the router complete synchronously, self.router is not set when completion handler is called, then access self.router in handler block will fail. Use this to access self.router in block.
 - (void)handle:(void(^)(void))block;
 @end
+
+NS_ASSUME_NONNULL_END

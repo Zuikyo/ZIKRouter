@@ -81,8 +81,7 @@
 }
 
 - (void)enterSourceViewWithSuccess:(void(^)(UIViewController *source))successHandler {
-    self.sourceRouter = [SourceViewRouter performFromSource:self.masterViewController configuring:^(ZIKViewRouteConfig * _Nonnull config) {
-        config.routeType = ZIKViewRouteTypePush;
+    self.sourceRouter = [SourceViewRouter performPath:ZIKViewRoutePath.pushFrom(self.masterViewController) configuring:^(ZIKViewRouteConfig * _Nonnull config) {
         config.animated = NO;
         config.successHandler = ^(id  _Nonnull destination) {
             NSLog(@"%@: enterSourceView succeed", destination);

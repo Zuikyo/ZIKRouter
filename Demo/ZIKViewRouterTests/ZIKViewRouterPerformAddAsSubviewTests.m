@@ -35,9 +35,8 @@
     XCTestExpectation *expectation = [self expectationWithDescription:@"prepareDestination"];
     {
         [self enterTest:^(UIViewController *source) {
-            self.router = [ZIKRouterToView(BSubviewInput) performFromSource:source.view configuring:^(ZIKViewRouteConfiguration * _Nonnull config) {
+            self.router = [ZIKRouterToView(BSubviewInput) performPath:[self pathFromSource:source] configuring:^(ZIKViewRouteConfiguration * _Nonnull config) {
                 [self configRouteConfiguration:config source:source];
-                config.routeType = self.routeType;
                 config.prepareDestination = ^(id<BSubviewInput>  _Nonnull destination) {
                     destination.title = @"test title";
                 };
@@ -63,9 +62,8 @@
     XCTestExpectation *expectation = [self expectationWithDescription:@"completionHandler"];
     {
         [self enterTest:^(UIViewController *source) {
-            self.router = [ZIKRouterToView(BSubviewInput) performFromSource:source.view configuring:^(ZIKViewRouteConfiguration * _Nonnull config) {
+            self.router = [ZIKRouterToView(BSubviewInput) performPath:[self pathFromSource:source] configuring:^(ZIKViewRouteConfiguration * _Nonnull config) {
                 [self configRouteConfiguration:config source:source];
-                config.routeType = self.routeType;
                 config.completionHandler = ^(BOOL success, id  _Nullable destination, ZIKRouteAction  _Nonnull routeAction, NSError * _Nullable error) {
                     XCTAssertTrue(success);
                     XCTAssertNil(error);
@@ -88,9 +86,8 @@
     XCTestExpectation *expectation = [self expectationWithDescription:@"completionHandler"];
     {
         [self enterTest:^(UIViewController *source) {
-            self.router = [ZIKRouterToView(BSubviewInput) performFromSource:nil configuring:^(ZIKViewRouteConfiguration * _Nonnull config) {
+            self.router = [ZIKRouterToView(BSubviewInput) performPath:nil configuring:^(ZIKViewRouteConfiguration * _Nonnull config) {
                 [self configRouteConfiguration:config source:source];
-                config.routeType = self.routeType;
                 config.completionHandler = ^(BOOL success, id  _Nullable destination, ZIKRouteAction  _Nonnull routeAction, NSError * _Nullable error) {
                     XCTAssertFalse(success);
                     XCTAssertNotNil(error);
@@ -217,9 +214,8 @@
     XCTestExpectation *expectation = [self expectationWithDescription:@"successHandler"];
     {
         [self enterTest:^(UIViewController *source) {
-            self.router = [ZIKRouterToView(BSubviewInput) performFromSource:source.view configuring:^(ZIKViewRouteConfiguration * _Nonnull config) {
+            self.router = [ZIKRouterToView(BSubviewInput) performPath:[self pathFromSource:source] configuring:^(ZIKViewRouteConfiguration * _Nonnull config) {
                 [self configRouteConfiguration:config source:source];
-                config.routeType = self.routeType;
                 config.successHandler = ^(id  _Nonnull destination) {
                     XCTAssertNotNil(destination);
                     [expectation fulfill];
@@ -244,9 +240,8 @@
     performerSuccessHandlerExpectation.assertForOverFulfill = YES;
     {
         [self enterTest:^(UIViewController *source) {
-            self.router = [ZIKRouterToView(BSubviewInput) performFromSource:source.view configuring:^(ZIKViewRouteConfiguration * _Nonnull config) {
+            self.router = [ZIKRouterToView(BSubviewInput) performPath:[self pathFromSource:source] configuring:^(ZIKViewRouteConfiguration * _Nonnull config) {
                 [self configRouteConfiguration:config source:source];
-                config.routeType = self.routeType;
                 config.successHandler = ^(id  _Nonnull destination) {
                     XCTAssertNotNil(destination);
                     [successHandlerExpectation fulfill];
@@ -285,9 +280,8 @@
     XCTestExpectation *performerErrorExpectation = [self expectationWithDescription:@"performerErrorHandler"];
     {
         [self enterTest:^(UIViewController *source) {
-            self.router = [ZIKRouterToView(BSubviewInput) performFromSource:nil configuring:^(ZIKViewRouteConfiguration * _Nonnull config) {
+            self.router = [ZIKRouterToView(BSubviewInput) performPath:nil configuring:^(ZIKViewRouteConfiguration * _Nonnull config) {
                 [self configRouteConfiguration:config source:source];
-                config.routeType = self.routeType;
                 config.successHandler = ^(id  _Nonnull destination) {
                     XCTAssert(NO, @"successHandler should not be called");
                 };
@@ -322,9 +316,8 @@
     {
         [self enterTest:^(UIViewController *source) {
             id destination = [ZIKRouterToView(BSubviewInput) makeDestination];
-            self.router = [ZIKRouterToView(BSubviewInput) performOnDestination:destination fromSource:source.view configuring:^(ZIKViewRouteConfiguration * _Nonnull config) {
+            self.router = [ZIKRouterToView(BSubviewInput) performOnDestination:destination path:[self pathFromSource:source] configuring:^(ZIKViewRouteConfiguration * _Nonnull config) {
                 [self configRouteConfiguration:config source:source];
-                config.routeType = self.routeType;
                 config.successHandler = ^(id  _Nonnull destination) {
                     [successHandlerExpectation fulfill];
                 };
@@ -360,9 +353,8 @@
     {
         [self enterTest:^(UIViewController *source) {
             id invalidDestination = nil;
-            self.router = [ZIKRouterToView(BSubviewInput) performOnDestination:invalidDestination fromSource:source.view configuring:^(ZIKViewRouteConfiguration * _Nonnull config) {
+            self.router = [ZIKRouterToView(BSubviewInput) performOnDestination:invalidDestination path:[self pathFromSource:source] configuring:^(ZIKViewRouteConfiguration * _Nonnull config) {
                 [self configRouteConfiguration:config source:source];
-                config.routeType = self.routeType;
                 config.successHandler = ^(id  _Nonnull destination) {
                     XCTAssert(NO, @"successHandler should not be called");
                 };
@@ -399,12 +391,11 @@
     {
         [self enterTest:^(UIViewController *source) {
             self.router = [ZIKRouterToView(BSubviewInput)
-                           performFromSource:source.view
+                           performPath:[self pathFromSource:source]
                            strictConfiguring:^(ZIKViewRouteConfiguration * _Nonnull config,
                                                void (^prepareDest)(void (^)(id<BSubviewInput> destination)),
                                                void (^prepareModule)(void (^)(ZIKViewRouteConfig *config))) {
                                [self configRouteConfiguration:config source:source];
-                               config.routeType = self.routeType;
                                prepareDest(^(id<BSubviewInput> destination) {
                                    destination.title = @"test title";
                                });
@@ -432,12 +423,11 @@
     {
         [self enterTest:^(UIViewController *source) {
             self.router = [ZIKRouterToView(BSubviewInput)
-                           performFromSource:source.view
+                           performPath:[self pathFromSource:source]
                            strictConfiguring:^(ZIKViewRouteConfiguration * _Nonnull config,
                                                void (^prepareDest)(void (^)(id<BSubviewInput> destination)),
                                                void (^prepareModule)(void (^)(ZIKViewRouteConfig *config))) {
                                [self configRouteConfiguration:config source:source];
-                               config.routeType = self.routeType;
                                config.completionHandler = ^(BOOL success, id  _Nullable destination, ZIKRouteAction  _Nonnull routeAction, NSError * _Nullable error) {
                                    XCTAssertTrue(success);
                                    XCTAssertNil(error);
@@ -461,12 +451,11 @@
     {
         [self enterTest:^(UIViewController *source) {
             self.router = [ZIKRouterToView(BSubviewInput)
-                           performFromSource:nil
+                           performPath:nil
                            strictConfiguring:^(ZIKViewRouteConfiguration * _Nonnull config,
                                                void (^prepareDest)(void (^)(id<BSubviewInput> destination)),
                                                void (^prepareModule)(void (^)(ZIKViewRouteConfig *config))) {
                                [self configRouteConfiguration:config source:source];
-                               config.routeType = self.routeType;
                                config.completionHandler = ^(BOOL success, id  _Nullable destination, ZIKRouteAction  _Nonnull routeAction, NSError * _Nullable error) {
                                    XCTAssertFalse(success);
                                    XCTAssertNotNil(error);
@@ -490,12 +479,11 @@
     {
         [self enterTest:^(UIViewController *source) {
             self.router = [ZIKRouterToView(BSubviewInput)
-                           performFromSource:source.view
+                           performPath:[self pathFromSource:source]
                            strictConfiguring:^(ZIKViewRouteConfiguration * _Nonnull config,
                                                void (^prepareDest)(void (^)(id<BSubviewInput> destination)),
                                                void (^prepareModule)(void (^)(ZIKViewRouteConfig *config))) {
                                [self configRouteConfiguration:config source:source];
-                               config.routeType = self.routeType;
                                config.successHandler = ^(id  _Nonnull destination) {
                                    XCTAssertNotNil(destination);
                                    [expectation fulfill];
@@ -521,12 +509,11 @@
     {
         [self enterTest:^(UIViewController *source) {
             self.router = [ZIKRouterToView(BSubviewInput)
-                           performFromSource:source.view
+                           performPath:[self pathFromSource:source]
                            strictConfiguring:^(ZIKViewRouteConfiguration * _Nonnull config,
                                                void (^prepareDest)(void (^)(id<BSubviewInput> destination)),
                                                void (^prepareModule)(void (^)(ZIKViewRouteConfig *config))) {
                                [self configRouteConfiguration:config source:source];
-                               config.routeType = self.routeType;
                                config.successHandler = ^(id  _Nonnull destination) {
                                    XCTAssertNotNil(destination);
                                    [successHandlerExpectation fulfill];
@@ -565,12 +552,11 @@
     {
         [self enterTest:^(UIViewController *source) {
             self.router = [ZIKRouterToView(BSubviewInput)
-                           performFromSource:nil
+                           performPath:nil
                            strictConfiguring:^(ZIKViewRouteConfiguration * _Nonnull config,
                                                void (^prepareDest)(void (^)(id<BSubviewInput> destination)),
                                                void (^prepareModule)(void (^)(ZIKViewRouteConfig *config))) {
                                [self configRouteConfiguration:config source:source];
-                               config.routeType = self.routeType;
                                config.successHandler = ^(id  _Nonnull destination) {
                                    XCTAssert(NO, @"successHandler should not be called");
                                };
@@ -607,7 +593,7 @@
             id destination = [ZIKRouterToView(BSubviewInput) makeDestination];
             self.router = [ZIKRouterToView(BSubviewInput)
                            performOnDestination:destination
-                           fromSource:source.view
+                           path:[self pathFromSource:source]
                            strictConfiguring:^(ZIKViewRouteConfiguration * _Nonnull config,
                                                void (^ _Nonnull prepareDest)(void (^ _Nonnull)(id<BSubviewInput> _Nonnull)),
                                                void (^ _Nonnull prepareModule)(void (^ _Nonnull)(ZIKViewRouteConfiguration * _Nonnull))) {
@@ -652,7 +638,7 @@
             id invalidDestination = nil;
             self.router = [ZIKRouterToView(BSubviewInput)
                            performOnDestination:invalidDestination
-                           fromSource:source.view
+                           path:[self pathFromSource:source]
                            strictConfiguring:^(ZIKViewRouteConfiguration * _Nonnull config,
                                                void (^ _Nonnull prepareDest)(void (^ _Nonnull)(id<BSubviewInput> _Nonnull)),
                                                void (^ _Nonnull prepareModule)(void (^ _Nonnull)(ZIKViewRouteConfiguration * _Nonnull))) {

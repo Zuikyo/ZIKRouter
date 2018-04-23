@@ -9,6 +9,33 @@
 import XCTest
 import ZRouter
 
+extension ZIKViewRouterTestCase {
+    func path(from source: UIViewController) ->ViewRoutePath {
+        switch self.routeType {
+        case .push:
+            return .push(from: source)
+        case .presentModally:
+            return .presentModally(from: source)
+        case .presentAsPopover:
+            return .presentAsPopover(from: source)
+        case .performSegue:
+            return .performSegue(from: source)
+        case .show:
+            return .show(from: source)
+        case .showDetail:
+            return .showDetail(from: source)
+        case .addAsChildViewController:
+            return .addAsChildViewController(from: source)
+        case .addAsSubview:
+            return .addAsSubview(from: source.view)
+        case .custom:
+            return .custom(from: source)
+        case .makeDestination:
+            return .makeDestination
+        }
+    }
+}
+
 class ZIKViewRouterPerformTests: ZIKViewRouterTestCase {
     
     override func setUp() {
@@ -31,7 +58,7 @@ class ZIKViewRouterPerformTests: ZIKViewRouterTestCase {
         enterTest { (source) in
             self.router = Router.perform(
                 to: RoutableView<AViewInput>(),
-                from: source,
+                path: self.path(from: source),
                 configuring: { (config, prepareDest, _) in
                     self.configure(routeConfiguration: config, source: source)
                     prepareDest({ destination in
@@ -42,7 +69,7 @@ class ZIKViewRouterPerformTests: ZIKViewRouterTestCase {
                         XCTAssert(destination is AViewInput)
                         XCTAssert((destination as! AViewInput).title == "test title")
                         self.handle({
-                            XCTAssert(self.router.state == .routed)
+                            XCTAssert(self.router?.state == .routed)
                             self.leaveTest()
                         })
                     }
@@ -56,7 +83,7 @@ class ZIKViewRouterPerformTests: ZIKViewRouterTestCase {
         enterTest { (source) in
             self.router = Router.perform(
                 to: RoutableView<AViewInput>(),
-                from: source,
+                path: self.path(from: source),
                 configuring: { (config, prepareDest, _) in
                     self.configure(routeConfiguration: config, source: source)
                     config.completionHandler = { (success, destination, action, error) in
@@ -64,7 +91,7 @@ class ZIKViewRouterPerformTests: ZIKViewRouterTestCase {
                         XCTAssertNil(error)
                         expectation.fulfill()
                         self.handle({
-                            XCTAssert(self.router.state == .routed)
+                            XCTAssert(self.router?.state == .routed)
                             self.leaveTest()
                         })
                     }
@@ -86,7 +113,7 @@ class ZIKViewRouterPerformTests: ZIKViewRouterTestCase {
                         XCTAssertNotNil(error)
                         expectation.fulfill()
                         self.handle({
-                            XCTAssert(self.router == nil || self.router.state == .unrouted)
+                            XCTAssert(self.router == nil || self.router?.state == .unrouted)
                             self.leaveTest()
                         })
                     }
@@ -100,13 +127,13 @@ class ZIKViewRouterPerformTests: ZIKViewRouterTestCase {
         enterTest { (source) in
             self.router = Router.perform(
                 to: RoutableView<AViewInput>(),
-                path: ViewRoutePath.presentModally(from: source!),
+                path: ViewRoutePath.presentModally(from: source),
                 completion: { (success, destination, action, error) in
                     XCTAssertTrue(success)
                     XCTAssertNil(error)
                     expectation.fulfill()
                     self.handle({
-                        XCTAssert(self.router.state == .routed)
+                        XCTAssert(self.router?.state == .routed)
                         self.leaveTest()
                     })
             })?.router
