@@ -21,6 +21,8 @@
 - (void)leaveTestViewWithCompletion:(void(^)(BOOL success, ZIKRouteAction  _Nonnull routeAction, NSError * _Nullable error))completion;
 - (void)leaveTest;
 
+- (ZIKViewRoutePath *)pathFromSource:(UIViewController *)source;
+
 #pragma mark Override
 
 + (BOOL)allowLeaveTestViewFailing;

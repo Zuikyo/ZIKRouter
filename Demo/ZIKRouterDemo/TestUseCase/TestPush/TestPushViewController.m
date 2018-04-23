@@ -64,8 +64,7 @@
 
 - (void)performRouteWithSuccessHandler:(void(^)(void))successHandler {
     __weak typeof(self) weakSelf = self;
-    self.infoViewRouter = [ZIKRouterToView(ZIKInfoViewProtocol) performFromSource:self configuring:^(ZIKViewRouteConfiguration * _Nonnull config) {
-        config.routeType = ZIKViewRouteTypePush;
+    self.infoViewRouter = [ZIKRouterToView(ZIKInfoViewProtocol) performPath:ZIKViewRoutePath.pushFrom(self) configuring:^(ZIKViewRouteConfiguration * _Nonnull config) {
         
         //prepareDestination is hold in configuration, should be careful about retain cycle if this view controller will hold the router. Same with successHandler, errorHandler, completion, stateNotifier.
         config.prepareDestination = ^(UIViewController<ZIKInfoViewProtocol> *destination) {

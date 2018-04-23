@@ -90,8 +90,8 @@ typedef NS_ENUM(NSInteger, ZIKViewRouteRealType) {
     ZIKViewRouteRealTypeCustom
 };
 
-@class ZIKViewRoutePopoverConfiguration,ZIKViewRouteSegueConfiguration;
-@protocol ZIKViewRouteSource,ZIKViewRouteContainer;
+@class ZIKViewRoutePath, ZIKViewRoutePopoverConfiguration, ZIKViewRouteSegueConfiguration;
+@protocol ZIKViewRouteSource, ZIKViewRouteContainer;
 typedef UIViewController<ZIKViewRouteContainer>*_Nonnull(^ZIKViewRouteContainerWrapper)(UIViewController *destination);
 typedef void(^ZIKViewRoutePopoverConfigure)(ZIKViewRoutePopoverConfiguration *popoverConfig);
 typedef void(^ZIKViewRouteSegueConfigure)(ZIKViewRouteSegueConfiguration *segueConfig);
@@ -100,6 +100,9 @@ typedef void(^ZIKViewRouteSegueConfiger)(NS_NOESCAPE ZIKViewRouteSegueConfigure)
 
 ///Configuration for view module. You can use a subclass to add complex dependencies for destination. The subclass must conforms to NSCopying, because the configuration need to be copied when routing.
 @interface ZIKViewRouteConfiguration : ZIKPerformRouteConfiguration <NSCopying>
+
+///Set source and route type in a type safe way.
+@property (nonatomic, readonly) void(^configurePath)(ZIKViewRoutePath *routePath) NS_REFINED_FOR_SWIFT;
 
 /**
  Source ViewController or View for route.
@@ -206,6 +209,38 @@ typedef void(^ZIKViewRouteSegueConfiger)(NS_NOESCAPE ZIKViewRouteSegueConfigure)
 
 ///When set to YES and the router still exists, if the same destination instance is removed from external, successHandler, errorHandler will be called
 @property (nonatomic, assign) BOOL handleExternalRoute;
+@end
+
+///Route path for setting source and route type in a type safe way.
+@interface ZIKViewRoutePath : NSObject
+@property (nonatomic, strong, readonly, nullable) id<ZIKViewRouteSource> source;
+@property (nonatomic, readonly) ZIKViewRouteType routeType;
+
+@property (nonatomic, class, readonly) ZIKViewRoutePath *(^pushFrom)(UIViewController *source) NS_SWIFT_UNAVAILABLE("Use push(from:) instead");
+@property (nonatomic, class, readonly) ZIKViewRoutePath *(^presentModallyFrom)(UIViewController *source) NS_SWIFT_UNAVAILABLE("Use presentModally(from:) instead");
+@property (nonatomic, class, readonly) ZIKViewRoutePath *(^presentAsPopoverFrom)(UIViewController *source) NS_SWIFT_UNAVAILABLE("Use presentAsPopover(from:) instead");
+@property (nonatomic, class, readonly) ZIKViewRoutePath *(^performSegueFrom)(UIViewController *source) NS_SWIFT_UNAVAILABLE("Use performSegue(from:) instead");
+@property (nonatomic, class, readonly) ZIKViewRoutePath *(^showFrom)(UIViewController *source) NS_SWIFT_UNAVAILABLE("Use show(from:) instead");
+@property (nonatomic, class, readonly) ZIKViewRoutePath *(^showDetailFrom)(UIViewController *source) NS_SWIFT_UNAVAILABLE("Use showDetail(from:) instead");
+@property (nonatomic, class, readonly) ZIKViewRoutePath *(^addAsChildViewControllerFrom)(UIViewController *source) NS_SWIFT_UNAVAILABLE("Use addAsChildViewController(from:) instead");
+@property (nonatomic, class, readonly) ZIKViewRoutePath *(^addAsSubviewFrom)(UIView *source) NS_SWIFT_UNAVAILABLE("Use addAsSubview(from:) instead");
+@property (nonatomic, class, readonly) ZIKViewRoutePath *(^customFrom)(id<ZIKViewRouteSource> _Nullable source) NS_SWIFT_UNAVAILABLE("Use custom(from:) instead");
+@property (nonatomic, class, readonly) ZIKViewRoutePath *(^makeDestination)(void);
+
++ (instancetype)pushFrom:(UIViewController *)source NS_SWIFT_NAME(push(from:));
++ (instancetype)presentModallyFrom:(UIViewController *)source NS_SWIFT_NAME(presentModally(from:));
++ (instancetype)presentAsPopoverFrom:(UIViewController *)source NS_SWIFT_NAME(presentAsPopover(from:));
++ (instancetype)performSegueFrom:(UIViewController *)source NS_SWIFT_NAME(performSegue(from:));
++ (instancetype)showFrom:(UIViewController *)source NS_SWIFT_NAME(show(from:));
++ (instancetype)showDetailFrom:(UIViewController *)source NS_SWIFT_NAME(showDetail(from:));
++ (instancetype)addAsChildViewControllerFrom:(UIViewController *)source NS_SWIFT_NAME(addAsChildViewController(from:));
++ (instancetype)addAsSubviewFrom:(UIView *)source NS_SWIFT_NAME(addAsSubview(from:));
++ (instancetype)customFrom:(nullable id<ZIKViewRouteSource>)source NS_SWIFT_NAME(custom(from:));
+
+- (instancetype)initWithRouteType:(ZIKViewRouteType)routeType source:(nullable id<ZIKViewRouteSource>)source NS_DESIGNATED_INITIALIZER;
+- (instancetype)init NS_UNAVAILABLE;
++ (instancetype)new NS_UNAVAILABLE;
+
 @end
 
 @protocol ZIKViewRouteSource <NSObject>

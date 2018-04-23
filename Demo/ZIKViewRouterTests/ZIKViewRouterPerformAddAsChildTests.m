@@ -130,7 +130,7 @@
     XCTestExpectation *expectation = [self expectationWithDescription:@"completionHandler"];
     {
         [self enterTest:^(UIViewController *source) {
-            self.router = [ZIKRouterToView(AViewInput) performFromSource:source routeType:self.routeType completion:^(BOOL success, UIViewController<AViewInput> *_Nullable destination, ZIKRouteAction  _Nonnull routeAction, NSError * _Nullable error) {
+            self.router = [ZIKRouterToView(AViewInput) performPath:[self pathFromSource:source] completion:^(BOOL success, UIViewController<AViewInput> *_Nullable destination, ZIKRouteAction  _Nonnull routeAction, NSError * _Nullable error) {
                 XCTAssertTrue(success);
                 XCTAssertNil(error);
                 [[self class] addChildToParentView:source.view childView:destination.view completion:^{
@@ -154,7 +154,7 @@
     XCTestExpectation *expectation = [self expectationWithDescription:@"completionHandler"];
     {
         [self enterTest:^(UIViewController *source) {
-            self.router = [ZIKRouterToView(AViewInput) performFromSource:nil routeType:self.routeType completion:^(BOOL success, id<AViewInput>  _Nullable destination, ZIKRouteAction  _Nonnull routeAction, NSError * _Nullable error) {
+            self.router = [ZIKRouterToView(AViewInput) performPath:nil completion:^(BOOL success, id<AViewInput>  _Nullable destination, ZIKRouteAction  _Nonnull routeAction, NSError * _Nullable error) {
                 XCTAssertFalse(success);
                 XCTAssertNotNil(error);
                 [expectation fulfill];
@@ -176,7 +176,7 @@
     expectation.assertForOverFulfill = YES;
     {
         [self enterTest:^(UIViewController *source) {
-            self.router = [ZIKRouterToView(AViewInput) performFromSource:source routeType:self.routeType completion:^(BOOL success, UIViewController<AViewInput> *_Nullable destination, ZIKRouteAction  _Nonnull routeAction, NSError * _Nullable error) {
+            self.router = [ZIKRouterToView(AViewInput) performPath:[self pathFromSource:source] completion:^(BOOL success, UIViewController<AViewInput> *_Nullable destination, ZIKRouteAction  _Nonnull routeAction, NSError * _Nullable error) {
                 XCTAssertTrue(success);
                 XCTAssertNil(error);
                 
@@ -213,7 +213,7 @@
     expectation.assertForOverFulfill = YES;
     {
         [self enterTest:^(UIViewController *source) {
-            self.router = [ZIKRouterToView(AViewInput) performFromSource:source routeType:self.routeType completion:^(BOOL success, UIViewController<AViewInput> *_Nullable destination, ZIKRouteAction  _Nonnull routeAction, NSError * _Nullable error) {
+            self.router = [ZIKRouterToView(AViewInput) performPath:[self pathFromSource:source] completion:^(BOOL success, UIViewController<AViewInput> *_Nullable destination, ZIKRouteAction  _Nonnull routeAction, NSError * _Nullable error) {
                 XCTAssertTrue(success);
                 [[self class] addChildToParentView:source.view childView:destination.view completion:^{
                     [destination didMoveToParentViewController:source];

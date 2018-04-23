@@ -71,7 +71,9 @@
             if (destination) {
                 [showDestinationExpectation fulfill];
             }
-            [self leaveTest];
+            [destination dismissViewControllerAnimated:NO completion:^{
+                [self leaveTest];
+            }];
         });
     }];
     

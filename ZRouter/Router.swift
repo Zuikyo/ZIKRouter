@@ -141,12 +141,12 @@ public extension Router {
     /// - Returns: The view router.
     @discardableResult public static func perform<Destination>(
         to routableView: RoutableView<Destination>,
-        from source: ZIKViewRouteSource?,
+        path: ViewRoutePath,
         configuring configure: (ViewRouteConfig, (@escaping (Destination) -> Void) -> Void, ((ViewRouteConfig) -> Void) -> Void) -> Void,
         removing removeConfigure: ((ViewRemoveConfig, (@escaping (Destination) -> Void) -> Void) -> Void)? = nil
         ) -> ViewRouter<Destination, ViewRouteConfig>? {
         let routerType = Registry.router(to: routableView)
-        return routerType?.perform(from: source, configuring: configure, removing: removeConfigure)
+        return routerType?.perform(path: path, configuring: configure, removing: removeConfigure)
     }
     
     /// Perform route with view protocol and route type.
@@ -158,12 +158,27 @@ public extension Router {
     /// - Returns: The view router.
     @discardableResult public static func perform<Destination>(
         to routableView: RoutableView<Destination>,
-        from source: ZIKViewRouteSource?,
-        routeType: ViewRouteType
+        path: ViewRoutePath
         ) -> ViewRouter<Destination, ViewRouteConfig>? {
-        return perform(to: routableView, from: source, configuring: { (config, _, _) in
-            config.routeType = routeType
+        return perform(to: routableView, path: path, configuring: { (config, _, _) in
+            
         })
+    }
+    
+    /// Perform route with view protocol, route type and completion.
+    ///
+    /// - Parameters:
+    ///   - routableView: A routable entry carrying a view protocol.
+    ///   - path: The route path with source and route type.
+    ///   - completion: Completion for current performing.
+    /// - Returns: The view router.
+    @discardableResult public static func perform<Destination>(
+        to routableView: RoutableView<Destination>,
+        path: ViewRoutePath,
+        completion: @escaping (Bool, Destination?, ZIKRouteAction, Error?) -> Void
+        ) -> ViewRouter<Destination, ViewRouteConfig>? {
+        let routerType = Registry.router(to: routableView)
+        return routerType?.perform(path: path, completion: completion)
     }
     
     /// Perform route with view config protocol and prepare the module with the protocol.
@@ -179,12 +194,12 @@ public extension Router {
     /// - Returns: The view router.
     @discardableResult public static func perform<Module>(
         to routableViewModule: RoutableViewModule<Module>,
-        from source: ZIKViewRouteSource?,
+        path: ViewRoutePath,
         configuring configure: (ViewRouteConfig, (@escaping (Any) -> Void) -> Void, ((Module) -> Void) -> Void) -> Void,
         removing removeConfigure: ((ViewRemoveConfig, (@escaping (Any) -> Void) -> Void) -> Void)? = nil
         ) -> ViewRouter<Any, Module>? {
         let routerType = Registry.router(to: routableViewModule)
-        return routerType?.perform(from: source, configuring: configure, removing: removeConfigure)
+        return routerType?.perform(path: path, configuring: configure, removing: removeConfigure)
     }
     
     /// Perform route with view config protocol and route type.
@@ -196,12 +211,27 @@ public extension Router {
     /// - Returns: The view router.
     @discardableResult public static func perform<Module>(
         to routableViewModule: RoutableViewModule<Module>,
-        from source: ZIKViewRouteSource?,
-        routeType: ViewRouteType
+        path: ViewRoutePath
         ) -> ViewRouter<Any, Module>? {
-        return perform(to: routableViewModule, from: source, configuring: { (config, _, _) in
-            config.routeType = routeType
+        return perform(to: routableViewModule, path: path, configuring: { (config, _, _) in
+            
         })
+    }
+    
+    /// Perform route with view config protocol, route type and completion.
+    ///
+    /// - Parameters:
+    ///   - routableViewModule: A routabe entry carrying a view module config protocol.
+    ///   - path: The route path with source and route type.
+    ///   - completion: Completion for current performing.
+    /// - Returns: The view router.
+    @discardableResult public static func perform<Module>(
+        to routableViewModule: RoutableViewModule<Module>,
+        path: ViewRoutePath,
+        completion: @escaping (Bool, Any?, ZIKRouteAction, Error?) -> Void
+        ) -> ViewRouter<Any, Module>? {
+        let routerType = Registry.router(to: routableViewModule)
+        return routerType?.perform(path: path, completion: completion)
     }
     
     /// Perform route with service protocol and prepare the destination with the protocol.
@@ -223,6 +253,20 @@ public extension Router {
         return routerType?.perform(configuring: configure, removing: removeConfigure)
     }
     
+    /// Perform route with service protocol and completion.
+    ///
+    /// - Parameters:
+    ///   - routableService: A routabe entry carrying a service protocol.
+    ///   - completion: Completion for current performing.
+    /// - Returns: The service router.
+    @discardableResult public static func perform<Destination>(
+        to routableService: RoutableService<Destination>,
+        completion: @escaping (Bool, Any?, ZIKRouteAction, Error?) -> Void
+        ) -> ServiceRouter<Destination, PerformRouteConfig>? {
+        let routerType = Registry.router(to: routableService)
+        return routerType?.perform(completion: completion)
+    }
+    
     /// Perform route with service module config protocol and prepare the module with the protocol.
     ///
     /// - Parameters:
@@ -241,6 +285,20 @@ public extension Router {
         let routerType = Registry.router(to: routableServiceModule)
         let router = routerType?.perform(configuring: configure, removing: removeConfigure)
         return router
+    }
+    
+    /// Perform route with service protocol and completion.
+    ///
+    /// - Parameters:
+    ///   - routableServiceModule: A routabe entry carrying a module config protocol.
+    ///   - completion: Completion for current performing.
+    /// - Returns: The service router.
+    @discardableResult public static func perform<Module>(
+        to routableServiceModule: RoutableServiceModule<Module>,
+        completion: @escaping (Bool, Any?, ZIKRouteAction, Error?) -> Void
+        ) -> ServiceRouter<Any, Module>? {
+        let routerType = Registry.router(to: routableServiceModule)
+        return routerType?.perform(completion: completion)
     }
 }
 
@@ -352,5 +410,51 @@ public extension Router {
         ) -> Any? {
         let routerClass = Registry.router(to: routableServiceModule)
         return routerClass?.makeDestination(configuring: configure)
+    }
+    
+    // MARK: Deprecated
+    
+    @available(iOS, deprecated: 8.0, message: "Use perform(to:path:configuring:removing:) instead")
+    @discardableResult public static func perform<Destination>(
+        to routableView: RoutableView<Destination>,
+        from source: ZIKViewRouteSource?,
+        configuring configure: (ViewRouteConfig, (@escaping (Destination) -> Void) -> Void, ((ViewRouteConfig) -> Void) -> Void) -> Void,
+        removing removeConfigure: ((ViewRemoveConfig, (@escaping (Destination) -> Void) -> Void) -> Void)? = nil
+        ) -> ViewRouter<Destination, ViewRouteConfig>? {
+        let routerType = Registry.router(to: routableView)
+        return routerType?.perform(from: source, configuring: configure, removing: removeConfigure)
+    }
+    
+    @available(iOS, deprecated: 8.0, message: "Use perform(to:path:) instead")
+    @discardableResult public static func perform<Destination>(
+        to routableView: RoutableView<Destination>,
+        from source: ZIKViewRouteSource?,
+        routeType: ViewRouteType
+        ) -> ViewRouter<Destination, ViewRouteConfig>? {
+        return perform(to: routableView, from: source, configuring: { (config, _, _) in
+            config.routeType = routeType
+        })
+    }
+    
+    @available(iOS, deprecated: 8.0, message: "Use perform(to:path:configuring:removing:) instead")
+    @discardableResult public static func perform<Module>(
+        to routableViewModule: RoutableViewModule<Module>,
+        from source: ZIKViewRouteSource?,
+        configuring configure: (ViewRouteConfig, (@escaping (Any) -> Void) -> Void, ((Module) -> Void) -> Void) -> Void,
+        removing removeConfigure: ((ViewRemoveConfig, (@escaping (Any) -> Void) -> Void) -> Void)? = nil
+        ) -> ViewRouter<Any, Module>? {
+        let routerType = Registry.router(to: routableViewModule)
+        return routerType?.perform(from: source, configuring: configure, removing: removeConfigure)
+    }
+    
+    @available(iOS, deprecated: 8.0, message: "Use perform(to:path:) instead")
+    @discardableResult public static func perform<Module>(
+        to routableViewModule: RoutableViewModule<Module>,
+        from source: ZIKViewRouteSource?,
+        routeType: ViewRouteType
+        ) -> ViewRouter<Any, Module>? {
+        return perform(to: routableViewModule, from: source, configuring: { (config, _, _) in
+            config.routeType = routeType
+        })
     }
 }

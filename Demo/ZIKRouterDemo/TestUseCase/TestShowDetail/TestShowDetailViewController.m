@@ -24,9 +24,8 @@
 - (IBAction)showDetail:(id)sender {
     __weak typeof(self) weakSelf = self;
     self.infoViewRouter = [ZIKRouterToView(ZIKInfoViewProtocol)
-                           performFromSource:self
+                           performPath:ZIKViewRoutePath.showDetailFrom(self)
                            configuring:^(ZIKViewRouteConfiguration * _Nonnull config) {
-                               config.routeType = ZIKViewRouteTypeShowDetail;
                                config.containerWrapper = ^UIViewController<ZIKViewRouteContainer> * _Nonnull(UIViewController * _Nonnull destination) {
 //                                     UINavigationController *container = [[UINavigationController alloc] initWithRootViewController:destination];
 //                                     return container;

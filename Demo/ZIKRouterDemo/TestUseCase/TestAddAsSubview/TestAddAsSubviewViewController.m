@@ -23,9 +23,8 @@
 
 - (IBAction)addAsSubview:(id)sender {
     self.labelRouter = [ZIKRouterToView(ZIKSimpleLabelProtocol)
-                        performFromSource:self.view
+                        performPath:ZIKViewRoutePath.addAsSubviewFrom(self.view)
                         configuring:^(ZIKViewRouteConfiguration * _Nonnull config) {
-                            config.routeType = ZIKViewRouteTypeAddAsSubview;
                             config.prepareDestination = ^(id<ZIKSimpleLabelProtocol>  _Nonnull destination) {
                                 destination.text = @"this is a label from router";
                                 destination.frame = CGRectMake(50, 50, 200, 50);

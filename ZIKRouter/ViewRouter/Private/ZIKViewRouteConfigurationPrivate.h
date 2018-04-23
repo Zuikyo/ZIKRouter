@@ -24,6 +24,7 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic, assign) BOOL popoverLayoutMarginsConfiged;
 @end
 
+@class ZIKPresentationState;
 @interface ZIKViewRouteSegueConfiguration ()
 @property (nonatomic, weak, nullable) UIViewController *segueSource;
 @property (nonatomic, weak, nullable) UIViewController *segueDestination;

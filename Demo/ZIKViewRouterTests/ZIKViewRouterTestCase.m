@@ -66,6 +66,14 @@
     });
 }
 
+- (ZIKViewRoutePath *)pathFromSource:(UIViewController *)source {
+    id<ZIKViewRouteSource> s = source;
+    if (self.routeType == ZIKViewRouteTypeAddAsSubview) {
+        s = source.view;
+    }
+    return [[ZIKViewRoutePath alloc] initWithRouteType:self.routeType source:s];
+}
+
 - (void)enterTest:(void(^)(UIViewController *source))testBlock {
     self.leaveSourceViewExpectation = [self expectationWithDescription:@"Remove source View Controller"];
     self.leaveSourceViewExpectation.assertForOverFulfill = NO;

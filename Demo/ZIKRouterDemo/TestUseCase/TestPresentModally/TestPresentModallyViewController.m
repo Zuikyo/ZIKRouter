@@ -46,9 +46,8 @@
 - (void)performRouteWithSuccessHandler:(void(^)(void))successHandler {
     __weak typeof(self) weakSelf = self;
     self.infoViewRouter = [ZIKRouterToView(ZIKInfoViewProtocol)
-                           performFromSource:self
+                           performPath:ZIKViewRoutePath.presentModallyFrom(self)
                            configuring:^(ZIKViewRouteConfiguration * _Nonnull config) {
-                               config.routeType = ZIKViewRouteTypePresentModally;
                                config.containerWrapper = ^UIViewController<ZIKViewRouteContainer> * _Nonnull(UIViewController * _Nonnull destination) {
                                    UINavigationController *container = [[UINavigationController alloc] initWithRootViewController:destination];
                                    return container;

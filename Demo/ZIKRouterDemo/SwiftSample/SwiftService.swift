@@ -22,9 +22,8 @@ class SwiftService: SwiftServiceInput, SwiftServiceInput2 {
         print("this is a swift function")
         _ = Router.perform(
             to: RoutableViewModule<RequiredCompatibleAlertConfigProtocol>(),
-            from: UIApplication.shared.keyWindow?.rootViewController,
+            path: .custom(from: UIApplication.shared.keyWindow?.rootViewController),
             configuring: { (config, _, prepareModule) in
-                config.routeType = .custom
                 prepareModule({ module in
                     module.title = "SwiftService"
                     module.message = "This is a swift service"

@@ -86,6 +86,26 @@ public class ServiceRouterType<Destination, ModuleConfig> {
         }
     }
     
+    /// If this destination doesn't need any variable to initialize, just pass source and perform route with completion.
+    ///
+    /// - Parameters:
+    ///   - completion: Completion for current performing.
+    /// - Returns: The service router for this route.
+    @discardableResult public func perform(completion: @escaping (Bool, Destination?, ZIKRouteAction, Error?) -> Void) -> ServiceRouter<Destination, ModuleConfig>? {
+        return perform(configuring: { (config, _, _) in
+            config.completionHandler = { (success, d, action, error) in
+                let destination = d as? Destination
+                if success && destination == nil {
+                    assertionFailure("Bad implementation in router, destination (\(String(describing: d))) should be type (\(Destination.self))")
+                    let error = ZIKAnyViewRouter.routeError(withCode: .destinationUnavailable, localizedDescription: "Bad implementation in router, destination (\(String(describing: d))) should be type (\(Destination.self))")
+                    completion(false, destination, action, error)
+                    return
+                }
+                completion(success, destination, action, error)
+            }
+        })
+    }
+    
     // MARK: Make Destination
     
     /// Whether the destination is instantiated synchronously.

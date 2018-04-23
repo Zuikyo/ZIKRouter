@@ -133,7 +133,7 @@
     expectation.assertForOverFulfill = YES;
     {
         [self enterTest:^(UIViewController *source) {
-            self.router = [ZIKRouterToView(ZIKInfoViewProtocol) performFromSource:source routeType:self.routeType completion:^(BOOL success, id<ZIKInfoViewProtocol>  _Nullable destination, ZIKRouteAction  _Nonnull routeAction, NSError * _Nullable error) {
+            self.router = [ZIKRouterToView(ZIKInfoViewProtocol) performPath:[self pathFromSource:source] completion:^(BOOL success, id<ZIKInfoViewProtocol>  _Nullable destination, ZIKRouteAction  _Nonnull routeAction, NSError * _Nullable error) {
                 XCTAssertFalse(success);
                 [expectation fulfill];
                 [self leaveTest];
@@ -586,7 +586,7 @@
     expectation.assertForOverFulfill = YES;
     {
         [self enterTest:^(UIViewController *source) {
-            self.router = [ZIKAnyViewRouter performFromSource:source routeType:self.routeType completion:^(BOOL success, id  _Nullable destination, ZIKRouteAction  _Nonnull routeAction, NSError * _Nullable error) {
+            self.router = [ZIKAnyViewRouter performPath:[self pathFromSource:source] completion:^(BOOL success, id  _Nullable destination, ZIKRouteAction  _Nonnull routeAction, NSError * _Nullable error) {
                 XCTAssertFalse(success);
                 [expectation fulfill];
                 [self leaveTest];

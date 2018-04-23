@@ -24,9 +24,8 @@
 - (IBAction)addAsChildViewController:(id)sender {
     __weak typeof(self) weakSelf = self;
     self.infoViewRouter = [ZIKRouterToView(ZIKInfoViewProtocol)
-                           performFromSource:self
+                           performPath:ZIKViewRoutePath.addAsChildViewControllerFrom(self)
                            configuring:^(ZIKViewRouteConfiguration * _Nonnull config) {
-                               config.routeType = ZIKViewRouteTypeAddAsChildViewController;
                                config.prepareDestination = ^(id<ZIKInfoViewProtocol>  _Nonnull destination) {
                                    destination.delegate = weakSelf;
                                    destination.name = @"Zuik";

@@ -20,6 +20,120 @@ ZIKRouteAction const ZIKRouteActionToViewModule = @"ZIKRouteActionToViewModule";
 ZIKRouteAction const ZIKRouteActionPrepareOnDestination = @"ZIKRouteActionPrepareOnDestination";
 ZIKRouteAction const ZIKRouteActionPerformOnDestination = @"ZIKRouteActionPerformOnDestination";
 
+@interface ZIKViewRoutePath()
+@property (nonatomic, strong) id<ZIKViewRouteSource> source;
+@property (nonatomic) ZIKViewRouteType routeType;
+
+@end
+
+@implementation ZIKViewRoutePath
+
++ (ZIKViewRoutePath *(^)(UIViewController *))pushFrom {
+    return ^(UIViewController *source) {
+        return [[ZIKViewRoutePath alloc] initWithRouteType:ZIKViewRouteTypePush source:source];
+    };
+}
+
++ (ZIKViewRoutePath *(^)(UIViewController *))presentModallyFrom {
+    return ^(UIViewController *source) {
+        return [[ZIKViewRoutePath alloc] initWithRouteType:ZIKViewRouteTypePresentModally source:source];
+    };
+}
+
++ (ZIKViewRoutePath *(^)(UIViewController *))presentAsPopoverFrom {
+    return ^(UIViewController *source) {
+        return [[ZIKViewRoutePath alloc] initWithRouteType:ZIKViewRouteTypePresentAsPopover source:source];
+    };
+}
+
++ (ZIKViewRoutePath *(^)(UIViewController *))performSegueFrom {
+    return ^(UIViewController *source) {
+        return [[ZIKViewRoutePath alloc] initWithRouteType:ZIKViewRouteTypePerformSegue source:source];
+    };
+}
+
++ (ZIKViewRoutePath *(^)(UIViewController *))showFrom {
+    return ^(UIViewController *source) {
+        return [[ZIKViewRoutePath alloc] initWithRouteType:ZIKViewRouteTypeShow source:source];
+    };
+}
+
++ (ZIKViewRoutePath *(^)(UIViewController *))showDetailFrom {
+    return ^(UIViewController *source) {
+        return [[ZIKViewRoutePath alloc] initWithRouteType:ZIKViewRouteTypeShowDetail source:source];
+    };
+}
+
++ (ZIKViewRoutePath *(^)(UIViewController *))addAsChildViewControllerFrom {
+    return ^(UIViewController *source) {
+        return [[ZIKViewRoutePath alloc] initWithRouteType:ZIKViewRouteTypeAddAsChildViewController source:source];
+    };
+}
+
++ (ZIKViewRoutePath *(^)(UIView *))addAsSubviewFrom {
+    return ^(UIView *source) {
+        return [[ZIKViewRoutePath alloc] initWithRouteType:ZIKViewRouteTypeAddAsSubview source:source];
+    };
+}
+
++ (ZIKViewRoutePath *(^)(id<ZIKViewRouteSource>))customFrom {
+    return ^(id<ZIKViewRouteSource> source) {
+        return [[ZIKViewRoutePath alloc] initWithRouteType:ZIKViewRouteTypeCustom source:source];
+    };
+}
+
++ (ZIKViewRoutePath *(^)(void))makeDestination {
+    return ^ {
+        return [[ZIKViewRoutePath alloc] initWithRouteType:ZIKViewRouteTypeGetDestination source:nil];
+    };
+}
+
++ (instancetype)pushFrom:(UIViewController *)source {
+    return [[ZIKViewRoutePath alloc] initWithRouteType:ZIKViewRouteTypePush source:source];
+}
+
++ (instancetype)presentModallyFrom:(UIViewController *)source {
+    return [[ZIKViewRoutePath alloc] initWithRouteType:ZIKViewRouteTypePresentModally source:source];
+}
+
++ (instancetype)presentAsPopoverFrom:(UIViewController *)source {
+    return [[ZIKViewRoutePath alloc] initWithRouteType:ZIKViewRouteTypePresentAsPopover source:source];
+}
+
++ (instancetype)performSegueFrom:(UIViewController *)source {
+    return [[ZIKViewRoutePath alloc] initWithRouteType:ZIKViewRouteTypePerformSegue source:source];
+}
+
++ (instancetype)showFrom:(UIViewController *)source {
+    return [[ZIKViewRoutePath alloc] initWithRouteType:ZIKViewRouteTypeShow source:source];
+}
+
++ (instancetype)showDetailFrom:(UIViewController *)source {
+    return [[ZIKViewRoutePath alloc] initWithRouteType:ZIKViewRouteTypeShowDetail source:source];
+}
+
++ (instancetype)addAsChildViewControllerFrom:(UIViewController *)source {
+    return [[ZIKViewRoutePath alloc] initWithRouteType:ZIKViewRouteTypeAddAsChildViewController source:source];
+}
+
++ (instancetype)addAsSubviewFrom:(UIViewController *)source {
+    return [[ZIKViewRoutePath alloc] initWithRouteType:ZIKViewRouteTypeAddAsSubview source:source];
+}
+
++ (instancetype)customFrom:(UIViewController *)source {
+    return [[ZIKViewRoutePath alloc] initWithRouteType:ZIKViewRouteTypeCustom source:source];
+}
+
+- (instancetype)initWithRouteType:(ZIKViewRouteType)routeType source:(id<ZIKViewRouteSource>)source {
+    if (self= [super init]) {
+        _source = source;
+        _routeType = routeType;
+    }
+    return self;
+}
+
+@end
+
 @interface ZIKViewRouter()
 + (NSString *)descriptionOfRouteType:(ZIKViewRouteType)routeType;
 @end
@@ -50,6 +164,13 @@ ZIKRouteAction const ZIKRouteActionPerformOnDestination = @"ZIKRouteActionPerfor
         [self configDefaultValue];
     }
     return self;
+}
+
+- (void(^)(ZIKViewRoutePath *))configurePath {
+    return ^(ZIKViewRoutePath *routePath) {
+        self.source = routePath.source;
+        self.routeType = routePath.routeType;
+    };
 }
 
 - (void)configDefaultValue {

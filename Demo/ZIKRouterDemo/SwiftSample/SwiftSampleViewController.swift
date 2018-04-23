@@ -44,9 +44,8 @@ class SwiftSampleViewController: UIViewController, PureSwiftSampleViewInput, Swi
         // Not necessary to hold the router, here is just for demonstrating
         infoRouter = Router.perform(
             to: RoutableView<ZIKInfoViewProtocol>(),
-            from: self,
+            path: .presentModally(from: self),
             configuring: { (config, prepareDestination, _) in
-                config.routeType = .presentModally
                 prepareDestination({ [weak self] destination in
                     destination.delegate = self
                     destination.name = "zuik"
@@ -70,7 +69,7 @@ class SwiftSampleViewController: UIViewController, PureSwiftSampleViewInput, Swi
     @IBAction func testRouteForConfig(_ sender: Any) {
         alertRouter = Router.perform(
             to: RoutableViewModule<RequiredCompatibleAlertConfigProtocol>(),
-            from: self,
+            path: .custom(from: self),
             configuring: { (config, _, prepareModule) in
                 config.successHandler = { d in
                     print("show custom alert complete")
@@ -102,9 +101,8 @@ class SwiftSampleViewController: UIViewController, PureSwiftSampleViewInput, Swi
         }
         
         switchableRouter = Router.to(switchableView)?
-            .perform(from: self,
+            .perform(path: .push(from: self),
                      configuring: { config,_,_  in
-                        config.routeType = .push
                         config.prepareDestination = { [weak self] dest in
                             switch dest {
                             case let dest as UIViewController & ZIKInfoViewProtocol:
@@ -122,7 +120,7 @@ class SwiftSampleViewController: UIViewController, PureSwiftSampleViewInput, Swi
     
     @IBAction func testInjectedRouter(_ sender: Any) {
         injectedAlertRouter?.perform(
-            from: self,
+            path: .custom(from: self),
             configuring: { (config, _, prepareModule) in
                 prepareModule({ module in
                     module.title = "Compatible Alert"
@@ -158,8 +156,7 @@ class SwiftSampleViewController: UIViewController, PureSwiftSampleViewInput, Swi
         guard let destination = viewControllerToCommit as? ZIKInfoViewProtocol else {
             return
         }
-        infoRouter = Router.to(RoutableView<ZIKInfoViewProtocol>())?.perform(onDestination: destination, from: self, configuring: { (config, prepareDest, _) in
-            config.routeType = .presentModally
+        infoRouter = Router.to(RoutableView<ZIKInfoViewProtocol>())?.perform(onDestination: destination, path: .presentModally(from: self), configuring: { (config, prepareDest, _) in
             prepareDest({ [weak self] d in
                 d.delegate = self
                 d.name = "test"
