@@ -164,11 +164,11 @@ ZIKRouteAction const ZIKRouteActionPerformOnDestination = @"ZIKRouteActionPerfor
     return self;
 }
 
-- (void(^)(ZIKViewRoutePath *))configurePath {
-    return ^(ZIKViewRoutePath *routePath) {
-        self.source = routePath.source;
-        self.routeType = routePath.routeType;
-    };
+- (void)configurePath:(ZIKViewRoutePath *)path {
+    if (path.source) {
+        self.source = path.source;
+    }
+    self.routeType = path.routeType;
 }
 
 - (void)configDefaultValue {

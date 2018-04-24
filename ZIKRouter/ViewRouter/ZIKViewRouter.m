@@ -2988,7 +2988,7 @@ static  ZIKViewRouterType *_Nullable _routerTypeToRegisteredView(Class viewClass
         if (config.injected) {
             config = (ZIKViewRouteConfiguration *)config.injected;
         }
-        config.configurePath(path);
+        [config configurePath:path];
     } removing:removeConfigBuilder];
 }
 
@@ -3017,7 +3017,7 @@ static  ZIKViewRouterType *_Nullable _routerTypeToRegisteredView(Class viewClass
         if (config.injected) {
             config = (ZIKViewRouteConfiguration *)config.injected;
         }
-        config.configurePath(path);
+        [config configurePath:path];
     } strictRemoving:removeConfigBuilder];
 }
 
@@ -3075,7 +3075,7 @@ static  ZIKViewRouterType *_Nullable _routerTypeToRegisteredView(Class viewClass
         if (configuration.injected) {
             configuration = (ZIKViewRouteConfiguration *)configuration.injected;
         }
-        configuration.configurePath(path);
+        [configuration configurePath:path];
     } removing:(void(^)(ZIKRemoveRouteConfiguration *))removeConfigBuilder];
     NSAssert([(ZIKViewRouteConfiguration *)router.original_configuration routeType] != ZIKViewRouteTypeMakeDestination, @"It's meaningless to get destination when you already offer a prepared destination.");
     [router notifyRouteState:ZIKRouterStateRouting];

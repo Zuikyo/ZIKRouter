@@ -443,7 +443,7 @@ public class ViewRouter<Destination, ModuleConfig> {
     }
 }
 
-///Set source and route type in a type safe way. You can extend your custom transition type in ZIKViewRoutePath, and use custom default configuration in router, override -configurePath and set custom parameters to configuration.
+///Set source and route type in a type safe way. You can extend your custom transition type in ZIKViewRoutePath, and use custom default configuration in router, override -configurePath: and set custom parameters to configuration.
 public enum ViewRoutePath {
     case push(from: UIViewController)
     case presentModally(from: UIViewController)

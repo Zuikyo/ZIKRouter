@@ -103,8 +103,8 @@ typedef void(^ZIKViewRouteSegueConfiger)(NS_NOESCAPE ZIKViewRouteSegueConfigure)
 ///Configuration for view module. You can use a subclass to add complex dependencies for destination. The subclass must conforms to NSCopying, because the configuration need to be copied when routing.
 @interface ZIKViewRouteConfiguration : ZIKPerformRouteConfiguration <NSCopying>
 
-///Set source and route type in a type safe way. You can extend your custom transition type in ZIKViewRoutePath, and use custom default configuration in router, override -configurePath and set custom parameters to configuration.
-@property (nonatomic, readonly) void(^configurePath)(ZIKViewRoutePath *routePath) NS_REFINED_FOR_SWIFT;
+///Set source and route type in a type safe way. You can extend your custom transition type in ZIKViewRoutePath, and use custom default configuration in router, override -configurePath: and set custom parameters to configuration.
+- (void)configurePath:(ZIKViewRoutePath *)path NS_REQUIRES_SUPER;
 
 /**
  Source ViewController or View for route.
@@ -213,7 +213,7 @@ typedef void(^ZIKViewRouteSegueConfiger)(NS_NOESCAPE ZIKViewRouteSegueConfigure)
 @property (nonatomic, assign) BOOL handleExternalRoute;
 @end
 
-///Route path for setting source and route type in a type safe way. You can extend your custom transition type here, and use custom default configuration in router, override -configurePath and set custom parameters to configuration.
+///Route path for setting source and route type in a type safe way. You can extend your custom transition type here, and use custom default configuration in router, override -configurePath: and set custom parameters to configuration.
 @interface ZIKViewRoutePath : NSObject
 @property (nonatomic, strong, readonly, nullable) id<ZIKViewRouteSource> source;
 @property (nonatomic, readonly) ZIKViewRouteType routeType;

@@ -7,6 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		F891C4F5208F4BF1006DD4C9 /* ZIKViewRoutePath+CompatibleAlert.h in Headers */ = {isa = PBXBuildFile; fileRef = F891C4F3208F4BF1006DD4C9 /* ZIKViewRoutePath+CompatibleAlert.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		F891C4F6208F4BF1006DD4C9 /* ZIKViewRoutePath+CompatibleAlert.m in Sources */ = {isa = PBXBuildFile; fileRef = F891C4F4208F4BF1006DD4C9 /* ZIKViewRoutePath+CompatibleAlert.m */; };
 		F8DFBD4D2019FB5C0069841B /* ZIKCompatibleAlert.h in Headers */ = {isa = PBXBuildFile; fileRef = F8DFBD4B2019FB5C0069841B /* ZIKCompatibleAlert.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		F8DFBD552019FBA50069841B /* ZIKCompatibleAlertViewRouter.m in Sources */ = {isa = PBXBuildFile; fileRef = F8DFBD542019FBA50069841B /* ZIKCompatibleAlertViewRouter.m */; };
 		F8DFBD572019FBE40069841B /* ZIKCompatibleAlertConfigProtocol.h in Headers */ = {isa = PBXBuildFile; fileRef = F8DFBD562019FBE40069841B /* ZIKCompatibleAlertConfigProtocol.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -15,6 +17,8 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		F891C4F3208F4BF1006DD4C9 /* ZIKViewRoutePath+CompatibleAlert.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "ZIKViewRoutePath+CompatibleAlert.h"; sourceTree = "<group>"; };
+		F891C4F4208F4BF1006DD4C9 /* ZIKViewRoutePath+CompatibleAlert.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = "ZIKViewRoutePath+CompatibleAlert.m"; sourceTree = "<group>"; };
 		F8DFBD482019FB5C0069841B /* ZIKCompatibleAlert.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = ZIKCompatibleAlert.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		F8DFBD4B2019FB5C0069841B /* ZIKCompatibleAlert.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ZIKCompatibleAlert.h; sourceTree = "<group>"; };
 		F8DFBD4C2019FB5C0069841B /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
@@ -60,6 +64,8 @@
 				F8DFBD562019FBE40069841B /* ZIKCompatibleAlertConfigProtocol.h */,
 				F8DFBD622019FF740069841B /* ZIKCompatibleAlertViewRouter.h */,
 				F8DFBD542019FBA50069841B /* ZIKCompatibleAlertViewRouter.m */,
+				F891C4F3208F4BF1006DD4C9 /* ZIKViewRoutePath+CompatibleAlert.h */,
+				F891C4F4208F4BF1006DD4C9 /* ZIKViewRoutePath+CompatibleAlert.m */,
 				F8DFBD4C2019FB5C0069841B /* Info.plist */,
 			);
 			path = ZIKCompatibleAlert;
@@ -82,6 +88,7 @@
 			files = (
 				F8DFBD572019FBE40069841B /* ZIKCompatibleAlertConfigProtocol.h in Headers */,
 				F8DFBD632019FF740069841B /* ZIKCompatibleAlertViewRouter.h in Headers */,
+				F891C4F5208F4BF1006DD4C9 /* ZIKViewRoutePath+CompatibleAlert.h in Headers */,
 				F8DFBD4D2019FB5C0069841B /* ZIKCompatibleAlert.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -155,6 +162,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				F8DFBD552019FBA50069841B /* ZIKCompatibleAlertViewRouter.m in Sources */,
+				F891C4F6208F4BF1006DD4C9 /* ZIKViewRoutePath+CompatibleAlert.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

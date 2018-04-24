@@ -13,7 +13,9 @@ import ZIKRouter
 
 public extension ViewRouteConfig {
     public func configurePath(_ path: ViewRoutePath) {
-        self.source = path.source
+        if let source = path.source {
+            self.source = source
+        }
         self.routeType = path.routeType
     }
 }
@@ -69,10 +71,20 @@ public protocol ViewRouteExtension: class {
 }
 
 public extension ViewRouteExtension {
+    
+    /// Register pure Swift protocol or objc protocol for your view with this ZIKViewRoute.
+    ///
+    /// - Parameter routableView: A routabe entry carrying a protocol conformed by the destination of the router.
+    /// - Returns: Self
     func register<Protocol>(_ routableView: RoutableView<Protocol>) -> Self {
         Registry.register(routableView, forRoute: self)
         return self
     }
+    
+    /// Register pure Swift protocol or objc protocol for your custom configuration with a ZIKViewRoute. You must add `makeDefaultConfiguration` for this route, and router will check whether the registered config protocol is conformed by the defaultRouteConfiguration.
+    ///
+    /// - Parameter routableViewModule: A routabe entry carrying a module config protocol conformed by the custom configuration of the router.
+    /// - Returns: Self
     func register<Protocol>(_ routableViewModule: RoutableViewModule<Protocol>) -> Self {
         Registry.register(routableViewModule, forRoute: self)
         return self
@@ -93,9 +105,9 @@ public protocol ServiceRouteExtension: class {
 
 public extension ServiceRouteExtension {
     
-    /// Register pure Swift protocol or objc protocol for your service with this ZIKServiceRoute. Router will check whether the registered service protocol is conformed by the registered service.
+    /// Register pure Swift protocol or objc protocol for your service with this ZIKServiceRoute.
     ///
-    /// - Parameter routableService: A routabe entry carrying a protocol conformed by the custom configuration of the router. Can be pure Swift protocol or objc protocol.
+    /// - Parameter routableService: A routabe entry carrying a protocol conformed by the destination of the router. Can be pure Swift protocol or objc protocol.
     /// - Returns: Self
     func register<Protocol>(_ routableService: RoutableService<Protocol>) -> Self {
         Registry.register(routableService, forRoute: self)
@@ -104,7 +116,7 @@ public extension ServiceRouteExtension {
     
     /// Register pure Swift protocol or objc protocol for your custom configuration with a ZIKServiceRoute. You must add `makeDefaultConfiguration` for this route, and router will check whether the registered config protocol is conformed by the defaultRouteConfiguration.
     ///
-    /// - Parameter routableServiceModule: A routabe entry carrying a module config protocol conformed by the custom configuration of the router. Can be pure Swift protocol or objc protocol.
+    /// - Parameter routableServiceModule: A routabe entry carrying a module config protocol conformed by the custom configuration of the router.
     /// - Returns: Self
     func register<Protocol>(_ routableServiceModule: RoutableServiceModule<Protocol>) -> Self {
         Registry.register(routableServiceModule, forRoute: self)

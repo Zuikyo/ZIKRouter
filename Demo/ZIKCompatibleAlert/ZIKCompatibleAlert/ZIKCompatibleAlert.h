@@ -8,6 +8,7 @@
 
 #import <UIKit/UIKit.h>
 #import "ZIKCompatibleAlertViewRouter.h"
+#import "ZIKViewRoutePath+CompatibleAlert.h"
 
 //! Project version number for ZIKCompatibleAlert.
 FOUNDATION_EXPORT double ZIKCompatibleAlertVersionNumber;

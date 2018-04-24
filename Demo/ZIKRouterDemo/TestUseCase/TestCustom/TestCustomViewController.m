@@ -9,6 +9,7 @@
 #import "TestCustomViewController.h"
 @import ZIKRouter;
 #import "RequiredCompatibleAlertConfigProtocol.h"
+#import <ZIKCompatibleAlert/ZIKViewRoutePath+CompatibleAlert.h>
 
 @interface TestCustomViewController ()
 @property (nonatomic, strong) ZIKViewRouter<id, ZIKViewRouteConfiguration<RequiredCompatibleAlertConfigProtocol> *> *alertViewRouter;
@@ -27,7 +28,7 @@
 - (void)showAlert {
     ///If the protocol passed to `ZIKViewRouterToModule` is changed, parameter type in `prepareModule` will also change. So it's much safer when you change the routable protocol.
     self.alertViewRouter = [ZIKRouterToViewModule(RequiredCompatibleAlertConfigProtocol)
-     performPath:ZIKViewRoutePath.customFrom(self)
+     performPath:ZIKViewRoutePath.presentCompatibleAlertFrom(self)
      strictConfiguring:^(ZIKViewRouteConfiguration<RequiredCompatibleAlertConfigProtocol> *config,
                          void (^prepareDest)(void (^)(id)),
                          void (^prepareModule)(void (^)(ZIKViewRouteConfig<RequiredCompatibleAlertConfigProtocol> *))) {
