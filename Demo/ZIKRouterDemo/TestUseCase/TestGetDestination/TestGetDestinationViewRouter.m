@@ -22,7 +22,7 @@
 
 - (id<ZIKRoutableView>)destinationWithConfiguration:(ZIKViewRouteConfiguration *)configuration {
     UIStoryboard *sb = [UIStoryboard storyboardWithName:@"Main" bundle:nil];
-    TestGetDestinationViewController *destination = [sb instantiateViewControllerWithIdentifier:@"testGetDestination"];;
+    TestGetDestinationViewController *destination = [sb instantiateViewControllerWithIdentifier:@"testGetDestination"];
     destination.title = @"Test GetDestination";
     return destination;
 }

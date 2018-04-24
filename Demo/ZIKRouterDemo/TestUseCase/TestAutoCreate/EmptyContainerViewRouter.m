@@ -22,7 +22,7 @@
 
 - (id<ZIKRoutableView>)destinationWithConfiguration:(ZIKViewRouteConfiguration *)configuration {
     UIStoryboard *sb = [UIStoryboard storyboardWithName:@"Main" bundle:nil];
-    EmptyContainerViewController *destination = [sb instantiateViewControllerWithIdentifier:@"emptyContainer"];;
+    EmptyContainerViewController *destination = [sb instantiateViewControllerWithIdentifier:@"emptyContainer"];
     destination.title = @"Empty Container";
     return destination;
 }

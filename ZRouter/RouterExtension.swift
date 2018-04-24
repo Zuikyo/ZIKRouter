@@ -14,7 +14,7 @@ import ZIKRouter
 public extension ViewRouteConfig {
     public func configurePath(_ path: ViewRoutePath) {
         self.source = path.source
-        self.routeType = path.type
+        self.routeType = path.routeType
     }
 }
 

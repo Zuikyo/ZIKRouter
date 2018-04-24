@@ -93,7 +93,8 @@
     XCTestExpectation *expectation = [self expectationWithDescription:@"completionHandler"];
     {
         [self enterTest:^(UIViewController *source) {
-            self.router = [ZIKRouterToViewModule(BSubviewModuleInput) performPath:nil configuring:^(ZIKViewRouteConfiguration<BSubviewModuleInput> * _Nonnull config) {
+            ZIKViewRoutePath *path = [[ZIKViewRoutePath alloc] initWithRouteType:self.routeType source:nil];
+            self.router = [ZIKRouterToViewModule(BSubviewModuleInput) performPath:path configuring:^(ZIKViewRouteConfiguration<BSubviewModuleInput> * _Nonnull config) {
                 [self configRouteConfiguration:config source:source];
                 config.title = @"test title";
                 [config makeDestinationCompletion:^(id<BSubviewInput> destination) {
@@ -142,7 +143,8 @@
     XCTestExpectation *expectation = [self expectationWithDescription:@"completionHandler"];
     {
         [self enterTest:^(UIViewController *source) {
-            self.router = [ZIKRouterToViewModule(BSubviewModuleInput) performPath:nil completion:^(BOOL success, id<BSubviewInput>  _Nullable destination, ZIKRouteAction  _Nonnull routeAction, NSError * _Nullable error) {
+            ZIKViewRoutePath *path = [[ZIKViewRoutePath alloc] initWithRouteType:self.routeType source:nil];
+            self.router = [ZIKRouterToViewModule(BSubviewModuleInput) performPath:path completion:^(BOOL success, id<BSubviewInput>  _Nullable destination, ZIKRouteAction  _Nonnull routeAction, NSError * _Nullable error) {
                 XCTAssertFalse(success);
                 XCTAssertNotNil(error);
                 [expectation fulfill];
@@ -298,7 +300,8 @@
     XCTestExpectation *performerErrorExpectation = [self expectationWithDescription:@"performerErrorHandler"];
     {
         [self enterTest:^(UIViewController *source) {
-            self.router = [ZIKRouterToViewModule(BSubviewModuleInput) performPath:nil configuring:^(ZIKViewRouteConfiguration<BSubviewModuleInput> * _Nonnull config) {
+            ZIKViewRoutePath *path = [[ZIKViewRoutePath alloc] initWithRouteType:self.routeType source:nil];
+            self.router = [ZIKRouterToViewModule(BSubviewModuleInput) performPath:path configuring:^(ZIKViewRouteConfiguration<BSubviewModuleInput> * _Nonnull config) {
                 [self configRouteConfiguration:config source:source];
                 config.title = @"test title";
                 [config makeDestinationCompletion:^(id<BSubviewInput> destination) {
@@ -491,8 +494,9 @@
     XCTestExpectation *expectation = [self expectationWithDescription:@"completionHandler"];
     {
         [self enterTest:^(UIViewController *source) {
+            ZIKViewRoutePath *path = [[ZIKViewRoutePath alloc] initWithRouteType:self.routeType source:nil];
             self.router = [ZIKRouterToViewModule(BSubviewModuleInput)
-                           performPath:nil
+                           performPath:path
                            strictConfiguring:^(ZIKViewRouteConfiguration<BSubviewModuleInput> * _Nonnull config,
                                                void (^prepareDest)(void (^)(id destination)),
                                                void (^prepareModule)(void (^)(ZIKViewRouteConfiguration<BSubviewModuleInput> *config))) {
@@ -613,8 +617,9 @@
     XCTestExpectation *performerErrorExpectation = [self expectationWithDescription:@"performerErrorHandler"];
     {
         [self enterTest:^(UIViewController *source) {
+            ZIKViewRoutePath *path = [[ZIKViewRoutePath alloc] initWithRouteType:self.routeType source:nil];
             self.router = [ZIKRouterToViewModule(BSubviewModuleInput)
-                           performPath:nil
+                           performPath:path
                            strictConfiguring:^(ZIKViewRouteConfiguration<BSubviewModuleInput> * _Nonnull config,
                                                void (^prepareDest)(void (^)(id destination)),
                                                void (^prepareModule)(void (^)(ZIKViewRouteConfiguration<BSubviewModuleInput> *config))) {

@@ -103,7 +103,7 @@ typedef void(^ZIKViewRouteSegueConfiger)(NS_NOESCAPE ZIKViewRouteSegueConfigure)
 ///Configuration for view module. You can use a subclass to add complex dependencies for destination. The subclass must conforms to NSCopying, because the configuration need to be copied when routing.
 @interface ZIKViewRouteConfiguration : ZIKPerformRouteConfiguration <NSCopying>
 
-///Set source and route type in a type safe way.
+///Set source and route type in a type safe way. You can extend your custom transition type in ZIKViewRoutePath, and use custom default configuration in router, override -configurePath and set custom parameters to configuration.
 @property (nonatomic, readonly) void(^configurePath)(ZIKViewRoutePath *routePath) NS_REFINED_FOR_SWIFT;
 
 /**
@@ -213,7 +213,7 @@ typedef void(^ZIKViewRouteSegueConfiger)(NS_NOESCAPE ZIKViewRouteSegueConfigure)
 @property (nonatomic, assign) BOOL handleExternalRoute;
 @end
 
-///Route path for setting source and route type in a type safe way.
+///Route path for setting source and route type in a type safe way. You can extend your custom transition type here, and use custom default configuration in router, override -configurePath and set custom parameters to configuration.
 @interface ZIKViewRoutePath : NSObject
 @property (nonatomic, strong, readonly, nullable) id<ZIKViewRouteSource> source;
 @property (nonatomic, readonly) ZIKViewRouteType routeType;
@@ -227,7 +227,7 @@ typedef void(^ZIKViewRouteSegueConfiger)(NS_NOESCAPE ZIKViewRouteSegueConfigure)
 @property (nonatomic, class, readonly) ZIKViewRoutePath *(^addAsChildViewControllerFrom)(UIViewController *source) NS_SWIFT_UNAVAILABLE("Use addAsChildViewController(from:) instead");
 @property (nonatomic, class, readonly) ZIKViewRoutePath *(^addAsSubviewFrom)(UIView *source) NS_SWIFT_UNAVAILABLE("Use addAsSubview(from:) instead");
 @property (nonatomic, class, readonly) ZIKViewRoutePath *(^customFrom)(id<ZIKViewRouteSource> _Nullable source) NS_SWIFT_UNAVAILABLE("Use custom(from:) instead");
-@property (nonatomic, class, readonly) ZIKViewRoutePath *(^makeDestination)(void);
+@property (nonatomic, class, readonly) ZIKViewRoutePath *makeDestination;
 
 + (instancetype)pushFrom:(UIViewController *)source NS_SWIFT_NAME(push(from:));
 + (instancetype)presentModallyFrom:(UIViewController *)source NS_SWIFT_NAME(presentModally(from:));
@@ -239,12 +239,14 @@ typedef void(^ZIKViewRouteSegueConfiger)(NS_NOESCAPE ZIKViewRouteSegueConfigure)
 + (instancetype)addAsSubviewFrom:(UIView *)source NS_SWIFT_NAME(addAsSubview(from:));
 + (instancetype)customFrom:(nullable id<ZIKViewRouteSource>)source NS_SWIFT_NAME(custom(from:));
 
+///It's preferred to use those type safe factory methods, rather than this unsafe initializer, because this initializer doesn't check source's type.
 - (instancetype)initWithRouteType:(ZIKViewRouteType)routeType source:(nullable id<ZIKViewRouteSource>)source NS_DESIGNATED_INITIALIZER;
 - (instancetype)init NS_UNAVAILABLE;
 + (instancetype)new NS_UNAVAILABLE;
 
 @end
 
+///Should only be conformed by UIViewController and UIView.
 @protocol ZIKViewRouteSource <NSObject>
 
 @optional

@@ -11,32 +11,17 @@ import ZRouter
 
 extension ZIKViewRouterTestCase {
     func path(from source: UIViewController) ->ViewRoutePath {
-        switch self.routeType {
-        case .push:
-            return .push(from: source)
-        case .presentModally:
-            return .presentModally(from: source)
-        case .presentAsPopover:
-            return .presentAsPopover(from: source)
-        case .performSegue:
-            return .performSegue(from: source)
-        case .show:
-            return .show(from: source)
-        case .showDetail:
-            return .showDetail(from: source)
-        case .addAsChildViewController:
-            return .addAsChildViewController(from: source)
-        case .addAsSubview:
-            return .addAsSubview(from: source.view)
-        case .custom:
-            return .custom(from: source)
-        case .makeDestination:
-            return .makeDestination
+        var routeSource: ZIKViewRouteSource? = source
+        if self.routeType == .addAsSubview {
+            routeSource = source.view
         }
+        let path = ViewRoutePath(rawValue: (self.routeType, routeSource))
+        XCTAssertNotNil(path)
+        return path!
     }
 }
 
-class ZIKViewRouterPerformTests: ZIKViewRouterTestCase {
+class ViewRouterPerformTests: ZIKViewRouterTestCase {
     
     override func setUp() {
         super.setUp()

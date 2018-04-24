@@ -88,7 +88,8 @@
     XCTestExpectation *expectation = [self expectationWithDescription:@"completionHandler"];
     {
         [self enterTest:^(UIViewController *source) {
-            self.router = [ZIKRouterToViewModule(AViewModuleInput) performPath:nil configuring:^(ZIKViewRouteConfiguration<AViewModuleInput> * _Nonnull config) {
+            ZIKViewRoutePath *path = [[ZIKViewRoutePath alloc] initWithRouteType:self.routeType source:nil];
+            self.router = [ZIKRouterToViewModule(AViewModuleInput) performPath:path configuring:^(ZIKViewRouteConfiguration<AViewModuleInput> * _Nonnull config) {
                 [self configRouteConfiguration:config source:source];
                 config.title = @"test title";
                 [config makeDestinationCompletion:^(id<AViewInput> destination) {
@@ -137,7 +138,8 @@
     XCTestExpectation *expectation = [self expectationWithDescription:@"completionHandler"];
     {
         [self enterTest:^(UIViewController *source) {
-            self.router = [ZIKRouterToViewModule(AViewModuleInput) performPath:nil completion:^(BOOL success, id<AViewInput>  _Nullable destination, ZIKRouteAction  _Nonnull routeAction, NSError * _Nullable error) {
+            ZIKViewRoutePath *path = [[ZIKViewRoutePath alloc] initWithRouteType:self.routeType source:nil];
+            self.router = [ZIKRouterToViewModule(AViewModuleInput) performPath:path completion:^(BOOL success, id<AViewInput>  _Nullable destination, ZIKRouteAction  _Nonnull routeAction, NSError * _Nullable error) {
                 XCTAssertFalse(success);
                 XCTAssertNotNil(error);
                 [expectation fulfill];
@@ -293,7 +295,8 @@
     XCTestExpectation *performerErrorExpectation = [self expectationWithDescription:@"performerErrorHandler"];
     {
         [self enterTest:^(UIViewController *source) {
-            self.router = [ZIKRouterToViewModule(AViewModuleInput) performPath:nil configuring:^(ZIKViewRouteConfiguration<AViewModuleInput> * _Nonnull config) {
+            ZIKViewRoutePath *path = [[ZIKViewRoutePath alloc] initWithRouteType:self.routeType source:nil];
+            self.router = [ZIKRouterToViewModule(AViewModuleInput) performPath:path configuring:^(ZIKViewRouteConfiguration<AViewModuleInput> * _Nonnull config) {
                 [self configRouteConfiguration:config source:source];
                 config.title = @"test title";
                 [config makeDestinationCompletion:^(id<AViewInput> destination) {
@@ -486,8 +489,9 @@
     XCTestExpectation *expectation = [self expectationWithDescription:@"completionHandler"];
     {
         [self enterTest:^(UIViewController *source) {
+            ZIKViewRoutePath *path = [[ZIKViewRoutePath alloc] initWithRouteType:self.routeType source:nil];
             self.router = [ZIKRouterToViewModule(AViewModuleInput)
-                           performPath:nil
+                           performPath:path
                            strictConfiguring:^(ZIKViewRouteConfiguration<AViewModuleInput> * _Nonnull config,
                                                void (^prepareDest)(void (^)(id<AViewInput> destination)),
                                                void (^prepareModule)(void (^)(ZIKViewRouteConfiguration<AViewModuleInput> *config))) {
@@ -608,8 +612,9 @@
     XCTestExpectation *performerErrorExpectation = [self expectationWithDescription:@"performerErrorHandler"];
     {
         [self enterTest:^(UIViewController *source) {
+            ZIKViewRoutePath *path = [[ZIKViewRoutePath alloc] initWithRouteType:self.routeType source:nil];
             self.router = [ZIKRouterToViewModule(AViewModuleInput)
-                           performPath:nil
+                           performPath:path
                            strictConfiguring:^(ZIKViewRouteConfiguration<AViewModuleInput> * _Nonnull config,
                                                void (^prepareDest)(void (^)(id<AViewInput> destination)),
                                                void (^prepareModule)(void (^)(ZIKViewRouteConfiguration<AViewModuleInput> *config))) {

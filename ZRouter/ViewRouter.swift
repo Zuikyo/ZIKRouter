@@ -11,65 +11,6 @@
 
 import ZIKRouter.Internal
 
-public enum ViewRoutePath {
-    case push(from: UIViewController)
-    case presentModally(from: UIViewController)
-    case presentAsPopover(from: UIViewController)
-    case performSegue(from: UIViewController)
-    case show(from: UIViewController)
-    case showDetail(from: UIViewController)
-    case addAsChildViewController(from: UIViewController)
-    case addAsSubview(from: UIView)
-    case custom(from: ZIKViewRouteSource?)
-    case makeDestination
-
-    public var source: ZIKViewRouteSource? {
-        let source: ZIKViewRouteSource?
-        switch self {
-        case .push(from: let s),
-             .presentModally(from: let s),
-             .presentAsPopover(from: let s),
-             .performSegue(from: let s),
-             .show(from: let s),
-             .showDetail(from: let s),
-             .addAsChildViewController(from: let s):
-            source = s
-        case .addAsSubview(from: let s):
-            source = s
-        case .custom(from: let s):
-            source = s
-        case .makeDestination:
-            source = nil
-        }
-        return source
-    }
-
-    public var type: ZIKViewRouteType {
-        switch self {
-        case .push(from: _):
-            return .push
-        case .presentModally(from: _):
-            return .presentModally
-        case .presentAsPopover(from: _):
-            return .presentAsPopover
-        case .performSegue(from: _):
-            return .performSegue
-        case .show(from: _):
-            return .show
-        case .showDetail(from: _):
-            return .showDetail
-        case .addAsChildViewController(from: _):
-            return .addAsChildViewController
-        case .addAsSubview(from: _):
-            return .addAsSubview
-        case .custom(from: _):
-            return .custom
-        case .makeDestination:
-            return .makeDestination
-        }
-    }
-}
-
 /// Swift Wrapper of ZIKViewRouter class for supporting pure Swift generic type.
 public class ViewRouterType<Destination, ModuleConfig> {
     
@@ -118,8 +59,7 @@ public class ViewRouterType<Destination, ModuleConfig> {
             }
         }
         let routerType = self.routerType
-        let routePath = ZIKViewRoutePath(routeType: path.type, source: path.source)
-        let router = routerType.perform(routePath, configuring: { config in
+        let router = routerType.perform(path.path, configuring: { config in
             let prepareDestination = { (prepare: @escaping (Destination) -> Void) in
                 config.prepareDestination = { d in
                     guard let destination = d as? Destination else {
@@ -200,7 +140,7 @@ public class ViewRouterType<Destination, ModuleConfig> {
     /// - Returns: The view router for this route.
     @discardableResult public func perform(
         onDestination destination: Destination,
-        path: ZIKViewRoutePath,
+        path: ViewRoutePath,
         configuring configBuilder: (ViewRouteConfig, DestinationPreparation, ModulePreparation) -> Void,
         removing removeConfigBuilder: ((ViewRemoveConfig, DestinationPreparation) -> Void)? = nil
         ) -> ViewRouter<Destination, ModuleConfig>? {
@@ -223,8 +163,7 @@ public class ViewRouterType<Destination, ModuleConfig> {
             ZIKAnyViewRouter.notifyGlobalError(with: nil, action: .init, error: ZIKAnyViewRouter.routeError(withCode: .invalidConfiguration, localizedDescription: "Perform route on invalid destination: \(destination)"))
             return nil
         }
-        let routePath = ZIKViewRoutePath(routeType: path.routeType, source: path.source)
-        let router = routerType.perform(onDestination: dest, path: routePath, configuring: { (config) in
+        let router = routerType.perform(onDestination: dest, path: path.path, configuring: { (config) in
             let prepareDestination = { (prepare: @escaping (Destination) -> Void) in
                 config.prepareDestination = { d in
                     guard let destination = d as? Destination else {
@@ -260,7 +199,7 @@ public class ViewRouterType<Destination, ModuleConfig> {
     /// - Returns: The view router for this route. If the destination is not registered with this router class, return nil.
     @discardableResult public func perform(
         onDestination destination: Destination,
-        path: ZIKViewRoutePath) -> ViewRouter<Destination, ModuleConfig>? {
+        path: ViewRoutePath) -> ViewRouter<Destination, ModuleConfig>? {
         return perform(onDestination: destination, path: path, configuring: { (config, _, _) in
             
         })
@@ -501,6 +440,116 @@ public class ViewRouter<Destination, ModuleConfig> {
             }
             configBuilder(config, prepareDestination)
         })
+    }
+}
+
+///Set source and route type in a type safe way. You can extend your custom transition type in ZIKViewRoutePath, and use custom default configuration in router, override -configurePath and set custom parameters to configuration.
+public enum ViewRoutePath {
+    case push(from: UIViewController)
+    case presentModally(from: UIViewController)
+    case presentAsPopover(from: UIViewController)
+    case performSegue(from: UIViewController)
+    case show(from: UIViewController)
+    case showDetail(from: UIViewController)
+    case addAsChildViewController(from: UIViewController)
+    case addAsSubview(from: UIView)
+    case custom(from: ZIKViewRouteSource?)
+    case makeDestination
+    ///Only use this when using custom transition type extended in ZIKViewRoutePath
+    case extensible(path: ZIKViewRoutePath)
+    
+    public var source: ZIKViewRouteSource? {
+        let source: ZIKViewRouteSource?
+        switch self {
+        case .push(from: let s),
+             .presentModally(from: let s),
+             .presentAsPopover(from: let s),
+             .performSegue(from: let s),
+             .show(from: let s),
+             .showDetail(from: let s),
+             .addAsChildViewController(from: let s):
+            source = s
+        case .addAsSubview(from: let s):
+            source = s
+        case .custom(from: let s):
+            source = s
+        case .makeDestination:
+            source = nil
+        case .extensible(path: let p):
+            source = p.source
+        }
+        return source
+    }
+    
+    public var routeType: ZIKViewRouteType {
+        switch self {
+        case .push(from: _):
+            return .push
+        case .presentModally(from: _):
+            return .presentModally
+        case .presentAsPopover(from: _):
+            return .presentAsPopover
+        case .performSegue(from: _):
+            return .performSegue
+        case .show(from: _):
+            return .show
+        case .showDetail(from: _):
+            return .showDetail
+        case .addAsChildViewController(from: _):
+            return .addAsChildViewController
+        case .addAsSubview(from: _):
+            return .addAsSubview
+        case .custom(from: _):
+            return .custom
+        case .makeDestination:
+            return .makeDestination
+        case .extensible(let path):
+            return path.routeType
+        }
+    }
+    
+    public var path: ZIKViewRoutePath {
+        switch self {
+        case .extensible(path: let path):
+            return path
+        default:
+            return ZIKViewRoutePath(routeType: routeType, source: source)
+        }
+    }
+}
+
+extension ViewRoutePath: RawRepresentable {
+    public typealias RawValue = (ZIKViewRouteType, ZIKViewRouteSource?)
+    
+    public init?(rawValue: (ZIKViewRouteType, ZIKViewRouteSource?)) {
+        switch rawValue {
+        case (.push, let source as UIViewController):
+            self = .push(from: source)
+        case (.presentModally, let source as UIViewController):
+            self = .presentModally(from: source)
+        case (.presentAsPopover, let source as UIViewController):
+            self = .presentAsPopover(from: source)
+        case (.performSegue, let source as UIViewController):
+            self = .performSegue(from: source)
+        case (.show, let source as UIViewController):
+            self = .show(from: source)
+        case (.showDetail, let source as UIViewController):
+            self = .showDetail(from: source)
+        case (.addAsChildViewController, let source as UIViewController):
+            self = .addAsChildViewController(from: source)
+        case (.addAsSubview, let source as UIView):
+            self = .addAsSubview(from: source)
+        case (.custom, let source):
+            self = .custom(from: source)
+        case (.makeDestination, _):
+            self = .makeDestination
+        default:
+            return nil
+        }
+    }
+    
+    public var rawValue: (ZIKViewRouteType, ZIKViewRouteSource?) {
+        return (routeType, source)
     }
 }
 

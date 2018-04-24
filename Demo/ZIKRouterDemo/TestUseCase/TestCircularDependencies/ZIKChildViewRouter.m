@@ -41,7 +41,7 @@
     //Must check to avoid unnecessary preparation
     if (destination.parent == nil) {
         [ZIKRouterToView(ZIKParentViewProtocol)
-         performPath:ZIKViewRoutePath.makeDestination()
+         performPath:ZIKViewRoutePath.makeDestination
          configuring:^(ZIKViewRouteConfiguration * _Nonnull config) {
              config.prepareDestination = ^(id<ZIKParentViewProtocol> parent) {
                  parent.child = destination;
