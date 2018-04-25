@@ -9,6 +9,7 @@
 import UIKit
 import ZIKRouter
 import ZRouter
+import ZIKCompatibleAlert
 
 ///The protocol is routable in both Swift and objc.
 @objc public protocol SwiftSampleViewInput: ZIKViewRoutable {
@@ -69,7 +70,7 @@ class SwiftSampleViewController: UIViewController, PureSwiftSampleViewInput, Swi
     @IBAction func testRouteForConfig(_ sender: Any) {
         alertRouter = Router.perform(
             to: RoutableViewModule<RequiredCompatibleAlertConfigProtocol>(),
-            path: .custom(from: self),
+            path: .extensible(path: .presentCompatibleAlertFrom(self)),
             configuring: { (config, _, prepareModule) in
                 config.successHandler = { d in
                     print("show custom alert complete")

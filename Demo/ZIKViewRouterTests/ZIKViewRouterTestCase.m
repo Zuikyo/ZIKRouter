@@ -12,7 +12,6 @@
 @import ZIKRouter.Internal;
 
 @interface ZIKViewRouterTestCase()
-@property (nonatomic, strong) ZIKAnyViewRouter *strongRouter;
 @property (nonatomic, strong) UIViewController *masterViewController;
 @property (nonatomic, strong) SourceViewRouter *sourceRouter;
 @property (nonatomic, strong) XCTestExpectation *leaveSourceViewExpectation;

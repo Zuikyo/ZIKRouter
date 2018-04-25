@@ -170,15 +170,15 @@ public extension Router {
     /// - Parameters:
     ///   - routableView: A routable entry carrying a view protocol.
     ///   - path: The route path with source and route type.
-    ///   - completion: Completion for current performing.
+    ///   - performerCompletion: Completion for current performing.
     /// - Returns: The view router.
     @discardableResult public static func perform<Destination>(
         to routableView: RoutableView<Destination>,
         path: ViewRoutePath,
-        completion: @escaping (Bool, Destination?, ZIKRouteAction, Error?) -> Void
+        completion performerCompletion: @escaping (Bool, Destination?, ZIKRouteAction, Error?) -> Void
         ) -> ViewRouter<Destination, ViewRouteConfig>? {
         let routerType = Registry.router(to: routableView)
-        return routerType?.perform(path: path, completion: completion)
+        return routerType?.perform(path: path, completion: performerCompletion)
     }
     
     /// Perform route with view config protocol and prepare the module with the protocol.
@@ -223,15 +223,15 @@ public extension Router {
     /// - Parameters:
     ///   - routableViewModule: A routabe entry carrying a view module config protocol.
     ///   - path: The route path with source and route type.
-    ///   - completion: Completion for current performing.
+    ///   - performerCompletion: Completion for current performing.
     /// - Returns: The view router.
     @discardableResult public static func perform<Module>(
         to routableViewModule: RoutableViewModule<Module>,
         path: ViewRoutePath,
-        completion: @escaping (Bool, Any?, ZIKRouteAction, Error?) -> Void
+        completion performerCompletion: @escaping (Bool, Any?, ZIKRouteAction, Error?) -> Void
         ) -> ViewRouter<Any, Module>? {
         let routerType = Registry.router(to: routableViewModule)
-        return routerType?.perform(path: path, completion: completion)
+        return routerType?.perform(path: path, completion: performerCompletion)
     }
     
     /// Perform route with service protocol and prepare the destination with the protocol.
@@ -257,14 +257,14 @@ public extension Router {
     ///
     /// - Parameters:
     ///   - routableService: A routabe entry carrying a service protocol.
-    ///   - completion: Completion for current performing.
+    ///   - performerCompletion: Completion for current performing.
     /// - Returns: The service router.
     @discardableResult public static func perform<Destination>(
         to routableService: RoutableService<Destination>,
-        completion: @escaping (Bool, Any?, ZIKRouteAction, Error?) -> Void
+        completion performerCompletion: @escaping (Bool, Any?, ZIKRouteAction, Error?) -> Void
         ) -> ServiceRouter<Destination, PerformRouteConfig>? {
         let routerType = Registry.router(to: routableService)
-        return routerType?.perform(completion: completion)
+        return routerType?.perform(completion: performerCompletion)
     }
     
     /// Perform route with service module config protocol and prepare the module with the protocol.
@@ -291,14 +291,14 @@ public extension Router {
     ///
     /// - Parameters:
     ///   - routableServiceModule: A routabe entry carrying a module config protocol.
-    ///   - completion: Completion for current performing.
+    ///   - performerCompletion: Completion for current performing.
     /// - Returns: The service router.
     @discardableResult public static func perform<Module>(
         to routableServiceModule: RoutableServiceModule<Module>,
-        completion: @escaping (Bool, Any?, ZIKRouteAction, Error?) -> Void
+        completion performerCompletion: @escaping (Bool, Any?, ZIKRouteAction, Error?) -> Void
         ) -> ServiceRouter<Any, Module>? {
         let routerType = Registry.router(to: routableServiceModule)
-        return routerType?.perform(completion: completion)
+        return routerType?.perform(completion: performerCompletion)
     }
 }
 

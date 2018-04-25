@@ -8,8 +8,12 @@
 
 #import <ZIKRouter/ZIKViewRouter.h>
 
+NS_ASSUME_NONNULL_BEGIN
+
 @interface ZIKViewRoutePath (CompatibleAlert)
 
 @property (nonatomic, class, readonly) ZIKViewRoutePath *(^presentCompatibleAlertFrom)(UIViewController *source);
 
 @end
+
+NS_ASSUME_NONNULL_END

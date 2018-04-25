@@ -104,6 +104,34 @@ public class ViewRouterType<Destination, ModuleConfig> {
         }, removing: nil)
     }
     
+    /// If this route action doesn't need any arguments, perform directly with successHandler and errorHandler for current performing.
+    @discardableResult public func perform(
+        path: ViewRoutePath,
+        successHandler performerSuccessHandler: ((Destination) -> Void)? = nil,
+        errorHandler performerErrorHandler: ((ZIKRouteAction, Error) -> Void)? = nil
+        ) -> ViewRouter<Destination, ModuleConfig>? {
+        return perform(path: path, configuring: { (config, _, _) in
+            if let performerSuccessHandler = performerSuccessHandler {
+                let successHandler = config.performerSuccessHandler
+                config.performerSuccessHandler = { d in
+                    guard let destination  = d as? Destination else {
+                        assertionFailure("Bad implementation in router, destination (\(String(describing: d))) should be type (\(Destination.self))")
+                        return
+                    }
+                    successHandler?(destination)
+                    performerSuccessHandler(destination)
+                }
+            }
+            if let performerErrorHandler = performerErrorHandler {
+                let errorHandler = config.performerErrorHandler
+                config.performerErrorHandler = { (action, error) in
+                    errorHandler?(action, error)
+                    performerErrorHandler(action, error)
+                }
+            }
+        })
+    }
+    
     /// If this destination doesn't need any variable to initialize, just pass source and perform route with completion.
     ///
     /// - Parameters:
@@ -112,19 +140,12 @@ public class ViewRouterType<Destination, ModuleConfig> {
     /// - Returns: The view router for this route.
     @discardableResult public func perform(
         path: ViewRoutePath,
-        completion: @escaping (Bool, Destination?, ZIKRouteAction, Error?) -> Void
+        completion performerCompletion: @escaping (Bool, Destination?, ZIKRouteAction, Error?) -> Void
         ) -> ViewRouter<Destination, ModuleConfig>? {
-        return perform(path: path, configuring: { (config, _, _) in
-            config.completionHandler = { (success, d, action, error) in
-                let destination = d as? Destination
-                if success && destination == nil {
-                    assertionFailure("Bad implementation in router, destination (\(String(describing: d))) should be type (\(Destination.self))")
-                    let error = ZIKAnyViewRouter.routeError(withCode: .destinationUnavailable, localizedDescription: "Bad implementation in router, destination (\(String(describing: d))) should be type (\(Destination.self))")
-                    completion(false, destination, action, error)
-                    return
-                }
-                completion(success, destination, action, error)
-            }
+        return perform(path: path, successHandler: { (destination) in
+            performerCompletion(true, destination, .performRoute, nil);
+        }, errorHandler: { (action, error) in
+            performerCompletion(false, nil, action, error);
         })
     }
     
@@ -379,18 +400,32 @@ public class ViewRouter<Destination, ModuleConfig> {
         return router.canPerform()
     }
     
-    ///Perform with success handler and error handler.
-    public func performRoute(successHandler: ((Destination) -> Void)? = nil, errorHandler: ((ZIKRouteAction, Error) -> Void)? = nil) {
+    /// If this route action doesn't need any arguments, perform directly with successHandler and errorHandler for current performing.
+    public func performRoute(successHandler performerSuccessHandler: ((Destination) -> Void)? = nil, errorHandler performerErrorHandler: ((ZIKRouteAction, Error) -> Void)? = nil) {
         router.performRoute(successHandler: { (d) in
             guard let destination = d as? Destination else {
                 assertionFailure("Bad implementation in router, destination (\(d)) should be type (\(Destination.self))")
                 return
             }
-            successHandler?(destination)
-        }, errorHandler: errorHandler)
+            performerSuccessHandler?(destination)
+        }, errorHandler: performerErrorHandler)
+    }
+    
+    /// If this route action doesn't need any arguments, perform directly with completion for current performing.
+    public func performRoute(completion performerCompletion: @escaping (Bool, Destination?, ZIKRouteAction, Error?) -> Void) {
+        performRoute(successHandler: { (destination) in
+            performerCompletion(true, destination, .performRoute, nil)
+        }, errorHandler: { (action, error) in
+            performerCompletion(false, nil, action, error)
+        })
     }
     
     // MARK: Remove
+    
+    ///Whether the router should be removed before another performing, when the router is performed already.
+    public var shouldRemoveBeforePerform: Bool {
+        return router.shouldRemoveBeforePerform()
+    }
     
     /// Whether can remove a performed view route. Always use it in main thread, bacause state may be changed in main thread after you check the state in child thread.
     /// -Discussion:
@@ -418,6 +453,15 @@ public class ViewRouter<Destination, ModuleConfig> {
     /// Remove a routed destination. Auto choose proper remove action in pop/dismiss/removeFromParentViewController/removeFromSuperview/custom. If canRemove return false, this will failed, use removeRouteWithSuccessHandler:errorHandler: to get error info. Main thread only.
     public func removeRoute(successHandler performerSuccessHandler: (() -> Void)? = nil, errorHandler performerErrorHandler: ((ZIKRouteAction, Error) -> Void)? = nil) {
         router.removeRoute(successHandler: performerSuccessHandler, errorHandler: performerErrorHandler)
+    }
+    
+    /// Remove route with completion for current removing.
+    public func removeRoute(completion performerCompletion: @escaping (Bool, ZIKRouteAction, Error?) -> Void) {
+        removeRoute(successHandler: {
+            performerCompletion(true, .removeRoute, nil)
+        }, errorHandler: { (action, error) in
+            performerCompletion(false, action, error)
+        })
     }
     
     public typealias DestinationPreparation = (@escaping (Destination) -> Void) -> Void
