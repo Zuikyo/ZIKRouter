@@ -23,11 +23,14 @@
 #import "BSubviewModuleInput.h"
 #import "BSubviewModuleRouter.h"
 
+#import "ZIKViewRouterTests-Swift.h"
+
 @implementation TestRouteRegistry
 
 #if !AUTO_REGISTER_ROUTERS
 
 + (void)load {
+    [TestSwiftRouteRegistry registerRoutes];
     [self registerRoutes];
 }
 

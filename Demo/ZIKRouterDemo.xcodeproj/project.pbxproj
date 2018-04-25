@@ -80,6 +80,12 @@
 		F88DD3091FBB2F0400715097 /* TestClassHierarchyViewRouter.m in Sources */ = {isa = PBXBuildFile; fileRef = F88DD3081FBB2F0400715097 /* TestClassHierarchyViewRouter.m */; };
 		F88DD30C1FBB301600715097 /* SubclassViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = F88DD30B1FBB301600715097 /* SubclassViewController.m */; };
 		F88DD30F1FBB303B00715097 /* SubclassViewRouter.m in Sources */ = {isa = PBXBuildFile; fileRef = F88DD30E1FBB303B00715097 /* SubclassViewRouter.m */; };
+		F891C4F92090F4F0006DD4C9 /* ASwiftViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F891C4F82090F4EF006DD4C9 /* ASwiftViewController.swift */; };
+		F891C4FB2090F85C006DD4C9 /* SwiftViewRouterPerformTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F891C4FA2090F85C006DD4C9 /* SwiftViewRouterPerformTests.swift */; };
+		F891C4FD2090FA74006DD4C9 /* TestSwiftRouteRegistry.swift in Sources */ = {isa = PBXBuildFile; fileRef = F891C4FC2090FA74006DD4C9 /* TestSwiftRouteRegistry.swift */; };
+		F891C4FF2090FB12006DD4C9 /* BSwiftSubview.swift in Sources */ = {isa = PBXBuildFile; fileRef = F891C4FE2090FB12006DD4C9 /* BSwiftSubview.swift */; };
+		F891C5012090FBE2006DD4C9 /* ViewRouterPerformAddAsChildTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F891C5002090FBE2006DD4C9 /* ViewRouterPerformAddAsChildTests.swift */; };
+		F891C503209105A1006DD4C9 /* ViewRouterPerformAddAsSubviewTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F891C502209105A1006DD4C9 /* ViewRouterPerformAddAsSubviewTests.swift */; };
 		F8BC9A0D207E386B00971352 /* SourceViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = F8BC9A0C207E386B00971352 /* SourceViewController.m */; };
 		F8BC9A10207E387A00971352 /* SourceViewRouter.m in Sources */ = {isa = PBXBuildFile; fileRef = F8BC9A0F207E387A00971352 /* SourceViewRouter.m */; };
 		F8BCCB981F208D2B0051716B /* MasterViewRouter.m in Sources */ = {isa = PBXBuildFile; fileRef = F8BCCB971F208D2B0051716B /* MasterViewRouter.m */; };
@@ -263,6 +269,12 @@
 		F88DD30B1FBB301600715097 /* SubclassViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = SubclassViewController.m; sourceTree = "<group>"; };
 		F88DD30D1FBB303B00715097 /* SubclassViewRouter.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SubclassViewRouter.h; sourceTree = "<group>"; };
 		F88DD30E1FBB303B00715097 /* SubclassViewRouter.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = SubclassViewRouter.m; sourceTree = "<group>"; };
+		F891C4F82090F4EF006DD4C9 /* ASwiftViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ASwiftViewController.swift; sourceTree = "<group>"; };
+		F891C4FA2090F85C006DD4C9 /* SwiftViewRouterPerformTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SwiftViewRouterPerformTests.swift; sourceTree = "<group>"; };
+		F891C4FC2090FA74006DD4C9 /* TestSwiftRouteRegistry.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TestSwiftRouteRegistry.swift; sourceTree = "<group>"; };
+		F891C4FE2090FB12006DD4C9 /* BSwiftSubview.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BSwiftSubview.swift; sourceTree = "<group>"; };
+		F891C5002090FBE2006DD4C9 /* ViewRouterPerformAddAsChildTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewRouterPerformAddAsChildTests.swift; sourceTree = "<group>"; };
+		F891C502209105A1006DD4C9 /* ViewRouterPerformAddAsSubviewTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewRouterPerformAddAsSubviewTests.swift; sourceTree = "<group>"; };
 		F8BC9A0B207E386B00971352 /* SourceViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SourceViewController.h; sourceTree = "<group>"; };
 		F8BC9A0C207E386B00971352 /* SourceViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = SourceViewController.m; sourceTree = "<group>"; };
 		F8BC9A0E207E387A00971352 /* SourceViewRouter.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SourceViewRouter.h; sourceTree = "<group>"; };
@@ -569,6 +581,9 @@
 				F81E818D208D16800005BC95 /* ZIKViewRouterAutoCreateTests.m */,
 				F86F0F1520852C1900A81DC3 /* ZIKViewRouterRemoveTests.m */,
 				F81E8190208D2AEA0005BC95 /* ViewRouterPerformTests.swift */,
+				F891C5002090FBE2006DD4C9 /* ViewRouterPerformAddAsChildTests.swift */,
+				F891C502209105A1006DD4C9 /* ViewRouterPerformAddAsSubviewTests.swift */,
+				F891C4FA2090F85C006DD4C9 /* SwiftViewRouterPerformTests.swift */,
 				F81E818F208D2AE90005BC95 /* ZIKViewRouterTests-Bridging-Header.h */,
 				F846AEF0207D4F1600EC7418 /* Info.plist */,
 			);
@@ -600,6 +615,9 @@
 				F8BC9A0C207E386B00971352 /* SourceViewController.m */,
 				F8BC9A0E207E387A00971352 /* SourceViewRouter.h */,
 				F8BC9A0F207E387A00971352 /* SourceViewRouter.m */,
+				F891C4F82090F4EF006DD4C9 /* ASwiftViewController.swift */,
+				F891C4FE2090FB12006DD4C9 /* BSwiftSubview.swift */,
+				F891C4FC2090FA74006DD4C9 /* TestSwiftRouteRegistry.swift */,
 			);
 			path = TestRouters;
 			sourceTree = "<group>";
@@ -837,20 +855,26 @@
 				F81E8191208D2AEA0005BC95 /* ViewRouterPerformTests.swift in Sources */,
 				F86F0F1620852C1900A81DC3 /* ZIKViewRouterRemoveTests.m in Sources */,
 				F81A339A2086F4E0001D176A /* BSubviewRouter.m in Sources */,
+				F891C4FB2090F85C006DD4C9 /* SwiftViewRouterPerformTests.swift in Sources */,
 				F86F0F192085BD2C00A81DC3 /* ZIKViewRouterPerformAddAsChildTests.m in Sources */,
 				F81A33A02086F625001D176A /* ZIKViewRouterPerformAddAsSubviewTests.m in Sources */,
 				F810F65E208935C80020382E /* ZIKViewModuleRouterPerformAddAsChildTests.m in Sources */,
 				F8BC9A10207E387A00971352 /* SourceViewRouter.m in Sources */,
+				F891C4FF2090FB12006DD4C9 /* BSwiftSubview.swift in Sources */,
 				F810F65C20892DEF0020382E /* ZIKViewModuleRouterPerformTests.m in Sources */,
 				F810F660208938590020382E /* ZIKViewModuleRouterPerformAddAsSubviewTests.m in Sources */,
 				F846AF00207DE13400EC7418 /* AViewController.m in Sources */,
 				F86F0F132084980F00A81DC3 /* ZIKViewRouterTestCase.m in Sources */,
 				F8BC9A0D207E386B00971352 /* SourceViewController.m in Sources */,
+				F891C4F92090F4F0006DD4C9 /* ASwiftViewController.swift in Sources */,
+				F891C503209105A1006DD4C9 /* ViewRouterPerformAddAsSubviewTests.swift in Sources */,
 				F810F65A20892C8B0020382E /* AViewModuleRouter.m in Sources */,
 				F81A3397208674EF001D176A /* TestRouteRegistry.m in Sources */,
 				F810F65920892C8B0020382E /* BSubviewModuleRouter.m in Sources */,
 				F846AEFE207DE13400EC7418 /* AViewRouter.m in Sources */,
+				F891C4FD2090FA74006DD4C9 /* TestSwiftRouteRegistry.swift in Sources */,
 				F81E818C208D021B0005BC95 /* ZIKViewRouterPerformSegueTests.m in Sources */,
+				F891C5012090FBE2006DD4C9 /* ViewRouterPerformAddAsChildTests.swift in Sources */,
 				F846AF01207DE13400EC7418 /* ZIKViewRouterPerformTests.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
