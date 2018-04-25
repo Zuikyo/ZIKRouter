@@ -932,16 +932,16 @@ NSErrorDomain const ZIKRouteErrorDomain = @"ZIKRouteErrorDomain";
 }
 
 + (void)increaseRecursiveDepth {
-    NSUInteger depth = [self recursiveDepth];
+    NSInteger depth = [self recursiveDepth];
     [self setRecursiveDepth:++depth];
 }
 
 + (void)decreaseRecursiveDepth {
-    NSUInteger depth = [self recursiveDepth];
+    NSInteger depth = [self recursiveDepth];
     [self setRecursiveDepth:--depth];
 }
 
-+ (NSUInteger)recursiveDepth {
++ (NSInteger)recursiveDepth {
     NSNumber *depth = objc_getAssociatedObject(self, @"ZIKRouter_recursiveDepth");
     if ([depth isKindOfClass:[NSNumber class]]) {
         return [depth unsignedIntegerValue];
@@ -949,8 +949,11 @@ NSErrorDomain const ZIKRouteErrorDomain = @"ZIKRouteErrorDomain";
     return 0;
 }
 
-+ (void)setRecursiveDepth:(NSUInteger)depth {
-    objc_setAssociatedObject(self, @"ZIKRouter_recursiveDepth", @(depth), OBJC_ASSOCIATION_RETAIN_NONATOMIC);
++ (void)setRecursiveDepth:(NSInteger)depth {
+    if (depth < 0) {
+        depth = 0;
+    }
+    objc_setAssociatedObject(self, @"ZIKRouter_recursiveDepth", @(depth), OBJC_ASSOCIATION_RETAIN);
 }
 
 #pragma mark Getter/Setter

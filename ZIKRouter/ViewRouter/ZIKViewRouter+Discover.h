@@ -47,35 +47,32 @@ NS_SWIFT_UNAVAILABLE("ZIKModuleViewRouterType is a fake class")
  @discussion
  This function is for decoupling route behavior with router class. If a view conforms to a protocol for configuring it's dependencies, and the protocol is only used by this view, you can use +registerViewProtocol: to register the protocol, then you don't need to import the router's header when performing route.
  @code
- //ZIKLoginViewProtocol
- @protocol ZIKLoginViewProtocol <ZIKViewRoutable>
+ //ZIKLoginViewInput
+ @protocol ZIKLoginViewInput <ZIKViewRoutable>
  @property (nonatomic, copy) NSString *account;
  @end
  
  //ZIKLoginViewController.h
- @interface ZIKLoginViewController : UIViewController <ZIKLoginViewProtocol>
+ @interface ZIKLoginViewController : UIViewController <ZIKLoginViewInput>
  @property (nonatomic, copy) NSString *account;
  @end
  
  //in ZIKLoginViewRouter.m
  //Mark ZIKLoginViewController routable
- @interface ZIKLoginViewController (ZIKLoginViewRouter) <ZIKRoutableView>
- @end
- @implementation ZIKLoginViewController (ZIKLoginViewRouter)
- @end
+ DeclareRoutableView(ZIKLoginViewController, ZIKLoginViewRouter)
  
  @implementation ZIKLoginViewRouter
  + (void)registerRoutableDestination {
      [self registerView:[ZIKLoginViewController class]];
-     [self registerViewProtocol:ZIKRoutable(ZIKLoginViewProtocol)];
+     [self registerViewProtocol:ZIKRoutable(ZIKLoginViewInput)];
  }
  @end
  
  //Get ZIKLoginViewRouter and perform route
- [ZIKRouterToView(ZIKLoginViewProtocol)
-     performFromSource:self
+ [ZIKRouterToView(ZIKLoginViewInput)
+     performPath:ZIKViewRoutePath.presentModallyFrom(self)
      configuring:^(ZIKViewRouteConfiguration *config) {
-         config.prepareDestination = ^(id<ZIKLoginViewProtocol> destination) {
+         config.prepareDestination = ^(id<ZIKLoginViewInput> destination) {
          destination.account = @"my account";
      };
  }];
@@ -93,8 +90,8 @@ NS_SWIFT_UNAVAILABLE("ZIKModuleViewRouterType is a fake class")
  @discussion
  Similar to ZIKViewRouter.toView(), this function is for decoupling route behavior with router class. If configurations of a module can't be set directly with a protocol the view conforms, you can use a custom ZIKViewRouteConfiguration to config these configurations. Use +registerModuleProtocol: to register the protocol, then you don't need to import the router's header when performing route.
  @code
- //ZIKLoginViewProtocol
- @protocol ZIKLoginViewConfigProtocol <ZIKViewModuleRoutable>
+ //ZIKLoginViewConfigInput
+ @protocol ZIKLoginViewConfigInput <ZIKViewModuleRoutable>
  @property (nonatomic, copy) NSString *account;
  @end
  
@@ -103,7 +100,7 @@ NS_SWIFT_UNAVAILABLE("ZIKModuleViewRouterType is a fake class")
  @property (nonatomic, copy) NSString *account;
  @end
  
- @interface ZIKLoginViewConfiguration : ZIKViewRouteConfiguration <NSCopying, ZIKLoginViewConfigProtocol>
+ @interface ZIKLoginViewConfiguration : ZIKViewRouteConfiguration <NSCopying, ZIKLoginViewConfigInput>
  @property (nonatomic, copy) NSString *account;
  @end
  
@@ -114,12 +111,12 @@ NS_SWIFT_UNAVAILABLE("ZIKModuleViewRouterType is a fake class")
  @implementation ZIKLoginViewController (ZIKLoginViewRouter)
  @end
  
- @interface ZIKLoginViewRouter : ZIKViewRouter<ZIKViewRouteConfiguration<ZIKLoginViewConfigProtocol> *, ZIKViewRemoveConfiguration *>
+ @interface ZIKLoginViewRouter : ZIKViewRouter<ZIKViewRouteConfiguration<ZIKLoginViewConfigInput> *, ZIKViewRemoveConfiguration *>
  @end
  @implementation ZIKLoginViewRouter
  + (void)registerRoutableDestination {
      [self registerView:[ZIKLoginViewController class]];
-     [self registerModuleProtocol:ZIKRoutable(ZIKLoginViewConfigProtocol)];
+     [self registerModuleProtocol:ZIKRoutable(ZIKLoginViewConfigInput)];
  }
  - (id)destinationWithConfiguration:(ZIKLoginViewConfiguration *)configuration {
      ZIKLoginViewController *destination = [ZIKLoginViewController new];
@@ -131,9 +128,9 @@ NS_SWIFT_UNAVAILABLE("ZIKModuleViewRouterType is a fake class")
  @end
  
  //Get ZIKLoginViewRouter and perform route
- [ZIKRouterToViewModule(ZIKLoginViewConfigProtocol)
-     performFromSource:self
-     configuring:^(ZIKViewRouteConfiguration<ZIKLoginViewConfigProtocol> *config) {
+ [ZIKRouterToViewModule(ZIKLoginViewConfigInput)
+     performPath:ZIKViewRoutePath.presentModallyFrom(self)
+     configuring:^(ZIKViewRouteConfiguration<ZIKLoginViewConfigInput> *config) {
          config.account = @"my account";
      }];
  @endcode
