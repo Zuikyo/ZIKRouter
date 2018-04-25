@@ -14,7 +14,7 @@
 /**
  Protocols inheriting from ZIKServiceRoutable can be used to fetch service router with ZIKRouterToService().
  
- It's safe to use objc protocols inheriting from ZIKServiceRoutable with ZIKRouterToService() and won't get nil. When ZIKROUTER_CHECK is enbled, ZIKServiceRouter will validate all ZIKServiceRoutable protocols when registration is finished, make sure all routable service protocols have been registered with a router.
+ It's safe to use objc protocols inheriting from ZIKServiceRoutable with ZIKRouterToService() and won't get nil. When ZIKROUTER_CHECK is enbled, ZIKServiceRouter will validate all ZIKServiceRoutable protocols when registration is finished, then we can make sure all routable service protocols have been registered with a router.
  */
 @protocol ZIKServiceRoutable
 

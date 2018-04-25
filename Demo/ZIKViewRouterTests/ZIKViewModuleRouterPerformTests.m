@@ -775,7 +775,7 @@
 
 - (void)setUp {
     [super setUp];
-    self.routeType = ZIKViewRouteTypePresentModally;
+    self.routeType = ZIKViewRouteTypePresentAsPopover;
 }
 
 - (void)configRouteConfiguration:(ZIKViewRouteConfiguration *)configuration source:(UIViewController *)source {
@@ -786,9 +786,72 @@
     });
 }
 
+- (void)testPerformWithSuccessCompletion {
+    [self leaveTest];
+    [self waitForExpectationsWithTimeout:5 handler:^(NSError * _Nullable error) {
+        !error? : NSLog(@"%@", error);
+    }];
+}
+
+- (void)testPerformWithErrorCompletion {
+    XCTestExpectation *expectation = [self expectationWithDescription:@"completionHandler"];
+    {
+        [self enterTest:^(UIViewController *source) {
+            self.router = [ZIKRouterToViewModule(AViewModuleInput) performPath:[self pathFromSource:source] completion:^(BOOL success, id<AViewInput>  _Nullable destination, ZIKRouteAction  _Nonnull routeAction, NSError * _Nullable error) {
+                XCTAssertFalse(success);
+                XCTAssertNotNil(error);
+                [expectation fulfill];
+                [self handle:^{
+                    XCTAssert(self.router == nil || self.router.state == ZIKRouterStateUnrouted);
+                    [self leaveTest];
+                }];
+            }];
+        }];
+    }
+    
+    [self waitForExpectationsWithTimeout:5 handler:^(NSError * _Nullable error) {
+        !error? : NSLog(@"%@", error);
+    }];
+}
+
+- (void)testPerformRouteWithSuccessCompletion {
+    [self leaveTest];
+    [self waitForExpectationsWithTimeout:5 handler:^(NSError * _Nullable error) {
+        !error? : NSLog(@"%@", error);
+    }];
+}
+
+- (void)testPerformRouteWithErrorCompletion {
+    XCTestExpectation *expectation = [self expectationWithDescription:@"completionHandler"];
+    expectation.assertForOverFulfill = YES;
+    {
+        [self enterTest:^(UIViewController *source) {
+            self.router = [ZIKRouterToViewModule(AViewModuleInput) performPath:[self pathFromSource:source] configuring:^(ZIKViewRouteConfiguration<AViewModuleInput> * _Nonnull config) {
+                [self configRouteConfiguration:config source:source];
+                config.performerSuccessHandler = ^(id  _Nonnull destination) {
+                    [self handle:^{
+                        XCTAssert(self.router.state == ZIKRouterStateRouted);
+                        [self.router performRouteWithCompletion:^(BOOL success, id  _Nullable destination, ZIKRouteAction  _Nonnull routeAction, NSError * _Nullable error) {
+                            XCTAssert(self.router.state == ZIKRouterStateRouted);
+                            XCTAssertFalse(success);
+                            XCTAssertNotNil(error);
+                            [expectation fulfill];
+                            [self leaveTest];
+                        }];
+                    }];
+                };
+            }];
+        }];
+    }
+    
+    [self waitForExpectationsWithTimeout:5 handler:^(NSError * _Nullable error) {
+        !error? : NSLog(@"%@", error);
+    }];
+}
+
 @end
 
-@interface ZIKViewModuleRouterPerformPresentAsPopoverWithoutAnimationTests : ZIKViewModuleRouterPerformWithoutAnimationTests
+@interface ZIKViewModuleRouterPerformPresentAsPopoverWithoutAnimationTests : ZIKViewModuleRouterPerformPresentAsPopoverTests
 
 @end
 
@@ -796,15 +859,12 @@
 
 - (void)setUp {
     [super setUp];
-    self.routeType = ZIKViewRouteTypePresentModally;
+    self.routeType = ZIKViewRouteTypePresentAsPopover;
 }
 
 - (void)configRouteConfiguration:(ZIKViewRouteConfiguration *)configuration source:(UIViewController *)source {
     [super configRouteConfiguration:configuration source:source];
-    configuration.configurePopover(^(ZIKViewRoutePopoverConfiguration * _Nonnull popoverConfig) {
-        popoverConfig.sourceView = source.view;
-        popoverConfig.sourceRect = CGRectMake(0, 0, 50, 10);
-    });
+    configuration.animated = NO;
 }
 
 @end

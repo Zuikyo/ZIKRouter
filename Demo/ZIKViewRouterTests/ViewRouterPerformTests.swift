@@ -238,4 +238,276 @@ class ViewRouterPerformTests: ZIKViewRouterTestCase {
         }
         waitForExpectations(timeout: 500, handler: { if let error = $0 {print(error)}})
     }
+    
+    func testPerformWithSuccess() {
+        let expectation = self.expectation(description: "successHandler")
+        enterTest { (source) in
+            self.testRouter = Router.perform(
+                to: RoutableView<AViewInput>(),
+                path: self.path(from: source),
+                configuring: { (config, prepareDest, _) in
+                    self.configure(routeConfiguration: config, source: source)
+                    config.successHandler = { d in
+                        expectation.fulfill()
+                        self.handle({
+                            XCTAssert(self.router?.state == .routed)
+                            self.leaveTest()
+                        })
+                    }
+            })
+        }
+        waitForExpectations(timeout: 5, handler: { if let error = $0 {print(error)}})
+    }
+    
+    func testPerformWithPerformerSuccess() {
+        let providerHandlerExpectation = self.expectation(description: "successHandler")
+        providerHandlerExpectation.expectedFulfillmentCount = 2
+        let performerHandlerExpectation = self.expectation(description: "performerSuccessHandler")
+        performerHandlerExpectation.assertForOverFulfill = true
+        enterTest { (source) in
+            self.testRouter = Router.perform(
+                to: RoutableView<AViewInput>(),
+                path: self.path(from: source),
+                configuring: { (config, prepareDest, _) in
+                    self.configure(routeConfiguration: config, source: source)
+                    config.successHandler = { d in
+                        providerHandlerExpectation.fulfill()
+                    }
+                    config.performerSuccessHandler = { d in
+                        performerHandlerExpectation.fulfill()
+                        self.handle({
+                            XCTAssert(self.router?.state == .routed)
+                            self.testRouter?.removeRoute(successHandler: {
+                                XCTAssert(self.router?.state == .removed)
+                                self.testRouter?.performRoute(successHandler: { (d) in
+                                    XCTAssert(self.router?.state == .routed)
+                                    self.leaveTest()
+                                })
+                            })
+                        })
+                    }
+            })
+        }
+        waitForExpectations(timeout: 5, handler: { if let error = $0 {print(error)}})
+    }
+    
+    func testPerformWithError() {
+        let providerHandlerExpectation = self.expectation(description: "errorHandler")
+        let performerHandlerExpectation = self.expectation(description: "performerErrorHandler")
+        enterTest { (source) in
+            self.testRouter = Router.perform(
+                to: RoutableView<AViewInput>(),
+                path: .extensible(path: ZIKViewRoutePath(routeType: self.routeType, source: nil)),
+                configuring: { (config, prepareDest, _) in
+                    self.configure(routeConfiguration: config, source: source)
+                    config.successHandler = { d in
+                        XCTAssert(false, "successHandler should not be called")
+                    }
+                    config.performerSuccessHandler = { d in
+                        XCTAssert(false, "performerSuccessHandler should not be called")
+                    }
+                    config.errorHandler = { (action, error) in
+                        providerHandlerExpectation.fulfill()
+                    }
+                    config.performerErrorHandler = { (action, error) in
+                        performerHandlerExpectation.fulfill()
+                        self.handle({
+                            XCTAssert(self.router == nil || self.router?.state == .unrouted)
+                            self.leaveTest()
+                        })
+                    }
+            })
+        }
+        waitForExpectations(timeout: 5, handler: { if let error = $0 {print(error)}})
+    }
+    
+    func testPerformOnDestinationSuccess() {
+        let providerHandlerExpectation = self.expectation(description: "errorHandler")
+        let performerHandlerExpectation = self.expectation(description: "performerErrorHandler")
+        let completionHandlerExpectation = self.expectation(description: "completionHandler")
+        enterTest { (source) in
+            let destination = Router.makeDestination(to: RoutableView<AViewInput>())
+            self.testRouter = Router
+                .to(RoutableView<AViewInput>())?
+                .perform(
+                    onDestination: destination!,
+                    path: self.path(from: source),
+                    configuring: { (config, _, _) in
+                        self.configure(routeConfiguration: config, source: source)
+                        config.successHandler = { d in
+                            providerHandlerExpectation.fulfill()
+                        }
+                        config.performerSuccessHandler = { d in
+                            performerHandlerExpectation.fulfill()
+                        }
+                        config.completionHandler = { (success, destination, action, error) in
+                            completionHandlerExpectation.fulfill()
+                            self.handle({
+                                XCTAssert(self.router?.state == .routed)
+                                self.leaveTest()
+                            })
+                        }
+                        config.errorHandler = { (action, error) in
+                            XCTAssert(false, "errorHandler should not be called")
+                        }
+                        config.performerErrorHandler = { (action, error) in
+                            XCTAssert(false, "performerErrorHandler should not be called")
+                        }
+                })
+        }
+        waitForExpectations(timeout: 5, handler: { if let error = $0 {print(error)}})
+    }
+}
+
+class ViewRouterPerformWithoutAnimationTests: ViewRouterPerformTests {
+    override func configure(routeConfiguration config: ViewRouteConfig, source: ZIKViewRouteSource?) {
+        super.configure(routeConfiguration: config, source: source)
+        config.animated = false
+    }
+}
+
+class ViewRouterPerformPresentAsPopoverTests: ViewRouterPerformTests {
+    override func setUp() {
+        super.setUp()
+        self.routeType = .presentAsPopover
+    }
+    
+    override func configure(routeConfiguration config: ViewRouteConfig, source: ZIKViewRouteSource?) {
+        super.configure(routeConfiguration: config, source: source)
+        config.configurePopover({ popoverConfig in
+            popoverConfig.sourceView = (source as! UIViewController).view
+            popoverConfig.sourceRect = CGRect(x: 0, y: 0, width: 50, height: 10)
+        })
+    }
+    
+    override func testPerformWithSuccessCompletion() {
+        leaveTest()
+        waitForExpectations(timeout: 5, handler: { if let error = $0 {print(error)}})
+    }
+    
+    override func testPerformWithErrorCompletion() {
+        let expectation = self.expectation(description: "completionHandler")
+        enterTest { (source) in
+            self.testRouter = Router.perform(
+                to: RoutableView<AViewInput>(),
+                path: self.path(from: source),
+                completion: { (success, destination, action, error) in
+                    XCTAssertFalse(success)
+                    XCTAssertNotNil(error)
+                    expectation.fulfill()
+                    self.handle({
+                        XCTAssert(self.router == nil || self.router?.state == .unrouted)
+                        self.leaveTest()
+                    })
+            })
+        }
+        waitForExpectations(timeout: 5, handler: { if let error = $0 {print(error)}})
+    }
+    
+    override func testPerformRouteWithSuccessCompletion() {
+        leaveTest()
+        waitForExpectations(timeout: 5, handler: { if let error = $0 {print(error)}})
+    }
+    
+    override func testPerformRouteWithErrorCompletion() {
+        let expectation = self.expectation(description: "completionHandler")
+        enterTest { (source) in
+            self.testRouter = Router.perform(
+                to: RoutableView<AViewInput>(),
+                path: self.path(from: source),
+                configuring: { (config, _, _) in
+                    self.configure(routeConfiguration: config, source: source)
+                    config.performerSuccessHandler = { d in
+                        self.handle({
+                            XCTAssert(self.router?.state == .routed)
+                            self.testRouter?.performRoute(completion: { (success, destination, action, error) in
+                                XCTAssertFalse(success)
+                                XCTAssertNotNil(error)
+                                expectation.fulfill()
+                                XCTAssert(self.router?.state == .routed)
+                                self.leaveTest()
+                            })
+                        })
+                    }
+            })
+        }
+        waitForExpectations(timeout: 5, handler: { if let error = $0 {print(error)}})
+    }
+}
+
+class ViewRouterPerformPresentAsPopoverWithoutAnimationTests: ViewRouterPerformPresentAsPopoverTests {
+    override func setUp() {
+        super.setUp()
+        self.routeType = .presentAsPopover
+    }
+    
+    override func configure(routeConfiguration config: ViewRouteConfig, source: ZIKViewRouteSource?) {
+        super.configure(routeConfiguration: config, source: source)
+        config.animated = false
+    }
+}
+
+class ViewRouterPerformPushTests: ViewRouterPerformTests {
+    override func setUp() {
+        super.setUp()
+        self.routeType = .push
+    }
+}
+
+class ViewRouterPerformPushWithoutAnimationTests: ViewRouterPerformWithoutAnimationTests {
+    override func setUp() {
+        super.setUp()
+        self.routeType = .push
+    }
+}
+
+class ViewRouterPerformShowTests: ViewRouterPerformTests {
+    override func setUp() {
+        super.setUp()
+        self.routeType = .show
+    }
+}
+
+class ViewRouterPerformShowWithoutAnimationTests: ViewRouterPerformWithoutAnimationTests {
+    override func setUp() {
+        super.setUp()
+        self.routeType = .show
+    }
+}
+
+class ViewRouterPerformShowDetailTests: ViewRouterPerformTests {
+    override func setUp() {
+        super.setUp()
+        self.routeType = .showDetail
+    }
+}
+
+class ViewRouterPerformShowDetailWithoutAnimationTests: ViewRouterPerformWithoutAnimationTests {
+    override func setUp() {
+        super.setUp()
+        self.routeType = .showDetail
+    }
+    
+    override class func allowLeaveTestViewFailing() ->Bool {
+        if UI_USER_INTERFACE_IDIOM() == .pad {
+            return true
+        }
+        return false
+    }
+    
+    override func testPerformWithPerformerSuccess() {
+        leaveTest()
+        waitForExpectations(timeout: 5, handler: { if let error = $0 {print(error)}})
+    }
+    override func testPerformRouteWithSuccessCompletion() {
+        leaveTest()
+        waitForExpectations(timeout: 5, handler: { if let error = $0 {print(error)}})
+    }
+}
+
+class ViewRouterPerformCustomTests: ViewRouterPerformTests {
+    override func setUp() {
+        super.setUp()
+        self.routeType = .custom
+    }
 }
