@@ -172,6 +172,9 @@ NSErrorDomain const ZIKRouteErrorDomain = @"ZIKRouteErrorDomain";
     if (state == ZIKRouterStateUnrouted) {
         return YES;
     } else if (state == ZIKRouterStateRouted) {
+        if (self.destination == nil) {
+            return YES;
+        }
         return ![self shouldRemoveBeforePerform];
     }
     return NO;
@@ -197,7 +200,7 @@ NSErrorDomain const ZIKRouteErrorDomain = @"ZIKRouteErrorDomain";
                           errorHandler:(void(^)(ZIKRouteAction routeAction, NSError *error))performerErrorHandler {
     NSAssert(self.original_configuration, @"router must has configuration");
     ZIKRouterState state = self.state;
-    if (state == ZIKRouterStateRouted && [self shouldRemoveBeforePerform]) {
+    if (state == ZIKRouterStateRouted && self.destination != nil && [self shouldRemoveBeforePerform]) {
         ZIKRouteAction action = ZIKRouteActionPerformRoute;
         NSString *description = [NSString stringWithFormat:@"%@ 's state is routed, can't perform route before it's removed",self];
         NSError *error = [ZIKRouter errorWithCode:ZIKRouteErrorActionFailed localizedDescription:description];

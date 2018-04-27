@@ -378,7 +378,7 @@ static NSMutableArray *g_preparingUIViewRouters;
             *message = @"Router is removing.";
         }
         return NO;
-    } else if (state == ZIKRouterStateRouted && [self shouldRemoveBeforePerform]) {
+    } else if (state == ZIKRouterStateRouted && self.destination != nil && [self shouldRemoveBeforePerform]) {
         if (message) {
             *message = @"Router is routed, can't perform route after remove.";
         }
@@ -1058,6 +1058,9 @@ destinationStateBeforeRoute:(ZIKPresentationState *)destinationStateBeforeRoute
 - (BOOL)shouldRemoveBeforePerform {
     ZIKViewRouteType routeType = self.original_configuration.routeType;
     if (routeType == ZIKViewRouteTypeMakeDestination) {
+        return NO;
+    }
+    if (self.destination == nil) {
         return NO;
     }
     return YES;

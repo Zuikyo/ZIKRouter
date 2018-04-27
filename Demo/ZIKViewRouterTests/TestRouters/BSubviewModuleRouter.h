@@ -9,6 +9,8 @@
 @import ZIKRouter;
 #import "BSubviewModuleInput.h"
 
+NS_ASSUME_NONNULL_BEGIN
+
 @interface BSubviewModuleRouter : ZIKModuleViewRouter(BSubviewModuleInput)
 
 @end
@@ -20,3 +22,5 @@
 - (void)makeDestinationCompletion:(void(^)(id<BSubviewInput> destination))block;
 
 @end
+
+NS_ASSUME_NONNULL_END

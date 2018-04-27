@@ -26,12 +26,12 @@ public typealias ViewRoutePopoverConfig = ZIKViewRoutePopoverConfiguration
 public typealias AnyViewRouter = ViewRouter<Any, ViewRouteConfig>
 public typealias ZIKAnyViewRouter = ZIKViewRouter<AnyObject, ViewRouteConfig>
 public typealias DestinationViewRouter<Destination> = ViewRouter<Destination, ViewRouteConfig>
-public typealias ModuleViewRouter<ModuleConfig: ViewRouteConfig> = ViewRouter<Any, ModuleConfig>
+public typealias ModuleViewRouter<ModuleConfig> = ViewRouter<Any, ModuleConfig>
 
 public typealias AnyServiceRouter = ServiceRouter<Any, PerformRouteConfig>
 public typealias ZIKAnyServiceRouter = ZIKServiceRouter<AnyObject, PerformRouteConfig>
 public typealias DestinationServiceRouter<Destination> = ServiceRouter<Destination, PerformRouteConfig>
-public typealias ModuleServiceRouter<ModuleConfig: PerformRouteConfig> = ServiceRouter<Any, ModuleConfig>
+public typealias ModuleServiceRouter<ModuleConfig> = ServiceRouter<Any, ModuleConfig>
 
 public typealias ZIKAnyViewRouterType = ZIKViewRouterType<AnyObject, ViewRouteConfig>
 public typealias ZIKAnyServiceRouterType = ZIKServiceRouterType<AnyObject, PerformRouteConfig>

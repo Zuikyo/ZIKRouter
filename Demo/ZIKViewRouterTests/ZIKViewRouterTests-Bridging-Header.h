@@ -4,4 +4,6 @@
 
 #import "ZIKViewRouterTestCase.h"
 #import "AViewInput.h"
+#import "AViewModuleInput.h"
 #import "BSubviewInput.h"
+#import "BSubviewModuleInput.h"

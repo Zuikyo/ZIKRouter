@@ -117,7 +117,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 #pragma mark Remove
 
-///Whether the router should be removed before another performing, when the router is performed already.
+///Whether the router should be removed before another performing, when the router is performed already and the destination still exists.
 - (BOOL)shouldRemoveBeforePerform;
 
 ///Whether the router can remove route now.

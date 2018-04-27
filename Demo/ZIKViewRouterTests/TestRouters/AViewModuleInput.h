@@ -9,6 +9,8 @@
 @import ZIKRouter;
 #import "AViewInput.h"
 
+NS_ASSUME_NONNULL_BEGIN
+
 @protocol AViewModuleInput <ZIKViewModuleRoutable>
 
 @property (nonatomic, copy, nullable) NSString *title;
@@ -16,3 +18,5 @@
 - (void)makeDestinationCompletion:(void(^)(id<AViewInput> destination))block;
 
 @end
+
+NS_ASSUME_NONNULL_END
