@@ -41,6 +41,7 @@ class SwiftViewModuleRouterPerformTests: ZIKViewRouterTestCase {
     override func leaveTest() {
         if testRouter == nil || testRouter?.state == .unrouted || testRouter?.state == .removed {
             strongTestRouter = nil
+            strongRouter = nil
             leaveTestViewExpectation.fulfill()
             leaveSourceView()
             return
@@ -62,6 +63,16 @@ class SwiftViewModuleRouterPerformTests: ZIKViewRouterTestCase {
         self.strongTestRouter = nil
     }
     
+    func path(from source: UIViewController) ->ViewRoutePath {
+        var routeSource: ZIKViewRouteSource? = source
+        if self.routeType == .addAsSubview {
+            routeSource = source.view
+        }
+        let path = ViewRoutePath(path: ZIKViewRoutePath(routeType: routeType, source: routeSource))
+        XCTAssertNotNil(path)
+        return path!
+    }
+
     func configure(routeConfiguration config: ViewRouteConfig, source: ZIKViewRouteSource?) {
         config.animated = true
         config.routeType = self.routeType
@@ -161,25 +172,6 @@ class SwiftViewModuleRouterPerformTests: ZIKViewRouterTestCase {
                     expectation.fulfill()
                     self.handle({
                         XCTAssert(self.router?.state == .routed)
-                        self.leaveTest()
-                    })
-            })
-        }
-        waitForExpectations(timeout: 5, handler: { if let error = $0 {print(error)}})
-    }
-    
-    func testPerformWithErrorCompletion() {
-        let expectation = self.expectation(description: "completionHandler")
-        enterTest { (source) in
-            self.testRouter = Router.perform(
-                to: RoutableViewModule<ASwiftViewModuleInput>(),
-                path: .extensible(path: ZIKViewRoutePath(routeType: self.routeType, source: nil)),
-                completion: { (success, destination, action, error) in
-                    XCTAssertFalse(success)
-                    XCTAssertNotNil(error)
-                    expectation.fulfill()
-                    self.handle({
-                        XCTAssert(self.router == nil || self.router?.state == .unrouted)
                         self.leaveTest()
                     })
             })
@@ -397,35 +389,15 @@ class SwiftViewModuleRouterPerformPresentAsPopoverTests: SwiftViewModuleRouterPe
         self.routeType = .presentAsPopover
     }
     
-    override func configure(routeConfiguration config: ViewRouteConfig, source: ZIKViewRouteSource?) {
-        super.configure(routeConfiguration: config, source: source)
-        config.configurePopover({ popoverConfig in
-            popoverConfig.sourceView = (source as! UIViewController).view
+    override func path(from source: UIViewController) -> ViewRoutePath {
+        return .presentAsPopover(from: source, configure: { (popoverConfig) in
+            popoverConfig.sourceView = source.view
             popoverConfig.sourceRect = CGRect(x: 0, y: 0, width: 50, height: 10)
         })
     }
     
     override func testPerformWithSuccessCompletion() {
         leaveTest()
-        waitForExpectations(timeout: 5, handler: { if let error = $0 {print(error)}})
-    }
-    
-    override func testPerformWithErrorCompletion() {
-        let expectation = self.expectation(description: "completionHandler")
-        enterTest { (source) in
-            self.testRouter = Router.perform(
-                to: RoutableViewModule<ASwiftViewModuleInput>(),
-                path: self.path(from: source),
-                completion: { (success, destination, action, error) in
-                    XCTAssertFalse(success)
-                    XCTAssertNotNil(error)
-                    expectation.fulfill()
-                    self.handle({
-                        XCTAssert(self.router == nil || self.router?.state == .unrouted)
-                        self.leaveTest()
-                    })
-            })
-        }
         waitForExpectations(timeout: 5, handler: { if let error = $0 {print(error)}})
     }
     

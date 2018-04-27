@@ -24,13 +24,13 @@
 - (IBAction)presentAsPopover:(id)sender {
     __weak typeof(self) weakSelf = self;
     self.infoViewRouter = [ZIKRouterToView(ZIKInfoViewProtocol)
-                           performPath:ZIKViewRoutePath.presentAsPopoverFrom(self)
+                           performPath:ZIKViewRoutePath
+                                        .presentAsPopoverFrom(self, ^(ZIKViewRoutePopoverConfiguration *popoverConfig) {
+                                            popoverConfig.delegate = self;
+                                            popoverConfig.sourceView = sender;
+                                            popoverConfig.sourceRect = CGRectMake(0, 0, 50, 10);
+                                        })
                            configuring:^(ZIKViewRouteConfiguration *config) {
-                               config.configurePopover(^(ZIKViewRoutePopoverConfiguration * _Nonnull popoverConfig) {
-                                   popoverConfig.delegate = self;
-                                   popoverConfig.sourceView = sender;
-                                   popoverConfig.sourceRect = CGRectMake(0, 0, 50, 10);
-                               });
                                config.prepareDestination = ^(UIViewController<ZIKInfoViewProtocol> *destination) {
                                    destination.name = @"Zuik";
                                    destination.age = 18;
@@ -47,13 +47,12 @@
 - (IBAction)presentAsPopoverAndDismiss:(id)sender {
     __weak typeof(self) weakSelf = self;
     self.infoViewRouter = [ZIKRouterToView(ZIKInfoViewProtocol)
-                           performPath:ZIKViewRoutePath.presentAsPopoverFrom(self)
+                           performPath:ZIKViewRoutePath.presentAsPopoverFrom(self, ^(ZIKViewRoutePopoverConfiguration *popoverConfig) {
+                                    popoverConfig.delegate = self;
+                                    popoverConfig.sourceView = sender;
+                                    popoverConfig.sourceRect = CGRectMake(0, 0, 50, 10);
+                                })
                            configuring:^(ZIKViewRouteConfiguration *config) {
-                               config.configurePopover(^(ZIKViewRoutePopoverConfiguration * _Nonnull popoverConfig) {
-                                   popoverConfig.delegate = self;
-                                   popoverConfig.sourceView = sender;
-                                   popoverConfig.sourceRect = CGRectMake(0, 0, 50, 10);
-                               });
                                config.prepareDestination = ^(UIViewController<ZIKInfoViewProtocol> *destination) {
                                    destination.name = @"Zuik";
                                    destination.age = 18;

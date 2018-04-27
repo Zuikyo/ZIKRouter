@@ -256,9 +256,8 @@
     self.routeType = ZIKViewRouteTypePresentAsPopover;
 }
 
-- (void)configRouteConfiguration:(ZIKViewRouteConfiguration *)configuration source:(UIViewController *)source {
-    [super configRouteConfiguration:configuration source:source];
-    configuration.configurePopover(^(ZIKViewRoutePopoverConfiguration * _Nonnull popoverConfig) {
+- (ZIKViewRoutePath *)pathFromSource:(UIViewController *)source {
+    return ZIKViewRoutePath.presentAsPopoverFrom(source, ^(ZIKViewRoutePopoverConfiguration *popoverConfig) {
         popoverConfig.sourceView = source.view;
         popoverConfig.sourceRect = CGRectMake(0, 0, 50, 10);
     });
@@ -277,9 +276,8 @@
     self.routeType = ZIKViewRouteTypePresentAsPopover;
 }
 
-- (void)configRouteConfiguration:(ZIKViewRouteConfiguration *)configuration source:(UIViewController *)source {
-    [super configRouteConfiguration:configuration source:source];
-    configuration.configurePopover(^(ZIKViewRoutePopoverConfiguration * _Nonnull popoverConfig) {
+- (ZIKViewRoutePath *)pathFromSource:(UIViewController *)source {
+    return ZIKViewRoutePath.presentAsPopoverFrom(source, ^(ZIKViewRoutePopoverConfiguration *popoverConfig) {
         popoverConfig.sourceView = source.view;
         popoverConfig.sourceRect = CGRectMake(0, 0, 50, 10);
     });

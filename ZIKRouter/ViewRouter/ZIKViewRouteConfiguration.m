@@ -23,6 +23,9 @@ ZIKRouteAction const ZIKRouteActionPerformOnDestination = @"ZIKRouteActionPerfor
 @interface ZIKViewRoutePath()
 @property (nonatomic, strong) id<ZIKViewRouteSource> source;
 @property (nonatomic) ZIKViewRouteType routeType;
+@property (nonatomic, strong, nullable) ZIKViewRoutePopoverConfigure configurePopover;
+@property (nonatomic, copy, nullable) NSString *segueIdentifier;
+@property (nonatomic, strong, nullable) id segueSender;
 
 @end
 
@@ -30,55 +33,55 @@ ZIKRouteAction const ZIKRouteActionPerformOnDestination = @"ZIKRouteActionPerfor
 
 + (ZIKViewRoutePath *(^)(UIViewController *))pushFrom {
     return ^(UIViewController *source) {
-        return [[ZIKViewRoutePath alloc] initWithRouteType:ZIKViewRouteTypePush source:source];
+        return [self pushFrom:source];
     };
 }
 
 + (ZIKViewRoutePath *(^)(UIViewController *))presentModallyFrom {
     return ^(UIViewController *source) {
-        return [[ZIKViewRoutePath alloc] initWithRouteType:ZIKViewRouteTypePresentModally source:source];
+        return [self presentModallyFrom:source];
     };
 }
 
-+ (ZIKViewRoutePath *(^)(UIViewController *))presentAsPopoverFrom {
-    return ^(UIViewController *source) {
-        return [[ZIKViewRoutePath alloc] initWithRouteType:ZIKViewRouteTypePresentAsPopover source:source];
++ (ZIKViewRoutePath *(^)(UIViewController *, ZIKViewRoutePopoverConfigure))presentAsPopoverFrom {
+    return ^(UIViewController *source, ZIKViewRoutePopoverConfigure configure) {
+        return [self presentAsPopoverFrom:source configure:configure];
     };
 }
 
-+ (ZIKViewRoutePath *(^)(UIViewController *))performSegueFrom {
-    return ^(UIViewController *source) {
-        return [[ZIKViewRoutePath alloc] initWithRouteType:ZIKViewRouteTypePerformSegue source:source];
++ (ZIKViewRoutePath *(^)(UIViewController *, NSString *, id))performSegueFrom {
+    return ^(UIViewController *source, NSString *identifier, id _Nullable sender) {
+        return [self performSegueFrom:source identifier:identifier sender:sender];
     };
 }
 
 + (ZIKViewRoutePath *(^)(UIViewController *))showFrom {
     return ^(UIViewController *source) {
-        return [[ZIKViewRoutePath alloc] initWithRouteType:ZIKViewRouteTypeShow source:source];
+        return [self showFrom:source];
     };
 }
 
 + (ZIKViewRoutePath *(^)(UIViewController *))showDetailFrom {
     return ^(UIViewController *source) {
-        return [[ZIKViewRoutePath alloc] initWithRouteType:ZIKViewRouteTypeShowDetail source:source];
+        return [self showDetailFrom:source];
     };
 }
 
 + (ZIKViewRoutePath *(^)(UIViewController *))addAsChildViewControllerFrom {
     return ^(UIViewController *source) {
-        return [[ZIKViewRoutePath alloc] initWithRouteType:ZIKViewRouteTypeAddAsChildViewController source:source];
+        return [self addAsChildViewControllerFrom:source];
     };
 }
 
 + (ZIKViewRoutePath *(^)(UIView *))addAsSubviewFrom {
     return ^(UIView *source) {
-        return [[ZIKViewRoutePath alloc] initWithRouteType:ZIKViewRouteTypeAddAsSubview source:source];
+        return [self addAsSubviewFrom:source];
     };
 }
 
 + (ZIKViewRoutePath *(^)(id<ZIKViewRouteSource>))customFrom {
     return ^(id<ZIKViewRouteSource> source) {
-        return [[ZIKViewRoutePath alloc] initWithRouteType:ZIKViewRouteTypeCustom source:source];
+        return [self customFrom:source];
     };
 }
 
@@ -94,12 +97,17 @@ ZIKRouteAction const ZIKRouteActionPerformOnDestination = @"ZIKRouteActionPerfor
     return [[ZIKViewRoutePath alloc] initWithRouteType:ZIKViewRouteTypePresentModally source:source];
 }
 
-+ (instancetype)presentAsPopoverFrom:(UIViewController *)source {
-    return [[ZIKViewRoutePath alloc] initWithRouteType:ZIKViewRouteTypePresentAsPopover source:source];
++ (instancetype)presentAsPopoverFrom:(UIViewController *)source configure:(ZIKViewRoutePopoverConfigure)configure {
+    ZIKViewRoutePath *path = [[ZIKViewRoutePath alloc] initWithRouteType:ZIKViewRouteTypePresentAsPopover source:source];
+    path.configurePopover = configure;
+    return path;
 }
 
-+ (instancetype)performSegueFrom:(UIViewController *)source {
-    return [[ZIKViewRoutePath alloc] initWithRouteType:ZIKViewRouteTypePerformSegue source:source];
++ (instancetype)performSegueFrom:(UIViewController *)source identifier:(nonnull NSString *)identifier sender:(nullable id)sender {
+    ZIKViewRoutePath *path = [[ZIKViewRoutePath alloc] initWithRouteType:ZIKViewRouteTypePerformSegue source:source];
+    path.segueIdentifier = identifier;
+    path.segueSender = sender;
+    return path;
 }
 
 + (instancetype)showFrom:(UIViewController *)source {
@@ -169,6 +177,20 @@ ZIKRouteAction const ZIKRouteActionPerformOnDestination = @"ZIKRouteActionPerfor
         self.source = path.source;
     }
     self.routeType = path.routeType;
+    switch (path.routeType) {
+        case ZIKViewRouteTypePresentAsPopover:
+            self.configurePopover(path.configurePopover);
+            break;
+        case ZIKViewRouteTypePerformSegue: {
+            self.configureSegue(^(ZIKViewRouteSegueConfiguration * _Nonnull segueConfig) {
+                segueConfig.identifier = path.segueIdentifier;
+                segueConfig.sender = path.segueSender;
+            });
+        }
+            break;
+        default:
+            break;
+    }
 }
 
 - (void)configDefaultValue {
@@ -191,13 +213,6 @@ ZIKRouteAction const ZIKRouteActionPerformOnDestination = @"ZIKRouteActionPerfor
         if (!strongSelf) {
             return;
         }
-        if (strongSelf.segueConfiguration) {
-            [ZIKViewRouter notifyGlobalErrorWithRouter:nil
-                                                action:ZIKRouteActionPerformRoute
-                                                 error:[ZIKRouter errorWithCode:ZIKRouteErrorInvalidConfiguration
-                                                        localizedDescriptionFormat:@"segueConfiguration for configuration: %@ should only configure once",self]];
-            NSAssert(NO, @"segueConfiguration for configuration: %@ should only configure once",self);
-        }
         ZIKViewRouteSegueConfiguration *segueConfiguration = [ZIKViewRouteSegueConfiguration new];
         if (configure) {
             configure(segueConfiguration);
@@ -206,14 +221,12 @@ ZIKRouteAction const ZIKRouteActionPerformOnDestination = @"ZIKRouteActionPerfor
                                                 action:ZIKRouteActionPerformRoute
                                                  error:[ZIKRouter errorWithCode:ZIKRouteErrorInvalidConfiguration
                                                         localizedDescriptionFormat:@"When configureSegue for configuration : %@, configure block should not be nil !",self]];
-            NSAssert(NO, @"When configureSegue for configuration : %@, configure block should not be nil !",self);
         }
         if (!segueConfiguration.identifier && !strongSelf.autoCreated) {
             [ZIKViewRouter notifyGlobalErrorWithRouter:nil
                                                 action:ZIKRouteActionPerformRoute
                                                  error:[ZIKRouter errorWithCode:ZIKRouteErrorInvalidConfiguration
                                                         localizedDescriptionFormat:@"configureSegue didn't assign segue identifier for configuration: %@", self]];
-            NSAssert(NO, @"configureSegue didn't assign segue identifier for configuration: %@", self);
         }
         strongSelf.segueConfiguration = segueConfiguration;
     };
@@ -226,13 +239,6 @@ ZIKRouteAction const ZIKRouteActionPerformOnDestination = @"ZIKRouteActionPerfor
         if (!strongSelf) {
             return;
         }
-        if (strongSelf.popoverConfiguration) {
-            [ZIKViewRouter notifyGlobalErrorWithRouter:nil
-                                                action:ZIKRouteActionPerformRoute
-                                                 error:[ZIKViewRouter errorWithCode:ZIKRouteErrorInvalidConfiguration
-                                                        localizedDescriptionFormat:@"popoverConfiguration for configuration: %@ should only configure once",self]];
-            NSAssert(NO, @"popoverConfiguration for configuration: %@ should only configure once",self);
-        }
         ZIKViewRoutePopoverConfiguration *popoverConfiguration = [ZIKViewRoutePopoverConfiguration new];
         if (configure) {
             configure(popoverConfiguration);
@@ -241,14 +247,12 @@ ZIKRouteAction const ZIKRouteActionPerformOnDestination = @"ZIKRouteActionPerfor
                                                 action:ZIKRouteActionPerformRoute
                                                  error:[ZIKViewRouter errorWithCode:ZIKRouteErrorInvalidConfiguration
                                                         localizedDescriptionFormat:@"When configurePopover for configuration : %@, configure should not be nil !",self]];
-            NSAssert(NO, @"When configurePopover for configuration : %@, configure should not be nil !",self);
         }
         if (!popoverConfiguration.sourceView && !popoverConfiguration.barButtonItem) {
             [ZIKViewRouter notifyGlobalErrorWithRouter:nil
                                                 action:ZIKRouteActionPerformRoute
                                                  error:[ZIKViewRouter errorWithCode:ZIKRouteErrorInvalidConfiguration
                                                         localizedDescriptionFormat:@"configurePopover didn't assign sourceView or barButtonItem for configuration: %@", self]];
-            NSAssert(NO, @"configurePopover didn't assign sourceView or barButtonItem for configuration: %@", self);
         }
         strongSelf.popoverConfiguration = popoverConfiguration;
     };

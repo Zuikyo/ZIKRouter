@@ -42,6 +42,7 @@ class ViewModuleRouterPerformAddAsChildTests: ZIKViewRouterTestCase {
     override func leaveTest() {
         if testRouter == nil || testRouter?.state == .unrouted || testRouter?.state == .removed {
             strongTestRouter = nil
+            strongRouter = nil
             leaveTestViewExpectation.fulfill()
             leaveSourceView()
             return
@@ -61,6 +62,16 @@ class ViewModuleRouterPerformAddAsChildTests: ZIKViewRouterTestCase {
         assert(testRouter == nil, "Didn't leave test view")
         self.testRouter = nil
         self.strongTestRouter = nil
+    }
+    
+    func path(from source: UIViewController) ->ViewRoutePath {
+        var routeSource: ZIKViewRouteSource? = source
+        if self.routeType == .addAsSubview {
+            routeSource = source.view
+        }
+        let path = ViewRoutePath(path: ZIKViewRoutePath(routeType: routeType, source: routeSource))
+        XCTAssertNotNil(path)
+        return path!
     }
     
     func configure(routeConfiguration config: ViewRouteConfig, source: ZIKViewRouteSource?) {

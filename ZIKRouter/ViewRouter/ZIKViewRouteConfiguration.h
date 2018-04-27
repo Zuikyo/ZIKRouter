@@ -213,15 +213,19 @@ typedef void(^ZIKViewRouteSegueConfiger)(NS_NOESCAPE ZIKViewRouteSegueConfigure)
 @property (nonatomic, assign) BOOL handleExternalRoute;
 @end
 
-///Route path for setting source and route type in a type safe way. You can extend your custom transition type here, and use custom default configuration in router, override -configurePath: and set custom parameters to configuration.
+///Route path for setting route type and those required parameters for each type. You can extend your custom transition type here, and use custom default configuration in router, override -configurePath: and set custom parameters to configuration.
 @interface ZIKViewRoutePath : NSObject
 @property (nonatomic, strong, readonly, nullable) id<ZIKViewRouteSource> source;
 @property (nonatomic, readonly) ZIKViewRouteType routeType;
 
+@property (nonatomic, strong, readonly, nullable) ZIKViewRoutePopoverConfigure configurePopover;
+@property (nonatomic, copy, readonly, nullable) NSString *segueIdentifier;
+@property (nonatomic, strong, readonly, nullable) id segueSender;
+
 @property (nonatomic, class, readonly) ZIKViewRoutePath *(^pushFrom)(UIViewController *source) NS_SWIFT_UNAVAILABLE("Use push(from:) instead");
 @property (nonatomic, class, readonly) ZIKViewRoutePath *(^presentModallyFrom)(UIViewController *source) NS_SWIFT_UNAVAILABLE("Use presentModally(from:) instead");
-@property (nonatomic, class, readonly) ZIKViewRoutePath *(^presentAsPopoverFrom)(UIViewController *source) NS_SWIFT_UNAVAILABLE("Use presentAsPopover(from:) instead");
-@property (nonatomic, class, readonly) ZIKViewRoutePath *(^performSegueFrom)(UIViewController *source) NS_SWIFT_UNAVAILABLE("Use performSegue(from:) instead");
+@property (nonatomic, class, readonly) ZIKViewRoutePath *(^presentAsPopoverFrom)(UIViewController *source, ZIKViewRoutePopoverConfigure configurePopover) NS_SWIFT_UNAVAILABLE("Use presentAsPopover(from:) instead");
+@property (nonatomic, class, readonly) ZIKViewRoutePath *(^performSegueFrom)(UIViewController *source, NSString *identifier, id _Nullable sender) NS_SWIFT_UNAVAILABLE("Use performSegue(from:) instead");
 @property (nonatomic, class, readonly) ZIKViewRoutePath *(^showFrom)(UIViewController *source) NS_SWIFT_UNAVAILABLE("Use show(from:) instead");
 @property (nonatomic, class, readonly) ZIKViewRoutePath *(^showDetailFrom)(UIViewController *source) NS_SWIFT_UNAVAILABLE("Use showDetail(from:) instead");
 @property (nonatomic, class, readonly) ZIKViewRoutePath *(^addAsChildViewControllerFrom)(UIViewController *source) NS_SWIFT_UNAVAILABLE("Use addAsChildViewController(from:) instead");
@@ -231,8 +235,8 @@ typedef void(^ZIKViewRouteSegueConfiger)(NS_NOESCAPE ZIKViewRouteSegueConfigure)
 
 + (instancetype)pushFrom:(UIViewController *)source NS_SWIFT_NAME(push(from:));
 + (instancetype)presentModallyFrom:(UIViewController *)source NS_SWIFT_NAME(presentModally(from:));
-+ (instancetype)presentAsPopoverFrom:(UIViewController *)source NS_SWIFT_NAME(presentAsPopover(from:));
-+ (instancetype)performSegueFrom:(UIViewController *)source NS_SWIFT_NAME(performSegue(from:));
++ (instancetype)presentAsPopoverFrom:(UIViewController *)source configure:(ZIKViewRoutePopoverConfigure)configure NS_SWIFT_NAME(presentAsPopover(from:configure:));
++ (instancetype)performSegueFrom:(UIViewController *)source identifier:(NSString *)identifier sender:(nullable id)sender NS_SWIFT_NAME(performSegue(from:identifier:sender:));
 + (instancetype)showFrom:(UIViewController *)source NS_SWIFT_NAME(show(from:));
 + (instancetype)showDetailFrom:(UIViewController *)source NS_SWIFT_NAME(showDetail(from:));
 + (instancetype)addAsChildViewControllerFrom:(UIViewController *)source NS_SWIFT_NAME(addAsChildViewController(from:));

@@ -24,8 +24,8 @@ class SwiftServiceConfiguration: ZIKPerformRouteConfiguration, SwiftServiceConfi
 class SwiftServiceRouter: ZIKServiceRouter<AnyObject, SwiftServiceConfiguration> {
     override class func registerRoutableDestination() {
         registerService(SwiftService.self)
-        register(RoutableService<SwiftServiceInput>())
-        register(RoutableServiceModule<SwiftServiceConfig>())
+//        register(RoutableService<SwiftServiceInput>())
+//        register(RoutableServiceModule<SwiftServiceConfig>())
     }
     
     override func destination(with configuration: SwiftServiceConfiguration) -> AnyObject? {

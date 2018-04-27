@@ -31,12 +31,8 @@
 - (IBAction)performSegue:(id)sender {
     __weak typeof(self) weakSelf = self;
     self.segueRouter = [ZIKRouterToView(ZIKInfoViewProtocol)
-                            performPath:ZIKViewRoutePath.performSegueFrom(self)
+                            performPath:ZIKViewRoutePath.performSegueFrom(self, @"presentInfo", nil)
                             configuring:^(ZIKViewRouteConfiguration * _Nonnull config) {
-                               config.source = self;
-                               config.configureSegue(^(ZIKViewRouteSegueConfiguration * _Nonnull segueConfig) {
-                                   segueConfig.identifier = @"presentInfo";
-                               });
                                config.prepareDestination = ^(id<ZIKInfoViewProtocol>  _Nonnull destination) {
                                    destination.delegate = weakSelf;
                                    destination.name = @"Zuik";
@@ -54,12 +50,8 @@
 - (IBAction)performCustomSegue:(id)sender {
     __weak typeof(self) weakSelf = self;
     self.segueRouter = [ZIKRouterToView(ZIKInfoViewProtocol)
-                            performPath:ZIKViewRoutePath.performSegueFrom(self)
+                            performPath:ZIKViewRoutePath.performSegueFrom(self, @"customSegue", nil)
                             configuring:^(ZIKViewRouteConfiguration * _Nonnull config) {
-                               config.source = self;
-                               config.configureSegue(^(ZIKViewRouteSegueConfiguration * _Nonnull segueConfig) {
-                                   segueConfig.identifier = @"customSegue";
-                               });
                                config.prepareDestination = ^(id<ZIKInfoViewProtocol>  _Nonnull destination) {
                                    destination.delegate = weakSelf;
                                    destination.name = @"Zuik";
@@ -77,11 +69,8 @@
 - (IBAction)performSegueForUnroutableDestination:(id)sender {
     //If destination doesn't comform to ZIKRoutableView, just use ZIKViewRouter to perform the segue.
     self.segueRouter = [ZIKAnyViewRouter
-                        performPath:ZIKViewRoutePath.performSegueFrom(self)
+                        performPath:ZIKViewRoutePath.performSegueFrom(self, @"showUnroutableDestination", nil)
                         configuring:^(ZIKViewRouteConfig * _Nonnull config) {
-                            config.configureSegue(^(ZIKViewRouteSegueConfiguration * _Nonnull segueConfig) {
-                                segueConfig.identifier = @"showUnroutableDestination";
-                            });
                             config.prepareDestination = ^(id _Nonnull destination) {
                                 NSLog(@"prepare for unroutable destination:%@",destination);
                             };
@@ -110,11 +99,8 @@
 - (void)perfromUnwindSegueToTestPerformSegueVCFromInfoVC:(UIViewController *)infoViewController {
     //unwind segue from ZIKInfoViewController to TestPerformSegueViewController is define in ZIKInfoViewController, and should be used inside ZIKInfoViewController, this code is just for test
     [TestPerformSegueViewRouter
-     performPath:ZIKViewRoutePath.performSegueFrom(infoViewController)
+     performPath:ZIKViewRoutePath.performSegueFrom(self, @"unwindToTestPerformSegue", nil)
      configuring:^(ZIKViewRouteConfiguration * _Nonnull config) {
-         config.configureSegue(^(ZIKViewRouteSegueConfiguration * _Nonnull segueConfig) {
-             segueConfig.identifier = @"unwindToTestPerformSegue";
-         });
          config.prepareDestination = ^(UIViewController * _Nonnull destination) {
              NSLog(@"change destination's background color when unwind to destination:(%@)",destination);
              destination.view.backgroundColor = [UIColor yellowColor];

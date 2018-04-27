@@ -38,12 +38,13 @@
     }];
 }
 
+- (ZIKViewRoutePath *)pathFromSource:(UIViewController *)source {
+    return ZIKViewRoutePath.performSegueFrom(source, @"presentInfo", nil);
+}
+
 - (void)configRouteConfiguration:(ZIKViewRouteConfiguration *)configuration source:(UIViewController *)source {
     BOOL supportRouteType = [ZIKRouterToView(ZIKInfoViewProtocol) supportRouteType:self.routeType];
     XCTAssertTrue(supportRouteType);
-    configuration.configureSegue(^(ZIKViewRouteSegueConfiguration * _Nonnull segueConfig) {
-        segueConfig.identifier = @"presentInfo";
-    });
 }
 
 - (void)testPerformWithPrepareDestination {
@@ -130,10 +131,12 @@
     expectation.assertForOverFulfill = YES;
     {
         [self enterTest:^(UIViewController *source) {
-            self.router = [ZIKRouterToView(ZIKInfoViewProtocol) performPath:[self pathFromSource:source] completion:^(BOOL success, id<ZIKInfoViewProtocol>  _Nullable destination, ZIKRouteAction  _Nonnull routeAction, NSError * _Nullable error) {
+            self.router = [ZIKRouterToView(ZIKInfoViewProtocol) performPath:[[ZIKViewRoutePath alloc] initWithRouteType:self.routeType source:nil] completion:^(BOOL success, id<ZIKInfoViewProtocol>  _Nullable destination, ZIKRouteAction  _Nonnull routeAction, NSError * _Nullable error) {
                 XCTAssertFalse(success);
                 [expectation fulfill];
-                [self leaveTest];
+                [self handle:^{
+                    [self leaveTest];
+                }];
             }];
         }];
     }
@@ -172,6 +175,7 @@
     XCTestExpectation *performerSuccessHandlerExpectation = [self expectationWithDescription:@"performerSuccessHandler once"];
     performerSuccessHandlerExpectation.assertForOverFulfill = YES;
     {
+        
         [self enterTest:^(UIViewController *source) {
             self.router = [ZIKRouterToView(ZIKInfoViewProtocol) performPath:[self pathFromSource:source] configuring:^(ZIKViewRouteConfiguration * _Nonnull config) {
                 [self configRouteConfiguration:config source:source];
@@ -459,12 +463,8 @@
 
 @implementation ZIKViewRouterPerformCustomSegueTests
 
-- (void)configRouteConfiguration:(ZIKViewRouteConfiguration *)configuration source:(UIViewController *)source {
-    BOOL supportRouteType = [ZIKRouterToView(ZIKInfoViewProtocol) supportRouteType:self.routeType];
-    XCTAssertTrue(supportRouteType);
-    configuration.configureSegue(^(ZIKViewRouteSegueConfiguration * _Nonnull segueConfig) {
-        segueConfig.identifier = @"customSegue";
-    });
+- (ZIKViewRoutePath *)pathFromSource:(UIViewController *)source {
+    return ZIKViewRoutePath.performSegueFrom(source, @"customSegue", nil);
 }
 
 @end
@@ -492,12 +492,8 @@
     }];
 }
 
-- (void)configRouteConfiguration:(ZIKViewRouteConfiguration *)configuration source:(UIViewController *)source {
-    BOOL supportRouteType = [ZIKRouterToView(ZIKInfoViewProtocol) supportRouteType:self.routeType];
-    XCTAssertTrue(supportRouteType);
-    configuration.configureSegue(^(ZIKViewRouteSegueConfiguration * _Nonnull segueConfig) {
-        segueConfig.identifier = @"showUnroutableDestination";
-    });
+- (ZIKViewRoutePath *)pathFromSource:(UIViewController *)source {
+    return ZIKViewRoutePath.performSegueFrom(source, @"showUnroutableDestination", nil);
 }
 
 - (void)testPerformWithPrepareDestination {
@@ -580,7 +576,7 @@
     expectation.assertForOverFulfill = YES;
     {
         [self enterTest:^(UIViewController *source) {
-            self.router = [ZIKAnyViewRouter performPath:[self pathFromSource:source] completion:^(BOOL success, id  _Nullable destination, ZIKRouteAction  _Nonnull routeAction, NSError * _Nullable error) {
+            self.router = [ZIKAnyViewRouter performPath:[[ZIKViewRoutePath alloc] initWithRouteType:self.routeType source:nil] completion:^(BOOL success, id  _Nullable destination, ZIKRouteAction  _Nonnull routeAction, NSError * _Nullable error) {
                 XCTAssertFalse(success);
                 [expectation fulfill];
                 [self leaveTest];

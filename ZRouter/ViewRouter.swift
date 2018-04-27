@@ -487,19 +487,29 @@ public class ViewRouter<Destination, ModuleConfig> {
     }
 }
 
-///Set source and route type in a type safe way. You can extend your custom transition type in ZIKViewRoutePath, and use custom default configuration in router, override -configurePath: and set custom parameters to configuration.
+/// Route path for setting route type and those required parameters for each type. You can extend your custom transition type in ZIKViewRoutePath, and use custom default configuration in router, override -configurePath: and set custom parameters to configuration.
 public enum ViewRoutePath {
+    /// Push the destination from the source view controller.
     case push(from: UIViewController)
+    /// Present the destination modally from the source view controller.
     case presentModally(from: UIViewController)
-    case presentAsPopover(from: UIViewController)
-    case performSegue(from: UIViewController)
+    /// Present the destination as popover from the source view controller, and configure the popover.
+    case presentAsPopover(from: UIViewController, configure: ZIKViewRoutePopoverConfigure)
+    /// Perform segue from the source view controller, with the segue identifier
+    case performSegue(from: UIViewController, identifier: String, sender: Any?)
+    /// Show the destination from the source view controller.
     case show(from: UIViewController)
+    /// Show the destination as detail from the source view controller.
     case showDetail(from: UIViewController)
+    /// Add the destination as child view controller to the parent source view controller.
     case addAsChildViewController(from: UIViewController)
+    /// Add the destination as subview to the superview.
     case addAsSubview(from: UIView)
+    /// Perform custom transition type from the source.
     case custom(from: ZIKViewRouteSource?)
+    /// Just make destination.
     case makeDestination
-    ///Only use this when using custom transition type extended in ZIKViewRoutePath
+    /// Only use this when using custom transition type extended in ZIKViewRoutePath
     case extensible(path: ZIKViewRoutePath)
     
     public var source: ZIKViewRouteSource? {
@@ -507,8 +517,8 @@ public enum ViewRoutePath {
         switch self {
         case .push(from: let s),
              .presentModally(from: let s),
-             .presentAsPopover(from: let s),
-             .performSegue(from: let s),
+             .presentAsPopover(from: let s, _),
+             .performSegue(from: let s, _, _),
              .show(from: let s),
              .showDetail(from: let s),
              .addAsChildViewController(from: let s):
@@ -554,27 +564,35 @@ public enum ViewRoutePath {
     
     public var path: ZIKViewRoutePath {
         switch self {
+        case .presentAsPopover(from: let source, configure: let configure):
+            return ZIKViewRoutePath.presentAsPopover(from: source, configure: configure)
+        case .performSegue(from: let source, let identifier, let sender):
+            return ZIKViewRoutePath.performSegue(from: source, identifier: identifier, sender: sender)
         case .extensible(path: let path):
             return path
         default:
             return ZIKViewRoutePath(routeType: routeType, source: source)
         }
     }
-}
-
-extension ViewRoutePath: RawRepresentable {
-    public typealias RawValue = (ZIKViewRouteType, ZIKViewRouteSource?)
     
-    public init?(rawValue: (ZIKViewRouteType, ZIKViewRouteSource?)) {
-        switch rawValue {
+    public init?(path: ZIKViewRoutePath) {
+        switch (path.routeType, path.source) {
         case (.push, let source as UIViewController):
             self = .push(from: source)
         case (.presentModally, let source as UIViewController):
             self = .presentModally(from: source)
         case (.presentAsPopover, let source as UIViewController):
-            self = .presentAsPopover(from: source)
+            if let configure = path.configurePopover {
+                self = .presentAsPopover(from: source, configure: configure)
+            } else {
+                return nil
+            }
         case (.performSegue, let source as UIViewController):
-            self = .performSegue(from: source)
+            if let identifier = path.segueIdentifier {
+                self = .performSegue(from: source, identifier: identifier, sender: path.segueSender)
+            } else {
+                return nil
+            }
         case (.show, let source as UIViewController):
             self = .show(from: source)
         case (.showDetail, let source as UIViewController):
@@ -590,10 +608,6 @@ extension ViewRoutePath: RawRepresentable {
         default:
             return nil
         }
-    }
-    
-    public var rawValue: (ZIKViewRouteType, ZIKViewRouteSource?) {
-        return (routeType, source)
     }
 }
 
