@@ -15,15 +15,15 @@ import ZRouter
         SwiftSampleViewRouter.registerRoutableDestination()
         SwiftServiceRouter.registerRoutableDestination()
         
-        _ = ZIKServiceRoute<SwiftService, PerformRouteConfig>
-            .make(withDestination: SwiftService.self,
-                  makeDestination: { (config, router) -> SwiftService? in
-                    return SwiftService()
-            })
-            .register(RoutableService<SwiftServiceInput>())
-            .register(RoutableServiceModule<SwiftServiceConfig>())
-            .makeDefaultConfiguration({
-                return SwiftServiceConfiguration()
-            })
+//        _ = ZIKServiceRoute<SwiftService, PerformRouteConfig>
+//            .make(withDestination: SwiftService.self,
+//                  makeDestination: { (config, router) -> SwiftService? in
+//                    return SwiftService()
+//            })
+//            .register(RoutableService<SwiftServiceInput>())
+//            .register(RoutableServiceModule<SwiftServiceConfig>())
+//            .makeDefaultConfiguration({
+//                return SwiftServiceConfiguration()
+//            })
     }
 }

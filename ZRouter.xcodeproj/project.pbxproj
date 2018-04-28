@@ -15,6 +15,26 @@
 		F872F4F81FAF5BD600297A1D /* Alias.swift in Sources */ = {isa = PBXBuildFile; fileRef = F872F4F01FAF5BD500297A1D /* Alias.swift */; };
 		F872F4F91FAF5BD600297A1D /* Registry.swift in Sources */ = {isa = PBXBuildFile; fileRef = F872F4F11FAF5BD500297A1D /* Registry.swift */; };
 		F872F4FB1FAF5BD600297A1D /* Namespace.swift in Sources */ = {isa = PBXBuildFile; fileRef = F872F4F31FAF5BD500297A1D /* Namespace.swift */; };
+		F87E85A520945FBE00E5A306 /* ServiceModuleRouterPerformTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F87E85A420945FBE00E5A306 /* ServiceModuleRouterPerformTests.swift */; };
+		F87E85A7209460D700E5A306 /* ServiceRouterMakeDestinationTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F87E85A6209460D700E5A306 /* ServiceRouterMakeDestinationTests.swift */; };
+		F87E85A9209470ED00E5A306 /* ServiceModuleRouterMakeDestinationTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F87E85A8209470ED00E5A306 /* ServiceModuleRouterMakeDestinationTests.swift */; };
+		F87E85AB2094728700E5A306 /* AViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F87E85AA2094728700E5A306 /* AViewController.swift */; };
+		F87E85AD209472A400E5A306 /* BSubview.swift in Sources */ = {isa = PBXBuildFile; fileRef = F87E85AC209472A400E5A306 /* BSubview.swift */; };
+		F87E85B2209474CF00E5A306 /* ViewModuleRouterPerformTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F87E85AE209474CE00E5A306 /* ViewModuleRouterPerformTests.swift */; };
+		F87E85B3209474CF00E5A306 /* ViewModuleRouterMakeDestinationTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F87E85AF209474CF00E5A306 /* ViewModuleRouterMakeDestinationTests.swift */; };
+		F87E85B4209474CF00E5A306 /* ViewRouterMakeDestinationTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F87E85B0209474CF00E5A306 /* ViewRouterMakeDestinationTests.swift */; };
+		F87E85B5209474CF00E5A306 /* ViewRouterPerformTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F87E85B1209474CF00E5A306 /* ViewRouterPerformTests.swift */; };
+		F87E85B7209477C800E5A306 /* ViewRouterPrepareDestinationTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F87E85B6209477C800E5A306 /* ViewRouterPrepareDestinationTests.swift */; };
+		F87E85BD20947B5300E5A306 /* SubViewModuleRouterPerformTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F87E85B820947B5200E5A306 /* SubViewModuleRouterPerformTests.swift */; };
+		F87E85BE20947B5300E5A306 /* SubViewModuleRouterMakeDestinationTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F87E85B920947B5300E5A306 /* SubViewModuleRouterMakeDestinationTests.swift */; };
+		F87E85BF20947B5300E5A306 /* SubViewRouterMakeDestinationTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F87E85BA20947B5300E5A306 /* SubViewRouterMakeDestinationTests.swift */; };
+		F87E85C020947B5300E5A306 /* SubViewRouterPerformTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F87E85BB20947B5300E5A306 /* SubViewRouterPerformTests.swift */; };
+		F87E85C120947B5300E5A306 /* SubViewRouterPrepareDestinationTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F87E85BC20947B5300E5A306 /* SubViewRouterPrepareDestinationTests.swift */; };
+		F8A5ED072093A7C000773853 /* ServiceRouterPerformTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F8A5ED062093A7C000773853 /* ServiceRouterPerformTests.swift */; };
+		F8A5ED092093A7C000773853 /* ZRouter.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F872F4E11FAF5BB200297A1D /* ZRouter.framework */; };
+		F8A5ED152093A80E00773853 /* AService.swift in Sources */ = {isa = PBXBuildFile; fileRef = F8A5ED142093A80E00773853 /* AService.swift */; };
+		F8A5ED172093B05100773853 /* TestRouteRegistry.swift in Sources */ = {isa = PBXBuildFile; fileRef = F8A5ED162093B05100773853 /* TestRouteRegistry.swift */; };
+		F8A5ED1920940D7A00773853 /* TestConfig.swift in Sources */ = {isa = PBXBuildFile; fileRef = F8A5ED1820940D7A00773853 /* TestConfig.swift */; };
 		F8C0D1161FB034B5003D3B3B /* Router.swift in Sources */ = {isa = PBXBuildFile; fileRef = F8C0D1151FB034B5003D3B3B /* Router.swift */; };
 		F8C0D11E1FB04E06003D3B3B /* Routable.swift in Sources */ = {isa = PBXBuildFile; fileRef = F8C0D11D1FB04E06003D3B3B /* Routable.swift */; };
 		F8EF733C1FB4C4550040008C /* Switchable.swift in Sources */ = {isa = PBXBuildFile; fileRef = F8EF733B1FB4C4550040008C /* Switchable.swift */; };
@@ -34,6 +54,20 @@
 			proxyType = 2;
 			remoteGlobalIDString = F85F4D271F2240D2003106C3;
 			remoteInfo = libZIKRouter;
+		};
+		F8A5ED0A2093A7C000773853 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = F872F4D81FAF5BB200297A1D /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = F872F4E01FAF5BB200297A1D;
+			remoteInfo = ZRouter;
+		};
+		F8A5ED112093A7C000773853 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = F872F4FC1FAF5C6E00297A1D /* ZIKRouter.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = F81A33A6208726B5001D176A;
+			remoteInfo = ZIKRouterTests;
 		};
 		F8C0D10A1FAF89E2003D3B3B /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
@@ -56,6 +90,27 @@
 		F872F4F11FAF5BD500297A1D /* Registry.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Registry.swift; sourceTree = "<group>"; };
 		F872F4F31FAF5BD500297A1D /* Namespace.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Namespace.swift; sourceTree = "<group>"; };
 		F872F4FC1FAF5C6E00297A1D /* ZIKRouter.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; path = ZIKRouter.xcodeproj; sourceTree = "<group>"; };
+		F87E85A420945FBE00E5A306 /* ServiceModuleRouterPerformTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ServiceModuleRouterPerformTests.swift; sourceTree = "<group>"; };
+		F87E85A6209460D700E5A306 /* ServiceRouterMakeDestinationTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ServiceRouterMakeDestinationTests.swift; sourceTree = "<group>"; };
+		F87E85A8209470ED00E5A306 /* ServiceModuleRouterMakeDestinationTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ServiceModuleRouterMakeDestinationTests.swift; sourceTree = "<group>"; };
+		F87E85AA2094728700E5A306 /* AViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AViewController.swift; sourceTree = "<group>"; };
+		F87E85AC209472A400E5A306 /* BSubview.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BSubview.swift; sourceTree = "<group>"; };
+		F87E85AE209474CE00E5A306 /* ViewModuleRouterPerformTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ViewModuleRouterPerformTests.swift; sourceTree = "<group>"; };
+		F87E85AF209474CF00E5A306 /* ViewModuleRouterMakeDestinationTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ViewModuleRouterMakeDestinationTests.swift; sourceTree = "<group>"; };
+		F87E85B0209474CF00E5A306 /* ViewRouterMakeDestinationTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ViewRouterMakeDestinationTests.swift; sourceTree = "<group>"; };
+		F87E85B1209474CF00E5A306 /* ViewRouterPerformTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ViewRouterPerformTests.swift; sourceTree = "<group>"; };
+		F87E85B6209477C800E5A306 /* ViewRouterPrepareDestinationTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewRouterPrepareDestinationTests.swift; sourceTree = "<group>"; };
+		F87E85B820947B5200E5A306 /* SubViewModuleRouterPerformTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SubViewModuleRouterPerformTests.swift; sourceTree = "<group>"; };
+		F87E85B920947B5300E5A306 /* SubViewModuleRouterMakeDestinationTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SubViewModuleRouterMakeDestinationTests.swift; sourceTree = "<group>"; };
+		F87E85BA20947B5300E5A306 /* SubViewRouterMakeDestinationTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SubViewRouterMakeDestinationTests.swift; sourceTree = "<group>"; };
+		F87E85BB20947B5300E5A306 /* SubViewRouterPerformTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SubViewRouterPerformTests.swift; sourceTree = "<group>"; };
+		F87E85BC20947B5300E5A306 /* SubViewRouterPrepareDestinationTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SubViewRouterPrepareDestinationTests.swift; sourceTree = "<group>"; };
+		F8A5ED042093A7C000773853 /* ZRouterTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = ZRouterTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		F8A5ED062093A7C000773853 /* ServiceRouterPerformTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ServiceRouterPerformTests.swift; sourceTree = "<group>"; };
+		F8A5ED082093A7C000773853 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		F8A5ED142093A80E00773853 /* AService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AService.swift; sourceTree = "<group>"; };
+		F8A5ED162093B05100773853 /* TestRouteRegistry.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TestRouteRegistry.swift; sourceTree = "<group>"; };
+		F8A5ED1820940D7A00773853 /* TestConfig.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TestConfig.swift; sourceTree = "<group>"; };
 		F8C0D1151FB034B5003D3B3B /* Router.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Router.swift; sourceTree = "<group>"; };
 		F8C0D11D1FB04E06003D3B3B /* Routable.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Routable.swift; sourceTree = "<group>"; };
 		F8EF733B1FB4C4550040008C /* Switchable.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Switchable.swift; sourceTree = "<group>"; };
@@ -69,6 +124,14 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		F8A5ED012093A7C000773853 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				F8A5ED092093A7C000773853 /* ZRouter.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
@@ -77,6 +140,7 @@
 			children = (
 				F872F4FC1FAF5C6E00297A1D /* ZIKRouter.xcodeproj */,
 				F872F4E31FAF5BB200297A1D /* ZRouter */,
+				F8A5ED052093A7C000773853 /* ZRouterTests */,
 				F872F4E21FAF5BB200297A1D /* Products */,
 			);
 			sourceTree = "<group>";
@@ -85,6 +149,7 @@
 			isa = PBXGroup;
 			children = (
 				F872F4E11FAF5BB200297A1D /* ZRouter.framework */,
+				F8A5ED042093A7C000773853 /* ZRouterTests.xctest */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -113,8 +178,36 @@
 			children = (
 				F872F5031FAF5C6E00297A1D /* ZIKRouter.framework */,
 				F872F5051FAF5C6E00297A1D /* libZIKRouter.a */,
+				F8A5ED122093A7C000773853 /* ZIKRouterTests.xctest */,
 			);
 			name = Products;
+			sourceTree = "<group>";
+		};
+		F8A5ED052093A7C000773853 /* ZRouterTests */ = {
+			isa = PBXGroup;
+			children = (
+				F8A5ED162093B05100773853 /* TestRouteRegistry.swift */,
+				F8A5ED1820940D7A00773853 /* TestConfig.swift */,
+				F8A5ED142093A80E00773853 /* AService.swift */,
+				F87E85AA2094728700E5A306 /* AViewController.swift */,
+				F87E85AC209472A400E5A306 /* BSubview.swift */,
+				F8A5ED062093A7C000773853 /* ServiceRouterPerformTests.swift */,
+				F87E85A420945FBE00E5A306 /* ServiceModuleRouterPerformTests.swift */,
+				F87E85A6209460D700E5A306 /* ServiceRouterMakeDestinationTests.swift */,
+				F87E85A8209470ED00E5A306 /* ServiceModuleRouterMakeDestinationTests.swift */,
+				F87E85B1209474CF00E5A306 /* ViewRouterPerformTests.swift */,
+				F87E85AE209474CE00E5A306 /* ViewModuleRouterPerformTests.swift */,
+				F87E85B0209474CF00E5A306 /* ViewRouterMakeDestinationTests.swift */,
+				F87E85AF209474CF00E5A306 /* ViewModuleRouterMakeDestinationTests.swift */,
+				F87E85B6209477C800E5A306 /* ViewRouterPrepareDestinationTests.swift */,
+				F87E85BB20947B5300E5A306 /* SubViewRouterPerformTests.swift */,
+				F87E85BA20947B5300E5A306 /* SubViewRouterMakeDestinationTests.swift */,
+				F87E85B820947B5200E5A306 /* SubViewModuleRouterPerformTests.swift */,
+				F87E85B920947B5300E5A306 /* SubViewModuleRouterMakeDestinationTests.swift */,
+				F87E85BC20947B5300E5A306 /* SubViewRouterPrepareDestinationTests.swift */,
+				F8A5ED082093A7C000773853 /* Info.plist */,
+			);
+			path = ZRouterTests;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -150,18 +243,41 @@
 			productReference = F872F4E11FAF5BB200297A1D /* ZRouter.framework */;
 			productType = "com.apple.product-type.framework";
 		};
+		F8A5ED032093A7C000773853 /* ZRouterTests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = F8A5ED132093A7C000773853 /* Build configuration list for PBXNativeTarget "ZRouterTests" */;
+			buildPhases = (
+				F8A5ED002093A7C000773853 /* Sources */,
+				F8A5ED012093A7C000773853 /* Frameworks */,
+				F8A5ED022093A7C000773853 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				F8A5ED0B2093A7C000773853 /* PBXTargetDependency */,
+			);
+			name = ZRouterTests;
+			productName = ZRouterTests;
+			productReference = F8A5ED042093A7C000773853 /* ZRouterTests.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
+		};
 /* End PBXNativeTarget section */
 
 /* Begin PBXProject section */
 		F872F4D81FAF5BB200297A1D /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
+				LastSwiftUpdateCheck = 0930;
 				LastUpgradeCheck = 0910;
 				ORGANIZATIONNAME = zuik;
 				TargetAttributes = {
 					F872F4E01FAF5BB200297A1D = {
 						CreatedOnToolsVersion = 9.1;
 						LastSwiftMigration = 0910;
+						ProvisioningStyle = Automatic;
+					};
+					F8A5ED032093A7C000773853 = {
+						CreatedOnToolsVersion = 9.3;
 						ProvisioningStyle = Automatic;
 					};
 				};
@@ -185,6 +301,7 @@
 			projectRoot = "";
 			targets = (
 				F872F4E01FAF5BB200297A1D /* ZRouter */,
+				F8A5ED032093A7C000773853 /* ZRouterTests */,
 			);
 		};
 /* End PBXProject section */
@@ -204,10 +321,24 @@
 			remoteRef = F872F5041FAF5C6E00297A1D /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
+		F8A5ED122093A7C000773853 /* ZIKRouterTests.xctest */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.cfbundle;
+			path = ZIKRouterTests.xctest;
+			remoteRef = F8A5ED112093A7C000773853 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
 /* End PBXReferenceProxy section */
 
 /* Begin PBXResourcesBuildPhase section */
 		F872F4DF1FAF5BB200297A1D /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		F8A5ED022093A7C000773853 /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -234,9 +365,40 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		F8A5ED002093A7C000773853 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				F87E85AD209472A400E5A306 /* BSubview.swift in Sources */,
+				F87E85AB2094728700E5A306 /* AViewController.swift in Sources */,
+				F87E85A9209470ED00E5A306 /* ServiceModuleRouterMakeDestinationTests.swift in Sources */,
+				F87E85B5209474CF00E5A306 /* ViewRouterPerformTests.swift in Sources */,
+				F87E85B7209477C800E5A306 /* ViewRouterPrepareDestinationTests.swift in Sources */,
+				F8A5ED172093B05100773853 /* TestRouteRegistry.swift in Sources */,
+				F87E85A520945FBE00E5A306 /* ServiceModuleRouterPerformTests.swift in Sources */,
+				F87E85BE20947B5300E5A306 /* SubViewModuleRouterMakeDestinationTests.swift in Sources */,
+				F8A5ED1920940D7A00773853 /* TestConfig.swift in Sources */,
+				F8A5ED072093A7C000773853 /* ServiceRouterPerformTests.swift in Sources */,
+				F87E85B3209474CF00E5A306 /* ViewModuleRouterMakeDestinationTests.swift in Sources */,
+				F87E85B2209474CF00E5A306 /* ViewModuleRouterPerformTests.swift in Sources */,
+				F87E85C120947B5300E5A306 /* SubViewRouterPrepareDestinationTests.swift in Sources */,
+				F87E85C020947B5300E5A306 /* SubViewRouterPerformTests.swift in Sources */,
+				F8A5ED152093A80E00773853 /* AService.swift in Sources */,
+				F87E85B4209474CF00E5A306 /* ViewRouterMakeDestinationTests.swift in Sources */,
+				F87E85BD20947B5300E5A306 /* SubViewModuleRouterPerformTests.swift in Sources */,
+				F87E85A7209460D700E5A306 /* ServiceRouterMakeDestinationTests.swift in Sources */,
+				F87E85BF20947B5300E5A306 /* SubViewRouterMakeDestinationTests.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
+		F8A5ED0B2093A7C000773853 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = F872F4E01FAF5BB200297A1D /* ZRouter */;
+			targetProxy = F8A5ED0A2093A7C000773853 /* PBXContainerItemProxy */;
+		};
 		F8C0D10B1FAF89E2003D3B3B /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			name = ZIKRouter;
@@ -411,6 +573,42 @@
 			};
 			name = Release;
 		};
+		F8A5ED0C2093A7C000773853 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_TEAM = 8FE9268LAG;
+				INFOPLIST_FILE = ZRouterTests/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 11.3;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
+				PRODUCT_BUNDLE_IDENTIFIER = com.zuik.ZRouterTests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_VERSION = 4.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		F8A5ED0D2093A7C000773853 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_TEAM = 8FE9268LAG;
+				INFOPLIST_FILE = ZRouterTests/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 11.3;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
+				PRODUCT_BUNDLE_IDENTIFIER = com.zuik.ZRouterTests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_VERSION = 4.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Release;
+		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
@@ -428,6 +626,15 @@
 			buildConfigurations = (
 				F872F4EA1FAF5BB200297A1D /* Debug */,
 				F872F4EB1FAF5BB200297A1D /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		F8A5ED132093A7C000773853 /* Build configuration list for PBXNativeTarget "ZRouterTests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				F8A5ED0C2093A7C000773853 /* Debug */,
+				F8A5ED0D2093A7C000773853 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;

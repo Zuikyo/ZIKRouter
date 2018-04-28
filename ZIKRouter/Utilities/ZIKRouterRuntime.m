@@ -289,10 +289,9 @@ static bool(*swift_conformsToProtocols())(void *, void *, void *, void *) {
     static void *_conformsToProtocols = NULL;
     static dispatch_once_t onceToken;
     dispatch_once(&onceToken, ^{
-        NSString *libswiftCorePath = [[[NSBundle mainBundle] bundlePath] stringByAppendingPathComponent:@"Frameworks/libswiftCore.dylib"];
         NSLog(@"\nZIKRouter:: _swift_typeConformsToProtocol():\nStart searching function pointer for\n`bool _conformsToProtocols(const OpaqueValue *value, const Metadata *type, const ExistentialTypeMetadata *existentialType, const WitnessTable **conformances)` in libswiftCore.dylib to validate swift type.\n");
         
-        ZIKImageRef libswiftCoreImage = [ZIKImageSymbol imageByName:libswiftCorePath.UTF8String];
+        ZIKImageRef libswiftCoreImage = [ZIKImageSymbol imageByName:"libswiftCore.dylib"];
         _conformsToProtocols = [ZIKImageSymbol findSymbolInImage:libswiftCoreImage matching:^BOOL(const char * _Nonnull symbolName) {
             if(strstr(symbolName, "_conformsToProtocols") &&
                strstr(symbolName, "OpaqueValue") &&

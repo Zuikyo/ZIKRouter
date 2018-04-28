@@ -305,7 +305,7 @@ static NSMutableArray<Class> *_routerClasses;
             NSAssert([obj isKindOfClass:[ZIKViewRoute class]], @"The object is either a ZIKViewRouter class or a ZIKViewRoute");
             ZIKViewRoute *route = obj;
             if (ZIKRouter_classIsSubclassOfClass(key, [UIView class])) {
-                NSAssert1([route supportRouteType:ZIKViewRouteTypeAddAsSubview] || [route supportRouteType:ZIKViewRouteTypeCustom], @"If the destination is UIView type, the router (%@) must support ZIKViewRouteTypeAddAsSubview or ZIKViewRouteTypeCustom.", route);
+                NSAssert1([route supportRouteType:ZIKViewRouteTypeAddAsSubview] || [route supportRouteType:ZIKViewRouteTypeCustom], @"If the destination is UIView type, the router (%@) must set supportedRouteTypes and support ZIKViewRouteTypeAddAsSubview or ZIKViewRouteTypeCustom.", route);
             }
             if ([route supportRouteType:ZIKViewRouteTypeCustom]) {
                 NSAssert1(route.canPerformCustomRouteBlock != nil, @"The route (%@) supports ZIKViewRouteTypeCustom, but missing  -canPerformCustomRoute.", route);
@@ -359,7 +359,7 @@ static NSMutableArray<Class> *_routerClasses;
 + (void)registerDestination:(Class)destinationClass router:(Class)routerClass {
     NSParameterAssert([routerClass isSubclassOfClass:[ZIKViewRouter class]]);
     if (ZIKRouter_classIsSubclassOfClass(destinationClass, [UIView class])) {
-        NSAssert([routerClass supportRouteType:ZIKViewRouteTypeAddAsSubview] || [routerClass supportRouteType:ZIKViewRouteTypeCustom], @"If the destination is UIView type, the router must support ZIKViewRouteTypeAddAsSubview or ZIKViewRouteTypeCustom.");
+        NSAssert1([routerClass supportRouteType:ZIKViewRouteTypeAddAsSubview] || [routerClass supportRouteType:ZIKViewRouteTypeCustom], @"If the destination is UIView type, the router (%@) must override +supportedRouteTypes and support ZIKViewRouteTypeAddAsSubview or ZIKViewRouteTypeCustom.", routerClass);
     }
     [super registerDestination:destinationClass router:routerClass];
 }

@@ -165,7 +165,7 @@ public extension Router {
         })
     }
     
-    /// Perform route with view protocol, route type and completion.
+    /// Perform route with view protocol and completion.
     ///
     /// - Parameters:
     ///   - routableView: A routable entry carrying a view protocol.
@@ -179,6 +179,24 @@ public extension Router {
         ) -> ViewRouter<Destination, ViewRouteConfig>? {
         let routerType = Registry.router(to: routableView)
         return routerType?.perform(path: path, completion: performerCompletion)
+    }
+    
+    /// Perform route with view protocol and success handler and error handler for current performing.
+    ///
+    /// - Parameters:
+    ///   - routableView: A routable entry carrying a view protocol.
+    ///   - path: The route path with source and route type.
+    ///   - performerSuccessHandler: Success handler for current performing.
+    ///   - performerErrorHandler: Error handler for current performing.
+    /// - Returns: The view router.
+    @discardableResult public static func perform<Destination>(
+        to routableView: RoutableView<Destination>,
+        path: ViewRoutePath,
+        successHandler performerSuccessHandler: ((Destination) -> Void)? = nil,
+        errorHandler performerErrorHandler: ((ZIKRouteAction, Error) -> Void)? = nil
+        ) -> ViewRouter<Destination, ViewRouteConfig>? {
+        let routerType = Registry.router(to: routableView)
+        return routerType?.perform(path: path, successHandler: performerSuccessHandler, errorHandler: performerErrorHandler)
     }
     
     /// Perform route with view config protocol and prepare the module with the protocol.
@@ -267,6 +285,22 @@ public extension Router {
         return routerType?.perform(completion: performerCompletion)
     }
     
+    /// Perform route with service protocol and success handler and error handler for current performing.
+    ///
+    /// - Parameters:
+    ///   - routableService: A routabe entry carrying a service protocol.
+    ///   - performerSuccessHandler: Success handler for current performing.
+    ///   - performerErrorHandler: Error handler for current performing.
+    /// - Returns: The service router.
+    @discardableResult public static func perform<Destination>(
+        to routableService: RoutableService<Destination>,
+        successHandler performerSuccessHandler: ((Destination) -> Void)? = nil,
+        errorHandler performerErrorHandler: ((ZIKRouteAction, Error) -> Void)? = nil
+        ) -> ServiceRouter<Destination, PerformRouteConfig>? {
+        let routerType = Registry.router(to: routableService)
+        return routerType?.perform(successHandler: performerSuccessHandler, errorHandler: performerErrorHandler)
+    }
+    
     /// Perform route with service module config protocol and prepare the module with the protocol.
     ///
     /// - Parameters:
@@ -317,6 +351,20 @@ public extension Router {
         ) -> Destination? {
         let routerClass = Registry.router(to: routableView)
         return routerClass?.makeDestination(preparation: prepare)
+    }
+    
+    /// Get view destination with view protocol.
+    ///
+    /// - Parameters:
+    ///   - routableView: A routabe entry carrying a view protocol.
+    ///   - configure: Prepare the destination and other parameters.
+    /// - Returns: The view destination.
+    public static func makeDestination<Destination>(
+        to routableView: RoutableView<Destination>,
+        configuring configure: (ViewRouteConfig, (@escaping (Destination) -> Void) -> Void, ((ViewRouteConfig) -> Void) -> Void) -> Void
+        ) -> Destination? {
+        let routerClass = Registry.router(to: routableView)
+        return routerClass?.makeDestination(configuring: configure)
     }
     
     /// Get view destination with view config protocol.
@@ -371,6 +419,20 @@ public extension Router {
         ) -> Destination? {
         let routerClass = Registry.router(to: routableService)
         return routerClass?.makeDestination(preparation: prepare)
+    }
+    
+    /// Get service destination with service config protocol.
+    ///
+    /// - Parameters:
+    ///   - routableService: A routabe entry carrying a service protocol.
+    ///   - configure: Prepare the destination and other parameters.
+    /// - Returns: The service destination.
+    public static func makeDestination<Destination>(
+        to routableService: RoutableService<Destination>,
+        configuring configure: (PerformRouteConfig, (@escaping (Destination) -> Void) -> Void, ((PerformRouteConfig) -> Void) -> Void) -> Void
+        ) -> Destination? {
+        let routerClass = Registry.router(to: routableService)
+        return routerClass?.makeDestination(configuring: configure)
     }
     
     /// Get service destination with service config protocol.
