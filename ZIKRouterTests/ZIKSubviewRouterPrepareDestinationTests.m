@@ -1,5 +1,5 @@
 //
-//  ZIKViewRouterPrepareUIViewDestinationTests.m
+//  ZIKSubviewRouterPrepareDestinationTests.m
 //  ZIKRouterTests
 //
 //  Created by zuik on 2018/4/19.
@@ -10,11 +10,11 @@
 #import "BSubviewInput.h"
 #import "BSubview.h"
 
-@interface ZIKViewRouterPrepareUIViewDestinationTests : ZIKRouterTestCase
+@interface ZIKSubviewRouterPrepareDestinationTests : ZIKRouterTestCase
 
 @end
 
-@implementation ZIKViewRouterPrepareUIViewDestinationTests
+@implementation ZIKSubviewRouterPrepareDestinationTests
 
 - (void)setUp {
     [super setUp];

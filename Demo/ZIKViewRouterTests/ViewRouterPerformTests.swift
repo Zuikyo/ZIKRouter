@@ -210,7 +210,7 @@ class ViewRouterPerformTests: ZIKViewRouterTestCase {
                     })
             })
         }
-        waitForExpectations(timeout: 500, handler: { if let error = $0 {print(error)}})
+        waitForExpectations(timeout: 5, handler: { if let error = $0 {print(error)}})
     }
     
     func testPerformRouteWithErrorCompletion() {
@@ -235,7 +235,7 @@ class ViewRouterPerformTests: ZIKViewRouterTestCase {
                     })
             })
         }
-        waitForExpectations(timeout: 500, handler: { if let error = $0 {print(error)}})
+        waitForExpectations(timeout: 5, handler: { if let error = $0 {print(error)}})
     }
     
     func testPerformWithSuccess() {
@@ -458,6 +458,22 @@ class ViewRouterPerformShowDetailTests: ViewRouterPerformTests {
     override func setUp() {
         super.setUp()
         self.routeType = .showDetail
+    }
+    
+    override class func allowLeaveTestViewFailing() ->Bool {
+        if UI_USER_INTERFACE_IDIOM() == .pad {
+            return true
+        }
+        return false
+    }
+    
+    override func testPerformWithPerformerSuccess() {
+        leaveTest()
+        waitForExpectations(timeout: 5, handler: { if let error = $0 {print(error)}})
+    }
+    override func testPerformRouteWithSuccessCompletion() {
+        leaveTest()
+        waitForExpectations(timeout: 5, handler: { if let error = $0 {print(error)}})
     }
 }
 

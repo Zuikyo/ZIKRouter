@@ -37,7 +37,7 @@
 		F810F64920890E350020382E /* AViewModuleRouter.m in Sources */ = {isa = PBXBuildFile; fileRef = F810F64820890E350020382E /* AViewModuleRouter.m */; };
 		F810F64C208911370020382E /* ZIKViewModuleRouterMakeDestinationTests.m in Sources */ = {isa = PBXBuildFile; fileRef = F810F64B208911370020382E /* ZIKViewModuleRouterMakeDestinationTests.m */; };
 		F810F64F208922F10020382E /* BSubviewModuleRouter.m in Sources */ = {isa = PBXBuildFile; fileRef = F810F64E208922F10020382E /* BSubviewModuleRouter.m */; };
-		F810F652208924F30020382E /* ZIKViewModuleRouterMakeUIViewDestinationTests.m in Sources */ = {isa = PBXBuildFile; fileRef = F810F651208924F30020382E /* ZIKViewModuleRouterMakeUIViewDestinationTests.m */; };
+		F810F652208924F30020382E /* ZIKSubviewModuleRouterMakeDestinationTests.m in Sources */ = {isa = PBXBuildFile; fileRef = F810F651208924F30020382E /* ZIKSubviewModuleRouterMakeDestinationTests.m */; };
 		F81A33A9208726B6001D176A /* ZIKServiceRouterPerformTests.m in Sources */ = {isa = PBXBuildFile; fileRef = F81A33A8208726B6001D176A /* ZIKServiceRouterPerformTests.m */; };
 		F81A33AB208726B6001D176A /* ZIKRouter.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F85F4CFF1F223EB0003106C3 /* ZIKRouter.framework */; };
 		F81A33B3208726DF001D176A /* AServiceRouter.m in Sources */ = {isa = PBXBuildFile; fileRef = F81A33B2208726DF001D176A /* AServiceRouter.m */; };
@@ -55,8 +55,8 @@
 		F83315461F6FE0FA00891004 /* ZIKViewRouteConfigurationPrivate.h in Headers */ = {isa = PBXBuildFile; fileRef = F83315441F6FE0FA00891004 /* ZIKViewRouteConfigurationPrivate.h */; };
 		F845A54F20885F3700AB00FA /* BSubviewRouter.m in Sources */ = {isa = PBXBuildFile; fileRef = F845A54A20885F3600AB00FA /* BSubviewRouter.m */; };
 		F845A55020885F3700AB00FA /* BSubview.m in Sources */ = {isa = PBXBuildFile; fileRef = F845A54E20885F3700AB00FA /* BSubview.m */; };
-		F845A5522088608E00AB00FA /* ZIKViewRouterMakeUIViewDestinationTests.m in Sources */ = {isa = PBXBuildFile; fileRef = F845A5512088608E00AB00FA /* ZIKViewRouterMakeUIViewDestinationTests.m */; };
-		F845A554208860FA00AB00FA /* ZIKViewRouterPrepareUIViewDestinationTests.m in Sources */ = {isa = PBXBuildFile; fileRef = F845A553208860FA00AB00FA /* ZIKViewRouterPrepareUIViewDestinationTests.m */; };
+		F845A5522088608E00AB00FA /* ZIKSubviewRouterMakeDestinationTests.m in Sources */ = {isa = PBXBuildFile; fileRef = F845A5512088608E00AB00FA /* ZIKSubviewRouterMakeDestinationTests.m */; };
+		F845A554208860FA00AB00FA /* ZIKSubviewRouterPrepareDestinationTests.m in Sources */ = {isa = PBXBuildFile; fileRef = F845A553208860FA00AB00FA /* ZIKSubviewRouterPrepareDestinationTests.m */; };
 		F845A55A208898A300AB00FA /* AServiceModuleRouter.m in Sources */ = {isa = PBXBuildFile; fileRef = F845A559208898A300AB00FA /* AServiceModuleRouter.m */; };
 		F845A55D20889C2C00AB00FA /* ZIKServiceModuleRouterPerformTests.m in Sources */ = {isa = PBXBuildFile; fileRef = F845A55C20889C2C00AB00FA /* ZIKServiceModuleRouterPerformTests.m */; };
 		F845A55F2088C0A700AB00FA /* ZIKServiceModuleRouterMakeDestinationTests.m in Sources */ = {isa = PBXBuildFile; fileRef = F845A55E2088C0A700AB00FA /* ZIKServiceModuleRouterMakeDestinationTests.m */; };
@@ -253,7 +253,7 @@
 		F810F64D208922F10020382E /* BSubviewModuleRouter.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = BSubviewModuleRouter.h; sourceTree = "<group>"; };
 		F810F64E208922F10020382E /* BSubviewModuleRouter.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = BSubviewModuleRouter.m; sourceTree = "<group>"; };
 		F810F650208923060020382E /* BSubviewModuleInput.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = BSubviewModuleInput.h; sourceTree = "<group>"; };
-		F810F651208924F30020382E /* ZIKViewModuleRouterMakeUIViewDestinationTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ZIKViewModuleRouterMakeUIViewDestinationTests.m; sourceTree = "<group>"; };
+		F810F651208924F30020382E /* ZIKSubviewModuleRouterMakeDestinationTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ZIKSubviewModuleRouterMakeDestinationTests.m; sourceTree = "<group>"; };
 		F81A33A6208726B5001D176A /* ZIKRouterTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = ZIKRouterTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		F81A33A8208726B6001D176A /* ZIKServiceRouterPerformTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ZIKServiceRouterPerformTests.m; sourceTree = "<group>"; };
 		F81A33AA208726B6001D176A /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
@@ -280,8 +280,8 @@
 		F845A54C20885F3700AB00FA /* BSubview.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BSubview.h; sourceTree = "<group>"; };
 		F845A54D20885F3700AB00FA /* BSubviewRouter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BSubviewRouter.h; sourceTree = "<group>"; };
 		F845A54E20885F3700AB00FA /* BSubview.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BSubview.m; sourceTree = "<group>"; };
-		F845A5512088608E00AB00FA /* ZIKViewRouterMakeUIViewDestinationTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ZIKViewRouterMakeUIViewDestinationTests.m; sourceTree = "<group>"; };
-		F845A553208860FA00AB00FA /* ZIKViewRouterPrepareUIViewDestinationTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ZIKViewRouterPrepareUIViewDestinationTests.m; sourceTree = "<group>"; };
+		F845A5512088608E00AB00FA /* ZIKSubviewRouterMakeDestinationTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ZIKSubviewRouterMakeDestinationTests.m; sourceTree = "<group>"; };
+		F845A553208860FA00AB00FA /* ZIKSubviewRouterPrepareDestinationTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ZIKSubviewRouterPrepareDestinationTests.m; sourceTree = "<group>"; };
 		F845A558208898A300AB00FA /* AServiceModuleRouter.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AServiceModuleRouter.h; sourceTree = "<group>"; };
 		F845A559208898A300AB00FA /* AServiceModuleRouter.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AServiceModuleRouter.m; sourceTree = "<group>"; };
 		F845A55B208898BB00AB00FA /* AServiceModuleInput.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AServiceModuleInput.h; sourceTree = "<group>"; };
@@ -414,10 +414,10 @@
 				F845A55E2088C0A700AB00FA /* ZIKServiceModuleRouterMakeDestinationTests.m */,
 				F8A2B71B2087D616001F9B57 /* ZIKViewRouterMakeDestinationTests.m */,
 				F810F64B208911370020382E /* ZIKViewModuleRouterMakeDestinationTests.m */,
-				F845A5512088608E00AB00FA /* ZIKViewRouterMakeUIViewDestinationTests.m */,
-				F810F651208924F30020382E /* ZIKViewModuleRouterMakeUIViewDestinationTests.m */,
 				F8A2B71D2087D9F9001F9B57 /* ZIKViewRouterPrepareDestinationTests.m */,
-				F845A553208860FA00AB00FA /* ZIKViewRouterPrepareUIViewDestinationTests.m */,
+				F845A5512088608E00AB00FA /* ZIKSubviewRouterMakeDestinationTests.m */,
+				F810F651208924F30020382E /* ZIKSubviewModuleRouterMakeDestinationTests.m */,
+				F845A553208860FA00AB00FA /* ZIKSubviewRouterPrepareDestinationTests.m */,
 				F81A33AA208726B6001D176A /* Info.plist */,
 			);
 			path = ZIKRouterTests;
@@ -946,7 +946,7 @@
 				F8A2B70D2087867E001F9B57 /* TestConfig.m in Sources */,
 				F8A2B7112087C111001F9B57 /* ZIKRouterTestCase.m in Sources */,
 				F81A33BA2087301E001D176A /* TestRouteRegistry.m in Sources */,
-				F845A554208860FA00AB00FA /* ZIKViewRouterPrepareUIViewDestinationTests.m in Sources */,
+				F845A554208860FA00AB00FA /* ZIKSubviewRouterPrepareDestinationTests.m in Sources */,
 				F8A2B7192087D537001F9B57 /* AViewRouter.m in Sources */,
 				F8A2B71A2087D537001F9B57 /* AViewController.m in Sources */,
 				F8A2B71E2087D9F9001F9B57 /* ZIKViewRouterPrepareDestinationTests.m in Sources */,
@@ -954,11 +954,11 @@
 				F810F64F208922F10020382E /* BSubviewModuleRouter.m in Sources */,
 				F845A55A208898A300AB00FA /* AServiceModuleRouter.m in Sources */,
 				F8A2B70F2087C02A001F9B57 /* ZIKServiceRouterMakeDestinationTests.m in Sources */,
-				F810F652208924F30020382E /* ZIKViewModuleRouterMakeUIViewDestinationTests.m in Sources */,
+				F810F652208924F30020382E /* ZIKSubviewModuleRouterMakeDestinationTests.m in Sources */,
 				F810F64C208911370020382E /* ZIKViewModuleRouterMakeDestinationTests.m in Sources */,
 				F81A33B3208726DF001D176A /* AServiceRouter.m in Sources */,
 				F8A2B71C2087D616001F9B57 /* ZIKViewRouterMakeDestinationTests.m in Sources */,
-				F845A5522088608E00AB00FA /* ZIKViewRouterMakeUIViewDestinationTests.m in Sources */,
+				F845A5522088608E00AB00FA /* ZIKSubviewRouterMakeDestinationTests.m in Sources */,
 				F845A54F20885F3700AB00FA /* BSubviewRouter.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

@@ -222,25 +222,61 @@ typedef void(^ZIKViewRouteSegueConfiger)(NS_NOESCAPE ZIKViewRouteSegueConfigure)
 @property (nonatomic, copy, readonly, nullable) NSString *segueIdentifier;
 @property (nonatomic, strong, readonly, nullable) id segueSender;
 
+/// Push the destination from the source view controller.
 @property (nonatomic, class, readonly) ZIKViewRoutePath *(^pushFrom)(UIViewController *source) NS_SWIFT_UNAVAILABLE("Use push(from:) instead");
+
+/// Present the destination modally from the source view controller.
 @property (nonatomic, class, readonly) ZIKViewRoutePath *(^presentModallyFrom)(UIViewController *source) NS_SWIFT_UNAVAILABLE("Use presentModally(from:) instead");
-@property (nonatomic, class, readonly) ZIKViewRoutePath *(^presentAsPopoverFrom)(UIViewController *source, ZIKViewRoutePopoverConfigure configurePopover) NS_SWIFT_UNAVAILABLE("Use presentAsPopover(from:) instead");
-@property (nonatomic, class, readonly) ZIKViewRoutePath *(^performSegueFrom)(UIViewController *source, NSString *identifier, id _Nullable sender) NS_SWIFT_UNAVAILABLE("Use performSegue(from:) instead");
+
+/// Present the destination as popover from the source view controller, and configure the popover.
+@property (nonatomic, class, readonly) ZIKViewRoutePath *(^presentAsPopoverFrom)(UIViewController *source, ZIKViewRoutePopoverConfigure configurePopover) NS_SWIFT_UNAVAILABLE("Use presentAsPopover(from:configure:) instead");
+
+/// Perform segue from the source view controller, with the segue identifier
+@property (nonatomic, class, readonly) ZIKViewRoutePath *(^performSegueFrom)(UIViewController *source, NSString *identifier, id _Nullable sender) NS_SWIFT_UNAVAILABLE("Use performSegue(from:identifier:sender:) instead");
+
+/// Show the destination from the source view controller.
 @property (nonatomic, class, readonly) ZIKViewRoutePath *(^showFrom)(UIViewController *source) NS_SWIFT_UNAVAILABLE("Use show(from:) instead");
+
+/// Show the destination as detail from the source view controller.
 @property (nonatomic, class, readonly) ZIKViewRoutePath *(^showDetailFrom)(UIViewController *source) NS_SWIFT_UNAVAILABLE("Use showDetail(from:) instead");
+
+/// Add the destination as child view controller to the parent source view controller.
 @property (nonatomic, class, readonly) ZIKViewRoutePath *(^addAsChildViewControllerFrom)(UIViewController *source) NS_SWIFT_UNAVAILABLE("Use addAsChildViewController(from:) instead");
+
+/// Add the destination as subview to the superview.
 @property (nonatomic, class, readonly) ZIKViewRoutePath *(^addAsSubviewFrom)(UIView *source) NS_SWIFT_UNAVAILABLE("Use addAsSubview(from:) instead");
+
+/// Perform custom transition type from the source.
 @property (nonatomic, class, readonly) ZIKViewRoutePath *(^customFrom)(id<ZIKViewRouteSource> _Nullable source) NS_SWIFT_UNAVAILABLE("Use custom(from:) instead");
+
+/// Just make destination.
 @property (nonatomic, class, readonly) ZIKViewRoutePath *makeDestination;
 
+/// Push the destination from the source view controller.
 + (instancetype)pushFrom:(UIViewController *)source NS_SWIFT_NAME(push(from:));
+
+/// Present the destination modally from the source view controller.
 + (instancetype)presentModallyFrom:(UIViewController *)source NS_SWIFT_NAME(presentModally(from:));
+
+/// Present the destination as popover from the source view controller, and configure the popover.
 + (instancetype)presentAsPopoverFrom:(UIViewController *)source configure:(ZIKViewRoutePopoverConfigure)configure NS_SWIFT_NAME(presentAsPopover(from:configure:));
+
+/// Perform segue from the source view controller, with the segue identifier
 + (instancetype)performSegueFrom:(UIViewController *)source identifier:(NSString *)identifier sender:(nullable id)sender NS_SWIFT_NAME(performSegue(from:identifier:sender:));
+
+/// Show the destination from the source view controller.
 + (instancetype)showFrom:(UIViewController *)source NS_SWIFT_NAME(show(from:));
+
+/// Show the destination as detail from the source view controller.
 + (instancetype)showDetailFrom:(UIViewController *)source NS_SWIFT_NAME(showDetail(from:));
+
+/// Add the destination as child view controller to the parent source view controller.
 + (instancetype)addAsChildViewControllerFrom:(UIViewController *)source NS_SWIFT_NAME(addAsChildViewController(from:));
+
+/// Add the destination as subview to the superview.
 + (instancetype)addAsSubviewFrom:(UIView *)source NS_SWIFT_NAME(addAsSubview(from:));
+
+/// Perform custom transition type from the source.
 + (instancetype)customFrom:(nullable id<ZIKViewRouteSource>)source NS_SWIFT_NAME(custom(from:));
 
 ///It's preferred to use those type safe factory methods, rather than this unsafe initializer, because this initializer doesn't check source's type.

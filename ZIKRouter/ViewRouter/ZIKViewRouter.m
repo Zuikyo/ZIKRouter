@@ -551,6 +551,13 @@ static NSMutableArray *g_preparingUIViewRouters;
                                  errorDescription:@"Warning: Attempt to present %@ on %@ whose view is not in the window hierarchy! %@ 's view not in any superview.",destination,source,source];
         return;
     }
+    if (source == destination) {
+        [self notifyRouteState:self.preState];
+        [self notifyError_invalidSourceWithAction:ZIKRouteActionPerformRoute
+                                 errorDescription:@"Application tried to present modally an active controller %@, destination: %@",source, destination];
+        return;
+    }
+    
     UIViewController *wrappedDestination = [self _wrappedDestination:destination];
     [self beginPerformRoute];
     [destination setZix_routeTypeFromRouter:@(ZIKViewRouteTypePresentModally)];
@@ -580,6 +587,12 @@ static NSMutableArray *g_preparingUIViewRouters;
         [self notifyRouteState:self.preState];
         [self notifyError_invalidSourceWithAction:ZIKRouteActionPerformRoute
                                  errorDescription:@"Warning: Attempt to present %@ on %@ whose view is not in the window hierarchy! %@ 's view not in any superview.",destination,source,source];
+        return;
+    }
+    if (source == destination) {
+        [self notifyRouteState:self.preState];
+        [self notifyError_invalidSourceWithAction:ZIKRouteActionPerformRoute
+                                 errorDescription:@"Application tried to present modally an active controller %@, destination: %@",source, destination];
         return;
     }
     
@@ -953,7 +966,7 @@ destinationStateBeforeRoute:(ZIKPresentationState *)destinationStateBeforeRoute
         ZIKPresentationState *destinationStateAfterRoute = [destination zix_presentationState];
         if ([destinationStateBeforeRoute isEqual:destinationStateAfterRoute]) {
             router.realRouteType = ZIKViewRouteRealTypeCustom;//maybe ZIKViewRouteRealTypeUnwind, but we just need to know this route can't be remove
-            NSLog(@"⚠️Warning: segue(%@) 's destination(%@)'s state was not changed after perform route from source: %@. current state: %@. You may override %@'s -showViewController:sender:/-showDetailViewController:sender:/-presentViewController:animated:completion:/-pushViewController:animated: or use a custom segue, but didn't perform real presentation, or your presentation was async.",self,destination,source,destinationStateAfterRoute,source);
+            NSLog(@"⚠️Warning: destination(%@)'s state was not changed after perform route from source: (%@). current state: (%@).\nYou may begin another transition without animation when the source is still in a transition without animation, or you may override source's -showViewController:sender:/-showDetailViewController:sender:/-presentViewController:animated:completion:/-pushViewController:animated: or use a custom segue, but didn't perform real presentation, or your presentation was async.",destination,source,destinationStateAfterRoute);
         } else {
             ZIKViewRouteDetailType routeType = [ZIKPresentationState detailRouteTypeFromStateBeforeRoute:destinationStateBeforeRoute stateAfterRoute:destinationStateAfterRoute];
             router.realRouteType = [[router class] _realRouteTypeFromDetailType:routeType];
@@ -968,6 +981,7 @@ destinationStateBeforeRoute:(ZIKPresentationState *)destinationStateBeforeRoute
     NSParameterAssert(completion);
     //If user use a custom transition from source to destination, such as methods in UIView(UIViewAnimationWithBlocks) or UIView (UIViewKeyframeAnimations), the transitionCoordinator will be nil, route will complete before animation complete
     if (!transitionCoordinator) {
+        //If the source view controlelr is still in transition, begin another transition in completion may fail. So complete in next runloop (or next viewDidAppear: / viewDidDisappear:).
         dispatch_async(dispatch_get_main_queue(), ^{
             completion();
         });
@@ -2681,8 +2695,13 @@ static  ZIKViewRouterType *_Nullable _routerTypeToRegisteredView(Class viewClass
 }
 
 + (BOOL)_validateSourceInWindowHierarchy:(UIViewController *)source {
+    if (source.parentViewController) {
+        if ([self _validateSourceInWindowHierarchy:source.parentViewController]) {
+            return YES;
+        }
+    }
     if (!source.isViewLoaded) {
-        return YES;
+        return NO;
     }
     if (!source.view.superview) {
         return NO;
