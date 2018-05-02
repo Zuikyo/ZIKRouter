@@ -25,6 +25,7 @@ static CFMutableDictionaryRef _moduleConfigProtocolToRouterMap;
 static CFMutableDictionaryRef _destinationToRoutersMap;
 static CFMutableDictionaryRef _destinationToDefaultRouterMap;
 static CFMutableDictionaryRef _destinationToExclusiveRouterMap;
+static CFMutableDictionaryRef _identifierToRouterMap;
 #if ZIKROUTER_CHECK
 static CFMutableDictionaryRef _check_routerToDestinationsMap;
 static CFMutableDictionaryRef _check_routerToDestinationProtocolsMap;
@@ -39,6 +40,7 @@ static NSMutableArray<Class> *_routerClasses;
     _destinationToRoutersMap = CFDictionaryCreateMutable(kCFAllocatorDefault, 0, NULL, &kCFTypeDictionaryValueCallBacks);
     _destinationToDefaultRouterMap = CFDictionaryCreateMutable(kCFAllocatorDefault, 0, NULL, NULL);
     _destinationToExclusiveRouterMap = CFDictionaryCreateMutable(kCFAllocatorDefault, 0, NULL, NULL);
+    _identifierToRouterMap = CFDictionaryCreateMutable(kCFAllocatorDefault, 0, &kCFTypeDictionaryKeyCallBacks, NULL);
 #if ZIKROUTER_CHECK
     _check_routerToDestinationsMap = CFDictionaryCreateMutable(kCFAllocatorDefault, 0, NULL, &kCFTypeDictionaryValueCallBacks);
     _check_routerToDestinationProtocolsMap = CFDictionaryCreateMutable(kCFAllocatorDefault, 0, NULL, &kCFTypeDictionaryValueCallBacks);
@@ -129,6 +131,10 @@ static NSMutableArray<Class> *_routerClasses;
 + (CFMutableDictionaryRef)destinationToExclusiveRouterMap {
     return _destinationToExclusiveRouterMap;
 }
++ (CFMutableDictionaryRef)identifierToRouterMap {
+    return _identifierToRouterMap;
+}
+
 + (CFMutableDictionaryRef)_check_routerToDestinationsMap {
 #if ZIKROUTER_CHECK
     return _check_routerToDestinationsMap;
@@ -379,6 +385,11 @@ static NSMutableArray<Class> *_routerClasses;
     [super registerModuleProtocol:configProtocol router:routerClass];
 }
 
++ (void)registerIdentifier:(NSString *)identifier router:(Class)routerClass {
+    NSParameterAssert([routerClass isSubclassOfClass:[ZIKViewRouter class]]);
+    [super registerIdentifier:identifier router:routerClass];
+}
+
 + (void)registerDestination:(Class)destinationClass route:(ZIKViewRoute *)route {
     NSParameterAssert([route isKindOfClass:[ZIKViewRoute class]]);
     [super registerDestination:destinationClass route:route];
@@ -397,6 +408,11 @@ static NSMutableArray<Class> *_routerClasses;
 + (void)registerModuleProtocol:(Protocol *)configProtocol route:(ZIKRoute *)route {
     NSParameterAssert([route isKindOfClass:[ZIKViewRoute class]]);
     [super registerModuleProtocol:configProtocol route:route];
+}
+
++ (void)registerIdentifier:(NSString *)identifier route:(ZIKRoute *)route {
+    NSParameterAssert([route isKindOfClass:[ZIKViewRoute class]]);
+    [super registerIdentifier:identifier route:route];
 }
 
 #endif

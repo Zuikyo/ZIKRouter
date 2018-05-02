@@ -25,6 +25,7 @@ static CFMutableDictionaryRef _moduleConfigProtocolToRouterMap;
 static CFMutableDictionaryRef _destinationToRoutersMap;
 static CFMutableDictionaryRef _destinationToDefaultRouterMap;
 static CFMutableDictionaryRef _destinationToExclusiveRouterMap;
+static CFMutableDictionaryRef _identifierToRouterMap;
 #if ZIKROUTER_CHECK
 static CFMutableDictionaryRef _check_routerToDestinationsMap;
 static CFMutableDictionaryRef _check_routerToDestinationProtocolsMap;
@@ -91,6 +92,13 @@ static NSMutableArray<Class> *_routerClasses;
         _destinationToExclusiveRouterMap = CFDictionaryCreateMutable(kCFAllocatorDefault, 0, NULL, NULL);
     });
     return _destinationToExclusiveRouterMap;
+}
++ (CFMutableDictionaryRef)identifierToRouterMap {
+    static dispatch_once_t onceToken;
+    dispatch_once(&onceToken, ^{
+        _identifierToRouterMap = CFDictionaryCreateMutable(kCFAllocatorDefault, 0, &kCFTypeDictionaryKeyCallBacks, NULL);
+    });
+    return _identifierToRouterMap;
 }
 + (CFMutableDictionaryRef)_check_routerToDestinationsMap {
 #if ZIKROUTER_CHECK
@@ -291,6 +299,11 @@ static NSMutableArray<Class> *_routerClasses;
     [super registerDestinationProtocol:destinationProtocol router:routerClass];
 }
 
++ (void)registerIdentifier:(NSString *)identifier router:(Class)routerClass {
+    NSParameterAssert([routerClass isSubclassOfClass:[ZIKServiceRouter class]]);
+    [super registerIdentifier:identifier router:routerClass];
+}
+
 + (void)registerModuleProtocol:(Protocol *)configProtocol router:(Class)routerClass {
     NSParameterAssert([routerClass isSubclassOfClass:[ZIKServiceRouter class]]);
     [super registerModuleProtocol:configProtocol router:routerClass];
@@ -314,6 +327,11 @@ static NSMutableArray<Class> *_routerClasses;
 + (void)registerModuleProtocol:(Protocol *)configProtocol route:(ZIKRoute *)route {
     NSParameterAssert([route isKindOfClass:[ZIKServiceRoute class]]);
     [super registerModuleProtocol:configProtocol route:route];
+}
+
++ (void)registerIdentifier:(NSString *)identifier route:(ZIKRoute *)route {
+    NSParameterAssert([route isKindOfClass:[ZIKServiceRoute class]]);
+    [super registerIdentifier:identifier route:route];
 }
 
 #endif

@@ -30,6 +30,7 @@
 #import "TestAutoCreateViewRouter.h"
 #import "TestPushViewRouter.h"
 #import "TestCustomViewRouter.h"
+#import "TestURLRouterViewRouter.h"
 #import "ZIKInfoViewRouter.h"
 #import <ZIKCompatibleAlert/ZIKCompatibleAlertViewRouter.h>
 #import "ZIKTimeServiceRouter.h"
@@ -88,6 +89,7 @@
     [TestAutoCreateViewRouter registerRoutableDestination];
     [TestPushViewRouter registerRoutableDestination];
     [TestCustomViewRouter registerRoutableDestination];
+    [TestURLRouterViewRouter registerRoutableDestination];
     [ZIKInfoViewRouter registerRoutableDestination];
     [ZIKCompatibleAlertViewRouter registerRoutableDestination];
     [ZIKTimeServiceRouter registerRoutableDestination];

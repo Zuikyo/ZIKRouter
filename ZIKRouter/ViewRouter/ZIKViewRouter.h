@@ -339,6 +339,8 @@ typedef void(^ZIKViewRouteGlobalErrorHandler)(__kindof ZIKViewRouter * _Nullable
  */
 + (void)registerModuleProtocol:(Protocol<ZIKViewModuleRoutable> *)configProtocol;
 
++ (void)registerIdentifier:(NSString *)identifier;
+
 ///Is registration all finished. Can't register any router after registration is finished.
 + (BOOL)isRegistrationFinished;
 @end

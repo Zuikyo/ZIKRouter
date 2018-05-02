@@ -18,6 +18,7 @@
 
 + (void)registerRoutableDestination {
     [self registerView:[TestPerformSegueViewController class]];
+    [self registerIdentifier:@"com.zuik.viewController.testPerformSegue"];
 }
 
 - (id<ZIKRoutableView>)destinationWithConfiguration:(ZIKViewRouteConfiguration *)configuration {

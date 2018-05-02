@@ -57,6 +57,26 @@ ZIKAnyViewRouterType *_Nullable _ZIKViewRouterToModule(Protocol *configProtocol)
     return nil;
 }
 
+ZIKAnyViewRouterType *_Nullable _ZIKViewRouterToIdentifier(NSString *identifier) {
+    if (!identifier) {
+        [ZIKViewRouter notifyError_invalidProtocolWithAction:ZIKRouteActionToView errorDescription:@"ZIKViewRouter.toIdentifier() identifier is nil"];
+        return nil;
+    }
+    
+    ZIKRouterType *route = [ZIKViewRouteRegistry routerToIdentifier:identifier];
+    if ([route isKindOfClass:[ZIKViewRouterType class]]) {
+        return (ZIKViewRouterType *)route;
+    }
+    [ZIKViewRouter notifyError_invalidProtocolWithAction:ZIKRouteActionToView
+                                        errorDescription:@"Didn't find view router for identifier: %@, this identifier was not registered.",identifier];
+    if (ZIKRouteRegistry.registrationFinished) {
+        NSCAssert1(NO, @"Didn't find view router for identifier: %@, this identifier was not registered.",identifier);
+    } else {
+        NSCAssert1(NO, @"❌❌❌❌warning: failed to get router for view identifier (%@), because manually registration is not finished yet! If there're modules running before registration is finished, and modules require some routers before you register them, then you should register those required routers earlier.",identifier);
+    }
+    return nil;
+}
+
 @implementation ZIKViewRouter (Discover)
 
 + (ZIKDestinationViewRouterType<id<ZIKViewRoutable>, ZIKViewRouteConfiguration *> *(^)(Protocol *))toView {
@@ -68,6 +88,12 @@ ZIKAnyViewRouterType *_Nullable _ZIKViewRouterToModule(Protocol *configProtocol)
 + (ZIKModuleViewRouterType<id, id<ZIKViewModuleRoutable>, ZIKViewRouteConfiguration *> *(^)(Protocol *))toModule {
     return ^(Protocol *configProtocol) {
         return (ZIKModuleViewRouterType *)_ZIKViewRouterToModule(configProtocol);
+    };
+}
+
++ (ZIKAnyViewRouterType *(^)(NSString *))toIdentifier {
+    return ^(NSString *identifier) {
+        return _ZIKViewRouterToIdentifier(identifier);
     };
 }
 

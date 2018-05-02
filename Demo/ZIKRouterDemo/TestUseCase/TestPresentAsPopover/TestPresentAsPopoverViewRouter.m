@@ -18,6 +18,7 @@
 
 + (void)registerRoutableDestination {
     [self registerView:[TestPresentAsPopoverViewController class]];
+    [self registerIdentifier:@"com.zuik.viewController.testPresentAsPopover"];
 }
 
 - (id<ZIKRoutableView>)destinationWithConfiguration:(ZIKViewRouteConfiguration *)configuration {

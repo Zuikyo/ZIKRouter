@@ -55,6 +55,26 @@ ZIKServiceRouterType *_Nullable _ZIKServiceRouterToModule(Protocol *configProtoc
     return nil;
 }
 
+ZIKAnyServiceRouterType *_Nullable _ZIKServiceRouterToIdentifier(NSString *identifier) {
+    if (!identifier) {
+        [ZIKServiceRouter notifyError_invalidProtocolWithAction:ZIKRouteActionToService errorDescription:@"ZIKServiceRouter.toIdentifier() identifier is nil"];
+        return nil;
+    }
+    
+    ZIKRouterType *route = [ZIKServiceRouteRegistry routerToIdentifier:identifier];
+    if ([route isKindOfClass:[ZIKServiceRouterType class]]) {
+        return (ZIKServiceRouterType *)route;
+    }
+    [ZIKServiceRouter notifyError_invalidProtocolWithAction:ZIKRouteActionToService
+                                           errorDescription:@"Didn't find service router for identifier: %@, this identifier was not registered.",identifier];
+    if (ZIKRouteRegistry.registrationFinished) {
+        NSCAssert1(NO, @"Didn't find service router for identifier: %@, this identifier was not registered.",identifier);
+    } else {
+        NSCAssert1(NO, @"❌❌❌❌warning: failed to get router for service identifier (%@), because manually registration is not finished yet! If there're modules running before registration is finished, and modules require some routers before you register them, then you should register those required routers earlier.",identifier);
+    }
+    return nil;
+}
+
 @implementation ZIKServiceRouter (Discover)
 
 + (ZIKDestinationServiceRouterType<id<ZIKServiceRoutable>, ZIKPerformRouteConfiguration *> *(^)(Protocol *))toService {
@@ -66,6 +86,12 @@ ZIKServiceRouterType *_Nullable _ZIKServiceRouterToModule(Protocol *configProtoc
 + (ZIKModuleServiceRouterType<id, id<ZIKServiceModuleRoutable>, ZIKPerformRouteConfiguration *> *(^)(Protocol *))toModule {
     return ^(Protocol *configProtocol) {
         return (ZIKModuleServiceRouterType *)_ZIKServiceRouterToModule(configProtocol);
+    };
+}
+
++ (ZIKAnyServiceRouterType *(^)(NSString *))toIdentifier {
+    return ^(NSString *identifier) {
+        return _ZIKServiceRouterToIdentifier(identifier);
     };
 }
 

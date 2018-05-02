@@ -38,6 +38,8 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic, class, readonly) CFMutableDictionaryRef destinationToDefaultRouterMap;
 ///key: destination class, value: the exclusive router class or ZIKRoute
 @property (nonatomic, class, readonly) CFMutableDictionaryRef destinationToExclusiveRouterMap;
+///key: identifier string, value: router class or ZIKRoute
+@property (nonatomic, class, readonly) CFMutableDictionaryRef identifierToRouterMap;
 
 #if ZIKROUTER_CHECK
 ///key: router class or ZIKRoute, value: destination class set
@@ -62,6 +64,7 @@ NS_ASSUME_NONNULL_BEGIN
 + (nullable ZIKRouterType *)routerToRegisteredDestinationClass:(Class)destinationClass;
 + (nullable ZIKRouterType *)routerToDestination:(Protocol *)destinationProtocol;
 + (nullable ZIKRouterType *)routerToModule:(Protocol *)configProtocol;
++ (nullable ZIKRouterType *)routerToIdentifier:(NSString *)identifier;
 
 + (void)enumerateRoutersForDestinationClass:(Class)destinationClass handler:(void(^)(ZIKRouterType * route))handler;
 
@@ -71,11 +74,13 @@ NS_ASSUME_NONNULL_BEGIN
 + (void)registerExclusiveDestination:(Class)destinationClass router:(Class)routerClass;
 + (void)registerDestinationProtocol:(Protocol *)destinationProtocol router:(Class)routerClass;
 + (void)registerModuleProtocol:(Protocol *)configProtocol router:(Class)routerClass;
++ (void)registerIdentifier:(NSString *)identifier router:(Class)routerClass;
 
 + (void)registerDestination:(Class)destinationClass route:(ZIKRoute *)route;
 + (void)registerExclusiveDestination:(Class)destinationClass route:(ZIKRoute *)route;
 + (void)registerDestinationProtocol:(Protocol *)destinationProtocol route:(ZIKRoute *)route;
 + (void)registerModuleProtocol:(Protocol *)configProtocol route:(ZIKRoute *)route;
++ (void)registerIdentifier:(NSString *)identifier route:(ZIKRoute *)route;
 
 #pragma mark Check
 

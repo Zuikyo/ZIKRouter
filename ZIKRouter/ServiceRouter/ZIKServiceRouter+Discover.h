@@ -54,6 +54,9 @@ NS_SWIFT_UNAVAILABLE("ZIKModuleServiceRouterType is a fake class")
  */
 @property (nonatomic,class,readonly) ZIKModuleServiceRouterType<Destination, id<ZIKServiceModuleRoutable>, RouteConfig> * _Nullable (^toModule)(Protocol *configProtocol) NS_SWIFT_UNAVAILABLE("Use `Router.to(RoutableServiceModule<ModuleProtocol>())` in ZRouter instead");
 
+///Find service router registered with the unique identifier.
+@property (nonatomic, class, readonly) ZIKAnyServiceRouterType * _Nullable (^toIdentifier)(NSString *identifier);
+
 @end
 
 @interface ZIKDestinationServiceRouterType<__covariant Destination: id<ZIKServiceRoutable>, __covariant RouteConfig: ZIKPerformRouteConfiguration *> (Extension)

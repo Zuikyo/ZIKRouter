@@ -138,28 +138,28 @@ static dispatch_semaphore_t g_globalErrorSema;
     NSParameterAssert(serviceClass);
     NSParameterAssert([serviceClass conformsToProtocol:@protocol(ZIKRoutableService)]);
     NSAssert(!ZIKServiceRouteRegistry.registrationFinished, @"Only register in +registerRoutableDestination.");
-    NSAssert([NSThread isMainThread], @"Call in main thread for thread safety.");
     [ZIKServiceRouteRegistry registerDestination:serviceClass router:self];
 }
 
 + (void)registerExclusiveService:(Class)serviceClass {
     NSParameterAssert([serviceClass conformsToProtocol:@protocol(ZIKRoutableService)]);
     NSAssert(!ZIKServiceRouteRegistry.registrationFinished, @"Only register in +registerRoutableDestination.");
-    NSAssert([NSThread isMainThread], @"Call in main thread for thread safety.");
     [ZIKServiceRouteRegistry registerExclusiveDestination:serviceClass router:self];
 }
 
 + (void)registerServiceProtocol:(Protocol *)serviceProtocol {
     NSAssert(!ZIKServiceRouteRegistry.registrationFinished, @"Only register in +registerRoutableDestination.");
-    NSAssert([NSThread isMainThread], @"Call in main thread for thread safety.");
     [ZIKServiceRouteRegistry registerDestinationProtocol:serviceProtocol router:self];
 }
 
 + (void)registerModuleProtocol:(Protocol *)configProtocol {
     NSAssert([[self defaultRouteConfiguration] conformsToProtocol:configProtocol], @"configProtocol should be conformed by this router's defaultRouteConfiguration.");
     NSAssert(!ZIKServiceRouteRegistry.registrationFinished, @"Only register in +registerRoutableDestination.");
-    NSAssert([NSThread isMainThread], @"Call in main thread for thread safety.");
     [ZIKServiceRouteRegistry registerModuleProtocol:configProtocol router:self];
+}
+
++ (void)registerIdentifier:(NSString *)identifier {
+    [ZIKServiceRouteRegistry registerIdentifier:identifier router:self];
 }
 
 @end

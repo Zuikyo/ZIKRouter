@@ -3328,6 +3328,10 @@ static  ZIKViewRouterType *_Nullable _routerTypeToRegisteredView(Class viewClass
     [ZIKViewRouteRegistry registerModuleProtocol:configProtocol router:self];
 }
 
++ (void)registerIdentifier:(NSString *)identifier {
+    [ZIKViewRouteRegistry registerIdentifier:identifier router:self];
+}
+
 @end
 
 @implementation ZIKViewRouter (Private)

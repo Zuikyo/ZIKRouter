@@ -138,6 +138,9 @@ NS_SWIFT_UNAVAILABLE("ZIKModuleViewRouterType is a fake class")
  */
 @property (nonatomic, class, readonly) ZIKModuleViewRouterType<id, id<ZIKViewModuleRoutable>, RouteConfig> * _Nullable (^toModule)(Protocol *configProtocol) NS_SWIFT_UNAVAILABLE("Use `Router.to(RoutableViewModule<ModuleProtocol>())` in ZRouter instead");
 
+///Find view router registered with the unique identifier.
+@property (nonatomic, class, readonly) ZIKAnyViewRouterType * _Nullable (^toIdentifier)(NSString *identifier);
+
 @end
 
 #pragma mark Router Type
