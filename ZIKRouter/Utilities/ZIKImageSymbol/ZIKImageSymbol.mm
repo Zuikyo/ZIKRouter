@@ -31,7 +31,9 @@
 +(void *)findSymbolInImage:(ZIKImageRef)image matching:(BOOL(^)(const char *symbolName))matchingBlock {
     NSParameterAssert(image);
     NSParameterAssert(matchingBlock);
-    void *symbol = ZIKFindSymbol(image, matchingBlock);
+    void *symbol = ZIKFindSymbol(image, ^bool(const char *symbolName) {
+        return matchingBlock(symbolName);
+    });
     return symbol;
 }
 

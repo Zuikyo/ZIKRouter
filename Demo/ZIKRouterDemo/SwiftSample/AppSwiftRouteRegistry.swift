@@ -8,6 +8,8 @@
 
 import Foundation
 import ZRouter
+import ZIKRouter
+
 
 ///Manually register swift routers
 @objc class AppSwiftRouteRegistry: NSObject {
@@ -15,15 +17,15 @@ import ZRouter
         SwiftSampleViewRouter.registerRoutableDestination()
         SwiftServiceRouter.registerRoutableDestination()
         
-//        _ = ZIKServiceRoute<SwiftService, PerformRouteConfig>
+//        let route = ZIKServiceRoute<SwiftService, PerformRouteConfig>
 //            .make(withDestination: SwiftService.self,
 //                  makeDestination: { (config, router) -> SwiftService? in
 //                    return SwiftService()
 //            })
-//            .register(RoutableService<SwiftServiceInput>())
-//            .register(RoutableServiceModule<SwiftServiceConfig>())
 //            .makeDefaultConfiguration({
 //                return SwiftServiceConfiguration()
 //            })
+//        route.register(RoutableService<SwiftServiceInput>())
+//        route.register(RoutableServiceModule<SwiftServiceConfig>())
     }
 }

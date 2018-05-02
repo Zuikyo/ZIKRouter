@@ -41,10 +41,6 @@
     return nil;
 }
 
-+ (BOOL)destinationPrepared:(id)destination {
-    return [super destinationPrepared:destination];
-}
-
 - (BOOL)destinationFromExternalPrepared:(id)destination {
     BOOL(^destinationFromExternalPreparedBlock)(id destination, ZIKViewRouter *router) = self.route.destinationFromExternalPreparedBlock;
     if (destinationFromExternalPreparedBlock) {

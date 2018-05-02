@@ -101,7 +101,6 @@ class ViewRouterPerformTests: XCTestCase {
         self.router = Router.perform(to: RoutableView<AViewInput>(), path: .makeDestination, completion: { (success, destination, action, error) in
             XCTAssertTrue(success)
             XCTAssertNotNil(destination)
-            XCTAssert(destination is AViewInput)
             expectation.fulfill()
             self.handle({
                 self.leaveTest()
@@ -157,7 +156,6 @@ class ViewRouterPerformTests: XCTestCase {
         self.router = Router.perform(to: RoutableView<AViewInput>(), path: .makeDestination, completion: { (success, destination, action, error) in
             XCTAssertTrue(success)
             XCTAssertNotNil(destination)
-            XCTAssert(destination is AViewInput)
             self.handle({
                 XCTAssert(self.router?.state == .routed)
                 self.router?.performRoute(completion: { (success, destination, action, error) in
@@ -179,7 +177,6 @@ class ViewRouterPerformTests: XCTestCase {
         self.router = Router.perform(to: RoutableView<AViewInput>(), path: .makeDestination, completion: { (success, destination, action, error) in
             XCTAssertTrue(success)
             XCTAssertNotNil(destination)
-            XCTAssert(destination is AViewInput)
             self.handle({
                 XCTAssert(self.router?.state == .routed)
                 TestConfig.routeShouldFail = true

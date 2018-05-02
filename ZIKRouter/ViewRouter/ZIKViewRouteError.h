@@ -14,7 +14,11 @@
 extern NSErrorDomain const ZIKViewRouteErrorDomain;
 
 ///Errors for callback in ZIKRouteErrorHandler and ZIKViewRouteGlobalErrorHandler
+#ifdef NS_ERROR_ENUM
 typedef NS_ERROR_ENUM(ZIKViewRouteErrorDomain, ZIKViewRouteError) {
+#else
+typedef NS_ENUM(NSInteger, ZIKViewRouteError) {
+#endif
     ///Bad implementation in code. When adding a UIView or UIViewController conforms to ZIKRoutableView in xib or storyboard, and it need preparing, you have to implement -prepareDestinationFromExternal:configuration: in the view controller which added it.
     ZIKViewRouteErrorInvalidPerformer     = 10,
     ///This router doesn't support the route type you assigned.

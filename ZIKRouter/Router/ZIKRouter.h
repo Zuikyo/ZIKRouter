@@ -201,7 +201,11 @@ NS_ASSUME_NONNULL_BEGIN
 extern NSErrorDomain const ZIKRouteErrorDomain;
 
 ///Error code for ZIKRouter.
+#ifdef NS_ERROR_ENUM
 typedef NS_ERROR_ENUM(ZIKRouteErrorDomain, ZIKRouteError) {
+#else
+typedef NS_ENUM(NSInteger, ZIKRouteError) {
+#endif
     ///The protocol to fetch the router is not registered. Fix this error in the development phase.
     ZIKRouteErrorInvalidProtocol        = 0,
     ///Configuration missed some required values, or some values were conflict, or the external destination to prepare/perform is invalid. Fix this error in the development phase.

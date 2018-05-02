@@ -361,7 +361,7 @@ strictConfiguring:(void (^)(ZIKViewRouteConfiguration * _Nonnull,
 }
 
 - (Class)routerClassForSupportedRouteTypes:(ZIKBlockViewRouteTypeMask)supportedTypes {
-    switch (supportedTypes) {
+    switch ((NSInteger)supportedTypes) {
         case ZIKBlockViewRouteTypeMaskUIViewControllerDefault:
             return [ZIKBlockViewRouter class];
             break;

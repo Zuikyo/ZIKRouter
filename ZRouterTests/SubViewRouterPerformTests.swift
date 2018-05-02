@@ -101,7 +101,6 @@ class SubviewRouterPerformTests: XCTestCase {
         self.router = Router.perform(to: RoutableView<BSubviewInput>(), path: .makeDestination, completion: { (success, destination, action, error) in
             XCTAssertTrue(success)
             XCTAssertNotNil(destination)
-            XCTAssert(destination is BSubviewInput)
             expectation.fulfill()
             self.handle({
                 self.leaveTest()
