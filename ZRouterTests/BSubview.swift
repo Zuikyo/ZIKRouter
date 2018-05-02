@@ -83,6 +83,7 @@ class BSubviewRouter: ZIKViewRouter<BSubview, BSubviewModuleConfiguration> {
     override func didFinishPrepareDestination(_ destination: BSubview, configuration: BSubviewModuleConfiguration) {
         if let completion = configuration.completion {
             completion(destination)
+            configuration.completion = nil
         }
     }
     

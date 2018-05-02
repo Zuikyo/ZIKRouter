@@ -8,6 +8,8 @@
 
 #import "ZIKRoute.h"
 
+NS_ASSUME_NONNULL_BEGIN
+
 @interface ZIKRoute<__covariant Destination, __covariant RouteConfig: ZIKPerformRouteConfiguration *, __covariant RemoveConfig: ZIKRemoveRouteConfiguration *> ()
 @property (nonatomic, copy, readonly) _Nullable Destination(^makeDestinationBlock)(RouteConfig config, ZIKRouter *router);
 @property (nonatomic, copy, readonly, nullable) RouteConfig(^makeDefaultConfigurationBlock)(void);
@@ -19,3 +21,5 @@
 + (Class)registryClass;
 
 @end
+
+NS_ASSUME_NONNULL_END

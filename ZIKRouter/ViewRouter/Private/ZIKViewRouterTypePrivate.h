@@ -8,6 +8,8 @@
 
 #import "ZIKViewRouterType.h"
 
+NS_ASSUME_NONNULL_BEGIN
+
 @class ZIKRoute;
 @interface ZIKViewRouterType<__covariant Destination: id, __covariant RouteConfig: ZIKViewRouteConfiguration *> ()
 
@@ -24,3 +26,5 @@
 - (void)router:(nullable ZIKViewRouter *)router didRemoveRouteOnDestination:(id)destination fromSource:(nullable id)source;
 
 @end
+
+NS_ASSUME_NONNULL_END

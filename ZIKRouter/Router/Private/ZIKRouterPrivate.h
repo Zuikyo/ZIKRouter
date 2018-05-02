@@ -8,6 +8,8 @@
 
 #import "ZIKRouter.h"
 
+NS_ASSUME_NONNULL_BEGIN
+
 @interface ZIKRouter () {
     @protected ZIKRemoveRouteConfiguration *_removeConfiguration;
 }
@@ -30,3 +32,5 @@
 - (void)notifyError_infiniteRecursionWithAction:(ZIKRouteAction)action errorDescription:(NSString *)format ,...;
 
 @end
+
+NS_ASSUME_NONNULL_END

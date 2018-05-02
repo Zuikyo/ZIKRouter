@@ -82,6 +82,7 @@ class AServiceRouter: ZIKServiceRouter<AnyObject, AServiceModuleConfiguration> {
     override func didFinishPrepareDestination(_ destination: AnyObject, configuration: AServiceModuleConfiguration) {
         if let completion = configuration.completion, let destination = destination as? AServiceInput {
             completion(destination)
+            configuration.completion = nil
         }
     }
     

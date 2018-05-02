@@ -8,8 +8,12 @@
 
 #import "ZIKViewRouteRegistry.h"
 
+NS_ASSUME_NONNULL_BEGIN
+
 @interface ZIKViewRouteRegistry ()
 
 + (BOOL)isDestinationClass:(Class)destinationClass registeredWithRouter:(Class)routerClass;
 
 @end
+
+NS_ASSUME_NONNULL_END

@@ -503,6 +503,22 @@ class ViewModuleRouterPerformShowDetailTests: ViewModuleRouterPerformTests {
         super.setUp()
         self.routeType = .showDetail
     }
+    
+    override class func allowLeaveTestViewFailing() ->Bool {
+        if UI_USER_INTERFACE_IDIOM() == .pad {
+            return true
+        }
+        return false
+    }
+    
+    override func testPerformWithPerformerSuccess() {
+        leaveTest()
+        waitForExpectations(timeout: 5, handler: { if let error = $0 {print(error)}})
+    }
+    override func testPerformRouteWithSuccessCompletion() {
+        leaveTest()
+        waitForExpectations(timeout: 5, handler: { if let error = $0 {print(error)}})
+    }
 }
 
 class ViewModuleRouterPerformShowDetailWithoutAnimationTests: ViewModuleRouterPerformWithoutAnimationTests {

@@ -80,6 +80,7 @@ class BSwiftSubviewRouter: ZIKViewRouter<BSwiftSubview, BSwiftSubviewModuleConfi
     override func didFinishPrepareDestination(_ destination: BSwiftSubview, configuration: BSwiftSubviewModuleConfiguration) {
         if let completion = configuration.makeDestinationCompletion {
             completion(destination)
+            configuration.makeDestinationCompletion = nil
         }
     }
     

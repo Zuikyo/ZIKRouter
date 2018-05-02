@@ -112,7 +112,7 @@ bool ZIKRouter_replaceMethodWithMethodType(Class originalClass, SEL originalSele
     return true;
 }
 
-IMP ZIKRouter_replaceMethodWithMethodAndGetOriginalImp(Class originalClass, SEL originalSelector, Class swizzledClass, SEL swizzledSelector) {
+IMP _Nullable ZIKRouter_replaceMethodWithMethodAndGetOriginalImp(Class originalClass, SEL originalSelector, Class swizzledClass, SEL swizzledSelector) {
     NSCParameterAssert(originalClass);
     NSCParameterAssert(originalSelector);
     NSCParameterAssert(swizzledClass);

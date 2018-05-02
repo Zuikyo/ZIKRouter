@@ -9,6 +9,8 @@
 //  LICENSE file in the root directory of this source tree.
 //
 
+NS_ASSUME_NONNULL_BEGIN
+
 /**
  Check whether a swift type is the target type(is same type or subclass, or conforms to the target protocol), works like `is` operator in swift.
  @warning
@@ -22,3 +24,5 @@
  @return True if the sourceType is the targetType.
  */
 extern bool _swift_typeIsTargetType(id sourceType, id targetType);
+
+NS_ASSUME_NONNULL_END
