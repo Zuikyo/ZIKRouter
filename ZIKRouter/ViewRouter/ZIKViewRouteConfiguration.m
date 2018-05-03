@@ -26,6 +26,7 @@ ZIKRouteAction const ZIKRouteActionPerformOnDestination = @"ZIKRouteActionPerfor
 @property (nonatomic, strong, nullable) ZIKViewRoutePopoverConfigure configurePopover;
 @property (nonatomic, copy, nullable) NSString *segueIdentifier;
 @property (nonatomic, strong, nullable) id segueSender;
+@property (nonatomic, copy, nullable) void(^addingChildViewHandler)(UIViewController *destination, void(^completion)(void));
 
 @end
 

@@ -52,7 +52,7 @@ typedef NS_ENUM(NSInteger,ZIKViewRouteType) {
      Without a container, present modally.
      */
     ZIKViewRouteTypeShowDetail NS_ENUM_AVAILABLE_IOS(8_0) = 5,
-    ///Get destination viewController and do @code[source addChildViewController:destination]@endcode; You need to get destination in successHandler, and add it's view to your view hierarchy, and call [destination didMoveToParentViewController:source]; source must be a UIViewController.
+    ///Get destination viewController and do @code[source addChildViewController:destination]@endcode; You need to add destination's view to soruce's view in addingChildViewHandler; source must be a UIViewController.
     ZIKViewRouteTypeAddAsChildViewController,
     ///Get your custom UIView and do @code[source addSubview:destination]@endcode; source must be a UIView.
     ZIKViewRouteTypeAddAsSubview,
@@ -132,7 +132,7 @@ typedef void(^ZIKViewRouteSegueConfiger)(NS_NOESCAPE ZIKViewRouteSegueConfigure)
  
  For ZIKViewRouteTypeShowDetail, if source is in a collapsed UISplitViewController, and master is a UINavigationController, container can't be a UINavigationController or UISplitViewController
  
- For ZIKViewRouteTypeAddAsChildViewController, will add container as source's child, so you have to add container's view to source's view in successHandler, not the destination's view
+ For ZIKViewRouteTypeAddAsChildViewController, will add container as source's child, so you have to add container's view to source's view in addingChildViewHandler, not the destination's view
  */
 @property (nonatomic, copy, nullable) ZIKViewRouteContainerWrapper containerWrapper;
 
@@ -223,7 +223,7 @@ typedef void(^ZIKViewRouteSegueConfiger)(NS_NOESCAPE ZIKViewRouteSegueConfigure)
 @property (nonatomic, strong, readonly, nullable) ZIKViewRoutePopoverConfigure configurePopover;
 @property (nonatomic, copy, readonly, nullable) NSString *segueIdentifier;
 @property (nonatomic, strong, readonly, nullable) id segueSender;
-@property (nonatomic, copy, nullable) void(^addingChildViewHandler)(UIViewController *destination, void(^completion)(void));
+@property (nonatomic, copy, readonly, nullable) void(^addingChildViewHandler)(UIViewController *destination, void(^completion)(void));
 
 /// Push the destination from the source view controller.
 @property (nonatomic, class, readonly) ZIKViewRoutePath *(^pushFrom)(UIViewController *source) NS_SWIFT_UNAVAILABLE("Use push(from:) instead");

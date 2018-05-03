@@ -65,13 +65,9 @@ class ViewModuleRouterPerformAddAsChildTests: ZIKViewRouterTestCase {
     }
     
     func path(from source: UIViewController) ->ViewRoutePath {
-        var routeSource: ZIKViewRouteSource? = source
-        if self.routeType == .addAsSubview {
-            routeSource = source.view
-        }
-        let path = ViewRoutePath(path: ZIKViewRoutePath(routeType: routeType, source: routeSource))
-        XCTAssertNotNil(path)
-        return path!
+        return ViewRoutePath.addAsChildViewController(from: source, addingChildViewHandler: { (destination, completion) in
+            self.addChild(to: source.view, childView: destination.view, completion: completion)
+        })
     }
     
     func configure(routeConfiguration config: ViewRouteConfig, source: ZIKViewRouteSource?) {
@@ -107,13 +103,9 @@ class ViewModuleRouterPerformAddAsChildTests: ZIKViewRouterTestCase {
                         expectation.fulfill()
                     })
                     config.successHandler = { destination in
-                        let dest = destination as! UIViewController
-                        self.addChild(to: source.view, childView: dest.view, completion: {
-                            dest.didMove(toParentViewController: source)
-                            self.handle({
-                                XCTAssert(self.router?.state == .routed)
-                                self.leaveTest()
-                            })
+                        self.handle({
+                            XCTAssert(self.router?.state == .routed)
+                            self.leaveTest()
                         })
                     }
             })
@@ -139,13 +131,9 @@ class ViewModuleRouterPerformAddAsChildTests: ZIKViewRouterTestCase {
                         XCTAssertTrue(success)
                         XCTAssertNil(error)
                         expectation.fulfill()
-                        let dest = destination as! UIViewController
-                        self.addChild(to: source.view, childView: dest.view, completion: {
-                            dest.didMove(toParentViewController: source)
-                            self.handle({
-                                XCTAssert(self.router?.state == .routed)
-                                self.leaveTest()
-                            })
+                        self.handle({
+                            XCTAssert(self.router?.state == .routed)
+                            self.leaveTest()
                         })
                     }
             })
@@ -191,13 +179,9 @@ class ViewModuleRouterPerformAddAsChildTests: ZIKViewRouterTestCase {
                     XCTAssertTrue(success)
                     XCTAssertNil(error)
                     expectation.fulfill()
-                    let dest = destination as! UIViewController
-                    self.addChild(to: source.view, childView: dest.view, completion: {
-                        dest.didMove(toParentViewController: source)
-                        self.handle({
-                            XCTAssert(self.router?.state == .routed)
-                            self.leaveTest()
-                        })
+                    self.handle({
+                        XCTAssert(self.router?.state == .routed)
+                        self.leaveTest()
                     })
             })
         }
@@ -233,24 +217,16 @@ class ViewModuleRouterPerformAddAsChildTests: ZIKViewRouterTestCase {
                 completion: { (success, destination, action, error) in
                     XCTAssertTrue(success)
                     XCTAssertNil(error)
-                    let dest = destination as! UIViewController
-                    self.addChild(to: source.view, childView: dest.view, completion: {
-                        dest.didMove(toParentViewController: source)
-                        self.handle({
-                            XCTAssert(self.router?.state == .routed)
-                            self.testRouter?.removeRoute(successHandler: {
-                                XCTAssert(self.router?.state == .removed)
-                                self.testRouter?.performRoute(completion: { (success, destination, action, error) in
-                                    XCTAssert(self.router?.state == .routed)
-                                    XCTAssertTrue(success)
-                                    XCTAssertNil(error)
-                                    expectation.fulfill()
-                                    let dest = destination as! UIViewController
-                                    self.addChild(to: source.view, childView: dest.view, completion: {
-                                        dest.didMove(toParentViewController: source)
-                                        self.leaveTest()
-                                    })
-                                })
+                    self.handle({
+                        XCTAssert(self.router?.state == .routed)
+                        self.testRouter?.removeRoute(successHandler: {
+                            XCTAssert(self.router?.state == .removed)
+                            self.testRouter?.performRoute(completion: { (success, destination, action, error) in
+                                XCTAssert(self.router?.state == .routed)
+                                XCTAssertTrue(success)
+                                XCTAssertNil(error)
+                                expectation.fulfill()
+                                self.leaveTest()
                             })
                         })
                     })
@@ -269,18 +245,15 @@ class ViewModuleRouterPerformAddAsChildTests: ZIKViewRouterTestCase {
                 completion: { (success, destination, action, error) in
                     XCTAssertTrue(success)
                     XCTAssertNil(error)
-                    let dest = destination as! UIViewController
-                    self.addChild(to: source.view, childView: dest.view, completion: {
-                        self.handle({
+                    self.handle({
+                        XCTAssert(self.router?.state == .routed)
+                        XCTAssertTrue(self.router!.shouldRemoveBeforePerform())
+                        self.testRouter?.performRoute(completion: { (success, destination, action, error) in
                             XCTAssert(self.router?.state == .routed)
-                            XCTAssertTrue(self.router!.shouldRemoveBeforePerform())
-                            self.testRouter?.performRoute(completion: { (success, destination, action, error) in
-                                XCTAssert(self.router?.state == .routed)
-                                XCTAssertFalse(success)
-                                XCTAssertNotNil(error)
-                                expectation.fulfill()
-                                self.leaveTest()
-                            })
+                            XCTAssertFalse(success)
+                            XCTAssertNotNil(error)
+                            expectation.fulfill()
+                            self.leaveTest()
                         })
                     })
             })
@@ -304,13 +277,9 @@ class ViewModuleRouterPerformAddAsChildTests: ZIKViewRouterTestCase {
                     })
                     config.successHandler = { d in
                         expectation.fulfill()
-                        let dest = d as! UIViewController
-                        self.addChild(to: source.view, childView: dest.view, completion: {
-                            dest.didMove(toParentViewController: source)
-                            self.handle({
-                                XCTAssert(self.router?.state == .routed)
-                                self.leaveTest()
-                            })
+                        self.handle({
+                            XCTAssert(self.router?.state == .routed)
+                            self.leaveTest()
                         })
                     }
             })
@@ -340,20 +309,13 @@ class ViewModuleRouterPerformAddAsChildTests: ZIKViewRouterTestCase {
                     }
                     config.performerSuccessHandler = { d in
                         performerHandlerExpectation.fulfill()
-                        let dest = d as! UIViewController
-                        self.addChild(to: source.view, childView: dest.view, completion: {
-                            dest.didMove(toParentViewController: source)
-                            self.handle({
-                                XCTAssert(self.router?.state == .routed)
-                                self.testRouter?.removeRoute(successHandler: {
-                                    XCTAssert(self.router?.state == .removed)
-                                    self.testRouter?.performRoute(successHandler: { (d) in
-                                        let dest = d as! UIViewController
-                                        self.addChild(to: source.view, childView: dest.view, completion: {
-                                            XCTAssert(self.router?.state == .routed)
-                                            self.leaveTest()
-                                        })
-                                    })
+                        self.handle({
+                            XCTAssert(self.router?.state == .routed)
+                            self.testRouter?.removeRoute(successHandler: {
+                                XCTAssert(self.router?.state == .removed)
+                                self.testRouter?.performRoute(successHandler: { (d) in
+                                    XCTAssert(self.router?.state == .routed)
+                                    self.leaveTest()
                                 })
                             })
                         })
@@ -426,13 +388,9 @@ class ViewModuleRouterPerformAddAsChildTests: ZIKViewRouterTestCase {
                         }
                         config.completionHandler = { (success, destination, action, error) in
                             completionHandlerExpectation.fulfill()
-                            let dest = destination as! UIViewController
-                            self.addChild(to: source.view, childView: dest.view, completion: {
-                                dest.didMove(toParentViewController: source)
-                                self.handle({
-                                    XCTAssert(self.router?.state == .routed)
-                                    self.leaveTest()
-                                })
+                            self.handle({
+                                XCTAssert(self.router?.state == .routed)
+                                self.leaveTest()
                             })
                         }
                         config.errorHandler = { (action, error) in
