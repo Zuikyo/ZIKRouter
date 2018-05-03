@@ -815,6 +815,17 @@ static NSMutableArray *g_preparingUIViewRouters;
     [source addChildViewController:wrappedDestination];
     
     self.realRouteType = ZIKViewRouteRealTypeUnknown;
+    void(^addingChildViewHandler)(UIViewController *, void(^)(void)) = self.original_configuration.addingChildViewHandler;
+    if (addingChildViewHandler) {
+        addingChildViewHandler(wrappedDestination, ^{
+            [wrappedDestination didMoveToParentViewController:source];
+            self.realRouteType = ZIKViewRouteRealTypeAddAsChildViewController;
+            [self notifyRouteState:ZIKRouterStateRouted];
+            self.routingFromInternal = NO;
+            [self notifyPerformRouteSuccessWithDestination:destination];
+        });
+        return;
+    }
 //    [self endPerformRouteWithSuccess];
     [self notifyRouteState:ZIKRouterStateRouted];
     self.routingFromInternal = NO;
@@ -3329,6 +3340,7 @@ static  ZIKViewRouterType *_Nullable _routerTypeToRegisteredView(Class viewClass
 }
 
 + (void)registerIdentifier:(NSString *)identifier {
+    NSAssert(!ZIKViewRouteRegistry.registrationFinished, @"Only register in +registerRoutableDestination.");
     [ZIKViewRouteRegistry registerIdentifier:identifier router:self];
 }
 

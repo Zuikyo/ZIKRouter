@@ -53,6 +53,8 @@
 }
 
 - (BOOL)application:(UIApplication *)app openURL:(NSURL *)url options:(NSDictionary<UIApplicationOpenURLOptionsKey,id> *)options {
+    
+    //You can use other url router framework, here is only for demonstrating.
     NSString *identifier = url.host;
     if (identifier == nil) {
         return NO;

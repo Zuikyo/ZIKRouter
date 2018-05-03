@@ -501,8 +501,8 @@ public enum ViewRoutePath {
     case show(from: UIViewController)
     /// Show the destination as detail from the source view controller.
     case showDetail(from: UIViewController)
-    /// Add the destination as child view controller to the parent source view controller.
-    case addAsChildViewController(from: UIViewController)
+    /// Add the destination as child view controller to the parent source view controller. In addingChildViewHandler, add destination's view to source's view in addingChildViewHandler, and invoke the completion block when finished.
+    case addAsChildViewController(from: UIViewController, addingChildViewHandler: (UIViewController, @escaping () -> Void) -> Void)
     /// Add the destination as subview to the superview.
     case addAsSubview(from: UIView)
     /// Perform custom transition type from the source.
@@ -521,7 +521,7 @@ public enum ViewRoutePath {
              .performSegue(from: let s, _, _),
              .show(from: let s),
              .showDetail(from: let s),
-             .addAsChildViewController(from: let s):
+             .addAsChildViewController(from: let s, _):
             source = s
         case .addAsSubview(from: let s):
             source = s
@@ -568,6 +568,8 @@ public enum ViewRoutePath {
             return ZIKViewRoutePath.presentAsPopover(from: source, configure: configure)
         case .performSegue(from: let source, let identifier, let sender):
             return ZIKViewRoutePath.performSegue(from: source, identifier: identifier, sender: sender)
+        case .addAsChildViewController(from: let source, addingChildViewHandler: let handler):
+            return ZIKViewRoutePath.addAsChildViewController(from: source, addingChildViewHandler: handler)
         case .extensible(path: let path):
             return path
         default:
@@ -598,7 +600,11 @@ public enum ViewRoutePath {
         case (.showDetail, let source as UIViewController):
             self = .showDetail(from: source)
         case (.addAsChildViewController, let source as UIViewController):
-            self = .addAsChildViewController(from: source)
+            if let addingChildViewHandler = path.addingChildViewHandler {
+                self = .addAsChildViewController(from: source, addingChildViewHandler: addingChildViewHandler)
+            } else {
+                return nil
+            }
         case (.addAsSubview, let source as UIView):
             self = .addAsSubview(from: source)
         case (.custom, let source):

@@ -24,7 +24,7 @@ DeclareRoutableView(MasterViewController, MasterViewRouter)
     return destination;
 }
 
-+ (BOOL)destinationPrepared:(MasterViewController *)destination {
+- (BOOL)destinationFromExternalPrepared:(MasterViewController *)destination {
     if ([destination.tableView.backgroundColor isEqual:[UIColor lightGrayColor]]) {
         return YES;
     }

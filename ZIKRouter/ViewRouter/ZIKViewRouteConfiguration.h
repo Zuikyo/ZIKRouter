@@ -177,6 +177,8 @@ typedef void(^ZIKViewRouteSegueConfiger)(NS_NOESCAPE ZIKViewRouteSegueConfigure)
 ///config segue for ZIKViewRouteTypePerformSegue
 @property (nonatomic, readonly, copy) ZIKViewRouteSegueConfiger configureSegue;
 
+@property (nonatomic, copy, nullable) void(^addingChildViewHandler)(UIViewController *destination, void(^completion)(void));
+
 @property (nonatomic, readonly, strong, nullable) ZIKViewRoutePopoverConfiguration *popoverConfiguration;
 @property (nonatomic, readonly, strong, nullable) ZIKViewRouteSegueConfiguration *segueConfiguration;
 
@@ -221,6 +223,7 @@ typedef void(^ZIKViewRouteSegueConfiger)(NS_NOESCAPE ZIKViewRouteSegueConfigure)
 @property (nonatomic, strong, readonly, nullable) ZIKViewRoutePopoverConfigure configurePopover;
 @property (nonatomic, copy, readonly, nullable) NSString *segueIdentifier;
 @property (nonatomic, strong, readonly, nullable) id segueSender;
+@property (nonatomic, copy, nullable) void(^addingChildViewHandler)(UIViewController *destination, void(^completion)(void));
 
 /// Push the destination from the source view controller.
 @property (nonatomic, class, readonly) ZIKViewRoutePath *(^pushFrom)(UIViewController *source) NS_SWIFT_UNAVAILABLE("Use push(from:) instead");
@@ -240,8 +243,8 @@ typedef void(^ZIKViewRouteSegueConfiger)(NS_NOESCAPE ZIKViewRouteSegueConfigure)
 /// Show the destination as detail from the source view controller.
 @property (nonatomic, class, readonly) ZIKViewRoutePath *(^showDetailFrom)(UIViewController *source) NS_SWIFT_UNAVAILABLE("Use showDetail(from:) instead");
 
-/// Add the destination as child view controller to the parent source view controller.
-@property (nonatomic, class, readonly) ZIKViewRoutePath *(^addAsChildViewControllerFrom)(UIViewController *source) NS_SWIFT_UNAVAILABLE("Use addAsChildViewController(from:) instead");
+/// Add the destination as child view controller to the parent source view controller. Adding destination's view to source's view in addingChildViewHandler, and invoke the completion block when finished.
+@property (nonatomic, class, readonly) ZIKViewRoutePath *(^addAsChildViewControllerFrom)(UIViewController *source, void(^addingChildViewHandler)(UIViewController *destination, void(^completion)(void))) NS_SWIFT_UNAVAILABLE("Use addAsChildViewController(from:addingChildViewHandler) instead");
 
 /// Add the destination as subview to the superview.
 @property (nonatomic, class, readonly) ZIKViewRoutePath *(^addAsSubviewFrom)(UIView *source) NS_SWIFT_UNAVAILABLE("Use addAsSubview(from:) instead");
@@ -270,8 +273,8 @@ typedef void(^ZIKViewRouteSegueConfiger)(NS_NOESCAPE ZIKViewRouteSegueConfigure)
 /// Show the destination as detail from the source view controller.
 + (instancetype)showDetailFrom:(UIViewController *)source NS_SWIFT_NAME(showDetail(from:));
 
-/// Add the destination as child view controller to the parent source view controller.
-+ (instancetype)addAsChildViewControllerFrom:(UIViewController *)source NS_SWIFT_NAME(addAsChildViewController(from:));
+/// Add the destination as child view controller to the parent source view controller. Adding destination's view to source's view in addingChildViewHandler, and invoke the completion block when finished.
++ (instancetype)addAsChildViewControllerFrom:(UIViewController *)source addingChildViewHandler:(void(^)(UIViewController *destination, void(^completion)(void)))addingChildViewHandler NS_SWIFT_NAME(addAsChildViewController(from:addingChildViewHandler:));
 
 /// Add the destination as subview to the superview.
 + (instancetype)addAsSubviewFrom:(UIView *)source NS_SWIFT_NAME(addAsSubview(from:));
@@ -302,18 +305,19 @@ typedef void(^ZIKViewRouteSegueConfiger)(NS_NOESCAPE ZIKViewRouteSegueConfigure)
 
 @end
 
-@interface UIView () <ZIKViewRouteSource>
+@interface UIView (ZIKViewRouteSource) <ZIKViewRouteSource>
 @end
-@interface UIViewController () <ZIKViewRouteSource>
+@interface UIViewController (ZIKViewRouteSource) <ZIKViewRouteSource>
 @end
 
+///UINavigationController, or UITabBarController, or UISplitViewController.
 @protocol ZIKViewRouteContainer <NSObject>
 @end
-@interface UINavigationController () <ZIKViewRouteContainer>
+@interface UINavigationController (ZIKViewRouteContainer) <ZIKViewRouteContainer>
 @end
-@interface UITabBarController () <ZIKViewRouteContainer>
+@interface UITabBarController (ZIKViewRouteContainer) <ZIKViewRouteContainer>
 @end
-@interface UISplitViewController () <ZIKViewRouteContainer>
+@interface UISplitViewController (ZIKViewRouteContainer) <ZIKViewRouteContainer>
 @end
 
 NS_ASSUME_NONNULL_END

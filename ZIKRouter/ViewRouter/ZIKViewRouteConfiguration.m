@@ -67,9 +67,9 @@ ZIKRouteAction const ZIKRouteActionPerformOnDestination = @"ZIKRouteActionPerfor
     };
 }
 
-+ (ZIKViewRoutePath *(^)(UIViewController *))addAsChildViewControllerFrom {
-    return ^(UIViewController *source) {
-        return [self addAsChildViewControllerFrom:source];
++ (ZIKViewRoutePath *(^)(UIViewController *, void(^)(UIViewController *destination, void(^completion)(void))))addAsChildViewControllerFrom {
+    return ^(UIViewController *source, void(^addingChildViewHandler)(UIViewController *destination, void(^completion)(void))) {
+        return [self addAsChildViewControllerFrom:source addingChildViewHandler:addingChildViewHandler];
     };
 }
 
@@ -118,8 +118,10 @@ ZIKRouteAction const ZIKRouteActionPerformOnDestination = @"ZIKRouteActionPerfor
     return [[ZIKViewRoutePath alloc] initWithRouteType:ZIKViewRouteTypeShowDetail source:source];
 }
 
-+ (instancetype)addAsChildViewControllerFrom:(UIViewController *)source {
-    return [[ZIKViewRoutePath alloc] initWithRouteType:ZIKViewRouteTypeAddAsChildViewController source:source];
++ (instancetype)addAsChildViewControllerFrom:(UIViewController *)source addingChildViewHandler:(void(^)(UIViewController *destination, void(^completion)(void)))addingChildViewHandler {
+    ZIKViewRoutePath *path = [[ZIKViewRoutePath alloc] initWithRouteType:ZIKViewRouteTypeAddAsChildViewController source:source];
+    path.addingChildViewHandler = addingChildViewHandler;
+    return path;
 }
 
 + (instancetype)addAsSubviewFrom:(UIViewController *)source {
@@ -179,14 +181,25 @@ ZIKRouteAction const ZIKRouteActionPerformOnDestination = @"ZIKRouteActionPerfor
     self.routeType = path.routeType;
     switch (path.routeType) {
         case ZIKViewRouteTypePresentAsPopover:
-            self.configurePopover(path.configurePopover);
+            if (path.configurePopover) {
+                self.configurePopover(path.configurePopover);
+            }
             break;
         case ZIKViewRouteTypePerformSegue: {
             self.configureSegue(^(ZIKViewRouteSegueConfiguration * _Nonnull segueConfig) {
-                segueConfig.identifier = path.segueIdentifier;
-                segueConfig.sender = path.segueSender;
+                if (path.segueIdentifier) {
+                    segueConfig.identifier = path.segueIdentifier;
+                }
+                if (path.segueSender) {
+                    segueConfig.sender = path.segueSender;
+                }
             });
         }
+            break;
+        case ZIKViewRouteTypeAddAsChildViewController:
+            if (path.addingChildViewHandler) {
+                self.addingChildViewHandler = path.addingChildViewHandler;
+            }
             break;
         default:
             break;
@@ -266,6 +279,7 @@ ZIKRouteAction const ZIKRouteActionPerformOnDestination = @"ZIKRouteActionPerfor
     config.autoCreated = self.autoCreated;
     config.containerWrapper = self.containerWrapper;
     config.sender = self.sender;
+    config.addingChildViewHandler = self.addingChildViewHandler;
     config.popoverConfiguration = [self.popoverConfiguration copy];
     config.segueConfiguration = [self.segueConfiguration copy];
     config.handleExternalRoute = self.handleExternalRoute;
@@ -371,4 +385,15 @@ ZIKRouteAction const ZIKRouteActionPerformOnDestination = @"ZIKRouteActionPerfor
     return [NSString stringWithFormat:@"animated:%d,handleExternalRoute:%d",self.animated,self.handleExternalRoute];
 }
 
+@end
+
+@implementation UIView (ZIKViewRouteSource)
+@end
+@implementation UIViewController (ZIKViewRouteSource)
+@end
+@implementation UINavigationController (ZIKViewRouteContainer)
+@end
+@implementation UITabBarController (ZIKViewRouteContainer)
+@end
+@implementation UISplitViewController (ZIKViewRouteContainer)
 @end

@@ -159,6 +159,7 @@ static dispatch_semaphore_t g_globalErrorSema;
 }
 
 + (void)registerIdentifier:(NSString *)identifier {
+    NSAssert(!ZIKServiceRouteRegistry.registrationFinished, @"Only register in +registerRoutableDestination.");
     [ZIKServiceRouteRegistry registerIdentifier:identifier router:self];
 }
 

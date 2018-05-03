@@ -24,25 +24,25 @@
 - (IBAction)addAsChildViewController:(id)sender {
     __weak typeof(self) weakSelf = self;
     self.infoViewRouter = [ZIKRouterToView(ZIKInfoViewProtocol)
-                           performPath:ZIKViewRoutePath.addAsChildViewControllerFrom(self)
+                           performPath:ZIKViewRoutePath.addAsChildViewControllerFrom(self, ^(UIViewController * _Nonnull destination, void (^ _Nonnull completion)(void)) {
+                                //If use containerWrapper to wrap destination in a container, router will add container as source's child, so you have to add container's view to source's view, not the destination's view, and call container's didMoveToParentViewController:
+                                destination.view.frame = weakSelf.view.frame;
+                                destination.view.transform = CGAffineTransformMakeScale(0.1, 0.1);
+                                //ZIKViewRouter use UIViewController's transitionCoordinator to do completion, so this will let the router complete before animation real complete
+                                [UIView animateWithDuration:2 animations:^{
+                                    destination.view.backgroundColor = [UIColor redColor];
+                                    [weakSelf.view addSubview:destination.view];
+                                    destination.view.transform = CGAffineTransformIdentity;
+                                } completion:^(BOOL finished) {
+                                    [destination didMoveToParentViewController:weakSelf];
+                                    completion();
+                                }];
+                            })
                            configuring:^(ZIKViewRouteConfiguration * _Nonnull config) {
                                config.prepareDestination = ^(id<ZIKInfoViewProtocol>  _Nonnull destination) {
                                    destination.delegate = weakSelf;
                                    destination.name = @"Zuik";
                                    destination.age = 18;
-                               };
-                               config.successHandler = ^(UIViewController * _Nonnull destination) {
-                                    //If use containerWrapper to wrap destination in a container, router will add container as source's child, so you have to add container's view to source's view, not the destination's view, and call container's didMoveToParentViewController:
-                                   destination.view.frame = weakSelf.view.frame;
-                                   destination.view.transform = CGAffineTransformMakeScale(0.1, 0.1);
-                                   //ZIKViewRouter use UIViewController's transitionCoordinator to do completion, so this will let the router complete before animation real complete
-                                   [UIView animateWithDuration:2 animations:^{
-                                       destination.view.backgroundColor = [UIColor redColor];
-                                       [weakSelf.view addSubview:destination.view];
-                                       destination.view.transform = CGAffineTransformIdentity;
-                                   } completion:^(BOOL finished) {
-                                       [destination didMoveToParentViewController:weakSelf];
-                                   }];
                                };
                                config.errorHandler = ^(ZIKRouteAction routeAction, NSError * _Nonnull error) {
                                    NSLog(@"addChildViewController failed: %@",error);
