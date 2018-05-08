@@ -26,14 +26,10 @@ Swift中，用条件extension来声明可路由的protocol，从而利用编译�
     [self registerView:[EditorViewController class]];
     
     //如果protocol不是继承自ZIKViewRoutable，将会编译错误
-    [self registerViewProtocol:ZIKRoutableProtocol(NoteEditorInput)];
+    [self registerViewProtocol:ZIKRoutable(NoteEditorInput)];
 }
 
 @end
-```
-```
-//如果protocol不是继承自ZIKViewRoutable，将会编译错误
-ZIKViewRouter.classToView(ZIKRoutableProtocol(NoteEditorInput))
 ```
 
 使用宏定义 `ZIKRouterToView`、`ZIKRouterToViewModule`、`ZIKRouterToService`、`ZIKRouterToServiceModule` 来获取router类：
@@ -48,11 +44,10 @@ ZIKRouterToView(NoteEditorInput)
 ```objectivec
 //3处地方的参数有继承关系
 [ZIKRouterToView(NoteEditorInput) //1
-     performFromSource:self
+     performPath:ZIKViewRoutePath.pushFrom(self)
      routeConfiguring:^(ZIKViewRouteConfig *config,
                         void (^prepareDest)(void (^)(id<NoteEditorInput>)), //2
                         void (^prepareModule)(void (^)(ZIKViewRouteConfig *))) {
-         config.routeType = ZIKViewRouteTypePush;
          prepareDest(^(id<NoteEditorInput> dest){ //3
              dest.delegate = weakSelf;
              dest.name = @"zuik";
@@ -112,12 +107,6 @@ class SwiftSampleViewRouter: ZIKViewRouter<SwiftSampleViewController, SwiftSampl
         return destination
     }
     
-    override static func destinationPrepared(_ destination: SwiftSampleViewController) -> Bool {
-        if (destination.injectedAlertRouter != nil) {
-            return true
-        }
-        return false
-    }
     override func prepareDestination(_ destination: SwiftSampleViewController, configuration: ZIKViewRouteConfiguration) {
         destination.injectedAlertRouter = Router.to(RoutableViewModule<ZIKCompatibleAlertConfigProtocol>())
     }

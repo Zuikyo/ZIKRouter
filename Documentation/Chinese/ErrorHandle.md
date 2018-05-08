@@ -19,7 +19,7 @@ ZIKRouter对路由时会产生的错误进行了详细的识别和记录。
 可以用`setGlobalErrorHandler:`记录全局的错误记录：
 
 ```swift
-ZIKAnyViewRouter.setGlobalErrorHandler { (router, action, error) in
+ZIKAnyViewRouter.globalErrorHandler = { (router, action, error) in
     print("❌ZIKRouter Error: \(router)'s action \(action) catch error: \(error)!")
 }
 ```
@@ -41,12 +41,8 @@ ZIKAnyViewRouter.setGlobalErrorHandler { (router, action, error) in
 ```swift
 Router.perform(
             to: RoutableView<NoteEditorInput>(),
-            from: self,
+            path: .push(from: self),
             configuring: { (config, prepareDestiantion, _) in
-                config.routeType = .push
-                config.successHandler = {
-                    //跳转成功处理
-                }
                 config.errorHandler = { (action, error) in
                     //跳转失败处理
                 }
@@ -57,12 +53,8 @@ Router.perform(
 
 ```objectivec
 [ZIKRouterToView(NoteEditorInput)
-	          performFromSource:self
+	          performPath:ZIKViewRoutePath.pushFrom(self)
 	          configuring:^(ZIKViewRouteConfiguration *config) {
-	              config.routeType = ZIKViewRouteTypePresentModally;
-	              config.successHandler = ^{
-	                  //跳转成功处理
-	              };
 	              config.errorHandler = ^(ZIKRouteAction routeAction, NSError *error) {
 	                  //跳转失败处理
 	              };

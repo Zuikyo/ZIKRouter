@@ -85,7 +85,7 @@ class ASwiftViewRouter: ZIKViewRouter<ASwiftViewController, ASwiftViewModuleConf
     }
     
     override class func supportedRouteTypes() -> ZIKViewRouteTypeMask {
-        return ZIKViewRouteTypeMask(rawValue: ZIKViewRouteTypeMask.uiViewControllerDefault.rawValue | ZIKViewRouteTypeMask.custom.rawValue)
+        return [.uiViewControllerDefault, .custom]
     }
     
     override func canPerformCustomRoute() -> Bool {

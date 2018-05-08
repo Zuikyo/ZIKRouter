@@ -27,7 +27,7 @@ extension EditorViewController: ZIKRoutableView {
 }
 //Declare that NoteEditorInput is routable protocol
 extension RoutableView where Protocol == NoteEditorInput {
-    init() { }
+    init() { self.init(declaredProtocol: Protocol.self) }
 }
 
 class EditorViewRouter: ZIKViewRouter<EditorViewController, ZIKViewRouteConfiguration> {
@@ -52,7 +52,7 @@ class EditorViewRouter: ZIKViewRouter<EditorViewController, ZIKViewRouteConfigur
     }
     
     //Whether the destination from storyboard requires dependencies from external
-    override static func destinationPrepared(_ destination: EditorViewController) -> Bool {
+    override func destinationFromExternalPrepared(destination: EditorViewController) -> Bool {
         if (destination.delegate != nil) {
             return true
         }
@@ -125,7 +125,7 @@ Create a `ZIKViewRouter` subclass for `EditorViewController`:
     [self registerView:[EditorViewController class]];
     
     //Register NoteEditorInput, then you can use this protocol to get this router
-    [self registerViewProtocol:ZIKRoutableProtocol(NoteEditorInput)];
+    [self registerViewProtocol:ZIKRoutable(NoteEditorInput)];
 }
 
 //Return the destination module
@@ -136,7 +136,7 @@ Create a `ZIKViewRouter` subclass for `EditorViewController`:
 }
 
 //Whether the destination from storyboard requires dependencies from external
-+ (BOOL)destinationPrepared:(EditorViewController *)destination {
+- (BOOL)destinationFromExternalPrepared:(EditorViewController *)destination {
     if (destination.delegate != nil) {
         return YES;
     }

@@ -10,11 +10,7 @@ class TestViewController: UIViewController {
     
     func showEditor() {
         //保存执行路由后的router实例
-        editorRouter = Router.perform(
-            to: RoutableView<NoteEditorInput>(),
-            from: self,
-            routeType: .push
-            )
+        editorRouter = Router.perform(to: RoutableView<NoteEditorInput>(), path: .push(from: self))
     }
     
     func removeEditor() {
@@ -47,7 +43,7 @@ class TestViewController: UIViewController {
 @implementation TestViewController: UIViewController
 
 - (void)showEditor {
-  self.editorRouter = [ZIKRouterToView(NoteEditorInput) performFromSource:self routeType:ZIKViewRouteTypePush];
+  self.editorRouter = [ZIKRouterToView(NoteEditorInput) performPath:ZIKViewRoutePath.pushFrom(self)];
 }
 
 - (void)removeEditor {

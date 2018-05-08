@@ -19,7 +19,7 @@ Errors can be detected:
 Use `setGlobalErrorHandler:` to log these errors:
 
 ```swift
-ZIKAnyViewRouter.setGlobalErrorHandler { (router, action, error) in
+ZIKAnyViewRouter.globalErrorHandler = { (router, action, error) in
     print("❌ZIKRouter Error: \(router)'s action \(action) catch error: \(error)!")
 }
 ```
@@ -41,12 +41,8 @@ You can handle the error when performing route:
 ```swift
 Router.perform(
             to: RoutableView<NoteEditorInput>(),
-            from: self,
+            path: .push(from: self),
             configuring: { (config, prepareDestiantion, _) in
-                config.routeType = .push
-                config.successHandler = {
-                    //Transition success
-                }
                 config.errorHandler = { (action, error) in
                     //Transition failed
                 }
@@ -57,12 +53,8 @@ Router.perform(
 
 ```objectivec
 [ZIKRouterToView(NoteEditorInput)
-	          performFromSource:self
+	          performPath:ZIKViewRoutePath.pushFrom(self)
 	          configuring:^(ZIKViewRouteConfiguration *config) {
-	              config.routeType = ZIKViewRouteTypePresentModally;
-	              config.successHandler = ^{
-	                  //Transition success
-	              };
 	              config.errorHandler = ^(ZIKRouteAction routeAction, NSError *error) {
 	                  //Transition failed
 	              };

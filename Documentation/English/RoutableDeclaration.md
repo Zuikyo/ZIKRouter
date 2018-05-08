@@ -39,12 +39,15 @@ There're several levels to make dynamic routing. In Swift and Objective-C, routa
 
 ### Routable in Swift
 
-In Swift, protocol was designated as struct's generic parameter:
+In Swift, protocol is designated as struct's generic parameter:
 
 ```swift
 public struct RoutableView<Protocol> {
-    //The external can't access to the initializer
-    internal init() { }
+    @available(*, unavailable, message: "Protocol is not declared as routable")
+    public init() { }
+    
+    /// Only use this in initializers in extension, never use it in other place. The protocol must be declared in extension.
+    public init(declaredProtocol: Protocol.Type) { }
 }
 ```
 
@@ -53,7 +56,7 @@ Declare that `SwiftEditorViewInput` is routable, and can only be used for view r
 ```swift
 extension RoutableView where Protocol == SwiftEditorViewInput {
     //Can access to initializer when generic is SwiftEditorViewInput
-    init() { }
+    init() { self.init(declaredProtocol: Protocol.self) }
 }
 ```
 
@@ -72,6 +75,8 @@ class TestViewController: UIViewController {
 ```
 
 If you pass a wrong protocol, such as `RoutableView<UnroutableProtocol>()`, there will be a compile error.
+
+The `init(declaredProtocol: Protocol.Type)` is only to silence the warning of `initializer for struct 'xxx' must use "self.init(...)" or "self = ..." because it is not in module xxx`. See [restrict-cross-module-struct-initializers](https://github.com/apple/swift-evolution/blob/master/proposals/0189-restrict-cross-module-struct-initializers.md). You should only use it in extension.
 
 ### Routable in Objective-C
 

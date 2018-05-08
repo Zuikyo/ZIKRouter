@@ -46,7 +46,11 @@ Swift示例：
 ```swift
 public struct RoutableView<Protocol> {
     //外部无法访问初始化方法进行实例化
-    internal init() { }
+    @available(*, unavailable, message: "Protocol is not declared as routable")
+    public init() { }
+    
+    /// 只在 extension 中使用此初始化方法
+    public init(declaredProtocol: Protocol.Type) { }
 }
 ```
 
@@ -55,7 +59,7 @@ public struct RoutableView<Protocol> {
 ```swift
 extension RoutableView where Protocol == SwiftEditorViewInput {
     //允许实例化
-    init() { }
+    init() { self.init(declaredProtocol: Protocol.self) }
 }
 ```
 `RoutableView`默认初始化方法是私有的，只有声明了的protocol才能访问它的初始化方法，进行实例化操作`RoutableView<SwiftEditorViewInput>()`：
@@ -73,6 +77,8 @@ class TestViewController: UIViewController {
 ```
 
 因此当你传入一个错误的protocol时，例如`RoutableView<UnroutableProtocol>()`，会产生编译错误。
+
+初始化方法 `init(declaredProtocol: Protocol.Type)` 只是用来消除 swift 的编译检查 `initializer for struct 'xxx' must use "self.init(...)" or "self = ..." because it is not in module xxx`. 参考 [restrict-cross-module-struct-initializers](https://github.com/apple/swift-evolution/blob/master/proposals/0189-restrict-cross-module-struct-initializers.md)。不要在除了 extension 之外的地方使用此初始化方法。
 
 ### Routable in Objective-C
 

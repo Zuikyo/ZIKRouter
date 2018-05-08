@@ -102,7 +102,7 @@ class EditorViewRouter: ZIKViewRouter<EditorViewController, EditorModuleConfigur
 
 ```
 
-## 自动注册的性能
+## 自动注册
 
 App启动时会遍历所有的类，自动执行所有router的`registerRoutableDestination`方法。下面是自动注册的性能测试结果。
 
@@ -121,3 +121,41 @@ App启动时会遍历所有的类，自动执行所有router的`registerRoutable
 在新机型上没有性能问题，在老机型上耗时会比较多，而大部分耗时都是在Objc的方法调用上，经测试，即便把注册方法都替换为空方法，耗时也是差不多的。
 
 如果对性能问题有疑虑，可以关闭自动注册，使用分阶段的手动注册。不过目前还未支持。
+
+## 手动注册
+
+如果你担心旧设备上自动注册的性能，可以关闭自动注册，在需要时逐个手动注册。
+
+### 1. 关闭自动注册
+
+```objectivec
+// 在 +load 中关闭自动注册, 只要在 UIApplicationMain 执行前关闭即可
++ (void)load {
+    ZIKRouteRegistry.autoRegister = NO;
+    [self registerForModulesBeforeRegistrationFinished];
+}
+
++ (void)registerForModulesBeforeRegistrationFinished {
+    // 注册那些在初始界面中就使用到的模块
+}
+
+```
+
+在手动注册时，有可能会发生模块在注册之前就要被使用的情况。比如有些模块在初始界面中就要使用。这时就需要让这些模块提早注册。如果在未完成全部注册前出现了查找失败的情况，ZIKRouter 会给出断言错误。
+
+### 2. 注册模块
+
+之后，在适当时间逐一注册每个 router:
+
+```objectivec
+@import ZIKRouter.Internal;
+#import "EditorViewRouter.h"
+
++ (void)registerRoutes {
+    [EditorViewRouter registerRoutableDestination];
+    ...
+    // 结束注册
+    [ZIKRouteRegistry notifyRegistrationFinished];
+}
+
+```

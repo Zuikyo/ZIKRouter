@@ -50,7 +50,7 @@
     [pickerView.heightAnchor constraintEqualToConstant:500].active = YES;
     
     UIButton *jumpButton = [UIButton buttonWithType:UIButtonTypeSystem];
-    [jumpButton setTitle:@"jump" forState:UIControlStateNormal];
+    [jumpButton setTitle:@"open URL" forState:UIControlStateNormal];
     [jumpButton addTarget:self action:@selector(openURL:) forControlEvents:UIControlEventTouchUpInside];
     [self.view addSubview:jumpButton];
     jumpButton.translatesAutoresizingMaskIntoConstraints = NO;

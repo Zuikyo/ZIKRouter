@@ -27,9 +27,8 @@ protocol ModuleARequiredLoginViewInput {
 //Module A中调用Login模块
 Router.perform(
     to RoutableView<ModuleARequiredLoginViewInput>(),
-    from: self,
+    path: .presentModally(from: self)
     configuring { (config, prepareDestiantion, _) in
-        config.routeType = .presentModally
         prepareDestination({ destination in
             destination.message = "请登录查看笔记详情"
         })
@@ -44,9 +43,8 @@ Router.perform(
 
 //Module A中调用Login模块
 [ZIKRouterToView(ModuleARequiredLoginViewInput)
-	          performFromSource:self
+	          performPath:ZIKViewRoutePath.presentModallyFrom(self)
 	          configuring:^(ZIKViewRouteConfiguration *config) {
-	              config.routeType = ZIKViewRouteTypePresentModally;
 	              //配置目的界面
 	              config.prepareDestination = ^(id<ModuleARequiredLoginViewInput> destination) {
 	                  destination.message = @"请登录查看笔记详情";
@@ -103,7 +101,7 @@ extension LoginViewController: ModuleARequiredLoginViewInput {
 
 + (void)registerRoutableDestination {
 	//注册ModuleARequiredLoginViewInput和ZIKEditorViewRouter匹配
-	[ZIKEditorViewRouter registerViewProtocol:ZIKRoutableProtocol(ModuleARequiredLoginViewInput)];
+	[ZIKEditorViewRouter registerViewProtocol:ZIKRoutable(ModuleARequiredLoginViewInput)];
 }
 
 @end
@@ -199,7 +197,7 @@ class ModuleAReqiredEditorViewRouter: ZIKViewRouter {
 + (void)registerRoutableDestination {
 	//注册ModuleARequiredLoginViewInput，和新的ZIKModuleARequiredEditorViewRouter配对，而不是目的模块中的ZIKEditorViewRouter
 	[self registerView:/* mediator的类*/];
-	[self registerViewProtocol:ZIKRoutableProtocol(NoteListRequiredNoteEditorProtocol)];
+	[self registerViewProtocol:ZIKRoutable(NoteListRequiredNoteEditorProtocol)];
 }
 - (id)destinationWithConfiguration:(ZIKViewRouteConfiguration *)configuration {
    //用ZIKEditorViewRouter获取真正的destination

@@ -13,13 +13,11 @@ class TestViewController: UIViewController {
     func showEditorViewController() {
         Router.perform(
             to: RoutableView<NoteEditorInput>(),
-            from: self,
+            path: .push(from: self),
             configuring: { (config, prepareDestiantion, _) in
                 //路由相关的设置
-                //设置跳转方式，支持push、present、show、showDetail、custom等多种方式
-                config.routeType = ViewRouteType.push
-                config.routeCompletion = { destination in
-                    //跳转结束处理
+                config.successHandler = { destination in
+                    //跳转成功处理
                 }
                 config.errorHandler = { (action, error) in
                     //跳转失败处理
@@ -55,7 +53,7 @@ class TestViewController: UIViewController {
         case networkNotConnected:
             switchableView = SwitchableView(RoutableView<NetworkDisconnectedViewInput>())
         }
-        Router.to(switchableView)?.perform(from: self, routeType: .push)
+        Router.to(switchableView)?.perform(path: .push(from: self))
     }
 }
 ```
@@ -66,7 +64,7 @@ class TestViewController: UIViewController {
 
 ```swift
 func handleOpenURLWithViewName(_ viewName: String) {
-    Router.to(dynamicView: viewName)?.perform(from: self, routeType: .push)
+    Router.to(dynamicView: viewName)?.perform(path: .push(from: self))
     }
 
 ```
@@ -82,9 +80,8 @@ func handleOpenURLWithViewName(_ viewName: String) {
 - (void)showEditorViewController {
 	//用EditorViewInput获取router类
 	[ZIKRouterToView(NoteEditorInput)
-	          performFromSource:self
+	          performPath:ZIKViewRoutePath.presentModallyFrom(self)
 	          configuring:^(ZIKViewRouteConfiguration *config) {
-	              config.routeType = ZIKViewRouteTypePresentModally;
 	              config.animated = YES;
 	              //配置目的界面
 	              config.prepareDestination = ^(id<NoteEditorInput> destination) {
@@ -108,11 +105,10 @@ func handleOpenURLWithViewName(_ viewName: String) {
 
 - (void)showEditorViewController {
 	[ZIKRouterToView(NoteEditorInput)
-	          performFromSource:self
+	          performPath:ZIKViewRoutePath.presentModallyFrom(self)
 	          routeConfiguring:^(ZIKViewRouteConfiguration *config,
 	          					  void (^prepareDest)(void (^)(id<NoteEditorInput>)),
                         		  void (^prepareModule)(void (^)(ZIKViewRouteConfig *))) {
-	              config.routeType = ZIKViewRouteTypePresentModally;
 	              config.animated = YES;
 	              //Type of prepareDest block changes with the router's generic parameters.
 	              prepareDest(^(id<NoteEditorInput> destination){
@@ -141,17 +137,17 @@ func handleOpenURLWithViewName(_ viewName: String) {
 
 ```swift
 class TestViewController: UIViewController {
-    var router: DestinationViewRouter<EditorViewInput>?
+    var routerType: ViewRouterType<EditorViewInput, ViewRouteConfig>?
     func viewDidLoad() {
         super.viewDidLoad()
-        router = Router.to(RoutableView<EditorViewInput>())
+        routerType = Router.to(RoutableView<EditorViewInput>())
     }
     
     func showEditor() {
-        guard let router = self.router, router.canPerform else {
+        guard let routerType = self. routerType else {
             return
         }
-        router?.perform(from: self, routeType: .push)
+        routerType.perform(path: .push(from: self))
     }
 }
 ```
@@ -163,23 +159,10 @@ class TestViewController: UIViewController {
 
 - (void)viewDidLoad {
     [super viewDidLoad];
-    self.router = [[ZIKViewRouter.classToView(ZIKRoutableProtocol(EditorViewInput)) alloc]
-                           initWithConfiguring:^(ZIKViewRouteConfiguration *config) {
-                               config.source = self;
-                               config.routeType = ZIKViewRouteTypePush;
-                           }
-                           removing:nil];
+    self.routerType = ZIKRouterToView(EditorViewInput);
 }
 - (void)showEditor {
-    if (![self.router canPerform]) {
-        NSLog(@"Can't perform route now:%@",self.router);
-        return;
-    }
-    [self.router performRouteWithSuccessHandler:^{
-        NSLog(@"did show editor");
-    } errorHandler:^(SEL routeAction, NSError *error) {
-        NSLog(@"failed to show editor with error: %@",error);
-    }];
+    [self.routerType performPath:ZIKViewRoutePath.pushFrom(self)];
 }
 @end
 ```

@@ -107,18 +107,54 @@ class EditorViewRouter: ZIKViewRouter<EditorViewController, EditorModuleConfigur
 
 When app is launched, ZIKRouter will enumerate all classes and call router's `registerRoutableDestination` method.
 
-Here is the performance test for auto registration. There're 5000 UIViewController and 5000 router.
+Here is the performance test for auto registration. There're 5000 UIViewController and 5000 router class.
 
 Register by `+registerView:` and `+registerViewProtocol:`:
 
-* iPhone6s real device: 58ms
-* iPhone5  real device: 240ms
+* iPhone 6s device: 58ms
+* iPhone 5  device: 240ms
 
 Register by `+registerExclusiveView:` and `+registerViewProtocol:`:
 
-* iPhone6s real device: 50ms
-* iPhone5  real device: 220ms
+* iPhone 6s device: 50ms
+* iPhone 5  device: 220ms
 
-There is no performance problem in new device. In old device like iPhone5, most time is costed by objc method invocation. The time is almost the same even we replace registration methods with empty methods that do nothing.
+There is no performance problem in new device. In old device like iPhone 5, most time is costed by objc method invocation. The time is almost the same even we replace registration methods with empty methods that do nothing.
 
-If you worry about the performance in old device, you can disable auto registration, and register manually. But this feature is not released now.
+## Manually Registration
+
+If you worry about the performance of auto registration in old device, you can disable auto registration, and register each router manually.
+
+### 1. Disable Auto Registration
+
+```objectivec
+// Disable auto registration in +load, or before UIApplicationMain
++ (void)load {
+    ZIKRouteRegistry.autoRegister = NO;
+    [self registerForModulesBeforeRegistrationFinished];
+}
+
++ (void)registerForModulesBeforeRegistrationFinished {
+    // Register routers used when registration is not finished yet.
+}
+
+```
+
+But if some modules require some routers before you register them, then there will be assert failure, you should register those required routers earlier. Such as routable initial view controller from storyboard, or any routers used in this initial view controller.
+
+### 2. Register Routers
+
+Then you can register each routers:
+
+```objectivec
+@import ZIKRouter.Internal;
+#import "EditorViewRouter.h"
+
++ (void)registerRoutes {
+    [EditorViewRouter registerRoutableDestination];
+    ...
+    // Finish
+    [ZIKRouteRegistry notifyRegistrationFinished];
+}
+
+```

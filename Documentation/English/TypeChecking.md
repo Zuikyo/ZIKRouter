@@ -26,14 +26,10 @@ When registering and getting router with protocol, use macro `ZIKRoutableProtoco
     [self registerView:[EditorViewController class]];
     
     //If the protocol is not inherited from ZIKViewRoutable, there will be compile error
-    [self registerViewProtocol:ZIKRoutableProtocol(NoteEditorInput)];
+    [self registerViewProtocol:ZIKRoutable(NoteEditorInput)];
 }
 
 @end
-```
-```
-//If the protocol is not inherited from ZIKViewRoutable, there will be compile error
-ZIKViewRouter.classToView(ZIKRoutableProtocol(NoteEditorInput))
 ```
 
 Use macro `ZIKRouterToView`, `ZIKRouterToViewModule`, `ZIKRouterToService`, `ZIKRouterToServiceModule` to get router class:
@@ -48,11 +44,10 @@ And the protocol type will affect the parameters in methods:
 ```objectivec
 //The 3 parameters have inheritance relationship
 [ZIKRouterToView(NoteEditorInput) //1
-     performFromSource:self
+     performPath:ZIKViewRoutePath.pushFrom(self)
      routeConfiguring:^(ZIKViewRouteConfig *config,
                         void (^prepareDest)(void (^)(id<NoteEditorInput>)), //2
                         void (^prepareModule)(void (^)(ZIKViewRouteConfig *))) {
-         config.routeType = ZIKViewRouteTypePush;
          prepareDest(^(id<NoteEditorInput> dest){ //3
              dest.delegate = weakSelf;
              dest.name = @"zuik";
@@ -112,12 +107,6 @@ class SwiftSampleViewRouter: ZIKViewRouter<SwiftSampleViewController, SwiftSampl
         return destination
     }
     
-    override static func destinationPrepared(_ destination: SwiftSampleViewController) -> Bool {
-        if (destination.injectedAlertRouter != nil) {
-            return true
-        }
-        return false
-    }
     override func prepareDestination(_ destination: SwiftSampleViewController, configuration: ZIKViewRouteConfiguration) {
         destination.injectedAlertRouter = Router.to(RoutableViewModule<ZIKCompatibleAlertConfigProtocol>())
     }

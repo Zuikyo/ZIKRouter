@@ -27,7 +27,7 @@ extension EditorViewController: ZIKRoutableView {
 }
 //声明NoteEditorInput是可路由的
 extension RoutableView where Protocol == NoteEditorInput {
-    init() { }
+    init() { self.init(declaredProtocol: Protocol.self) }
 }
 
 class EditorViewRouter: ZIKViewRouter<EditorViewController, ZIKViewRouteConfiguration> {
@@ -53,7 +53,7 @@ class EditorViewRouter: ZIKViewRouter<EditorViewController, ZIKViewRouteConfigur
     }
     
     //来自storyboard的destination，是否需要让source view controller进行配置
-    override static func destinationPrepared(_ destination: EditorViewController) -> Bool {
+    override func destinationFromExternalPrepared(destination: EditorViewController) -> Bool {
         if (destination.delegate != nil) {
             return true
         }
@@ -125,7 +125,7 @@ class EditorViewRouter: ZIKViewRouter<EditorViewController, ZIKViewRouteConfigur
     [self registerView:[EditorViewController class]];
     
     //注册NoteEditorInput，注册后就可以用此protocol获取此router
-    [self registerViewProtocol:ZIKRoutableProtocol(NoteEditorInput)];
+    [self registerViewProtocol:ZIKRoutable(NoteEditorInput)];
 }
 
 //返回需要获取的目的模块
@@ -136,7 +136,7 @@ class EditorViewRouter: ZIKViewRouter<EditorViewController, ZIKViewRouteConfigur
 }
 
 //来自storyboard的destination，是否需要让source view controller进行配置
-+ (BOOL)destinationPrepared:(EditorViewController *)destination {
+- (BOOL)destinationFromExternalPrepared:(EditorViewController *)destination {
     if (destination.delegate != nil) {
         return YES;
     }
