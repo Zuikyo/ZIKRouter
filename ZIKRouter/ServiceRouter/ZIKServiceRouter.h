@@ -76,7 +76,7 @@ typedef void(^ZIKServiceRouteGlobalErrorHandler)(__kindof ZIKServiceRouter * _Nu
 /**
  Register a service protocol that all services registered with the router conform to, then use ZIKRouterToService() to get the router class. In Swift, use `register(RoutableService<ServiceProtocol>())` in ZRouter instead.
  
- @param serviceProtocol The protocol conformed by service. Should inherit from ZIKServiceRoutable. Use macro `ZIKRoutableProtocol` to wrap the parameter.
+ @param serviceProtocol The protocol conformed by service. Should inherit from ZIKServiceRoutable. Use macro `ZIKRoutable` to wrap the parameter.
  */
 + (void)registerServiceProtocol:(Protocol<ZIKServiceRoutable> *)serviceProtocol;
 
@@ -85,7 +85,7 @@ typedef void(^ZIKServiceRouteGlobalErrorHandler)(__kindof ZIKServiceRouter * _Nu
  
  When the service module is not only a single service class, but also other internal services, and you can't prepare the module with a simple service protocol, then you need a module config protocol, and let router prepare the module inside..
  
- @param configProtocol The protocol conformed by default route configuration of this router class. Should inherit from ZIKServiceModuleRoutable. Use macro `ZIKRoutableProtocol` to wrap the parameter.
+ @param configProtocol The protocol conformed by default route configuration of this router class. Should inherit from ZIKServiceModuleRoutable. Use macro `ZIKRoutable` to wrap the parameter.
  */
 + (void)registerModuleProtocol:(Protocol<ZIKServiceModuleRoutable> *)configProtocol;
 

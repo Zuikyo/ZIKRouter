@@ -17,7 +17,7 @@ See [Routable Declaration](RoutableDeclaration.md#Routable).
 
 In Objective-C, we use some fake classes and macros to make compile time checking.
 
-When registering and getting router with protocol, use macro `ZIKRoutableProtocol` to wrap the protocol:
+When registering and getting router with protocol, use macro `ZIKRoutable` to wrap the protocol:
 
 ```objectivec
 @implementation EditorViewRouter

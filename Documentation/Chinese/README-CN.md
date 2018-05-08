@@ -432,7 +432,7 @@ class NoteEditorViewRouter: ZIKViewRouter<NoteEditorViewController, ViewRouteCon
 
 + (void)registerRoutableDestination {
     [self registerView:[NoteEditorViewRouter class]];
-    [self registerViewProtocol:ZIKRoutableProtocol(NoteEditorInput)];
+    [self registerViewProtocol:ZIKRoutable(NoteEditorInput)];
 }
 
 - (NoteEditorViewRouter *)destinationWithConfiguration:(ZIKViewRouteConfiguration *)configuration {

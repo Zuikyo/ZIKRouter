@@ -17,7 +17,7 @@ Swift中，用条件extension来声明可路由的protocol，从而利用编译�
 
 在Objective-C中，使用一些虚假类和宏定义制造编译检查。
 
-在注册protocol和获取router类时，用`ZIKRoutableProtocol`包裹protocol：
+在注册protocol和获取router类时，用`ZIKRoutable`包裹protocol：
 
 ```objectivec
 @implementation EditorViewRouter
