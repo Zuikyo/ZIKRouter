@@ -22,7 +22,11 @@
 
 - (id<ZIKRoutableView>)destinationWithConfiguration:(ZIKViewRouteConfiguration *)configuration {
     SubclassViewController *destination = [[SubclassViewController alloc] init];
-    destination.title = @"Subclass";
+    NSString *title = @"Subclass";
+    if ([configuration.userInfo objectForKey:@"url"]) {
+        title = [title stringByAppendingString:@"-fromURL"];
+    }
+    destination.title = title;
     return destination;
 }
 @end

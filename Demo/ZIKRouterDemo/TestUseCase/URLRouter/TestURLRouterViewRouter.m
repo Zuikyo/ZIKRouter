@@ -20,7 +20,11 @@ DeclareRoutableView(TestURLRouterViewController, TestURLRouterViewRouter)
 
 - (id<ZIKRoutableView>)destinationWithConfiguration:(ZIKViewRouteConfiguration *)configuration {
     TestURLRouterViewController *destination = [[TestURLRouterViewController alloc] init];
-    destination.title = @"Test URL Router";
+    NSString *title = @"Test URL Router";
+    if ([configuration.userInfo objectForKey:@"url"]) {
+        title = [title stringByAppendingString:@"-fromURL"];
+    }
+    destination.title = title;
     return destination;
 }
 

@@ -25,7 +25,11 @@
 
 - (id<ZIKRoutableView>)destinationWithConfiguration:(ZIKViewRouteConfiguration *)configuration {
     ZIKChildViewController *destination = [[ZIKChildViewController alloc] init];
-    destination.title = @"Test Circular Dependencies";
+    NSString *title = @"Test Circular Dependencies";
+    if ([configuration.userInfo objectForKey:@"url"]) {
+        title = [title stringByAppendingString:@"-fromURL"];
+    }
+    destination.title = title;
     destination.view.backgroundColor = [UIColor greenColor];
     return destination;
 }

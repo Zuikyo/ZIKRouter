@@ -23,7 +23,11 @@
 - (id<ZIKRoutableView>)destinationWithConfiguration:(ZIKViewRouteConfiguration *)configuration {
     UIStoryboard *sb = [UIStoryboard storyboardWithName:@"Main" bundle:nil];
     EmptyContainerViewController *destination = [sb instantiateViewControllerWithIdentifier:@"emptyContainer"];
-    destination.title = @"Empty Container";
+    NSString *title = @"Empty Container";
+    if ([configuration.userInfo objectForKey:@"url"]) {
+        title = [title stringByAppendingString:@"-fromURL"];
+    }
+    destination.title = title;
     return destination;
 }
 

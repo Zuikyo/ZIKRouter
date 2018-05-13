@@ -24,7 +24,11 @@
 - (id<ZIKRoutableView>)destinationWithConfiguration:(ZIKViewRouteConfiguration *)configuration {
     UIStoryboard *sb = [UIStoryboard storyboardWithName:@"Main" bundle:nil];
     TestCustomViewController *destination = [sb instantiateViewControllerWithIdentifier:@"testCustom"];
-    destination.title = @"Test Custom";
+    NSString *title = @"Test Custom";
+    if ([configuration.userInfo objectForKey:@"url"]) {
+        title = [title stringByAppendingString:@"-fromURL"];
+    }
+    destination.title = title;
     return destination;
 }
 

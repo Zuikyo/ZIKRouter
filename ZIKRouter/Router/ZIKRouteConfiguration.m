@@ -73,6 +73,10 @@
 
 @end
 
+@interface ZIKPerformRouteConfiguration()
+@property (nonatomic, strong) NSMutableDictionary<NSString *, id> *userInfo;
+@end
+
 @implementation ZIKPerformRouteConfiguration
 
 - (void)setRouteCompletion:(void (^)(id _Nonnull))routeCompletion {
@@ -83,6 +87,33 @@
     return self.successHandler;
 }
 
+- (NSMutableDictionary<NSString *, id> *)userInfo {
+    if (_userInfo == nil) {
+        _userInfo = [NSMutableDictionary dictionary];
+    }
+    return _userInfo;
+}
+
+- (void)addUserInfoForKey:(NSString *)key object:(id)object {
+    if (key == nil) {
+        return;
+    }
+    if (_userInfo == nil) {
+        _userInfo = [NSMutableDictionary dictionary];
+    }
+    _userInfo[key] = object;
+}
+
+- (void)addUserInfo:(NSDictionary<NSString *, id> *)userInfo {
+    if (userInfo == nil) {
+        return;
+    }
+    if (_userInfo == nil) {
+        _userInfo = [NSMutableDictionary dictionary];
+    }
+    [_userInfo addEntriesFromDictionary:userInfo];
+}
+
 - (id)copyWithZone:(nullable NSZone *)zone {
     ZIKPerformRouteConfiguration *config = [super copyWithZone:zone];
     config.prepareDestination = self.prepareDestination;
@@ -90,6 +121,9 @@
     config.completionHandler = self.completionHandler;
     config.performerSuccessHandler = self.performerSuccessHandler;
     config.route = self.route;
+    if (_userInfo) {
+        config.userInfo = _userInfo;
+    }
     return config;
 }
 

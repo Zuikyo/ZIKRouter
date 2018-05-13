@@ -65,7 +65,14 @@
     }
     UISplitViewController *splitViewController = (UISplitViewController *)self.window.rootViewController;
     UINavigationController *navigationController = [splitViewController.viewControllers lastObject];
-    [routerType performPath:ZIKViewRoutePath.showFrom(navigationController)];
+    
+    NSDictionary *params = @{ @"url": url,
+                              @"options" : options
+                              };
+    [routerType performPath:ZIKViewRoutePath.showFrom(navigationController)
+                configuring:^(ZIKViewRouteConfiguration * _Nonnull config) {
+                    [config addUserInfo:params];
+                }];
     return YES;
 }
 

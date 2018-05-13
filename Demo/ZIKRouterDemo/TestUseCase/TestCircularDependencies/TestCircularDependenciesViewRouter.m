@@ -26,7 +26,11 @@
 
 - (id<ZIKRoutableView>)destinationWithConfiguration:(ZIKViewRouteConfiguration *)configuration {
     TestCircularDependenciesViewController *destination = [[TestCircularDependenciesViewController alloc] init];
-    destination.title = @"Test Circular Dependencies";
+    NSString *title = @"Test Circular Dependencies";
+    if ([configuration.userInfo objectForKey:@"url"]) {
+        title = [title stringByAppendingString:@"-fromURL"];
+    }
+    destination.title = title;
     
     return destination;
 }

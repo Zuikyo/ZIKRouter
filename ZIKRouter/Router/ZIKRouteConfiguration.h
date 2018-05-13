@@ -97,6 +97,23 @@ typedef void(^ZIKPerformRouteCompletion)(BOOL success, id _Nullable destination,
  Use weakSelf in completion to avoid retain cycle.
  */
 @property (nonatomic, copy, nullable) ZIKPerformRouteCompletion completionHandler;
+
+///User info when handle route action from URL Scheme.
+@property (nonatomic, strong, readonly) NSDictionary<NSString *, id> *userInfo;
+
+/**
+ Add user info.
+ @note
+ You should only use user info when handle route action from URL Scheme, because it's not recommanded to passing parameters in dictionary. The compiler can't check parameters' type.
+ */
+- (void)addUserInfoForKey:(NSString *)key object:(id)object;
+/**
+ Add user info.
+ @note
+ You should only use user info when handle route action from URL Scheme, because it's not recommanded to passing parameters in dictionary. The compiler can't check parameters' type.
+ */
+- (void)addUserInfo:(NSDictionary<NSString *, id> *)userInfo;
+
 @end
 
 typedef void(^ZIKRemoveRouteCompletion)(BOOL success, ZIKRouteAction routeAction, NSError *_Nullable error);
