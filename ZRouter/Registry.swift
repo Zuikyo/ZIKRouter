@@ -877,7 +877,7 @@ private class _ServiceRouterValidater: ZIKServiceRouteAdapter {
             let badDestinationClass: AnyClass? = ZIKServiceRouteRegistry.validateDestinations(forRoute: route, handler: { (destinationClass) -> Bool in
                 return _swift_typeIsTargetType(destinationClass, serviceProtocol)
             })
-            assert(badDestinationClass == nil, "Registered service class (\(String(describing: badDestinationClass)) for router (\(route)) should conform to registered service protocol (\(serviceProtocol)).")
+            assert(badDestinationClass == nil, "Registered service class (\(badDestinationClass!)) for router (\(route)) should conform to registered service protocol (\(serviceProtocol)).")
         }
         
         for (adapter, _) in Registry.serviceAdapterContainer {
@@ -897,7 +897,7 @@ private class _ServiceRouterValidater: ZIKServiceRouteAdapter {
             let badDestinationClass: AnyClass? = ZIKServiceRouteRegistry.validateDestinations(forRoute: route, handler: { (destinationClass) -> Bool in
                 return _swift_typeIsTargetType(destinationClass, serviceProtocol)
             })
-            assert(badDestinationClass == nil, "Registered service class (\(String(describing: badDestinationClass)) for router (\(route)) should conform to registered service adapter protocol (\(serviceProtocol)).")
+            assert(badDestinationClass == nil, "Registered service class (\(badDestinationClass!)) for router (\(route)) should conform to registered service adapter protocol (\(serviceProtocol)).")
         }
         
         for (routeKey, route) in Registry.serviceConfigContainer {

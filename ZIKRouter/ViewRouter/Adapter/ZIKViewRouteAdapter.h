@@ -60,51 +60,51 @@ NS_ASSUME_NONNULL_BEGIN
                          errorHandler:(void(^ __nullable)(ZIKRouteAction routeAction, NSError *error))performerErrorHandler NS_UNAVAILABLE;
 - (void)removeRouteWithCompletion:(void(^)(BOOL success, ZIKRouteAction routeAction, NSError *_Nullable error))performerCompletion NS_UNAVAILABLE;
 
-+ (nullable instancetype)performPath:(ZIKViewRoutePath *)path configuring:(void(NS_NOESCAPE ^)(RouteConfig config))configBuilder NS_UNAVAILABLE;
++ (nullable instancetype)performPath:(ZIKViewRoutePath *)path configuring:(void(NS_NOESCAPE ^)(ZIKViewRouteConfiguration *config))configBuilder NS_UNAVAILABLE;
 + (nullable instancetype)performPath:(ZIKViewRoutePath *)path
-                         configuring:(void(NS_NOESCAPE ^)(RouteConfig config))configBuilder
+                         configuring:(void(NS_NOESCAPE ^)(ZIKViewRouteConfiguration *config))configBuilder
                             removing:(void(NS_NOESCAPE ^ _Nullable)(ZIKViewRemoveConfiguration *config))removeConfigBuilder NS_UNAVAILABLE;
 + (nullable instancetype)performPath:(ZIKViewRoutePath *)path NS_UNAVAILABLE;
 + (nullable instancetype)performPath:(ZIKViewRoutePath *)path
-                      successHandler:(void(^ _Nullable)(Destination destination))performerSuccessHandler
+                      successHandler:(void(^ _Nullable)(id destination))performerSuccessHandler
                         errorHandler:(void(^ _Nullable)(ZIKRouteAction routeAction, NSError *error))performerErrorHandler NS_UNAVAILABLE;
 + (nullable instancetype)performPath:(ZIKViewRoutePath *)path
-                          completion:(void(^)(BOOL success, Destination _Nullable destination, ZIKRouteAction routeAction, NSError *_Nullable error))performerCompletion NS_UNAVAILABLE;
+                          completion:(void(^)(BOOL success, id _Nullable destination, ZIKRouteAction routeAction, NSError *_Nullable error))performerCompletion NS_UNAVAILABLE;
 + (nullable instancetype)performPath:(ZIKViewRoutePath *)path
-                   strictConfiguring:(void(NS_NOESCAPE ^)(RouteConfig config,
-                                                          void(^prepareDest)(void(^prepare)(Destination dest)),
-                                                          void(^prepareModule)(void(NS_NOESCAPE ^prepare)(RouteConfig module))
+                   strictConfiguring:(void(NS_NOESCAPE ^)(ZIKViewRouteConfiguration *config,
+                                                          void(^prepareDest)(void(^prepare)(id dest)),
+                                                          void(^prepareModule)(void(NS_NOESCAPE ^prepare)(ZIKViewRouteConfiguration *module))
                                                           ))configBuilder NS_UNAVAILABLE;
 + (nullable instancetype)performPath:(ZIKViewRoutePath *)path
-                   strictConfiguring:(void(NS_NOESCAPE ^)(RouteConfig config,
-                                                          void(^prepareDest)(void(^prepare)(Destination dest)),
-                                                          void(^prepareModule)(void(NS_NOESCAPE ^prepare)(RouteConfig module))
+                   strictConfiguring:(void(NS_NOESCAPE ^)(ZIKViewRouteConfiguration *config,
+                                                          void(^prepareDest)(void(^prepare)(id dest)),
+                                                          void(^prepareModule)(void(NS_NOESCAPE ^prepare)(ZIKViewRouteConfiguration *module))
                                                           ))configBuilder
                       strictRemoving:(void(NS_NOESCAPE ^ _Nullable)(ZIKViewRemoveConfiguration *config,
-                                                                    void(^prepareDest)(void(^prepare)(Destination dest))
+                                                                    void(^prepareDest)(void(^prepare)(id dest))
                                                                     ))removeConfigBuilder NS_UNAVAILABLE;
-+ (nullable instancetype)performOnDestination:(Destination)destination
++ (nullable instancetype)performOnDestination:iddestination
                                          path:(ZIKViewRoutePath *)path
-                                  configuring:(void(NS_NOESCAPE ^)(RouteConfig config))configBuilder NS_UNAVAILABLE;
-+ (nullable instancetype)performOnDestination:(Destination)destination
+                                  configuring:(void(NS_NOESCAPE ^)(ZIKViewRouteConfiguration *config))configBuilder NS_UNAVAILABLE;
++ (nullable instancetype)performOnDestination:iddestination
                                          path:(ZIKViewRoutePath *)path
-                                  configuring:(void(NS_NOESCAPE ^)(RouteConfig config))configBuilder
+                                  configuring:(void(NS_NOESCAPE ^)(ZIKViewRouteConfiguration *config))configBuilder
                                      removing:(void(NS_NOESCAPE ^ _Nullable)(ZIKViewRemoveConfiguration *config))removeConfigBuilder NS_UNAVAILABLE;
-+ (nullable instancetype)performOnDestination:(Destination)destination path:(ZIKViewRoutePath *)path NS_UNAVAILABLE;
-+ (nullable instancetype)performOnDestination:(Destination)destination
++ (nullable instancetype)performOnDestination:iddestination path:(ZIKViewRoutePath *)path NS_UNAVAILABLE;
++ (nullable instancetype)performOnDestination:iddestination
                                          path:(ZIKViewRoutePath *)path
-                            strictConfiguring:(void(NS_NOESCAPE ^)(RouteConfig config,
-                                                                   void(^prepareDest)(void(^prepare)(Destination dest)),
-                                                                   void(^prepareModule)(void(NS_NOESCAPE ^prepare)(RouteConfig module))
+                            strictConfiguring:(void(NS_NOESCAPE ^)(ZIKViewRouteConfiguration *config,
+                                                                   void(^prepareDest)(void(^prepare)(id dest)),
+                                                                   void(^prepareModule)(void(NS_NOESCAPE ^prepare)(ZIKViewRouteConfiguration *module))
                                                                    ))configBuilder NS_UNAVAILABLE;
-+ (nullable instancetype)performOnDestination:(Destination)destination
++ (nullable instancetype)performOnDestination:iddestination
                                          path:(ZIKViewRoutePath *)path
-                            strictConfiguring:(void(NS_NOESCAPE ^)(RouteConfig config,
-                                                                   void(^prepareDest)(void(^prepare)(Destination dest)),
-                                                                   void(^prepareModule)(void(NS_NOESCAPE ^prepare)(RouteConfig module))
+                            strictConfiguring:(void(NS_NOESCAPE ^)(ZIKViewRouteConfiguration *config,
+                                                                   void(^prepareDest)(void(^prepare)(id dest)),
+                                                                   void(^prepareModule)(void(NS_NOESCAPE ^prepare)(ZIKViewRouteConfiguration *module))
                                                                    ))configBuilder
                                strictRemoving:(void(NS_NOESCAPE ^ _Nullable)(ZIKViewRemoveConfiguration *config,
-                                                                             void(^prepareDest)(void(^prepare)(Destination dest))
+                                                                             void(^prepareDest)(void(^prepare)(id dest))
                                                                              ))removeConfigBuilder NS_UNAVAILABLE;
 + (nullable instancetype)performFromSource:(nullable id<ZIKViewRouteSource>)source configuring:(void(NS_NOESCAPE ^)(__kindof ZIKViewRouteConfiguration *config))configBuilder NS_UNAVAILABLE;
 + (nullable instancetype)performFromSource:(nullable id<ZIKViewRouteSource>)source

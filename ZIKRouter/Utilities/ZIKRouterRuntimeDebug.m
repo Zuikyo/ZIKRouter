@@ -54,6 +54,24 @@ static void *dereferencedPointer(void *pointer) {
     return *deref;
 }
 
+typedef NS_ENUM(NSInteger, ZIKSwiftMetadataKind) {
+    ZIKSwiftMetadataKindClass                    = 0,
+    ZIKSwiftMetadataKindStruct                   = 1,
+    ZIKSwiftMetadataKindEnum                     = 2,
+    ZIKSwiftMetadataKindOptional                 = 3,
+    ZIKSwiftMetadataKindOpaque                   = 8,
+    ZIKSwiftMetadataKindTuple                    = 9,
+    ZIKSwiftMetadataKindFunction                 = 10,
+    ZIKSwiftMetadataKindExistential              = 12,
+    ZIKSwiftMetadataKindMetatype                 = 13,
+    ZIKSwiftMetadataKindObjCClassWrapper         = 14,
+    ZIKSwiftMetadataKindExistentialMetatype      = 15,
+    ZIKSwiftMetadataKindForeignClass             = 16,
+    ZIKSwiftMetadataKindHeapLocalVariable        = 64,
+    ZIKSwiftMetadataKindHeapGenericLocalVariable = 65,
+    ZIKSwiftMetadataKindErrorObject              = 128
+};
+
 bool _swift_typeIsTargetType(id sourceType, id targetType) {
     //swift class or swift object
     BOOL isSourceSwiftObjectType = [sourceType isKindOfClass:NSClassFromString(@"SwiftObject")];
@@ -124,6 +142,7 @@ bool _swift_typeIsTargetType(id sourceType, id targetType) {
         //swift struct or swift enum or swift protocol
         NSCAssert2([sourceType respondsToSelector:NSSelectorFromString(@"_swiftValue")], @"Swift value(%@) doesn't have method(%@), the API may be changed in libswiftCore.dylib.",sourceType,@"_swiftValue");
         sourceTypeOpaqueValue = (__bridge void *)[sourceType performSelector:NSSelectorFromString(@"_swiftValue")];
+        //OpaqueValue is struct SwiftValueHeader, Metadata * is it's first member
         sourceTypeMetadata = dereferencedPointer(sourceTypeOpaqueValue);
     } else {
         //objc class or objc protocol
@@ -137,32 +156,15 @@ bool _swift_typeIsTargetType(id sourceType, id targetType) {
     if (isTargetSwiftValueType) {
         //swift struct or swift enum or swift protocol
         NSCAssert2([targetType respondsToSelector:NSSelectorFromString(@"_swiftValue")], @"Swift value(%@) doesn't have method(%@), the API may be changed in libswiftCore.dylib.",targetType,@"_swiftValue");
-        NSString *targetTypeName = [targetType performSelector:NSSelectorFromString(@"_swiftTypeName")];
-        // The target can only be a protocol here
-        if ([targetTypeName hasSuffix:@".Protocol"] == NO) {
-            return false;
-        }
         targetTypeOpaqueValue = (__bridge void *)[targetType performSelector:NSSelectorFromString(@"_swiftValue")];
-        // Check composed protocol
-        if (isSourceSwiftValueType == NO && [targetTypeName containsString:@"&"]) {
-            NSCAssert([targetTypeName hasPrefix:@"("] && [targetTypeName hasSuffix:@").Protocol"], @"If protocol name contains &, it's should be a swift protocol from protocol composition");
-            BOOL containsSwiftProtocol = NO;
-            NSString *protocolNamesString = [targetTypeName substringWithRange:NSMakeRange(1, targetTypeName.length - 1 - @").Protocol".length)];
-            NSArray<NSString *> *protocolNames = [protocolNamesString componentsSeparatedByString:@" & "];
-            for (NSString *name in protocolNames) {
-                if ([name hasPrefix:@"Swift."]) {
-                    containsSwiftProtocol = YES;
-                    break;
-                }
-            }
-            containsSwiftProtocol = YES;
-            if (containsSwiftProtocol) {
-                targetTypeMetadata = dereferencedPointer(targetTypeOpaqueValue);
-            } else {
-                targetTypeMetadata = (__bridge void *)[targetType performSelector:NSSelectorFromString(@"_swiftTypeMetadata")];
-            }
-        } else {
-            targetTypeMetadata = dereferencedPointer(targetTypeOpaqueValue);
+        //OpaqueValue is struct SwiftValueHeader, TargetMetadata * is it's first member
+        targetTypeMetadata = dereferencedPointer(targetTypeOpaqueValue);
+        //Get the first member `Kind` in TargetMetadata, it's an enum `MetadataKind`
+        ZIKSwiftMetadataKind type = (ZIKSwiftMetadataKind)dereferencedPointer(targetTypeMetadata);
+        NSLog(@"%@: target type: %ld", targetType, (long)type);
+        //target should be swift protocol
+        if (type != ZIKSwiftMetadataKindExistential) {
+            return false;
         }
     } else {
         //objc protocol
