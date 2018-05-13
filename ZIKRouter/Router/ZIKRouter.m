@@ -124,16 +124,6 @@ NSErrorDomain const ZIKRouteErrorDomain = @"ZIKRouteErrorDomain";
     return [self initWithConfiguration:configuration removeConfiguration:removeConfiguration];
 }
 
-- (instancetype)initWithRouteConfiguring:(void (^)(ZIKPerformRouteConfiguration * _Nonnull,
-                                                   void (^ _Nonnull)(void (^ _Nonnull)(id _Nonnull)),
-                                                   void (^ _Nonnull)(void (^ _Nonnull)(ZIKPerformRouteConfiguration * _Nonnull))
-                                                   ))configBuilder
-                           routeRemoving:(void (^ _Nullable)(ZIKRemoveRouteConfiguration * _Nonnull,
-                                                             void (^ _Nonnull)(void (^ _Nonnull)(id _Nonnull))
-                                                             ))removeConfigBuilder {
-    return [self initWithStrictConfiguring:configBuilder strictRemoving:removeConfigBuilder];
-}
-
 - (void)attachDestination:(id)destination {
     [self willChangeValueForKey:@"destination"];
     _destination = destination;
@@ -340,13 +330,6 @@ NSErrorDomain const ZIKRouteErrorDomain = @"ZIKRouteErrorDomain";
     return [self performWithStrictConfiguring:configBuilder strictRemoving:nil];
 }
 
-+ (instancetype)performWithRouteConfiguring:(void (^)(ZIKPerformRouteConfiguration * _Nonnull,
-                                                      void (^ _Nonnull)(void (^ _Nonnull)(id _Nonnull)),
-                                                      void (^ _Nonnull)(void (^ _Nonnull)(ZIKPerformRouteConfiguration * _Nonnull))
-                                                      ))configBuilder {
-    return [self performWithRouteConfiguring:configBuilder routeRemoving:nil];
-}
-
 + (instancetype)performWithStrictConfiguring:(void (^)(ZIKPerformRouteConfiguration * _Nonnull,
                                                        void (^ _Nonnull)(void (^ _Nonnull)(id _Nonnull)),
                                                        void (^ _Nonnull)(void (^ _Nonnull)(ZIKPerformRouteConfiguration * _Nonnull))
@@ -358,16 +341,6 @@ NSErrorDomain const ZIKRouteErrorDomain = @"ZIKRouteErrorDomain";
     ZIKRouter *router = [[self alloc] initWithStrictConfiguring:configBuilder strictRemoving:removeConfigBuilder];
     [router performRoute];
     return router;
-}
-
-+ (instancetype)performWithRouteConfiguring:(void (^)(ZIKPerformRouteConfiguration * _Nonnull,
-                                                      void (^ _Nonnull)(void (^ _Nonnull)(id _Nonnull)),
-                                                      void (^ _Nonnull)(void (^ _Nonnull)(ZIKPerformRouteConfiguration * _Nonnull))
-                                                      ))configBuilder
-                              routeRemoving:(void (^)(ZIKRemoveRouteConfiguration * _Nonnull,
-                                                      void (^ _Nonnull)(void (^ _Nonnull)(id _Nonnull))
-                                                      ))removeConfigBuilder {
-    return [self performWithStrictConfiguring:configBuilder strictRemoving:removeConfigBuilder];
 }
 
 #pragma mark Remove
@@ -534,12 +507,6 @@ NSErrorDomain const ZIKRouteErrorDomain = @"ZIKRouteErrorDomain";
     [self removeDestination:self.destination removeConfiguration:configuration];
 }
 
-- (void)removeRouteWithRouteConfiguring:(void (^)(ZIKRemoveRouteConfiguration * _Nonnull,
-                                                  void (^ _Nonnull)(void (^ _Nonnull)(id _Nonnull))
-                                                  ))removeConfigBuilder {
-    [self removeRouteWithStrictConfiguring:removeConfigBuilder];
-}
-
 #pragma mark Make Destination
 
 + (BOOL)canMakeDestination {
@@ -609,13 +576,6 @@ NSErrorDomain const ZIKRouteErrorDomain = @"ZIKRouteErrorDomain";
     } strictRemoving:nil];
     [router performRoute];
     return dest;
-}
-
-+ (nullable id)makeDestinationWithRouteConfiguring:(void (^)(ZIKPerformRouteConfiguration * _Nonnull,
-                                                             void (^ _Nonnull)(void (^ _Nonnull)(id _Nonnull)),
-                                                             void (^ _Nonnull)(void (^ _Nonnull)(ZIKPerformRouteConfiguration * _Nonnull))
-                                                             ))configBuilder {
-    return [self makeDestinationWithStrictConfiguring:configBuilder];
 }
 
 + (nullable id)makeDestination {

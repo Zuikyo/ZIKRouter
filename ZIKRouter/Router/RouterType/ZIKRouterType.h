@@ -55,11 +55,6 @@ NS_ASSUME_NONNULL_BEGIN
                                                                                             void(^prepareModule)(void(NS_NOESCAPE ^prepare)(RouteConfig module))
                                                                                             ))configBuilder;
 
-- (nullable Destination)makeDestinationWithRouteConfiguring:(void(NS_NOESCAPE ^ _Nullable)(RouteConfig config,
-                                                                                           void(^prepareDest)(void(^prepare)(Destination dest)),
-                                                                                           void(^prepareModule)(void(NS_NOESCAPE ^prepare)(RouteConfig module))
-                                                                                           ))configBuilder API_DEPRECATED_WITH_REPLACEMENT("makeDestinationWithStrictConfiguring:", ios(7.0, 7.0));
-
 #pragma mark Internal
 
 - (RouteConfig)defaultRouteConfiguration;
@@ -67,6 +62,7 @@ NS_ASSUME_NONNULL_BEGIN
 #pragma mark Unavailable
 
 - (instancetype)init NS_UNAVAILABLE;
++ (instancetype)new NS_UNAVAILABLE;
 - (id)copy NS_UNAVAILABLE;
 - (id)mutableCopy NS_UNAVAILABLE;
 - (IMP)methodForSelector:(SEL)aSelector NS_UNAVAILABLE;

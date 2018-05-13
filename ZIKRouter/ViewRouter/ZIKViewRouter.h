@@ -378,17 +378,6 @@ typedef void(^ZIKViewRouteGlobalErrorHandler)(__kindof ZIKViewRouter * _Nullable
                                        strictRemoving:(void(NS_NOESCAPE ^ _Nullable)(ZIKViewRemoveConfiguration *config,
                                                                                      void(^prepareDest)(void(^prepare)(Destination dest))
                                                                                      ))removeConfigBuilder NS_UNAVAILABLE;
-+ (nullable instancetype)performWithRouteConfiguring:(void(NS_NOESCAPE ^)(RouteConfig config,
-                                                                          void(^prepareDest)(void(^prepare)(Destination dest)),
-                                                                          void(^prepareModule)(void(NS_NOESCAPE ^prepare)(RouteConfig module))
-                                                                          ))configBuilder NS_UNAVAILABLE;
-+ (nullable instancetype)performWithRouteConfiguring:(void(NS_NOESCAPE ^)(RouteConfig config,
-                                                                          void(^prepareDest)(void(^prepare)(Destination dest)),
-                                                                          void(^prepareModule)(void(NS_NOESCAPE ^prepare)(RouteConfig module))
-                                                                          ))configBuilder
-                                       routeRemoving:(void(NS_NOESCAPE ^ _Nullable)(ZIKViewRemoveConfiguration *config,
-                                                                                    void(^prepareDest)(void(^prepare)(Destination dest))
-                                                                                    ))removeConfigBuilder NS_UNAVAILABLE;
 
 @end
 
@@ -441,47 +430,5 @@ typedef void(^ZIKViewRouteGlobalErrorHandler)(__kindof ZIKViewRouter * _Nullable
                                                                              void(^prepareDest)(void(^prepare)(Destination dest))
                                                                              ))removeConfigBuilder API_DEPRECATED_WITH_REPLACEMENT("performOnDestination:path:strictConfiguring:strictRemoving:", ios(7.0, 7.0));
 
-
-+ (nullable instancetype)performFromSource:(nullable id<ZIKViewRouteSource>)source
-                          routeConfiguring:(void(NS_NOESCAPE ^)(RouteConfig config,
-                                                                void(^prepareDest)(void(^prepare)(Destination dest)),
-                                                                void(^prepareModule)(void(NS_NOESCAPE ^prepare)(RouteConfig module))
-                                                                ))configBuilder API_DEPRECATED_WITH_REPLACEMENT("+performFromSource:strictConfiguring:", ios(7.0, 7.0));
-+ (nullable instancetype)performFromSource:(nullable id<ZIKViewRouteSource>)source
-                          routeConfiguring:(void(NS_NOESCAPE ^)(RouteConfig config,
-                                                                void(^prepareDest)(void(^prepare)(Destination dest)),
-                                                                void(^prepareModule)(void(NS_NOESCAPE ^prepare)(RouteConfig module))
-                                                                ))configBuilder
-                             routeRemoving:(void(NS_NOESCAPE ^ _Nullable)(ZIKViewRemoveConfiguration *config,
-                                                                          void(^prepareDest)(void(^prepare)(Destination dest))
-                                                                          ))removeConfigBuilder API_DEPRECATED_WITH_REPLACEMENT("+performFromSource:strictConfiguring:strictRemoving:", ios(7.0, 7.0));
-+ (nullable instancetype)performOnDestination:(Destination)destination
-                                   fromSource:(nullable id<ZIKViewRouteSource>)source
-                             routeConfiguring:(void(NS_NOESCAPE ^)(RouteConfig config,
-                                                                   void(^prepareDest)(void(^prepare)(Destination dest)),
-                                                                   void(^prepareModule)(void(NS_NOESCAPE ^prepare)(RouteConfig module))
-                                                                   ))configBuilder API_DEPRECATED_WITH_REPLACEMENT("+performOnDestination:fromSource:strictConfiguring:", ios(7.0, 7.0));
-+ (nullable instancetype)performOnDestination:(Destination)destination
-                                   fromSource:(nullable id<ZIKViewRouteSource>)source
-                             routeConfiguring:(void(NS_NOESCAPE ^)(RouteConfig config,
-                                                                   void(^prepareDest)(void(^prepare)(Destination dest)),
-                                                                   void(^prepareModule)(void(NS_NOESCAPE ^prepare)(RouteConfig module))
-                                                                   ))configBuilder
-                                routeRemoving:(void(NS_NOESCAPE ^ _Nullable)(ZIKViewRemoveConfiguration *config,
-                                                                             void(^prepareDest)(void(^prepare)(Destination dest))
-                                                                             ))removeConfigBuilder API_DEPRECATED_WITH_REPLACEMENT("+performOnDestination:fromSource:strictConfiguring:strictRemoving:", ios(7.0, 7.0));
-+ (nullable instancetype)prepareDestination:(Destination)destination
-                           routeConfiguring:(void(NS_NOESCAPE ^)(RouteConfig config,
-                                                                 void(^prepareDest)(void(^prepare)(Destination dest)),
-                                                                 void(^prepareModule)(void(NS_NOESCAPE ^prepare)(RouteConfig module))
-                                                                 ))configBuilder API_DEPRECATED_WITH_REPLACEMENT("+prepareDestination:strictConfiguring:", ios(7.0, 7.0));
-+ (nullable instancetype)prepareDestination:(Destination)destination
-                           routeConfiguring:(void(NS_NOESCAPE ^)(RouteConfig config,
-                                                                 void(^prepareDest)(void(^prepare)(Destination dest)),
-                                                                 void(^prepareModule)(void(NS_NOESCAPE ^prepare)(RouteConfig module))
-                                                                 ))configBuilder
-                              routeRemoving:(void(NS_NOESCAPE ^ _Nullable)(ZIKViewRemoveConfiguration *config,
-                                                                           void(^prepareDest)(void(^prepare)(Destination dest))
-                                                                           ))removeConfigBuilder API_DEPRECATED_WITH_REPLACEMENT("+prepareDestination:strictConfiguring:strictRemoving:", ios(7.0, 7.0));
 @end
 NS_ASSUME_NONNULL_END

@@ -119,32 +119,4 @@ NS_SWIFT_UNAVAILABLE("ZIKModuleServiceRouterType is a fake class")
 
 @end
 
-@interface ZIKDestinationServiceRouterType<__covariant Destination: id<ZIKServiceRoutable>, __covariant RouteConfig: ZIKPerformRouteConfiguration *> (Deprecated)
-- (nullable instancetype)performWithRouteConfiguring:(void(NS_NOESCAPE ^)(RouteConfig config,
-                                                                          void(^prepareDest)(void(^prepare)(Destination dest)),
-                                                                          void(^prepareModule)(void(NS_NOESCAPE ^prepare)(RouteConfig module))
-                                                                          ))configBuilder API_DEPRECATED_WITH_REPLACEMENT("performWithStrictConfiguring:", ios(7.0, 7.0));
-- (nullable instancetype)performWithRouteConfiguring:(void(NS_NOESCAPE ^)(RouteConfig config,
-                                                                          void(^prepareDest)(void(^prepare)(Destination dest)),
-                                                                          void(^prepareModule)(void(NS_NOESCAPE ^prepare)(RouteConfig module))
-                                                                          ))configBuilder
-                                       routeRemoving:(void(NS_NOESCAPE ^ _Nullable)(ZIKRemoveRouteConfiguration *config,
-                                                                                    void(^prepareDest)(void(^prepare)(Destination dest))
-                                                                                    ))removeConfigBuilder API_DEPRECATED_WITH_REPLACEMENT("performWithStrictConfiguring:strictRemoving:", ios(7.0, 7.0));
-@end
-
-@interface ZIKModuleServiceRouterType<__covariant Destination: id, __covariant ModuleConfig: id<ZIKServiceModuleRoutable>, __covariant RouteConfig: ZIKPerformRouteConfiguration *> (Deprecated)
-- (nullable instancetype)performWithRouteConfiguring:(void(NS_NOESCAPE ^)(RouteConfig config,
-                                                                          void(^prepareDest)(void(^prepare)(Destination dest)),
-                                                                          void(^prepareModule)(void(NS_NOESCAPE ^prepare)(ModuleConfig module))
-                                                                          ))configBuilder API_DEPRECATED_WITH_REPLACEMENT("performWithStrictConfiguring:", ios(7.0, 7.0));
-- (nullable instancetype)performWithRouteConfiguring:(void(NS_NOESCAPE ^)(RouteConfig config,
-                                                                          void(^prepareDest)(void(^prepare)(Destination dest)),
-                                                                          void(^prepareModule)(void(NS_NOESCAPE ^prepare)(ModuleConfig module))
-                                                                          ))configBuilder
-                                       routeRemoving:(void(NS_NOESCAPE ^ _Nullable)(ZIKRemoveRouteConfiguration *config,
-                                                                                    void(^prepareDest)(void(^prepare)(Destination dest))
-                                                                                    ))removeConfigBuilder API_DEPRECATED_WITH_REPLACEMENT("performWithStrictConfiguring:strictRemoving:", ios(7.0, 7.0));
-@end
-
 NS_ASSUME_NONNULL_END

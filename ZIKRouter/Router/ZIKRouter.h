@@ -169,33 +169,6 @@ NS_ASSUME_NONNULL_BEGIN
 
 + (NSString *)descriptionOfState:(ZIKRouterState)state;
 
-#pragma mark Deprecated
-
-- (nullable instancetype)initWithRouteConfiguring:(void(NS_NOESCAPE ^)(RouteConfig config,
-                                                                       void(^prepareDest)(void(^prepare)(Destination dest)),
-                                                                       void(^prepareModule)(void(NS_NOESCAPE ^prepare)(RouteConfig module))
-                                                                       ))configBuilder
-                                    routeRemoving:(void(NS_NOESCAPE ^ _Nullable)(RemoveConfig config,
-                                                                                 void(^prepareDest)(void(^prepare)(Destination dest))
-                                                                                 ))removeConfigBuilder API_DEPRECATED_WITH_REPLACEMENT("initWithStrictConfiguring:strictRemoving:", ios(7.0, 7.0));
-+ (nullable instancetype)performWithRouteConfiguring:(void(NS_NOESCAPE ^)(RouteConfig config,
-                                                                          void(^prepareDest)(void(^prepare)(Destination dest)),
-                                                                          void(^prepareModule)(void(NS_NOESCAPE ^prepare)(RouteConfig module))
-                                                                          ))configBuilder API_DEPRECATED_WITH_REPLACEMENT("+performWithStrictConfiguring:", ios(7.0, 7.0));
-+ (nullable instancetype)performWithRouteConfiguring:(void(NS_NOESCAPE ^)(RouteConfig config,
-                                                                          void(^prepareDest)(void(^prepare)(Destination dest)),
-                                                                          void(^prepareModule)(void(NS_NOESCAPE ^prepare)(RouteConfig module))
-                                                                          ))configBuilder
-                                       routeRemoving:(void(NS_NOESCAPE ^ _Nullable)(RemoveConfig config,
-                                                                                    void(^prepareDest)(void(^prepare)(Destination dest))
-                                                                                    ))removeConfigBuilder API_DEPRECATED_WITH_REPLACEMENT("+performWithStrictConfiguring:strictRemoving:", ios(7.0, 7.0));
-- (void)removeRouteWithRouteConfiguring:(void(NS_NOESCAPE ^)(RemoveConfig config,
-                                                             void(^prepareDest)(void(^prepare)(Destination dest))
-                                                             ))removeConfigBuilder API_DEPRECATED_WITH_REPLACEMENT("removeRouteWithStrictConfiguring:", ios(7.0, 7.0));
-+ (nullable Destination)makeDestinationWithRouteConfiguring:(void(^ _Nullable)(RouteConfig config,
-                                                                               void(^prepareDest)(void(^prepare)(Destination dest)),
-                                                                               void(^prepareModule)(void(NS_NOESCAPE ^prepare)(RouteConfig module))
-                                                                               ))configBuilder API_DEPRECATED_WITH_REPLACEMENT("+makeDestinationWithStrictConfiguring:", ios(7.0, 7.0));
 @end
 
 extern NSErrorDomain const ZIKRouteErrorDomain;
