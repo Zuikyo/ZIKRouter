@@ -8,12 +8,20 @@
 
 import Foundation
 import ZRouter
+import ZIKRouter.Internal
 
 class TestRouteRegistry {
     static var registerRoutes: () = {
+        ZIKRouteRegistry.autoRegister = false
+        
         AServiceRouter.registerRoutableDestination()
         AViewRouter.registerRoutableDestination()
         BSubviewRouter.registerRoutableDestination()
+        
+        AViewAdapter.registerRoutableDestination()
+        AServiceAdapter.registerRoutableDestination()
+        
+        ZIKRouteRegistry.notifyRegistrationFinished()
     }()
     
     class func setUp() {

@@ -847,12 +847,7 @@ static NSMutableArray *g_preparingUIViewRouters;
 - (void)_performCustomOnDestination:(id)destination fromSource:(nullable id)source {
     [destination setZix_routeTypeFromRouter:@(ZIKViewRouteTypeCustom)];
     self.realRouteType = ZIKViewRouteRealTypeCustom;
-    if ([self respondsToSelector:@selector(performCustomRouteOnDestination:fromSource:configuration:)]) {
-        [self performCustomRouteOnDestination:destination fromSource:source configuration:self.original_configuration];
-    } else {
-        [self notifyRouteState:self.preState];
-        [self notifyError_actionFailedWithAction:ZIKRouteActionPerformRoute errorDescription:@"Perform custom route but router(%@) didn't implement -performCustomRouteOnDestination:fromSource:configuration:",[self class]];
-    }
+    [self performCustomRouteOnDestination:destination fromSource:source configuration:self.original_configuration];
 }
 
 - (void)_performGetDestination:(id)destination fromSource:(nullable id)source {
@@ -977,7 +972,9 @@ destinationStateBeforeRoute:(ZIKPresentationState *)destinationStateBeforeRoute
         ZIKPresentationState *destinationStateAfterRoute = [destination zix_presentationState];
         if ([destinationStateBeforeRoute isEqual:destinationStateAfterRoute]) {
             router.realRouteType = ZIKViewRouteRealTypeCustom;//maybe ZIKViewRouteRealTypeUnwind, but we just need to know this route can't be remove
+#if DEBUG
             NSLog(@"⚠️Warning: destination(%@)'s state was not changed after perform route from source: (%@). current state: (%@).\nYou may begin another transition without animation when the source is still in a transition without animation, or you may override source's -showViewController:sender:/-showDetailViewController:sender:/-presentViewController:animated:completion:/-pushViewController:animated: or use a custom segue, but didn't perform real presentation, or your presentation was async.",destination,source,destinationStateAfterRoute);
+#endif
         } else {
             ZIKViewRouteDetailType routeType = [ZIKPresentationState detailRouteTypeFromStateBeforeRoute:destinationStateBeforeRoute stateAfterRoute:destinationStateAfterRoute];
             router.realRouteType = [[router class] _realRouteTypeFromDetailType:routeType];
@@ -1425,9 +1422,7 @@ destinationStateBeforeRoute:(ZIKPresentationState *)destinationStateBeforeRoute
     NSParameterAssert([destination conformsToProtocol:@protocol(ZIKRoutableView)]);
     [ZIKViewRouteRegistry enumerateRoutersForDestinationClass:[destination class] handler:^(ZIKRouterType * _Nonnull route) {
         ZIKViewRouterType *r = (ZIKViewRouterType *)route;
-        if ([r respondsToSelector:@selector(router:willPerformRouteOnDestination:fromSource:)]) {
-            [r router:router willPerformRouteOnDestination:destination fromSource:source];
-        }
+        [r router:router willPerformRouteOnDestination:destination fromSource:source];
     }];
 }
 
@@ -1435,9 +1430,7 @@ destinationStateBeforeRoute:(ZIKPresentationState *)destinationStateBeforeRoute
     NSParameterAssert([destination conformsToProtocol:@protocol(ZIKRoutableView)]);
     [ZIKViewRouteRegistry enumerateRoutersForDestinationClass:[destination class] handler:^(ZIKRouterType * _Nonnull route) {
         ZIKViewRouterType *r = (ZIKViewRouterType *)route;
-        if ([r respondsToSelector:@selector(router:didPerformRouteOnDestination:fromSource:)]) {
-            [r router:router didPerformRouteOnDestination:destination fromSource:source];
-        }
+        [r router:router didPerformRouteOnDestination:destination fromSource:source];
     }];
 }
 
@@ -1445,9 +1438,7 @@ destinationStateBeforeRoute:(ZIKPresentationState *)destinationStateBeforeRoute
     NSParameterAssert([destination conformsToProtocol:@protocol(ZIKRoutableView)]);
     [ZIKViewRouteRegistry enumerateRoutersForDestinationClass:[destination class] handler:^(ZIKRouterType * _Nonnull route) {
         ZIKViewRouterType *r = (ZIKViewRouterType *)route;
-        if ([r respondsToSelector:@selector(router:willRemoveRouteOnDestination:fromSource:)]) {
-            [r router:router willRemoveRouteOnDestination:destination fromSource:(id)source];
-        }
+        [r router:router willRemoveRouteOnDestination:destination fromSource:(id)source];
     }];
 }
 
@@ -1455,9 +1446,7 @@ destinationStateBeforeRoute:(ZIKPresentationState *)destinationStateBeforeRoute
     NSParameterAssert([destination conformsToProtocol:@protocol(ZIKRoutableView)]);
     [ZIKViewRouteRegistry enumerateRoutersForDestinationClass:[destination class] handler:^(ZIKRouterType * _Nonnull route) {
         ZIKViewRouterType *r = (ZIKViewRouterType *)route;
-        if ([r respondsToSelector:@selector(router:didRemoveRouteOnDestination:fromSource:)]) {
-            [r router:router didRemoveRouteOnDestination:destination fromSource:(id)source];
-        }
+        [r router:router didRemoveRouteOnDestination:destination fromSource:(id)source];
     }];
 }
 
@@ -2613,7 +2602,7 @@ static  ZIKViewRouterType *_Nullable _routerTypeToRegisteredView(Class viewClass
 #if ZIKROUTER_CHECK
     Protocol *destinationProtocol;
     BOOL result = [ZIKViewRouteRegistry validateDestinationConformance:[destination class] forRouter:self protocol:&destinationProtocol];
-    NSAssert(result,@"Bad implementation in router (%@)'s -destinationWithConfiguration:. The destiantion (%@) doesn't conforms to registered view protocol (%@).",self, destination, NSStringFromProtocol(destinationProtocol));
+    NSAssert(result,@"Bad implementation in router (%@)'s -destinationWithConfiguration:. The destination (%@) doesn't conforms to registered view protocol (%@).",self, destination, NSStringFromProtocol(destinationProtocol));
 #endif
 }
 

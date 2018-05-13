@@ -47,7 +47,7 @@ class ViewModuleRouterPerformTests: XCTestCase {
     func testPerformWithPrepareDestination() {
         let expectation = self.expectation(description: "prepareDestination")
         enterTest()
-        self.router = Router.perform(to: RoutableViewModule<AViewModuleInput>(), path: .makeDestination, configuring: { (config, prepareDestiantion, prepareModule) in
+        self.router = Router.perform(to: RoutableViewModule<AViewModuleInput>(), path: .makeDestination, configuring: { (config, prepareDestination, prepareModule) in
             prepareModule({ module in
                 module.title = "test title"
                 expectation.fulfill()
@@ -62,7 +62,7 @@ class ViewModuleRouterPerformTests: XCTestCase {
     func testPerformWithSuccessCompletionHandler() {
         let expectation = self.expectation(description: "completionHandler")
         enterTest()
-        self.router = Router.perform(to: RoutableViewModule<AViewModuleInput>(), path: .makeDestination, configuring: { (config, prepareDestiantion, _) in
+        self.router = Router.perform(to: RoutableViewModule<AViewModuleInput>(), path: .makeDestination, configuring: { (config, prepareDestination, _) in
             config.completionHandler = { (success, destination, action, error) in
                 XCTAssertTrue(success)
                 XCTAssertNotNil(destination)
@@ -80,7 +80,7 @@ class ViewModuleRouterPerformTests: XCTestCase {
         let expectation = self.expectation(description: "completionHandler")
         TestConfig.routeShouldFail = true
         enterTest()
-        self.router = Router.perform(to: RoutableViewModule<AViewModuleInput>(), path: .makeDestination, configuring: { (config, prepareDestiantion, _) in
+        self.router = Router.perform(to: RoutableViewModule<AViewModuleInput>(), path: .makeDestination, configuring: { (config, prepareDestination, _) in
             config.completionHandler = { (success, destination, action, error) in
                 XCTAssertFalse(success)
                 XCTAssertNil(destination)

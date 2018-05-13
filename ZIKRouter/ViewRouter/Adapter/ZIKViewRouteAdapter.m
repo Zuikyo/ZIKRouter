@@ -10,6 +10,8 @@
 //
 
 #import "ZIKViewRouteAdapter.h"
+#import "ZIKRouteRegistryInternal.h"
+#import "ZIKViewRouteRegistry.h"
 
 @implementation ZIKViewRouteAdapter
 
@@ -29,6 +31,13 @@
 
 + (void)registerRoutableDestination {
     
+}
+
++ (void)registerDestinationAdapter:(Protocol *)adapterProtocol forAdaptee:(Protocol *)adapteeProtocol {
+    [ZIKViewRouteRegistry registerDestinationAdapter:adapterProtocol forAdaptee:adapteeProtocol];
+}
++ (void)registerModuleAdapter:(Protocol *)adapterProtocol forAdaptee:(Protocol *)adapteeProtocol {
+    [ZIKViewRouteRegistry registerModuleAdapter:adapterProtocol forAdaptee:adapteeProtocol];
 }
 
 @end

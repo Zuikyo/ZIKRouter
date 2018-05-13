@@ -29,9 +29,16 @@ public protocol ViewRouterExtension: class {
 }
 
 public extension ViewRouterExtension {
+    /// Register a view protocol that all views registered with the router conforming to.
+    ///
+    /// - Parameter routableView: A routabe entry carrying a protocol conformed by the destination of the router.
     static func register<Protocol>(_ routableView: RoutableView<Protocol>) {
         Registry.register(routableView, forRouter: self)
     }
+    
+    /// Register a module config protocol conformed by the router's default route configuration.
+    ///
+    /// - Parameter routableViewModule: A routabe entry carrying a module config protocol conformed by the custom configuration of the router.
     static func register<Protocol>(_ routableViewModule: RoutableViewModule<Protocol>) {
         Registry.register(routableViewModule, forRouter: self)
     }
@@ -50,9 +57,16 @@ public protocol ServiceRouterExtension: class {
 }
 
 public extension ServiceRouterExtension {
+    /// Register a service protocol that all services registered with the router conforming to.
+    ///
+    /// - Parameter routableService: A routabe entry carrying a protocol conformed by the destination of the router.
     static func register<Protocol>(_ routableService: RoutableService<Protocol>) {
         Registry.register(routableService, forRouter: self)
     }
+    
+    /// Register a module config protocol conformed by the router's default route configuration.
+    ///
+    /// - Parameter routableServiceModule: A routabe entry carrying a module config protocol conformed by the custom configuration of the router.
     static func register<Protocol>(_ routableServiceModule: RoutableServiceModule<Protocol>) {
         Registry.register(routableServiceModule, forRouter: self)
     }
@@ -60,6 +74,26 @@ public extension ServiceRouterExtension {
 
 extension ZIKServiceRouter: ServiceRouterExtension {
     
+}
+
+// MARK: Adapter Extension
+
+public extension ZIKViewRouteAdapter {
+    public static func register<Adapter, Adaptee>(adapter: RoutableView<Adapter>, forAdaptee adaptee: RoutableView<Adaptee>) {
+        Registry.register(adapter: adapter, forAdaptee: adaptee)
+    }
+    public static func register<Adapter, Adaptee>(adapter: RoutableViewModule<Adapter>, forAdaptee adaptee: RoutableViewModule<Adaptee>) {
+        Registry.register(adapter: adapter, forAdaptee: adaptee)
+    }
+}
+
+public extension ZIKServiceRouteAdapter {
+    public static func register<Adapter, Adaptee>(adapter: RoutableService<Adapter>, forAdaptee adaptee: RoutableService<Adaptee>) {
+        Registry.register(adapter: adapter, forAdaptee: adaptee)
+    }
+    public static func register<Adapter, Adaptee>(adapter: RoutableServiceModule<Adapter>, forAdaptee adaptee: RoutableServiceModule<Adaptee>) {
+        Registry.register(adapter: adapter, forAdaptee: adaptee)
+    }
 }
 
 // MARK: View Route Extension

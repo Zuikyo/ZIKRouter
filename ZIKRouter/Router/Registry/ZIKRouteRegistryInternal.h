@@ -41,6 +41,8 @@ NS_ASSUME_NONNULL_BEGIN
 ///key: identifier string, value: router class or ZIKRoute
 @property (nonatomic, class, readonly) CFMutableDictionaryRef identifierToRouterMap;
 
+@property (nonatomic, class, readonly) CFMutableDictionaryRef adapterToAdapteeMap;
+
 #if ZIKROUTER_CHECK
 ///key: router class or ZIKRoute, value: destination class set
 @property (nonatomic, class, readonly) CFMutableDictionaryRef _check_routerToDestinationsMap;
@@ -81,6 +83,9 @@ NS_ASSUME_NONNULL_BEGIN
 + (void)registerDestinationProtocol:(Protocol *)destinationProtocol route:(ZIKRoute *)route;
 + (void)registerModuleProtocol:(Protocol *)configProtocol route:(ZIKRoute *)route;
 + (void)registerIdentifier:(NSString *)identifier route:(ZIKRoute *)route;
+
++ (void)registerDestinationAdapter:(Protocol *)adapterProtocol forAdaptee:(Protocol *)adapteeProtocol;
++ (void)registerModuleAdapter:(Protocol *)adapterProtocol forAdaptee:(Protocol *)adapteeProtocol;
 
 #pragma mark Check
 

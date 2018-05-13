@@ -326,7 +326,7 @@ typedef void(^ZIKViewRouteGlobalErrorHandler)(__kindof ZIKViewRouter * _Nullable
 + (void)registerExclusiveView:(Class)viewClass;
 
 /**
- Register a view protocol that all views registered with the router conform to, then use ZIKRouterToView() to get the router class. In Swift, use `register(RoutableView<ViewProtocol>())` in ZRouter instead.
+ Register a view protocol that all views registered with the router conforming to, then use ZIKRouterToView() to get the router class. In Swift, use `register(RoutableView<ViewProtocol>())` in ZRouter instead.
  
  @param viewProtocol The protocol conformed by the view. Should inherit from ZIKViewRoutable. Use macro `ZIKRoutable` to wrap the parameter.
  */
@@ -339,6 +339,7 @@ typedef void(^ZIKViewRouteGlobalErrorHandler)(__kindof ZIKViewRouter * _Nullable
  */
 + (void)registerModuleProtocol:(Protocol<ZIKViewModuleRoutable> *)configProtocol;
 
+///Register a unique identifier for this router class.
 + (void)registerIdentifier:(NSString *)identifier;
 
 ///Is registration all finished. Can't register any router after registration is finished.

@@ -19,6 +19,25 @@ NS_ASSUME_NONNULL_BEGIN
  Why you need an adapter to decouple? There is a situation: module A need to use a file log module inside it, and A use the log module with a required interface (ModuleALogProtocol). The app context provides the log module as module B, and module B use a provided interface (ModuleBLogProtocol). So in the app context, you need to adapte required interface(ModuleALogProtocol) and provided interface(ModuleBLogProtocol). Use category, swift extension, NSProxy or custom mediator to forward ModuleALogProtocol to ModuleBLogProtocol. Then module A is totally decoupled with module B.
  */
 @interface ZIKServiceRouteAdapter : ZIKServiceRouter
+
+/**
+ Register adapter and adaptee protocols conformed by the destination. Then if you try to find router with the adapter, there will return the adaptee's router. In Swift, use `register(adapter:forAdaptee:)` in ZRouter instead.
+ 
+ @param adapterProtocol The required protocol used in the user. The protocol should not be directly registered with any router yet.
+ @param adapteeProtocol The provided protocol.
+ */
++ (void)registerDestinationAdapter:(Protocol<ZIKServiceRoutable> *)adapterProtocol forAdaptee:(Protocol<ZIKServiceRoutable> *)adapteeProtocol;
+
+/**
+ Register adapter and adaptee protocols conformed by the default configuration of the adaptee's router. Then if you try to find router with the adapter, there will return the adaptee's router. In Swift, use `register(adapter:forAdaptee:)` in ZRouter instead.
+ 
+ @param adapterProtocol The required protocol used in the user. The protocol should not be directly registered with any router yet.
+ @param adapteeProtocol The provided protocol.
+ */
++ (void)registerModuleAdapter:(Protocol<ZIKServiceModuleRoutable> *)adapterProtocol forAdaptee:(Protocol<ZIKServiceModuleRoutable> *)adapteeProtocol;
+
+#pragma mark Unavailable
+
 - (nullable instancetype)initWithConfiguration:(__kindof ZIKPerformRouteConfiguration *)configuration
                            removeConfiguration:(nullable __kindof ZIKRouteConfiguration *)removeConfiguration NS_UNAVAILABLE;
 - (nullable instancetype)initWithConfiguring:(void(NS_NOESCAPE ^)(__kindof ZIKPerformRouteConfiguration *config))configBuilder

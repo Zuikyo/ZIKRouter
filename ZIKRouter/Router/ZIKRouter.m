@@ -1011,12 +1011,4 @@ NSErrorDomain const ZIKRouteErrorDomain = @"ZIKRouteErrorDomain";
     return [NSString stringWithFormat:@"%@: state:%@,\ndestinaton:%@,\nconfiguration:(%@)",[super description],[[self class] descriptionOfState:self.state],self.destination,self.original_configuration];
 }
 
-+ (BOOL)shouldCheckImplementation {
-#if ZIKROUTER_CHECK
-    return YES;
-#else
-    return NO;
-#endif
-}
-
 @end

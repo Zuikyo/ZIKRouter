@@ -14,7 +14,6 @@
 #import "ZIKRouter.h"
 
 @interface ZIKRouterType()
-@property (nonatomic, copy) NSString *routerClassName;
 @property (nonatomic, strong) Class routerClass;
 @property (nonatomic, strong) ZIKRoute *route;
 @end
@@ -33,7 +32,6 @@
     }
     if (self = [super init]) {
         _routerClass = routerClass;
-        _routerClassName = NSStringFromClass(routerClass);
     }
     return self;
 }
@@ -58,36 +56,22 @@
     return nil;
 }
 
-- (Class)routerClass {
-    if (_routerClass == nil) {
-        if (_routerClassName) {
-            return NSClassFromString(_routerClassName);
-        }
+- (id)routeObject {
+    if (_routerClass) {
+        return _routerClass;
     }
-    return _routerClass;
+    return _route;
 }
 
 - (BOOL)respondsToSelector:(SEL)aSelector {
     if ([super respondsToSelector:aSelector]) {
         return YES;
     }
-    if (self.routerClass) {
-        return [self.routerClass respondsToSelector:aSelector];
-    }
-    if (self.route) {
-        return [self.route respondsToSelector:aSelector];
-    }
-    return NO;
+    return [self.routeObject respondsToSelector:aSelector];
 }
 
 - (id)forwardingTargetForSelector:(SEL)aSelector {
-    if (self.routerClass) {
-        return self.routerClass;
-    }
-    if (self.route) {
-        return self.route;
-    }
-    return nil;
+    return self.routeObject;
 }
 
 - (NSString *)description {

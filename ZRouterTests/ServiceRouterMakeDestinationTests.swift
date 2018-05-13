@@ -90,4 +90,68 @@ class ServiceRouterMakeDestinationTests: XCTestCase {
         XCTAssert(destination?.title == "test title")
         waitForExpectations(timeout: 5, handler: { if let error = $0 {print(error)}})
     }
+    
+    func testSwiftAdapter() {
+        let providerExpectation = self.expectation(description: "successHandler")
+        let performerExpectation = self.expectation(description: "performerSuccessHandler")
+        let completionHandlerExpectation = self.expectation(description: "completionHandler")
+        XCTAssertTrue(Router.to(RoutableService<AServiceInputAdapter>())!.canMakeDestination)
+        let destination = Router.makeDestination(to: RoutableService<AServiceInput>(), configuring: { (config, prepareDestination, _) in
+            prepareDestination({ destination in
+                destination.title = "test title"
+            })
+            config.successHandler = { d in
+                providerExpectation.fulfill()
+            }
+            config.performerSuccessHandler = { d in
+                performerExpectation.fulfill()
+            }
+            config.errorHandler = { (action, error) in
+                XCTAssert(false, "errorHandler should not be called")
+            }
+            config.performerErrorHandler = { (action, error) in
+                XCTAssert(false, "performerErrorHandler should not be called")
+            }
+            config.completionHandler = { (success, destination, action, error) in
+                XCTAssertTrue(success)
+                XCTAssert(destination is AServiceInput)
+                completionHandlerExpectation.fulfill()
+            }
+        })
+        XCTAssertNotNil(destination)
+        XCTAssert(destination?.title == "test title")
+        waitForExpectations(timeout: 5, handler: { if let error = $0 {print(error)}})
+    }
+    
+    func testObjcAdapter() {
+        let providerExpectation = self.expectation(description: "successHandler")
+        let performerExpectation = self.expectation(description: "performerSuccessHandler")
+        let completionHandlerExpectation = self.expectation(description: "completionHandler")
+        XCTAssertTrue(Router.to(RoutableService<AServiceInputObjcAdapter>())!.canMakeDestination)
+        let destination = Router.makeDestination(to: RoutableService<AServiceInput>(), configuring: { (config, prepareDestination, _) in
+            prepareDestination({ destination in
+                destination.title = "test title"
+            })
+            config.successHandler = { d in
+                providerExpectation.fulfill()
+            }
+            config.performerSuccessHandler = { d in
+                performerExpectation.fulfill()
+            }
+            config.errorHandler = { (action, error) in
+                XCTAssert(false, "errorHandler should not be called")
+            }
+            config.performerErrorHandler = { (action, error) in
+                XCTAssert(false, "performerErrorHandler should not be called")
+            }
+            config.completionHandler = { (success, destination, action, error) in
+                XCTAssertTrue(success)
+                XCTAssert(destination is AServiceInput)
+                completionHandlerExpectation.fulfill()
+            }
+        })
+        XCTAssertNotNil(destination)
+        XCTAssert(destination?.title == "test title")
+        waitForExpectations(timeout: 5, handler: { if let error = $0 {print(error)}})
+    }
 }

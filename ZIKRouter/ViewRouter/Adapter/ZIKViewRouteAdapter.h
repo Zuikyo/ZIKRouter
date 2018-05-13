@@ -20,6 +20,24 @@ NS_ASSUME_NONNULL_BEGIN
  */
 @interface ZIKViewRouteAdapter : ZIKViewRouter
 
+/**
+ Register adapter and adaptee protocols conformed by the destination. Then if you try to find router with the adapter, there will return the adaptee's router. In Swift, use `register(adapter:forAdaptee:)` in ZRouter instead.
+ 
+ @param adapterProtocol The required protocol used in the user. The protocol should not be directly registered with any router yet.
+ @param adapteeProtocol The provided protocol.
+ */
++ (void)registerDestinationAdapter:(Protocol<ZIKViewRoutable> *)adapterProtocol forAdaptee:(Protocol<ZIKViewRoutable> *)adapteeProtocol;
+
+/**
+ Register adapter and adaptee protocols conformed by the default configuration of the adaptee's router. Then if you try to find router with the adapter, there will return the adaptee's router. In Swift, use `register(adapter:forAdaptee:)` in ZRouter instead.
+ 
+ @param adapterProtocol The required protocol used in the user. The protocol should not be directly registered with any router yet.
+ @param adapteeProtocol The provided protocol.
+ */
++ (void)registerModuleAdapter:(Protocol<ZIKViewModuleRoutable> *)adapterProtocol forAdaptee:(Protocol<ZIKViewModuleRoutable> *)adapteeProtocol;
+
+#pragma mark Unavailable
+
 - (nullable instancetype)initWithConfiguration:(__kindof ZIKViewRouteConfiguration *)configuration
                            removeConfiguration:(nullable __kindof ZIKViewRemoveConfiguration *)removeConfiguration NS_UNAVAILABLE;
 - (nullable instancetype)initWithConfiguring:(void(NS_NOESCAPE ^)(__kindof ZIKViewRouteConfiguration *config))configBuilder

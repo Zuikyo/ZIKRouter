@@ -71,7 +71,7 @@ public class ServiceRouterType<Destination, ModuleConfig> {
                 prepare(moduleConfig)
             }
             configBuilder(config, prepareDestination, prepareModule)
-            if shouldCheckServiceRouter {
+            if SHOULD_CHECK_ROUTER_IMPLEMENTATION {
                 let successHandler = config.successHandler
                 config.successHandler = { d in
                     successHandler?(d)
@@ -183,12 +183,12 @@ public class ServiceRouterType<Destination, ModuleConfig> {
     
     private static func _castedDestination(_ destination: Any, routerType: ZIKAnyServiceRouterType) -> Destination? {
         if let d = destination as? Destination {
-            if shouldCheckServiceRouter {
+            if SHOULD_CHECK_ROUTER_IMPLEMENTATION {
                 assert(Registry.validateConformance(destination: d, inServiceRouterType: routerType))
             }
             return d
         } else if let d = (destination as AnyObject) as? Destination {
-            if shouldCheckServiceRouter {
+            if SHOULD_CHECK_ROUTER_IMPLEMENTATION {
                 assert(Registry.validateConformance(destination: d, inServiceRouterType: routerType))
             }
             return d

@@ -19,11 +19,23 @@ protocol AServiceInput: class {
     var title: String? { get set }
 }
 
-extension AService: ZIKRoutableService, AServiceInput {
+protocol AServiceInputAdapter: class {
+    var title: String? { get set }
+}
+
+@objc protocol AServiceInputObjcAdapter: ZIKServiceRoutable {
+    var title: String? { get set }
+}
+
+extension AService: ZIKRoutableService, AServiceInput, AServiceInputAdapter, AServiceInputObjcAdapter {
     
 }
 
 extension RoutableService where Protocol == AServiceInput {
+    init() { self.init(declaredProtocol: Protocol.self) }
+}
+
+extension RoutableService where Protocol == AServiceInputAdapter {
     init() { self.init(declaredProtocol: Protocol.self) }
 }
 
@@ -32,16 +44,34 @@ protocol AServiceModuleInput: class {
     func makeDestinationCompletion(_ block: @escaping (AServiceInput) -> Void)
 }
 
+protocol AServiceModuleInputAdapter: class {
+    var title: String? { get set }
+    func makeDestinationCompletion(_ block: @escaping (AServiceInput) -> Void)
+}
+
+@objc protocol AServiceModuleInputObjcAdapter: ZIKServiceModuleRoutable {
+    var title: String? { get set }
+    func makeDestinationCompletion(_ block: @escaping (AServiceInputObjcAdapter) -> Void)
+}
+
 extension RoutableServiceModule where Protocol == AServiceModuleInput {
     init() { self.init(declaredProtocol: Protocol.self) }
 }
 
-class AServiceModuleConfiguration: ZIKPerformRouteConfiguration, AServiceModuleInput {
+extension RoutableServiceModule where Protocol == AServiceModuleInputAdapter {
+    init() { self.init(declaredProtocol: Protocol.self) }
+}
+
+class AServiceModuleConfiguration: ZIKPerformRouteConfiguration, AServiceModuleInput, AServiceModuleInputAdapter, AServiceModuleInputObjcAdapter {
     var completion: ((AServiceInput) -> Void)?
+    var objcCompletion: ((AServiceInputObjcAdapter) -> Void)?
     
     var title: String?
     func makeDestinationCompletion(_ block: @escaping (AServiceInput) -> Void) {
         completion = block
+    }
+    func makeDestinationCompletion(_ block: @escaping (AServiceInputObjcAdapter) -> Void) {
+        objcCompletion = block
     }
     
     override func copy(with zone: NSZone? = nil) -> Any {
@@ -88,3 +118,11 @@ class AServiceRouter: ZIKServiceRouter<AnyObject, AServiceModuleConfiguration> {
     
 }
 
+class AServiceAdapter: ZIKServiceRouteAdapter {
+    override static func registerRoutableDestination() {
+        register(adapter: RoutableService<AServiceInputAdapter>(), forAdaptee: RoutableService<AServiceInput>())
+        register(adapter: RoutableService<AServiceInputObjcAdapter>(), forAdaptee: RoutableService<AServiceInput>())
+        register(adapter: RoutableServiceModule<AServiceModuleInputAdapter>(), forAdaptee: RoutableServiceModule<AServiceModuleInput>())
+        register(adapter: RoutableServiceModule<AServiceModuleInputObjcAdapter>(), forAdaptee: RoutableServiceModule<AServiceModuleInput>())
+    }
+}

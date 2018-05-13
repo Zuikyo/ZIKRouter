@@ -77,7 +77,7 @@ public class ViewRouterType<Destination, ModuleConfig> {
                 prepare(moduleConfig)
             }
             configBuilder(config, prepareDestination, prepareModule)
-            if shouldCheckServiceRouter {
+            if SHOULD_CHECK_ROUTER_IMPLEMENTATION {
                 let successHandler = config.successHandler
                 config.successHandler = { d in
                     successHandler?(d)
@@ -660,7 +660,7 @@ public extension ViewRouterType {
                 prepare(moduleConfig)
             }
             configBuilder(config, prepareDestination, prepareModule)
-            if shouldCheckServiceRouter {
+            if SHOULD_CHECK_ROUTER_IMPLEMENTATION {
                 let successHandler = config.successHandler
                 config.successHandler = { d in
                     successHandler?(d)

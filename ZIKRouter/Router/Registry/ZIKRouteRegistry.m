@@ -28,6 +28,12 @@ static BOOL _registrationFinished = NO;
 @property (nonatomic, class) BOOL registrationFinished;
 @end
 
+///Implementation is in ZRouter
+@interface ZIKRouteRegistry(SwiftAdapter)
++ (id)_swiftRouteForDestinationAdapter:(Protocol *)destinationProtocol;
++ (id)_swiftRouteForModuleAdapter:(Protocol *)moduleProtocol;
+@end
+
 @implementation ZIKRouteRegistry
 
 #pragma mark Auto Register
@@ -168,6 +174,36 @@ static BOOL _registrationFinished = NO;
         return nil;
     }
     id route = CFDictionaryGetValue(self.destinationProtocolToRouterMap, (__bridge const void *)(destinationProtocol));
+    if (route == nil) {
+        Protocol *adapter = destinationProtocol;
+        Protocol *adaptee = nil;
+#if ZIKROUTER_CHECK
+        NSMutableArray<Protocol *> *traversedProtocols = [NSMutableArray array];
+#endif
+        do {
+            adaptee = CFDictionaryGetValue(self.adapterToAdapteeMap, (__bridge const void *)(adapter));
+            if (adaptee == nil) {
+                break;
+            }
+#if ZIKROUTER_CHECK
+            [traversedProtocols addObject:adapter];
+            if ([traversedProtocols containsObject:adaptee]) {
+                NSMutableString *adapterChain = [NSMutableString string];
+                [traversedProtocols enumerateObjectsUsingBlock:^(Protocol * _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
+                    [adapterChain appendFormat:@"%@ -> ", NSStringFromProtocol(obj)];
+                }];
+                [adapterChain appendFormat:@"%@", NSStringFromProtocol(adaptee)];
+                NSAssert(NO, @"Dead cycle in destination adapter -> adaptee chain: %@. Check your +registerDestinationAdapter:forAdaptee:.",adapterChain);
+                break;
+            }
+#endif
+            route = CFDictionaryGetValue(self.destinationProtocolToRouterMap, (__bridge const void *)(adaptee));
+            adapter = adaptee;
+        } while (route == nil);
+    }
+    if (route == nil && [self respondsToSelector:@selector(_swiftRouteForDestinationAdapter:)]) {
+        route = [self _swiftRouteForDestinationAdapter:destinationProtocol];
+    }
     return [self _routerTypeForObject:route];
 }
 
@@ -179,6 +215,36 @@ static BOOL _registrationFinished = NO;
         return nil;
     }
     id route = CFDictionaryGetValue(self.moduleConfigProtocolToRouterMap, (__bridge const void *)(configProtocol));
+    if (route == nil) {
+        Protocol *adapter = configProtocol;
+        Protocol *adaptee = nil;
+#if ZIKROUTER_CHECK
+        NSMutableArray<Protocol *> *traversedProtocols = [NSMutableArray array];
+#endif
+        do {
+            adaptee = CFDictionaryGetValue(self.adapterToAdapteeMap, (__bridge const void *)(adapter));
+            if (adaptee == nil) {
+                break;
+            }
+#if ZIKROUTER_CHECK
+            [traversedProtocols addObject:adapter];
+            if ([traversedProtocols containsObject:adaptee]) {
+                NSMutableString *adapterChain = [NSMutableString string];
+                [traversedProtocols enumerateObjectsUsingBlock:^(Protocol * _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
+                    [adapterChain appendFormat:@"%@ -> ", NSStringFromProtocol(obj)];
+                }];
+                [adapterChain appendFormat:@"%@", NSStringFromProtocol(adaptee)];
+                NSAssert(NO, @"Dead cycle in module adapter -> adaptee chain: %@. Check your +registerModuleAdapter:forAdaptee:.",adapterChain);
+                break;
+            }
+#endif
+            route = CFDictionaryGetValue(self.moduleConfigProtocolToRouterMap, (__bridge const void *)(adaptee));
+            adapter = adaptee;
+        } while (route == nil);
+    }
+    if (route == nil && [self respondsToSelector:@selector(_swiftRouteForModuleAdapter:)]) {
+        route = [self _swiftRouteForModuleAdapter:configProtocol];
+    }
     return [self _routerTypeForObject:route];
 }
 
@@ -265,6 +331,18 @@ static BOOL _registrationFinished = NO;
 + (void)registerIdentifier:(NSString *)identifier route:(ZIKRoute *)route {
     NSParameterAssert([route isKindOfClass:[ZIKRoute class]]);
     [self _registerIdentifier:identifier routeObject:route];
+}
+
++ (void)registerDestinationAdapter:(Protocol *)adapterProtocol forAdaptee:(Protocol *)adapteeProtocol {
+    NSAssert2(CFDictionaryGetValue(self.destinationProtocolToRouterMap, (__bridge const void *)(adapterProtocol)) == nil, @"Adapter (%@) already register with router (%@)", NSStringFromProtocol(adapterProtocol), CFDictionaryGetValue(self.destinationProtocolToRouterMap, (__bridge const void *)(adapterProtocol)));
+    NSAssert3(CFDictionaryGetValue(self.adapterToAdapteeMap, (__bridge const void *)(adapterProtocol)) == nil, @"Adapter (%@) can't register adaptee (%@),  already register another adaptee (%@)", NSStringFromProtocol(adapterProtocol), NSStringFromProtocol(adapteeProtocol), CFDictionaryGetValue(self.adapterToAdapteeMap, (__bridge const void *)(adapterProtocol)));
+    CFDictionarySetValue(self.adapterToAdapteeMap, (__bridge const void *)(adapterProtocol), (__bridge const void *)(adapteeProtocol));
+}
+
++ (void)registerModuleAdapter:(Protocol *)adapterProtocol forAdaptee:(Protocol *)adapteeProtocol {
+    NSAssert2(CFDictionaryGetValue(self.moduleConfigProtocolToRouterMap, (__bridge const void *)(adapterProtocol)) == nil, @"Adapter (%@) already register with router (%@)", NSStringFromProtocol(adapterProtocol), CFDictionaryGetValue(self.moduleConfigProtocolToRouterMap, (__bridge const void *)(adapterProtocol)));
+    NSAssert3(CFDictionaryGetValue(self.adapterToAdapteeMap, (__bridge const void *)(adapterProtocol)) == nil, @"Adapter (%@) can't register adaptee (%@),  already register another adaptee (%@)", NSStringFromProtocol(adapterProtocol), NSStringFromProtocol(adapteeProtocol), CFDictionaryGetValue(self.adapterToAdapteeMap, (__bridge const void *)(adapterProtocol)));
+    CFDictionarySetValue(self.adapterToAdapteeMap, (__bridge const void *)(adapterProtocol), (__bridge const void *)(adapteeProtocol));
 }
 
 + (void)_registerDestination:(Class)destinationClass routeObject:(id)routeObject {
@@ -415,6 +493,7 @@ static BOOL _registrationFinished = NO;
 #pragma mark Manually Register
 
 + (void)notifyRegistrationFinished {
+    NSAssert(self.autoRegister == NO, @"Only use -notifyRegistrationFinished for manually registration.");
     if (_registrationFinished) {
         NSAssert(NO, @"Registration is already finished.");
         return;
@@ -423,6 +502,7 @@ static BOOL _registrationFinished = NO;
     for (Class registry in registries) {
         [registry didFinishRegistration];
     }
+    
     self.registrationFinished = YES;
 }
 
@@ -617,6 +697,10 @@ static BOOL _registrationFinished = NO;
     return nil;
 }
 + (CFMutableDictionaryRef)identifierToRouterMap {
+    NSAssert(NO, @"%@ must override %@",self,NSStringFromSelector(_cmd));
+    return nil;
+}
++ (CFMutableDictionaryRef)adapterToAdapteeMap {
     NSAssert(NO, @"%@ must override %@",self,NSStringFromSelector(_cmd));
     return nil;
 }

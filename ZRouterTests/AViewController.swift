@@ -25,11 +25,27 @@ protocol AViewInput: class {
     var title: String? { get set }
 }
 
-extension AViewController: ZIKRoutableView, AViewInput {
+protocol AViewInputAdapter: class {
+    var title: String? { get set }
+}
+
+@objc protocol AViewInputObjcAdapter: ZIKViewRoutable {
+    var title: String? { get set }
+}
+
+extension AViewController: ZIKRoutableView, AViewInput, AViewInputAdapter, AViewInputObjcAdapter {
     
 }
 
 extension RoutableView where Protocol == AViewInput {
+    init() { self.init(declaredProtocol: Protocol.self) }
+}
+
+extension RoutableView where Protocol == UIViewController & AViewInput {
+    init() { self.init(declaredProtocol: Protocol.self) }
+}
+
+extension RoutableView where Protocol == AViewInputAdapter {
     init() { self.init(declaredProtocol: Protocol.self) }
 }
 
@@ -38,16 +54,34 @@ protocol AViewModuleInput: class {
     func makeDestinationCompletion(_ block: @escaping (AViewInput) -> Void)
 }
 
+protocol AViewModuleInputAdapter: class {
+    var title: String? { get set }
+    func makeDestinationCompletion(_ block: @escaping (AViewInput) -> Void)
+}
+
+@objc protocol AViewModuleInputObjcAdapter: ZIKViewModuleRoutable {
+    var title: String? { get set }
+    func makeDestinationCompletion(_ block: @escaping (AViewInputObjcAdapter) -> Void)
+}
+
 extension RoutableViewModule where Protocol == AViewModuleInput {
     init() { self.init(declaredProtocol: Protocol.self) }
 }
 
-class AViewModuleConfiguration: ZIKViewRouteConfiguration, AViewModuleInput {
+extension RoutableViewModule where Protocol == AViewModuleInputAdapter {
+    init() { self.init(declaredProtocol: Protocol.self) }
+}
+
+class AViewModuleConfiguration: ZIKViewRouteConfiguration, AViewModuleInput, AViewModuleInputAdapter, AViewModuleInputObjcAdapter {
     var completion: ((AViewInput) -> Void)?
+    var objcCompletion: ((AViewInputObjcAdapter) -> Void)?
     
     var title: String?
     func makeDestinationCompletion(_ block: @escaping (AViewInput) -> Void) {
         completion = block
+    }
+    func makeDestinationCompletion(_ block: @escaping (AViewInputObjcAdapter) -> Void) {
+        objcCompletion = block
     }
     
     override func copy(with zone: NSZone? = nil) -> Any {
@@ -63,6 +97,7 @@ class AViewRouter: ZIKViewRouter<AViewController, AViewModuleConfiguration> {
         registerView(AViewController.self)
         register(RoutableView<AViewInput>())
         register(RoutableViewModule<AViewModuleInput>())
+        register(RoutableView<UIViewController & AViewInput>())
     }
     
     override class func defaultRouteConfiguration() -> AViewModuleConfiguration {
@@ -86,7 +121,19 @@ class AViewRouter: ZIKViewRouter<AViewController, AViewModuleConfiguration> {
         if let completion = configuration.completion {
             completion(destination)
             configuration.completion = nil
+        } else if let completion = configuration.objcCompletion {
+            completion(destination)
+            configuration.objcCompletion = nil
         }
     }
     
+}
+
+class AViewAdapter: ZIKViewRouteAdapter {
+    override class func registerRoutableDestination() {
+        register(adapter: RoutableView<AViewInputAdapter>(), forAdaptee: RoutableView<AViewInput>())
+        register(adapter: RoutableView<AViewInputObjcAdapter>(), forAdaptee: RoutableView<AViewInput>())
+        register(adapter: RoutableViewModule<AViewModuleInputAdapter>(), forAdaptee: RoutableViewModule<AViewModuleInput>())
+        register(adapter: RoutableViewModule<AViewModuleInputObjcAdapter>(), forAdaptee: RoutableViewModule<AViewModuleInput>())
+    }
 }

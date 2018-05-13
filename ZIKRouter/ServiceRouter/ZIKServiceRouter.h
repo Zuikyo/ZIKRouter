@@ -74,7 +74,7 @@ typedef void(^ZIKServiceRouteGlobalErrorHandler)(__kindof ZIKServiceRouter * _Nu
 + (void)registerExclusiveService:(Class)serviceClass;
 
 /**
- Register a service protocol that all services registered with the router conform to, then use ZIKRouterToService() to get the router class. In Swift, use `register(RoutableService<ServiceProtocol>())` in ZRouter instead.
+ Register a service protocol that all services registered with the router conforming to, then use ZIKRouterToService() to get the router class. In Swift, use `register(RoutableService<ServiceProtocol>())` in ZRouter instead.
  
  @param serviceProtocol The protocol conformed by service. Should inherit from ZIKServiceRoutable. Use macro `ZIKRoutable` to wrap the parameter.
  */
@@ -89,6 +89,7 @@ typedef void(^ZIKServiceRouteGlobalErrorHandler)(__kindof ZIKServiceRouter * _Nu
  */
 + (void)registerModuleProtocol:(Protocol<ZIKServiceModuleRoutable> *)configProtocol;
 
+///Register a unique identifier for this router class.
 + (void)registerIdentifier:(NSString *)identifier;
 
 ///Is registration all finished. Can't register any router after registration is finished.

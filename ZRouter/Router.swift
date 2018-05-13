@@ -83,42 +83,28 @@ public class Router {
         return Registry.router(to: switchableServiceModule)
     }
     
-    // MARK: Dynamic Discover
+    // MARK: Identifier Discover
     
-    /// Get view router type for registered view protocol name.
-    /// - Warning: Only use this when the business logic requires highly dynamic route, e.g. handling open URL from outside and show dynamic view.
+    /// Find view router registered with the unique identifier.
     ///
-    /// - Parameter viewProtocolName: The name string of the view protocol.
-    /// - Returns: The view router type for the view protocol.
-    public static func to(dynamicView viewProtocolName: String) -> ViewRouterType<Any, ViewRouteConfig>? {
-        return Registry.router(toDynamicView: viewProtocolName)
+    /// - Parameter viewIdentifier: Identifier of the router.
+    /// - Returns: The view router type for the identifier. Return nil if the identifier is not registered with any view router.
+    public static func to(viewIdentifier: String) -> ViewRouterType<Any, ViewRouteConfig>? {
+        if let routerType = ZIKAnyViewRouter.toIdentifier(viewIdentifier) {
+            return ViewRouterType(routerType: routerType)
+        }
+        return nil
     }
     
-    /// Get view router type for registered view module protocol name.
-    /// - Warning: Only use this when the business logic requires highly dynamic route, e.g. handling open URL from outside and show dynamic view.
+    /// Find service router registered with the unique identifier.
     ///
-    /// - Parameter configProtocolName: The name string of the view module config protocol.
-    /// - Returns: The view router type for the view module config protocol.
-    public static func to(dynamicViewModule configProtocolName: String) -> ViewRouterType<Any, ViewRouteConfig>? {
-        return Registry.router(toDynamicViewModule: configProtocolName)
-    }
-    
-    /// Get service router type for registered service protocol name.
-    /// - Warning: Only use this when the business logic requires highly dynamic route.
-    ///
-    /// - Parameter serviceProtocolName: The name string of the service protocol.
-    /// - Returns: The service router type for the service protocol.
-    public static func to(dynamicService serviceProtocolName: String) -> ServiceRouterType<Any, PerformRouteConfig>? {
-        return Registry.router(toDynamicService: serviceProtocolName)
-    }
-    
-    /// Get service router type for registered service module protocol name.
-    /// - Warning: Only use this when the business logic requires highly dynamic route.
-    ///
-    /// - Parameter configProtocolName: The name string of the service module config protocol.
-    /// - Returns: The service router type for the service module config protocol.
-    public static func to(dynamicServiceModule configProtocolName: String) -> ServiceRouterType<Any, PerformRouteConfig>? {
-        return Registry.router(toDynamicServiceModule: configProtocolName)
+    /// - Parameter serviceIdentifier: Identifier of the router.
+    /// - Returns: The service router type for the identifier. Return nil if the identifier is not registered with any service router.
+    public static func to(serviceIdentifier: String) -> ServiceRouterType<Any, PerformRouteConfig>? {
+        if let routerType = ZIKAnyServiceRouter.toIdentifier(serviceIdentifier) {
+            return ServiceRouterType(routerType: routerType)
+        }
+        return nil
     }
 }
 

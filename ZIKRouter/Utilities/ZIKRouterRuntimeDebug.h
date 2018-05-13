@@ -1,13 +1,12 @@
 //
-//  ZIKRouterRuntimeInternal.h
+//  ZIKRouterRuntimeDebug.h
 //  ZIKRouter
 //
-//  Created by zuik on 2017/11/17.
-//  Copyright © 2017 zuik. All rights reserved.
+//  Created by zuik on 2018/5/12.
+//  Copyright © 2018 zuik. All rights reserved.
 //
-//  This source code is licensed under the MIT-style license found in the
-//  LICENSE file in the root directory of this source tree.
-//
+
+#import <Foundation/Foundation.h>
 
 NS_ASSUME_NONNULL_BEGIN
 
@@ -18,6 +17,7 @@ NS_ASSUME_NONNULL_BEGIN
  `bool _conformsToProtocols(const OpaqueValue *value, const Metadata *type, const ExistentialTypeMetadata *existentialType, const WitnessTable **conformances)`. See `https://github.com/apple/swift/blob/master/stdlib/public/runtime/Casting.cpp`.
  
  This private function may change in later version of swift, so this function may not work then.
+ @since swift 3.3
  
  @param sourceType Any type of swift class, objc class, swift struct, swift enum, objc protocol, swift protocol.
  @param targetType The target type to check, can be swift protocol, objc protocol, swift class, objc class, swift struct, swift enum.

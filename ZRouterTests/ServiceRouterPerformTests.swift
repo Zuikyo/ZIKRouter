@@ -48,9 +48,9 @@ class ServiceRouterPerformTests: XCTestCase {
     func testPerformWithPrepareDestination() {
         let expectation = self.expectation(description: "prepareDestination")
         enterTest()
-        self.router = Router.perform(to: RoutableService<AServiceInput>(), configuring: { (config, prepareDestiantion, _) in
-            prepareDestiantion({ destiantion in
-                destiantion.title = "test title"
+        self.router = Router.perform(to: RoutableService<AServiceInput>(), configuring: { (config, prepareDestination, _) in
+            prepareDestination({ destination in
+                destination.title = "test title"
                 expectation.fulfill()
                 self.handle({
                     self.leaveTest()
@@ -63,7 +63,7 @@ class ServiceRouterPerformTests: XCTestCase {
     func testPerformWithSuccessCompletionHandler() {
         let expectation = self.expectation(description: "completionHandler")
         enterTest()
-        self.router = Router.perform(to: RoutableService<AServiceInput>(), configuring: { (config, prepareDestiantion, _) in
+        self.router = Router.perform(to: RoutableService<AServiceInput>(), configuring: { (config, prepareDestination, _) in
             config.completionHandler = { (success, destination, action, error) in
                 XCTAssertTrue(success)
                 XCTAssertNotNil(destination)
@@ -81,7 +81,7 @@ class ServiceRouterPerformTests: XCTestCase {
         let expectation = self.expectation(description: "completionHandler")
         TestConfig.routeShouldFail = true
         enterTest()
-        self.router = Router.perform(to: RoutableService<AServiceInput>(), configuring: { (config, prepareDestiantion, _) in
+        self.router = Router.perform(to: RoutableService<AServiceInput>(), configuring: { (config, prepareDestination, _) in
             config.completionHandler = { (success, destination, action, error) in
                 XCTAssertFalse(success)
                 XCTAssertNil(destination)
@@ -287,5 +287,4 @@ class ServiceRouterPerformTests: XCTestCase {
         })
         waitForExpectations(timeout: 2, handler: { if let error = $0 {print(error)}})
     }
-
 }

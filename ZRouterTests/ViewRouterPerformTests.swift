@@ -48,9 +48,9 @@ class ViewRouterPerformTests: XCTestCase {
     func testPerformWithPrepareDestination() {
         let expectation = self.expectation(description: "prepareDestination")
         enterTest()
-        self.router = Router.perform(to: RoutableView<AViewInput>(), path: .makeDestination, configuring: { (config, prepareDestiantion, _) in
-            prepareDestiantion({ destiantion in
-                destiantion.title = "test title"
+        self.router = Router.perform(to: RoutableView<AViewInput>(), path: .makeDestination, configuring: { (config, prepareDestination, _) in
+            prepareDestination({ destination in
+                destination.title = "test title"
                 expectation.fulfill()
                 self.handle({
                     self.leaveTest()
@@ -63,7 +63,7 @@ class ViewRouterPerformTests: XCTestCase {
     func testPerformWithSuccessCompletionHandler() {
         let expectation = self.expectation(description: "completionHandler")
         enterTest()
-        self.router = Router.perform(to: RoutableView<AViewInput>(), path: .makeDestination, configuring: { (config, prepareDestiantion, _) in
+        self.router = Router.perform(to: RoutableView<AViewInput>(), path: .makeDestination, configuring: { (config, prepareDestination, _) in
             config.completionHandler = { (success, destination, action, error) in
                 XCTAssertTrue(success)
                 XCTAssertNotNil(destination)
@@ -81,7 +81,7 @@ class ViewRouterPerformTests: XCTestCase {
         let expectation = self.expectation(description: "completionHandler")
         TestConfig.routeShouldFail = true
         enterTest()
-        self.router = Router.perform(to: RoutableView<AViewInput>(), path: .makeDestination, configuring: { (config, prepareDestiantion, _) in
+        self.router = Router.perform(to: RoutableView<AViewInput>(), path: .makeDestination, configuring: { (config, prepareDestination, _) in
             config.completionHandler = { (success, destination, action, error) in
                 XCTAssertFalse(success)
                 XCTAssertNil(destination)

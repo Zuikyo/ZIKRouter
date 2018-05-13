@@ -35,6 +35,7 @@
 		F8A5ED152093A80E00773853 /* AService.swift in Sources */ = {isa = PBXBuildFile; fileRef = F8A5ED142093A80E00773853 /* AService.swift */; };
 		F8A5ED172093B05100773853 /* TestRouteRegistry.swift in Sources */ = {isa = PBXBuildFile; fileRef = F8A5ED162093B05100773853 /* TestRouteRegistry.swift */; };
 		F8A5ED1920940D7A00773853 /* TestConfig.swift in Sources */ = {isa = PBXBuildFile; fileRef = F8A5ED1820940D7A00773853 /* TestConfig.swift */; };
+		F8B5753220A5832800FC05B5 /* UtilityTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F8B5753120A5832800FC05B5 /* UtilityTests.swift */; };
 		F8C0D1161FB034B5003D3B3B /* Router.swift in Sources */ = {isa = PBXBuildFile; fileRef = F8C0D1151FB034B5003D3B3B /* Router.swift */; };
 		F8C0D11E1FB04E06003D3B3B /* Routable.swift in Sources */ = {isa = PBXBuildFile; fileRef = F8C0D11D1FB04E06003D3B3B /* Routable.swift */; };
 		F8EF733C1FB4C4550040008C /* Switchable.swift in Sources */ = {isa = PBXBuildFile; fileRef = F8EF733B1FB4C4550040008C /* Switchable.swift */; };
@@ -111,6 +112,7 @@
 		F8A5ED142093A80E00773853 /* AService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AService.swift; sourceTree = "<group>"; };
 		F8A5ED162093B05100773853 /* TestRouteRegistry.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TestRouteRegistry.swift; sourceTree = "<group>"; };
 		F8A5ED1820940D7A00773853 /* TestConfig.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TestConfig.swift; sourceTree = "<group>"; };
+		F8B5753120A5832800FC05B5 /* UtilityTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UtilityTests.swift; sourceTree = "<group>"; };
 		F8C0D1151FB034B5003D3B3B /* Router.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Router.swift; sourceTree = "<group>"; };
 		F8C0D11D1FB04E06003D3B3B /* Routable.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Routable.swift; sourceTree = "<group>"; };
 		F8EF733B1FB4C4550040008C /* Switchable.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Switchable.swift; sourceTree = "<group>"; };
@@ -191,6 +193,7 @@
 				F8A5ED142093A80E00773853 /* AService.swift */,
 				F87E85AA2094728700E5A306 /* AViewController.swift */,
 				F87E85AC209472A400E5A306 /* BSubview.swift */,
+				F8B5753120A5832800FC05B5 /* UtilityTests.swift */,
 				F8A5ED062093A7C000773853 /* ServiceRouterPerformTests.swift */,
 				F87E85A420945FBE00E5A306 /* ServiceModuleRouterPerformTests.swift */,
 				F87E85A6209460D700E5A306 /* ServiceRouterMakeDestinationTests.swift */,
@@ -369,6 +372,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				F8B5753220A5832800FC05B5 /* UtilityTests.swift in Sources */,
 				F87E85AD209472A400E5A306 /* BSubview.swift in Sources */,
 				F87E85AB2094728700E5A306 /* AViewController.swift in Sources */,
 				F87E85A9209470ED00E5A306 /* ServiceModuleRouterMakeDestinationTests.swift in Sources */,
@@ -546,7 +550,7 @@
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SKIP_INSTALL = YES;
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
-				SWIFT_VERSION = 4.0;
+				SWIFT_VERSION = 3.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
 			name = Debug;
@@ -572,7 +576,7 @@
 				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SKIP_INSTALL = YES;
-				SWIFT_VERSION = 4.0;
+				SWIFT_VERSION = 3.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
 			name = Release;
@@ -590,7 +594,7 @@
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = com.zuik.ZRouterTests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				SWIFT_VERSION = 4.0;
+				SWIFT_VERSION = 3.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
 			name = Debug;
@@ -608,7 +612,7 @@
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = com.zuik.ZRouterTests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				SWIFT_VERSION = 4.0;
+				SWIFT_VERSION = 3.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
 			name = Release;

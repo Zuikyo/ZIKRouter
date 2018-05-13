@@ -56,7 +56,7 @@
     jumpButton.translatesAutoresizingMaskIntoConstraints = NO;
     [jumpButton.centerXAnchor constraintEqualToAnchor:pickerView.centerXAnchor].active = YES;
     [jumpButton.bottomAnchor constraintEqualToAnchor:self.view.bottomAnchor constant:-50].active = YES;
-    [jumpButton.widthAnchor constraintEqualToConstant:50].active = YES;
+    [jumpButton.widthAnchor constraintEqualToConstant:100].active = YES;
     [jumpButton.heightAnchor constraintEqualToConstant:30].active = YES;
 }
 

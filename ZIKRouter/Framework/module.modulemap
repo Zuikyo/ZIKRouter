@@ -8,7 +8,7 @@ framework module ZIKRouter {
       header "ZIKRoute.h"
       header "ZIKRouterInternal.h"
       header "ZIKRouteRegistry.h"
-      header "ZIKRouterRuntimeInternal.h"
+      header "ZIKRouterRuntimeDebug.h"
       
       header "ZIKServiceRoute.h"
       header "ZIKServiceRouterInternal.h"

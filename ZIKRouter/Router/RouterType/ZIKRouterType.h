@@ -19,6 +19,8 @@ NS_ASSUME_NONNULL_BEGIN
 @interface ZIKRouterType<__covariant Destination: id, __covariant RouteConfig: ZIKPerformRouteConfiguration *, __covariant RemoveConfig: ZIKRemoveRouteConfiguration *> : NSObject
 @property (nonatomic, strong, readonly, nullable) Class routerClass;
 @property (nonatomic, strong, readonly, nullable) ZIKRoute *route;
+// routerClass or ZIKRoute
+@property (nonatomic, strong, readonly) id routeObject;
 
 - (nullable instancetype)initWithRouterClass:(Class)routerClass NS_DESIGNATED_INITIALIZER;
 - (nullable instancetype)initWithRoute:(ZIKRoute *)route NS_DESIGNATED_INITIALIZER;

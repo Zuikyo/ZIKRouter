@@ -94,4 +94,72 @@ class ViewModuleRouterMakeDestinationTests: XCTestCase {
         XCTAssertNotNil(destination is AViewInput)
         waitForExpectations(timeout: 5, handler: { if let error = $0 {print(error)}})
     }
+    
+    func testSwiftAdapter() {
+        let providerExpectation = self.expectation(description: "successHandler")
+        let performerExpectation = self.expectation(description: "performerSuccessHandler")
+        let completionHandlerExpectation = self.expectation(description: "completionHandler")
+        XCTAssertTrue(Router.to(RoutableViewModule<AViewModuleInputAdapter>())!.canMakeDestination)
+        let destination = Router.makeDestination(to: RoutableViewModule<AViewModuleInput>(), configuring: { (config, prepareDestination, prepareModule) in
+            prepareModule({ module in
+                module.title = "test title"
+                module.makeDestinationCompletion({ (destination) in
+                    XCTAssert(destination.title == "test title")
+                })
+            })
+            config.successHandler = { d in
+                providerExpectation.fulfill()
+            }
+            config.performerSuccessHandler = { d in
+                performerExpectation.fulfill()
+            }
+            config.errorHandler = { (action, error) in
+                XCTAssert(false, "errorHandler should not be called")
+            }
+            config.performerErrorHandler = { (action, error) in
+                XCTAssert(false, "performerErrorHandler should not be called")
+            }
+            config.completionHandler = { (success, destination, action, error) in
+                XCTAssertTrue(success)
+                XCTAssert(destination is AViewInput)
+                completionHandlerExpectation.fulfill()
+            }
+        })
+        XCTAssertNotNil(destination is AViewInput)
+        waitForExpectations(timeout: 5, handler: { if let error = $0 {print(error)}})
+    }
+    
+    func testObjcAdapter() {
+        let providerExpectation = self.expectation(description: "successHandler")
+        let performerExpectation = self.expectation(description: "performerSuccessHandler")
+        let completionHandlerExpectation = self.expectation(description: "completionHandler")
+        XCTAssertTrue(Router.to(RoutableViewModule<AViewModuleInputObjcAdapter>())!.canMakeDestination)
+        let destination = Router.makeDestination(to: RoutableViewModule<AViewModuleInput>(), configuring: { (config, prepareDestination, prepareModule) in
+            prepareModule({ module in
+                module.title = "test title"
+                module.makeDestinationCompletion({ (destination) in
+                    XCTAssert(destination.title == "test title")
+                })
+            })
+            config.successHandler = { d in
+                providerExpectation.fulfill()
+            }
+            config.performerSuccessHandler = { d in
+                performerExpectation.fulfill()
+            }
+            config.errorHandler = { (action, error) in
+                XCTAssert(false, "errorHandler should not be called")
+            }
+            config.performerErrorHandler = { (action, error) in
+                XCTAssert(false, "performerErrorHandler should not be called")
+            }
+            config.completionHandler = { (success, destination, action, error) in
+                XCTAssertTrue(success)
+                XCTAssert(destination is AViewInput)
+                completionHandlerExpectation.fulfill()
+            }
+        })
+        XCTAssertNotNil(destination is AViewInput)
+        waitForExpectations(timeout: 5, handler: { if let error = $0 {print(error)}})
+    }
 }

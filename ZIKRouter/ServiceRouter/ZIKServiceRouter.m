@@ -99,7 +99,7 @@ static dispatch_semaphore_t g_globalErrorSema;
 #if ZIKROUTER_CHECK
     Protocol *destinationProtocol;
     BOOL result = [ZIKServiceRouteRegistry validateDestinationConformance:[destination class] forRouter:self protocol:&destinationProtocol];
-    NSAssert(result, @"Bad implementation in router (%@)'s -destinationWithConfiguration:. The destiantion (%@) doesn't conforms to registered service protocol (%@).",self, destination, NSStringFromProtocol(destinationProtocol));
+    NSAssert(result, @"Bad implementation in router (%@)'s -destinationWithConfiguration:. The destination (%@) doesn't conforms to registered service protocol (%@).",self, destination, NSStringFromProtocol(destinationProtocol));
 #endif
 }
 

@@ -26,6 +26,7 @@ static CFMutableDictionaryRef _destinationToRoutersMap;
 static CFMutableDictionaryRef _destinationToDefaultRouterMap;
 static CFMutableDictionaryRef _destinationToExclusiveRouterMap;
 static CFMutableDictionaryRef _identifierToRouterMap;
+static CFMutableDictionaryRef _adapterToAdapteeMap;
 #if ZIKROUTER_CHECK
 static CFMutableDictionaryRef _check_routerToDestinationsMap;
 static CFMutableDictionaryRef _check_routerToDestinationProtocolsMap;
@@ -41,6 +42,7 @@ static NSMutableArray<Class> *_routerClasses;
     _destinationToDefaultRouterMap = CFDictionaryCreateMutable(kCFAllocatorDefault, 0, NULL, NULL);
     _destinationToExclusiveRouterMap = CFDictionaryCreateMutable(kCFAllocatorDefault, 0, NULL, NULL);
     _identifierToRouterMap = CFDictionaryCreateMutable(kCFAllocatorDefault, 0, &kCFTypeDictionaryKeyCallBacks, NULL);
+    _adapterToAdapteeMap = CFDictionaryCreateMutable(kCFAllocatorDefault, 0, NULL, NULL);
 #if ZIKROUTER_CHECK
     _check_routerToDestinationsMap = CFDictionaryCreateMutable(kCFAllocatorDefault, 0, NULL, &kCFTypeDictionaryValueCallBacks);
     _check_routerToDestinationProtocolsMap = CFDictionaryCreateMutable(kCFAllocatorDefault, 0, NULL, &kCFTypeDictionaryValueCallBacks);
@@ -134,6 +136,9 @@ static NSMutableArray<Class> *_routerClasses;
 + (CFMutableDictionaryRef)identifierToRouterMap {
     return _identifierToRouterMap;
 }
++ (CFMutableDictionaryRef)adapterToAdapteeMap {
+    return _adapterToAdapteeMap;
+}
 
 + (CFMutableDictionaryRef)_check_routerToDestinationsMap {
 #if ZIKROUTER_CHECK
@@ -206,13 +211,11 @@ static NSMutableArray<Class> *_routerClasses;
         [self _searchAllRoutersAndDestinations];
         [self _checkAllRoutableDestinations];
         [self _checkAllRouters];
-        [self _checkAllModuleConfigProtocols];
         [self _checkAllRoutableProtocols];
         return;
     }
     [[NSNotificationCenter defaultCenter] addObserverForName:UIApplicationDidFinishLaunchingNotification object:nil queue:[NSOperationQueue mainQueue] usingBlock:^(NSNotification * _Nonnull note) {
         [self _checkAllRouters];
-        [self _checkAllModuleConfigProtocols];
     }];
 #endif
 }
@@ -321,13 +324,6 @@ static NSMutableArray<Class> *_routerClasses;
     }];
 }
 
-+ (void)_checkAllModuleConfigProtocols {
-    NSDictionary<Protocol *, id> *configProtocolToRouterMap = (__bridge NSDictionary *)self.moduleConfigProtocolToRouterMap;
-    [configProtocolToRouterMap enumerateKeysAndObjectsUsingBlock:^(Protocol * _Nonnull protocol, id  _Nonnull router, BOOL * _Nonnull stop) {
-        NSAssert3([[router defaultRouteConfiguration] conformsToProtocol:protocol], @"Module config protocol (%@) should be conformed by this router (%@)'s defaultRouteConfiguration (%@).", NSStringFromProtocol(protocol), router, [router defaultRouteConfiguration]);
-    }];
-}
-
 + (void)_checkAllRoutableProtocols {
     ZIKRouter_enumerateProtocolList(^(Protocol *protocol) {
         if (protocol) {
@@ -339,21 +335,24 @@ static NSMutableArray<Class> *_routerClasses;
 + (void)_checkProtocol:(Protocol *)protocol {
     if (protocol_conformsToProtocol(protocol, @protocol(ZIKViewRoutable)) &&
         protocol != @protocol(ZIKViewRoutable)) {
-        Class routerClass = (Class)CFDictionaryGetValue(self.destinationProtocolToRouterMap, (__bridge const void *)(protocol));
-        NSCAssert1(routerClass, @"Declared view protocol(%@) is not registered with any router class!",NSStringFromProtocol(protocol));
-        
-        CFSetRef viewsRef = CFDictionaryGetValue(self._check_routerToDestinationsMap, (__bridge const void *)(routerClass));
+        ZIKRouterType *routerType = [self routerToDestination:protocol];
+        NSCAssert1(routerType, @"Declared view protocol(%@) is not registered with any router class!",NSStringFromProtocol(protocol));
+        id router = routerType.routerClass;
+        if (router == nil) {
+            router = routerType.route;
+        }
+        CFSetRef viewsRef = CFDictionaryGetValue(self._check_routerToDestinationsMap, (__bridge const void *)(router));
         NSSet *views = (__bridge NSSet *)(viewsRef);
-        NSCAssert1(views.count > 0, @"Router(%@) didn't registered with any viewClass", routerClass);
+        NSCAssert1(views.count > 0, @"Router(%@) didn't registered with any viewClass", router);
         for (Class viewClass in views) {
-            NSCAssert3([viewClass conformsToProtocol:protocol], @"Router(%@)'s viewClass(%@) should conform to registered protocol(%@)",routerClass, viewClass, NSStringFromProtocol(protocol));
+            NSCAssert3([viewClass conformsToProtocol:protocol], @"Router(%@)'s viewClass(%@) should conform to registered protocol(%@)",router, viewClass, NSStringFromProtocol(protocol));
         }
     } else if (protocol_conformsToProtocol(protocol, @protocol(ZIKViewModuleRoutable)) &&
                protocol != @protocol(ZIKViewModuleRoutable)) {
-        Class routerClass = (Class)CFDictionaryGetValue(self.moduleConfigProtocolToRouterMap, (__bridge const void *)(protocol));
-        NSCAssert1(routerClass, @"Declared routable config protocol(%@) is not registered with any router class!",NSStringFromProtocol(protocol));
-        ZIKViewRouteConfiguration *config = [routerClass defaultRouteConfiguration];
-        NSCAssert3([config conformsToProtocol:protocol], @"Router(%@)'s default ZIKViewRouteConfiguration(%@) should conform to registered config protocol(%@)",routerClass, [config class], NSStringFromProtocol(protocol));
+        ZIKRouterType *routerType = [self routerToModule:protocol];
+        NSCAssert1(routerType, @"Declared routable config protocol(%@) is not registered with any router class!",NSStringFromProtocol(protocol));
+        ZIKViewRouteConfiguration *config = [routerType defaultRouteConfiguration];
+        NSCAssert3([config conformsToProtocol:protocol], @"Router(%@)'s default ZIKViewRouteConfiguration(%@) should conform to registered config protocol(%@)",routerType, [config class], NSStringFromProtocol(protocol));
     }
 }
 #endif

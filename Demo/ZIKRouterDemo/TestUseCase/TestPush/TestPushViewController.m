@@ -20,6 +20,7 @@
     [super viewDidLoad];
     
 }
+
 - (IBAction)push:(id)sender {
     if (self.infoViewRouter == nil) {
         [self performRouteWithSuccessHandler:nil];

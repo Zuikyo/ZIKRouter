@@ -105,10 +105,6 @@ NS_ASSUME_NONNULL_BEGIN
 
 + (NSString *)errorDomain;
 
-#pragma mark Internal
-
-+ (BOOL)shouldCheckImplementation;
-
 @end
 
 NS_ASSUME_NONNULL_END

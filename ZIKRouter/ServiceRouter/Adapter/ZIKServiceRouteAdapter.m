@@ -10,6 +10,8 @@
 //
 
 #import "ZIKServiceRouteAdapter.h"
+#import "ZIKRouteRegistryInternal.h"
+#import "ZIKServiceRouteRegistry.h"
 
 @implementation ZIKServiceRouteAdapter
 
@@ -29,6 +31,13 @@
 
 + (void)registerRoutableDestination {
     
+}
+
++ (void)registerDestinationAdapter:(Protocol *)adapterProtocol forAdaptee:(Protocol *)adapteeProtocol {
+    [ZIKServiceRouteRegistry registerDestinationAdapter:adapterProtocol forAdaptee:adapteeProtocol];
+}
++ (void)registerModuleAdapter:(Protocol *)adapterProtocol forAdaptee:(Protocol *)adapteeProtocol {
+    [ZIKServiceRouteRegistry registerModuleAdapter:adapterProtocol forAdaptee:adapteeProtocol];
 }
 
 @end
