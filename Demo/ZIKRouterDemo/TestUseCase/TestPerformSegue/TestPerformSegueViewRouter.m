@@ -24,11 +24,7 @@
 - (id<ZIKRoutableView>)destinationWithConfiguration:(ZIKViewRouteConfiguration *)configuration {
     UIStoryboard *sb = [UIStoryboard storyboardWithName:@"Main" bundle:nil];
     TestPerformSegueViewController *destination = [sb instantiateViewControllerWithIdentifier:@"testPerformSegue"];
-    NSString *title = @"Test PerformSegue";
-    if ([configuration.userInfo objectForKey:@"url"]) {
-        title = [title stringByAppendingString:@"-fromURL"];
-    }
-    destination.title = title;
+    destination.title = @"Test PerformSegue";
     return destination;
 }
 

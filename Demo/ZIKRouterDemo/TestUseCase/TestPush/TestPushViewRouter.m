@@ -21,11 +21,7 @@ DeclareRoutableView(TestPushViewController, TestPushViewRouter)
 - (id<ZIKRoutableView>)destinationWithConfiguration:(ZIKViewRouteConfiguration *)configuration {
     UIStoryboard *sb = [UIStoryboard storyboardWithName:@"Main" bundle:nil];
     TestPushViewController *destination = [sb instantiateViewControllerWithIdentifier:@"testPush"];
-    NSString *title = @"Test Push";
-    if ([configuration.userInfo objectForKey:@"url"]) {
-        title = [title stringByAppendingString:@"-fromURL"];
-    }
-    destination.title = title;
+    destination.title = @"Test Push";
     return destination;
 }
 

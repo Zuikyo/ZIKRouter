@@ -24,11 +24,7 @@
 - (id<ZIKRoutableView>)destinationWithConfiguration:(ZIKViewRouteConfiguration *)configuration {
     UIStoryboard *sb = [UIStoryboard storyboardWithName:@"Main" bundle:nil];
     TestPresentModallyViewController *destination = [sb instantiateViewControllerWithIdentifier:@"testPresentModally"];
-    NSString *title = @"Test PresentModally";
-    if ([configuration.userInfo objectForKey:@"url"]) {
-        title = [title stringByAppendingString:@"-fromURL"];
-    }
-    destination.title = title;
+    destination.title = @"Test PresentModally";
     return destination;
 }
 

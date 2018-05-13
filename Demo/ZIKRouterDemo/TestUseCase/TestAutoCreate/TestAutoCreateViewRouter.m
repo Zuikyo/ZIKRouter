@@ -24,11 +24,7 @@
 - (id<ZIKRoutableView>)destinationWithConfiguration:(ZIKViewRouteConfiguration *)configuration {
     UIStoryboard *sb = [UIStoryboard storyboardWithName:@"Main" bundle:nil];
     TestAutoCreateViewController *destination = [sb instantiateViewControllerWithIdentifier:@"testAutoCreate"];
-    NSString *title = @"Test AutoCreate";
-    if ([configuration.userInfo objectForKey:@"url"]) {
-        title = [title stringByAppendingString:@"-fromURL"];
-    }
-    destination.title = title;
+    destination.title = @"Test AutoCreate";
     return destination;
 }
 

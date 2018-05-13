@@ -23,11 +23,7 @@
 
 - (id<ZIKRoutableView>)destinationWithConfiguration:(ZIKViewRouteConfiguration *)configuration {
     TestClassHierarchyViewController *destination = [[TestClassHierarchyViewController alloc] init];
-    NSString *title = @"Test Class Hierarchy";
-    if ([configuration.userInfo objectForKey:@"url"]) {
-        title = [title stringByAppendingString:@"-fromURL"];
-    }
-    destination.title = title;
+    destination.title = @"Test Class Hierarchy";
     return destination;
 }
 

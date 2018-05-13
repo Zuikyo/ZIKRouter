@@ -175,7 +175,7 @@ static NSMutableArray<Class> *_routerClasses;
 #if ZIKROUTER_CHECK
     if (ZIKRouter_classIsSubclassOfClass(class, UIResponderClass)) {
         if (class_conformsToProtocol(class, @protocol(ZIKRoutableView))) {
-            NSCAssert(ZIKRouter_classIsSubclassOfClass(class, [UIView class]) || ZIKRouter_classIsSubclassOfClass(class, UIViewControllerClass), @"ZIKRoutableView only suppourt UIView and UIViewController");
+            NSCAssert(ZIKRouter_classIsSubclassOfClass(class, [UIView class]) || class == [UIView class] || ZIKRouter_classIsSubclassOfClass(class, UIViewControllerClass) || class == [UIViewController class], @"ZIKRoutableView only suppourt UIView and UIViewController");
             [_routableDestinations addObject:class];
         }
     }
@@ -281,7 +281,7 @@ static NSMutableArray<Class> *_routerClasses;
         }
         if (ZIKRouter_classIsSubclassOfClass(class, [UIResponder class])) {
             if (class_conformsToProtocol(class, @protocol(ZIKRoutableView))) {
-                NSCAssert(ZIKRouter_classIsSubclassOfClass(class, [UIView class]) || ZIKRouter_classIsSubclassOfClass(class, [UIViewController class]), @"ZIKRoutableView only suppourt UIView and UIViewController");
+                NSCAssert(ZIKRouter_classIsSubclassOfClass(class, [UIView class]) || class == [UIView class] || ZIKRouter_classIsSubclassOfClass(class, [UIViewController class]) || class == [UIViewController class], @"ZIKRoutableView only suppourt UIView and UIViewController");
                 [_routableDestinations addObject:class];
             }
         } else if (ZIKRouter_classIsSubclassOfClass(class, [ZIKViewRouter class])) {

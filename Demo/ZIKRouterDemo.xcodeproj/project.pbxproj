@@ -106,6 +106,7 @@
 		F8DFBD5E2019FE210069841B /* DemoRouteAdapter.m in Sources */ = {isa = PBXBuildFile; fileRef = F8DFBD5D2019FE210069841B /* DemoRouteAdapter.m */; };
 		F8DFBD602019FE530069841B /* ZIKCompatibleAlert.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F8DFBD5F2019FE530069841B /* ZIKCompatibleAlert.framework */; };
 		F8DFBD612019FE530069841B /* ZIKCompatibleAlert.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = F8DFBD5F2019FE530069841B /* ZIKCompatibleAlert.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		F8F6B1C420A8C36000110B03 /* URLRouteHandler.m in Sources */ = {isa = PBXBuildFile; fileRef = F8F6B1C320A8C36000110B03 /* URLRouteHandler.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -308,6 +309,8 @@
 		F8DFBD5C2019FE210069841B /* DemoRouteAdapter.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = DemoRouteAdapter.h; sourceTree = "<group>"; };
 		F8DFBD5D2019FE210069841B /* DemoRouteAdapter.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = DemoRouteAdapter.m; sourceTree = "<group>"; };
 		F8DFBD5F2019FE530069841B /* ZIKCompatibleAlert.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = ZIKCompatibleAlert.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		F8F6B1C220A8C36000110B03 /* URLRouteHandler.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = URLRouteHandler.h; sourceTree = "<group>"; };
+		F8F6B1C320A8C36000110B03 /* URLRouteHandler.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = URLRouteHandler.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -659,6 +662,8 @@
 				F8728AB9209A3A9A00A39975 /* TestURLRouterViewController.m */,
 				F8728ABB209A3AB400A39975 /* TestURLRouterViewRouter.h */,
 				F8728ABC209A3AB400A39975 /* TestURLRouterViewRouter.m */,
+				F8F6B1C220A8C36000110B03 /* URLRouteHandler.h */,
+				F8F6B1C320A8C36000110B03 /* URLRouteHandler.m */,
 			);
 			path = URLRouter;
 			sourceTree = "<group>";
@@ -833,6 +838,7 @@
 			files = (
 				F82ECAC11F17DC51007168AA /* ZIKInfoViewRouter.m in Sources */,
 				F82ECAC91F17DC51007168AA /* TestCustomViewRouter.m in Sources */,
+				F8F6B1C420A8C36000110B03 /* URLRouteHandler.m in Sources */,
 				F82ECADA1F17DC51007168AA /* TestPushViewRouter.m in Sources */,
 				F82ECAD01F17DC51007168AA /* TestShowViewController.m in Sources */,
 				F82ECAC41F17DC51007168AA /* TestAutoCreateViewController.m in Sources */,

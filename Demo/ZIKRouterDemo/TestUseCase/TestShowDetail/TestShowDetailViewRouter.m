@@ -24,11 +24,7 @@
 - (id<ZIKRoutableView>)destinationWithConfiguration:(ZIKViewRouteConfiguration *)configuration {
     UIStoryboard *sb = [UIStoryboard storyboardWithName:@"Main" bundle:nil];
     TestShowDetailViewController *destination = [sb instantiateViewControllerWithIdentifier:@"testShowDetail"];
-    NSString *title = @"Test ShowDetail";
-    if ([configuration.userInfo objectForKey:@"url"]) {
-        title = [title stringByAppendingString:@"-fromURL"];
-    }
-    destination.title = title;
+    destination.title = @"Test ShowDetail";
     return destination;
 }
 

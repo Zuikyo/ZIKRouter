@@ -44,6 +44,7 @@ class SwiftSampleViewRouter: ZIKViewRouter<SwiftSampleViewController, SwiftSampl
     override func destination(with configuration: SwiftSampleViewConfiguration) -> SwiftSampleViewController? {
         let sb = UIStoryboard.init(name: "Main", bundle: nil)
         let destination = sb.instantiateViewController(withIdentifier: "SwiftSampleViewController") as! SwiftSampleViewController
+        destination.title = "Swift Sample"
         return destination
     }
     

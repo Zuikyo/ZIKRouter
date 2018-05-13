@@ -25,11 +25,7 @@
 - (id<ZIKInfoViewProtocol>)destinationWithConfiguration:(ZIKViewRouteConfiguration *)configuration {
     UIStoryboard *sb = [UIStoryboard storyboardWithName:@"Main" bundle:nil];
     ZIKInfoViewController *destination = [sb instantiateViewControllerWithIdentifier:@"info"];
-    NSString *title = @"info";
-    if ([configuration.userInfo objectForKey:@"url"]) {
-        title = [title stringByAppendingString:@"-fromURL"];
-    }
-    destination.title = title;
+    destination.title = @"info";
     NSAssert([destination conformsToProtocol:@protocol(ZIKInfoViewProtocol)], nil);
     return destination;
 }
