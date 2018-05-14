@@ -25,7 +25,7 @@ View router 将 UIKit 中的所有界面跳转方式封装成一个统一的方�
 
 Service router 用于模块寻找，通过 protocol 寻找对应的模块，并用 protocol 进行依赖注入和模块调用。可兼容 URL router。
 
-### [中文文档](Documentation/Chinese/README-CN.md)
+### [中文文档](Documentation/Chinese/README.md)
 
 ---
 
