@@ -22,7 +22,7 @@
  
  @return The function pointer of _conformsToProtocols().
  */
-static bool(*swift_conformsToProtocols())(void *, void *, void *, void **) {
+static bool(*swift_conformsToProtocols())(uintptr_t, uintptr_t, uintptr_t, uintptr_t*) {
     static void *_conformsToProtocols = NULL;
     static dispatch_once_t onceToken;
     dispatch_once(&onceToken, ^{
@@ -46,12 +46,12 @@ static bool(*swift_conformsToProtocols())(void *, void *, void *, void **) {
         NSLog(@"\n✅ZIKRouter: function pointer address 0x%lx is found for `_conformsToProtocols`.\n",(long)_conformsToProtocols);
     });
     
-    return (bool(*)(void *, void *, void *, void **))_conformsToProtocols;
+    return (bool(*)(uintptr_t, uintptr_t, uintptr_t, uintptr_t*))_conformsToProtocols;
 }
 
-static void *dereferencedPointer(void *pointer) {
-    void **deref = pointer;
-    return *deref;
+static uintptr_t dereferencedPointer(uintptr_t pointer) {
+    uintptr_t **deref = (uintptr_t **)pointer;
+    return (uintptr_t)*deref;
 }
 
 typedef NS_ENUM(NSInteger, ZIKSwiftMetadataKind) {
@@ -72,6 +72,9 @@ typedef NS_ENUM(NSInteger, ZIKSwiftMetadataKind) {
     ZIKSwiftMetadataKindErrorObject              = 128
 };
 
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Warc-performSelector-leaks"
+
 bool _swift_typeIsTargetType(id sourceType, id targetType) {
     //swift class or swift object
     BOOL isSourceSwiftObjectType = [sourceType isKindOfClass:NSClassFromString(@"SwiftObject")];
@@ -81,6 +84,7 @@ bool _swift_typeIsTargetType(id sourceType, id targetType) {
     BOOL isTargetSwiftValueType = [targetType isKindOfClass:NSClassFromString(@"_SwiftValue")];
     BOOL isSourceSwiftType = isSourceSwiftObjectType || isSourceSwiftValueType;
     BOOL isTargetSwiftType = isTargetSwiftObjectType || isTargetSwiftValueType;
+    
     if (isSourceSwiftValueType && isTargetSwiftValueType == NO) {
         return false;
     }
@@ -114,9 +118,6 @@ bool _swift_typeIsTargetType(id sourceType, id targetType) {
         return false;
     }
     
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Warc-performSelector-leaks"
-    
     if (object_isClass(sourceType) && object_isClass(targetType)) {
         return [sourceType isSubclassOfClass:targetType] || sourceType == targetType;
     } else if (isSourceSwiftValueType && isTargetSwiftValueType) {
@@ -127,41 +128,53 @@ bool _swift_typeIsTargetType(id sourceType, id targetType) {
         }
     }
     
-    bool (*_conformsToProtocols)(void *, void *, void *, void **) = swift_conformsToProtocols();
+    bool (*_conformsToProtocols)(uintptr_t, uintptr_t, uintptr_t, uintptr_t*) = swift_conformsToProtocols();
     if (_conformsToProtocols == NULL) {
         return false;
     }
     
-    void* sourceTypeOpaqueValue;
-    void* sourceTypeMetadata;
+    uintptr_t sourceTypeOpaqueValue;
+    uintptr_t sourceTypeMetadata;
     if (isSourceSwiftObjectType) {
         //swift class or swift object
-        sourceTypeMetadata = (__bridge void *)(sourceType);
-        sourceTypeOpaqueValue = (__bridge void *)(sourceType);
+        sourceTypeMetadata = (uintptr_t)(sourceType);
+        sourceTypeOpaqueValue = (uintptr_t)(sourceType);
     } else if (isSourceSwiftValueType) {
         //swift struct or swift enum or swift protocol
         NSCAssert2([sourceType respondsToSelector:NSSelectorFromString(@"_swiftValue")], @"Swift value(%@) doesn't have method(%@), the API may be changed in libswiftCore.dylib.",sourceType,@"_swiftValue");
-        sourceTypeOpaqueValue = (__bridge void *)[sourceType performSelector:NSSelectorFromString(@"_swiftValue")];
-        //OpaqueValue is struct SwiftValueHeader, Metadata * is it's first member
-        sourceTypeMetadata = dereferencedPointer(sourceTypeOpaqueValue);
+        sourceTypeOpaqueValue = (uintptr_t)[sourceType performSelector:NSSelectorFromString(@"_swiftValue")];
+        //Get type metadata of this value, like `type(of: T)`
+        sourceTypeMetadata = (uintptr_t)[sourceType performSelector:NSSelectorFromString(@"_swiftTypeMetadata")];
+        //Get the first member `Kind` in TargetMetadata, it's an enum `MetadataKind`
+        ZIKSwiftMetadataKind type = (ZIKSwiftMetadataKind)dereferencedPointer(sourceTypeMetadata);
+        //Source is a metatype, get it's metadata
+        if (type == ZIKSwiftMetadataKindMetatype) {
+            //OpaqueValue is struct SwiftValueHeader, `Metadata *` is it's first member
+            sourceTypeMetadata = dereferencedPointer(sourceTypeOpaqueValue);
+        }
     } else {
         //objc class or objc protocol
-        sourceTypeMetadata = (__bridge void *)(sourceType);
-        sourceTypeOpaqueValue = (__bridge void *)(sourceType);
+        sourceTypeMetadata = (uintptr_t)sourceType;
+        sourceTypeOpaqueValue = (uintptr_t)sourceType;
     }
     
-    void* targetTypeOpaqueValue;
-    void* targetTypeMetadata;
-    void* targetWitnessTables = NULL;
+    uintptr_t targetTypeOpaqueValue;
+    uintptr_t targetTypeMetadata;
+    uintptr_t targetWitnessTables = 0;
     if (isTargetSwiftValueType) {
         //swift struct or swift enum or swift protocol
         NSCAssert2([targetType respondsToSelector:NSSelectorFromString(@"_swiftValue")], @"Swift value(%@) doesn't have method(%@), the API may be changed in libswiftCore.dylib.",targetType,@"_swiftValue");
-        targetTypeOpaqueValue = (__bridge void *)[targetType performSelector:NSSelectorFromString(@"_swiftValue")];
-        //OpaqueValue is struct SwiftValueHeader, TargetMetadata * is it's first member
-        targetTypeMetadata = dereferencedPointer(targetTypeOpaqueValue);
+        targetTypeOpaqueValue = (uintptr_t)[targetType performSelector:NSSelectorFromString(@"_swiftValue")];
+        //Get type metadata of this value, like `type(of: T)`
+        targetTypeMetadata = (uintptr_t)[targetType performSelector:NSSelectorFromString(@"_swiftTypeMetadata")];
         //Get the first member `Kind` in TargetMetadata, it's an enum `MetadataKind`
         ZIKSwiftMetadataKind type = (ZIKSwiftMetadataKind)dereferencedPointer(targetTypeMetadata);
-        NSLog(@"%@: target type: %ld", targetType, (long)type);
+        //Target is a metatype, get it's metadata
+        if (type == ZIKSwiftMetadataKindMetatype) {
+            //OpaqueValue is struct SwiftValueHeader, `Metadata *` is it's first member
+            targetTypeMetadata = dereferencedPointer(targetTypeOpaqueValue);
+            type = (ZIKSwiftMetadataKind)dereferencedPointer(targetTypeMetadata);
+        }
         //target should be swift protocol
         if (type != ZIKSwiftMetadataKindExistential) {
             return false;
@@ -171,14 +184,15 @@ bool _swift_typeIsTargetType(id sourceType, id targetType) {
         if ([targetType isKindOfClass:NSClassFromString(@"Protocol")] == NO) {
             return false;
         }
-        targetTypeMetadata = (__bridge void *)(targetType);
-        targetTypeOpaqueValue = (__bridge void *)(targetType);
+        targetTypeMetadata = (uintptr_t)targetType;
+        targetTypeOpaqueValue = (uintptr_t)targetType;
     }
     
-#pragma clang diagnostic pop
     bool result = _conformsToProtocols(sourceTypeOpaqueValue, sourceTypeMetadata, targetTypeMetadata, &targetWitnessTables);
     return result;
 }
+
+#pragma clang diagnostic pop
 
 #else
 

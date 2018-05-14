@@ -22,8 +22,8 @@ NS_ASSUME_NONNULL_BEGIN
  This private function may change in later version of swift, so this function may not work then.
  @since swift 3.3
  
- @param sourceType Any type of swift class, objc class, swift struct, swift enum, objc protocol, swift protocol.
- @param targetType The target type to check, can be swift protocol, objc protocol, swift class, objc class, swift struct, swift enum.
+ @param sourceType Any type of swift class, objc class, swift struct, swift enum, swift function, swift tuple, objc protocol, swift protocol.
+ @param targetType The target type to check, can be swift protocol, objc protocol, swift class, objc class, swift struct, swift enum, swift function, swift tuple.
  @return True if the sourceType is the targetType.
  */
 extern bool _swift_typeIsTargetType(id sourceType, id targetType);

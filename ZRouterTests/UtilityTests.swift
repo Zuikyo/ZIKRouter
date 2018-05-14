@@ -386,4 +386,75 @@ class UtilityTests: XCTestCase {
         XCTAssertFalse(_swift_typeIsTargetType(ComposedProtocol.self, SwiftStruct.self))
         XCTAssertFalse(_swift_typeIsTargetType(ComposedProtocol.self, SwiftEnum.self))
     }
+    
+    func testTypeCheckingForFunction() {
+        // Function
+        XCTAssert(_swift_typeIsTargetType(type(of: testTypeCheckingForFunction.self), type(of: testTypeCheckingForFunction.self)))
+        XCTAssert(_swift_typeIsTargetType(SwiftClass.encode.self, SwiftClass.encode.self))
+    }
+    
+    func testTypeCheckingForFunctionFailure() {
+        XCTAssertFalse(_swift_typeIsTargetType(testTypeCheckingForFunction.self, type(of: testTypeCheckingForFunction.self)))
+        XCTAssertFalse(_swift_typeIsTargetType(SwiftClass.self, testTypeCheckingForFunction.self))
+        XCTAssertFalse(_swift_typeIsTargetType(SwiftSubclass.self, testTypeCheckingForFunction.self))
+        XCTAssertFalse(_swift_typeIsTargetType(GenericClass<Any>.self, testTypeCheckingForFunction.self))
+        XCTAssertFalse(_swift_typeIsTargetType(SubGenericClass.self, testTypeCheckingForFunction.self))
+        XCTAssertFalse(_swift_typeIsTargetType(GenericSubclass<Any>.self, testTypeCheckingForFunction.self))
+        XCTAssertFalse(_swift_typeIsTargetType(ObjcClass.self, testTypeCheckingForFunction.self))
+        XCTAssertFalse(_swift_typeIsTargetType(ObjcSubclass.self, testTypeCheckingForFunction.self))
+        XCTAssertFalse(_swift_typeIsTargetType(SwiftStruct.self, testTypeCheckingForFunction.self))
+        XCTAssertFalse(_swift_typeIsTargetType(SwiftEnum.self, testTypeCheckingForFunction.self))
+        XCTAssertFalse(_swift_typeIsTargetType(SwiftClass.encode.self, testTypeCheckingForFunction.self))
+        XCTAssertFalse(_swift_typeIsTargetType(SwiftClassProtocol.self, testTypeCheckingForFunction.self))
+        XCTAssertFalse(_swift_typeIsTargetType(ComposedProtocol.self, testTypeCheckingForFunction.self))
+        XCTAssertFalse(_swift_typeIsTargetType(ObjcClassProtocol.self, testTypeCheckingForFunction.self))
+        XCTAssertFalse(_swift_typeIsTargetType(ObjcClassSubProtocol.self, testTypeCheckingForFunction.self))
+        XCTAssertFalse(_swift_typeIsTargetType(Encodable.self, testTypeCheckingForFunction.self))
+    }
+    
+    func testTypeCheckingForTuple() {
+        // Tuple
+        XCTAssert(_swift_typeIsTargetType((1, 2), (1, 2)))
+        XCTAssert(_swift_typeIsTargetType(type(of: (1, 2)), type(of: (1, 2))))
+    }
+    
+    func testTypeCheckingForTupleFailure() {
+        XCTAssertFalse(_swift_typeIsTargetType((1, 2), type(of: (1, 2))))
+        XCTAssertFalse(_swift_typeIsTargetType(SwiftClass.self, type(of: (1, 2))))
+        XCTAssertFalse(_swift_typeIsTargetType(SwiftSubclass.self, type(of: (1, 2))))
+        XCTAssertFalse(_swift_typeIsTargetType(GenericClass<Any>.self, type(of: (1, 2))))
+        XCTAssertFalse(_swift_typeIsTargetType(SubGenericClass.self, type(of: (1, 2))))
+        XCTAssertFalse(_swift_typeIsTargetType(GenericSubclass<Any>.self, type(of: (1, 2))))
+        XCTAssertFalse(_swift_typeIsTargetType(ObjcClass.self, type(of: (1, 2))))
+        XCTAssertFalse(_swift_typeIsTargetType(ObjcSubclass.self, type(of: (1, 2))))
+        XCTAssertFalse(_swift_typeIsTargetType(SwiftStruct.self, type(of: (1, 2))))
+        XCTAssertFalse(_swift_typeIsTargetType(SwiftEnum.self, type(of: (1, 2))))
+        XCTAssertFalse(_swift_typeIsTargetType(SwiftClass.encode.self, type(of: (1, 2))))
+        XCTAssertFalse(_swift_typeIsTargetType(SwiftClassProtocol.self, type(of: (1, 2))))
+        XCTAssertFalse(_swift_typeIsTargetType(ComposedProtocol.self, type(of: (1, 2))))
+        XCTAssertFalse(_swift_typeIsTargetType(ObjcClassProtocol.self, type(of: (1, 2))))
+        XCTAssertFalse(_swift_typeIsTargetType(ObjcClassSubProtocol.self, type(of: (1, 2))))
+        XCTAssertFalse(_swift_typeIsTargetType(Encodable.self, type(of: (1, 2))))
+    }
+    
+    func testInvalidTypeChecking() {
+        let types: [Any] = [SwiftClass.self, type(of: SwiftClass.self),
+                            ObjcClass.self, type(of: ObjcClass.self),
+                            SwiftStruct.self, SwiftStruct(), type(of: SwiftStruct.self),
+                            SwiftEnum.self, SwiftEnum.case1, type(of: SwiftEnum.self),
+                            (1, 2), (Int, Int).self, type(of: (Int, Int).self),
+                            testTypeCheckingForFunction.self, type(of: testTypeCheckingForFunction.self)]
+        
+        for source in types {
+            for target in types {
+                if type(of: source) != type(of: target) {
+                    XCTAssertFalse(_swift_typeIsTargetType(source, target), "source: \(source), should not be target: \(target)")
+                }
+            }
+        }
+    }
+    
+    func testSingle() {
+        XCTAssertFalse(_swift_typeIsTargetType(SwiftClass.self, type(of: SwiftClassProtocol.self)))
+    }
 }

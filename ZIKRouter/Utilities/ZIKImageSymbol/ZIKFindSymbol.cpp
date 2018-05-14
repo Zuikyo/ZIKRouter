@@ -234,6 +234,9 @@ thin:
 }
 
 static bool string_ends_with(const char * str, const char * suffix) {
+    if (str == NULL || suffix == NULL) {
+        return false;
+    }
     size_t str_len = strlen(str);
     size_t suffix_len = strlen(suffix);
     
