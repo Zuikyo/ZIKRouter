@@ -25,6 +25,10 @@ protocol AViewInput: class {
     var title: String? { get set }
 }
 
+@objc protocol AViewObjcInput: ZIKViewRoutable {
+    var title: String? { get set }
+}
+
 protocol AViewInputAdapter: class {
     var title: String? { get set }
 }
@@ -33,7 +37,7 @@ protocol AViewInputAdapter: class {
     var title: String? { get set }
 }
 
-extension AViewController: ZIKRoutableView, AViewInput, AViewInputAdapter, AViewInputObjcAdapter {
+extension AViewController: ZIKRoutableView, AViewInput, AViewObjcInput, AViewInputAdapter, AViewInputObjcAdapter {
     
 }
 
@@ -42,6 +46,10 @@ extension RoutableView where Protocol == AViewInput {
 }
 
 extension RoutableView where Protocol == UIViewController & AViewInput {
+    init() { self.init(declaredProtocol: Protocol.self) }
+}
+
+extension RoutableView where Protocol == UIViewController & AViewObjcInput {
     init() { self.init(declaredProtocol: Protocol.self) }
 }
 
@@ -96,6 +104,8 @@ class AViewRouter: ZIKViewRouter<AViewController, AViewModuleConfiguration> {
     override class func registerRoutableDestination() {
         registerView(AViewController.self)
         register(RoutableView<AViewInput>())
+        register(RoutableView<AViewObjcInput>())
+        register(RoutableView<UIViewController & AViewObjcInput>())
         register(RoutableViewModule<AViewModuleInput>())
         register(RoutableView<UIViewController & AViewInput>())
     }
