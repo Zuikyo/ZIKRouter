@@ -66,10 +66,12 @@ protocol ProvidedLoginViewInput {
 ```
 ```swift
 //Write in app context, make ZIKEditorViewRouter supports ModuleARequiredLoginViewInput
-class EditorAdapter: ZIKViewRouteAdapter {
+class LoginViewAdapter: ZIKViewRouteAdapter {
     override class func registerRoutableDestination() {
-        //You can get router with ModuleARequiredLoginViewInput after registering
+        //If you can get the router, you can just register ModuleARequiredLoginViewInput to it
         ZIKEditorViewRouter.register(RoutableView<ModuleARequiredLoginViewInput>())
+        //If you don't know the router, you can use adapter
+        register(adapter: RoutableView<ModuleARequiredLoginViewInput>(), forAdaptee: RoutableView<ProvidedLoginViewInput>())
     }
 }
 
@@ -93,25 +95,27 @@ extension LoginViewController: ModuleARequiredLoginViewInput {
 @end
 ```
 ```objectivec
-//ZIKEditorAdapter.h
-@interface ZIKEditorAdapter : ZIKViewRouteAdapter
+//LoginViewAdapter.h
+@interface LoginViewAdapter : ZIKViewRouteAdapter
 @end
 
-//ZIKEditorAdapter.m
-@implementation ZIKEditorAdapter
+//LoginViewAdapter.m
+@implementation LoginViewAdapter
 
 + (void)registerRoutableDestination {
-	//You can get router with ModuleARequiredLoginViewInput after registering
+	//If you can get the router, you can just register ModuleARequiredLoginViewInput to it
 	[ZIKEditorViewRouter registerViewProtocol:ZIKRoutable(ModuleARequiredLoginViewInput)];
+	//If you don't know the router, you can use adapter
+	[self registerDestinationAdapter:ZIKRoutable(ModuleARequiredLoginViewInput) forAdaptee:ZIKRoutable(ProvidedLoginViewInput)];
 }
 
 @end
 
 //Make LoginViewController support ModuleARequiredLoginViewInput
-@interface LoginViewController (ModuleAAdapte) <ModuleARequiredLoginViewInput>
+@interface LoginViewController (ModuleAAdapter) <ModuleARequiredLoginViewInput>
 @property (nonatomic, copy) NSString *message;
 @end
-@implementation LoginViewController (ModuleAAdapte)
+@implementation LoginViewController (ModuleAAdapter)
 - (void)setMessage:(NSString *)message {
 	self.notifyString = message;
 }
@@ -179,11 +183,11 @@ In this situation, you can create a new router to forward the real router, and r
 ```swift
 class ModuleAReqiredEditorViewRouter: ZIKViewRouter {
    override class func registerRoutableDestination() {
-       registerView(/*proxy class*/);
+       registerView(/*proxy class*/)
        register(RoutableView<ModuleARequiredLoginViewInput>())
    }
    override func destination(with configuration: ZIKViewRouteConfiguration) -> ModuleARequiredLoginViewInput? {
-       //Get real destination with ZIKEditorViewRouter
+       //Get real destination with ProvidedLoginViewInput's router
        let realDestination: ProvidedLoginViewInput = ZIKEditorViewRouter.makeDestination()
        //Proxy is responsible for forwarding ModuleARequiredLoginViewInput to ProvidedLoginViewInput
        let proxy: ModuleARequiredLoginViewInput = ProxyForDestination(realDestination)
@@ -198,18 +202,20 @@ class ModuleAReqiredEditorViewRouter: ZIKViewRouter {
 @implementation ZIKModuleARequiredEditorViewRouter
 + (void)registerRoutableDestination {
 	//注册ModuleARequiredLoginViewInput，和新的ZIKModuleARequiredEditorViewRouter配对，而不是目的模块中的ZIKEditorViewRouter
-	[self registerView:/* proxy的类*/];
+	[self registerView:/* proxy class*/];
 	[self registerViewProtocol:ZIKRoutable(NoteListRequiredNoteEditorProtocol)];
 }
 - (id)destinationWithConfiguration:(ZIKViewRouteConfiguration *)configuration {
-   //用ZIKEditorViewRouter获取真正的destination
+   //Get real destination with ProvidedLoginViewDelegate's router
    id<ProvidedLoginViewInput> realDestination = [ZIKEditorViewRouter makeDestination];
-    //proxy负责把ModuleARequiredLoginViewInput转发为ProvidedLoginViewInput
+    //Proxy is responsible for forwarding ModuleARequiredLoginViewInput to ProvidedLoginViewInput
     id<ModuleARequiredLoginViewInput> proxy = ProxyForDestination(realDestination);
     return proxy;
 }
 @end
 ```
 </details>
+
+For simple objc classes, you can use NSProxy to create a proxy. For those complex classes such as UIViewController in UIKit, you can subclass the UIViewController, and override methods to adapte interface.
 
 You don't have to always separate `requiredProtocol` and `providedProtocol`. It's ok to use the same protocol in module and it's user. Change it only when you need it.

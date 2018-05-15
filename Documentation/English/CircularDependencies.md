@@ -63,3 +63,6 @@ class ChildRouter: ZIKServiceRouter<ChildObject, ZIKPerformRouteConfigration> {
 ```
 
 Then we can resovle circular dependencies.
+
+---
+#### Next section: [Module Adapter](ModuleAdapter.md)

@@ -8,7 +8,7 @@
 
 依赖注入是指外部向对象传入依赖。
 
-一个类A在接口中体现出内部需要用到的一些依赖(例如内部需要用到类B的实例)，从而让使用者从外部注入这些依赖，而不是在类内部直接引用依赖并创建类B。依赖可以用protocol的方式声明，这样就可以使类A和所使用的依赖类B进行解耦。
+一个类 A 在接口中体现出内部需要用到的一些依赖(例如内部需要用到类B的实例)，从而让使用者从外部注入这些依赖，而不是在类内部直接引用依赖并创建类 B。依赖可以用 protocol 的方式声明，这样就可以使类 A 和所使用的依赖类 B 进行解耦。
 
 ### 初始化注入
 
@@ -43,7 +43,7 @@ class Person {
 ```
 </details>
 
-在router里，可以用module config protocol实现初始化依赖：
+在 router 里，可以用 module config protocol 实现初始化依赖：
 
 ```swift
 protocol PersonConfig {
@@ -71,7 +71,7 @@ class PersonRouter: ZIKServiceRouter<Person, PersonConfiguration> {
 }
 ```
 
-调用者必须调用config protocol中以`construct`作为前缀的方法。
+你可以约定调用者必须调用 config protocol 中以`construct`作为前缀的方法。
 
 ```swift
 let name: Name = ...
@@ -171,7 +171,7 @@ class Person: PersonType {
 ```
 </details>
 
-在router里，可以注入一些默认的依赖：
+在 router 里，可以注入一些默认的依赖：
 
 ```swift
 class PersonRouter: ZIKServiceRouter<Person, ZIKPerformRouteConfiguration> {
@@ -226,4 +226,7 @@ Person *person = [ZIKRouterToService(PersonType)
 
 ## 依赖查找
 
-依赖查找是指在内部通过某种方式查找依赖。当使用Router获取模块的时候，就是在动态地查找依赖。
+依赖查找是指在内部通过某种方式查找依赖。当使用 Router 获取模块的时候，就是在动态地查找依赖。
+
+---
+#### 下一节：[循环依赖问题](CircularDependencies.md)

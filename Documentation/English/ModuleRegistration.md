@@ -47,11 +47,11 @@ You can register destination's protocol. Then you can get the router with the pr
 
 And you can prepare the destination and do method injection with the protocol when performing route.
 
-## Destination protocol
+### Destination protocol
 
 If your module is simple and all dependencies can be set on destination, you only need to use protocol conformed by destination.
 
-## Module protocol
+### Module protocol
 
 If your module contains multi components, and those components' dependencies can't be passed through destination, you need a module config protocol, and config components' dependencies inside router.
 
@@ -102,6 +102,30 @@ class EditorViewRouter: ZIKViewRouter<EditorViewController, EditorModuleConfigur
 }
 
 ```
+
+## Register Identifier
+
+You can register a unique identifier for the router:
+
+```swift
+class EditorViewRouter: ZIKAnyViewRouter {
+    override class func registerRoutableDestination() {
+        registerIdentifier("viewController-editor")
+    }
+}
+```
+
+Then you can get the router with the identifier:
+
+```
+var userInfo: [String : Any] = ... // Pass parameters in a dictionary
+Router.to(viewIdentifier: "viewController-editor")?
+	.perform(path: .push(from: self), configuring: { (config, _, _) in
+    	config.addUserInfo(userInfo)
+	})
+```
+
+We can't check type of parameters when passing in a dictionary, so it's not recommanded to use for most cases. You should only use this function when the module needs to support URL scheme. You can combine other URL router with ZIKRouter with identifier matching.
 
 ## Auto Registration
 
@@ -158,3 +182,5 @@ Then you can register each routers:
 }
 
 ```
+---
+#### Next section: [Routable Declaration](./RoutableDeclaration.md)

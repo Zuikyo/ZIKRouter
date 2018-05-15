@@ -87,3 +87,6 @@ Steps to support removing a service:
 2. Override `-removeDestination:removeConfiguration:`, check whether the destination exists, and do unload action
 3. Call `-prepareDestinationBeforeRemoving` to let the performer prepare the destination before unloading
 4. Manage the router's state with `beginRemoveRoute`、`endRemoveRouteWithSuccess`、`endRemoveRouteWithError:`
+
+---
+#### Next section: [Make Destination](MakeDestination.md)

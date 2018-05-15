@@ -23,7 +23,7 @@ The service router can discover and prepare corresponding module with it's proto
 
 View router 将 UIKit 中的所有界面跳转方式封装成一个统一的方法。
 
-Service router 用于模块寻找，通过 protocol 寻找对应的模块，并用 protocol 进行依赖注入和模块调用。可兼容 URL router。
+Service router 用于模块寻找，通过 protocol 寻找对应的模块，并用 protocol 进行依赖注入和模块调用。可和其他 URL router 兼容。
 
 ### [中文文档](Documentation/Chinese/README.md)
 
@@ -34,21 +34,21 @@ Service router 用于模块寻找，通过 protocol 寻找对应的模块，并�
 - [x] Swift, Objective-C and mixed development Support
 - [x] Routing for UIViewController, UIView and any classes
 - [x] Dependency injection
-- [x] Locate view and service with it's protocol
-- [x] Compatible with other URL router, locate module with identifier
-- [x] Prepare the module with it's protocol when performing route, rather than passing a parameter dictionary
-- [x] Use different protocols inside module and module's caller to get the same module, then the caller won't couple with any protocol
-- [x] Declare routable protocol. There're compile-time checking and runtime checking to make safe routing
+- [x] **Locate view and service with it's protocol**
+- [x] **Locate module with identifier, compatible with other URL router**
+- [x] **Prepare the module with it's protocol when performing route, rather than passing a parameter dictionary**
+- [x] **Use different adapter protocols inside module and module's user for the same module to make thorough decouple**
+- [x] **Declare routable protocol. There're compile-time checking and runtime checking to make safe routing**
 - [x] Declare a specific router with generic parameters
-- [x] Decouple modules and add compatible interfaces with adapter
+- [x] **Decouple modules and add compatible interfaces with adapter**
 - [x] Encapsulate navigation methods in UIKit (push, present modally, present as popover, segue, show, showDetail, addChildViewController, addSubview) and custom transitions into one method
 - [x] Remove a UIviewController/UIView or unload a module through one method, without using pop、dismiss、removeFromParentViewController、removeFromSuperview in different situation. Router can choose the proper method
-- [x] Support storyboard. UIViewController and UIView from a segue can auto create it's registered router
+- [x] **Support storyboard. UIViewController and UIView from a segue can auto create it's registered router**
 - [x] Error checking for UIKit view transition
 - [x] AOP for view transition
-- [x] Two registration way: auto register all routers, or manually register each router
-- [x] Add route for module with block, not just router subclasses
-- [ ] Support Mac OS and tv OS
+- [x] Auto register all routers, or manually register each router
+- [x] Add route with router subclasses, or with blocks
+- [ ] Support Mac OS and tv OS (only iOS now)
 
 ## Table of Contents
 
@@ -79,7 +79,7 @@ Demo view controller and protocol：
 
 ```swift
 ///Editor view's interface
-protocol NoteEditorInput {
+protocol NoteEditorInput: class {
     weak var delegate: EditorDelegate? { get set }
     func constructForCreatingNewNote()
 }
@@ -377,6 +377,12 @@ ZIKRouter is designed for VIPER architecture at first. But you can also use it i
 The demo (ZIKRouterDemo) in this repository shows how to use ZIKRouter to perform each route type.
 
 If you want to see how it works in a VIPER architecture app, go to [ZIKViper](https://github.com/Zuikyo/ZIKViper).
+
+## Requirements
+
+* iOS 7.0+
+* Swift 3.2+
+* Xcode 9.0+
 
 ## Installation
 

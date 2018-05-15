@@ -67,8 +67,7 @@ class TestViewController: UIViewController {
     func showEditor() {
         Router.perform(
             to: RoutableView<SwiftEditorViewInput>(),
-            from: self,
-            routeType: .push
+            path: .push(from: self)
             )
     }
 }
@@ -108,10 +107,15 @@ When a protocol is a service module config protocol, the protocol should inherit
 
 #### Runtime Checking
 
-When app is launched and in DEBUG mode, ZIKRouter will enumerate all protocols inheriting form `ZIKViewRoutable`,`ZIKServiceRoutable `,`ZIKViewModuleRoutable` and `ZIKServiceModuleRoutable`, to check whether all protocols were registered with a router, and the router's destination or defaultConfiguration conforms to the protocol.
+If you declare a routable protocol, but didn't register it with any router, there will be assert failure.
 
-Even for pure swift type, ZIKRouter can check it's conformance with another pure swift protocol type.
+When app is launched and in DEBUG mode, ZIKRouter will enumerate all objc protocols inheriting form `ZIKViewRoutable`,`ZIKServiceRoutable `,`ZIKViewModuleRoutable` and `ZIKServiceModuleRoutable`, to check whether all protocols were registered with a router, and the router's destination or defaultConfiguration conforms to the protocol.
+
+Even for pure swift type, ZIKRouter can dynamically enumerate all declared protocols and check it's conformance. It uses private APIs in `libswiftCore.dylib`, and these code won't be compiled in release mode.
 
 Protocols inheriting from `ZIKViewRoutable`,`ZIKServiceRoutable `,`ZIKViewModuleRoutable` and `ZIKServiceModuleRoutable` is also routable in Swift. You don't need to declare them in Swift again.
 
 More details about type checking: [Type Checking](TypeChecking.md).
+
+---
+#### Next section: [Type Checking](TypeChecking.md)

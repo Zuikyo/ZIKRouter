@@ -9,3 +9,6 @@ If `-destinationFromExternalPrepared:` returns NO, means the source view control
 After that, router will call it's `-prepareDestination:configuration:` and `-didFinishPrepareDestination:configuration:` to prepare the destination.
 
 When adding subview, ZIKRouter will also check whether the UIView conforms to `ZIKRoutableView`, and prepare it with the same procedure.
+
+---
+#### Next section: [AOP](AOP.md)

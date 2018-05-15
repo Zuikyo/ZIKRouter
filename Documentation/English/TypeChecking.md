@@ -65,19 +65,19 @@ After auto registration is finished, ZIKRouter will check:
 
 * All routers were registered with at least one destination class
 * All protocols inheriting from `ZIKViewRoutable`,`ZIKViewModuleRoutable`,`ZIKServiceRoutable`,`ZIKServiceModuleRoutable` were registered with at least one router
+* All swift protocols declared in extensions of `RoutableView`, `RoutableViewModule`, `RoutableService`, `RoutableServiceModule` were registered with at least one router
 * If router is registered with a protocol, the router's destination or configuration must conforms to the protocol
 * Even for a Swift type, ZIKRouter can also check it conformance with dynamic protocol types
 
-Shortcomings:
+For dynamically checking swift types, ZIKRouter uses private APIs in `libswiftCore.dylib`, and these code won't be compiled in release mode.
 
-In Objective-C, we can enuemrate protocols to do checking. But pure Swift protocols can't be enumerated with runtime. So you need to do manually checking:
+You can also do custom checking. In DEBUG mode, all routers' `+_registrationDidFinished` will be invoked when all registrations are finished. You can do custom checking here:
 
 ```swift
 class SwiftSampleViewRouter: ZIKAnyViewRouter {
     ...
     override class func _registrationDidFinished() {
-        //Make sure all routable dependencies in this module is available.
-        assert((Router.to(RoutableService<SwiftServiceInput>()) != nil))
+        // Custom checking
     }
     ...
 }
@@ -125,8 +125,11 @@ RouteConfig is type of router's configuration. You can use a custom type when us
 
 ### Usage of Generic Parameters
 
-Custom Swift generic doesn't support covariance and contravariance. So a `ZIKViewRouter<UIViewController, ViewRouteConfig>` type is not a `ZIKViewRouter<AnyObject, ViewRouteConfig>` type, there will be complie error if you assign one type to another. Therefore, we use `ViewRouter` and `ServiceRouter` to wrap `ZIKViewRouter` and `ZIKServiceRouter`.
+Custom Swift generic doesn't support covariance and contravariance. So a `ZIKViewRouter<UIViewController, ViewRouteConfig>` type is not a `ZIKViewRouter<AnyObject, ViewRouteConfig>` type, there will be complie error if you assign one type to another. And OC class's generic parameters can't be pure swift types, therefore, we use `ViewRouter` and `ServiceRouter` to wrap `ZIKViewRouter` and `ZIKServiceRouter`, to support pure swift types.
 
 Only one generic parameter will be set for each router. You can use convenient types like `DestinationViewRouter`,`DestinationServiceRouter`,`ModuleViewRouter`,`ModuleServiceRouter`. `ViewRouter<NoteEditorInput, ViewRouteConfig>` can be replaced with `DestinationViewRouter<NoteEditorInput>`.
 
 When the router uses a module config protocol, the destination type can't be designated in generic parameter. If you wan't to designated destination type, you should return the destination in module config protocol's interface.
+
+---
+#### Next section：[Perform Route](./PerformRoute.md)

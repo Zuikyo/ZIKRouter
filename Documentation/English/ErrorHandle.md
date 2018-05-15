@@ -16,7 +16,7 @@ Errors can be detected:
 * Destination not exists when removing (the module may be unloaded, or the view may be removed from view hierarchy)
 * Circular dependency
 
-Use `setGlobalErrorHandler:` to log these errors:
+Use `globalErrorHandler:` to log these errors:
 
 ```swift
 ZIKAnyViewRouter.globalErrorHandler = { (router, action, error) in
@@ -62,3 +62,6 @@ Router.perform(
 ```
 
 </details>
+
+---
+#### Next section: [Storyboard](Storyboard.md)

@@ -1,6 +1,6 @@
 # 创建路由
 
-ZIKRouter的设计使用了抽象工厂模式，你需要为模块（产品）创建对应的router子类（工厂子类），然后在子类中实现router的接口即可，而无需对模块本身做出修改。
+ZIKRouter 的设计使用了抽象工厂模式，你需要为模块（产品）创建对应的 router 子类（工厂子类），然后在子类中实现 router 的接口即可，而无需对模块本身做出修改。
 
 例如，要为`EditorViewController`创建路由。
 
@@ -21,28 +21,23 @@ class EditorViewController: UIViewController, NoteEditorInput {
 ```swift
 //EditorViewRouter.swift
 
-//声明EditorViewController是可路由的UIViewController
+//声明 EditorViewController 是可路由的 UIViewController
 extension EditorViewController: ZIKRoutableView {
 
 }
-//声明NoteEditorInput是可路由的
+//声明 NoteEditorInput 是可路由的
 extension RoutableView where Protocol == NoteEditorInput {
     init() { self.init(declaredProtocol: Protocol.self) }
 }
 
 class EditorViewRouter: ZIKViewRouter<EditorViewController, ZIKViewRouteConfiguration> {
-    //注册当前Router所管理的view和protocol
+    //注册当前 Router 所管理的 view 和 protocol
     override class func registerRoutableDestination() {
-        //把EditorViewController和对应的Router子类进行注册，一个Router可以注册多个界面，一个界面也可以使用多个Router
+        //把 EditorViewController 和对应的 Router 子类进行注册，一个 Router 可以注册多个界面，一个界面也可以使用多个 Router
         registerView(EditorViewController.self)
         
-        //注册NoteEditorInput，注册后就可以用此protocol获取此router
+        //注册 NoteEditorInput，注册后就可以用此 protocol 获取此 router
         register(RoutableView<NoteEditorInput>())
-    }
-    //检查模块内使用的外部路由依赖是否有效
-    override class func _didFinishRegistration() {
-        //Make sure all routable dependencies in this module is available.
-        assert(Router.to(RoutableService<SomeServiceInput>()) != nil)
     }
     
     //返回需要获取的目的模块
@@ -52,7 +47,7 @@ class EditorViewRouter: ZIKViewRouter<EditorViewController, ZIKViewRouteConfigur
         return destination
     }
     
-    //来自storyboard的destination，是否需要让source view controller进行配置
+    //来自 storyboard 的 destination，是否需要让 source view controller 进行配置
     override func destinationFromExternalPrepared(destination: EditorViewController) -> Bool {
         if (destination.delegate != nil) {
             return true
@@ -70,7 +65,7 @@ class EditorViewRouter: ZIKViewRouter<EditorViewController, ZIKViewRouteConfigur
         
     }
     
-    //View Router的AOP回调
+    //View Router 的 AOP 回调
     override class func router(_ router: DefaultViewRouter?, willPerformRouteOnDestination destination: EditorViewController, fromSource source: Any?) {
         
     }
@@ -111,7 +106,7 @@ class EditorViewRouter: ZIKViewRouter<EditorViewController, ZIKViewRouteConfigur
 ```objectivec
 //EditorViewRouter.m
 
-//声明EditorViewController是可路由的UIViewController
+//声明 EditorViewController 是可路由的 UIViewController
 @interface EditorViewController (EditorViewRouter) <ZIKRoutableView>
 @end
 @implementation EditorViewController (EditorViewRouter)
@@ -119,12 +114,12 @@ class EditorViewRouter: ZIKViewRouter<EditorViewController, ZIKViewRouteConfigur
 
 @implementation EditorViewRouter
 
-//注册当前Router所管理的view和protocol
+//注册当前 Router 所管理的 view 和 protocol
 + (void)registerRoutableDestination {
-    //把EditorViewController和对应的Router子类进行注册，一个Router可以注册多个界面，一个界面也可以使用多个Router
+    //把 EditorViewController 和对应的 Router 子类进行注册，一个 Router 可以注册多个界面，一个界面也可以使用多个 Router
     [self registerView:[EditorViewController class]];
     
-    //注册NoteEditorInput，注册后就可以用此protocol获取此router
+    //注册 NoteEditorInput，注册后就可以用此 protocol 获取此 router
     [self registerViewProtocol:ZIKRoutable(NoteEditorInput)];
 }
 
@@ -135,7 +130,7 @@ class EditorViewRouter: ZIKViewRouter<EditorViewController, ZIKViewRouteConfigur
     return destination;
 }
 
-//来自storyboard的destination，是否需要让source view controller进行配置
+//来自 storyboard 的 destination，是否需要让 source view controller 进行配置
 - (BOOL)destinationFromExternalPrepared:(EditorViewController *)destination {
     if (destination.delegate != nil) {
         return YES;
@@ -145,7 +140,7 @@ class EditorViewRouter: ZIKViewRouter<EditorViewController, ZIKViewRouteConfigur
 
 //在执行路由前配置模块，执行依赖注入
 - (void)prepareDestination:(EditorViewController *)destination configuration:(ZIKViewRouteConfiguration *)configuration {
-    //为EditorViewController注入依赖
+    //为 EditorViewController 注入依赖
 }
 
 //配置完毕，检查是否配置正确
@@ -153,7 +148,7 @@ class EditorViewRouter: ZIKViewRouter<EditorViewController, ZIKViewRouteConfigur
     
 }
 
-//路由时的AOP回调
+//路由时的 AOP 回调
 + (void)router:(nullable ZIKViewRouter *)router willPerformRouteOnDestination:(EditorViewController *)destination fromSource:(id)source {
     
 }
@@ -173,16 +168,13 @@ class EditorViewRouter: ZIKViewRouter<EditorViewController, ZIKViewRouteConfigur
 
 在继承时可以指定泛型参数，参考[Type Checking](TypeChecking.md#泛型)。
 
-如果不想使用router子类来添加路由，也可以用轻量化的block来注册：
+如果不想使用 router 子类来添加路由，也可以用轻量化的 block 来注册：
 
 ```swift
-Registry.register(destination: EditorViewController.self, routableProtocol: NoteEditorInput.self)
-	.makeDestination({ config in
-		return EditorViewController()
-	})
-	.prepareDestination({ destination in
-		
-	})
+ZIKViewRoute<EditorViewController, ViewRouteConfig>
+    .make(withDestination: EditorViewController.self,
+          makeDestination: { (config, router) -> SwiftService? in
+            return EditorViewController()
+    })
+    .register(RoutableView<NoteEditorInput>())
 ```
-
-不过这个特性目前暂时还未发布。

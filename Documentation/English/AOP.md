@@ -41,3 +41,6 @@ override class func router(_ router: DefaultViewRouter?, didRemoveRouteOnDestina
 When registered view's state changes, all it's routers will be notified, even the view's state change is not caused by router.
 
 See comments in these methods for more details.
+
+---
+#### Next section: [Dependency Injection](DependencyInjection.md)

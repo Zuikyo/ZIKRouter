@@ -58,18 +58,6 @@ class TestViewController: UIViewController {
 }
 ```
 
-## Dynamic Perform
-
-When you need highly dynamic routing, you can perform route with protocol's name string:
-
-```swift
-func handleOpenURLWithViewName(_ viewName: String) {
-    Router.to(dynamicView: viewName)?.perform(path: .push(from: self))
-    }
-
-```
-You should only use this when you really need it. If the protocol name is wrong, the routing will be failed. So it's not that safe.
-
 ## Perform in Objective-C
 
 ```objectivec
@@ -184,3 +172,153 @@ If you want to do custom route action, override `-performRouteOnDestination:conf
 Most service routers are just for getting a service object. You can use [Make Destination](MakeDestination.md).
 
 After performing, you will get a router instance. You can hold the router and remove route later. See [Remove Route](RemoveRoute.md).
+
+## Perform on Destination
+
+If you get a destination from other place, you can perform on the destination with it's router.
+
+For example, a UIViewController supports 3D touch, and implments `UIViewControllerPreviewingDelegate`:
+
+```swift
+class SourceViewController: UIViewController, UIViewControllerPreviewingDelegate {
+	func previewingContext(_ previewingContext: UIViewControllerPreviewing, viewControllerForLocation location: CGPoint) -> UIViewController? {
+	     //Return the destination UIViewController to let system preview it
+        let destination = Router.makeDestination(to: RoutableView<DestinationViewInput>())
+        return destination
+    }
+    
+    func previewingContext(_ previewingContext: UIViewControllerPreviewing, commit viewControllerToCommit: UIViewController) {
+        guard let destination = viewControllerToCommit as? DestinationViewInput else {
+            return
+        }
+        //Show the destination
+        Router.to(RoutableView<DestinationViewInput>())?.perform(onDestination: destination, path: .presentModally(from: self))
+}
+
+```
+
+<details><summary>Objective-C Sample</summary>
+
+```objectivec
+@implementation SourceViewController
+
+- (nullable UIViewController *)previewingContext:(id <UIViewControllerPreviewing>)previewingContext viewControllerForLocation:(CGPoint)location {
+    //Return the destination UIViewController to let system preview it
+    UIViewController<DestinationViewInput> *destination = [ZIKRouterToView(DestinationViewInput) makeDestination];
+    return destination;
+}
+
+- (void)previewingContext:(id <UIViewControllerPreviewing>)previewingContext commitViewController:(UIViewController *)viewControllerToCommit {
+    //Show the destination
+    UIViewController<DestinationViewInput> *destination;
+    if ([viewControllerToCommit conformsToProtocol:@protocol(DestinationViewInput)]) {
+        destination = viewControllerToCommit;
+    } else {
+        return;
+    }
+    [ZIKRouterToView(ZIKInfoViewProtocol) performOnDestination: destination path:ZIKViewRoutePath.presentModallyFrom(self)];
+}
+
+@end
+```
+
+</details>
+
+## Prepare on Destination
+
+If you don't want to show the destination, but just want to prepare an existing destination, you can prepare the destination with router.
+
+If the router do dependency injection inside it, this can properly setting the destination object.
+
+```swift
+var destination: DestinationViewInput = ...
+Router.to(RoutableView<DestinationViewInput>())?.prepare(destination: destination, configuring: { (config, prepareDestination, _) in
+            prepareDestination({ destination in
+                // Prepare
+            })
+        })
+
+```
+
+<details><summary>Objective-C Sample</summary>
+
+```objectivec
+UIViewController<DestinationViewInput> *destination = ...
+[ZIKRouterToView(DestinationViewInput) prepareDestination:destination configuring:^(ZIKViewRouteConfiguration *config) {
+            config.prepareDestination = ^(id<DestinationViewInput> destination) {
+                // Prepare
+            };
+        }];
+```
+
+</details>
+
+## URL router
+
+If your app needs to support URL scheme, you can use identifier to perofrm route.
+
+```swift
+// openURL inside your app or from other app
+func openURL(_ url: NSURL) {
+    // your-app-scheme://listView/settingView?item=1
+    UIApplication.shared.openURL(url)
+}
+
+class AppDelegate: UIResponder, UIApplicationDelegate {
+    ...
+    override func application(_ app: UIApplication, open url: URL, options: [UIApplicationOpenURLOptionsKey : Any] = [:]) -> Bool {
+    
+        //You can use other url router framework to handle the url
+        let identifier: String = // route identifier from the url
+        let routerType = Router.to(viewIdentifier: identifier)
+        if routerType == nil {
+            return false
+        }
+        let params: [String : Any] = // parameters from the url
+        let rootViewController = // get rootViewController
+        routerType?.perform(path: .show(from: rootViewController), configuring: { (config, _, _) in
+            config.addUserInfo(params)
+        })
+        
+    }
+}
+```
+
+<details><summary>Objective-C Sample</summary>
+
+```objectivec
+// openURL inside your app or from other app
+- (void)openURL:(NSURL *)url {
+    // your-app-scheme://listView/settingView?item=1
+    [[UIApplication sharedApplication] openURL: url];
+}
+
+@implementation AppDelegate
+
+- (BOOL)application:(UIApplication *)app openURL:(NSURL *)url options:(NSDictionary<UIApplicationOpenURLOptionsKey,id> *)options {
+    
+    //You can use other URL router framework to handle the url
+    NSString *identifier = // route identifier from the url
+    ZIKViewRouterType *routerType = ZIKViewRouter.toIdentifier(identifier);
+    if (routerType == nil) {
+        return NO;
+    }
+    UISplitViewController *splitViewController = (UISplitViewController *)self.window.rootViewController;
+    UINavigationController *navigationController = [splitViewController.viewControllers lastObject];
+    
+    NSDictionary *params = // parameters from the url
+    [routerType performPath:ZIKViewRoutePath.showFrom(navigationController)
+                configuring:^(ZIKViewRouteConfiguration *config) {
+                    [config addUserInfo:params];
+                }];
+    return YES;
+}
+@end
+```
+
+</details>
+
+You can use other URL router framework to handle the url, the URL router needs to set and get the identifier for router.
+
+---
+#### Next section: [Remove Route](RemoveRoute.md)

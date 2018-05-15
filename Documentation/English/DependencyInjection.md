@@ -227,3 +227,6 @@ Person *person = [ZIKRouterToService(PersonType)
 Dependency lookup is where class itself looks up for dependency.
 
 Getting router with protocol is Dependency Lookup.
+
+---
+#### Next section: [Circular Dependency](CircularDependencies.md)

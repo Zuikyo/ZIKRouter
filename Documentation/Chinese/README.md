@@ -15,7 +15,7 @@
 
 View router将UIKit中的所有界面跳转方式封装成一个统一的方法。
 
-Service router用于模块寻找，通过protocol寻找对应的模块，并用protocol进行依赖注入和模块调用。可兼容 URL router。
+Service router用于模块寻找，通过protocol寻找对应的模块，并用protocol进行依赖注入和模块调用。可和其他 URL router 兼容。
 
 `ZRouter`为Swift提供更加Swifty、更加安全的路由方式。
 
@@ -26,21 +26,21 @@ Service router用于模块寻找，通过protocol寻找对应的模块，并用p
 - [x] 支持 Swift 和 Objective-C，以及两者混编
 - [x] 支持界面路由和任意模块的路由
 - [x] 支持对模块进行静态依赖注入和动态依赖注入
-- [x] **用protocol动态获取界面和模块，隐藏具体类**
-- [x] **用protocol向模块传递参数，基于接口进行类型安全的模块调用和参数传递**
-- [x] **可以和其他 URL router 兼容，用 idntifier 获取模块**
-- [x] **在模块和模块使用者中用不同的protocol指向同一个模块，因此路由时不必和某个固定的protocol耦合**
-- [x] **明确声明可用于路由的public protocol，进行编译时检查和运行时检查，避免了动态特性带来的过于自由的安全问题**
-- [x] 使用泛型表明指定功能的router
-- [x] 用adapter对两个模块进行解耦和接口兼容
-- [x] 封装UIKit里的所有界面跳转方式（push、present modally、present as popover、segue、show、showDetail、addChildViewController、addSubview）以及自定义的展示方式，封装成一个统一的方法
+- [x] **用 protocol 动态获取界面和模块，隐藏具体类**
+- [x] **用 protocol 向模块传递参数，基于接口进行类型安全的模块调用和参数传递**
+- [x] **可以用 idntifier 获取模块，和其他 URL router 兼容**
+- [x] **在模块和模块使用者中用不同的 protocol 指向同一个模块，因此路由时不必和某个固定的 protocol 耦合**
+- [x] **明确声明可用于路由的 protocol，进行编译时检查和运行时检查，避免了动态特性带来的过于自由的安全问题**
+- [x] 使用泛型表明指定功能的 router
+- [x] 用 adapter 对两个模块进行解耦和接口兼容
+- [x] 封装 UIKit 里的所有界面跳转方式（push、present modally、present as popover、segue、show、showDetail、addChildViewController、addSubview）以及自定义的展示方式，封装成一个统一的方法
 - [x] 支持用一个方法执行界面回退和模块销毁，不必区分使用pop、dismiss、removeFromParentViewController、removeFromSuperview
-- [x] **支持storyboard，可以对从segue中跳转的界面执行依赖注入**
+- [x] **支持 storyboard，可以对从segue中跳转的界面执行依赖注入**
 - [x] 完备的错误检查，可以检测界面跳转时的大部分问题
-- [x] 支持界面跳转过程中的AOP回调
+- [x] 支持界面跳转过程中的 AOP 回调
 - [x] 两种注册方式：自动注册和手动注册
 - [x] 用 router 子类添加模块，也可以用 block 添加 router
-- [ ] 增加支持Mac OS和tv OS
+- [ ] 增加支持 Mac OS 和 tv OS
 
 ## Table of Contents
 
@@ -65,15 +65,15 @@ Service router用于模块寻找，通过protocol寻找对应的模块，并用p
 
 ## 示例代码
 
-下面演示router的基本使用。
+下面演示 router 的基本使用。
 
 ### View Router
 
-演示用的界面和protocol。
+演示用的界面和 protocol。
 
 ```swift
-///Editor模块的接口和依赖
-protocol NoteEditorInput {
+///Editor 模块的接口和依赖
+protocol NoteEditorInput: class {
     weak var delegate: EditorDelegate? { get set }
     func constructForCreatingNewNote()
 }
@@ -87,7 +87,7 @@ class NoteEditorViewController: UIViewController, NoteEditorInput {
 <details><summary>Objective-C Sample</summary>
   
 ```objectivec
-///Editor模块的接口和依赖
+///Editor 模块的接口和依赖
 @protocol NoteEditorInput <ZIKViewRoutable>
 @property (nonatomic, weak) id<EditorDelegate> delegate;
 - (void)constructForCreatingNewNote;
@@ -106,12 +106,12 @@ class NoteEditorViewController: UIViewController, NoteEditorInput {
 
 #### 直接跳转
 
-直接跳转到editor界面:
+直接跳转到 editor 界面:
 
 ```swift
 class TestViewController: UIViewController {
 
-    //直接跳转到editor view controller
+    //直接跳转到 editor view controller
     func showEditorDirectly() {
         Router.perform(to: RoutableView<NoteEditorInput>(), path: .push(from: self))
     }
@@ -124,7 +124,7 @@ class TestViewController: UIViewController {
 @implementation TestViewController
 
 - (void)showEditorDirectly {
-    //直接跳转到editor view controller
+    //直接跳转到 editor view controller
     [ZIKRouterToView(NoteEditorInput) performPath:ZIKViewRoutePath.pushFrom(self)];
 }
 
@@ -158,7 +158,7 @@ enum ViewRoutePath {
 ```swift
 class TestViewController: UIViewController {
 
-    //跳转到editor界面；通过protocol获取对应的router类，再通过protocol配置界面
+    //跳转到 editor 界面；通过 protocol 获取对应的 router 类，同时用 protocol 配置界面
     func showEditor() {
         Router.perform(
             to: RoutableView<NoteEditorInput>(),
@@ -188,7 +188,7 @@ class TestViewController: UIViewController {
 @implementation TestViewController
 
 - (void)showEditor {
-    //跳转到editor界面；通过protocol获取对应的router类，再通过protocol配置界面
+    //跳转到 editor 界面；通过 protocol 获取对应的 router 类，同时用 protocol 配置界面
     [ZIKRouterToView(NoteEditorInput)
 	     performPath:ZIKViewRoutePath.pushFrom(self)
 	     configuring:^(ZIKViewRouteConfig *config) {
@@ -221,7 +221,7 @@ class TestViewController: UIViewController {
     var router: DestinationViewRouter<NoteEditorInput>?
     
     func showEditor() {
-        //持有router
+        //持有 router
         router = Router.perform(to: RoutableView<NoteEditorInput>(), path: .push(from: self))
     }
     
@@ -269,7 +269,7 @@ class TestViewController: UIViewController {
 @implementation TestViewController
 
 - (void)showEditorDirectly {
-    //持有router
+    //持有 router
     self.router = [ZIKRouterToView(NoteEditorInput) performPath:ZIKViewRoutePath.pushFrom(self)];
 }
 
@@ -316,7 +316,7 @@ class TestViewController: UIViewController {
 获取模块:
 
 ```swift
-///time service的接口
+///time service 的接口
 protocol TimeServiceInput {
     func currentTimeString() -> String
 }
@@ -326,7 +326,7 @@ class TestViewController: UIViewController {
     @IBOutlet weak var timeLabel: UILabel!
     
     func callTimeService() {
-        //获取TimeServiceInput模块
+        //获取 TimeServiceInput 模块
         let timeService = Router.makeDestination(
         	to: RoutableService<TimeServiceInput>(), 
         	preparation: { destination in
@@ -341,7 +341,7 @@ class TestViewController: UIViewController {
 <details><summary>Objective-C示例</summary>
 
 ```objectivec
-///time service的接口
+///time service 的接口
 @protocol TimeServiceInput <ZIKServiceRoutable>
 - (NSString *)currentTimeString;
 @end
@@ -355,7 +355,7 @@ class TestViewController: UIViewController {
 @implementation TestViewController
 
 - (void)callTimeService {
-   //获取TimeServiceInput模块
+   //获取 TimeServiceInput 模块
    id<TimeServiceInput> timeService = [ZIKRouterToService(TimeServiceInput) makeDestination];
    self.timeLabel.text = [timeService currentTimeString];    
 }
@@ -365,23 +365,29 @@ class TestViewController: UIViewController {
 
 ## Demo和实践
 
-ZIKRouter是为了实践VIPER架构而开发的，但是也能用于MVC、MVVM，并没有任何限制。
+ZIKRouter 是为了实践 VIPER 架构而开发的，但是也能用于 MVC、MVVM，并没有任何限制。
 
-Demo目录下的ZIKRouterDemo展示了如何用ZIKRouter进行各种界面跳转以及模块获取，并且展示了Swift和OC混编的场景。
+Demo 目录下的 ZIKRouterDemo 展示了如何用 ZIKRouter 进行各种界面跳转以及模块获取，并且展示了 Swift 和OC 混编的场景。
 
-想要查看router是如何应用在VIPER架构中的，可以参考这个项目：[ZIKViper](https://github.com/Zuikyo/ZIKViper)。
+想要查看 router 是如何应用在 VIPER 架构中的，可以参考这个项目：[ZIKViper](https://github.com/Zuikyo/ZIKViper)。
+
+## Requirements
+
+* iOS 7.0+
+* Swift 3.2+
+* Xcode 9.0+
 
 ## Installation
 
 ### Cocoapods
 
-可以用Cocoapods安装ZIKRouter：
+可以用 Cocoapods 安装 ZIKRouter：
 
 ```
 pod 'ZIKRouter', '0.13.0'
 ```
 
-如果是Swift项目，则使用ZRouter：
+如果是 Swift 项目，则使用 ZRouter：
 
 ```
 pod 'ZRouter', '0.9.0'
@@ -406,12 +412,12 @@ class NoteEditorViewRouter: ZIKViewRouter<NoteEditorViewController, ViewRouteCon
     }
     
     override func destination(with configuration: ViewRouteConfig) -> NoteEditorViewController? {
-        let destination: NoteEditorViewController? = ... ///实例化view controller
+        let destination: NoteEditorViewController? = ... ///实例化 view controller
         return destination
     }
     
     override func prepareDestination(_ destination: NoteEditorViewController, configuration: ViewRouteConfig) {
-        //为destination注入依赖
+        //为 destination 注入依赖
     }
 }
 ```
@@ -436,12 +442,12 @@ class NoteEditorViewRouter: ZIKViewRouter<NoteEditorViewController, ViewRouteCon
 }
 
 - (NoteEditorViewRouter *)destinationWithConfiguration:(ZIKViewRouteConfiguration *)configuration {
-    NoteEditorViewRouter *destination = ... ///实例化view controller
+    NoteEditorViewRouter *destination = ... ///实例化 view controller
     return destination;
 }
 
 - (void)prepareDestination:(NoteEditorViewRouter *)destination configuration:(ZIKViewRouteConfiguration *)configuration {
-    //为destination注入依赖
+    //为 destination 注入依赖
 }
 
 @end
@@ -449,16 +455,16 @@ class NoteEditorViewRouter: ZIKViewRouter<NoteEditorViewController, ViewRouteCon
 
 </details>
 
-关于更多可用于override的方法，请参考详细文档。
+关于更多可用于 override 的方法，请参考详细文档。
 
 ### 2.声明 Routable 类型
 
 ```swift
-//声明 NoteEditorViewController is routable
+//声明 NoteEditorViewController 为 routable
 extension NoteEditorViewController: ZIKRoutableView {
 }
 
-//声明 NoteEditorInput is routable
+//声明 NoteEditorInput 为 routable
 extension RoutableView where Protocol == NoteEditorInput {
     init() { self.init(declaredProtocol: Protocol.self) }
 }
@@ -467,7 +473,7 @@ extension RoutableView where Protocol == NoteEditorInput {
 <details><summary>Objective-C Sample</summary>
 
 ```objectivec
-//声明 NoteEditorViewController is routable
+//声明 NoteEditorViewController 为 routable
 DeclareRoutableView(NoteEditorViewController, NoteEditorViewRouter)
 
 ///当 protocol 继承自 ZIKViewRoutable, 就是 routable 的
@@ -489,13 +495,13 @@ class TestViewController: UIViewController {
         Router.perform(to: RoutableView<NoteEditorInput>(), path: .push(from: self))
     }
     
-    //跳转到editor界面；通过protocol获取对应的router类，再通过protocol配置界面
+    //跳转到 editor 界面；通过 protocol 获取对应的 router 类，同时用 protocol 配置界面
     func showEditor() {
         Router.perform(
             to: RoutableView<NoteEditorInput>(),
             path: .push(from: self),
             configuring: { (config, prepareDestination, _) in
-                //跳转前配置destination
+                //跳转前配置 destination
                 prepareDestination({ destination in
                     //destination 自动推断为 NoteEditorInput 类型
                     destination.delegate = self
@@ -517,12 +523,12 @@ class TestViewController: UIViewController {
     [ZIKRouterToView(NoteEditorInput) performPath:ZIKViewRoutePath.pushFrom(self)];
 }
 
-//跳转到editor界面；通过protocol获取对应的router类，再通过protocol配置界面
+//跳转到 editor 界面；通过 protocol 获取对应的router类，同时用 protocol 配置界面
 - (void)showEditor {
     [ZIKRouterToView(NoteEditorInput)
 	     performPath:ZIKViewRoutePath.pushFrom(self)
 	     configuring:^(ZIKViewRouteConfig *config) {
-	         //跳转前配置destination
+	         //跳转前配置 destination
 	         config.prepareDestination = ^(id<NoteEditorInput> destination) {
 	             destination.delegate = self;
 	             [destination constructForCreatingNewNote];

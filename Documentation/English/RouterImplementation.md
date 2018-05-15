@@ -176,13 +176,13 @@ The router subclass can set generic parameters when inheriting from ZIKViewRoute
 If you don't want to create a complex router subclass for a simple module, you can use block to register the module:
 
 ```swift
-Registry.register(destination: EditorViewController.self, routableProtocol: NoteEditorInput.self)
-	.makeDestination({ config in
-		return EditorViewController()
-	})
-	.prepareDestination({ destination in
-		
-	})
+ZIKViewRoute<EditorViewController, ViewRouteConfig>
+    .make(withDestination: EditorViewController.self,
+          makeDestination: { (config, router) -> SwiftService? in
+            return EditorViewController()
+    })
+    .register(RoutableView<NoteEditorInput>())
 ```
 
-But this feature is not released now.
+---
+#### Next section: [Module Registration](./ModuleRegistration.md)
