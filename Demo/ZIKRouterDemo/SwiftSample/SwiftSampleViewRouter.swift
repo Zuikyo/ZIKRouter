@@ -50,7 +50,7 @@ class SwiftSampleViewRouter: ZIKViewRouter<SwiftSampleViewController, SwiftSampl
         return false
     }
     override func prepareDestination(_ destination: SwiftSampleViewController, configuration: ZIKViewRouteConfiguration) {
-        destination.injectedAlertRouter = Router.to(RoutableViewModule<RequiredCompatibleAlertConfigProtocol>())
+        destination.injectedAlertRouter = Router.to(RoutableViewModule<RequiredCompatibleAlertModuleInput>())
     }
 }
 

@@ -1,5 +1,5 @@
 //
-//  ZIKCompatibleAlertConfigProtocol.h
+//  RequiredCompatibleAlertModuleInput.h
 //  ZIKRouterDemo
 //
 //  Created by zuik on 2017/7/6.
@@ -11,8 +11,8 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-///Provided interface of the real module
-@protocol ZIKCompatibleAlertConfigProtocol <ZIKViewModuleRoutable>
+///Required interface used in caller
+@protocol RequiredCompatibleAlertModuleInput <ZIKViewModuleRoutable>
 @property(nonatomic,copy) NSString *title;
 @property(nullable,nonatomic,copy) NSString *message;
 - (void)addCancelButtonTitle:(NSString *)cancelButtonTitle handler:(void (^__nullable)(void))handler;

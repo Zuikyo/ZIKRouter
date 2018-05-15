@@ -161,7 +161,7 @@
 		F820BF911F628A9600D570CF /* ZIKRouterDemo-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "ZIKRouterDemo-Bridging-Header.h"; sourceTree = "<group>"; };
 		F820BF921F628A9600D570CF /* SwiftSampleViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SwiftSampleViewController.swift; sourceTree = "<group>"; };
 		F820BF941F628EF300D570CF /* SwiftSampleViewRouter.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SwiftSampleViewRouter.swift; sourceTree = "<group>"; };
-		F82ECA6E1F17DC51007168AA /* RequiredCompatibleAlertConfigProtocol.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RequiredCompatibleAlertConfigProtocol.h; sourceTree = "<group>"; };
+		F82ECA6E1F17DC51007168AA /* RequiredCompatibleAlertModuleInput.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RequiredCompatibleAlertModuleInput.h; sourceTree = "<group>"; };
 		F82ECA721F17DC51007168AA /* ZIKSimpleLabel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ZIKSimpleLabel.h; sourceTree = "<group>"; };
 		F82ECA731F17DC51007168AA /* ZIKSimpleLabel.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ZIKSimpleLabel.m; sourceTree = "<group>"; };
 		F82ECA741F17DC51007168AA /* ZIKSimpleLabelProtocol.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ZIKSimpleLabelProtocol.h; sourceTree = "<group>"; };
@@ -350,7 +350,7 @@
 		F82ECA6D1F17DC51007168AA /* CompatibleAlertView */ = {
 			isa = PBXGroup;
 			children = (
-				F82ECA6E1F17DC51007168AA /* RequiredCompatibleAlertConfigProtocol.h */,
+				F82ECA6E1F17DC51007168AA /* RequiredCompatibleAlertModuleInput.h */,
 			);
 			path = CompatibleAlertView;
 			sourceTree = "<group>";

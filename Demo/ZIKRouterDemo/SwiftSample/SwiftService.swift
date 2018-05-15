@@ -13,15 +13,11 @@ protocol SwiftServiceInput {
     func swiftFunction()
 }
 
-protocol SwiftServiceInput2 {
-    
-}
-
-class SwiftService: SwiftServiceInput, SwiftServiceInput2 {
+class SwiftService: SwiftServiceInput {
     func swiftFunction() {
         print("this is a swift function")
         _ = Router.perform(
-            to: RoutableViewModule<RequiredCompatibleAlertConfigProtocol>(),
+            to: RoutableViewModule<RequiredCompatibleAlertModuleInput>(),
             path: .custom(from: UIApplication.shared.keyWindow?.rootViewController),
             configuring: { (config, _, prepareModule) in
                 prepareModule({ module in

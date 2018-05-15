@@ -48,9 +48,6 @@ extension SwiftService: ZIKRoutableService {
 extension RoutableService where Protocol == SwiftServiceInput {
     init() { self.init(declaredProtocol: Protocol.self) }
 }
-extension RoutableService where Protocol == SwiftServiceInput2 {
-    init() { self.init(declaredProtocol: Protocol.self) }
-}
 extension RoutableServiceModule where Protocol == SwiftServiceConfig {
     init() { self.init(declaredProtocol: Protocol.self) }
 }

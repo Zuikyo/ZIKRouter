@@ -30,10 +30,10 @@ class SwiftSampleViewController: UIViewController, PureSwiftSampleViewInput, Swi
     var switchableRouter: ViewRouter<Any, ViewRouteConfig>? {
         willSet { anyRouter = newValue?.router }
     }
-    var alertRouter: ViewRouter<Any, RequiredCompatibleAlertConfigProtocol>?
+    var alertRouter: ViewRouter<Any, RequiredCompatibleAlertModuleInput>?
     
     //You can inject alertRouter from outside, then use the router directly
-    var injectedAlertRouter: ViewRouterType<Any, RequiredCompatibleAlertConfigProtocol>?
+    var injectedAlertRouter: ViewRouterType<Any, RequiredCompatibleAlertModuleInput>?
     
     override func viewDidLoad() {
         if #available(iOS 9.0, *) {
@@ -69,7 +69,7 @@ class SwiftSampleViewController: UIViewController, PureSwiftSampleViewInput, Swi
     
     @IBAction func testRouteForConfig(_ sender: Any) {
         alertRouter = Router.perform(
-            to: RoutableViewModule<RequiredCompatibleAlertConfigProtocol>(),
+            to: RoutableViewModule<RequiredCompatibleAlertModuleInput>(),
             path: .extensible(path: .presentCompatibleAlertFrom(self)),
             configuring: { (config, _, prepareModule) in
                 config.successHandler = { d in

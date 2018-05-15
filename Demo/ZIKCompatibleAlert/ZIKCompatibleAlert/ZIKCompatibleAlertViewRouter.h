@@ -7,11 +7,11 @@
 //
 
 @import ZIKRouter;
-#import "ZIKCompatibleAlertConfigProtocol.h"
+#import "ZIKCompatibleAlertModuleInput.h"
 
 NS_ASSUME_NONNULL_BEGIN
 
-@interface ZIKCompatibleAlertViewConfiguration : ZIKViewRouteConfiguration <NSCopying, ZIKCompatibleAlertConfigProtocol>
+@interface ZIKCompatibleAlertViewConfiguration : ZIKViewRouteConfiguration <NSCopying, ZIKCompatibleAlertModuleInput>
 @property(nonatomic,copy) NSString *title;
 @property(nullable,nonatomic,copy) NSString *message;
 - (void)addCancelButtonTitle:(NSString *)cancelButtonTitle handler:(void (^__nullable)(void))handler;
@@ -19,7 +19,7 @@ NS_ASSUME_NONNULL_BEGIN
 - (void)addDestructiveButtonTitle:(NSString *)destructiveButtonTitle handler:(void (^)(void))handler;
 @end
 
-@interface ZIKCompatibleAlertViewRouter: ZIKModuleViewRouter(ZIKCompatibleAlertConfigProtocol)
+@interface ZIKCompatibleAlertViewRouter: ZIKModuleViewRouter(ZIKCompatibleAlertModuleInput)
 + (nullable ZIKViewRouter *)performFromSource:(nullable id)source routeType:(ZIKViewRouteType)routeType NS_UNAVAILABLE;
 @end
 
