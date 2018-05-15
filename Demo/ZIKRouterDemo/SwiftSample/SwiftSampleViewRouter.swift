@@ -32,11 +32,6 @@ class SwiftSampleViewRouter: ZIKViewRouter<SwiftSampleViewController, SwiftSampl
         registerIdentifier("com.zuik.viewController.swiftSample")
     }
     
-    override class func _didFinishRegistration() {
-        //Make sure all routable dependencies in this module is available.
-        assert(Router.to(RoutableService<SwiftServiceInput>()) != nil)
-    }
-    
     override class func defaultRouteConfiguration() -> SwiftSampleViewConfiguration {
         return SwiftSampleViewConfiguration()
     }

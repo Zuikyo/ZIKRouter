@@ -13,23 +13,36 @@
 
 #import "ZIKImageSymbol.h"
 #import "ZIKFindSymbol.h"
+#import <mach-o/dyld.h>
 
 @implementation ZIKImageSymbol
 
-+(ZIKImageRef)imageByName:(const char *)file {
++ (ZIKImageRef)imageByName:(const char *)file {
     ZIKImageRef image = ZIKGetImageByName(file);
     return image;
 }
 
-+(void *)findSymbolInImage:(ZIKImageRef)image name:(const char *)symbolName {
-    NSParameterAssert(image);
++ (void)enumerateImages:(BOOL(^)(ZIKImageRef image, NSString *path))handler {
+    if (handler == nil) {
+        return;
+    }
+    uint32_t images = _dyld_image_count();
+    for (uint32_t image = 0; image != images; ++image) {
+        NSString *path = [NSString stringWithUTF8String:_dyld_get_image_name(image)];
+        BOOL result = handler(_dyld_get_image_header(image), path);
+        if (result == NO) {
+            break;
+        }
+    }
+}
+
++ (void *)findSymbolInImage:(ZIKImageRef)image name:(const char *)symbolName {
     NSParameterAssert(symbolName);
     void *symbol = ZIKFindSymbol(image, symbolName);
     return symbol;
 }
 
-+(void *)findSymbolInImage:(ZIKImageRef)image matching:(BOOL(^)(const char *symbolName))matchingBlock {
-    NSParameterAssert(image);
++ (void *)findSymbolInImage:(ZIKImageRef)image matching:(BOOL(^)(const char *symbolName))matchingBlock {
     NSParameterAssert(matchingBlock);
     void *symbol = ZIKFindSymbol(image, ^bool(const char *symbolName) {
         return matchingBlock(symbolName);

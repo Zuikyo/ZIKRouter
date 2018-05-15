@@ -30,3 +30,16 @@ import ZIKRouter
         }
     }
 }
+
+import ZIKRouter.Internal
+
+typealias RequiredInfoViewInput = UIViewController & ZIKInfoViewProtocol
+class ZIKInfoViewAdapter: ZIKViewRouteAdapter {
+    override class func registerRoutableDestination() {
+        register(adapter: RoutableView<UIViewController & ZIKInfoViewProtocol>(), forAdaptee: RoutableView<ZIKInfoViewProtocol>())
+    }
+}
+
+extension RoutableView where Protocol == RequiredInfoViewInput {
+    init() { self.init(declaredProtocol: Protocol.self) }
+}

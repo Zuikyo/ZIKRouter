@@ -24,7 +24,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 #pragma mark Optional Override
 
-///Invoked after all registrations are finished when ZIKROUTER_CHECK is enabled. You can override and validate whether those routable swift protocols used in your module as external dependencies  are already registered with routers, because we can't enumerate swift protocols at runtime to auto check.
+///Invoked after all registrations are finished when ZIKROUTER_CHECK is enabled, when ZIKROUTER_CHECK is disabled, this won't be invoked. You can override and do some debug checking.
 + (void)_didFinishRegistration;
 
 ///Prepare the destination after -prepareDestination is invoked.

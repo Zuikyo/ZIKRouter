@@ -60,6 +60,8 @@ enum UnusedSwiftEnum { }
 protocol UnusedSwiftProtocol { }
 @objc protocol UnusedObjcProtocol { }
 
+#if DEBUG
+
 class UtilityTests: XCTestCase {
     
     func testTypeCheckingForSwiftClass() {
@@ -454,7 +456,33 @@ class UtilityTests: XCTestCase {
         }
     }
     
-    func testSingle() {
-        XCTAssertFalse(_swift_typeIsTargetType(SwiftClass.self, type(of: SwiftClassProtocol.self)))
+    func testEnumerateDeclaredProtocol() {
+        measure {
+            var symbolNames = [String]()
+            _enumerateSymbolName { (name, demangledAsSwift) -> Bool in
+                if (strstr(name, "RoutableView") != nil) {
+                    let symbolName = demangledAsSwift(name, false)
+                    if symbolName.contains("(extension in"), symbolName.contains(">.init"), symbolName.contains("(extension in ZRouter)") == false {
+                        let simplifiedName = demangledAsSwift(name, true)
+                        symbolNames.append(simplifiedName)
+                    }
+                }
+                return true
+            }
+        }
+    }
+    
+    func testDemangleSwiftSymbol() {
+        measure {
+            _enumerateSymbolName { (name, demangledAsSwift) -> Bool in
+                if (strstr(name, "AViewModuleInput") != nil) {
+                    let symbolName = demangledAsSwift(name, false)
+                    let simplifiedName = demangledAsSwift(name, true)
+                    assert(simplifiedName.contains(".") == false, "Simplified swift name (\(simplifiedName)) should not contain module name. Full symbol name is \(symbolName)")
+                }
+                return true
+            }
+        }
     }
 }
+#endif

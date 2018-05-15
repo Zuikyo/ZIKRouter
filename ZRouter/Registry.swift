@@ -838,11 +838,45 @@ private class _ViewRouterValidater: ZIKViewRouteAdapter {
     override class func isAbstractRouter() -> Bool {
         return true
     }
-    override class func registerRoutableDestination() {
-        
-    }
     override class func _didFinishRegistration() {
         
+        // Declared protocol by extend RoutableView and RoutableViewModule should be registered
+        var symbolNames = [String]()
+        _enumerateSymbolName { (name, demangledAsSwift) -> Bool in
+            if (strstr(name, "RoutableView") != nil) {
+                let symbolName = demangledAsSwift(name, false)
+                if symbolName.contains("(extension in"), symbolName.contains(">.init"), symbolName.contains("(extension in ZRouter)") == false {
+                    let simplifiedName = demangledAsSwift(name, true)
+                    symbolNames.append(simplifiedName)
+                }
+            }
+            return true
+        }
+        
+        let destinationProtocolRegex = try! NSRegularExpression(pattern: "(?<=-> RoutableView<).*(?=>$)", options: [.anchorsMatchLines])
+        let moduleProtocolRegex = try! NSRegularExpression(pattern: "(?<=-> RoutableViewModule<).*(?=>$)", options: [.anchorsMatchLines])
+        var declaredDestinationProtocols = [String]()
+        var declaredModuleProtocols = [String]()
+        for declaration in symbolNames {
+            if let result = destinationProtocolRegex.firstMatch(in: declaration, options: .reportCompletion, range: NSRange(location: 0, length: declaration.utf8.count)) {
+                let declaredProtocol = (declaration as NSString).substring(with: result.range)
+                declaredDestinationProtocols.append(declaredProtocol)
+            } else if let result = moduleProtocolRegex.firstMatch(in: declaration, options: .reportCompletion, range: NSRange(location: 0, length: declaration.utf8.count)) {
+                let declaredProtocol = (declaration as NSString).substring(with: result.range)
+                declaredModuleProtocols.append(declaredProtocol)
+            }
+        }
+        
+        for declaredProtocol in declaredDestinationProtocols {
+            assert(Registry.viewProtocolContainer.keys.contains(_RouteKey(key: declaredProtocol)) ||
+                Registry.viewAdapterContainer.keys.contains(_RouteKey(key: declaredProtocol)), "Declared view protocol (\(declaredProtocol)) is not registered with any router.")
+        }
+        for declaredProtocol in declaredModuleProtocols {
+            assert(Registry.viewModuleProtocolContainer.keys.contains(_RouteKey(key: declaredProtocol)) ||
+                Registry.viewModuleAdapterContainer.keys.contains(_RouteKey(key: declaredProtocol)), "Declared view protocol (\(declaredProtocol)) is not registered with any router.")
+        }
+        
+        // Destination should conform to registered destination protocols
         for (routeKey, route) in Registry.viewProtocolContainer {
             let viewProtocol = routeKey.type!
             let badDestinationClass: AnyClass? = ZIKViewRouteRegistry.validateDestinations(forRoute: route, handler: { (destinationClass) -> Bool in
@@ -851,6 +885,7 @@ private class _ViewRouterValidater: ZIKViewRouteAdapter {
             assert(badDestinationClass == nil, "Registered view class (\(String(describing: badDestinationClass)) for router (\(route)) should conform to registered view protocol (\(viewProtocol)).")
         }
         
+        // Destination should conforms to registered adapter destination protocols
         for (adapter, _) in Registry.viewAdapterContainer {
             guard let routerType = Registry._swiftRouter(toViewRouteKey: adapter) else {
                 assertionFailure("View adapter protocol(\(adapter.key)) is not registered with any router!")
@@ -871,6 +906,7 @@ private class _ViewRouterValidater: ZIKViewRouteAdapter {
             assert(badDestinationClass == nil, "Registered view class (\(String(describing: badDestinationClass)) for router (\(route)) should conform to registered view adapter protocol (\(viewProtocol)).")
         }
         
+        // Router's defaultRouteConfiguration should conforms to registered module config protocols
         for (routeKey, route) in Registry.viewModuleProtocolContainer {
             guard let routerType = ZIKAnyViewRouterType.tryMakeType(forRoute: route) else {
                 assertionFailure("Invalid route (\(route))")
@@ -881,6 +917,7 @@ private class _ViewRouterValidater: ZIKViewRouteAdapter {
             assert(_swift_typeIsTargetType(configType, configProtocol), "The router (\(route))'s default configuration (\(configType)) must conform to the registered config protocol (\(configProtocol)).")
         }
         
+        // Router's defaultRouteConfiguration should conforms to registered adapter module config protocols
         for (adapter, _) in Registry.viewModuleAdapterContainer {
             guard let routerType = Registry._swiftRouter(toViewModuleRouteKey: adapter) else {
                 assertionFailure("View adapter protocol(\(adapter.key)) is not registered with any router!")
@@ -905,11 +942,45 @@ private class _ServiceRouterValidater: ZIKServiceRouteAdapter {
     override class func isAbstractRouter() -> Bool {
         return true
     }
-    override class func registerRoutableDestination() {
-        
-    }
     override class func _didFinishRegistration() {
         
+        // Declared protocol by extend RoutableView and RoutableViewModule should be registered
+        var symbolNames = [String]()
+        _enumerateSymbolName { (name, demangledAsSwift) -> Bool in
+            if (strstr(name, "RoutableService") != nil) {
+                let symbolName = demangledAsSwift(name, false)
+                if symbolName.contains("(extension in"), symbolName.contains(">.init"), symbolName.contains("(extension in ZRouter)") == false {
+                    let simplifiedName = demangledAsSwift(name, true)
+                    symbolNames.append(simplifiedName)
+                }
+            }
+            return true
+        }
+        
+        let destinationProtocolRegex = try! NSRegularExpression(pattern: "(?<=-> RoutableService<).*(?=>$)", options: [.anchorsMatchLines])
+        let moduleProtocolRegex = try! NSRegularExpression(pattern: "(?<=-> RoutableServiceModule<).*(?=>$)", options: [.anchorsMatchLines])
+        var declaredDestinationProtocols = [String]()
+        var declaredModuleProtocols = [String]()
+        for declaration in symbolNames {
+            if let result = destinationProtocolRegex.firstMatch(in: declaration, options: .reportCompletion, range: NSRange(location: 0, length: declaration.utf8.count)) {
+                let declaredProtocol = (declaration as NSString).substring(with: result.range)
+                declaredDestinationProtocols.append(declaredProtocol)
+            } else if let result = moduleProtocolRegex.firstMatch(in: declaration, options: .reportCompletion, range: NSRange(location: 0, length: declaration.utf8.count)) {
+                let declaredProtocol = (declaration as NSString).substring(with: result.range)
+                declaredModuleProtocols.append(declaredProtocol)
+            }
+        }
+        
+        for declaredProtocol in declaredDestinationProtocols {
+            assert(Registry.serviceProtocolContainer.keys.contains(_RouteKey(key: declaredProtocol)) ||
+                Registry.serviceAdapterContainer.keys.contains(_RouteKey(key: declaredProtocol)), "Declared service protocol (\(declaredProtocol)) is not registered with any router.")
+        }
+        for declaredProtocol in declaredModuleProtocols {
+            assert(Registry.serviceModuleProtocolContainer.keys.contains(_RouteKey(key: declaredProtocol)) ||
+                Registry.serviceModuleAdapterContainer.keys.contains(_RouteKey(key: declaredProtocol)), "Declared service protocol (\(declaredProtocol)) is not registered with any router.")
+        }
+        
+        // Destination should conforms to registered destination protocols
         for (routeKey, route) in Registry.serviceProtocolContainer {
             let serviceProtocol = routeKey.type!
             let badDestinationClass: AnyClass? = ZIKServiceRouteRegistry.validateDestinations(forRoute: route, handler: { (destinationClass) -> Bool in
@@ -918,6 +989,7 @@ private class _ServiceRouterValidater: ZIKServiceRouteAdapter {
             assert(badDestinationClass == nil, "Registered service class (\(badDestinationClass!)) for router (\(route)) should conform to registered service protocol (\(serviceProtocol)).")
         }
         
+        // Destination should conforms to registered adapter destination protocols
         for (adapter, _) in Registry.serviceAdapterContainer {
             guard let routerType = Registry._swiftRouter(toServiceRouteKey: adapter) else {
                 assertionFailure("Service adapter protocol(\(adapter.key)) is not registered with any router!")
@@ -938,6 +1010,7 @@ private class _ServiceRouterValidater: ZIKServiceRouteAdapter {
             assert(badDestinationClass == nil, "Registered service class (\(badDestinationClass!)) for router (\(route)) should conform to registered service adapter protocol (\(serviceProtocol)).")
         }
         
+        // Router's defaultRouteConfiguration should conforms to registered module config protocols
         for (routeKey, route) in Registry.serviceModuleProtocolContainer {
             guard let routerType = ZIKAnyServiceRouterType.tryMakeType(forRoute: route) else {
                 assertionFailure("Invalid route (\(route))")
@@ -948,6 +1021,7 @@ private class _ServiceRouterValidater: ZIKServiceRouteAdapter {
             assert(_swift_typeIsTargetType(configType, configProtocol), "The router (\(route))'s default configuration (\(configType)) must conform to the registered config protocol (\(configProtocol)).")
         }
         
+        // Router's defaultRouteConfiguration should conforms to registered adapter module config protocols
         for (adapter, _) in Registry.serviceModuleAdapterContainer {
             guard let routerType = Registry._swiftRouter(toServiceModuleRouteKey: adapter) else {
                 assertionFailure("Service module adapter protocol(\(adapter.key)) is not registered with any router!")

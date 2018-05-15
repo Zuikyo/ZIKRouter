@@ -39,6 +39,7 @@
 		F8C0D1161FB034B5003D3B3B /* Router.swift in Sources */ = {isa = PBXBuildFile; fileRef = F8C0D1151FB034B5003D3B3B /* Router.swift */; };
 		F8C0D11E1FB04E06003D3B3B /* Routable.swift in Sources */ = {isa = PBXBuildFile; fileRef = F8C0D11D1FB04E06003D3B3B /* Routable.swift */; };
 		F8EF733C1FB4C4550040008C /* Switchable.swift in Sources */ = {isa = PBXBuildFile; fileRef = F8EF733B1FB4C4550040008C /* Switchable.swift */; };
+		F8F6B1C620A8C65A00110B03 /* ViewRouterComposedTypeTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F8F6B1C520A8C65A00110B03 /* ViewRouterComposedTypeTests.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -116,6 +117,7 @@
 		F8C0D1151FB034B5003D3B3B /* Router.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Router.swift; sourceTree = "<group>"; };
 		F8C0D11D1FB04E06003D3B3B /* Routable.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Routable.swift; sourceTree = "<group>"; };
 		F8EF733B1FB4C4550040008C /* Switchable.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Switchable.swift; sourceTree = "<group>"; };
+		F8F6B1C520A8C65A00110B03 /* ViewRouterComposedTypeTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewRouterComposedTypeTests.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -208,6 +210,7 @@
 				F87E85B820947B5200E5A306 /* SubViewModuleRouterPerformTests.swift */,
 				F87E85B920947B5300E5A306 /* SubViewModuleRouterMakeDestinationTests.swift */,
 				F87E85BC20947B5300E5A306 /* SubViewRouterPrepareDestinationTests.swift */,
+				F8F6B1C520A8C65A00110B03 /* ViewRouterComposedTypeTests.swift */,
 				F8A5ED082093A7C000773853 /* Info.plist */,
 			);
 			path = ZRouterTests;
@@ -373,6 +376,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				F8B5753220A5832800FC05B5 /* UtilityTests.swift in Sources */,
+				F8F6B1C620A8C65A00110B03 /* ViewRouterComposedTypeTests.swift in Sources */,
 				F87E85AD209472A400E5A306 /* BSubview.swift in Sources */,
 				F87E85AB2094728700E5A306 /* AViewController.swift in Sources */,
 				F87E85A9209470ED00E5A306 /* ServiceModuleRouterMakeDestinationTests.swift in Sources */,
@@ -465,6 +469,7 @@
 				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
 				MTL_ENABLE_DEBUG_INFO = YES;
 				ONLY_ACTIVE_ARCH = YES;
+				OTHER_SWIFT_FLAGS = "";
 				SDKROOT = iphoneos;
 				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
@@ -520,6 +525,7 @@
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
 				MTL_ENABLE_DEBUG_INFO = NO;
+				OTHER_SWIFT_FLAGS = "";
 				SDKROOT = iphoneos;
 				SWIFT_OPTIMIZATION_LEVEL = "-Owholemodule";
 				VALIDATE_PRODUCT = YES;

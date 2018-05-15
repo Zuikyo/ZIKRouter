@@ -20,7 +20,10 @@ NS_ASSUME_NONNULL_BEGIN
 typedef const void *ZIKImageRef;
 
 ///Get beginning address of a loaded image.
-+(ZIKImageRef)imageByName:(const char *)file;
++ (ZIKImageRef)imageByName:(const char *)file;
+
+///Enumerate loaded images. In handler, return NO to stop.
++ (void)enumerateImages:(BOOL(^)(ZIKImageRef image, NSString *path))handler;
 
 /**
  Find function pointer address of a symbol in the loaded image. You can get static function's address which not supported by dlsym().
@@ -31,7 +34,7 @@ typedef const void *ZIKImageRef;
  @param symbolName The symbol to find. Need to add `_` when finding a C function name.
  @return Address of the symbol, NULL when symbol was not found.
  */
-+(void *)findSymbolInImage:(ZIKImageRef)image name:(const char *)symbolName;
++ (void *)findSymbolInImage:(_Nullable ZIKImageRef)image name:(const char *)symbolName;
 
 /**
  Find function pointer address of a symbol in the loaded image. You can get static function's address which not supported by dlsym().
@@ -42,7 +45,7 @@ typedef const void *ZIKImageRef;
  @param matchingBlock The block to check the symbol name, return true if the name is matched.
  @return Address of the symbol, NULL when symbol was not found.
  */
-+(void *)findSymbolInImage:(ZIKImageRef)image matching:(BOOL(^)(const char *symbolName))matchingBlock;
++ (void *)findSymbolInImage:(_Nullable ZIKImageRef)image matching:(BOOL(^)(const char *symbolName))matchingBlock;
 
 ///Get symbol of a address.
 + (nullable NSString *)symbolNameForAddress:(void *)address;

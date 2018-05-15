@@ -111,63 +111,6 @@ bool ZIKRouter_replaceMethodWithMethodType(Class originalClass, SEL originalSele
     return true;
 }
 
-IMP _Nullable ZIKRouter_replaceMethodWithMethodAndGetOriginalImp(Class originalClass, SEL originalSelector, Class swizzledClass, SEL swizzledSelector) {
-    NSCParameterAssert(originalClass);
-    NSCParameterAssert(originalSelector);
-    NSCParameterAssert(swizzledClass);
-    NSCParameterAssert(swizzledSelector);
-    NSCParameterAssert(!(originalClass == swizzledClass && originalSelector == swizzledSelector));
-    NSCAssert2(class_respondsToSelector(object_getClass(originalClass), swizzledSelector) == NO, @"originalClass(%@) already exists same method name(%@) to swizzle",originalClass,NSStringFromSelector(swizzledSelector));
-    Method originalMethod = class_getInstanceMethod(originalClass, originalSelector);
-    Method swizzledMethod = class_getInstanceMethod(swizzledClass, swizzledSelector);
-    bool originIsClassMethod = false;
-    if (!originalMethod) {
-        originIsClassMethod = true;
-        originalMethod = class_getClassMethod(originalClass, originalSelector);
-        //        originalClass = objc_getMetaClass(object_getClassName(originalClass));
-    }
-    if (!originalMethod) {
-        NSLog(@"replace failed, can't find original method:%@",NSStringFromSelector(originalSelector));
-        return NULL;
-    }
-    
-    if (!swizzledMethod) {
-        swizzledMethod = class_getClassMethod(swizzledClass, swizzledSelector);
-    }
-    if (!swizzledMethod) {
-        NSLog(@"replace failed, can't find swizzled method:%@",NSStringFromSelector(swizzledSelector));
-        return NULL;
-    }
-    
-    IMP originalIMP = method_getImplementation(originalMethod);
-    IMP swizzledIMP = method_getImplementation(swizzledMethod);
-    if (originalIMP == swizzledIMP) {//original class was already swizzled, or originalSelector's implementation is in super class but super class was already swizzled
-        return NULL;
-    }
-    if (originIsClassMethod) {
-        originalClass = objc_getMetaClass(class_getName(originalClass));
-    }
-    const char *originalType = method_getTypeEncoding(originalMethod);
-    const char *swizzledType = method_getTypeEncoding(swizzledMethod);
-    if (strcmp(originalType, swizzledType) != 0) {
-        NSLog(@"warning：method signature not match, please confirm！original method:%@\n signature:%s\nswizzled method:%@\nsignature:%s",NSStringFromSelector(originalSelector),originalType,NSStringFromSelector(swizzledSelector),swizzledType);
-        swizzledType = originalType;
-    }
-    BOOL success = class_addMethod(originalClass, originalSelector, swizzledIMP, swizzledType);
-    if (success) {
-        //method is in originalClass's superclass chain
-        success = class_addMethod(originalClass, swizzledSelector, originalIMP, originalType);
-        NSCAssert(success, @"swizzledSelector shouldn't exist in original class before hook");
-        return NULL;
-    } else {
-        //method is in originalClass
-        success = class_addMethod(originalClass, swizzledSelector, originalIMP, originalType);
-        NSCAssert(success, @"swizzledSelector shouldn't exist in original class before hook");
-        method_setImplementation(originalMethod, swizzledIMP);
-        return originalIMP;
-    }
-}
-
 void ZIKRouter_enumerateClassList(void(^handler)(Class aClass)) {
     NSCParameterAssert(handler);
     int numClasses = objc_getClassList(NULL, 0);

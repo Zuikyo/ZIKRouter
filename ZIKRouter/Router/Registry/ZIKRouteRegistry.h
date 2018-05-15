@@ -27,7 +27,7 @@ NS_ASSUME_NONNULL_BEGIN
 ///Search all router classes and register.
 + (void)registerAll;
 
-///Notify that registration is finished, when you register routers by calling each router's +registerRoutableDestination. It's for rejecting any registration later and let routers call +_didFinishRegistration to check their dependency routers.
+///Notify that registration is finished, when you register routers by calling each router's +registerRoutableDestination. It's for rejecting any registration later and let routers call +_didFinishRegistration.
 + (void)notifyRegistrationFinished;
 
 #pragma mark Debug

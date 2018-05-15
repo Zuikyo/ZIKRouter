@@ -286,7 +286,9 @@ static void ZIKFindSymbols(ZIKImageRef image, size_t count, const char *names[],
                 MSSymbolData &item(items[index]);
                 if (item.name_ == NULL && item.value_ == 0) {
                     ++result;
-                    item.name_ = names[index];
+                    if (names) {
+                        item.name_ = names[index];
+                    }
                 }
             }
             

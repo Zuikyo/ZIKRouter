@@ -10,11 +10,12 @@
 //
 
 #import "ZIKRouterRuntimeDebug.h"
+
+#if DEBUG
+
 #import "ZIKRouterRuntime.h"
 #import "ZIKImageSymbol.h"
 #import <objc/runtime.h>
-
-#if DEBUG
 
 /**
  Check whether a type conforms to the given protocol. Use private C++ function inside libswiftCore.dylib:
@@ -148,7 +149,7 @@ bool _swift_typeIsTargetType(id sourceType, id targetType) {
         //Get the first member `Kind` in TargetMetadata, it's an enum `MetadataKind`
         ZIKSwiftMetadataKind type = (ZIKSwiftMetadataKind)dereferencedPointer(sourceTypeMetadata);
         //Source is a metatype, get it's metadata
-        if (type == ZIKSwiftMetadataKindMetatype) {
+        if (type == ZIKSwiftMetadataKindMetatype || type == ZIKSwiftMetadataKindExistentialMetatype) {
             //OpaqueValue is struct SwiftValueHeader, `Metadata *` is it's first member
             sourceTypeMetadata = dereferencedPointer(sourceTypeOpaqueValue);
         }
@@ -170,7 +171,7 @@ bool _swift_typeIsTargetType(id sourceType, id targetType) {
         //Get the first member `Kind` in TargetMetadata, it's an enum `MetadataKind`
         ZIKSwiftMetadataKind type = (ZIKSwiftMetadataKind)dereferencedPointer(targetTypeMetadata);
         //Target is a metatype, get it's metadata
-        if (type == ZIKSwiftMetadataKindMetatype) {
+        if (type == ZIKSwiftMetadataKindMetatype || type == ZIKSwiftMetadataKindExistentialMetatype) {
             //OpaqueValue is struct SwiftValueHeader, `Metadata *` is it's first member
             targetTypeMetadata = dereferencedPointer(targetTypeOpaqueValue);
             type = (ZIKSwiftMetadataKind)dereferencedPointer(targetTypeMetadata);
@@ -194,10 +195,45 @@ bool _swift_typeIsTargetType(id sourceType, id targetType) {
 
 #pragma clang diagnostic pop
 
-#else
+#import "NSString+Demangle.h"
 
-bool _swift_typeIsTargetType(id sourceType, id targetType) {
-    return false;
+void _enumerateSymbolName(bool(^handler)(const char *name, NSString *(^demangledAsSwift)(const char *mangledName, bool simplified))) {
+    if (handler == nil) {
+        return;
+    }
+    NSString *(^demangledAsSwift)(const char *, bool) = ^(const char *mangledName, bool simplified) {
+        NSString *name = nil;
+        if (mangledName == NULL) {
+            return name;
+        }
+        name = [NSString stringWithUTF8String:mangledName];
+        if ([name hasPrefix:@"_"]) {
+            name = [name substringFromIndex:1];
+        }
+        NSString *demangled;
+        if (simplified) {
+            demangled = [name demangledAsSimplifiedSwift];
+        } else {
+            demangled = [name demangledAsSwift];
+        }
+        if (demangled) {
+            return demangled;
+        }
+        return name;
+    };
+    
+    [ZIKImageSymbol enumerateImages:^BOOL(ZIKImageRef  _Nonnull image, NSString * _Nonnull path) {
+        if ([path containsString:@"/System/Library/"] == YES ||
+            [path containsString:@"/usr/"] == YES) {
+            return YES;
+        }
+        [ZIKImageSymbol findSymbolInImage:image matching:^BOOL(const char * _Nonnull symbolName) {
+            return !handler(symbolName, demangledAsSwift);
+        }];
+        return YES;
+    }];
+    
+    
 }
 
 #endif

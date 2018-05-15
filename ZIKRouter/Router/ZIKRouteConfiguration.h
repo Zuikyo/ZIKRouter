@@ -19,7 +19,7 @@ typedef NS_ENUM(NSInteger, ZIKRouterState) {
     ZIKRouterStateUnrouted = 0,
     ///Performing a route.
     ZIKRouterStateRouting,
-    ///successfully performing a route.
+    ///Successfully performing a route.
     ZIKRouterStateRouted,
     ///Removing a performed route.
     ZIKRouterStateRemoving,

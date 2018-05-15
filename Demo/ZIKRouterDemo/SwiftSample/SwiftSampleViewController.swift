@@ -119,6 +119,18 @@ class SwiftSampleViewController: UIViewController, PureSwiftSampleViewInput, Swi
             })
     }
     
+    var adapterRouter: DestinationViewRouter<UIViewController & ZIKInfoViewProtocol>?
+    
+    @IBAction func testAdapterWithComposedType(_ sender: UIButton) {
+        adapterRouter = Router.perform(to: RoutableView<RequiredInfoViewInput>(), path: .presentModally(from: self), configuring: { (config, prepareDestination, _) in
+            prepareDestination({ [weak self] destination in
+                destination.delegate = self
+                destination.name = "zuik"
+                destination.age = 18
+            })
+        })
+    }
+    
     @IBAction func testInjectedRouter(_ sender: Any) {
         injectedAlertRouter?.perform(
             path: .custom(from: self),

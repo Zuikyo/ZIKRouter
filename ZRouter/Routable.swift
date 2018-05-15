@@ -32,7 +32,15 @@ import ZIKRouter
      })
  })
  ```
- 
+ The Protocol can also be composed type, like:
+ ```
+ UIViewController & TestViewInput
+ ```
+ or
+ ```
+ TestViewInput & AnotherViewInput
+ ```
+ When a type is declared as routable, you should register it in router's `registerRoutableDestiantion()`. In DEBUG mode, ZRouter will enumerate all declared type and make sure they are all registered.
  - Warning
  Never add extension for RoutableView without generic constraint and expose it's initializer.
  - Note
@@ -57,6 +65,11 @@ public struct RoutableView<Protocol> {
      init() { self.init(declaredProtocol: Protocol.self) }
  }
  ```
+ The Protocol can also be composed type, like:
+ ```
+ TestViewModuleInput & AnotherViewModuleInput
+ ```
+  When a type is declared as routable, you should register it in router's `registerRoutableDestiantion()`. In DEBUG mode, ZRouter will enumerate all declared type and make sure they are all registered.
  - Warning
  Never add extension for RoutableViewModule without generic constraint and expose it's initializer.
  */
@@ -79,6 +92,15 @@ public struct RoutableViewModule<Protocol> {
      init() { self.init(declaredProtocol: Protocol.self) }
  }
  ```
+ The Protocol can also be composed type, like:
+ ```
+ ServiceType & TestServiceInput
+ ```
+ or
+ ```
+ TestServiceInput & AnotherServiceInput
+ ```
+  When a type is declared as routable, you should register it in router's `registerRoutableDestiantion()`. In DEBUG mode, ZRouter will enumerate all declared type and make sure they are all registered.
  - Warning
  Never add extension for RoutableServiceModule without generic constraint and expose it's initializer.
  */
@@ -101,6 +123,7 @@ public struct RoutableService<Protocol> {
      init() { self.init(declaredProtocol: Protocol.self) }
  }
  ```
+  When a type is declared as routable, you should register it in router's `registerRoutableDestiantion()`. In DEBUG mode, ZRouter will enumerate all declared type and make sure they are all registered.
  - Warning
  Never add extension for RoutableServiceModule without generic constraint and expose it's initializer.
  */

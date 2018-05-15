@@ -32,7 +32,7 @@ NS_ASSUME_NONNULL_BEGIN
 ///Configuration for performRoute; Return copy of configuration, so modify this won't change the real configuration inside router.
 @property (nonatomic, readonly, copy) RouteConfig configuration;
 ///Configuration for removeRoute; return copy of configuration, so modify this won't change the real configuration inside router.
-@property (nonatomic, readonly, copy ,nullable) RemoveConfig removeConfiguration;
+@property (nonatomic, readonly, copy, nullable) RemoveConfig removeConfiguration;
 ///Latest error when route action failed.
 @property (nonatomic, readonly, strong, nullable) NSError *error;
 //Set error handler for all router instance. Use this to debug and log.
@@ -131,7 +131,6 @@ NS_ASSUME_NONNULL_BEGIN
 - (void)removeRouteWithCompletion:(void(^)(BOOL success, ZIKRouteAction routeAction, NSError *_Nullable error))performerCompletion;
 ///Remove route and prepare before removing.
 - (void)removeRouteWithConfiguring:(void(NS_NOESCAPE ^)(RemoveConfig config))removeConfigBuilder;
-
 ///Remove route and prepare before removing.
 - (void)removeRouteWithStrictConfiguring:(void(NS_NOESCAPE ^)(RemoveConfig config,
                                                               void(^prepareDest)(void(^prepare)(Destination dest))

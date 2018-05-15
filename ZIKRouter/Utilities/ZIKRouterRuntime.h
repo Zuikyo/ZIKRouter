@@ -50,10 +50,6 @@ extern bool ZIKRouter_replaceMethodWithMethod(Class originalClass, SEL originalS
 extern bool ZIKRouter_replaceMethodWithMethodType(Class originalClass, SEL originalSelector, bool originIsClassMethod,
                                                   Class swizzledClass, SEL swizzledSelector, bool swizzledIsClassMethod);
 
-///Same with ZIKRouter_replaceMethodWithMethod. return the original IMP.
-extern IMP _Nullable ZIKRouter_replaceMethodWithMethodAndGetOriginalImp(Class originalClass, SEL originalSelector,
-                                                                        Class swizzledClass, SEL swizzledSelector);
-
 ///Enumerate all classes
 extern void ZIKRouter_enumerateClassList(void(^handler)(Class aClass));
 
