@@ -27,8 +27,6 @@ static bool(*swift_conformsToProtocols())(uintptr_t, uintptr_t, uintptr_t, uintp
     static void *_conformsToProtocols = NULL;
     static dispatch_once_t onceToken;
     dispatch_once(&onceToken, ^{
-        NSLog(@"\nZIKRouter:: _swift_typeConformsToProtocol():\nStart searching function pointer for\n`bool _conformsToProtocols(const OpaqueValue *value, const Metadata *type, const ExistentialTypeMetadata *existentialType, const WitnessTable **conformances)` in libswiftCore.dylib to validate swift type.\n");
-        
         ZIKImageRef libswiftCoreImage = [ZIKImageSymbol imageByName:"libswiftCore.dylib"];
         _conformsToProtocols = [ZIKImageSymbol findSymbolInImage:libswiftCoreImage matching:^BOOL(const char * _Nonnull symbolName) {
             if(strstr(symbolName, "_conformsToProtocols") &&
@@ -44,7 +42,6 @@ static bool(*swift_conformsToProtocols())(uintptr_t, uintptr_t, uintptr_t, uintp
                    [[ZIKImageSymbol symbolNameForAddress:_conformsToProtocols] containsString:@"TargetMetadata"] &&
                    [[ZIKImageSymbol symbolNameForAddress:_conformsToProtocols] containsString:@"WitnessTable"]
                    , @"The symbol name is not matched: %@", [ZIKImageSymbol symbolNameForAddress:_conformsToProtocols]);
-        NSLog(@"\n✅ZIKRouter: function pointer address 0x%lx is found for `_conformsToProtocols`.\n",(long)_conformsToProtocols);
     });
     
     return (bool(*)(uintptr_t, uintptr_t, uintptr_t, uintptr_t*))_conformsToProtocols;

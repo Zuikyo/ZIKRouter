@@ -31,6 +31,7 @@
 #import "TestPushViewRouter.h"
 #import "TestCustomViewRouter.h"
 #import "TestURLRouterViewRouter.h"
+#import "URLRouteHandler.h"
 #import "ZIKInfoViewRouter.h"
 #import <ZIKCompatibleAlert/ZIKCompatibleAlertViewRouter.h>
 #import "ZIKTimeServiceRouter.h"
@@ -56,6 +57,7 @@
 #endif
 
 + (void)registerForModulesBeforeRegistrationFinished {
+    [URLRouteHandler registerRoutableDestination];
     [MasterViewRouter registerRoutableDestination];
     
     //MasterViewController uses router for SwiftSampleViewRouter

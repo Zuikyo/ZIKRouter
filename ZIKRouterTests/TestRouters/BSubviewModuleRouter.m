@@ -58,7 +58,7 @@ DeclareRoutableView(BSubview, BSubviewModuleRouter)
 }
 
 + (ZIKViewRouteTypeMask)supportedRouteTypes {
-    return ZIKViewRouteTypeMaskUIViewDefault;
+    return ZIKViewRouteTypeMaskViewDefault;
 }
 
 + (BSubviewModuleConfiguration *)defaultRouteConfiguration {

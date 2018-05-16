@@ -39,7 +39,7 @@
 }
 
 + (ZIKViewRouteTypeMask)supportedRouteTypes {
-    return ZIKViewRouteTypeMaskUIViewDefault;
+    return ZIKViewRouteTypeMaskViewDefault;
 }
 
 + (void)router:(nullable ZIKViewRouter *)router willPerformRouteOnDestination:(id)destination fromSource:(id)source {

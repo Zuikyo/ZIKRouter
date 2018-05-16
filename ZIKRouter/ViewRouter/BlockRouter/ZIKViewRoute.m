@@ -365,25 +365,25 @@ strictConfiguring:(void (^)(ZIKViewRouteConfiguration * _Nonnull,
 
 - (Class)routerClassForSupportedRouteTypes:(ZIKBlockViewRouteTypeMask)supportedTypes {
     switch ((NSInteger)supportedTypes) {
-        case ZIKBlockViewRouteTypeMaskUIViewControllerDefault:
+        case ZIKBlockViewRouteTypeMaskViewControllerDefault:
             return [ZIKBlockViewRouter class];
             break;
-        case ZIKBlockViewRouteTypeMaskUIViewControllerDefault | ZIKBlockViewRouteTypeMaskCustom:
+        case ZIKBlockViewRouteTypeMaskViewControllerDefault | ZIKBlockViewRouteTypeMaskCustom:
             return [ZIKBlockCustomViewRouter class];
             break;
-        case ZIKBlockViewRouteTypeMaskUIViewDefault:
+        case ZIKBlockViewRouteTypeMaskViewDefault:
             return [ZIKBlockSubviewRouter class];
             break;
-        case ZIKBlockViewRouteTypeMaskUIViewDefault | ZIKBlockViewRouteTypeMaskCustom:
+        case ZIKBlockViewRouteTypeMaskViewDefault | ZIKBlockViewRouteTypeMaskCustom:
             return [ZIKBlockCustomSubviewRouter class];
             break;
         case ZIKBlockViewRouteTypeMaskCustom:
             return [ZIKBlockCustomOnlyViewRouter class];
             break;
-        case ZIKViewRouteTypeMaskUIViewControllerDefault | ZIKViewRouteTypeMaskUIViewDefault:
+        case ZIKBlockViewRouteTypeMaskViewControllerDefault | ZIKBlockViewRouteTypeMaskViewDefault:
             return [ZIKBlockAnyViewRouter class];
             break;
-        case ZIKBlockViewRouteTypeMaskUIViewControllerDefault | ZIKBlockViewRouteTypeMaskUIViewDefault | ZIKBlockViewRouteTypeMaskCustom:
+        case ZIKBlockViewRouteTypeMaskViewControllerDefault | ZIKBlockViewRouteTypeMaskViewDefault | ZIKBlockViewRouteTypeMaskCustom:
             return [ZIKBlockAllViewRouter class];
             break;
     }

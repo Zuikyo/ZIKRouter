@@ -11,7 +11,7 @@
 #import "ZIKInfoViewProtocol.h"
 
 @interface TestAddAsChildViewController () <ZIKInfoViewDelegate>
-@property (nonatomic, strong) ZIKViewRouter *infoViewRouter;
+@property (nonatomic, strong) ZIKDestinationViewRouter(id<ZIKInfoViewProtocol>) *infoViewRouter;
 @end
 
 @implementation TestAddAsChildViewController
@@ -29,7 +29,7 @@
                                 destination.view.frame = weakSelf.view.frame;
                                 destination.view.transform = CGAffineTransformMakeScale(0.1, 0.1);
                                 //ZIKViewRouter use UIViewController's transitionCoordinator to do completion, so this will let the router complete before animation real complete
-                                [UIView animateWithDuration:2 animations:^{
+                                [UIView animateWithDuration:0.5 animations:^{
                                     destination.view.backgroundColor = [UIColor redColor];
                                     [weakSelf.view addSubview:destination.view];
                                     destination.view.transform = CGAffineTransformIdentity;
@@ -55,10 +55,19 @@
         NSLog(@"Can't remove router now:%@",self.infoViewRouter);
         return;
     }
-    [self.infoViewRouter removeRouteWithSuccessHandler:^{
-        NSLog(@"remove success");
-    } errorHandler:^(ZIKRouteAction routeAction, NSError * _Nonnull error) {
-        NSLog(@"remove failed,error:%@",error);
+    [self.infoViewRouter removeRouteWithConfiguring:^(ZIKViewRemoveConfiguration * _Nonnull config) {
+        config.removingChildViewHandler = ^(UIViewController * _Nonnull destination, void (^ _Nonnull completion)(void)) {
+            destination.view.transform = CGAffineTransformIdentity;
+            [UIView animateWithDuration:0.5 animations:^{
+                destination.view.transform = CGAffineTransformMakeScale(0.1, 0.1);
+            } completion:^(BOOL finished) {
+                [destination.view removeFromSuperview];
+                completion();
+            }];
+        };
+        config.completionHandler = ^(BOOL success, ZIKRouteAction  _Nonnull routeAction, NSError * _Nullable error) {
+            NSLog(@"remove completes");
+        };
     }];
 }
 

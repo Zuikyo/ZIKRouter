@@ -55,7 +55,7 @@ NS_ASSUME_NONNULL_BEGIN
  */
 - (BOOL)canPerform;
 
-///Default is ZIKViewRouteTypeMaskUIViewControllerDefault for UIViewController type destination, if your destination is a UIView, override this and return ZIKViewRouteTypeMaskUIViewDefault. Router subclass can also limit the route type.
+///Default is ZIKViewRouteTypeMaskViewControllerDefault for UIViewController type destination, if your destination is a UIView, override this and return ZIKViewRouteTypeMaskViewDefault. Router subclass can also limit the route type.
 + (ZIKViewRouteTypeMask)supportedRouteTypes;
 
 ///Check whether the router support a route type.

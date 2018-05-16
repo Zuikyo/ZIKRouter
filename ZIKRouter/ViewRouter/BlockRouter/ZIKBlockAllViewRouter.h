@@ -11,7 +11,7 @@
 
 #import "ZIKBlockViewRouter.h"
 
-///Block view router for route type: ZIKViewRouteTypeMaskUIViewControllerDefault | ZIKViewRouteTypeMaskUIViewDefault | ZIKViewRouteTypeMaskCustom.
+///Block view router for route type: ZIKViewRouteTypeMaskViewControllerDefault | ZIKViewRouteTypeMaskViewDefault | ZIKViewRouteTypeMaskCustom.
 @interface ZIKBlockAllViewRouter : ZIKBlockViewRouter
 
 @end

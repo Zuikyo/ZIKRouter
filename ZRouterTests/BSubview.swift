@@ -55,8 +55,10 @@ class BSubviewRouter: ZIKViewRouter<BSubview, BSubviewModuleConfiguration> {
     
     override class func registerRoutableDestination() {
         registerView(BSubview.self)
-        register(RoutableView<BSubviewInput>())
-        register(RoutableViewModule<BSubviewModuleInput>())
+        if !TEST_BLOCK_ROUTE {
+            register(RoutableView<BSubviewInput>())
+            register(RoutableViewModule<BSubviewModuleInput>())
+        }
     }
     
     override class func defaultRouteConfiguration() -> BSubviewModuleConfiguration {
@@ -64,7 +66,7 @@ class BSubviewRouter: ZIKViewRouter<BSubview, BSubviewModuleConfiguration> {
     }
     
     override class func supportedRouteTypes() -> ZIKViewRouteTypeMask {
-        return ZIKViewRouteTypeMask(rawValue: ZIKViewRouteTypeMask.uiViewDefault.rawValue | ZIKViewRouteTypeMask.custom.rawValue)
+        return .viewDefault
     }
     
     override func destination(with configuration: BSubviewModuleConfiguration) -> BSubview? {

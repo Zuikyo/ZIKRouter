@@ -8,6 +8,8 @@
 
 import Foundation
 
+let TEST_BLOCK_ROUTE = false
+
 class TestConfig {
     static var routeShouldFail: Bool = false
 }

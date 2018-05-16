@@ -6,4 +6,6 @@
 //  Copyright © 2018 zuik. All rights reserved.
 //
 
-#define TEST_BLOCK_ROUTE 1
+#import "AppRouteRegistry.h"
+
+#define TEST_BLOCK_ROUTE TEST_BLOCK_ROUTES

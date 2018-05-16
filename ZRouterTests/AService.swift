@@ -85,8 +85,10 @@ class AServiceRouter: ZIKServiceRouter<AnyObject, AServiceModuleConfiguration> {
     
     override class func registerRoutableDestination() {
         registerService(AService.self)
-        register(RoutableService<AServiceInput>())
-        register(RoutableServiceModule<AServiceModuleInput>())
+        if !TEST_BLOCK_ROUTE {
+            register(RoutableService<AServiceInput>())
+            register(RoutableServiceModule<AServiceModuleInput>())
+        }
     }
     
     override class func defaultRouteConfiguration() -> AServiceModuleConfiguration {

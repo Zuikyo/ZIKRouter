@@ -1342,6 +1342,21 @@ destinationStateBeforeRoute:(ZIKPresentationState *)destinationStateBeforeRoute
     [self beginRemoveRouteFromSource:source];
     
     [wrappedDestination willMoveToParentViewController:nil];
+    
+    void(^completion)(void) = ^{
+        [wrappedDestination removeFromParentViewController];
+        [self endRemoveRouteWithSuccessOnDestination:destination fromSource:source];
+        if (!wrappedDestination.isViewLoaded) {
+            [destination setZix_routeTypeFromRouter:nil];
+        }
+    };
+    
+    void(^removingChildViewHandler)(UIViewController *destination, void(^completion)(void)) = self.original_removeConfiguration.removingChildViewHandler;
+    if (removingChildViewHandler) {
+        [wrappedDestination willMoveToParentViewController:nil];
+        removingChildViewHandler(wrappedDestination, completion);
+        return;
+    }
     BOOL isViewLoaded = wrappedDestination.isViewLoaded;
     if (isViewLoaded) {
         [wrappedDestination.view removeFromSuperview];//If do removeFromSuperview before removeFromParentViewController, -didMoveToParentViewController:nil in destination may be called twice
@@ -1553,7 +1568,7 @@ destinationStateBeforeRoute:(ZIKPresentationState *)destinationStateBeforeRoute
             }
     }
     if (state == ZIKRouterStateRouting) {
-        [self notifyError_unbalancedTransitionWithAction:ZIKRouteActionRemoveRoute errorDescription:@"Unbalanced calls to begin/end appearance transitions for destination. This error occurs when you try and display a view controller before the current view controller is finished displaying. This may cause the UIViewController skips or messes up the order calling -viewWillAppear:, -viewDidAppear:, -viewWillDisAppear: and -viewDidDisappear:, and messes up the route state. Current error reason is trying to remove route on destination when destination is routing, router:(%@), callStack:%@",self,[NSThread callStackSymbols]];
+        [self notifyError_unbalancedTransitionWithAction:ZIKRouteActionPerformRoute errorDescription:@"Unbalanced calls to begin/end appearance transitions for destination. This error occurs when you try and display a view controller before the current view controller is finished displaying. This may cause the UIViewController skips or messes up the order calling -viewWillAppear:, -viewDidAppear:, -viewWillDisAppear: and -viewDidDisappear:, and messes up the route state. Current error reason is trying to remove route on destination when destination is routing, router:(%@), callStack:%@",self,[NSThread callStackSymbols]];
     }
 }
 
@@ -1785,7 +1800,7 @@ static  ZIKViewRouterType *_Nullable _routerTypeToRegisteredView(Class viewClass
             }
             
             [destination setZix_parentRemovingFrom:source];
-            [ZIKViewRouter notifyGlobalErrorWithRouter:nil action:ZIKRouteActionPerformRoute error:[ZIKViewRouter errorWithCode:ZIKViewRouteErrorUnbalancedTransition localizedDescriptionFormat:@"Unbalanced calls to begin/end appearance transitions for destination. This error occurs when you try and display a view controller before the current view controller is finished displaying. This may cause the UIViewController skips or messes up the order calling -viewWillAppear:, -viewDidAppear:, -viewWillDisAppear: and -viewDidDisappear:, and messes up the route state. Current error reason is already removed destination but destination appears again before -viewDidDisappear:, router:(%@), callStack:%@",self,[NSThread callStackSymbols]]];
+            [ZIKViewRouter notifyGlobalErrorWithRouter:nil action:ZIKRouteActionPerformRoute error:[ZIKViewRouter errorWithCode:ZIKViewRouteErrorUnbalancedTransition localizedDescriptionFormat:@"Unbalanced calls to begin/end appearance transitions for %@. This error occurs when you try and display a view controller before the current view controller is finished displaying. This may cause the UIViewController skips or messes up the order calling -viewWillAppear:, -viewDidAppear:, -viewWillDisAppear: and -viewDidDisappear:, and messes up the route state. Current error reason is already removed destination but destination appears again before -viewDidDisappear:, callStack:%@",self,[NSThread callStackSymbols]]];
             break;
         }
     }
@@ -2935,7 +2950,7 @@ static  ZIKViewRouterType *_Nullable _routerTypeToRegisteredView(Class viewClass
 }
 
 + (ZIKViewRouteTypeMask)supportedRouteTypes {
-    return ZIKViewRouteTypeMaskUIViewControllerDefault;
+    return ZIKViewRouteTypeMaskViewControllerDefault;
 }
 
 + (BOOL)supportRouteType:(ZIKViewRouteType)type {

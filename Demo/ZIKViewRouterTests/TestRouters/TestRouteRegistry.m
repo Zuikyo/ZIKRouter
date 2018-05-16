@@ -10,6 +10,7 @@
 #import "SourceViewRouter.h"
 @import ZIKRouter.Internal;
 #import "TestConfig.h"
+#import "AppRouteRegistry.h"
 
 #import "AViewRouter.h"
 #import "AViewInput.h"
@@ -25,6 +26,9 @@
 
 #import "ZIKViewRouterTests-Swift.h"
 
+@interface TestBlockRouteRegistry: ZIKViewRouteAdapter
+@end
+
 @implementation TestRouteRegistry
 
 #if !AUTO_REGISTER_ROUTERS
@@ -38,18 +42,33 @@
 
 + (void)registerRoutes {
     ZIKRouteRegistry.autoRegister = NO;
-    
     [SourceViewRouter registerRoutableDestination];
     
-    [self registerViewRoute];
-    [self registerViewModuleRoute];
-    [self registerSubviewRoute];
-    [self registerSubviewModuleRoute];
+    [TestBlockRouteRegistry registerRoutableDestination];
+    
+    [self registerViewRouter];
+    [self registerViewModuleRouter];
+    [self registerSubviewRouter];
+    [self registerSubviewModuleRouter];    
+}
+
++ (void)registerViewRouter {
+    [AViewRouter registerRoutableDestination];
+}
+
++ (void)registerViewModuleRouter {
+    [AViewModuleRouter registerRoutableDestination];
+}
+
++ (void)registerSubviewRouter {
+    [BSubviewRouter registerRoutableDestination];
+}
+
++ (void)registerSubviewModuleRouter {
+    [BSubviewModuleRouter registerRoutableDestination];
 }
 
 + (void)registerViewRoute {
-    [AViewRouter registerRoutableDestination];
-    
     ZIKDestinationViewRoute(id<AViewInput>) *route;
     route = [ZIKDestinationViewRoute(id<AViewInput>)
              makeRouteWithDestination:[AViewController class]
@@ -62,7 +81,7 @@
     .registerDestinationProtocol(ZIKRoutable(AViewInput))
 #endif
     .makeSupportedRouteTypes(^ZIKBlockViewRouteTypeMask{
-        return ZIKBlockViewRouteTypeMaskUIViewControllerDefault | ZIKBlockViewRouteTypeMaskCustom;
+        return ZIKBlockViewRouteTypeMaskViewControllerDefault | ZIKBlockViewRouteTypeMaskCustom;
     })
     .canPerformCustomRoute(^BOOL(ZIKViewRouter * _Nonnull router) {
         return YES;
@@ -115,8 +134,6 @@
 }
 
 + (void)registerViewModuleRoute {
-    [AViewModuleRouter registerRoutableDestination];
-    
     ZIKModuleViewRoute(AViewModuleInput) *route;
     route = [ZIKModuleViewRoute(AViewModuleInput)
              makeRouteWithDestination:[AViewController class]
@@ -134,7 +151,7 @@
         return [[AViewModuleConfiguration alloc] init];
     })
     .makeSupportedRouteTypes(^ZIKBlockViewRouteTypeMask{
-        return ZIKBlockViewRouteTypeMaskUIViewControllerDefault | ZIKBlockViewRouteTypeMaskCustom;
+        return ZIKBlockViewRouteTypeMaskViewControllerDefault | ZIKBlockViewRouteTypeMaskCustom;
     })
     .canPerformCustomRoute(^BOOL(ZIKViewRouter * _Nonnull router) {
         return YES;
@@ -187,8 +204,6 @@
 }
 
 + (void)registerSubviewRoute {
-    [BSubviewRouter registerRoutableDestination];
-    
     ZIKDestinationViewRoute(id<BSubviewInput>) *route;
     route = [ZIKDestinationViewRoute(id<BSubviewInput>)
              makeRouteWithDestination:[BSubview class]
@@ -201,7 +216,7 @@
     .registerDestinationProtocol(ZIKRoutable(BSubviewInput))
 #endif
     .makeSupportedRouteTypes(^ZIKBlockViewRouteTypeMask{
-        return ZIKBlockViewRouteTypeMaskUIViewDefault | ZIKBlockViewRouteTypeMaskCustom;
+        return ZIKBlockViewRouteTypeMaskViewDefault | ZIKBlockViewRouteTypeMaskCustom;
     })
     .destinationFromExternalPrepared(^BOOL(id<BSubviewInput> destination, ZIKViewRouter *router) {
         if (destination.title == nil) {
@@ -242,8 +257,6 @@
 }
 
 + (void)registerSubviewModuleRoute {
-    [BSubviewModuleRouter registerRoutableDestination];
-    
     ZIKModuleViewRoute(BSubviewModuleInput) *route;
     route = [ZIKModuleViewRoute(BSubviewModuleInput)
              makeRouteWithDestination:[BSubview class]
@@ -261,7 +274,7 @@
         return [[BSubviewModuleConfiguration alloc] init];
     })
     .makeSupportedRouteTypes(^ZIKBlockViewRouteTypeMask{
-        return ZIKBlockViewRouteTypeMaskUIViewDefault | ZIKBlockViewRouteTypeMaskCustom;
+        return ZIKBlockViewRouteTypeMaskViewDefault | ZIKBlockViewRouteTypeMaskCustom;
     })
     .destinationFromExternalPrepared(^BOOL(id<BSubviewInput> destination, ZIKViewRouter *router) {
         if (destination.title == nil) {
@@ -301,4 +314,13 @@
     });
 }
 
+@end
+
+@implementation TestBlockRouteRegistry
++ (void)registerRoutableDestination {
+    [TestRouteRegistry registerViewRoute];
+    [TestRouteRegistry registerViewModuleRoute];
+    [TestRouteRegistry registerSubviewRoute];
+    [TestRouteRegistry registerSubviewModuleRoute];
+}
 @end

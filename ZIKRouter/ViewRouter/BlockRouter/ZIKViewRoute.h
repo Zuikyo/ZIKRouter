@@ -14,9 +14,9 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-typedef NS_ENUM(NSInteger, ZIKBlockViewRouteTypeMask) {
-    ZIKBlockViewRouteTypeMaskUIViewControllerDefault = ZIKViewRouteTypeMaskUIViewControllerDefault,
-    ZIKBlockViewRouteTypeMaskUIViewDefault = ZIKViewRouteTypeMaskUIViewDefault,
+typedef NS_OPTIONS(NSInteger, ZIKBlockViewRouteTypeMask) {
+    ZIKBlockViewRouteTypeMaskViewControllerDefault = ZIKViewRouteTypeMaskViewControllerDefault,
+    ZIKBlockViewRouteTypeMaskViewDefault = ZIKViewRouteTypeMaskViewDefault,
     ZIKBlockViewRouteTypeMaskCustom = ZIKViewRouteTypeMaskCustom
 };
 

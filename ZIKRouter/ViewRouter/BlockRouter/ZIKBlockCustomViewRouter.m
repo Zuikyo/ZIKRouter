@@ -14,7 +14,7 @@
 @implementation ZIKBlockCustomViewRouter
 
 + (ZIKViewRouteTypeMask)supportedRouteTypes {
-    return ZIKViewRouteTypeMaskUIViewControllerDefault | ZIKViewRouteTypeMaskCustom;
+    return ZIKViewRouteTypeMaskViewControllerDefault | ZIKViewRouteTypeMaskCustom;
 }
 
 @end

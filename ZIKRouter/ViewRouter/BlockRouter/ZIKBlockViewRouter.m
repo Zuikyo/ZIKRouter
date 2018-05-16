@@ -33,7 +33,7 @@
 }
 
 + (ZIKViewRouteTypeMask)supportedRouteTypes {
-    return ZIKViewRouteTypeMaskUIViewControllerDefault;
+    return ZIKViewRouteTypeMaskViewControllerDefault;
 }
 
 - (nullable id)destinationWithConfiguration:(ZIKViewRouteConfiguration *)configuration {

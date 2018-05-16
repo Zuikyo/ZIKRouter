@@ -115,7 +115,7 @@
     .registerDestinationProtocol(ZIKRoutable(AViewInput))
 #endif
     .makeSupportedRouteTypes(^ZIKBlockViewRouteTypeMask{
-        return ZIKBlockViewRouteTypeMaskUIViewControllerDefault | ZIKBlockViewRouteTypeMaskCustom;
+        return ZIKBlockViewRouteTypeMaskViewControllerDefault | ZIKBlockViewRouteTypeMaskCustom;
     })
     .canPerformCustomRoute(^BOOL(ZIKViewRouter * _Nonnull router) {
         return YES;
@@ -190,7 +190,7 @@
         return [[AViewModuleConfiguration alloc] init];
     })
     .makeSupportedRouteTypes(^ZIKBlockViewRouteTypeMask{
-        return ZIKBlockViewRouteTypeMaskUIViewControllerDefault | ZIKBlockViewRouteTypeMaskCustom;
+        return ZIKBlockViewRouteTypeMaskViewControllerDefault | ZIKBlockViewRouteTypeMaskCustom;
     })
     .canPerformCustomRoute(^BOOL(ZIKViewRouter * _Nonnull router) {
         return YES;
@@ -260,7 +260,7 @@
     .registerDestinationProtocol(ZIKRoutable(BSubviewInput))
 #endif
     .makeSupportedRouteTypes(^ZIKBlockViewRouteTypeMask{
-        return ZIKBlockViewRouteTypeMaskUIViewDefault | ZIKBlockViewRouteTypeMaskCustom;
+        return ZIKBlockViewRouteTypeMaskViewDefault | ZIKBlockViewRouteTypeMaskCustom;
     })
     .canPerformCustomRoute(^BOOL(ZIKViewRouter * _Nonnull router) {
         return YES;
@@ -317,7 +317,7 @@
         return [[BSubviewModuleConfiguration alloc] init];
     })
     .makeSupportedRouteTypes(^ZIKBlockViewRouteTypeMask{
-        return ZIKBlockViewRouteTypeMaskUIViewDefault | ZIKBlockViewRouteTypeMaskCustom;
+        return ZIKBlockViewRouteTypeMaskViewDefault | ZIKBlockViewRouteTypeMaskCustom;
     })
     .canPerformCustomRoute(^BOOL(ZIKViewRouter * _Nonnull router) {
         return YES;

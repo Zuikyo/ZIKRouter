@@ -15,23 +15,30 @@ import ZIKRouter
     @objc class func manuallyRegisterEachRouter() {
         SwiftSampleViewRouter.registerRoutableDestination()
         SwiftServiceRouter.registerRoutableDestination()
-        
-        if TEST_BLOCK_ROUTES == 1 {
-            _ = ZIKServiceRoute<SwiftService, PerformRouteConfig>
-                .make(withDestination: SwiftService.self,
-                      makeDestination: { (config, router) -> SwiftService? in
-                        return SwiftService()
-                })
-                .register(RoutableService<SwiftServiceInput>())
-                .register(RoutableServiceModule<SwiftServiceConfig>())
-                .makeDefaultConfiguration({
-                    return SwiftServiceConfiguration()
-                })
-        }
+        ZIKInfoViewAdapter.registerRoutableDestination()
+        AppBlockRouteRegistry.registerRoutableDestination()
     }
 }
 
 import ZIKRouter.Internal
+
+class AppBlockRouteRegistry: ZIKViewRouteAdapter {
+    override class func registerRoutableDestination() {
+        do {
+            let route = ZIKServiceRoute<SwiftService, PerformRouteConfig>
+                .make(withDestination: SwiftService.self,
+                      makeDestination: { (config, router) -> SwiftService? in
+                        return SwiftService()
+                }).makeDefaultConfiguration({
+                    return SwiftServiceConfiguration()
+                })
+            if TEST_BLOCK_ROUTES == 1 {
+                _ = route.register(RoutableService<SwiftServiceInput>())
+                    .register(RoutableServiceModule<SwiftServiceConfig>())
+            }
+        }
+    }
+}
 
 typealias RequiredInfoViewInput = UIViewController & ZIKInfoViewProtocol
 class ZIKInfoViewAdapter: ZIKViewRouteAdapter {

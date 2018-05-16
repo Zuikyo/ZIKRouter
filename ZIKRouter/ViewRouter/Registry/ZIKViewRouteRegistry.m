@@ -365,6 +365,10 @@ static NSMutableArray<Class> *_routerClasses;
     NSParameterAssert([routerClass isSubclassOfClass:[ZIKViewRouter class]]);
     if (ZIKRouter_classIsSubclassOfClass(destinationClass, [UIView class])) {
         NSAssert1([routerClass supportRouteType:ZIKViewRouteTypeAddAsSubview] || [routerClass supportRouteType:ZIKViewRouteTypeCustom], @"If the destination is UIView type, the router (%@) must override +supportedRouteTypes and support ZIKViewRouteTypeAddAsSubview or ZIKViewRouteTypeCustom.", routerClass);
+        if ([routerClass supportRouteType:ZIKViewRouteTypeCustom]) {
+            NSAssert1(ZIKRouter_classSelfImplementingMethod(routerClass, @selector(canPerformCustomRoute), false), @"The router (%@) supports ZIKViewRouteTypeCustom, but doesn't override -canPerformCustomRoute.", routerClass);
+            NSAssert1(ZIKRouter_classSelfImplementingMethod(routerClass, @selector(performCustomRouteOnDestination:fromSource:configuration:), false), @"The router (%@) supports ZIKViewRouteTypeCustom, but doesn't override -performCustomRouteOnDestination:fromSource:configuration:.", routerClass);
+        }
     }
     [super registerDestination:destinationClass router:routerClass];
 }

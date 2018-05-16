@@ -103,11 +103,13 @@ class AViewRouter: ZIKViewRouter<AViewController, AViewModuleConfiguration> {
     
     override class func registerRoutableDestination() {
         registerView(AViewController.self)
-        register(RoutableView<AViewInput>())
-        register(RoutableView<AViewObjcInput>())
-        register(RoutableView<UIViewController & AViewObjcInput>())
-        register(RoutableViewModule<AViewModuleInput>())
-        register(RoutableView<UIViewController & AViewInput>())
+        if !TEST_BLOCK_ROUTE {
+            register(RoutableView<AViewInput>())
+            register(RoutableView<AViewObjcInput>())
+            register(RoutableView<UIViewController & AViewObjcInput>())
+            register(RoutableViewModule<AViewModuleInput>())
+            register(RoutableView<UIViewController & AViewInput>())
+        }
     }
     
     override class func defaultRouteConfiguration() -> AViewModuleConfiguration {
