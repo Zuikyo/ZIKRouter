@@ -48,7 +48,7 @@ Service router用于模块寻找，通过protocol寻找对应的模块，并用p
 
 1. [创建路由](RouterImplementation.md)
 2. [模块注册](ModuleRegistration.md)
-3. [Routable声明](RoutableDeclaration.md)
+3. [Routable 声明](RoutableDeclaration.md)
 4. [类型检查](TypeChecking.md)
 5. [执行路由](PerformRoute.md)
 6. [移除路由](RemoveRoute.md)
@@ -57,7 +57,7 @@ Service router用于模块寻找，通过protocol寻找对应的模块，并用p
 ### Advanced Features
 
 1. [错误检查](ErrorHandle.md)
-2. [Storyboard](Storyboard.md)
+2. [Storyboard 和自动注入](Storyboard.md)
 3. [AOP](AOP.md)
 4. [依赖注入](DependencyInjection.md)
 5. [循环依赖问题](CircularDependencies.md)

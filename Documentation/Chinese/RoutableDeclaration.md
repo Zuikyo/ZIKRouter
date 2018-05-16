@@ -79,6 +79,40 @@ class TestViewController: UIViewController {
 
 初始化方法 `init(declaredProtocol: Protocol.Type)` 只是用来消除 swift 的编译检查 `initializer for struct 'xxx' must use "self.init(...)" or "self = ..." because it is not in module xxx`. 参考 [restrict-cross-module-struct-initializers](https://github.com/apple/swift-evolution/blob/master/proposals/0189-restrict-cross-module-struct-initializers.md)。不要在除了 extension 之外的地方使用此初始化方法。
 
+### 多 Protocol 组合
+
+可以用组合而成的 protocol 声明：
+
+
+```swift
+extension RoutableView where Protocol == UIViewController & EditorViewInput {
+    init() { self.init(declaredProtocol: Protocol.self) }
+}
+```
+
+可以用类型别名简化:
+
+```
+typealias RequiredEditorViewInput = UIViewController & EditorViewInput
+```
+之后就能用组合 protocol 获取模块：
+
+```
+Router.perform(
+            to: RoutableView<RequiredEditorViewInput>(),
+            path: .push(from: self),
+            configuring: { (config, prepareDestiantion, _) in
+                prepareDestination({ destination in
+                    // destination 被推断为 UIViewController & EditorViewInput 类型
+                    // 无需再手动转换为 UIViewController
+                })
+        })
+        
+let destination = Router.makeDestination(to: RoutableView<RequiredEditorViewInput>())
+// destination 被推断为 UIViewController & EditorViewInput 类型
+```
+使用组合 protocol，可以同时为 destination 指定多个类型，而无需再去进行类型转换操作。
+
 ### Routable in Objective-C
 
 Swift 语言是静态的，本身就是类型安全的，但是 Objective-C 上就很难保证这些安全了。因此在Objective-C 上主要是依靠动态检查来保证路由的可靠和安全。

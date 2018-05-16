@@ -56,6 +56,12 @@ NS_ASSUME_NONNULL_BEGIN
  
  @note
  This method will be called for multi times when routing.
+ @discussion
+ ## About auto create:
+ 
+ When a UIViewController conforms to ZIKRoutableView, and is routing from storyboard segue or from -instantiateInitialViewController, a router will be auto created to prepare the UIViewController. If the destination needs preparing (-destinationFromExternalPrepared: returns NO), the segue's sourceViewController is responsible for preparing in delegate method -prepareDestinationFromExternal:configuration:. But When you show destination without router, such as use `[source presentViewController:destination animated:NO completion:nil]`, the routers can get AOP callback, but can't search source view controller to prepare the destination. So the router won't be auto created. If you use a router as a dependency injector for preparing the UIViewController, you should always display the UIViewController instance with router.
+ 
+ When Adding a registered UIView by code or xib, a router will be auto created. We search the view controller of custom class (not system class like native UINavigationController, or any container view controller) in it's responder hierarchy as the performer. If the registered UIView needs preparing (-destinationFromExternalPrepared: returns NO), you have to add the view to a superview in a view controller before it's removed from superview. There will be an assert failure if there is no view controller to prepare it (such as: 1. add it to a superview, and the superview is never added to a view controller; 2. add it to a UIWindow). If your custom class view use a routable view as it's subview, the custom view should use a router to add and prepare the routable view, then the routable view doesn't need to search performer because it's already prepared.
  
  @param destination The view from external, such as UIViewController from storyboard and UIView from -addSubview:.
  @return If the destination requires the performer to prepare it, return NO, then router will call performer's -prepareDestinationFromExternal:configuration:. Default is YES.

@@ -324,7 +324,8 @@ static NSMutableArray *g_preparingUIViewRouters;
 #pragma clang diagnostics pop
 
 - (void)prepareDestination:(id)destination configuration:(__kindof ZIKViewRouteConfiguration *)configuration {
-    NSAssert([self class] != [ZIKViewRouter class], @"Prepare destination with it's router.");
+    NSAssert([self class] != [ZIKViewRouter class] ||
+             configuration.routeType == ZIKViewRouteTypePerformSegue, @"Prepare destination with it's router.");
 }
 
 - (void)didFinishPrepareDestination:(id)destination configuration:(nonnull __kindof ZIKViewRouteConfiguration *)configuration {

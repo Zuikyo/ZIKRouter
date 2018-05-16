@@ -65,7 +65,7 @@ Service router 用于模块寻找，通过 protocol 寻找对应的模块，并�
 ### Advanced Features
 
 1. [Error Handle](Documentation/English/ErrorHandle.md)
-2. [Storyboard](Documentation/English/Storyboard.md)
+2. [Storyboard and Auto Create](Documentation/English/Storyboard.md)
 3. [AOP](Documentation/English/AOP.md)
 4. [Dependency Injection](Documentation/English/DependencyInjection.md)
 5. [Circular Dependency](Documentation/English/CircularDependencies.md)

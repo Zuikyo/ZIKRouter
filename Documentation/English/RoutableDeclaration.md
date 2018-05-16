@@ -77,6 +77,42 @@ If you pass a wrong protocol, such as `RoutableView<UnroutableProtocol>()`, ther
 
 The `init(declaredProtocol: Protocol.Type)` is only to silence the warning of `initializer for struct 'xxx' must use "self.init(...)" or "self = ..." because it is not in module xxx`. See [restrict-cross-module-struct-initializers](https://github.com/apple/swift-evolution/blob/master/proposals/0189-restrict-cross-module-struct-initializers.md). You should only use it in extension.
 
+### Composed Protocol
+
+You can declared with a composed protocol:
+
+
+```swift
+extension RoutableView where Protocol == UIViewController & EditorViewInput {
+    //Can access to initializer when generic is UIViewController & EditorViewInput
+    init() { self.init(declaredProtocol: Protocol.self) }
+}
+```
+
+You can also use typealias:
+
+```
+typealias RequiredEditorViewInput = UIViewController & EditorViewInput
+```
+Then use it as:
+
+```
+Router.perform(
+            to: RoutableView<RequiredEditorViewInput>(),
+            path: .push(from: self),
+            configuring: { (config, prepareDestiantion, _) in
+                prepareDestination({ destination in
+                    // destination is inferred as UIViewController & EditorViewInput
+                    // don't need to cast it to UIViewController
+                })
+        })
+        
+let destination = Router.makeDestination(to: RoutableView<RequiredEditorViewInput>())
+// destination is inferred as UIViewController & EditorViewInput
+```
+
+With composed protocol, you can designate multi types for the destination, and don't need to do type casting when you need to use destination as a UIViewControler.
+
 ### Routable in Objective-C
 
 Swift is type safe, but it's hard to make type safe in Objective-C for dynamic routing.
