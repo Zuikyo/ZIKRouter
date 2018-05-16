@@ -15,7 +15,7 @@ DeclareRoutableView(TestURLRouterViewController, TestURLRouterViewRouter)
 
 + (void)registerRoutableDestination {
     [self registerView:[TestURLRouterViewController class]];
-    [self registerIdentifier:@"com.zuik.viewController.testURLRouter"];
+    [self registerIdentifier:@"testURLRouter"];
 }
 
 - (id<ZIKRoutableView>)destinationWithConfiguration:(ZIKViewRouteConfiguration *)configuration {

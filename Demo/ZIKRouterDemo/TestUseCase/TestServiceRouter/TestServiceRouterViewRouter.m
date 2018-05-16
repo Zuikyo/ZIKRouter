@@ -18,7 +18,7 @@
 
 + (void)registerRoutableDestination {
     [self registerView:[TestServiceRouterViewController class]];
-    [self registerIdentifier:@"com.zuik.viewController.testServiceRouter"];
+    [self registerIdentifier:@"testServiceRouter"];
 }
 
 - (id<ZIKRoutableView>)destinationWithConfiguration:(ZIKViewRouteConfiguration *)configuration {

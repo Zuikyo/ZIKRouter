@@ -18,24 +18,24 @@
 - (void)viewDidLoad {
     [super viewDidLoad];
     
-    self.selectedIdentifier = @"com.zuik.viewController.testPush";
+    self.selectedIdentifier = @"testPush";
     self.routerIdentifiers = @[
-                               @"com.zuik.viewController.testPush",
-                               @"com.zuik.viewController.testPresentModally",
-                               @"com.zuik.viewController.testPresentAsPopover",
-                               @"com.zuik.viewController.testPerformSegue",
-                               @"com.zuik.viewController.testShow",
-                               @"com.zuik.viewController.testShowDetail",
-                               @"com.zuik.viewController.testAddAsChild",
-                               @"com.zuik.viewController.testAddAsSubview",
-                               @"com.zuik.viewController.testCustom",
-                               @"com.zuik.viewController.testGetDestination",
-                               @"com.zuik.viewController.testAutoCreate",
-                               @"com.zuik.viewController.testCircularDependencies",
-                               @"com.zuik.viewController.testClassHierarchy",
-                               @"com.zuik.viewController.testServiceRouter",
-                               @"com.zuik.viewController.swiftSample",
-                               @"com.zuik.viewController.testURLRouter"
+                               @"testPush",
+                               @"testPresentModally",
+                               @"testPresentAsPopover",
+                               @"testPerformSegue",
+                               @"testShow",
+                               @"testShowDetail",
+                               @"testAddAsChild",
+                               @"testAddAsSubview",
+                               @"testCustom",
+                               @"testGetDestination",
+                               @"testAutoCreate",
+                               @"testCircularDependencies",
+                               @"testClassHierarchy",
+                               @"testServiceRouter",
+                               @"swiftSample",
+                               @"testURLRouter"
                                ];
     
     self.view.backgroundColor = [UIColor whiteColor];
@@ -75,7 +75,6 @@
 
 - (nullable NSString *)pickerView:(UIPickerView *)pickerView titleForRow:(NSInteger)row forComponent:(NSInteger)component {
     NSString *title = [self.routerIdentifiers objectAtIndex:row];
-    title = [title stringByReplacingOccurrencesOfString:@"com.zuik.viewController." withString:@""];
     return title;
 }
 

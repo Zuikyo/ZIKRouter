@@ -29,7 +29,7 @@ class SwiftSampleViewRouter: ZIKViewRouter<SwiftSampleViewController, SwiftSampl
         register(RoutableView<SwiftSampleViewInput>())
         register(RoutableView<PureSwiftSampleViewInput>())
         register(RoutableViewModule<SwiftSampleViewConfig>())
-        registerIdentifier("com.zuik.viewController.swiftSample")
+        registerIdentifier("swiftSample")
     }
     
     override class func defaultRouteConfiguration() -> SwiftSampleViewConfiguration {

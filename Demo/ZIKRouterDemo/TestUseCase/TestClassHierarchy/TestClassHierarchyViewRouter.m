@@ -18,7 +18,7 @@
 
 + (void)registerRoutableDestination {
     [self registerView:[TestClassHierarchyViewController class]];
-    [self registerIdentifier:@"com.zuik.viewController.testClassHierarchy"];
+    [self registerIdentifier:@"testClassHierarchy"];
 }
 
 - (id<ZIKRoutableView>)destinationWithConfiguration:(ZIKViewRouteConfiguration *)configuration {

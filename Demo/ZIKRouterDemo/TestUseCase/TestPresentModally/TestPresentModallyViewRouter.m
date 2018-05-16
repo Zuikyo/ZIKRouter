@@ -18,7 +18,7 @@
 
 + (void)registerRoutableDestination {
     [self registerView:[TestPresentModallyViewController class]];
-    [self registerIdentifier:@"com.zuik.viewController.testPresentModally"];
+    [self registerIdentifier:@"testPresentModally"];
 }
 
 - (id<ZIKRoutableView>)destinationWithConfiguration:(ZIKViewRouteConfiguration *)configuration {

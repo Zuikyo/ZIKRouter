@@ -15,7 +15,7 @@ DeclareRoutableView(TestPushViewController, TestPushViewRouter)
 
 + (void)registerRoutableDestination {
     [self registerView:[TestPushViewController class]];
-    [self registerIdentifier:@"com.zuik.viewController.testPush"];
+    [self registerIdentifier:@"testPush"];
 }
 
 - (id<ZIKRoutableView>)destinationWithConfiguration:(ZIKViewRouteConfiguration *)configuration {
