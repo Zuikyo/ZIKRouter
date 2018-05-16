@@ -33,9 +33,12 @@
 @end
 
 @implementation ZIKViewRoute
+@dynamic nameAs;
 @dynamic registerDestination;
+@dynamic registerExclusiveDestination;
 @dynamic registerDestinationProtocol;
 @dynamic registerModuleProtocol;
+@dynamic registerIdentifier;
 @dynamic makeDefaultConfiguration;
 @dynamic makeDefaultRemoveConfiguration;
 @dynamic prepareDestination;

@@ -46,18 +46,8 @@ NS_ASSUME_NONNULL_BEGIN
 ///Invoked after all registrations are finished when ZIKROUTER_CHECK is enabled, when ZIKROUTER_CHECK is disabled, this won't be invoked. You can override and do some debug checking.
 + (void)_didFinishRegistration;
 
-/**
- Whether the destination is all prepared, if not, it requires the performer to prepare it. This method is for destination from storyboard and UIView from -addSubview:.
- @discussion
- Destination created from external will use this method to determine whether the router have to search the performer to prepare itself by invoking performer's -prepareDestinationFromExternal:configuration:.
- 
- @note
- This method will be called for multi times when routing.
- 
- @param destination The view from external, such as UIViewController from storyboard and UIView from -addSubview:.
- @return If the destination requires the performer to prepare it, return NO, then router will call performer's -prepareDestinationFromExternal:configuration:. Default is YES.
- */
-+ (BOOL)destinationPrepared:(Destination)destination API_DEPRECATED_WITH_REPLACEMENT("destinationFromExternalPrepared:", ios(7.0, 7.0));;
+///Supported route types of this router. Default is ZIKViewRouteTypeMaskViewControllerDefault for UIViewController type destination, if your destination is a UIView, override this and return ZIKViewRouteTypeMaskViewDefault. Router subclass can also limit the route type.
++ (ZIKViewRouteTypeMask)supportedRouteTypes;
 
 /**
  Whether the destination is all prepared, if not, it requires the performer to prepare it. This method is for destination from storyboard and UIView from -addSubview:.
@@ -71,6 +61,8 @@ NS_ASSUME_NONNULL_BEGIN
  @return If the destination requires the performer to prepare it, return NO, then router will call performer's -prepareDestinationFromExternal:configuration:. Default is YES.
  */
 - (BOOL)destinationFromExternalPrepared:(Destination)destination NS_SWIFT_NAME(destinationFromExternalPrepared(destination:));
+
++ (BOOL)destinationPrepared:(Destination)destination API_DEPRECATED_WITH_REPLACEMENT("destinationFromExternalPrepared:", ios(7.0, 7.0));
 
 /**
  Prepare the destination with the configuration when view first appears. Unwind segue to destination won't call this method.

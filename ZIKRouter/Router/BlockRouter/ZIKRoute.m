@@ -36,6 +36,15 @@
     return self;
 }
 
+- (instancetype)initWithExclusiveDestination:(Class)destinationClass makeDestination:(id  _Nullable (^)(ZIKPerformRouteConfiguration * _Nonnull, __kindof ZIKRouter<id, ZIKPerformRouteConfiguration *, ZIKRemoveRouteConfiguration *> * _Nonnull))makeDestination {
+    if (self = [super init]) {
+        self.retainedSelf = self;
+        self.makeDestinationBlock = makeDestination;
+        self.registerExclusiveDestination(destinationClass);
+    }
+    return self;
+}
+
 - (NSString *)name {
     if (_name == nil) {
         return [NSString stringWithFormat:@"Anonymous route for destination: %@", NSStringFromClass(self.destinationClass)];
@@ -47,9 +56,20 @@
     return [[self alloc] initWithDestination:destinationClass makeDestination:makeDestination];
 }
 
++ (instancetype)makeRouteWithExclusiveDestination:(Class)destinationClass makeDestination:(id  _Nullable (^)(ZIKPerformRouteConfiguration * _Nonnull, __kindof ZIKRouter<id, ZIKPerformRouteConfiguration *, ZIKRemoveRouteConfiguration *> * _Nonnull))makeDestination {
+    return [[self alloc] initWithExclusiveDestination:destinationClass makeDestination:makeDestination];
+}
+
 + (Class)registryClass {
     return nil;
 }
+
+- (ZIKRoute<id, ZIKPerformRouteConfiguration *, ZIKRemoveRouteConfiguration *> *(^)(NSString *))nameAs {
+    return ^(NSString *name) {
+        self.name = name;
+        return self;
+    };
+};
 
 - (ZIKRoute<id, ZIKPerformRouteConfiguration *, ZIKRemoveRouteConfiguration *> *(^)(Class))registerDestination {
     return ^(Class destinationClass) {
@@ -73,6 +93,13 @@
     return ^(Protocol *destinationProtocol) {
         //register destination protocol with route
         [[[self class] registryClass] registerDestinationProtocol:destinationProtocol route:self];
+        return self;
+    };
+};
+
+- (ZIKRoute<id, ZIKPerformRouteConfiguration *, ZIKRemoveRouteConfiguration *> *(^)(NSString *))registerIdentifier {
+    return ^(NSString *identifier) {
+        [[[self class] registryClass] registerIdentifier: identifier route:self];
         return self;
     };
 };

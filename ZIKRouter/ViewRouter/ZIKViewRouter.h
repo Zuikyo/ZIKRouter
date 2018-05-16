@@ -27,7 +27,7 @@ NS_ASSUME_NONNULL_BEGIN
  
  When Adding a registered UIView by code or xib, a router will be auto created. We search the view controller of custom class (not system class like native UINavigationController, or any container view controller) in it's responder hierarchy as the performer. If the registered UIView needs preparing (-destinationFromExternalPrepared: returns NO), you have to add the view to a superview in a view controller before it's removed from superview. There will be an assert failure if there is no view controller to prepare it (such as: 1. add it to a superview, and the superview is never added to a view controller; 2. add it to a UIWindow). If your custom class view use a routable view as it's subview, the custom view should use a router to add and prepare the routable view, then the routable view doesn't need to search performer because it's already prepared.
  */
-@interface ZIKViewRouter<__covariant Destination: id, __covariant RouteConfig: ZIKViewRouteConfiguration *> : ZIKRouter<Destination, RouteConfig, ZIKViewRemoveConfiguration *>
+@interface ZIKViewRouter<__covariant Destination, __covariant RouteConfig: ZIKViewRouteConfiguration *> : ZIKRouter<Destination, RouteConfig, ZIKViewRemoveConfiguration *>
 
 ///If this router's view is a UIViewController routed from storyboard, or a UIView added as subview from xib or code, a router will be auto created to prepare the view, and the router's autoCreated is YES; But when a UIViewController is routed from code manually, router won't be auto created because we can't find the performer to prepare the destination.
 @property (nonatomic, readonly, assign) BOOL autoCreated;
@@ -54,9 +54,6 @@ NS_ASSUME_NONNULL_BEGIN
  @return YES if source can perform route now, otherwise NO
  */
 - (BOOL)canPerform;
-
-///Default is ZIKViewRouteTypeMaskViewControllerDefault for UIViewController type destination, if your destination is a UIView, override this and return ZIKViewRouteTypeMaskViewDefault. Router subclass can also limit the route type.
-+ (ZIKViewRouteTypeMask)supportedRouteTypes;
 
 ///Check whether the router support a route type.
 + (BOOL)supportRouteType:(ZIKViewRouteType)type;

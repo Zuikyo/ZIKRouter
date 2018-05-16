@@ -304,6 +304,10 @@ static NSMutableArray *g_preparingUIViewRouters;
     return nil;
 }
 
++ (ZIKViewRouteTypeMask)supportedRouteTypes {
+    return ZIKViewRouteTypeMaskViewControllerDefault;
+}
+
 + (BOOL)destinationPrepared:(id)destination {
     NSAssert(self != [ZIKViewRouter class], @"Check destination prepared with it's router.");
     return YES;
@@ -2947,10 +2951,6 @@ static  ZIKViewRouterType *_Nullable _routerTypeToRegisteredView(Class viewClass
 
 - (BOOL)canPerform {
     return [self _canPerformWithErrorMessage:NULL];
-}
-
-+ (ZIKViewRouteTypeMask)supportedRouteTypes {
-    return ZIKViewRouteTypeMaskViewControllerDefault;
 }
 
 + (BOOL)supportRouteType:(ZIKViewRouteType)type {
