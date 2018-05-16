@@ -64,4 +64,4 @@ Router.perform(
 </details>
 
 ---
-#### Next section: [Storyboard](Storyboard.md)
+#### Next section: [Storyboard and Auto Create](Storyboard.md)

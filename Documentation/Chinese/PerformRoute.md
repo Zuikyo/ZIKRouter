@@ -60,7 +60,7 @@ class TestViewController: UIViewController {
 
 ## Perform in Objective-C
 
-在 Objective-C 中，由于 OC 的动态特性，无法为 router s做到完美的安全。
+在 Objective-C 中也能提供编译时的类型安全检查，不过由于 OC 的动态特性，并没有像 swift 中那样严格。
 
 ```objectivec
 @implementation TestViewController

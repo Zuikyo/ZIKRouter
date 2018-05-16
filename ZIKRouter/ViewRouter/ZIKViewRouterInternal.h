@@ -57,7 +57,7 @@ NS_ASSUME_NONNULL_BEGIN
  @note
  This method will be called for multi times when routing.
  @discussion
- ## About auto create:
+ ## About auto create: read https://github.com/Zuikyo/ZIKRouter/blob/master/Documentation/English/Storyboard.md
  
  When a UIViewController conforms to ZIKRoutableView, and is routing from storyboard segue or from -instantiateInitialViewController, a router will be auto created to prepare the UIViewController. If the destination needs preparing (-destinationFromExternalPrepared: returns NO), the segue's sourceViewController is responsible for preparing in delegate method -prepareDestinationFromExternal:configuration:. But When you show destination without router, such as use `[source presentViewController:destination animated:NO completion:nil]`, the routers can get AOP callback, but can't search source view controller to prepare the destination. So the router won't be auto created. If you use a router as a dependency injector for preparing the UIViewController, you should always display the UIViewController instance with router.
  
@@ -73,7 +73,7 @@ NS_ASSUME_NONNULL_BEGIN
 /**
  Prepare the destination with the configuration when view first appears. Unwind segue to destination won't call this method.
  @warning
- Cycle Dependency:
+ Cycle Dependency: read https://github.com/Zuikyo/ZIKRouter/blob/master/Documentation/English/CircularDependencies.md
  
  If a router(A) fetch destination(A)'s dependency destination(B) with another router(B) in router(A)'s -prepareDestination:configuration:, and the destination(A) is also the destination(B)'s dependency, so destination(B)'s router(B) will also fetch destination(A) with router(A) in it's -prepareDestination:configuration:. Then there will be an infinite recursion.
  

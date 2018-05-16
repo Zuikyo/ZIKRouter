@@ -35,7 +35,7 @@ Service router用于模块寻找，通过protocol寻找对应的模块，并用p
 - [x] 用 adapter 对两个模块进行解耦和接口兼容
 - [x] 封装 UIKit 里的所有界面跳转方式（push、present modally、present as popover、segue、show、showDetail、addChildViewController、addSubview）以及自定义的展示方式，封装成一个统一的方法
 - [x] 支持用一个方法执行界面回退和模块销毁，不必区分使用pop、dismiss、removeFromParentViewController、removeFromSuperview
-- [x] **支持 storyboard，可以对从segue中跳转的界面执行依赖注入**
+- [x] **支持 storyboard，可以对从segue中跳转的界面自动执行依赖注入**
 - [x] 完备的错误检查，可以检测界面跳转时的大部分问题
 - [x] 支持界面跳转过程中的 AOP 回调
 - [x] 两种注册方式：自动注册和手动注册
