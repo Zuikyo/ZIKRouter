@@ -190,8 +190,8 @@
 		F8A5ED052093A7C000773853 /* ZRouterTests */ = {
 			isa = PBXGroup;
 			children = (
-				F8A5ED162093B05100773853 /* TestRouteRegistry.swift */,
 				F8A5ED1820940D7A00773853 /* TestConfig.swift */,
+				F8A5ED162093B05100773853 /* TestRouteRegistry.swift */,
 				F8A5ED142093A80E00773853 /* AService.swift */,
 				F87E85AA2094728700E5A306 /* AViewController.swift */,
 				F87E85AC209472A400E5A306 /* BSubview.swift */,

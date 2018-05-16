@@ -29,8 +29,6 @@
 
 @implementation TestRouteRegistry
 
-#if !AUTO_REGISTER_ROUTERS
-
 + (void)load {
     ZIKRouteRegistry.autoRegister = NO;
     [self registerServiceRouter];
@@ -350,7 +348,5 @@
         
     });
 }
-
-#endif
 
 @end

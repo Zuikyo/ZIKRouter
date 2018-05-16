@@ -8,9 +8,7 @@
 
 #import <Foundation/Foundation.h>
 
-#define AUTO_REGISTER_ROUTERS 0
-
-#define TEST_BLOCK_ROUTE 1
+#define TEST_BLOCK_ROUTE 0
 
 @interface TestConfig: NSObject
 @property (nonatomic, class) BOOL routeShouldFail;
