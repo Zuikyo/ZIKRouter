@@ -16,6 +16,8 @@ class EditorViewController: UIViewController, NoteEditorInput {
     ...
 }
 ```
+## Router Subclass
+
 Create a `ZIKViewRouter` subclass for `EditorViewController`:
 
 ```swift
@@ -173,6 +175,8 @@ Create a `ZIKViewRouter` subclass for `EditorViewController`:
 
 The router subclass can set generic parameters when inheriting from ZIKViewRouter. See [Type Checking](TypeChecking.md).
 
+## Route with Blocks
+
 If you don't want to create a complex router subclass for a simple module, you can use block to register the module:
 
 ```swift
@@ -185,4 +189,4 @@ ZIKViewRoute<EditorViewController, ViewRouteConfig>
 ```
 
 ---
-#### Next section: [Module Registration](./ModuleRegistration.md)
+#### Next section: [Module Registration](ModuleRegistration.md)

@@ -125,29 +125,17 @@ Router.to(viewIdentifier: "viewController-editor")?
 	})
 ```
 
-We can't check type of parameters when passing in a dictionary, so it's not recommanded to use for most cases. You should only use this function when the module needs to support URL scheme. You can combine other URL router with ZIKRouter with identifier matching.
+We can't check type of parameters when passing in a dictionary, so it's not recommanded to use this method for most cases. You should only use this method when the module needs to support URL scheme. You can combine other URL router with ZIKRouter by identifier matching.
 
 ## Auto Registration
 
 When app is launched, ZIKRouter will enumerate all classes and call router's `registerRoutableDestination` method.
 
-Here is the performance test for auto registration. There're 5000 UIViewController and 5000 router class.
-
-Register by `+registerView:` and `+registerViewProtocol:`:
-
-* iPhone 6s device: 58ms
-* iPhone 5  device: 240ms
-
-Register by `+registerExclusiveView:` and `+registerViewProtocol:`:
-
-* iPhone 6s device: 50ms
-* iPhone 5  device: 220ms
-
-There is no performance problem in new device. In old device like iPhone 5, most time is costed by objc method invocation. The time is almost the same even we replace registration methods with empty methods that do nothing.
+Enumerating all classes will cost 10 - 20 ms. If you want to avoid the enumerating, or there're too much modules to register, you can try manually registration. But most of the time, the performance of auto registration is good enough.
 
 ## Manually Registration
 
-If you worry about the performance of auto registration in old device, you can disable auto registration, and register each router manually.
+Manually registration means calling each router's `registerRoutableDestination` manually.
 
 ### 1. Disable Auto Registration
 
@@ -182,5 +170,59 @@ Then you can register each routers:
 }
 
 ```
+
+## Performance
+
+You may worry about the performance of registration, the next tests will resolve your doubt.
+
+### Auto Registration and Manually Registration
+
+Here is the test of auto registration and manually registration:
+
+* Test the time of 500, 1000, 2000, 5000 view controllers when auto registration and manually registration
+* Register with `+registerExclusiveView:`and`+registerViewProtocol:`
+* `ZIKRouter: register with blocks` means registering with `ZIKViewRoute`. It uses much less classes than using router subclasses, so it's a bit quicker
+* `ZIKRouter: register with subclass` means registering with router subclasses
+* `ZRouter: register with string` means declaring and registering routable pure swift protocols with `init(declaredTypeName:)`. The performance of ZRouter is slightly worse than ZIKRouter, bacause ZRouter needs to support both objc protocols and pure swift protocols.
+
+![Auto registration and manually registration - 500 view controllers](../Resources/Auto-register-manually-register-500.png)
+
+![Auto registration and manually registration - 1000 view controllers](../Resources/Auto-register-manually-register-1000.png)
+
+![Auto registration and manually registration - 2000 view controllers](../Resources/Auto-register-manually-register-2000.png)
+
+![Auto registration and manually registration - 5000 view controllers](../Resources/Auto-register-manually-register-5000.png)
+
+There is no performance problem in 64 bit device. In 32 bit device like iPhone 5, most time is costed in objc method invocations. The time is almost the same even we replace registration methods with empty methods that do nothing.
+
+If your project needs to support 32 bit device, and your modules are more than 1000, you can use manually registration. But you will not use manually registration in most of the time, because even in Wechat app, there are only about 600 hundred view controllers.
+
+### Performance with other frameworks
+
+Here is the performance with other frameworks:
+
+* Test the time of 500, 1000, 2000, 5000 view controllers when auto registration and manually registration
+* Register with `+registerExclusiveView:`and`+registerViewProtocol:`
+* `ZRouter: register with type` means declaring and registering routable pure swift protocols with `init(declaredProtocol:)`
+* Registering urls for other URL routers in a format like `/user/TestViewControllerxxx/:userID`
+
+![Performance - 500 个 view controller](../Resources/Registration-performance-500.jpg)
+
+![Performance - 1000 个 view controller](../Resources/Registration-performance-1000.jpg)
+
+![Performance - 2000 个 view controller](../Resources/Registration-performance-2000.jpg)
+
+![Performance - 5000 个 view controller](../Resources/Registration-performance-5000.jpg)
+
+
+Result:
+
+* The best is `routable-ios` and `JLRoutes`, than ZIKRouter and ZRouter
+* MGJRouter and HHRouter will processing the url string when registering, so there are a little performance costs.
+* In Swift, the performances of `ZRouter: register with type` and Swinject  are much worse than others, because they use `String(describing:)` to convert swift type to string, and `String(describing:)` has poor performance
+* Using `Zrouter: register with string` can easily and highly improve the performance, because it avoid using `String(describing:)`
+
+So, my conclusion is: you don't need to worry about the performance of registration.
+
 ---
 #### Next section: [Routable Declaration](./RoutableDeclaration.md)

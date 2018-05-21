@@ -115,7 +115,7 @@ let destination = Router.makeDestination(to: RoutableView<RequiredEditorViewInpu
 
 ### Routable in Objective-C
 
-Swift 语言是静态的，本身就是类型安全的，但是 Objective-C 上就很难保证这些安全了。因此在Objective-C 上主要是依靠动态检查来保证路由的可靠和安全。
+Swift 语言是静态的，本身就是类型安全的，而在 Objective-C 中，我们需要用另一种方式进行声明。
 
 #### `ZIKViewRoutable`和`ZIKServiceRoutable`
 
@@ -149,4 +149,7 @@ Swift 语言是静态的，本身就是类型安全的，但是 Objective-C 上�
 
 继承自`ZIKViewRoutable`的 objc protocol，在 Swift 中将会自动声明为 routable，不需要再按照 Swift 的方式重复声明。
 
-关于类型检查的详细内容，请查看 [Type Checking](TypeChecking.md)。
+关于类型检查的详细内容，请查看 [类型检查](TypeChecking.md)。
+
+---
+#### 下一节 [类型检查](TypeChecking.md)

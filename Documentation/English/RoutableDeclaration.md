@@ -115,7 +115,7 @@ With composed protocol, you can designate multi types for the destination, and d
 
 ### Routable in Objective-C
 
-Swift is type safe, but it's hard to make type safe in Objective-C for dynamic routing.
+Swift is type safe, but Objective-C is not. In Objective-C, ZIKRouter uses another way to declare routable protocols.
 
 #### `ZIKViewRoutable` and `ZIKServiceRoutable`
 

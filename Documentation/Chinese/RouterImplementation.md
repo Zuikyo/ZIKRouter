@@ -16,6 +16,8 @@ class EditorViewController: UIViewController, NoteEditorInput {
     ...
 }
 ```
+## Router 子类
+
 为`EditorViewController`创建一个`ZIKViewRouter`的子类：
 
 ```swift
@@ -168,6 +170,8 @@ class EditorViewRouter: ZIKViewRouter<EditorViewController, ZIKViewRouteConfigur
 
 在继承时可以指定泛型参数，参考[Type Checking](TypeChecking.md#泛型)。
 
+## 通过 Block 创建
+
 如果不想使用 router 子类来添加路由，也可以用轻量化的 block 来注册：
 
 ```swift
@@ -178,3 +182,6 @@ ZIKViewRoute<EditorViewController, ViewRouteConfig>
     })
     .register(RoutableView<NoteEditorInput>())
 ```
+
+---
+#### 下一节：[模块注册](ModuleRegistration.md)

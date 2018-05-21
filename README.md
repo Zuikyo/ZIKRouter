@@ -443,16 +443,16 @@ class NoteEditorViewRouter: ZIKViewRouter<NoteEditorViewController, ViewRouteCon
 @implementation NoteEditorViewRouter
 
 + (void)registerRoutableDestination {
-    [self registerView:[NoteEditorViewRouter class]];
+    [self registerView:[NoteEditorViewController class]];
     [self registerViewProtocol:ZIKRoutable(NoteEditorInput)];
 }
 
-- (NoteEditorViewRouter *)destinationWithConfiguration:(ZIKViewRouteConfiguration *)configuration {
-    NoteEditorViewRouter *destination = ... ///instantiate your view controller
+- (NoteEditorViewController *)destinationWithConfiguration:(ZIKViewRouteConfiguration *)configuration {
+    NoteEditorViewController *destination = ... ///instantiate your view controller
     return destination;
 }
 
-- (void)prepareDestination:(NoteEditorViewRouter *)destination configuration:(ZIKViewRouteConfiguration *)configuration {
+- (void)prepareDestination:(NoteEditorViewController *)destination configuration:(ZIKViewRouteConfiguration *)configuration {
     //Inject dependencies to destination
 }
 

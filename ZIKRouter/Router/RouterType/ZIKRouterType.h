@@ -16,7 +16,7 @@ NS_ASSUME_NONNULL_BEGIN
 @class ZIKPerformRouteConfiguration, ZIKRemoveRouteConfiguration, ZIKRoute;
 
 ///Proxy to use ZIKRouter class type or ZIKRoute with compile time checking. These instance methods are actually class methods in ZIKRouter class.
-@interface ZIKRouterType<__covariant Destination: id, __covariant RouteConfig: ZIKPerformRouteConfiguration *, __covariant RemoveConfig: ZIKRemoveRouteConfiguration *> : NSObject
+@interface ZIKRouterType<__covariant Destination, __covariant RouteConfig: ZIKPerformRouteConfiguration *, __covariant RemoveConfig: ZIKRemoveRouteConfiguration *> : NSObject
 @property (nonatomic, strong, readonly, nullable) Class routerClass;
 @property (nonatomic, strong, readonly, nullable) ZIKRoute *route;
 // routerClass or ZIKRoute
