@@ -12,6 +12,7 @@ Pod::Spec.new do |s|
 
   s.platform     = :ios, "8.0"
   s.ios.deployment_target = "8.0"
+  s.swift_version = "4.0"
 
   s.source       = { :git => "https://github.com/Zuikyo/ZIKRouter.git", :tag => "swift-#{s.version}" }
 
