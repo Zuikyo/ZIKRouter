@@ -29,7 +29,8 @@ Pod::Spec.new do |s|
                         "ZIKRouter/ServiceRouter/**/*.{h,m,mm,cpp}",
                         "ZIKRouter/Utilities/*.{h,m,mm,cpp}",
                         "ZIKRouter/Utilities/**/*.{h,m,mm,cpp}",
-                        "ZIKRouter/Utilities/**/**/*.{h,m,mm,cpp}"
+                        "ZIKRouter/Utilities/**/**/*.{h,m,mm,cpp}",
+                        "ZIKRouter/Framework/Core/*.h"
     core.public_header_files = "ZIKRouter/*.h",
                                "ZIKRouter/Router/*.h",
                                "ZIKRouter/Router/**/*.h",
@@ -48,7 +49,8 @@ Pod::Spec.new do |s|
     s.module_map = 'ZIKRouter/Framework/ViewRouter/module.modulemap'
     viewRouter.source_files = "ZIKRouter/ViewRouter/*.{h,m,mm,cpp}",
                               "ZIKRouter/ViewRouter/**/*.{h,m,mm,cpp}",
-                              "ZIKRouter/ViewRouter/**/**/*.{h,m,mm,cpp}"
+                              "ZIKRouter/ViewRouter/**/**/*.{h,m,mm,cpp}",
+                              "ZIKRouter/Framework/ViewRouter/*.h"
     viewRouter.public_header_files = "ZIKRouter/ViewRouter/*.h",
                                      "ZIKRouter/ViewRouter/**/*.h",
                                      "ZIKRouter/Framework/ViewRouter/*.h"
