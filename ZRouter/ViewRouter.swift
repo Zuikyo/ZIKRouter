@@ -77,14 +77,14 @@ public class ViewRouterType<Destination, ModuleConfig> {
                 prepare(moduleConfig)
             }
             configBuilder(config, prepareDestination, prepareModule)
-            if SHOULD_CHECK_ROUTER_IMPLEMENTATION {
-                let successHandler = config.successHandler
-                config.successHandler = { d in
-                    successHandler?(d)
-                    assert(d is Destination, "Router (\(routerType)) returns wrong destination type (\(String(describing: d))), destination should be \(Destination.self)")
-                    assert(Registry.validateConformance(destination: d, inViewRouterType: routerType))
-                }
+            #if DEBUG
+            let successHandler = config.successHandler
+            config.successHandler = { d in
+                successHandler?(d)
+                assert(d is Destination, "Router (\(routerType)) returns wrong destination type (\(d)), destination should be \(Destination.self)")
+                assert(Registry.validateConformance(destination: d, inViewRouterType: routerType))
             }
+            #endif
         }, removing: removeBuilder)
         if let router = router {
             return ViewRouter<Destination, ModuleConfig>(router: router)
@@ -660,14 +660,14 @@ public extension ViewRouterType {
                 prepare(moduleConfig)
             }
             configBuilder(config, prepareDestination, prepareModule)
-            if SHOULD_CHECK_ROUTER_IMPLEMENTATION {
-                let successHandler = config.successHandler
-                config.successHandler = { d in
-                    successHandler?(d)
-                    assert(d is Destination, "Router (\(routerType)) returns wrong destination type (\(String(describing: d))), destination should be \(Destination.self)")
-                    assert(Registry.validateConformance(destination: d, inViewRouterType: routerType))
-                }
+            #if DEBUG
+            let successHandler = config.successHandler
+            config.successHandler = { d in
+                successHandler?(d)
+                assert(d is Destination, "Router (\(routerType)) returns wrong destination type (\(d)), destination should be \(Destination.self)")
+                assert(Registry.validateConformance(destination: d, inViewRouterType: routerType))
             }
+            #endif
         }, removing: removeBuilder)
         if let router = router {
             return ViewRouter<Destination, ModuleConfig>(router: router)

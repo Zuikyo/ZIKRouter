@@ -47,13 +47,25 @@ import ZIKRouter
  When there is only one declared protocol, swift complier will use that protocol as default generic parameter.
  */
 public struct RoutableView<Protocol> {
+    
+    /// Name of the routable type, equal to `String(describing: Protocol.self)`.
+    let typeName: String
+    
     @available(*, unavailable, message: "Protocol is not declared as routable")
-    public init() { }
+    public init() { typeName = String(describing: Protocol.self) }
     
     /// Only use this in initializers in extension, never use it in other place. This is only to silence the warning of `initializer for struct 'xxx' must use "self.init(...)" or "self = ..." because it is not in module xxx`. See https://github.com/apple/swift-evolution/blob/master/proposals/0189-restrict-cross-module-struct-initializers.md
     ///
     /// - Parameter declaredProtocol: The protocol must be declared in extension.
-    public init(declaredProtocol: Protocol.Type) { }
+    public init(declaredProtocol: Protocol.Type) { typeName = String(describing: Protocol.self) }
+    
+    /// Only use this in initializers in extension, never use it in other place. This function provides much higher performence. When registering more than 500 routable modules, it will cost more than 100 ms, because `String(describing:)` has poor performance. This initializer can avoid using `String(describing:)`, and gives us a factor of 10 improvement in performance.
+    ///
+    /// - Parameter declaredTypeName: The name of declared protocol in extension. Must be equal to the name from `String(describing: Protocol.self)`, or there will be assert failure.
+    public init(declaredTypeName: String) {
+        assert(declaredTypeName == String(describing: Protocol.self), "declaredTypeName should equal to String(describing:) of \(Protocol.self)")
+        typeName = declaredTypeName
+    }
 }
 
 /**
@@ -74,13 +86,25 @@ public struct RoutableView<Protocol> {
  Never add extension for RoutableViewModule without generic constraint and expose it's initializer.
  */
 public struct RoutableViewModule<Protocol> {
+    
+    /// Name of the routable type, equal to `String(describing: Protocol.self)`.
+    let typeName: String
+    
     @available(*, unavailable, message: "Protocol is not declared as routable")
-    public init() { }
+    public init() { typeName = String(describing: Protocol.self) }
     
     /// Only use this in initializers in extension, never use it in other place. This is only to silence the warning of `initializer for struct 'xxx' must use "self.init(...)" or "self = ..." because it is not in module xxx`. See https://github.com/apple/swift-evolution/blob/master/proposals/0189-restrict-cross-module-struct-initializers.md
     ///
     /// - Parameter declaredProtocol: The protocol must be declared in extension.
-    public init(declaredProtocol: Protocol.Type) { }
+    public init(declaredProtocol: Protocol.Type) { typeName = String(describing: Protocol.self) }
+    
+    /// Only use this in initializers in extension, never use it in other place. This function provides much higher performence. When registering more than 500 routable modules, it will cost more than 100 ms, because `String(describing:)` has poor performance. This initializer can avoid using `String(describing:)`, and gives use a factor of 10 improvement in performance.
+    ///
+    /// - Parameter declaredTypeName: The name of declared protocol in extension. Must be equal to the name from `String(describing: Protocol.self)`, or there will be assert failure.
+    public init(declaredTypeName: String) {
+        assert(declaredTypeName == String(describing: Protocol.self), "declaredTypeName should equal to String(describing:) of \(Protocol.self)")
+        typeName = declaredTypeName
+    }
 }
 
 /**
@@ -105,13 +129,25 @@ public struct RoutableViewModule<Protocol> {
  Never add extension for RoutableServiceModule without generic constraint and expose it's initializer.
  */
 public struct RoutableService<Protocol> {
+    
+    /// Name of the routable type, equal to `String(describing: Protocol.self)`.
+    let typeName: String
+    
     @available(*, unavailable, message: "Protocol is not declared as routable")
-    public init() { }
+    public init() { typeName = String(describing: Protocol.self) }
     
     /// Only use this in initializers in extension, never use it in other place. This is only to silence the warning of `initializer for struct 'xxx' must use "self.init(...)" or "self = ..." because it is not in module xxx`. See https://github.com/apple/swift-evolution/blob/master/proposals/0189-restrict-cross-module-struct-initializers.md
     ///
     /// - Parameter declaredProtocol: The protocol must be declared in extension.
-    public init(declaredProtocol: Protocol.Type) { }
+    public init(declaredProtocol: Protocol.Type) { typeName = String(describing: Protocol.self) }
+    
+    /// Only use this in initializers in extension, never use it in other place. This function provides much higher performence. When registering more than 500 routable modules, it will cost more than 100 ms, because `String(describing:)` has poor performance. This initializer can avoid using `String(describing:)`, and gives use a factor of 10 improvement in performance.
+    ///
+    /// - Parameter declaredTypeName: The name of declared protocol in extension. Must be equal to the name from `String(describing: Protocol.self)`, or there will be assert failure.
+    public init(declaredTypeName: String) {
+        assert(declaredTypeName == String(describing: Protocol.self), "declaredTypeName should equal to String(describing:) of \(Protocol.self)")
+        typeName = declaredTypeName
+    }
 }
 
 /**
@@ -128,31 +164,71 @@ public struct RoutableService<Protocol> {
  Never add extension for RoutableServiceModule without generic constraint and expose it's initializer.
  */
 public struct RoutableServiceModule<Protocol> {
+    
+    /// Name of the routable type, equal to `String(describing: Protocol.self)`.
+    let typeName: String
+    
     @available(*, unavailable, message: "Protocol is not declared as routable")
-    public init() { }
+    public init() { typeName = String(describing: Protocol.self) }
     
     /// Only use this in initializers in extension, never use it in other place. This is only to silence the warning of `initializer for struct 'xxx' must use "self.init(...)" or "self = ..." because it is not in module xxx`. See https://github.com/apple/swift-evolution/blob/master/proposals/0189-restrict-cross-module-struct-initializers.md
     ///
     /// - Parameter declaredProtocol: The protocol must be declared in extension.
-    public init(declaredProtocol: Protocol.Type) { }
+    public init(declaredProtocol: Protocol.Type) { typeName = String(describing: Protocol.self) }
+    
+    /// Only use this in initializers in extension, never use it in other place. This function provides much higher performence. When registering more than 500 routable modules, it will cost more than 100 ms, because `String(describing:)` has poor performance. This initializer can avoid using `String(describing:)`, and gives use a factor of 10 improvement in performance.
+    ///
+    /// - Parameter declaredTypeName: The name of declared protocol in extension. Must be equal to the name from `String(describing: Protocol.self)`, or there will be assert failure.
+    public init(declaredTypeName: String) {
+        assert(declaredTypeName == String(describing: Protocol.self), "declaredTypeName should equal to String(describing:) of \(Protocol.self)")
+        typeName = declaredTypeName
+    }
 }
 
 ///All protocols inherited from ZIKViewRoutable are routable as view protocol.
 public extension RoutableView where Protocol: ZIKViewRoutable {
-    init() { assert(ZIKRouter_isObjcProtocol(Protocol.self),"Generic parameter \(Protocol.self) should be protocol type.") }
+    init() {
+        if let objcProtocol = ZIKRouter_objcProtocol(Protocol.self) {
+            typeName = objcProtocol.name
+        } else {
+            typeName = String(describing: Protocol.self)
+            assert(false,"Generic parameter \(Protocol.self) should be protocol type.")
+        }
+    }
 }
 
 ///All protocols inherited from ZIKViewModuleRoutable are routable as view module protocol.
 public extension RoutableViewModule where Protocol: ZIKViewModuleRoutable {
-    init() { assert(ZIKRouter_isObjcProtocol(Protocol.self),"Generic parameter \(Protocol.self) should be protocol type.") }
+    init() {
+        if let objcProtocol = ZIKRouter_objcProtocol(Protocol.self) {
+            typeName = objcProtocol.name
+        } else {
+            typeName = String(describing: Protocol.self)
+            assert(false,"Generic parameter \(Protocol.self) should be protocol type.")
+        }
+    }
 }
 
 ///All protocols inherited from ZIKServiceRoutable are routable as service protocol.
 public extension RoutableService where Protocol: ZIKServiceRoutable {
-    init() { assert(ZIKRouter_isObjcProtocol(Protocol.self),"Generic parameter \(Protocol.self) should be protocol type.") }
+    init() {
+        if let objcProtocol = ZIKRouter_objcProtocol(Protocol.self) {
+            typeName = objcProtocol.name
+        } else {
+            typeName = String(describing: Protocol.self)
+            assert(false,"Generic parameter \(Protocol.self) should be protocol type.")
+        }
+    }
 }
 
 ///All protocols inherited from ZIKViewRoutable are routable as service module protocol.
 public extension RoutableServiceModule where Protocol: ZIKServiceModuleRoutable {
-    init() { assert(ZIKRouter_isObjcProtocol(Protocol.self),"Generic parameter \(Protocol.self) should be protocol type.") }
+    init() {
+        if let objcProtocol = ZIKRouter_objcProtocol(Protocol.self) {
+            typeName = objcProtocol.name
+        } else {
+            typeName = String(describing: Protocol.self)
+            assert(false,"Generic parameter \(Protocol.self) should be protocol type.")
+        }
+    }
 }

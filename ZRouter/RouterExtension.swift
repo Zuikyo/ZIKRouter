@@ -79,18 +79,38 @@ extension ZIKServiceRouter: ServiceRouterExtension {
 // MARK: Adapter Extension
 
 public extension ZIKViewRouteAdapter {
+    
+    /// Register adapter and adaptee protocols conformed by the destination. Then if you try to find router with the adapter, there will return the adaptee's router.
+    ///
+    /// - Parameter adapter: The required protocol used in the user. The protocol should not be directly registered with any router yet.
+    /// - Parameter adaptee: The provided protocol.
     public static func register<Adapter, Adaptee>(adapter: RoutableView<Adapter>, forAdaptee adaptee: RoutableView<Adaptee>) {
         Registry.register(adapter: adapter, forAdaptee: adaptee)
     }
+    
+    /// Register adapter and adaptee protocols conformed by the default configuration of the adaptee's router. Then if you try to find router with the adapter, there will return the adaptee's router.
+    ///
+    /// - Parameter adapter: The required protocol used in the user. The protocol should not be directly registered with any router yet.
+    /// - Parameter adaptee: The provided protocol.
     public static func register<Adapter, Adaptee>(adapter: RoutableViewModule<Adapter>, forAdaptee adaptee: RoutableViewModule<Adaptee>) {
         Registry.register(adapter: adapter, forAdaptee: adaptee)
     }
 }
 
 public extension ZIKServiceRouteAdapter {
+    
+    /// Register adapter and adaptee protocols conformed by the destination. Then if you try to find router with the adapter, there will return the adaptee's router.
+    ///
+    /// - Parameter adapter: The required protocol used in the user. The protocol should not be directly registered with any router yet.
+    /// - Parameter adaptee: The provided protocol.
     public static func register<Adapter, Adaptee>(adapter: RoutableService<Adapter>, forAdaptee adaptee: RoutableService<Adaptee>) {
         Registry.register(adapter: adapter, forAdaptee: adaptee)
     }
+    
+    /// Register adapter and adaptee protocols conformed by the default configuration of the adaptee's router. Then if you try to find router with the adapter, there will return the adaptee's router.
+    ///
+    /// - Parameter adapter: The required protocol used in the user. The protocol should not be directly registered with any router yet.
+    /// - Parameter adaptee: The provided protocol.
     public static func register<Adapter, Adaptee>(adapter: RoutableServiceModule<Adapter>, forAdaptee adaptee: RoutableServiceModule<Adaptee>) {
         Registry.register(adapter: adapter, forAdaptee: adaptee)
     }

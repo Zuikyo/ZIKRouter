@@ -71,13 +71,13 @@ public class ServiceRouterType<Destination, ModuleConfig> {
                 prepare(moduleConfig)
             }
             configBuilder(config, prepareDestination, prepareModule)
-            if SHOULD_CHECK_ROUTER_IMPLEMENTATION {
-                let successHandler = config.successHandler
-                config.successHandler = { d in
-                    successHandler?(d)
-                    assert(ServiceRouterType._castedDestination(d, routerType: routerType) != nil, "Router (\(String(describing: routerType))) returns wrong destination type (\(String(describing: d))), destination should be \(Destination.self)")
-                }
+            #if DEBUG
+            let successHandler = config.successHandler
+            config.successHandler = { d in
+                successHandler?(d)
+                assert(ServiceRouterType._castedDestination(d, routerType: routerType) != nil, "Router (\(String(describing: routerType))) returns wrong destination type (\(d)), destination should be \(Destination.self)")
             }
+            #endif
         }, removing: removeBuilder)
         if let router = router {
             return ServiceRouter<Destination, ModuleConfig>(router: router)
@@ -183,14 +183,14 @@ public class ServiceRouterType<Destination, ModuleConfig> {
     
     private static func _castedDestination(_ destination: Any, routerType: ZIKAnyServiceRouterType) -> Destination? {
         if let d = destination as? Destination {
-            if SHOULD_CHECK_ROUTER_IMPLEMENTATION {
-                assert(Registry.validateConformance(destination: d, inServiceRouterType: routerType))
-            }
+            #if DEBUG
+            assert(Registry.validateConformance(destination: d, inServiceRouterType: routerType))
+            #endif
             return d
         } else if let d = (destination as AnyObject) as? Destination {
-            if SHOULD_CHECK_ROUTER_IMPLEMENTATION {
-                assert(Registry.validateConformance(destination: d, inServiceRouterType: routerType))
-            }
+            #if DEBUG
+            assert(Registry.validateConformance(destination: d, inServiceRouterType: routerType))
+            #endif
             return d
         } else {
             assertionFailure("Router (\(routerType)) returns wrong destination type (\(destination)), destination should be \(Destination.self)")
