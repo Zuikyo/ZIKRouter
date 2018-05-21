@@ -962,7 +962,8 @@ private class _ViewRouterValidater: ZIKViewRouteAdapter {
                 assertionFailure("Invalid adapter (\(adapter.key)), can't get it's type")
                 continue
             }
-            let configType = type(of: routerType.defaultRouteConfiguration())
+            let config = routerType.defaultRouteConfiguration()
+            let configType = Swift.type(of: config)
             assert(_swift_typeIsTargetType(configType, configProtocol), "The router (\(routerType))'s default configuration (\(configType)) must conform to the registered adapter config protocol (\(configProtocol)).")
         }
     }
@@ -1068,7 +1069,7 @@ private class _ServiceRouterValidater: ZIKServiceRouteAdapter {
                 assertionFailure("Invalid adapter (\(adapter.key)), can't get it's type")
                 continue
             }
-            let configType = type(of: routerType.defaultRouteConfiguration())
+            let configType = Swift.type(of: routerType.defaultRouteConfiguration())
             assert(_swift_typeIsTargetType(configType, configProtocol), "The router (\(routerType))'s default configuration (\(configType)) must conform to the registered module adapter protocol (\(configProtocol)).")
         }
     }

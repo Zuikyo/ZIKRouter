@@ -10,7 +10,6 @@
 //
 
 #import <Foundation/Foundation.h>
-#import "ZIKRouterAlias.h"
 #import "ZIKRouter.h"
 #import "ZIKRouteConfiguration.h"
 #import "ZIKRouterType.h"
