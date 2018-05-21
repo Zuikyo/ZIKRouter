@@ -18,8 +18,6 @@ Pod::Spec.new do |s|
   s.frameworks = "Foundation", "UIKit"
   s.requires_arc = true
 
-  s.default_subspecs = 'Core', 'ViewRouter'
-
   s.preserve_path = 'ZIKRouter/Framework/Core/module.modulemap'
   s.module_map = 'ZIKRouter/Framework/Core/module.modulemap'
   s.source_files = "ZIKRouter/Router/*.{h,m,mm,cpp}",
