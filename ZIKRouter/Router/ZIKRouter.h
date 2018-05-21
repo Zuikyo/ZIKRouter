@@ -170,6 +170,17 @@ NS_ASSUME_NONNULL_BEGIN
 
 @end
 
+#pragma mark Alias
+
+typedef ZIKRouteConfiguration ZIKRouteConfig;
+typedef ZIKPerformRouteConfiguration ZIKPerformRouteConfig;
+typedef ZIKRemoveRouteConfiguration ZIKRemoveRouteConfig;
+
+///Check whether the protocol is routable at complie time when passing protocols to `+registerViewProtocol:`, `+registerServiceProtocol:`, `+registerModuleProtocol:`.
+#define ZIKRoutable(RoutableProtocol) (Protocol<RoutableProtocol>*)@protocol(RoutableProtocol)
+
+#pragma mark Error
+
 extern NSErrorDomain const ZIKRouteErrorDomain;
 
 ///Error code for ZIKRouter.

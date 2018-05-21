@@ -348,6 +348,17 @@ typedef void(^ZIKViewRouteGlobalErrorHandler)(__kindof ZIKViewRouter * _Nullable
 @implementation RoutableView (ExtensionName) \
 @end    \
 
+#pragma mark Alias
+
+typedef ZIKViewRouteConfiguration ZIKViewRouteConfig;
+typedef ZIKViewRemoveConfiguration ZIKViewRemoveConfig;
+typedef ZIKViewRouteSegueConfiguration ZIKViewRouteSegueConfig;
+typedef ZIKViewRoutePopoverConfiguration ZIKViewRoutePopoverConfig;
+
+typedef ZIKViewRouter<id, ZIKViewRouteConfig *> ZIKAnyViewRouter;
+#define ZIKDestinationViewRouter(Destination) ZIKViewRouter<Destination, ZIKViewRouteConfig *>
+#define ZIKModuleViewRouter(ModuleConfigProtocol) ZIKViewRouter<id, ZIKViewRouteConfig<ModuleConfigProtocol> *>
+
 @interface ZIKViewRouter<__covariant Destination: id, __covariant RouteConfig: ZIKViewRouteConfiguration *> (Unavailable)
 
 + (nullable instancetype)performRoute NS_UNAVAILABLE;
