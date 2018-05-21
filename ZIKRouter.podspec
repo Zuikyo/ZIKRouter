@@ -21,8 +21,8 @@ Pod::Spec.new do |s|
   s.default_subspecs = 'Core', 'ViewRouter'
 
   s.subspec 'Core' do |core|
-  s.preserve_path = 'ZIKRouter/Framework/Core/module.modulemap'
-  s.module_map = 'ZIKRouter/Framework/Core/module.modulemap'
+    core.preserve_path = 'ZIKRouter/Framework/Core/module.modulemap'
+    core.module_map = 'ZIKRouter/Framework/Core/module.modulemap'
     core.source_files = "ZIKRouter/Router/*.{h,m,mm,cpp}",
                         "ZIKRouter/Router/**/*.{h,m,mm,cpp}",
                         "ZIKRouter/ServiceRouter/*.{h,m,mm,cpp}",
@@ -45,8 +45,8 @@ Pod::Spec.new do |s|
 
   s.subspec 'ViewRouter' do |viewRouter|
     viewRouter.dependency 'ZIKRouter/Core'
-    s.preserve_path = 'ZIKRouter/Framework/ViewRouter/module.modulemap'
-    s.module_map = 'ZIKRouter/Framework/ViewRouter/module.modulemap'
+    viewRouter.preserve_path = 'ZIKRouter/Framework/ViewRouter/module.modulemap'
+    viewRouter.module_map = 'ZIKRouter/Framework/ViewRouter/module.modulemap'
     viewRouter.source_files = "ZIKRouter/ViewRouter/*.{h,m,mm,cpp}",
                               "ZIKRouter/ViewRouter/**/*.{h,m,mm,cpp}",
                               "ZIKRouter/ViewRouter/**/**/*.{h,m,mm,cpp}",
