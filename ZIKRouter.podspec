@@ -18,8 +18,8 @@ Pod::Spec.new do |s|
   s.frameworks = "Foundation", "UIKit"
   s.requires_arc = true
 
-  s.preserve_path = 'ZIKRouter/Framework/Core/module.modulemap'
-  s.module_map = 'ZIKRouter/Framework/Core/module.modulemap'
+  s.preserve_path = 'ZIKRouter/Framework/module.modulemap'
+  s.module_map = 'ZIKRouter/Framework/module.modulemap'
   s.source_files = "ZIKRouter/Router/*.{h,m,mm,cpp}",
                    "ZIKRouter/Router/**/*.{h,m,mm,cpp}",
                    "ZIKRouter/ServiceRouter/*.{h,m,mm,cpp}",
@@ -36,8 +36,8 @@ Pod::Spec.new do |s|
                           "ZIKRouter/Router/**/*.h",
                           "ZIKRouter/ServiceRouter/*.h",
                           "ZIKRouter/ServiceRouter/**/*.h",
-                          "ZIKRouter/ServiceRouter/*.h",
-                          "ZIKRouter/ServiceRouter/**/*.h",
+                          "ZIKRouter/ViewRouter/*.h",
+                          "ZIKRouter/ViewRouter/**/*.h",
                           "ZIKRouter/Utilities/*.h",
                           "ZIKRouter/Framework/*.h"
   s.private_header_files = "ZIKRouter/Router/Private/*.h",
