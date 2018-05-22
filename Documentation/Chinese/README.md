@@ -384,13 +384,13 @@ Demo 目录下的 ZIKRouterDemo 展示了如何用 ZIKRouter 进行各种界面�
 可以用 Cocoapods 安装 ZIKRouter：
 
 ```
-pod 'ZIKRouter', '0.13.0'
+pod 'ZIKRouter', '1.0.0'
 ```
 
 如果是 Swift 项目，则使用 ZRouter：
 
 ```
-pod 'ZRouter', '0.9.0'
+pod 'ZRouter', '1.0.0'
 ```
 
 ## How to use
