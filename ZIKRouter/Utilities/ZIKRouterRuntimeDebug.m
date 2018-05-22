@@ -23,8 +23,8 @@
  
  @return The function pointer of _conformsToProtocols().
  */
-static bool(*swift_conformsToProtocols())(uintptr_t, uintptr_t, uintptr_t, uintptr_t*) {
-    static void *_conformsToProtocols = NULL;
+static bool swift_conformsToProtocols(uintptr_t value, uintptr_t type, uintptr_t existentialType, uintptr_t* conformances) {
+    static bool(*_conformsToProtocols)(uintptr_t, uintptr_t, uintptr_t, uintptr_t*) = NULL;
     static dispatch_once_t onceToken;
     dispatch_once(&onceToken, ^{
         ZIKImageRef libswiftCoreImage = [ZIKImageSymbol imageByName:"libswiftCore.dylib"];
@@ -43,8 +43,41 @@ static bool(*swift_conformsToProtocols())(uintptr_t, uintptr_t, uintptr_t, uintp
                    [[ZIKImageSymbol symbolNameForAddress:_conformsToProtocols] containsString:@"WitnessTable"]
                    , @"The symbol name is not matched: %@", [ZIKImageSymbol symbolNameForAddress:_conformsToProtocols]);
     });
-    
-    return (bool(*)(uintptr_t, uintptr_t, uintptr_t, uintptr_t*))_conformsToProtocols;
+    if (_conformsToProtocols == NULL) {
+        return false;
+    }
+    return _conformsToProtocols(value, type, existentialType, conformances);
+}
+
+static bool _objcClassConformsToSwiftProtocolName(Class objcClass, NSString *swiftProtocolName) {
+    NSCAssert1([swiftProtocolName containsString:@"."], @"Invalid swift protocol name: %@", swiftProtocolName);
+    static NSMutableSet<NSString *> *conformancesCache;
+    static dispatch_once_t onceToken;
+    dispatch_once(&onceToken, ^{
+        conformancesCache = [NSMutableSet set];
+    });
+    __block BOOL conform = NO;
+    NSString *className = NSStringFromClass(objcClass);
+    NSString *record = [[className stringByAppendingString:@"_"] stringByAppendingString:swiftProtocolName];
+    if ([conformancesCache containsObject:record]) {
+        return true;
+    }
+    const char *classNameCString = className.UTF8String;
+    const char *swiftModuleName = [[swiftProtocolName componentsSeparatedByString:@"."] firstObject].UTF8String;
+    _enumerateSymbolName(^bool(const char * _Nonnull name, NSString * _Nonnull (^ _Nonnull demangledAsSwift)(const char * _Nonnull, bool)) {
+        if(strstr(name, classNameCString) &&
+           strstr(name, swiftModuleName)) {
+            NSString *demangledName = demangledAsSwift(name, false);
+            if ([demangledName containsString:@"protocol witness table for"] &&
+                [demangledName containsString:[NSString stringWithFormat:@"%@ : %@", className, swiftProtocolName]]) {
+                conform = YES;
+                [conformancesCache addObject:record];
+                return NO;
+            }
+        }
+        return YES;
+    });
+    return conform;
 }
 
 static uintptr_t dereferencedPointer(uintptr_t pointer) {
@@ -126,9 +159,8 @@ bool _swift_typeIsTargetType(id sourceType, id targetType) {
         }
     }
     
-    bool (*_conformsToProtocols)(uintptr_t, uintptr_t, uintptr_t, uintptr_t*) = swift_conformsToProtocols();
-    if (_conformsToProtocols == NULL) {
-        return false;
+    if (object_isClass(sourceType) && [NSStringFromClass(sourceType) containsString:@"."] == NO) {
+        return _objcClassConformsToSwiftProtocolName(sourceType, [targetType description]);
     }
     
     uintptr_t sourceTypeOpaqueValue;
@@ -186,7 +218,7 @@ bool _swift_typeIsTargetType(id sourceType, id targetType) {
         targetTypeOpaqueValue = (uintptr_t)targetType;
     }
     
-    bool result = _conformsToProtocols(sourceTypeOpaqueValue, sourceTypeMetadata, targetTypeMetadata, &targetWitnessTables);
+    bool result = swift_conformsToProtocols(sourceTypeOpaqueValue, sourceTypeMetadata, targetTypeMetadata, &targetWitnessTables);
     return result;
 }
 
@@ -221,16 +253,18 @@ void _enumerateSymbolName(bool(^handler)(const char *name, NSString *(^demangled
     
     [ZIKImageSymbol enumerateImages:^BOOL(ZIKImageRef  _Nonnull image, NSString * _Nonnull path) {
         if ([path containsString:@"/System/Library/"] == YES ||
-            [path containsString:@"/usr/"] == YES) {
+            [path containsString:@"/usr/"] == YES ||
+            ([path containsString:@"libswift"] && [path containsString:@"dylib"])) {
             return YES;
         }
-        [ZIKImageSymbol findSymbolInImage:image matching:^BOOL(const char * _Nonnull symbolName) {
+        void *value = [ZIKImageSymbol findSymbolInImage:image matching:^BOOL(const char * _Nonnull symbolName) {
             return !handler(symbolName, demangledAsSwift);
         }];
+        if (value != NULL) {
+            return NO;
+        }
         return YES;
     }];
-    
-    
 }
 
 #endif
