@@ -63,10 +63,9 @@ static bool _objcClassConformsToSwiftProtocolName(Class objcClass, NSString *swi
         return true;
     }
     const char *classNameCString = className.UTF8String;
-    const char *swiftModuleName = [[swiftProtocolName componentsSeparatedByString:@"."] firstObject].UTF8String;
     _enumerateSymbolName(^bool(const char * _Nonnull name, NSString * _Nonnull (^ _Nonnull demangledAsSwift)(const char * _Nonnull, bool)) {
-        if(strstr(name, classNameCString) &&
-           strstr(name, swiftModuleName)) {
+        if((strlen(name) > 2 && (strncmp("__", name, 2) == 0)) &&
+           strstr(name, classNameCString)) {
             NSString *demangledName = demangledAsSwift(name, false);
             if ([demangledName containsString:@"protocol witness table for"] &&
                 [demangledName containsString:[NSString stringWithFormat:@"%@ : %@", className, swiftProtocolName]]) {

@@ -85,7 +85,7 @@ static std::string _demangleSymbolAsString(const char *mangledName, size_t mangl
 
 @implementation NSString (Demangle)
 
-- (NSString *) demangledAsSwift {
+- (NSString *)demangledAsSwift {
     DemangleOptions options = DemangleOptions::FullDemangleOptions();
     std::string demangled = _demangleSymbolAsString(self.UTF8String, self.length, options);
     if(demangled.length() == 0) {
@@ -104,7 +104,7 @@ static std::string _demangleSymbolAsString(const char *mangledName, size_t mangl
     return [NSString stringWithUTF8String:demangled.c_str()];
 }
 
-- (NSString *) demangledAsCPP {
+- (NSString *)demangledAsCPP {
     NSString *result = nil;
     int status = 0;
     char* demangled = __cxxabiv1::__cxa_demangle(self.UTF8String, NULL, NULL, &status);
