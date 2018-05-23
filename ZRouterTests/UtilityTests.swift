@@ -39,6 +39,16 @@ class UnusedGenericClass<T> { }
 @objc class ObjcSubclass: ObjcClass { }
 @objc class UnusedObjcClass: NSObject { }
 
+extension UIViewController: ComposedProtocol { }
+extension ObjcViewController: SwiftClassSubProtocol, ObjcClassSubProtocol, Encodable {
+    public func encode(to encoder: Encoder) throws { }
+}
+class GenericObjcViewController<T>: ObjcViewController { }
+extension ObjcService: SwiftClassSubProtocol, ObjcClassSubProtocol, ComposedProtocol, Encodable {
+    public func encode(to encoder: Encoder) throws { }
+}
+class GenericObjcClass<T>: ObjcService { }
+
 protocol SwiftStructProtocol { }
 protocol SwiftStructSubProtocol: SwiftStructProtocol { }
 
@@ -267,6 +277,141 @@ class UtilityTests: XCTestCase {
         XCTAssertFalse(_swift_typeIsTargetType(ObjcSubclass.self, (Decodable & ProtocolA).self))
         XCTAssertFalse(_swift_typeIsTargetType(ObjcSubclass.self, Codable.self))
         XCTAssertFalse(_swift_typeIsTargetType(ObjcSubclass.self, Decodable.self))
+    }
+    
+    func testTypeCheckingForPureObjcClass() {
+        // Objc class
+        XCTAssert(_swift_typeIsTargetType(ObjcViewController.self, ObjcViewController.self))
+        XCTAssert(_swift_typeIsTargetType(ObjcViewController.self, ObjcClassProtocol.self))
+        XCTAssert(_swift_typeIsTargetType(ObjcViewController.self, ObjcClassSubProtocol.self))
+        XCTAssert(_swift_typeIsTargetType(ObjcViewController.self, SwiftClassProtocol.self))
+        XCTAssert(_swift_typeIsTargetType(ObjcViewController.self, SwiftClassSubProtocol.self))
+        XCTAssert(_swift_typeIsTargetType(ObjcViewController.self, ProtocolA.self))
+        XCTAssert(_swift_typeIsTargetType(ObjcViewController.self, ProtocolB.self))
+        XCTAssert(_swift_typeIsTargetType(ObjcViewController.self, ComposedProtocol.self))
+        XCTAssert(_swift_typeIsTargetType(ObjcViewController.self, (ProtocolA & ProtocolB).self))
+        XCTAssert(_swift_typeIsTargetType(ObjcViewController.self, Encodable.self))
+        XCTAssert(_swift_typeIsTargetType(ObjcViewController.self, (Encodable & ProtocolA).self))
+        XCTAssert(_swift_typeIsTargetType(ObjcViewController.self, (NSCoding & ProtocolA).self))
+        XCTAssert(_swift_typeIsTargetType(ObjcViewController.self, (NSCoding & Encodable).self))
+        XCTAssert(_swift_typeIsTargetType(ObjcViewController.self, ObjcViewInput.self))
+        XCTAssert(_swift_typeIsTargetType(ObjcViewController.self, ObjcViewSubInput.self))
+        XCTAssert(_swift_typeIsTargetType(ObjcViewController.self, (ObjcViewInput & ProtocolA).self))
+        XCTAssert(_swift_typeIsTargetType(ObjcViewController.self, (ObjcViewSubInput & ProtocolA).self))
+        
+        XCTAssert(_swift_typeIsTargetType(ObjcSubViewController.self, ObjcViewController.self))
+        XCTAssert(_swift_typeIsTargetType(ObjcSubViewController.self, ObjcClassProtocol.self))
+        XCTAssert(_swift_typeIsTargetType(ObjcSubViewController.self, ObjcClassSubProtocol.self))
+        XCTAssert(_swift_typeIsTargetType(ObjcSubViewController.self, SwiftClassProtocol.self))
+        XCTAssert(_swift_typeIsTargetType(ObjcSubViewController.self, SwiftClassSubProtocol.self))
+        XCTAssert(_swift_typeIsTargetType(ObjcSubViewController.self, ProtocolA.self))
+        XCTAssert(_swift_typeIsTargetType(ObjcSubViewController.self, ProtocolB.self))
+        XCTAssert(_swift_typeIsTargetType(ObjcSubViewController.self, ComposedProtocol.self))
+        XCTAssert(_swift_typeIsTargetType(ObjcSubViewController.self, (ProtocolA & ProtocolB).self))
+        XCTAssert(_swift_typeIsTargetType(ObjcSubViewController.self, Encodable.self))
+        XCTAssert(_swift_typeIsTargetType(ObjcSubViewController.self, (Encodable & ProtocolA).self))
+        XCTAssert(_swift_typeIsTargetType(ObjcSubViewController.self, (NSCoding & ProtocolA).self))
+        XCTAssert(_swift_typeIsTargetType(ObjcSubViewController.self, (NSCoding & Encodable).self))
+        XCTAssert(_swift_typeIsTargetType(ObjcSubViewController.self, ObjcViewInput.self))
+        XCTAssert(_swift_typeIsTargetType(ObjcSubViewController.self, ObjcViewSubInput.self))
+        XCTAssert(_swift_typeIsTargetType(ObjcSubViewController.self, (ObjcViewInput & ProtocolA).self))
+        XCTAssert(_swift_typeIsTargetType(ObjcSubViewController.self, (ObjcViewSubInput & ProtocolA).self))
+        
+        XCTAssert(_swift_typeIsTargetType(GenericObjcViewController<Any>.self, ObjcViewController.self))
+        XCTAssert(_swift_typeIsTargetType(GenericObjcViewController<Any>.self, ObjcClassProtocol.self))
+        XCTAssert(_swift_typeIsTargetType(GenericObjcViewController<Any>.self, ObjcClassSubProtocol.self))
+        XCTAssert(_swift_typeIsTargetType(GenericObjcViewController<Any>.self, SwiftClassProtocol.self))
+        XCTAssert(_swift_typeIsTargetType(GenericObjcViewController<Any>.self, SwiftClassSubProtocol.self))
+        XCTAssert(_swift_typeIsTargetType(GenericObjcViewController<Any>.self, ProtocolA.self))
+        XCTAssert(_swift_typeIsTargetType(GenericObjcViewController<Any>.self, ProtocolB.self))
+        XCTAssert(_swift_typeIsTargetType(GenericObjcViewController<Any>.self, ComposedProtocol.self))
+        XCTAssert(_swift_typeIsTargetType(GenericObjcViewController<Any>.self, (ProtocolA & ProtocolB).self))
+        XCTAssert(_swift_typeIsTargetType(GenericObjcViewController<Any>.self, Encodable.self))
+        XCTAssert(_swift_typeIsTargetType(GenericObjcViewController<Any>.self, (Encodable & ProtocolA).self))
+        XCTAssert(_swift_typeIsTargetType(GenericObjcViewController<Any>.self, (NSCoding & ProtocolA).self))
+        XCTAssert(_swift_typeIsTargetType(GenericObjcViewController<Any>.self, (NSCoding & Encodable).self))
+        XCTAssert(_swift_typeIsTargetType(GenericObjcViewController<Any>.self, ObjcViewInput.self))
+        XCTAssert(_swift_typeIsTargetType(GenericObjcViewController<Any>.self, ObjcViewSubInput.self))
+        XCTAssert(_swift_typeIsTargetType(GenericObjcViewController<Any>.self, (ObjcViewInput & ProtocolA).self))
+        XCTAssert(_swift_typeIsTargetType(GenericObjcViewController<Any>.self, (ObjcViewSubInput & ProtocolA).self))
+        
+        XCTAssert(_swift_typeIsTargetType(ObjcService.self, ObjcService.self))
+        XCTAssert(_swift_typeIsTargetType(ObjcService.self, ObjcClassProtocol.self))
+        XCTAssert(_swift_typeIsTargetType(ObjcService.self, ObjcClassSubProtocol.self))
+        XCTAssert(_swift_typeIsTargetType(ObjcService.self, SwiftClassProtocol.self))
+        XCTAssert(_swift_typeIsTargetType(ObjcService.self, SwiftClassSubProtocol.self))
+        XCTAssert(_swift_typeIsTargetType(ObjcService.self, ProtocolA.self))
+        XCTAssert(_swift_typeIsTargetType(ObjcService.self, ProtocolB.self))
+        XCTAssert(_swift_typeIsTargetType(ObjcService.self, ComposedProtocol.self))
+        XCTAssert(_swift_typeIsTargetType(ObjcService.self, (ProtocolA & ProtocolB).self))
+        XCTAssert(_swift_typeIsTargetType(ObjcService.self, Encodable.self))
+        XCTAssert(_swift_typeIsTargetType(ObjcService.self, (Encodable & ProtocolA).self))
+        XCTAssert(_swift_typeIsTargetType(ObjcService.self, ObjcServiceInput.self))
+        XCTAssert(_swift_typeIsTargetType(ObjcService.self, ObjcServiceSubInput.self))
+        XCTAssert(_swift_typeIsTargetType(ObjcService.self, (ObjcServiceInput & ProtocolA).self))
+        XCTAssert(_swift_typeIsTargetType(ObjcService.self, (ObjcServiceSubInput & ProtocolA).self))
+        
+        XCTAssert(_swift_typeIsTargetType(ObjcSubService.self, ObjcService.self))
+        XCTAssert(_swift_typeIsTargetType(ObjcSubService.self, ObjcClassProtocol.self))
+        XCTAssert(_swift_typeIsTargetType(ObjcSubService.self, ObjcClassSubProtocol.self))
+        XCTAssert(_swift_typeIsTargetType(ObjcSubService.self, SwiftClassProtocol.self))
+        XCTAssert(_swift_typeIsTargetType(ObjcSubService.self, SwiftClassSubProtocol.self))
+        XCTAssert(_swift_typeIsTargetType(ObjcSubService.self, ProtocolA.self))
+        XCTAssert(_swift_typeIsTargetType(ObjcSubService.self, ProtocolB.self))
+        XCTAssert(_swift_typeIsTargetType(ObjcSubService.self, ComposedProtocol.self))
+        XCTAssert(_swift_typeIsTargetType(ObjcSubService.self, (ProtocolA & ProtocolB).self))
+        XCTAssert(_swift_typeIsTargetType(ObjcSubService.self, Encodable.self))
+        XCTAssert(_swift_typeIsTargetType(ObjcSubService.self, (Encodable & ProtocolA).self))
+        XCTAssert(_swift_typeIsTargetType(ObjcSubService.self, ObjcServiceInput.self))
+        XCTAssert(_swift_typeIsTargetType(ObjcSubService.self, ObjcServiceSubInput.self))
+        XCTAssert(_swift_typeIsTargetType(ObjcSubService.self, (ObjcServiceInput & ProtocolA).self))
+        XCTAssert(_swift_typeIsTargetType(ObjcSubService.self, (ObjcServiceSubInput & ProtocolA).self))
+        
+        XCTAssert(_swift_typeIsTargetType(GenericObjcClass<Any>.self, ObjcService.self))
+        XCTAssert(_swift_typeIsTargetType(GenericObjcClass<Any>.self, ObjcClassProtocol.self))
+        XCTAssert(_swift_typeIsTargetType(GenericObjcClass<Any>.self, ObjcClassSubProtocol.self))
+        XCTAssert(_swift_typeIsTargetType(GenericObjcClass<Any>.self, SwiftClassProtocol.self))
+        XCTAssert(_swift_typeIsTargetType(GenericObjcClass<Any>.self, SwiftClassSubProtocol.self))
+        XCTAssert(_swift_typeIsTargetType(GenericObjcClass<Any>.self, ProtocolA.self))
+        XCTAssert(_swift_typeIsTargetType(GenericObjcClass<Any>.self, ProtocolB.self))
+        XCTAssert(_swift_typeIsTargetType(GenericObjcClass<Any>.self, ComposedProtocol.self))
+        XCTAssert(_swift_typeIsTargetType(GenericObjcClass<Any>.self, (ProtocolA & ProtocolB).self))
+        XCTAssert(_swift_typeIsTargetType(GenericObjcClass<Any>.self, Encodable.self))
+        XCTAssert(_swift_typeIsTargetType(GenericObjcClass<Any>.self, (Encodable & ProtocolA).self))
+        XCTAssert(_swift_typeIsTargetType(GenericObjcClass<Any>.self, ObjcServiceInput.self))
+        XCTAssert(_swift_typeIsTargetType(GenericObjcClass<Any>.self, ObjcServiceSubInput.self))
+        XCTAssert(_swift_typeIsTargetType(GenericObjcClass<Any>.self, (ObjcServiceInput & ProtocolA).self))
+        XCTAssert(_swift_typeIsTargetType(GenericObjcClass<Any>.self, (ObjcServiceSubInput & ProtocolA).self))
+    }
+    
+    func testTypeCheckingForPureObjcClassFailure() {
+        // Check failing cases
+        XCTAssertFalse(_swift_typeIsTargetType(ObjcViewController.self, UnusedObjcClass.self))
+        XCTAssertFalse(_swift_typeIsTargetType(ObjcViewController.self, UnusedSwiftClass.self))
+        XCTAssertFalse(_swift_typeIsTargetType(ObjcViewController.self, UnusedGenericClass<Any>.self))
+        XCTAssertFalse(_swift_typeIsTargetType(ObjcViewController.self, SwiftStruct.self))
+        XCTAssertFalse(_swift_typeIsTargetType(ObjcViewController.self, SwiftEnum.self))
+        XCTAssertFalse(_swift_typeIsTargetType(ObjcViewController.self, UnusedSwiftProtocol.self))
+        XCTAssertFalse(_swift_typeIsTargetType(ObjcViewController.self, UnusedObjcProtocol.self))
+        XCTAssertFalse(_swift_typeIsTargetType(ObjcViewController.self, (Decodable & ProtocolA).self))
+        XCTAssertFalse(_swift_typeIsTargetType(ObjcViewController.self, Codable.self))
+        XCTAssertFalse(_swift_typeIsTargetType(ObjcViewController.self, Decodable.self))
+        XCTAssertFalse(_swift_typeIsTargetType(ObjcViewController.self, ObjcServiceInput.self))
+        XCTAssertFalse(_swift_typeIsTargetType(ObjcViewController.self, ObjcServiceSubInput.self))
+        
+        XCTAssertFalse(_swift_typeIsTargetType(ObjcService.self, UnusedObjcClass.self))
+        XCTAssertFalse(_swift_typeIsTargetType(ObjcService.self, UnusedSwiftClass.self))
+        XCTAssertFalse(_swift_typeIsTargetType(ObjcService.self, UnusedGenericClass<Any>.self))
+        XCTAssertFalse(_swift_typeIsTargetType(ObjcService.self, SwiftStruct.self))
+        XCTAssertFalse(_swift_typeIsTargetType(ObjcService.self, SwiftEnum.self))
+        XCTAssertFalse(_swift_typeIsTargetType(ObjcService.self, UnusedSwiftProtocol.self))
+        XCTAssertFalse(_swift_typeIsTargetType(ObjcService.self, UnusedObjcProtocol.self))
+        XCTAssertFalse(_swift_typeIsTargetType(ObjcService.self, NSCoding.self))
+        XCTAssertFalse(_swift_typeIsTargetType(ObjcService.self, (Decodable & ProtocolA).self))
+        XCTAssertFalse(_swift_typeIsTargetType(ObjcService.self, Codable.self))
+        XCTAssertFalse(_swift_typeIsTargetType(ObjcService.self, Decodable.self))
+        XCTAssertFalse(_swift_typeIsTargetType(ObjcService.self, ObjcViewInput.self))
+        XCTAssertFalse(_swift_typeIsTargetType(ObjcService.self, ObjcViewSubInput.self))
     }
     
     func testTypeCheckingForSwiftStruct() {

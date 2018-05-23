@@ -16,6 +16,7 @@
 #import "ZIKRouterRuntime.h"
 #import "ZIKImageSymbol.h"
 #import <objc/runtime.h>
+#import "NSString+Demangle.h"
 
 /**
  Check whether a type conforms to the given protocol. Use private C++ function inside libswiftCore.dylib:
@@ -62,17 +63,63 @@ static bool _objcClassConformsToSwiftProtocolName(Class objcClass, NSString *swi
     if ([conformancesCache containsObject:record]) {
         return true;
     }
-    const char *classNameCString = className.UTF8String;
-    _enumerateSymbolName(^bool(const char * _Nonnull name, NSString * _Nonnull (^ _Nonnull demangledAsSwift)(const char * _Nonnull, bool)) {
-        if((strlen(name) > 2 && (strncmp("__", name, 2) == 0)) &&
-           strstr(name, classNameCString)) {
-            NSString *demangledName = demangledAsSwift(name, false);
-            if ([demangledName containsString:@"protocol witness table for"] &&
-                [demangledName containsString:[NSString stringWithFormat:@"__ObjC.%@ : %@", className, swiftProtocolName]]) {
-                conform = YES;
-                [conformancesCache addObject:record];
-                return NO;
+    NSMutableArray<NSString *> *classNames = [NSMutableArray array];
+    Class aClass = objcClass;
+    while (aClass) {
+        [classNames addObject:NSStringFromClass(aClass)];
+        aClass = [aClass superclass];
+    }
+    
+    // Handle composed protocol
+    NSMutableSet<NSString *> *protocolNames = [NSMutableSet setWithArray:[swiftProtocolName componentsSeparatedByString:@" & "]];
+    // Check objc protocol in composed protocol
+    for (NSString *protocolName in [swiftProtocolName componentsSeparatedByString:@" & "]) {
+        if ([protocolName hasPrefix:@"__ObjC."]) {
+            NSString *objcProtocolName = [protocolName substringFromIndex:7];
+            Protocol *objcProtocol = NSProtocolFromString(objcProtocolName);
+            if (objcProtocol) {
+                if ([objcClass conformsToProtocol:objcProtocol]) {
+                    [protocolNames removeObject:protocolName];
+                } else {
+                    return false;
+                }
             }
+        }
+    }
+    NSInteger protocolCount = protocolNames.count;
+    NSMutableSet<NSString *> *conformedProtocolNames = [NSMutableSet set];
+        
+    _enumerateSymbolName(^bool(const char * _Nonnull name, NSString * _Nonnull (^ _Nonnull demangledAsSwift)(const char * _Nonnull, bool)) {
+        if (strlen(name) <= 2) {
+            return YES;
+        }
+        if(strncmp("__", name, 2) != 0) {
+            return YES;
+        }
+        NSString *containedClassName = nil;
+        for (NSString *className in classNames) {
+            if (strstr(name, className.UTF8String)) {
+                containedClassName = className;
+                break;
+            }
+        }
+        if (containedClassName == nil) {
+            return YES;
+        }
+        NSString *demangledName = demangledAsSwift(name, false);
+        if ([demangledName containsString:@"protocol witness table for"]) {
+
+            for (NSString *protocolName in protocolNames) {
+                if ([demangledName containsString:[NSString stringWithFormat:@"__ObjC.%@ : %@", containedClassName, protocolName]]) {
+                    [conformedProtocolNames addObject:protocolName];
+                    if (conformedProtocolNames.count == protocolCount) {
+                        conform = YES;
+                        [conformancesCache addObject:record];
+                        return NO;
+                    }
+                }
+            }
+            
         }
         return YES;
     });
@@ -158,10 +205,6 @@ bool _swift_typeIsTargetType(id sourceType, id targetType) {
         }
     }
     
-    if (object_isClass(sourceType) && [NSStringFromClass(sourceType) containsString:@"."] == NO) {
-        return _objcClassConformsToSwiftProtocolName(sourceType, [targetType description]);
-    }
-    
     uintptr_t sourceTypeOpaqueValue;
     uintptr_t sourceTypeMetadata;
     if (isSourceSwiftObjectType) {
@@ -207,6 +250,11 @@ bool _swift_typeIsTargetType(id sourceType, id targetType) {
         //target should be swift protocol
         if (type != ZIKSwiftMetadataKindExistential) {
             return false;
+        } else {
+            if (object_isClass(sourceType) && isSourceSwiftObjectType == NO &&
+                [[NSStringFromClass(sourceType) demangledAsSwift] containsString:@"."] == NO) {
+                return _objcClassConformsToSwiftProtocolName(sourceType, [targetType description]);
+            }
         }
     } else {
         //objc protocol
@@ -222,8 +270,6 @@ bool _swift_typeIsTargetType(id sourceType, id targetType) {
 }
 
 #pragma clang diagnostic pop
-
-#import "NSString+Demangle.h"
 
 void _enumerateSymbolName(bool(^handler)(const char *name, NSString *(^demangledAsSwift)(const char *mangledName, bool simplified))) {
     if (handler == nil) {
