@@ -68,7 +68,7 @@ static bool _objcClassConformsToSwiftProtocolName(Class objcClass, NSString *swi
            strstr(name, classNameCString)) {
             NSString *demangledName = demangledAsSwift(name, false);
             if ([demangledName containsString:@"protocol witness table for"] &&
-                [demangledName containsString:[NSString stringWithFormat:@"%@ : %@", className, swiftProtocolName]]) {
+                [demangledName containsString:[NSString stringWithFormat:@"__ObjC.%@ : %@", className, swiftProtocolName]]) {
                 conform = YES;
                 [conformancesCache addObject:record];
                 return NO;
