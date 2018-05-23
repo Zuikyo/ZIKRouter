@@ -384,13 +384,13 @@ Demo 目录下的 ZIKRouterDemo 展示了如何用 ZIKRouter 进行各种界面�
 可以用 Cocoapods 安装 ZIKRouter：
 
 ```
-pod 'ZIKRouter', '1.0.0'
+pod 'ZIKRouter', '>= 1.0.0'
 ```
 
 如果是 Swift 项目，则使用 ZRouter：
 
 ```
-pod 'ZRouter', '1.0.0'
+pod 'ZRouter', '>= 1.0.0'
 ```
 
 ## How to use
@@ -540,6 +540,16 @@ class TestViewController: UIViewController {
 ```
 
 </details>
+
+### File Template
+
+可以用 Xcode 的文件模板快速生成 router 和 protocol 的代码：
+
+![File Template](../Resources/filetemplate.png)
+
+模板`ZIKRouter.xctemplate` 可以在这里获取 [Templates](Templates/)。
+
+把`ZIKRouter.xctemplate`拷贝到`~/Library/Developer/Xcode/Templates/ZIKRouter.xctemplate`，就可以在`Xcode -> File -> New -> File -> Templates`中直接使用了。
 
 ## License
 

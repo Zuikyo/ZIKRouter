@@ -31,14 +31,14 @@ Service router 用于模块寻找，通过 protocol 寻找对应的模块，并�
 
 ## Features
 
-- [x] Swift, Objective-C and mixed development Support
+- [x] Support Swift and Objective-C
 - [x] Routing for UIViewController, UIView and any classes
 - [x] Dependency injection
-- [x] **Locate view and service with it's protocol**
+- [x] **Locate module with it's protocol**
 - [x] **Locate module with identifier, compatible with other URL router**
 - [x] **Prepare the module with it's protocol when performing route, rather than passing a parameter dictionary**
 - [x] **Use different adapter protocols inside module and module's user for the same module to make thorough decouple**
-- [x] **Declare routable protocol. There're compile-time checking and runtime checking to make safe routing**
+- [x] **Declare routable protocol. There're compile-time checking and runtime checking to make routing reliable**
 - [x] Declare a specific router with generic parameters
 - [x] **Decouple modules and add compatible interfaces with adapter**
 - [x] Encapsulate navigation methods in UIKit (push, present modally, present as popover, segue, show, showDetail, addChildViewController, addSubview) and custom transitions into one method
@@ -391,12 +391,12 @@ If you want to see how it works in a VIPER architecture app, go to [ZIKViper](ht
 For Objective-C project:
 
 ```
-pod 'ZIKRouter', '1.0.0'
+pod 'ZIKRouter', '>= 1.0.0'
 ```
 For Swift project:
 
 ```
-pod 'ZRouter', '1.0.0'
+pod 'ZRouter', '>= 1.0.0'
 ```
 
 ## How to use
@@ -546,6 +546,16 @@ class TestViewController: UIViewController {
 ```
 
 </details>
+
+### File Template
+
+You can use Xcode file template to create router and protocol code quickly:
+
+![File Template](Documentation/Resources/filetemplate.png)
+
+The template `ZIKRouter.xctemplate` is in [Templates](Templates/).
+
+Copy `ZIKRouter.xctemplate` to `~/Library/Developer/Xcode/Templates/ZIKRouter.xctemplate`, then you can use it in `Xcode -> File -> New -> File -> Templates`.
 
 ## License
 

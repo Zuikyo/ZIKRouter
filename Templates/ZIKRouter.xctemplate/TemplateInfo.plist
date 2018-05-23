@@ -1,0 +1,152 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>Description</key>
+	<string>Generate router for ZIKRouter.</string>
+	<key>Kind</key>
+	<string>Xcode.IDEFoundation.TextSubstitutionFileTemplateKind</string>
+	<key>Identifier</key>
+	<string>com.zuik.zikrouter</string>
+	<key>Template Author</key>
+	<string>zuik</string>
+	<key>Ancestors</key>
+	<array>
+		<string>com.apple.dt.unit.cocoaTouchApplicationBase</string>
+	</array>
+	<key>CFBundleIdentifier</key>
+	<string>com.zuik.zikrouter</string>
+	<key>Options</key>
+	<array>
+		<dict>
+			<key>Identifier</key>
+			<string>productName</string>
+			<key>Name</key>
+			<string>Router Class:</string>
+			<key>Description</key>
+			<string>The router class name</string>
+			<key>Default</key>
+			<string>ViewRouter</string>
+			<key>Required</key>
+			<true/>
+			<key>Type</key>
+			<string>text</string>
+			<key>NotPersisted</key>
+			<true/>
+		</dict>
+		<dict>
+			<key>Identifier</key>
+			<string>destinationClass</string>
+			<key>Required</key>
+			<true/>
+			<key>Name</key>
+			<string>Destination Class:</string>
+			<key>Description</key>
+			<string>The destination class</string>
+			<key>Default</key>
+			<string>ViewController</string>
+			<key>Type</key>
+			<string>text</string>
+			<key>NotPersisted</key>
+			<true/>
+		</dict>
+		<dict>
+			<key>Identifier</key>
+			<string>routerType</string>
+			<key>Name</key>
+			<string>Router Type:</string>
+			<key>Description</key>
+			<string>The type of router</string>
+			<key>Default</key>
+			<string>ZIKViewRouter</string>
+			<key>Required</key>
+			<true/>
+			<key>Type</key>
+			<string>popup</string>
+			<key>Values</key>
+			<array>
+				<string>ZIKViewRouter</string>
+				<string>ZIKServiceRouter</string>
+			</array>
+		</dict>
+		<dict>
+			<key>Identifier</key>
+			<string>protocolType</string>
+			<key>Name</key>
+			<string>Protocol Type of Module</string>
+			<key>Description</key>
+			<string>Protocol type of this module</string>
+			<key>Type</key>
+			<string>popup</string>
+			<key>Default</key>
+			<string>destination input</string>
+			<key>Values</key>
+			<array>
+				<string>none</string>
+				<string>destination input</string>
+				<string>module input</string>
+			</array>
+		</dict>
+		<dict>
+			<key>Identifier</key>
+			<string>protocolName</string>
+			<key>Name</key>
+			<string>Name of protocol</string>
+			<key>Description</key>
+			<string>Name of protocol</string>
+			<key>Type</key>
+			<string>text</string>
+			<key>Default</key>
+			<string>___Input</string>
+			<key>RequiredOptions</key>
+			<dict>
+				<key>protocolType</key>
+				<array>
+					<string>destination input</string>
+					<string>module input</string>
+				</array>
+			</dict>
+		</dict>
+		<dict>
+			<key>Identifier</key>
+			<string>configClass</string>
+			<key>Name</key>
+			<string>Custom Configuration Class</string>
+			<key>Description</key>
+			<string>Name of the custom configuration class</string>
+			<key>Type</key>
+			<string>text</string>
+			<key>Default</key>
+			<string>___Configuration</string>
+			<key>RequiredOptions</key>
+			<dict>
+				<key>protocolType</key>
+				<array>
+					<string>module input</string>
+				</array>
+			</dict>
+		</dict>
+		<dict>
+			<key>Identifier</key>
+			<string>languageType</string>
+			<key>Name</key>
+			<string>Language</string>
+			<key>Description</key>
+			<string>Language of code</string>
+			<key>Type</key>
+			<string>popup</string>
+			<key>Default</key>
+			<string>Objective-C</string>
+			<key>Values</key>
+			<array>
+				<string>Objective-C</string>
+				<string>Swift</string>
+			</array>
+		</dict>
+	</array>
+	<key>Platforms</key>
+	<array>
+		<string>com.apple.platform.iphoneos</string>
+	</array>
+</dict>
+</plist>
