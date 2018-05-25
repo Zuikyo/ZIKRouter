@@ -7,7 +7,7 @@
 //
 
 #import <ZIKRouter/ZIKViewRouteAdapter.h>
-#import <ZIKCompatibleAlert/ZIKCompatibleAlert.h>
+#import <ZIKAlertModule/ZIKAlertModule.h>
 
 ///Host app is responsible for adapting required interface and provided interface.
 @interface DemoRouteAdapter : ZIKViewRouteAdapter

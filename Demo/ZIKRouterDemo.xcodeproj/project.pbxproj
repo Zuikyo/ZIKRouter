@@ -7,6 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		F80C701520B7EEF80082DC2C /* ZIKAlertModule.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F80C700A20B7EE960082DC2C /* ZIKAlertModule.framework */; };
+		F80C701620B7EEF80082DC2C /* ZIKAlertModule.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = F80C700A20B7EE960082DC2C /* ZIKAlertModule.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		F810F65920892C8B0020382E /* BSubviewModuleRouter.m in Sources */ = {isa = PBXBuildFile; fileRef = F810F65320892C8A0020382E /* BSubviewModuleRouter.m */; };
 		F810F65A20892C8B0020382E /* AViewModuleRouter.m in Sources */ = {isa = PBXBuildFile; fileRef = F810F65420892C8A0020382E /* AViewModuleRouter.m */; };
 		F810F65C20892DEF0020382E /* ZIKViewModuleRouterPerformTests.m in Sources */ = {isa = PBXBuildFile; fileRef = F810F65B20892DEF0020382E /* ZIKViewModuleRouterPerformTests.m */; };
@@ -104,12 +106,24 @@
 		F8C7F7F52019F95800B48365 /* ZRouter.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F8C7F7F42019F95800B48365 /* ZRouter.framework */; };
 		F8C7F7F62019F95800B48365 /* ZRouter.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = F8C7F7F42019F95800B48365 /* ZRouter.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		F8DFBD5E2019FE210069841B /* DemoRouteAdapter.m in Sources */ = {isa = PBXBuildFile; fileRef = F8DFBD5D2019FE210069841B /* DemoRouteAdapter.m */; };
-		F8DFBD602019FE530069841B /* ZIKCompatibleAlert.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F8DFBD5F2019FE530069841B /* ZIKCompatibleAlert.framework */; };
-		F8DFBD612019FE530069841B /* ZIKCompatibleAlert.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = F8DFBD5F2019FE530069841B /* ZIKCompatibleAlert.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		F8F6B1C420A8C36000110B03 /* URLRouteHandler.m in Sources */ = {isa = PBXBuildFile; fileRef = F8F6B1C320A8C36000110B03 /* URLRouteHandler.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
+		F80C700920B7EE960082DC2C /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = F80C700520B7EE950082DC2C /* ZIKAlertModule.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = F80C6FFA20B7EE510082DC2C;
+			remoteInfo = ZIKAlertModule;
+		};
+		F80C701720B7EEF80082DC2C /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = F80C700520B7EE950082DC2C /* ZIKAlertModule.xcodeproj */;
+			proxyType = 1;
+			remoteGlobalIDString = F80C6FF920B7EE510082DC2C;
+			remoteInfo = ZIKAlertModule;
+		};
 		F846AEF1207D4F1600EC7418 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = F84239BF1F0CDE78000FEE5F /* Project object */;
@@ -126,9 +140,9 @@
 			dstPath = "";
 			dstSubfolderSpec = 10;
 			files = (
+				F80C701620B7EEF80082DC2C /* ZIKAlertModule.framework in Embed Frameworks */,
 				F8C7F7F62019F95800B48365 /* ZRouter.framework in Embed Frameworks */,
 				F8C7F7F32019F95100B48365 /* ZIKRouter.framework in Embed Frameworks */,
-				F8DFBD612019FE530069841B /* ZIKCompatibleAlert.framework in Embed Frameworks */,
 			);
 			name = "Embed Frameworks";
 			runOnlyForDeploymentPostprocessing = 0;
@@ -136,6 +150,7 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		F80C700520B7EE950082DC2C /* ZIKAlertModule.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = ZIKAlertModule.xcodeproj; path = ZIKAlertModule/ZIKAlertModule.xcodeproj; sourceTree = "<group>"; };
 		F810F65320892C8A0020382E /* BSubviewModuleRouter.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BSubviewModuleRouter.m; sourceTree = "<group>"; };
 		F810F65420892C8A0020382E /* AViewModuleRouter.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AViewModuleRouter.m; sourceTree = "<group>"; };
 		F810F65520892C8B0020382E /* AViewModuleInput.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AViewModuleInput.h; sourceTree = "<group>"; };
@@ -318,9 +333,9 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				F80C701520B7EEF80082DC2C /* ZIKAlertModule.framework in Frameworks */,
 				F8C7F7F52019F95800B48365 /* ZRouter.framework in Frameworks */,
 				F8C7F7F22019F95100B48365 /* ZIKRouter.framework in Frameworks */,
-				F8DFBD602019FE530069841B /* ZIKCompatibleAlert.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -334,6 +349,14 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		F80C700620B7EE950082DC2C /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				F80C700A20B7EE960082DC2C /* ZIKAlertModule.framework */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
 		F820BF8E1F628A5100D570CF /* SwiftSample */ = {
 			isa = PBXGroup;
 			children = (
@@ -541,6 +564,7 @@
 				F84239C91F0CDE78000FEE5F /* ZIKRouterDemo */,
 				F846AEED207D4F1600EC7418 /* ZIKViewRouterTests */,
 				F84239C81F0CDE78000FEE5F /* Products */,
+				F80C700520B7EE950082DC2C /* ZIKAlertModule.xcodeproj */,
 			);
 			sourceTree = "<group>";
 		};
@@ -746,6 +770,7 @@
 			buildRules = (
 			);
 			dependencies = (
+				F80C701820B7EEF80082DC2C /* PBXTargetDependency */,
 			);
 			name = ZIKRouterDemo;
 			productName = ZIKRouterDemo;
@@ -803,6 +828,12 @@
 			mainGroup = F84239BE1F0CDE78000FEE5F;
 			productRefGroup = F84239C81F0CDE78000FEE5F /* Products */;
 			projectDirPath = "";
+			projectReferences = (
+				{
+					ProductGroup = F80C700620B7EE950082DC2C /* Products */;
+					ProjectRef = F80C700520B7EE950082DC2C /* ZIKAlertModule.xcodeproj */;
+				},
+			);
 			projectRoot = "";
 			targets = (
 				F84239C61F0CDE78000FEE5F /* ZIKRouterDemo */,
@@ -810,6 +841,16 @@
 			);
 		};
 /* End PBXProject section */
+
+/* Begin PBXReferenceProxy section */
+		F80C700A20B7EE960082DC2C /* ZIKAlertModule.framework */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.framework;
+			path = ZIKAlertModule.framework;
+			remoteRef = F80C700920B7EE960082DC2C /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+/* End PBXReferenceProxy section */
 
 /* Begin PBXResourcesBuildPhase section */
 		F84239C51F0CDE78000FEE5F /* Resources */ = {
@@ -940,6 +981,11 @@
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
+		F80C701820B7EEF80082DC2C /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			name = ZIKAlertModule;
+			targetProxy = F80C701720B7EEF80082DC2C /* PBXContainerItemProxy */;
+		};
 		F846AEF2207D4F1600EC7418 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			target = F84239C61F0CDE78000FEE5F /* ZIKRouterDemo */;

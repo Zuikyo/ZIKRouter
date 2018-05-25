@@ -33,7 +33,7 @@
 #import "TestURLRouterViewRouter.h"
 #import "URLRouteHandler.h"
 #import "ZIKInfoViewRouter.h"
-#import <ZIKCompatibleAlert/ZIKCompatibleAlertViewRouter.h>
+#import <ZIKAlertModule/ZIKCompatibleAlertViewRouter.h>
 #import "ZIKTimeServiceRouter.h"
 
 #pragma mark Objc Adapter

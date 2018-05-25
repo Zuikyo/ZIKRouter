@@ -3,7 +3,7 @@
 //  ZRouterTests
 //
 //  Created by zuik on 2018/5/23.
-//  Copyright © 2018年 zuik. All rights reserved.
+//  Copyright © 2018 zuik. All rights reserved.
 //
 
 #import <Foundation/Foundation.h>

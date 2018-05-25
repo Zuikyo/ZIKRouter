@@ -9,7 +9,7 @@
 #import "TestCustomViewController.h"
 @import ZIKRouter;
 #import "RequiredCompatibleAlertModuleInput.h"
-#import <ZIKCompatibleAlert/ZIKViewRoutePath+CompatibleAlert.h>
+#import <ZIKAlertModule/ZIKViewRoutePath+CompatibleAlert.h>
 
 @interface TestCustomViewController ()
 @property (nonatomic, strong) ZIKViewRouter<id, ZIKViewRouteConfiguration<RequiredCompatibleAlertModuleInput> *> *alertViewRouter;

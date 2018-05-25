@@ -106,14 +106,16 @@
 //#pragma clang diagnostic pop
 
 + (void)registerRoutableDestination {
-    [self registerView:[UIAlertController class]];
+    if (@available(iOS 8.0, *)) {
+        [self registerView:[UIAlertController class]];
+    }
     [self registerView:[UIAlertView class]];
     [self registerModuleProtocol:ZIKRoutable(ZIKCompatibleAlertModuleInput)];
 }
 
 - (id<ZIKRoutableView>)destinationWithConfiguration:(ZIKCompatibleAlertViewConfiguration *)configuration {
     id destination;
-    if (NSClassFromString(@"UIAlertController")) {
+    if (@available(iOS 8.0, *)) {
         UIAlertController *alertController = [UIAlertController alertControllerWithTitle:configuration.title message:configuration.message preferredStyle:UIAlertControllerStyleAlert];
         for (ZIKCompatibleAlertViewAction *action in configuration.actions) {
             void(^handler)(void) = action.handler;
@@ -173,12 +175,16 @@
 }
 
 - (void)performCustomRouteOnDestination:(id)destination fromSource:(UIViewController *)source configuration:(ZIKCompatibleAlertViewConfiguration *)configuration {
-    if ([destination isKindOfClass:[UIAlertController class]]) {
-        [self beginPerformRoute];
-        [source presentViewController:destination animated:configuration.animated completion:^{
-            [self endPerformRouteWithSuccess];
-        }];
-    } else if ([destination isKindOfClass:[UIAlertView class]]) {
+    if (@available(iOS 8.0, *)) {
+        if ([destination isKindOfClass:[UIAlertController class]]) {
+            [self beginPerformRoute];
+            [source presentViewController:destination animated:configuration.animated completion:^{
+                [self endPerformRouteWithSuccess];
+            }];
+            return;
+        }
+    }
+    if ([destination isKindOfClass:[UIAlertView class]]) {
         [self beginPerformRoute];
         [(UIAlertView *)destination show];
     } else {
@@ -186,12 +192,16 @@
     }
 }
 - (void)removeCustomRouteOnDestination:(id)destination fromSource:(UIViewController *)source removeConfiguration:(__kindof ZIKViewRemoveConfiguration *)removeConfiguration configuration:(__kindof ZIKViewRouteConfiguration *)configuration {
-    if ([destination isKindOfClass:[UIAlertController class]]) {
-        [self beginRemoveRouteFromSource:source];
-        [(UIAlertController *)destination dismissViewControllerAnimated:removeConfiguration.animated completion:^{
-            [self endRemoveRouteWithSuccessOnDestination:destination fromSource:source];
-        }];
-    } else if ([destination isKindOfClass:[UIAlertView class]]) {
+    if (@available(iOS 8.0, *)) {
+        if ([destination isKindOfClass:[UIAlertController class]]) {
+            [self beginRemoveRouteFromSource:source];
+            [(UIAlertController *)destination dismissViewControllerAnimated:removeConfiguration.animated completion:^{
+                [self endRemoveRouteWithSuccessOnDestination:destination fromSource:source];
+            }];
+            return;
+        }
+    }
+    if ([destination isKindOfClass:[UIAlertView class]]) {
         [self beginRemoveRouteFromSource:source];
         [(UIAlertView *)destination dismissWithClickedButtonIndex:0 animated:removeConfiguration.animated];
     } else {
