@@ -23,6 +23,7 @@
 #import "TestClassHierarchyViewRouter.h"
 #import "TestServiceRouterViewRouter.h"
 #import "TestURLRouterViewRouter.h"
+#import <ZIKLoginModule/ZIKLoginModule.h>
 #import "ZIKRouterDemo-Swift.h"
 
 typedef NS_ENUM(NSInteger,ZIKRouterTestType) {
@@ -41,7 +42,8 @@ typedef NS_ENUM(NSInteger,ZIKRouterTestType) {
     ZIKRouterTestTypeSubclassHierarchy,
     ZIKRouterTestTypeServiceRouter,
     ZIKRouterTestTypeSwiftSample,
-    ZIKRouterTestTypeURLRouter
+    ZIKRouterTestTypeURLRouter,
+    ZIKRouterTestTypeModularization
 };
 
 @interface MasterViewController () <UIViewControllerPreviewingDelegate>
@@ -73,7 +75,8 @@ typedef NS_ENUM(NSInteger,ZIKRouterTestType) {
                        @"Test Subclass Hierarchy",
                        @"Test ServiceRouter",
                        @"Swift Sample",
-                       @"URL Router"
+                       @"URL Router",
+                       @"Test Modularization"
                        ];
     self.routerClasses = @[
                            [TestPushViewRouter class],
@@ -91,7 +94,8 @@ typedef NS_ENUM(NSInteger,ZIKRouterTestType) {
                            [TestClassHierarchyViewRouter class],
                            [TestServiceRouterViewRouter class],
                            ZIKViewRouter.toView(ZIKRoutable(SwiftSampleViewInput)),
-                           [TestURLRouterViewRouter class]
+                           [TestURLRouterViewRouter class],
+                           [ZIKLoginViewRouter class]
                            ];
     self.routerIdentifiers = @[
                                @"testPush",
@@ -109,7 +113,8 @@ typedef NS_ENUM(NSInteger,ZIKRouterTestType) {
                                @"testClassHierarchy",
                                @"testServiceRouter",
                                @"swiftSample",
-                               @"testURLRouter"
+                               @"testURLRouter",
+                               @"loginView"
                                ];
     
     NSAssert(self.cellNames.count == self.routerClasses.count, nil);

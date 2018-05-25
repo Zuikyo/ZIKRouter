@@ -9,7 +9,7 @@
 import UIKit
 import ZIKRouter
 import ZRouter
-import ZIKCompatibleAlert
+import ZIKAlertModule
 
 ///The protocol is routable in both Swift and objc.
 @objc public protocol SwiftSampleViewInput: ZIKViewRoutable {
