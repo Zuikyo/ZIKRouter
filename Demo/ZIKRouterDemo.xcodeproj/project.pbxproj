@@ -323,7 +323,6 @@
 		F8C7F7F42019F95800B48365 /* ZRouter.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = ZRouter.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		F8DFBD5C2019FE210069841B /* DemoRouteAdapter.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = DemoRouteAdapter.h; sourceTree = "<group>"; };
 		F8DFBD5D2019FE210069841B /* DemoRouteAdapter.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = DemoRouteAdapter.m; sourceTree = "<group>"; };
-		F8DFBD5F2019FE530069841B /* ZIKCompatibleAlert.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = ZIKCompatibleAlert.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		F8F6B1C220A8C36000110B03 /* URLRouteHandler.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = URLRouteHandler.h; sourceTree = "<group>"; };
 		F8F6B1C320A8C36000110B03 /* URLRouteHandler.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = URLRouteHandler.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -558,7 +557,6 @@
 		F84239BE1F0CDE78000FEE5F = {
 			isa = PBXGroup;
 			children = (
-				F8DFBD5F2019FE530069841B /* ZIKCompatibleAlert.framework */,
 				F8C7F7F42019F95800B48365 /* ZRouter.framework */,
 				F8C7F7F12019F95100B48365 /* ZIKRouter.framework */,
 				F84239C91F0CDE78000FEE5F /* ZIKRouterDemo */,
