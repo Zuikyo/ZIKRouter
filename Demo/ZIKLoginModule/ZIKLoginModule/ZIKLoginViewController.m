@@ -3,7 +3,7 @@
 //  ZIKLoginModule
 //
 //  Created by zuik on 2018/5/25.
-//  Copyright © 2018年 duoyi. All rights reserved.
+//  Copyright © 2018 duoyi. All rights reserved.
 //
 
 #import "ZIKLoginViewController.h"
@@ -61,11 +61,13 @@
                 
             }];
             [config addOtherButtonTitle:@"Quit" handler:^{
-                [self.router removeRouteWithSuccessHandler:^{
-                    NSLog(@"remove login view success");
-                } errorHandler:^(ZIKRouteAction  _Nonnull routeAction, NSError * _Nonnull error) {
-                    NSLog(@"remove login view failed with action: %@, error:%@", routeAction, error);
-                }];
+                dispatch_async(dispatch_get_main_queue(), ^{
+                    [self.router removeRouteWithSuccessHandler:^{
+                        NSLog(@"remove login view success");
+                    } errorHandler:^(ZIKRouteAction  _Nonnull routeAction, NSError * _Nonnull error) {
+                        NSLog(@"remove login view failed with action: %@, error:%@", routeAction, error);
+                    }];
+                });
             }];
         }];
     }

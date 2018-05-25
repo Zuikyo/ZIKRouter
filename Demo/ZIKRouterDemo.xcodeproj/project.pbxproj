@@ -833,7 +833,6 @@
 				TargetAttributes = {
 					F84239C61F0CDE78000FEE5F = {
 						CreatedOnToolsVersion = 8.3.2;
-						DevelopmentTeam = 8FE9268LAG;
 						LastSwiftMigration = 0900;
 						ProvisioningStyle = Automatic;
 					};
@@ -1172,7 +1171,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
-				DEVELOPMENT_TEAM = 8FE9268LAG;
+				DEVELOPMENT_TEAM = "";
 				INFOPLIST_FILE = ZIKRouterDemo/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
@@ -1194,7 +1193,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
-				DEVELOPMENT_TEAM = 8FE9268LAG;
+				DEVELOPMENT_TEAM = "";
 				INFOPLIST_FILE = ZIKRouterDemo/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";

@@ -1,6 +1,6 @@
 //
 //  ZIKViewRoutePath+CompatibleAlert.h
-//  ZIKCompatibleAlert
+//  ZIKAlertModule
 //
 //  Created by zuik on 2018/4/24.
 //  Copyright © 2018 zuik. All rights reserved.
