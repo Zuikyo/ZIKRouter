@@ -13,7 +13,7 @@
 @implementation DemoRouteAdapter
 
 + (void)registerRoutableDestination {
-    //Let ZIKCompatibleAlertViewRouter support RequiredCompatibleAlertConfigProtocol
+    //Let ZIKCompatibleAlertViewRouter support RequiredCompatibleAlertModuleInput and ZIKLoginModuleRequiredAlertInput
     //If you can get the router, you can just register
     [ZIKCompatibleAlertViewRouter registerModuleProtocol:ZIKRoutable(ZIKLoginModuleRequiredAlertInput)];
     

@@ -208,7 +208,7 @@ bool ZIKRouter_isObjcProtocol(id protocol) {
     static Class ProtocolClass;
     static dispatch_once_t onceToken;
     dispatch_once(&onceToken, ^{
-        ProtocolClass = NSClassFromString(@"Protocol");
+        ProtocolClass = [(id)@protocol(NSObject) class];
     });
     return [protocol isKindOfClass:ProtocolClass];
 }

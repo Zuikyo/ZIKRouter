@@ -90,10 +90,20 @@ static bool _objcClassConformsToSwiftProtocolName(Class objcClass, NSString *swi
     NSMutableSet<NSString *> *conformedProtocolNames = [NSMutableSet set];
         
     _enumerateSymbolName(^bool(const char * _Nonnull name, NSString * _Nonnull (^ _Nonnull demangledAsSwift)(const char * _Nonnull, bool)) {
-        if (strlen(name) <= 2) {
+        size_t str_len = strlen(name);
+        if (str_len <= 3) {
             return YES;
         }
-        if(strncmp("__", name, 2) != 0) {
+        // swift mangled symbol
+        if(strncmp("__T", name, 3) != 0) {
+            return YES;
+        }
+        // suffix for protocol witness table: WP
+        // suffix for generic protocol witness table: WG
+        char *suffix = "WP";
+        size_t suffix_len = strlen(suffix);
+        BOOL isProtocolWitnessTable = (0 == strcmp(name + (str_len - suffix_len), suffix));
+        if (isProtocolWitnessTable == NO) {
             return YES;
         }
         NSString *containedClassName = nil;
@@ -251,6 +261,7 @@ bool _swift_typeIsTargetType(id sourceType, id targetType) {
         if (type != ZIKSwiftMetadataKindExistential) {
             return false;
         } else {
+            //For pure objc class, can't check conformance with swift_conformsToProtocols
             if (object_isClass(sourceType) && isSourceSwiftObjectType == NO &&
                 [[NSStringFromClass(sourceType) demangledAsSwift] containsString:@"."] == NO) {
                 return _objcClassConformsToSwiftProtocolName(sourceType, [targetType description]);
