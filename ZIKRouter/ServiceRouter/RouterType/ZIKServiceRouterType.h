@@ -16,6 +16,8 @@ NS_ASSUME_NONNULL_BEGIN
 
 ///Proxy and wrapper to use ZIKServiceRouter class type or ZIKServiceRoute with compile time checking. These instance methods are actually class methods in ZIKServiceRouter class.
 @interface ZIKServiceRouterType<__covariant Destination, __covariant RouteConfig: ZIKPerformRouteConfiguration *> : ZIKRouterType<Destination, RouteConfig, ZIKRemoveRouteConfiguration *>
+@end
+@interface ZIKServiceRouterType<__covariant Destination, __covariant RouteConfig: ZIKPerformRouteConfiguration *>(Proxy)
 
 ///If this route action doesn't need any arguments, just perform directly.
 - (nullable ZIKServiceRouter<Destination, RouteConfig> *)performRoute;
@@ -29,6 +31,30 @@ NS_ASSUME_NONNULL_BEGIN
 - (nullable ZIKServiceRouter<Destination, RouteConfig> *)performWithConfiguring:(void(NS_NOESCAPE ^)(RouteConfig config))configBuilder;
 ///Set dependencies required by destination and perform route, and you can remove the route with remove configuration later.
 - (nullable ZIKServiceRouter<Destination, RouteConfig> *)performWithConfiguring:(void(NS_NOESCAPE ^)(RouteConfig config))configBuilder removing:(void(NS_NOESCAPE ^ _Nullable)(ZIKRemoveRouteConfiguration *config))removeConfigBuilder;
+
+/**
+ Perform and prepare destination in a type safe way inferred by generic parameters.
+ 
+ @param configBuilder Type safe builder to build configuration, type of `strictConfig`'s properties are inferred by generic parameters.
+ @return The router.
+ */
+- (nullable ZIKServiceRouter<Destination, RouteConfig> *)performWithStrictConfiguring:(void (NS_NOESCAPE ^)(RouteConfig config,
+                                                                            ZIKPerformRouteStrictConfiguration<Destination> *strictConfig
+                                                                            ))configBuilder;
+
+/**
+ Perform and prepare destination in a type safe way inferred by generic parameters, and you can remove the route with remove configuration later.
+ 
+ @param configBuilder Type safe builder to build configuration, type of `strictConfig`'s properties are inferred by generic parameters.
+ @param removeConfigBuilder Type safe builder to build remove configuration, type of `strictConfig`'s properties are inferred by generic parameters.
+ @return The router.
+ */
+- (nullable ZIKServiceRouter<Destination, RouteConfig> *)performWithStrictConfiguring:(void (NS_NOESCAPE ^)(RouteConfig config,
+                                                                                                            ZIKPerformRouteStrictConfiguration<Destination> *strictConfig
+                                                                                                            ))configBuilder
+                                                                       strictRemoving:(void (NS_NOESCAPE ^ _Nullable)(ZIKRemoveRouteConfiguration *config,
+                                                                                                                      ZIKRemoveRouteStrictConfiguration<Destination> *strictConfig
+                                                                                                                      ))removeConfigBuilder;
 
 @end
 

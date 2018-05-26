@@ -88,36 +88,30 @@ NS_ASSUME_NONNULL_BEGIN
 
 /**
  Perform route from source view to destination view, and prepare destination in a type safe way inferred by generic parameters.
- @discussion
- `prepareDest` and `prepareModule`'s type changes with the router's generic parameters.
  
  @param path The route path with source and route type.
- @param configBuilder Type safe builder to build configuration, `prepareDest` is for setting `prepareDestination` block for configuration (it's an escaping block so use weakSelf in it), `prepareModule` is for setting custom route config.
+ @param configBuilder Type safe builder to build configuration, type of `strictConfig`'s properties are inferred by generic parameters.
  @return The view router for this route.
  */
 + (nullable instancetype)performPath:(ZIKViewRoutePath *)path
                    strictConfiguring:(void(NS_NOESCAPE ^)(RouteConfig config,
-                                                          void(^prepareDest)(void(^prepare)(Destination dest)),
-                                                          void(^prepareModule)(void(NS_NOESCAPE ^prepare)(RouteConfig module))
+                                                          ZIKPerformRouteStrictConfiguration<Destination> *strictConfig
                                                           ))configBuilder;
 
 /**
  Perform route from source view to destination view, and prepare destination in a type safe way inferred by generic parameters.
- @discussion
- `prepareDest` and `prepareModule`'s type changes with the router's generic parameters.
  
  @param path The route path with source and route type.
- @param configBuilder Type safe builder to build configuration, `prepareDest` is for setting `prepareDestination` block for configuration (it's an escaping block so use weakSelf in it), `prepareModule` is for setting custom route config.
- @param removeConfigBuilder Type safe builder to build remove configuration, `prepareDest` is for setting `prepareDestination` block for configuration (it's an escaping block so use weakSelf in it).
+ @param configBuilder Type safe builder to build configuration, type of `strictConfig`'s properties are inferred by generic parameters.
+ @param removeConfigBuilder Type safe builder to build remove configuration, type of `strictConfig`'s properties are inferred by generic parameters.
  @return The view router for this route.
  */
 + (nullable instancetype)performPath:(ZIKViewRoutePath *)path
                    strictConfiguring:(void(NS_NOESCAPE ^)(RouteConfig config,
-                                                          void(^prepareDest)(void(^prepare)(Destination dest)),
-                                                          void(^prepareModule)(void(NS_NOESCAPE ^prepare)(RouteConfig module))
+                                                          ZIKPerformRouteStrictConfiguration<Destination> *strictConfig
                                                           ))configBuilder
                       strictRemoving:(void(NS_NOESCAPE ^ _Nullable)(ZIKViewRemoveConfiguration *config,
-                                                                    void(^prepareDest)(void(^prepare)(Destination dest))
+                                                                    ZIKRemoveRouteStrictConfiguration<Destination> *strictConfig
                                                                     ))removeConfigBuilder;
 @end
 
@@ -163,14 +157,13 @@ NS_ASSUME_NONNULL_BEGIN
  
  @param destination The destination to perform route, the destination class should be registered with this router class.
  @param path The route path with source and route type.
- @param configBuilder Type safe builder to build configuration, `prepareDest` is for setting `prepareDestination` block for configuration (it's an escaping block so use weakSelf in it), `prepareModule` is for setting custom route config.
+ @param configBuilder Type safe builder to build configuration, type of `strictConfig`'s properties are inferred by generic parameters.
  @return A router for the destination. If the destination is not registered with this router class, return nil.
  */
 + (nullable instancetype)performOnDestination:(Destination)destination
                                          path:(ZIKViewRoutePath *)path
                             strictConfiguring:(void(NS_NOESCAPE ^)(RouteConfig config,
-                                                                   void(^prepareDest)(void(^prepare)(Destination dest)),
-                                                                   void(^prepareModule)(void(NS_NOESCAPE ^prepare)(RouteConfig module))
+                                                                   ZIKPerformRouteStrictConfiguration<Destination> *strictConfig
                                                                    ))configBuilder;
 
 /**
@@ -178,18 +171,17 @@ NS_ASSUME_NONNULL_BEGIN
  
  @param destination The destination to perform route, the destination class should be registered with this router class.
  @param path The route path with source and route type.
- @param configBuilder Type safe builder to build configuration, `prepareDest` is for setting `prepareDestination` block for configuration (it's an escaping block so use weakSelf in it), `prepareModule` is for setting custom route config.
- @param removeConfigBuilder Type safe builder to build remove configuration, `prepareDest` is for setting `prepareDestination` block for configuration (it's an escaping block so use weakSelf in it).
+ @param configBuilder Type safe builder to build configuration, type of `strictConfig`'s properties are inferred by generic parameters.
+ @param removeConfigBuilder Type safe builder to build remove configuration, type of `strictConfig`'s properties are inferred by generic parameters.
  @return A router for the destination. If the destination is not registered with this router class, return nil.
  */
 + (nullable instancetype)performOnDestination:(Destination)destination
                                          path:(ZIKViewRoutePath *)path
                             strictConfiguring:(void(NS_NOESCAPE ^)(RouteConfig config,
-                                                                   void(^prepareDest)(void(^prepare)(Destination dest)),
-                                                                   void(^prepareModule)(void(NS_NOESCAPE ^prepare)(RouteConfig module))
+                                                                   ZIKPerformRouteStrictConfiguration<Destination> *strictConfig
                                                                    ))configBuilder
                                strictRemoving:(void(NS_NOESCAPE ^ _Nullable)(ZIKViewRemoveConfiguration *config,
-                                                                             void(^prepareDest)(void(^prepare)(Destination dest))
+                                                                             ZIKRemoveRouteStrictConfiguration<Destination> *strictConfig
                                                                              ))removeConfigBuilder;
 @end
 
@@ -221,30 +213,28 @@ NS_ASSUME_NONNULL_BEGIN
  Prepare destination from external in a type safe way inferred by generic parameters, then you can use the router to perform route. You can also use this as a builder to prepare view created from external.
  
  @param destination The destination to prepare. Destination must be registered with this router class.
- @param configBuilder Type safe builder to build configuration, `prepareDest` is for setting `prepareDestination` block for configuration (it's an escaping block so use weakSelf in it), `prepareModule` is for setting custom route config.
+ @param configBuilder Type safe builder to build configuration, type of `strictConfig`'s properties are inferred by generic parameters.
  @return A router for the destination. If the destination is not registered with this router class, return nil.
  */
 + (nullable instancetype)prepareDestination:(Destination)destination
                           strictConfiguring:(void(NS_NOESCAPE ^)(RouteConfig config,
-                                                                 void(^prepareDest)(void(^prepare)(Destination dest)),
-                                                                 void(^prepareModule)(void(NS_NOESCAPE ^prepare)(RouteConfig module))
+                                                                 ZIKPerformRouteStrictConfiguration<Destination> *strictConfig
                                                                  ))configBuilder;
 
 /**
  Prepare destination from external in a type safe way inferred by generic parameters, then you can use the router to perform route. You can also use this as a builder to prepare view created from external.
  
  @param destination The destination to prepare. Destination must be registered with this router class.
- @param configBuilder Type safe builder to build configuration, `prepareDest` is for setting `prepareDestination` block for configuration (it's an escaping block so use weakSelf in it), `prepareModule` is for setting custom route config.
- @param removeConfigBuilder Type safe builder to build remove configuration, `prepareDest` is for setting `prepareDestination` block for configuration (it's an escaping block so use weakSelf in it).
+ @param configBuilder Type safe builder to build configuration, type of `strictConfig`'s properties are inferred by generic parameters.
+ @param removeConfigBuilder Type safe builder to build remove configuration, type of `strictConfig`'s properties are inferred by generic parameters.
  @return A router for the destination. If the destination is not registered with this router class, return nil.
  */
 + (nullable instancetype)prepareDestination:(Destination)destination
                           strictConfiguring:(void(NS_NOESCAPE ^)(RouteConfig config,
-                                                                 void(^prepareDest)(void(^prepare)(Destination dest)),
-                                                                 void(^prepareModule)(void(NS_NOESCAPE ^prepare)(RouteConfig module))
+                                                                 ZIKPerformRouteStrictConfiguration<Destination> *strictConfig
                                                                  ))configBuilder
                              strictRemoving:(void(NS_NOESCAPE ^ _Nullable)(ZIKViewRemoveConfiguration *config,
-                                                                           void(^prepareDest)(void(^prepare)(Destination dest))
+                                                                           ZIKRemoveRouteStrictConfiguration<Destination> *strictConfig
                                                                            ))removeConfigBuilder;
 @end
 
@@ -369,15 +359,13 @@ typedef ZIKViewRouter<id, ZIKViewRouteConfig *> ZIKAnyViewRouter;
                                        removing:(void(NS_NOESCAPE ^ _Nullable)(ZIKViewRemoveConfiguration *config))removeConfigBuilder NS_UNAVAILABLE;
 + (nullable instancetype)performWithConfiguring:(void(NS_NOESCAPE ^)(RouteConfig config))configBuilder NS_UNAVAILABLE;
 + (nullable instancetype)performWithStrictConfiguring:(void(NS_NOESCAPE ^)(RouteConfig config,
-                                                                           void(^prepareDest)(void(^prepare)(Destination dest)),
-                                                                           void(^prepareModule)(void(NS_NOESCAPE ^prepare)(RouteConfig module))
+                                                                           ZIKPerformRouteStrictConfiguration<Destination> *strictConfig
                                                                            ))configBuilder NS_UNAVAILABLE;
 + (nullable instancetype)performWithStrictConfiguring:(void(NS_NOESCAPE ^)(RouteConfig config,
-                                                                           void(^prepareDest)(void(^prepare)(Destination dest)),
-                                                                           void(^prepareModule)(void(NS_NOESCAPE ^prepare)(RouteConfig module))
+                                                                           ZIKPerformRouteStrictConfiguration<Destination> *strictConfig
                                                                            ))configBuilder
                                        strictRemoving:(void(NS_NOESCAPE ^ _Nullable)(ZIKViewRemoveConfiguration *config,
-                                                                                     void(^prepareDest)(void(^prepare)(Destination dest))
+                                                                                     ZIKRemoveRouteStrictConfiguration<Destination> *strictConfig
                                                                                      ))removeConfigBuilder NS_UNAVAILABLE;
 
 @end
@@ -394,16 +382,14 @@ typedef ZIKViewRouter<id, ZIKViewRouteConfig *> ZIKAnyViewRouter;
                               errorHandler:(void(^ _Nullable)(ZIKRouteAction routeAction, NSError *error))performerErrorHandler API_DEPRECATED_WITH_REPLACEMENT("performPath:successHandler:errorHandler:" ,ios(7.0, 7.0));
 + (nullable instancetype)performFromSource:(nullable id<ZIKViewRouteSource>)source
                          strictConfiguring:(void(NS_NOESCAPE ^)(RouteConfig config,
-                                                                void(^prepareDest)(void(^prepare)(Destination dest)),
-                                                                void(^prepareModule)(void(NS_NOESCAPE ^prepare)(RouteConfig module))
+                                                                ZIKPerformRouteStrictConfiguration<Destination> *strictConfig
                                                                 ))configBuilder API_DEPRECATED_WITH_REPLACEMENT("performPath:strictConfiguring:", ios(7.0, 7.0));
 + (nullable instancetype)performFromSource:(nullable id<ZIKViewRouteSource>)source
                          strictConfiguring:(void(NS_NOESCAPE ^)(RouteConfig config,
-                                                                void(^prepareDest)(void(^prepare)(Destination dest)),
-                                                                void(^prepareModule)(void(NS_NOESCAPE ^prepare)(RouteConfig module))
+                                                                ZIKPerformRouteStrictConfiguration<Destination> *strictConfig
                                                                 ))configBuilder
                             strictRemoving:(void(NS_NOESCAPE ^ _Nullable)(ZIKViewRemoveConfiguration *config,
-                                                                          void(^prepareDest)(void(^prepare)(Destination dest))
+                                                                          ZIKRemoveRouteStrictConfiguration<Destination> *strictConfig
                                                                           ))removeConfigBuilder API_DEPRECATED_WITH_REPLACEMENT("performPath:strictConfiguring:strictRemoving:", ios(7.0, 7.0));
 + (nullable instancetype)performOnDestination:(Destination)destination
                                    fromSource:(nullable id<ZIKViewRouteSource>)source
@@ -418,17 +404,15 @@ typedef ZIKViewRouter<id, ZIKViewRouteConfig *> ZIKAnyViewRouter;
 + (nullable instancetype)performOnDestination:(Destination)destination
                                    fromSource:(nullable id<ZIKViewRouteSource>)source
                             strictConfiguring:(void(NS_NOESCAPE ^)(RouteConfig config,
-                                                                   void(^prepareDest)(void(^prepare)(Destination dest)),
-                                                                   void(^prepareModule)(void(NS_NOESCAPE ^prepare)(RouteConfig module))
+                                                                   ZIKPerformRouteStrictConfiguration<Destination> *strictConfig
                                                                    ))configBuilder API_DEPRECATED_WITH_REPLACEMENT("performOnDestination:path:strictConfiguring:", ios(7.0, 7.0));
 + (nullable instancetype)performOnDestination:(Destination)destination
                                    fromSource:(nullable id<ZIKViewRouteSource>)source
                             strictConfiguring:(void(NS_NOESCAPE ^)(RouteConfig config,
-                                                                   void(^prepareDest)(void(^prepare)(Destination dest)),
-                                                                   void(^prepareModule)(void(NS_NOESCAPE ^prepare)(RouteConfig module))
+                                                                   ZIKPerformRouteStrictConfiguration<Destination> *strictConfig
                                                                    ))configBuilder
                                strictRemoving:(void(NS_NOESCAPE ^ _Nullable)(ZIKViewRemoveConfiguration *config,
-                                                                             void(^prepareDest)(void(^prepare)(Destination dest))
+                                                                             ZIKRemoveRouteStrictConfiguration<Destination> *strictConfig
                                                                              ))removeConfigBuilder API_DEPRECATED_WITH_REPLACEMENT("performOnDestination:path:strictConfiguring:strictRemoving:", ios(7.0, 7.0));
 
 @end

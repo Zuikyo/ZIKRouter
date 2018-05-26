@@ -44,20 +44,17 @@ NS_ASSUME_NONNULL_BEGIN
 - (nullable instancetype)initWithConfiguring:(void(NS_NOESCAPE ^)(RouteConfig config))configBuilder
                                     removing:(void(NS_NOESCAPE ^ _Nullable)(RemoveConfig config))removeConfigBuilder;
 /**
- Convenient method to create configuration in a builder block and prepare destination or module in block.
- @discussion
- `prepareDest` and `prepareModule`'s type changes with the router's generic parameters.
+ Convenient method to create configuration in a type safe builder block.
 
- @param configBuilder Type safe builder to build configuration, `prepareDest` is for setting `prepareDestination` block for configuration (it's an escaping block so use weakSelf in it), `prepareModule` is for setting custom route config.
- @param removeConfigBuilder Type safe builder to build remove configuration, `prepareDest` is for setting `prepareDestination` block for configuration (it's an escaping block so use weakSelf in it).
+ @param configBuilder Type safe builder to build configuration, type of `strictConfig`'s properties are inferred by generic parameters.
+ @param removeConfigBuilder Type safe builder to build remove configuration, type of `strictConfig`'s properties are inferred by generic parameters.
  @return The router.
  */
 - (nullable instancetype)initWithStrictConfiguring:(void(NS_NOESCAPE ^)(RouteConfig config,
-                                                                        void(^prepareDest)(void(^prepare)(Destination dest)),
-                                                                        void(^prepareModule)(void(NS_NOESCAPE ^prepare)(RouteConfig module))
+                                                                        ZIKPerformRouteStrictConfiguration<Destination> *strictConfig
                                                                         ))configBuilder
                                     strictRemoving:(void(NS_NOESCAPE ^ _Nullable)(RemoveConfig config,
-                                                                                  void(^prepareDest)(void(^prepare)(Destination dest))
+                                                                                  ZIKRemoveRouteStrictConfiguration<Destination> *strictConfig
                                                                                   ))removeConfigBuilder;
 - (instancetype)init NS_UNAVAILABLE;
 + (instancetype)new NS_UNAVAILABLE;
@@ -90,30 +87,28 @@ NS_ASSUME_NONNULL_BEGIN
                                        removing:(void(NS_NOESCAPE ^ _Nullable)(RemoveConfig config))removeConfigBuilder;
 
 /**
- Convenient method to prepare destination in a type safe way inferred by generic parameters and perform route.
-
- @param configBuilder Type safe builder to build configuration, `prepareDest` is for setting `prepareDestination` block for configuration (it's an escaping block so use weakSelf in it), `prepareModule` is for setting custom route config.
+ Perform and prepare destination in a type safe way inferred by generic parameters.
+ 
+ @param configBuilder Type safe builder to build configuration, type of `strictConfig`'s properties are inferred by generic parameters.
  @return The router.
  */
-+ (nullable instancetype)performWithStrictConfiguring:(void(NS_NOESCAPE ^)(RouteConfig config,
-                                                                           void(^prepareDest)(void(^prepare)(Destination dest)),
-                                                                           void(^prepareModule)(void(NS_NOESCAPE ^prepare)(RouteConfig module))
-                                                                           ))configBuilder;
++ (nullable instancetype)performWithStrictConfiguring:(void (NS_NOESCAPE ^)(RouteConfig config,
+                                                                            ZIKPerformRouteStrictConfiguration<Destination> *strictConfig
+                                                                            ))configBuilder;
 
 /**
- Convenient method to prepare destination in a type safe way inferred by generic parameters and perform route, and you can remove the route with remove configuration later.
-
- @param configBuilder Type safe builder to build configuration, `prepareDest` is for setting `prepareDestination` block for configuration (it's an escaping block so use weakSelf in it), `prepareModule` is for setting custom route config.
- @param removeConfigBuilder Type safe builder to build remove configuration, `prepareDest` is for setting `prepareDestination` block for configuration (it's an escaping block so use weakSelf in it).
+ Perform and prepare destination in a type safe way inferred by generic parameters, and you can remove the route with remove configuration later.
+ 
+ @param configBuilder Type safe builder to build configuration, type of `strictConfig`'s properties are inferred by generic parameters.
+ @param removeConfigBuilder Type safe builder to build remove configuration, type of `strictConfig`'s properties are inferred by generic parameters.
  @return The router.
  */
-+ (nullable instancetype)performWithStrictConfiguring:(void(NS_NOESCAPE ^)(RouteConfig config,
-                                                                           void(^prepareDest)(void(^prepare)(Destination dest)),
-                                                                           void(^prepareModule)(void(NS_NOESCAPE ^prepare)(RouteConfig module))
-                                                                           ))configBuilder
-                                       strictRemoving:(void(NS_NOESCAPE ^ _Nullable)(RemoveConfig config,
-                                                                                     void(^prepareDest)(void(^prepare)(Destination dest))
-                                                                                     ))removeConfigBuilder;
++ (nullable instancetype)performWithStrictConfiguring:(void (NS_NOESCAPE ^)(RouteConfig config,
+                                                                            ZIKPerformRouteStrictConfiguration<Destination> *strictConfig
+                                                                            ))configBuilder
+                                       strictRemoving:(void (NS_NOESCAPE ^ _Nullable)(RemoveConfig config,
+                                                                                      ZIKRemoveRouteStrictConfiguration<Destination> *strictConfig
+                                                                                      ))removeConfigBuilder;
 
 #pragma mark Remove
 
@@ -133,7 +128,7 @@ NS_ASSUME_NONNULL_BEGIN
 - (void)removeRouteWithConfiguring:(void(NS_NOESCAPE ^)(RemoveConfig config))removeConfigBuilder;
 ///Remove route and prepare before removing.
 - (void)removeRouteWithStrictConfiguring:(void(NS_NOESCAPE ^)(RemoveConfig config,
-                                                              void(^prepareDest)(void(^prepare)(Destination dest))
+                                                              ZIKRemoveRouteStrictConfiguration<Destination> *strictConfig
                                                               ))removeConfigBuilder;
 
 #pragma mark Factory
@@ -156,12 +151,11 @@ NS_ASSUME_NONNULL_BEGIN
 /**
  Synchronously get destination, and prepare the destination in a type safe way inferred by generic parameters.
 
- @param configBuilder Type safe builder to build configuration, `prepareDest` is for setting `prepareDestination` block for configuration (it's an escaping block so use weakSelf in it), `prepareModule` is for setting custom route config.
+ @param configBuilder Type safe builder to build configuration, type of `strictConfig`'s properties are inferred by generic parameters.
  @return The prepared destination.
  */
 + (nullable Destination)makeDestinationWithStrictConfiguring:(void(NS_NOESCAPE ^ _Nullable)(RouteConfig config,
-                                                                                            void(^prepareDest)(void(^prepare)(Destination dest)),
-                                                                                            void(^prepareModule)(void(NS_NOESCAPE ^prepare)(RouteConfig module))
+                                                                                            ZIKPerformRouteStrictConfiguration<Destination> *strictConfig
                                                                                             ))configBuilder;
 
 #pragma mark Debug

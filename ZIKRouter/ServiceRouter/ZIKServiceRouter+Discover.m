@@ -80,15 +80,15 @@ ZIKAnyServiceRouterType *_Nullable _ZIKServiceRouterToIdentifier(NSString *ident
 
 @implementation ZIKServiceRouter (Discover)
 
-+ (ZIKDestinationServiceRouterType<id<ZIKServiceRoutable>, ZIKPerformRouteConfiguration *> *(^)(Protocol *))toService {
++ (ZIKServiceRouterType<id<ZIKServiceRoutable>, ZIKPerformRouteConfiguration *> *(^)(Protocol *))toService {
     return ^(Protocol *serviceProtocol) {
-        return (ZIKDestinationServiceRouterType *)_ZIKServiceRouterToService(serviceProtocol);
+        return _ZIKServiceRouterToService(serviceProtocol);
     };
 }
 
-+ (ZIKModuleServiceRouterType<id, id<ZIKServiceModuleRoutable>, ZIKPerformRouteConfiguration *> *(^)(Protocol *))toModule {
++ (ZIKServiceRouterType<id, ZIKPerformRouteConfiguration *> *(^)(Protocol *))toModule {
     return ^(Protocol *configProtocol) {
-        return (ZIKModuleServiceRouterType *)_ZIKServiceRouterToModule(configProtocol);
+        return _ZIKServiceRouterToModule(configProtocol);
     };
 }
 
@@ -99,14 +99,3 @@ ZIKAnyServiceRouterType *_Nullable _ZIKServiceRouterToIdentifier(NSString *ident
 }
 
 @end
-
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wincomplete-implementation"
-
-@implementation ZIKDestinationServiceRouterType
-@end
-
-@implementation ZIKModuleServiceRouterType
-@end
-
-#pragma clang diagnostic pop

@@ -10,10 +10,11 @@
 //
 
 #import <Foundation/Foundation.h>
+#import "ZIKRouteConfiguration.h"
 
 NS_ASSUME_NONNULL_BEGIN
 
-@class ZIKPerformRouteConfiguration, ZIKRemoveRouteConfiguration, ZIKRoute;
+@class ZIKRoute;
 
 ///Proxy to use ZIKRouter class type or ZIKRoute with compile time checking. These instance methods are actually class methods in ZIKRouter class.
 @interface ZIKRouterType<__covariant Destination, __covariant RouteConfig: ZIKPerformRouteConfiguration *, __covariant RemoveConfig: ZIKRemoveRouteConfiguration *> : NSObject
@@ -47,12 +48,11 @@ NS_ASSUME_NONNULL_BEGIN
 /**
  Synchronously get destination, and prepare the destination in a type safe way inferred by generic parameters.
  
- @param configBuilder Type safe builder to build configuration, `prepareDest` is for setting `prepareDestination` block for configuration (it's an escaping block so use weakSelf in it), `prepareModule` is for setting custom route config.
+ @param configBuilder Type safe builder to build configuration, type of `strictConfig`'s properties are inferred by generic parameters.
  @return The prepared destination.
  */
 - (nullable Destination)makeDestinationWithStrictConfiguring:(void(NS_NOESCAPE ^ _Nullable)(RouteConfig config,
-                                                                                            void(^prepareDest)(void(^prepare)(Destination dest)),
-                                                                                            void(^prepareModule)(void(NS_NOESCAPE ^prepare)(RouteConfig module))
+                                                                                            ZIKPerformRouteStrictConfiguration<Destination> *strictConfig
                                                                                             ))configBuilder;
 
 #pragma mark Internal

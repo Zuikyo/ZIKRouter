@@ -25,4 +25,12 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic, strong, nullable) ZIKRemoveRouteConfiguration *injected;
 @end
 
+@interface ZIKPerformRouteStrictConfiguration()
+@property (nonatomic, strong) ZIKPerformRouteConfiguration *configuration;
+@end
+
+@interface ZIKRemoveRouteStrictConfiguration()
+@property (nonatomic, strong) ZIKRemoveRouteConfiguration *configuration;
+@end
+
 NS_ASSUME_NONNULL_END

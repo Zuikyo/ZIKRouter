@@ -69,15 +69,13 @@ NS_ASSUME_NONNULL_BEGIN
                                              removing:(void(NS_NOESCAPE ^ _Nullable)( __kindof ZIKRouteConfiguration *config))removeConfigBuilder NS_UNAVAILABLE;
 + (nullable __kindof ZIKServiceRouter *)performWithConfiguring:(void(NS_NOESCAPE ^)(__kindof ZIKPerformRouteConfiguration *config))configBuilder NS_UNAVAILABLE;
 + (nullable instancetype)performWithStrictConfiguring:(void(NS_NOESCAPE ^)(ZIKPerformRouteConfiguration *config,
-                                                                           void(^prepareDest)(void(^prepare)(id dest)),
-                                                                           void(^prepareModule)(void(NS_NOESCAPE ^prepare)(ZIKPerformRouteConfiguration *module))
+                                                                           ZIKPerformRouteStrictConfiguration<id> *strictConfig
                                                                            ))configBuilder NS_UNAVAILABLE;
 + (nullable instancetype)performWithStrictConfiguring:(void(NS_NOESCAPE ^)(ZIKPerformRouteConfiguration *config,
-                                                                           void(^prepareDest)(void(^prepare)(id dest)),
-                                                                           void(^prepareModule)(void(NS_NOESCAPE ^prepare)(ZIKPerformRouteConfiguration *module))
+                                                                           ZIKPerformRouteStrictConfiguration<id> *strictConfig
                                                                            ))configBuilder
                                        strictRemoving:(void(NS_NOESCAPE ^ _Nullable)(ZIKPerformRouteConfiguration *config,
-                                                                                     void(^prepareDest)(void(^prepare)(id dest))
+                                                                                     ZIKRemoveRouteStrictConfiguration<id> *strictConfig
                                                                                      ))removeConfigBuilder NS_UNAVAILABLE;
 + (BOOL)canMakeDestinationSynchronously NS_UNAVAILABLE;
 + (BOOL)canMakeDestination NS_UNAVAILABLE;

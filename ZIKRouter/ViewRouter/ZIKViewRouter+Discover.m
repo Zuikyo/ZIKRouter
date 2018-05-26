@@ -79,15 +79,15 @@ ZIKAnyViewRouterType *_Nullable _ZIKViewRouterToIdentifier(NSString *identifier)
 
 @implementation ZIKViewRouter (Discover)
 
-+ (ZIKDestinationViewRouterType<id<ZIKViewRoutable>, ZIKViewRouteConfiguration *> *(^)(Protocol *))toView {
++ (ZIKViewRouterType<id<ZIKViewRoutable>, ZIKViewRouteConfiguration *> *(^)(Protocol *))toView {
     return ^(Protocol *viewProtocol) {
-        return (ZIKDestinationViewRouterType *)_ZIKViewRouterToView(viewProtocol);
+        return _ZIKViewRouterToView(viewProtocol);
     };
 }
 
-+ (ZIKModuleViewRouterType<id, id<ZIKViewModuleRoutable>, ZIKViewRouteConfiguration *> *(^)(Protocol *))toModule {
++ (ZIKViewRouterType<id, ZIKViewRouteConfiguration *> *(^)(Protocol *))toModule {
     return ^(Protocol *configProtocol) {
-        return (ZIKModuleViewRouterType *)_ZIKViewRouterToModule(configProtocol);
+        return _ZIKViewRouterToModule(configProtocol);
     };
 }
 
@@ -98,15 +98,3 @@ ZIKAnyViewRouterType *_Nullable _ZIKViewRouterToIdentifier(NSString *identifier)
 }
 
 @end
-
-
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wincomplete-implementation"
-
-@implementation ZIKDestinationViewRouterType
-@end
-
-@implementation ZIKModuleViewRouterType
-@end
-
-#pragma clang diagnostic pop

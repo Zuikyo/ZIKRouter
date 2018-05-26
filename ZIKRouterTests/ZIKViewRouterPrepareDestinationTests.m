@@ -115,34 +115,31 @@
         AViewController *destination = [[AViewController alloc] init];
         self.router = [ZIKRouterToView(AViewInput)
                        prepareDestination:destination
-                       strictConfiguring:^(ZIKViewRouteConfiguration * _Nonnull config,
-                                           void (^ _Nonnull prepareDest)(void (^ _Nonnull)(id<AViewInput> _Nonnull)),
-                                           void (^ _Nonnull prepareModule)(void (^ _Nonnull)(ZIKViewRouteConfiguration * _Nonnull))) {
-                           prepareDest(^(id<AViewInput> destination){
+                       strictConfiguring:^(ZIKViewRouteConfiguration * _Nonnull config, ZIKPerformRouteStrictConfiguration<id<AViewInput>> *strictConfig) {
+                           strictConfig.prepareDestination = ^(id<AViewInput> destination) {
                                destination.title = @"test title";
-                           });
-                           prepareModule(^(ZIKViewRouteConfiguration *config) {
-                               config.successHandler = ^(id  _Nonnull destination) {
-                                   [successHandlerExpectation fulfill];
-                               };
-                               config.performerSuccessHandler = ^(id  _Nonnull destination) {
-                                   [performerSuccessHandlerExpectation fulfill];
-                               };
-                               config.errorHandler = ^(ZIKRouteAction  _Nonnull routeAction, NSError * _Nonnull error) {
-                                   XCTAssert(NO, @"errorHandler should not be called");
-                               };
-                               config.performerErrorHandler = ^(ZIKRouteAction  _Nonnull routeAction, NSError * _Nonnull error) {
-                                   XCTAssert(NO, @"performerErrorHandler should not be called");
-                               };
-                               config.completionHandler = ^(BOOL success, id  _Nullable destination, ZIKRouteAction  _Nonnull routeAction, NSError * _Nullable error) {
-                                   XCTAssertTrue(success);
-                                   [completionHandlerExpectation fulfill];
-                                   [self handle:^{
-                                       XCTAssertNotNil(self.router);
-                                       [self leaveTest];
-                                   }];
-                               };
-                           });
+                           };
+                           
+                           strictConfig.successHandler = ^(id<AViewInput> destination) {
+                               [successHandlerExpectation fulfill];
+                           };
+                           strictConfig.performerSuccessHandler = ^(id<AViewInput> destination) {
+                               [performerSuccessHandlerExpectation fulfill];
+                           };
+                           config.errorHandler = ^(ZIKRouteAction  _Nonnull routeAction, NSError * _Nonnull error) {
+                               XCTAssert(NO, @"errorHandler should not be called");
+                           };
+                           config.performerErrorHandler = ^(ZIKRouteAction  _Nonnull routeAction, NSError * _Nonnull error) {
+                               XCTAssert(NO, @"performerErrorHandler should not be called");
+                           };
+                           strictConfig.completionHandler = ^(BOOL success, id<AViewInput> _Nullable destination, ZIKRouteAction  _Nonnull routeAction, NSError * _Nullable error) {
+                               XCTAssertTrue(success);
+                               [completionHandlerExpectation fulfill];
+                               [self handle:^{
+                                   XCTAssertNotNil(self.router);
+                                   [self leaveTest];
+                               }];
+                           };
                        }];
         XCTAssert([destination.title isEqualToString:@"test title"]);
     }
@@ -162,35 +159,31 @@
         id invalidDestination = [[UIViewController alloc] init];
         self.router = [ZIKRouterToView(AViewInput)
                        prepareDestination:invalidDestination
-                       strictConfiguring:^(ZIKViewRouteConfiguration * _Nonnull config,
-                                           void (^ _Nonnull prepareDest)(void (^ _Nonnull)(id<AViewInput> _Nonnull)),
-                                           void (^ _Nonnull prepareModule)(void (^ _Nonnull)(ZIKViewRouteConfiguration * _Nonnull))) {
-                           prepareDest(^(id<AViewInput> destination){
+                       strictConfiguring:^(ZIKViewRouteConfiguration * _Nonnull config, ZIKPerformRouteStrictConfiguration<id<AViewInput>> *strictConfig) {
+                           strictConfig.prepareDestination = ^(id<AViewInput> destination) {
                                destination.title = @"test title";
-                           });
-                           prepareModule(^(ZIKViewRouteConfiguration *config) {
-                               config.successHandler = ^(id  _Nonnull destination) {
-                                   XCTAssert(NO, @"successHandler should not be called");
-                               };
-                               config.performerSuccessHandler = ^(id  _Nonnull destination) {
-                                   XCTAssert(NO, @"performerErrorHandler should not be called");
-                               };
-                               config.errorHandler = ^(ZIKRouteAction  _Nonnull routeAction, NSError * _Nonnull error) {
-                                   [errorHandlerExpectation fulfill];
-                               };
-                               config.performerErrorHandler = ^(ZIKRouteAction  _Nonnull routeAction, NSError * _Nonnull error) {
-                                   [performerErrorHandlerExpectation fulfill];
-                               };
-                               config.completionHandler = ^(BOOL success, id  _Nullable destination, ZIKRouteAction  _Nonnull routeAction, NSError * _Nullable error) {
-                                   XCTAssertFalse(success);
-                                   XCTAssertNotNil(error);
-                                   [completionHandlerExpectation fulfill];
-                                   [self handle:^{
-                                       XCTAssertNil(self.router);
-                                       [self leaveTest];
-                                   }];
-                               };
-                           });
+                           };
+                           strictConfig.successHandler = ^(id<AViewInput> destination) {
+                               XCTAssert(NO, @"successHandler should not be called");
+                           };
+                           strictConfig.performerSuccessHandler = ^(id<AViewInput> destination) {
+                               XCTAssert(NO, @"performerErrorHandler should not be called");
+                           };
+                           config.errorHandler = ^(ZIKRouteAction  _Nonnull routeAction, NSError * _Nonnull error) {
+                               [errorHandlerExpectation fulfill];
+                           };
+                           config.performerErrorHandler = ^(ZIKRouteAction  _Nonnull routeAction, NSError * _Nonnull error) {
+                               [performerErrorHandlerExpectation fulfill];
+                           };
+                           strictConfig.completionHandler = ^(BOOL success, id<AViewInput> _Nullable destination, ZIKRouteAction  _Nonnull routeAction, NSError * _Nullable error) {
+                               XCTAssertFalse(success);
+                               XCTAssertNotNil(error);
+                               [completionHandlerExpectation fulfill];
+                               [self handle:^{
+                                   XCTAssertNil(self.router);
+                                   [self leaveTest];
+                               }];
+                           };
                        }];
     }
     

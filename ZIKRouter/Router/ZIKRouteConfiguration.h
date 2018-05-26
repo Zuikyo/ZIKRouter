@@ -147,4 +147,52 @@ typedef void(^ZIKRemoveRouteCompletion)(BOOL success, ZIKRouteAction routeAction
 
 @end
 
+///Setting ZIKPerformRouteConfiguration in a type safe way.
+@interface ZIKPerformRouteStrictConfiguration<Destination> : NSObject
+
+- (instancetype)initWithConfiguration:(ZIKPerformRouteConfiguration *)configuration;
+
+/**
+ Prepare for performRoute, and config other dependency for destination here. Subclass can offer more specific info.
+ 
+ @note
+ Use weakSelf in prepareDestination to avoid retain cycle.
+ */
+@property (nonatomic, copy, nullable) void(^prepareDestination)(Destination destination);
+
+/**
+ Success handler for router's provider. Each time the router was performed, success handler will be called when the operation succeed.
+ @note
+ Use weakSelf in successHandler to avoid retain cycle.
+ */
+@property (nonatomic, copy, nullable) void(^successHandler)(Destination destination);
+
+///Success handler for current performing, will reset to nil after performed.
+@property (nonatomic, copy, nullable) void(^performerSuccessHandler)(Destination destination);
+
+/**
+ Completion handler for performRoute.
+ 
+ @note
+ Use weakSelf in completion to avoid retain cycle.
+ */
+@property (nonatomic, copy, nullable) void(^completionHandler)(BOOL success, Destination _Nullable destination, ZIKRouteAction routeAction, NSError *_Nullable error);
+
+@end
+
+///Setting ZIKRemoveRouteConfiguration in a type safe way.
+@interface ZIKRemoveRouteStrictConfiguration<Destination> : NSObject
+
+- (instancetype)initWithConfiguration:(ZIKRemoveRouteConfiguration *)configuration;
+
+/**
+ Prepare for removeRoute. Subclass can offer more specific info.
+ 
+ @note
+ Use weakSelf in prepareDestination to avoid retain cycle.
+ */
+@property (nonatomic, copy, nullable) void(^prepareDestination)(Destination destination);
+
+@end
+
 NS_ASSUME_NONNULL_END

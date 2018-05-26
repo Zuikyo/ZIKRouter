@@ -141,3 +141,64 @@
 }
 
 @end
+
+@implementation ZIKPerformRouteStrictConfiguration
+
+- (instancetype)initWithConfiguration:(ZIKPerformRouteConfiguration *)configuration {
+    if (self= [super init]) {
+        _configuration = configuration;
+    }
+    return self;
+}
+
+- (void(^)(id))prepareDestination {
+    return _configuration.prepareDestination;
+}
+
+- (void)setPrepareDestination:(void (^)(id _Nonnull))prepareDestination {
+    _configuration.prepareDestination = prepareDestination;
+}
+
+- (void(^)(id))successHandler {
+    return _configuration.successHandler;
+}
+
+- (void)setSuccessHandler:(void (^)(id _Nonnull))successHandler {
+    _configuration.successHandler = successHandler;
+}
+
+- (void(^)(id))performerSuccessHandler {
+    return _configuration.performerSuccessHandler;
+}
+
+- (void)setPerformerSuccessHandler:(void (^)(id _Nonnull))performerSuccessHandler {
+    _configuration.performerSuccessHandler = performerSuccessHandler;
+}
+
+- (void(^)(BOOL success, id _Nullable, ZIKRouteAction, NSError *_Nullable))completionHandler {
+    return _configuration.completionHandler;
+}
+
+- (void)setCompletionHandler:(void (^)(BOOL, id _Nullable, ZIKRouteAction _Nonnull, NSError * _Nullable))completionHandler {
+    _configuration.completionHandler = completionHandler;
+}
+
+@end
+
+@implementation ZIKRemoveRouteStrictConfiguration
+
+- (instancetype)initWithConfiguration:(ZIKRemoveRouteConfiguration *)configuration {
+    if (self= [super init]) {
+        _configuration = configuration;
+    }
+    return self;
+}
+
+- (void(^)(id))prepareDestination {
+    return _configuration.prepareDestination;
+}
+
+- (void)setPrepareDestination:(void (^)(id _Nonnull))prepareDestination {
+    _configuration.prepareDestination = prepareDestination;
+}
+@end
