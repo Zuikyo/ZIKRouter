@@ -142,63 +142,117 @@
 
 @end
 
-@implementation ZIKPerformRouteStrictConfiguration
-
+@implementation ZIKRouteStrictConfiguration
 - (instancetype)initWithConfiguration:(ZIKPerformRouteConfiguration *)configuration {
-    if (self= [super init]) {
+    if (self = [super init]) {
         _configuration = configuration;
     }
     return self;
 }
 
+- (BOOL)respondsToSelector:(SEL)aSelector {
+    if ([super respondsToSelector:aSelector]) {
+        return YES;
+    }
+    return [_configuration respondsToSelector:aSelector];
+}
+
+- (id)forwardingTargetForSelector:(SEL)aSelector {
+    return _configuration;
+}
+
+- (ZIKRouteErrorHandler)errorHandler {
+    return self.configuration.errorHandler;
+}
+
+- (void)setErrorHandler:(ZIKRouteErrorHandler)errorHandler {
+    self.configuration.errorHandler = errorHandler;
+}
+
+- (ZIKRouteErrorHandler)performerErrorHandler {
+    return self.configuration.errorHandler;
+}
+
+- (void)setPerformerErrorHandler:(ZIKRouteErrorHandler)performerErrorHandler {
+    self.configuration.performerErrorHandler = performerErrorHandler;
+}
+
+- (ZIKRouteStateNotifier)stateNotifier {
+    return self.configuration.stateNotifier;
+}
+
+- (void)setStateNotifier:(ZIKRouteStateNotifier)stateNotifier {
+    self.configuration.stateNotifier = stateNotifier;
+}
+
+@end
+
+@implementation ZIKPerformRouteStrictConfiguration
+@dynamic configuration;
+- (instancetype)initWithConfiguration:(ZIKPerformRouteConfiguration *)configuration {
+    if (self = [super initWithConfiguration:configuration]) {
+        
+    }
+    return self;
+}
 - (void(^)(id))prepareDestination {
-    return _configuration.prepareDestination;
+    return self.configuration.prepareDestination;
 }
-
 - (void)setPrepareDestination:(void (^)(id _Nonnull))prepareDestination {
-    _configuration.prepareDestination = prepareDestination;
+    self.configuration.prepareDestination = prepareDestination;
 }
-
 - (void(^)(id))successHandler {
-    return _configuration.successHandler;
+    return self.configuration.successHandler;
 }
-
 - (void)setSuccessHandler:(void (^)(id _Nonnull))successHandler {
-    _configuration.successHandler = successHandler;
+    self.configuration.successHandler = successHandler;
 }
-
 - (void(^)(id))performerSuccessHandler {
-    return _configuration.performerSuccessHandler;
+    return self.configuration.performerSuccessHandler;
 }
-
 - (void)setPerformerSuccessHandler:(void (^)(id _Nonnull))performerSuccessHandler {
-    _configuration.performerSuccessHandler = performerSuccessHandler;
+    self.configuration.performerSuccessHandler = performerSuccessHandler;
 }
-
 - (void(^)(BOOL success, id _Nullable, ZIKRouteAction, NSError *_Nullable))completionHandler {
-    return _configuration.completionHandler;
+    return self.configuration.completionHandler;
 }
-
 - (void)setCompletionHandler:(void (^)(BOOL, id _Nullable, ZIKRouteAction _Nonnull, NSError * _Nullable))completionHandler {
-    _configuration.completionHandler = completionHandler;
+    self.configuration.completionHandler = completionHandler;
 }
 
 @end
 
 @implementation ZIKRemoveRouteStrictConfiguration
-
+@dynamic configuration;
 - (instancetype)initWithConfiguration:(ZIKRemoveRouteConfiguration *)configuration {
-    if (self= [super init]) {
-        _configuration = configuration;
+    if (self = [super initWithConfiguration:configuration]) {
+        
     }
     return self;
 }
 
 - (void(^)(id))prepareDestination {
-    return _configuration.prepareDestination;
+    return self.configuration.prepareDestination;
 }
-
 - (void)setPrepareDestination:(void (^)(id _Nonnull))prepareDestination {
-    _configuration.prepareDestination = prepareDestination;
+    self.configuration.prepareDestination = prepareDestination;
+}
+- (void (^)(void))successHandler {
+    return self.configuration.successHandler;
+}
+- (void)setSuccessHandler:(void (^)(void))successHandler {
+    self.configuration.successHandler = successHandler;
+}
+- (ZIKRemoveRouteCompletion)completionHandler {
+    return self.configuration.completionHandler;
+}
+- (void)setCompletionHandler:(ZIKRemoveRouteCompletion)completionHandler {
+    self.configuration.completionHandler = completionHandler;
+}
+- (void (^)(void))performerSuccessHandler {
+    return self.configuration.performerSuccessHandler;
+}
+- (void)setPerformerSuccessHandler:(void (^)(void))performerSuccessHandler {
+    self.configuration.performerSuccessHandler = performerSuccessHandler;
 }
 @end

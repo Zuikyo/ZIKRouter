@@ -46,12 +46,12 @@ class SwiftSampleViewController: UIViewController, PureSwiftSampleViewInput, Swi
         infoRouter = Router.perform(
             to: RoutableView<ZIKInfoViewProtocol>(),
             path: .presentModally(from: self),
-            configuring: { (config, prepareDestination, _) in
-                prepareDestination({ [weak self] destination in
+            configuring: { (config, _) in
+                config.prepareDestination = { [weak self] destination in
                     destination.delegate = self
                     destination.name = "zuik"
                     destination.age = 18
-                })
+                }
         })
     }
     
@@ -71,7 +71,7 @@ class SwiftSampleViewController: UIViewController, PureSwiftSampleViewInput, Swi
         alertRouter = Router.perform(
             to: RoutableViewModule<RequiredCompatibleAlertModuleInput>(),
             path: .extensible(path: .presentCompatibleAlertFrom(self)),
-            configuring: { (config, _, prepareModule) in
+            configuring: { (config, prepareModule) in
                 config.successHandler = { d in
                     print("show custom alert complete")
                 }
@@ -103,7 +103,7 @@ class SwiftSampleViewController: UIViewController, PureSwiftSampleViewInput, Swi
         
         switchableRouter = Router.to(switchableView)?
             .perform(path: .push(from: self),
-                     configuring: { config,_,_  in
+                     configuring: { config,_  in
                         config.prepareDestination = { [weak self] dest in
                             switch dest {
                             case let dest as UIViewController & ZIKInfoViewProtocol:
@@ -122,19 +122,19 @@ class SwiftSampleViewController: UIViewController, PureSwiftSampleViewInput, Swi
     var adapterRouter: DestinationViewRouter<UIViewController & ZIKInfoViewProtocol>?
     
     @IBAction func testAdapterWithComposedType(_ sender: UIButton) {
-        adapterRouter = Router.perform(to: RoutableView<RequiredInfoViewInput>(), path: .presentModally(from: self), configuring: { (config, prepareDestination, _) in
-            prepareDestination({ [weak self] destination in
+        adapterRouter = Router.perform(to: RoutableView<RequiredInfoViewInput>(), path: .presentModally(from: self), configuring: { (config, _) in
+            config.prepareDestination = { [weak self] destination in
                 destination.delegate = self
                 destination.name = "zuik"
                 destination.age = 18
-            })
+            }
         })
     }
     
     @IBAction func testInjectedRouter(_ sender: Any) {
         injectedAlertRouter?.perform(
             path: .custom(from: self),
-            configuring: { (config, _, prepareModule) in
+            configuring: { (config, prepareModule) in
                 prepareModule({ module in
                     module.title = "Compatible Alert"
                     module.message = "Test custom route for alert with UIAlertView and UIAlertController"
@@ -169,11 +169,11 @@ class SwiftSampleViewController: UIViewController, PureSwiftSampleViewInput, Swi
         guard let destination = viewControllerToCommit as? ZIKInfoViewProtocol else {
             return
         }
-        infoRouter = Router.to(RoutableView<ZIKInfoViewProtocol>())?.perform(onDestination: destination, path: .presentModally(from: self), configuring: { (config, prepareDest, _) in
-            prepareDest({ [weak self] d in
+        infoRouter = Router.to(RoutableView<ZIKInfoViewProtocol>())?.perform(onDestination: destination, path: .presentModally(from: self), configuring: { (config, _) in
+            config.prepareDestination = { [weak self] d in
                 d.delegate = self
                 d.name = "test"
-            })
+            }
         })
     }
     

@@ -17,6 +17,10 @@ NS_ASSUME_NONNULL_BEGIN
     @protected ZIKRemoveRouteConfiguration *_removeConfiguration;
 }
 
++ (ZIKPerformRouteStrictConfiguration *)defaultRouteStrictConfigurationFor:(ZIKPerformRouteConfiguration *)configuration;
+
++ (ZIKRemoveRouteStrictConfiguration *)defaultRemoveStrictConfigurationFor:(ZIKRemoveRouteConfiguration *)configuration;
+
 #pragma mark Internal Methods
 
 ///Change state.

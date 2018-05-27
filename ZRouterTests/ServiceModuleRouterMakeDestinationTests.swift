@@ -66,7 +66,7 @@ class ServiceModuleRouterMakeDestinationTests: XCTestCase {
         let performerExpectation = self.expectation(description: "performerSuccessHandler")
         let completionHandlerExpectation = self.expectation(description: "completionHandler")
         XCTAssertTrue(Router.to(RoutableServiceModule<AServiceModuleInput>())!.canMakeDestination)
-        let destination = Router.makeDestination(to: RoutableServiceModule<AServiceModuleInput>(), configuring: { (config, prepareDestination, prepareModule) in
+        let destination = Router.makeDestination(to: RoutableServiceModule<AServiceModuleInput>(), configuring: { (config, prepareModule) in
             prepareModule({ module in
                 module.title = "test title"
                 module.makeDestinationCompletion({ (destination) in
@@ -100,7 +100,7 @@ class ServiceModuleRouterMakeDestinationTests: XCTestCase {
         let performerExpectation = self.expectation(description: "performerSuccessHandler")
         let completionHandlerExpectation = self.expectation(description: "completionHandler")
         XCTAssertTrue(Router.to(RoutableServiceModule<AServiceModuleInputAdapter>())!.canMakeDestination)
-        let destination = Router.makeDestination(to: RoutableServiceModule<AServiceModuleInput>(), configuring: { (config, prepareDestination, prepareModule) in
+        let destination = Router.makeDestination(to: RoutableServiceModule<AServiceModuleInput>(), configuring: { (config, prepareModule) in
             prepareModule({ module in
                 module.title = "test title"
                 module.makeDestinationCompletion({ (destination) in
@@ -134,7 +134,7 @@ class ServiceModuleRouterMakeDestinationTests: XCTestCase {
         let performerExpectation = self.expectation(description: "performerSuccessHandler")
         let completionHandlerExpectation = self.expectation(description: "completionHandler")
         XCTAssertTrue(Router.to(RoutableServiceModule<AServiceModuleInputObjcAdapter>())!.canMakeDestination)
-        let destination = Router.makeDestination(to: RoutableServiceModule<AServiceModuleInput>(), configuring: { (config, prepareDestination, prepareModule) in
+        let destination = Router.makeDestination(to: RoutableServiceModule<AServiceModuleInput>(), configuring: { (config, prepareModule) in
             prepareModule({ module in
                 module.title = "test title"
                 module.makeDestinationCompletion({ (destination) in

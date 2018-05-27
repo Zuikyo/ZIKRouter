@@ -420,10 +420,10 @@
         [self enterTest:^(UIViewController *source) {
             self.router = [ZIKRouterToViewModule(AViewModuleInput)
                            performPath:[self pathFromSource:source]
-                           strictConfiguring:^(ZIKViewRouteConfiguration<AViewModuleInput> * _Nonnull config, ZIKPerformRouteStrictConfiguration * _Nonnull strictConfig) {
-                               [self configRouteConfiguration:config source:source];
-                               config.title = @"test title";
-                               [config makeDestinationCompletion:^(id<AViewInput> destination) {
+                           strictConfiguring:^(ZIKViewRouteStrictConfiguration * _Nonnull config, ZIKViewRouteConfiguration<AViewModuleInput> * _Nonnull module) {
+                               [self configRouteConfiguration:config.configuration source:source];
+                               module.title = @"test title";
+                               [module makeDestinationCompletion:^(id<AViewInput> destination) {
                                    XCTAssert([destination.title isEqualToString:@"test title"]);
                                }];
                                config.successHandler = ^(id<AViewInput>  _Nonnull destination) {
@@ -451,10 +451,10 @@
         [self enterTest:^(UIViewController *source) {
             self.router = [ZIKRouterToViewModule(AViewModuleInput)
                            performPath:[self pathFromSource:source]
-                           strictConfiguring:^(ZIKViewRouteConfiguration<AViewModuleInput> * _Nonnull config, ZIKPerformRouteStrictConfiguration * _Nonnull strictConfig) {
-                               [self configRouteConfiguration:config source:source];
-                               config.title = @"test title";
-                               [config makeDestinationCompletion:^(id<AViewInput> destination) {
+                           strictConfiguring:^(ZIKViewRouteStrictConfiguration * _Nonnull config, ZIKViewRouteConfiguration<AViewModuleInput> * _Nonnull module) {
+                               [self configRouteConfiguration:config.configuration source:source];
+                               module.title = @"test title";
+                               [module makeDestinationCompletion:^(id<AViewInput> destination) {
                                    XCTAssert([destination.title isEqualToString:@"test title"]);
                                }];
                                config.completionHandler = ^(BOOL success, id  _Nullable destination, ZIKRouteAction  _Nonnull routeAction, NSError * _Nullable error) {
@@ -482,10 +482,10 @@
             ZIKViewRoutePath *path = [[ZIKViewRoutePath alloc] initWithRouteType:self.routeType source:nil];
             self.router = [ZIKRouterToViewModule(AViewModuleInput)
                            performPath:path
-                           strictConfiguring:^(ZIKViewRouteConfiguration<AViewModuleInput> * _Nonnull config, ZIKPerformRouteStrictConfiguration * _Nonnull strictConfig) {
-                               [self configRouteConfiguration:config source:source];
-                               config.title = @"test title";
-                               [config makeDestinationCompletion:^(id<AViewInput> destination) {
+                           strictConfiguring:^(ZIKViewRouteStrictConfiguration * _Nonnull config, ZIKViewRouteConfiguration<AViewModuleInput> * _Nonnull module) {
+                               [self configRouteConfiguration:config.configuration source:source];
+                               module.title = @"test title";
+                               [module makeDestinationCompletion:^(id<AViewInput> destination) {
                                    XCTAssert([destination.title isEqualToString:@"test title"]);
                                }];
                                config.completionHandler = ^(BOOL success, id  _Nullable destination, ZIKRouteAction  _Nonnull routeAction, NSError * _Nullable error) {
@@ -512,10 +512,10 @@
         [self enterTest:^(UIViewController *source) {
             self.router = [ZIKRouterToViewModule(AViewModuleInput)
                            performPath:[self pathFromSource:source]
-                           strictConfiguring:^(ZIKViewRouteConfiguration<AViewModuleInput> * _Nonnull config, ZIKPerformRouteStrictConfiguration * _Nonnull strictConfig) {
-                               [self configRouteConfiguration:config source:source];
-                               config.title = @"test title";
-                               [config makeDestinationCompletion:^(id<AViewInput> destination) {
+                           strictConfiguring:^(ZIKViewRouteStrictConfiguration * _Nonnull config, ZIKViewRouteConfiguration<AViewModuleInput> * _Nonnull module) {
+                               [self configRouteConfiguration:config.configuration source:source];
+                               module.title = @"test title";
+                               [module makeDestinationCompletion:^(id<AViewInput> destination) {
                                    XCTAssert([destination.title isEqualToString:@"test title"]);
                                }];
                                config.successHandler = ^(id  _Nonnull destination) {
@@ -544,10 +544,10 @@
         [self enterTest:^(UIViewController *source) {
             self.router = [ZIKRouterToViewModule(AViewModuleInput)
                            performPath:[self pathFromSource:source]
-                           strictConfiguring:^(ZIKViewRouteConfiguration<AViewModuleInput> * _Nonnull config, ZIKPerformRouteStrictConfiguration * _Nonnull strictConfig) {
-                               [self configRouteConfiguration:config source:source];
-                               config.title = @"test title";
-                               [config makeDestinationCompletion:^(id<AViewInput> destination) {
+                           strictConfiguring:^(ZIKViewRouteStrictConfiguration * _Nonnull config, ZIKViewRouteConfiguration<AViewModuleInput> * _Nonnull module) {
+                               [self configRouteConfiguration:config.configuration source:source];
+                               module.title = @"test title";
+                               [module makeDestinationCompletion:^(id<AViewInput> destination) {
                                    XCTAssert([destination.title isEqualToString:@"test title"]);
                                }];
                                config.successHandler = ^(id  _Nonnull destination) {
@@ -590,10 +590,10 @@
             ZIKViewRoutePath *path = [[ZIKViewRoutePath alloc] initWithRouteType:self.routeType source:nil];
             self.router = [ZIKRouterToViewModule(AViewModuleInput)
                            performPath:path
-                           strictConfiguring:^(ZIKViewRouteConfiguration<AViewModuleInput> * _Nonnull config, ZIKPerformRouteStrictConfiguration * _Nonnull strictConfig) {
-                               [self configRouteConfiguration:config source:source];
-                               config.title = @"test title";
-                               [config makeDestinationCompletion:^(id<AViewInput> destination) {
+                           strictConfiguring:^(ZIKViewRouteStrictConfiguration * _Nonnull config, ZIKViewRouteConfiguration<AViewModuleInput> * _Nonnull module) {
+                               [self configRouteConfiguration:config.configuration source:source];
+                               module.title = @"test title";
+                               [module makeDestinationCompletion:^(id<AViewInput> destination) {
                                    XCTAssert([destination.title isEqualToString:@"test title"]);
                                }];
                                config.successHandler = ^(id  _Nonnull destination) {
@@ -633,10 +633,10 @@
             self.router = [ZIKRouterToViewModule(AViewModuleInput)
                            performOnDestination:destination
                            path:[self pathFromSource:source]
-                           strictConfiguring:^(ZIKViewRouteConfiguration<AViewModuleInput> * _Nonnull config, ZIKPerformRouteStrictConfiguration * _Nonnull strictConfig) {
-                               [self configRouteConfiguration:config source:source];
-                               config.title = @"test title";
-                               [config makeDestinationCompletion:^(id<AViewInput> destination) {
+                           strictConfiguring:^(ZIKViewRouteStrictConfiguration * _Nonnull config, ZIKViewRouteConfiguration<AViewModuleInput> * _Nonnull module) {
+                               [self configRouteConfiguration:config.configuration source:source];
+                               module.title = @"test title";
+                               [module makeDestinationCompletion:^(id<AViewInput> destination) {
                                    XCTAssert([destination.title isEqualToString:@"test title"]);
                                }];
                                config.successHandler = ^(id  _Nonnull destination) {
@@ -677,10 +677,10 @@
             self.router = [ZIKRouterToViewModule(AViewModuleInput)
                            performOnDestination:invalidDestination
                            path:[self pathFromSource:source]
-                           strictConfiguring:^(ZIKViewRouteConfiguration<AViewModuleInput> * _Nonnull config, ZIKPerformRouteStrictConfiguration * _Nonnull strictConfig) {
-                               [self configRouteConfiguration:config source:source];
-                               config.title = @"test title";
-                               [config makeDestinationCompletion:^(id<AViewInput> destination) {
+                           strictConfiguring:^(ZIKViewRouteStrictConfiguration * _Nonnull config, ZIKViewRouteConfiguration<AViewModuleInput> * _Nonnull module) {
+                               [self configRouteConfiguration:config.configuration source:source];
+                               module.title = @"test title";
+                               [module makeDestinationCompletion:^(id<AViewInput> destination) {
                                    XCTAssert([destination.title isEqualToString:@"test title"]);
                                }];
                                config.successHandler = ^(id  _Nonnull destination) {

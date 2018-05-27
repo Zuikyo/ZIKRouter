@@ -22,7 +22,7 @@ class ViewModuleRouterPerformAddAsChildTests: ZIKViewRouterTestCase {
     
     override func leaveTestView(completion: @escaping (Bool, ZIKRouteAction, Error?) -> Void) {
         XCTAssertNotNil(testRouter)
-        testRouter?.removeRoute(configuring: { (config, _) in
+        testRouter?.removeRoute(configuring: { (config) in
             config.successHandler = {
                 print("LeaveTestView succeed")
                 self.leaveTestViewExpectation.fulfill()
@@ -93,8 +93,8 @@ class ViewModuleRouterPerformAddAsChildTests: ZIKViewRouterTestCase {
             self.testRouter = Router.perform(
                 to: RoutableViewModule<AViewModuleInput>(),
                 path: self.path(from: source),
-                configuring: { (config, prepareDest, prepareModule) in
-                    self.configure(routeConfiguration: config, source: source)
+                configuring: { (config, prepareModule) in
+                    self.configure(routeConfiguration: config.config.configuration, source: source)
                     prepareModule({ module in
                         module.title = "test title"
                         module.makeDestinationCompletion({ (destination) in
@@ -119,8 +119,8 @@ class ViewModuleRouterPerformAddAsChildTests: ZIKViewRouterTestCase {
             self.testRouter = Router.perform(
                 to: RoutableViewModule<AViewModuleInput>(),
                 path: self.path(from: source),
-                configuring: { (config, prepareDest, prepareModule) in
-                    self.configure(routeConfiguration: config, source: source)
+                configuring: { (config, prepareModule) in
+                    self.configure(routeConfiguration: config.config.configuration, source: source)
                     prepareModule({ module in
                         module.title = "test title"
                         module.makeDestinationCompletion({ (destination) in
@@ -147,8 +147,8 @@ class ViewModuleRouterPerformAddAsChildTests: ZIKViewRouterTestCase {
             self.testRouter = Router.perform(
                 to: RoutableViewModule<AViewModuleInput>(),
                 path: .extensible(path: ZIKViewRoutePath(routeType: self.routeType, source: nil)),
-                configuring: { (config, prepareDest, prepareModule) in
-                    self.configure(routeConfiguration: config, source: source)
+                configuring: { (config, prepareModule) in
+                    self.configure(routeConfiguration: config.config.configuration, source: source)
                     prepareModule({ module in
                         module.title = "test title"
                         module.makeDestinationCompletion({ (destination) in
@@ -267,8 +267,8 @@ class ViewModuleRouterPerformAddAsChildTests: ZIKViewRouterTestCase {
             self.testRouter = Router.perform(
                 to: RoutableViewModule<AViewModuleInput>(),
                 path: self.path(from: source),
-                configuring: { (config, prepareDest, prepareModule) in
-                    self.configure(routeConfiguration: config, source: source)
+                configuring: { (config, prepareModule) in
+                    self.configure(routeConfiguration: config.config.configuration, source: source)
                     prepareModule({ module in
                         module.title = "test title"
                         module.makeDestinationCompletion({ (destination) in
@@ -296,8 +296,8 @@ class ViewModuleRouterPerformAddAsChildTests: ZIKViewRouterTestCase {
             self.testRouter = Router.perform(
                 to: RoutableViewModule<AViewModuleInput>(),
                 path: self.path(from: source),
-                configuring: { (config, prepareDest, prepareModule) in
-                    self.configure(routeConfiguration: config, source: source)
+                configuring: { (config, prepareModule) in
+                    self.configure(routeConfiguration: config.config.configuration, source: source)
                     prepareModule({ module in
                         module.title = "test title"
                         module.makeDestinationCompletion({ (destination) in
@@ -332,8 +332,8 @@ class ViewModuleRouterPerformAddAsChildTests: ZIKViewRouterTestCase {
             self.testRouter = Router.perform(
                 to: RoutableViewModule<AViewModuleInput>(),
                 path: .extensible(path: ZIKViewRoutePath(routeType: self.routeType, source: nil)),
-                configuring: { (config, prepareDest, prepareModule) in
-                    self.configure(routeConfiguration: config, source: source)
+                configuring: { (config, prepareModule) in
+                    self.configure(routeConfiguration: config.config.configuration, source: source)
                     prepareModule({ module in
                         module.title = "test title"
                         module.makeDestinationCompletion({ (destination) in
@@ -372,8 +372,8 @@ class ViewModuleRouterPerformAddAsChildTests: ZIKViewRouterTestCase {
                 .perform(
                     onDestination: destination!,
                     path: self.path(from: source),
-                    configuring: { (config, _, prepareModule) in
-                        self.configure(routeConfiguration: config, source: source)
+                    configuring: { (config, prepareModule) in
+                        self.configure(routeConfiguration: config.config.configuration, source: source)
                         prepareModule({ module in
                             module.title = "test title"
                             module.makeDestinationCompletion({ (destination) in

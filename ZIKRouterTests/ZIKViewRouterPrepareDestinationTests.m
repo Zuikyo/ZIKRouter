@@ -115,15 +115,15 @@
         AViewController *destination = [[AViewController alloc] init];
         self.router = [ZIKRouterToView(AViewInput)
                        prepareDestination:destination
-                       strictConfiguring:^(ZIKViewRouteConfiguration * _Nonnull config, ZIKPerformRouteStrictConfiguration<id<AViewInput>> *strictConfig) {
-                           strictConfig.prepareDestination = ^(id<AViewInput> destination) {
+                       strictConfiguring:^(ZIKPerformRouteStrictConfiguration<id<AViewInput>> *config, ZIKViewRouteConfiguration * _Nonnull module) {
+                           config.prepareDestination = ^(id<AViewInput> destination) {
                                destination.title = @"test title";
                            };
                            
-                           strictConfig.successHandler = ^(id<AViewInput> destination) {
+                           config.successHandler = ^(id<AViewInput> destination) {
                                [successHandlerExpectation fulfill];
                            };
-                           strictConfig.performerSuccessHandler = ^(id<AViewInput> destination) {
+                           config.performerSuccessHandler = ^(id<AViewInput> destination) {
                                [performerSuccessHandlerExpectation fulfill];
                            };
                            config.errorHandler = ^(ZIKRouteAction  _Nonnull routeAction, NSError * _Nonnull error) {
@@ -132,7 +132,7 @@
                            config.performerErrorHandler = ^(ZIKRouteAction  _Nonnull routeAction, NSError * _Nonnull error) {
                                XCTAssert(NO, @"performerErrorHandler should not be called");
                            };
-                           strictConfig.completionHandler = ^(BOOL success, id<AViewInput> _Nullable destination, ZIKRouteAction  _Nonnull routeAction, NSError * _Nullable error) {
+                           config.completionHandler = ^(BOOL success, id<AViewInput> _Nullable destination, ZIKRouteAction  _Nonnull routeAction, NSError * _Nullable error) {
                                XCTAssertTrue(success);
                                [completionHandlerExpectation fulfill];
                                [self handle:^{
@@ -159,14 +159,14 @@
         id invalidDestination = [[UIViewController alloc] init];
         self.router = [ZIKRouterToView(AViewInput)
                        prepareDestination:invalidDestination
-                       strictConfiguring:^(ZIKViewRouteConfiguration * _Nonnull config, ZIKPerformRouteStrictConfiguration<id<AViewInput>> *strictConfig) {
-                           strictConfig.prepareDestination = ^(id<AViewInput> destination) {
+                       strictConfiguring:^(ZIKPerformRouteStrictConfiguration<id<AViewInput>> *config, ZIKViewRouteConfiguration * _Nonnull module) {
+                           config.prepareDestination = ^(id<AViewInput> destination) {
                                destination.title = @"test title";
                            };
-                           strictConfig.successHandler = ^(id<AViewInput> destination) {
+                           config.successHandler = ^(id<AViewInput> destination) {
                                XCTAssert(NO, @"successHandler should not be called");
                            };
-                           strictConfig.performerSuccessHandler = ^(id<AViewInput> destination) {
+                           config.performerSuccessHandler = ^(id<AViewInput> destination) {
                                XCTAssert(NO, @"performerErrorHandler should not be called");
                            };
                            config.errorHandler = ^(ZIKRouteAction  _Nonnull routeAction, NSError * _Nonnull error) {
@@ -175,7 +175,7 @@
                            config.performerErrorHandler = ^(ZIKRouteAction  _Nonnull routeAction, NSError * _Nonnull error) {
                                [performerErrorHandlerExpectation fulfill];
                            };
-                           strictConfig.completionHandler = ^(BOOL success, id<AViewInput> _Nullable destination, ZIKRouteAction  _Nonnull routeAction, NSError * _Nullable error) {
+                           config.completionHandler = ^(BOOL success, id<AViewInput> _Nullable destination, ZIKRouteAction  _Nonnull routeAction, NSError * _Nullable error) {
                                XCTAssertFalse(success);
                                XCTAssertNotNil(error);
                                [completionHandlerExpectation fulfill];

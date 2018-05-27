@@ -29,7 +29,7 @@
     ///If the protocol passed to `ZIKViewRouterToModule` is changed, parameter type in `prepareModule` will also change. So it's much safer when you change the routable protocol.
     self.alertViewRouter = [ZIKRouterToViewModule(RequiredCompatibleAlertModuleInput)
      performPath:ZIKViewRoutePath.presentCompatibleAlertFrom(self)
-     strictConfiguring:^(ZIKViewRouteConfiguration<RequiredCompatibleAlertModuleInput> *config, ZIKPerformRouteStrictConfiguration *strictConfig) {
+     strictConfiguring:^(ZIKPerformRouteStrictConfiguration *config, ZIKViewRouteConfiguration<RequiredCompatibleAlertModuleInput> *module) {
          config.successHandler = ^(id _Nonnull destination) {
              NSLog(@"show custom alert complete");
          };
@@ -37,12 +37,12 @@
              NSLog(@"show custom alert failed: %@",error);
          };
          
-         config.title = @"Compatible Alert";
-         config.message = @"Test custom route for alert with UIAlertView and UIAlertController";
-         [config addCancelButtonTitle:@"Cancel" handler:^{
+         module.title = @"Compatible Alert";
+         module.message = @"Test custom route for alert with UIAlertView and UIAlertController";
+         [module addCancelButtonTitle:@"Cancel" handler:^{
              NSLog(@"Tap cancel alert");
          }];
-         [config addOtherButtonTitle:@"Hello" handler:^{
+         [module addOtherButtonTitle:@"Hello" handler:^{
              NSLog(@"Tap hello button");
          }];
      }];

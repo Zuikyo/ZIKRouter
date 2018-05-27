@@ -199,11 +199,11 @@
     };
 }
 
-- (void (^)(ZIKPerformRouteConfiguration * _Nonnull, ZIKPerformRouteStrictConfiguration<id> * _Nonnull))
+- (void (^)(ZIKPerformRouteStrictConfiguration<id> * _Nonnull, ZIKPerformRouteConfiguration * _Nonnull))
 _injectedStrictConfigBuilder:
-(void (^)(ZIKPerformRouteConfiguration * _Nonnull, ZIKPerformRouteStrictConfiguration<id> * _Nonnull)
+(void (^)(ZIKPerformRouteStrictConfiguration<id> * _Nonnull, ZIKPerformRouteConfiguration * _Nonnull)
  )builder {
-    return ^(ZIKPerformRouteConfiguration *configuration, ZIKPerformRouteStrictConfiguration<id> *strictConfig) {
+    return ^(ZIKPerformRouteStrictConfiguration<id> *strictConfig, ZIKPerformRouteConfiguration *configuration) {
         configuration.route = self;
         ZIKPerformRouteConfiguration *injected = [self defaultRouteConfigurationFromBlock];
         if (injected) {
@@ -212,24 +212,24 @@ _injectedStrictConfigBuilder:
             strictConfig.configuration = injected;
         }
         if (builder) {
-            builder(configuration, strictConfig);
+            builder(strictConfig, configuration);
         }
     };
 }
 
-- (void (^)(ZIKRemoveRouteConfiguration * _Nonnull, ZIKRemoveRouteStrictConfiguration<id> * _Nonnull))
+- (void (^)(ZIKRemoveRouteStrictConfiguration<id> * _Nonnull))
 _injectedStrictRemoveConfigBuilder:
-(void (^)(ZIKRemoveRouteConfiguration * _Nonnull, ZIKRemoveRouteStrictConfiguration<id> * _Nonnull)
+(void (^)(ZIKRemoveRouteStrictConfiguration<id> * _Nonnull)
  )builder {
-    return ^(ZIKRemoveRouteConfiguration * _Nonnull configuration, ZIKRemoveRouteStrictConfiguration<id> *strictConfig) {
+    return ^(ZIKRemoveRouteStrictConfiguration<id> *strictConfig) {
         ZIKRemoveRouteConfiguration *injected = [self defaultRemoveRouteConfigurationFromBlock];
         if (injected) {
+            ZIKRemoveRouteConfiguration *configuration = strictConfig.configuration;
             configuration.injected = injected;
-            configuration = injected;
             strictConfig.configuration = injected;
         }
         if (builder) {
-            builder(configuration, strictConfig);
+            builder(strictConfig);
         }
     };
 }
@@ -250,12 +250,8 @@ _injectedStrictRemoveConfigBuilder:
     return [[[self routerClass] alloc] initWithConfiguring:configBuilder removing:removeConfigBuilder];
 }
 
-- (id)initWithStrictConfiguring:(void (^)(ZIKPerformRouteConfiguration * _Nonnull,
-                                          ZIKPerformRouteStrictConfiguration<id> * _Nonnull
-                                          ))configBuilder
-                 strictRemoving:(void (^ _Nullable)(ZIKRemoveRouteConfiguration * _Nonnull,
-                                                    ZIKRemoveRouteStrictConfiguration<id> * _Nonnull
-                                                    ))removeConfigBuilder {
+- (id)initWithStrictConfiguring:(void (^)(ZIKPerformRouteStrictConfiguration<id> * _Nonnull, ZIKPerformRouteConfiguration * _Nonnull))configBuilder
+                 strictRemoving:(void (^ _Nullable)(ZIKRemoveRouteStrictConfiguration<id> * _Nonnull))removeConfigBuilder {
     configBuilder = [self _injectedStrictConfigBuilder:configBuilder];
     removeConfigBuilder = [self _injectedStrictRemoveConfigBuilder:removeConfigBuilder];
     return [[[self routerClass] alloc] initWithStrictConfiguring:configBuilder strictRemoving:removeConfigBuilder];
@@ -324,18 +320,12 @@ _injectedStrictRemoveConfigBuilder:
     return [[self routerClass] performWithConfiguring:configBuilder removing:removeConfigBuilder];
 }
 
-- (id)performWithStrictConfiguring:(void (^)(ZIKPerformRouteConfiguration * _Nonnull,
-                                             ZIKPerformRouteStrictConfiguration<id> * _Nonnull
-                                             ))configBuilder {
+- (id)performWithStrictConfiguring:(void (^)(ZIKPerformRouteStrictConfiguration<id> * _Nonnull, ZIKPerformRouteConfiguration * _Nonnull))configBuilder {
     return [self performWithStrictConfiguring:configBuilder strictRemoving:nil];
 }
 
-- (id)performWithStrictConfiguring:(void (^)(ZIKPerformRouteConfiguration * _Nonnull,
-                                             ZIKPerformRouteStrictConfiguration<id> * _Nonnull
-                                             ))configBuilder
-                    strictRemoving:(void (^)(ZIKRemoveRouteConfiguration * _Nonnull,
-                                             ZIKRemoveRouteStrictConfiguration<id> * _Nonnull
-                                             ))removeConfigBuilder {
+- (id)performWithStrictConfiguring:(void (^)(ZIKPerformRouteStrictConfiguration<id> * _Nonnull, ZIKPerformRouteConfiguration * _Nonnull))configBuilder
+                    strictRemoving:(void (^)(ZIKRemoveRouteStrictConfiguration<id> * _Nonnull))removeConfigBuilder {
     configBuilder = [self _injectedStrictConfigBuilder:configBuilder];
     removeConfigBuilder = [self _injectedStrictRemoveConfigBuilder:removeConfigBuilder];
     return [[self routerClass] performWithStrictConfiguring:configBuilder strictRemoving:removeConfigBuilder];
@@ -354,9 +344,7 @@ _injectedStrictRemoveConfigBuilder:
     return [[self routerClass] makeDestinationWithConfiguring:configBuilder];
 }
 
-- (id)makeDestinationWithStrictConfiguring:(void (^)(ZIKPerformRouteConfiguration * _Nonnull,
-                                                     ZIKPerformRouteStrictConfiguration<id> * _Nonnull
-                                                     ))configBuilder {
+- (id)makeDestinationWithStrictConfiguring:(void (^)(ZIKPerformRouteStrictConfiguration<id> * _Nonnull, ZIKPerformRouteConfiguration * _Nonnull))configBuilder {
     configBuilder = [self _injectedStrictConfigBuilder:configBuilder];
     return [[self routerClass] makeDestinationWithStrictConfiguring:configBuilder];
 }

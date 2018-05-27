@@ -66,7 +66,7 @@ class SubviewModuleRouterMakeDestinationTests: XCTestCase {
         let performerExpectation = self.expectation(description: "performerSuccessHandler")
         let completionHandlerExpectation = self.expectation(description: "completionHandler")
         XCTAssertTrue(Router.to(RoutableViewModule<BSubviewModuleInput>())!.canMakeDestination)
-        let destination = Router.makeDestination(to: RoutableViewModule<BSubviewModuleInput>(), configuring: { (config, prepareDestination, prepareModule) in
+        let destination = Router.makeDestination(to: RoutableViewModule<BSubviewModuleInput>(), configuring: { (config, prepareModule) in
             prepareModule({ module in
                 module.title = "test title"
                 module.makeDestinationCompletion({ (destination) in

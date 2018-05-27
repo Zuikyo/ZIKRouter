@@ -27,9 +27,9 @@ import ZIKRouter
  from: self,
  configuring: { (config, prepareDestination, _) in
      config.routeType = .presentModally
-     prepareDestination({ destination in
-         //destination is inferred as TestViewInput
-     })
+     config.prepareDestination = { destination in
+        //destination is inferred as TestViewInput
+     }
  })
  ```
  The Protocol can also be composed type, like:

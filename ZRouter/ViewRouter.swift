@@ -23,7 +23,6 @@ public class ViewRouterType<Destination, ModuleConfig> {
     
     // MARK: Perform
     
-    public typealias DestinationPreparation = (@escaping (Destination) -> Void) -> Void
     public typealias ModulePreparation = ((ModuleConfig) -> Void) -> Void
     
     /// Perform route from source view to destination view, and config the remove route.
@@ -32,43 +31,23 @@ public class ViewRouterType<Destination, ModuleConfig> {
     ///   - path: The path with source and route type.
     ///   - configBuilder: Build the configuration for performing route.
     ///     - config: Config for view route.
-    ///     - prepareDestination: Prepare destination before performing route. It's an escaping block, use weakSelf to avoid retain cycle.
     ///     - prepareModule: Prepare custom module config.
     ///   - removeConfigBuilder: Configure the configuration for removing view.
     ///     - config: Config for removing view route.
-    ///     - prepareDestination: Prepare destination before removing route. It's an escaping block, use weakSelf to avoid retain cycle.
     /// - Returns: The view router for this route.
     @discardableResult public func perform(
         path: ViewRoutePath,
-        configuring configBuilder: (ViewRouteConfig, DestinationPreparation, ModulePreparation) -> Void,
-        removing removeConfigBuilder: ((ViewRemoveConfig, DestinationPreparation) -> Void)? = nil
+        configuring configBuilder: (ViewRouteStrictConfig<Destination>, ModulePreparation) -> Void,
+        removing removeConfigBuilder: ((ViewRemoveStrictConfig<Destination>) -> Void)? = nil
         ) -> ViewRouter<Destination, ModuleConfig>? {
-        var removeBuilder: ((ViewRemoveConfig) -> Void)? = nil
+        var removeBuilder: ((ZIKRemoveRouteStrictConfiguration<AnyObject>) -> Void)? = nil
         if let removeConfigBuilder = removeConfigBuilder {
-            removeBuilder = { (config: ViewRemoveConfig) in
-                let prepareDestination = { (prepare: @escaping (Destination) -> Void) in
-                    config.prepareDestination = { d in
-                        guard let destination = d as? Destination else {
-                            assertionFailure("Bad implementation in router, destination (\(d)) should be type (\(Destination.self))")
-                            return
-                        }
-                        prepare(destination)
-                    }
-                }
-                removeConfigBuilder(config, prepareDestination)
+            removeBuilder = { (strictConfig: ZIKRemoveRouteStrictConfiguration<AnyObject>) in
+                removeConfigBuilder(ViewRemoveStrictConfig(configuration: strictConfig))
             }
         }
         let routerType = self.routerType
-        let router = routerType.perform(path.path, configuring: { config in
-            let prepareDestination = { (prepare: @escaping (Destination) -> Void) in
-                config.prepareDestination = { d in
-                    guard let destination = d as? Destination else {
-                        assertionFailure("Bad implementation in router, destination (\(d)) should be type (\(Destination.self))")
-                        return
-                    }
-                    prepare(destination)
-                }
-            }
+        let router = routerType.perform(path.path, strictConfiguring: { (strictConfig, config) in
             let prepareModule = { (prepare: (ModuleConfig) -> Void) in
                 guard let moduleConfig = config as? ModuleConfig else {
                     assertionFailure("Bad implementation in router, configuration (\(config)) should be type (\(ModuleConfig.self))")
@@ -76,7 +55,7 @@ public class ViewRouterType<Destination, ModuleConfig> {
                 }
                 prepare(moduleConfig)
             }
-            configBuilder(config, prepareDestination, prepareModule)
+            configBuilder(ViewRouteStrictConfig(configuration: strictConfig), prepareModule)
             #if DEBUG
             let successHandler = config.successHandler
             config.successHandler = { d in
@@ -85,7 +64,8 @@ public class ViewRouterType<Destination, ModuleConfig> {
                 assert(Registry.validateConformance(destination: d, inViewRouterType: routerType))
             }
             #endif
-        }, removing: removeBuilder)
+        }, strictRemoving: removeBuilder)
+        
         if let router = router {
             return ViewRouter<Destination, ModuleConfig>(router: router)
         } else {
@@ -99,7 +79,7 @@ public class ViewRouterType<Destination, ModuleConfig> {
     ///   - path: The path with source and route type.
     /// - Returns: The view router for this route.
     @discardableResult public func perform(path: ViewRoutePath) -> ViewRouter<Destination, ModuleConfig>? {
-        return perform(path: path, configuring: { (_, _, _) in
+        return perform(path: path, configuring: { (_, _) in
             
         }, removing: nil)
     }
@@ -110,14 +90,10 @@ public class ViewRouterType<Destination, ModuleConfig> {
         successHandler performerSuccessHandler: ((Destination) -> Void)? = nil,
         errorHandler performerErrorHandler: ((ZIKRouteAction, Error) -> Void)? = nil
         ) -> ViewRouter<Destination, ModuleConfig>? {
-        return perform(path: path, configuring: { (config, _, _) in
+        return perform(path: path, configuring: { (config, _) in
             if let performerSuccessHandler = performerSuccessHandler {
                 let successHandler = config.performerSuccessHandler
-                config.performerSuccessHandler = { d in
-                    guard let destination  = d as? Destination else {
-                        assertionFailure("Bad implementation in router, destination (\(String(describing: d))) should be type (\(Destination.self))")
-                        return
-                    }
+                config.performerSuccessHandler = { destination in
                     successHandler?(destination)
                     performerSuccessHandler(destination)
                 }
@@ -162,38 +138,20 @@ public class ViewRouterType<Destination, ModuleConfig> {
     @discardableResult public func perform(
         onDestination destination: Destination,
         path: ViewRoutePath,
-        configuring configBuilder: (ViewRouteConfig, DestinationPreparation, ModulePreparation) -> Void,
-        removing removeConfigBuilder: ((ViewRemoveConfig, DestinationPreparation) -> Void)? = nil
+        configuring configBuilder: (ViewRouteStrictConfig<Destination>, ModulePreparation) -> Void,
+        removing removeConfigBuilder: ((ViewRemoveStrictConfig<Destination>) -> Void)? = nil
         ) -> ViewRouter<Destination, ModuleConfig>? {
-        var removeBuilder: ((ViewRemoveConfig) -> Void)? = nil
+        var removeBuilder: ((ZIKRemoveRouteStrictConfiguration<AnyObject>) -> Void)? = nil
         if let removeConfigBuilder = removeConfigBuilder {
-            removeBuilder = { (config: ViewRemoveConfig) in
-                let prepareDestination = { (prepare: @escaping (Destination) -> Void) in
-                    config.prepareDestination = { d in
-                        guard let destination = d as? Destination else {
-                            assertionFailure("Bad implementation in router, destination (\(d)) should be type (\(Destination.self))")
-                            return
-                        }
-                        prepare(destination)
-                    }
-                }
-                removeConfigBuilder(config, prepareDestination)
+            removeBuilder = { (strictConfig: ZIKRemoveRouteStrictConfiguration<AnyObject>) in
+                removeConfigBuilder(ViewRemoveStrictConfig(configuration: strictConfig))
             }
         }
         guard let dest = destination as? ZIKRoutableView else {
             ZIKAnyViewRouter.notifyGlobalError(with: nil, action: .init, error: ZIKAnyViewRouter.routeError(withCode: .invalidConfiguration, localizedDescription: "Perform route on invalid destination: \(destination)"))
             return nil
         }
-        let router = routerType.perform(onDestination: dest, path: path.path, configuring: { (config) in
-            let prepareDestination = { (prepare: @escaping (Destination) -> Void) in
-                config.prepareDestination = { d in
-                    guard let destination = d as? Destination else {
-                        assertionFailure("Bad implementation in router, destination (\(d)) should be type (\(Destination.self))")
-                        return
-                    }
-                    prepare(destination)
-                }
-            }
+        let router = routerType.perform(onDestination: dest, path: path.path, strictConfiguring: { (strictConfig, config) in
             let prepareModule = { (prepare: (ModuleConfig) -> Void) in
                 guard let moduleConfig = config as? ModuleConfig else {
                     assertionFailure("Bad implementation in router, configuration (\(config)) should be type (\(ModuleConfig.self))")
@@ -201,8 +159,8 @@ public class ViewRouterType<Destination, ModuleConfig> {
                 }
                 prepare(moduleConfig)
             }
-            configBuilder(config, prepareDestination, prepareModule)
-        }, removing: removeBuilder)
+            configBuilder(ViewRouteStrictConfig(configuration: strictConfig), prepareModule)
+        }, strictRemoving: removeBuilder)
         
         guard let routed = router else {
             return nil
@@ -221,7 +179,7 @@ public class ViewRouterType<Destination, ModuleConfig> {
     @discardableResult public func perform(
         onDestination destination: Destination,
         path: ViewRoutePath) -> ViewRouter<Destination, ModuleConfig>? {
-        return perform(onDestination: destination, path: path, configuring: { (config, _, _) in
+        return perform(onDestination: destination, path: path, configuring: { (config, _) in
             
         })
     }
@@ -237,38 +195,20 @@ public class ViewRouterType<Destination, ModuleConfig> {
     /// - Returns: The view router for this route. If the destination is not registered with this router class, return nil.
     @discardableResult public func prepare(
         destination: Destination,
-        configuring configBuilder: (ViewRouteConfig, DestinationPreparation, ModulePreparation) -> Void,
-        removing removeConfigBuilder: ((ViewRemoveConfig, DestinationPreparation) -> Void)? = nil
+        configuring configBuilder: (ViewRouteStrictConfig<Destination>, ModulePreparation) -> Void,
+        removing removeConfigBuilder: ((ViewRemoveStrictConfig<Destination>) -> Void)? = nil
         ) -> ViewRouter<Destination, ModuleConfig>? {
-        var removeBuilder: ((ViewRemoveConfig) -> Void)? = nil
+        var removeBuilder: ((ZIKRemoveRouteStrictConfiguration<AnyObject>) -> Void)? = nil
         if let removeConfigBuilder = removeConfigBuilder {
-            removeBuilder = { (config: ViewRemoveConfig) in
-                let prepareDestination = { (prepare: @escaping (Destination) -> Void) in
-                    config.prepareDestination = { d in
-                        guard let destination = d as? Destination else {
-                            assertionFailure("Bad implementation in router, destination (\(d)) should be type (\(Destination.self))")
-                            return
-                        }
-                        prepare(destination)
-                    }
-                }
-                removeConfigBuilder(config, prepareDestination)
+            removeBuilder = { (strictConfig: ZIKRemoveRouteStrictConfiguration<AnyObject>) in
+                removeConfigBuilder(ViewRemoveStrictConfig(configuration: strictConfig))
             }
         }
         guard let dest = destination as? ZIKRoutableView else {
             ZIKAnyViewRouter.notifyGlobalError(with: nil, action: .init, error: ZIKAnyViewRouter.routeError(withCode: .invalidConfiguration, localizedDescription: "Perform route on invalid destination: \(destination)"))
             return nil
         }
-        let router = routerType.prepareDestination(dest, configuring: { (config) in
-            let prepareDestination = { (prepare: @escaping (Destination) -> Void) in
-                config.prepareDestination = { d in
-                    guard let destination = d as? Destination else {
-                        assertionFailure("Bad implementation in router, destination (\(d)) should be type (\(Destination.self))")
-                        return
-                    }
-                    prepare(destination)
-                }
-            }
+        let router = routerType.prepareDestination(dest, strictConfiguring: { (strictConfig, config) in
             let prepareModule = { (prepare: (ModuleConfig) -> Void) in
                 guard let moduleConfig = config as? ModuleConfig else {
                     assertionFailure("Bad implementation in router, configuration (\(config)) should be type (\(ModuleConfig.self))")
@@ -276,8 +216,8 @@ public class ViewRouterType<Destination, ModuleConfig> {
                 }
                 prepare(moduleConfig)
             }
-            configBuilder(config, prepareDestination, prepareModule)
-        }, removing: removeBuilder)
+            configBuilder(ViewRouteStrictConfig(configuration: strictConfig), prepareModule)
+        }, strictRemoving: removeBuilder)
         
         guard let routed = router else {
             return nil
@@ -324,20 +264,10 @@ public class ViewRouterType<Destination, ModuleConfig> {
     ///
     /// - Parameter configBuilder: Build the configuration for performing route.
     ///     - config: Config for view route.
-    ///     - prepareDestination: Prepare destination before performing route. It's an escaping block, use weakSelf to avoid retain cycle.
     ///     - prepareModule: Prepare custom module config.
     /// - Returns: Destination
-    public func makeDestination(configuring configBuilder: (ViewRouteConfig, DestinationPreparation, ModulePreparation) -> Void) -> Destination? {
-        let destination = routerType.makeDestination(configuring: { config in
-            let prepareDestination = { (prepare: @escaping (Destination) -> Void) in
-                config.prepareDestination = { d in
-                    guard let destination = d as? Destination else {
-                        assertionFailure("Bad implementation in router, destination (\(d)) should be type (\(Destination.self))")
-                        return
-                    }
-                    prepare(destination)
-                }
-            }
+    public func makeDestination(configuring configBuilder: (ViewRouteStrictConfig<Destination>, ModulePreparation) -> Void) -> Destination? {
+        let destination = routerType.makeDestination(strictConfiguring: { (strictConfig, config) in
             let prepareModule = { (prepare: (ModuleConfig) -> Void) in
                 guard let moduleConfig = config as? ModuleConfig else {
                     assertionFailure("Bad implementation in router, configuration (\(config)) should be type (\(ModuleConfig.self))")
@@ -345,7 +275,7 @@ public class ViewRouterType<Destination, ModuleConfig> {
                 }
                 prepare(moduleConfig)
             }
-            configBuilder(config, prepareDestination, prepareModule)
+            configBuilder(ViewRouteStrictConfig(configuration: strictConfig), prepareModule)
         })
         assert(destination == nil || destination is Destination, "Router (\(routerType)) returns wrong destination type (\(String(describing: destination))), destination should be \(Destination.self)")
         assert(destination == nil || Registry.validateConformance(destination: destination!, inViewRouterType: routerType))
@@ -464,25 +394,13 @@ public class ViewRouter<Destination, ModuleConfig> {
         })
     }
     
-    public typealias DestinationPreparation = (@escaping (Destination) -> Void) -> Void
-    
     /// Remove route and prepare before removing. Auto choose proper remove action in pop/dismiss/removeFromParentViewController/removeFromSuperview/custom. If canRemove return false, this will failed, use removeRouteWithSuccessHandler:errorHandler: to get error info. Main thread only.
     ///
     /// - Parameter configBuilder: Configure the configuration for removing view.
     ///     - config: Config for removing view route.
-    ///     - prepareDestination: Prepare destination before removing route. It's an escaping block, use weakSelf to avoid retain cycle.
-    public func removeRoute(configuring configBuilder: (ViewRemoveConfig, DestinationPreparation) -> Void) {
-        router.removeRoute(configuring: { (config) in
-            let prepareDestination = { (prepare: @escaping (Destination) -> Void) in
-                config.prepareDestination = { d in
-                    guard let destination = d as? Destination else {
-                        assertionFailure("Bad implementation in router, destination (\(d)) should be type (\(Destination.self))")
-                        return
-                    }
-                    prepare(destination)
-                }
-            }
-            configBuilder(config, prepareDestination)
+    public func removeRoute(configuring configBuilder: (ViewRemoveStrictConfig<Destination>) -> Void) {
+        router.removeRoute(strictConfiguring: { (strictConfig) in
+            configBuilder(ViewRemoveStrictConfig(configuration: strictConfig))
         })
     }
 }
@@ -623,35 +541,17 @@ public extension ViewRouterType {
     @available(iOS, deprecated: 8.0, message: "Use perform(path:configuring:removing:) instead")
     @discardableResult public func perform(
         from source: ZIKViewRouteSource?,
-        configuring configBuilder: (ViewRouteConfig, DestinationPreparation, ModulePreparation) -> Void,
-        removing removeConfigBuilder: ((ViewRemoveConfig, DestinationPreparation) -> Void)? = nil
+        configuring configBuilder: (ViewRouteStrictConfig<Destination>, ModulePreparation) -> Void,
+        removing removeConfigBuilder: ((ViewRemoveStrictConfig<Destination>) -> Void)? = nil
         ) -> ViewRouter<Destination, ModuleConfig>?{
-        var removeBuilder: ((ViewRemoveConfig) -> Void)? = nil
+        var removeBuilder: ((ZIKRemoveRouteStrictConfiguration<AnyObject>) -> Void)? = nil
         if let removeConfigBuilder = removeConfigBuilder {
-            removeBuilder = { (config: ViewRemoveConfig) in
-                let prepareDestination = { (prepare: @escaping (Destination) -> Void) in
-                    config.prepareDestination = { d in
-                        guard let destination = d as? Destination else {
-                            assertionFailure("Bad implementation in router, destination (\(d)) should be type (\(Destination.self))")
-                            return
-                        }
-                        prepare(destination)
-                    }
-                }
-                removeConfigBuilder(config, prepareDestination)
+            removeBuilder = { (strictConfig: ZIKRemoveRouteStrictConfiguration<AnyObject>) in
+                removeConfigBuilder(ViewRemoveStrictConfig(configuration: strictConfig))
             }
         }
         let routerType = self.routerType
-        let router = routerType.perform(from: source, configuring: { config in
-            let prepareDestination = { (prepare: @escaping (Destination) -> Void) in
-                config.prepareDestination = { d in
-                    guard let destination = d as? Destination else {
-                        assertionFailure("Bad implementation in router, destination (\(d)) should be type (\(Destination.self))")
-                        return
-                    }
-                    prepare(destination)
-                }
-            }
+        let router = routerType.perform(from: source, strictConfiguring: { (strictConfig, config) in
             let prepareModule = { (prepare: (ModuleConfig) -> Void) in
                 guard let moduleConfig = config as? ModuleConfig else {
                     assertionFailure("Bad implementation in router, configuration (\(config)) should be type (\(ModuleConfig.self))")
@@ -659,7 +559,7 @@ public extension ViewRouterType {
                 }
                 prepare(moduleConfig)
             }
-            configBuilder(config, prepareDestination, prepareModule)
+            configBuilder(ViewRouteStrictConfig(configuration: strictConfig), prepareModule)
             #if DEBUG
             let successHandler = config.successHandler
             config.successHandler = { d in
@@ -668,7 +568,7 @@ public extension ViewRouterType {
                 assert(Registry.validateConformance(destination: d, inViewRouterType: routerType))
             }
             #endif
-        }, removing: removeBuilder)
+        }, strictRemoving: removeBuilder)
         if let router = router {
             return ViewRouter<Destination, ModuleConfig>(router: router)
         } else {
@@ -681,7 +581,7 @@ public extension ViewRouterType {
         from source: ZIKViewRouteSource?,
         routeType: ViewRouteType
         ) -> ViewRouter<Destination, ModuleConfig>? {
-        return perform(from: source, configuring: { (config, _, _) in
+        return perform(from: source, configuring: { (config, _) in
             config.routeType = routeType
         })
     }
@@ -690,38 +590,20 @@ public extension ViewRouterType {
     @discardableResult public func perform(
         onDestination destination: Destination,
         from source: ZIKViewRouteSource?,
-        configuring configBuilder: (ViewRouteConfig, DestinationPreparation, ModulePreparation) -> Void,
-        removing removeConfigBuilder: ((ViewRemoveConfig, DestinationPreparation) -> Void)? = nil
+        configuring configBuilder: (ViewRouteStrictConfig<Destination>, ModulePreparation) -> Void,
+        removing removeConfigBuilder: ((ViewRemoveStrictConfig<Destination>) -> Void)? = nil
         ) -> ViewRouter<Destination, ModuleConfig>? {
-        var removeBuilder: ((ViewRemoveConfig) -> Void)? = nil
+        var removeBuilder: ((ZIKViewRemoveStrictConfiguration<AnyObject>) -> Void)? = nil
         if let removeConfigBuilder = removeConfigBuilder {
-            removeBuilder = { (config: ViewRemoveConfig) in
-                let prepareDestination = { (prepare: @escaping (Destination) -> Void) in
-                    config.prepareDestination = { d in
-                        guard let destination = d as? Destination else {
-                            assertionFailure("Bad implementation in router, destination (\(d)) should be type (\(Destination.self))")
-                            return
-                        }
-                        prepare(destination)
-                    }
-                }
-                removeConfigBuilder(config, prepareDestination)
+            removeBuilder = { (strictConfig: ZIKViewRemoveStrictConfiguration<AnyObject>) in
+                removeConfigBuilder(ViewRemoveStrictConfig(configuration: strictConfig))
             }
         }
         guard let dest = destination as? ZIKRoutableView else {
             ZIKAnyViewRouter.notifyGlobalError(with: nil, action: .init, error: ZIKAnyViewRouter.routeError(withCode: .invalidConfiguration, localizedDescription: "Perform route on invalid destination: \(destination)"))
             return nil
         }
-        let router = routerType.perform(onDestination: dest, from: source, configuring: { (config) in
-            let prepareDestination = { (prepare: @escaping (Destination) -> Void) in
-                config.prepareDestination = { d in
-                    guard let destination = d as? Destination else {
-                        assertionFailure("Bad implementation in router, destination (\(d)) should be type (\(Destination.self))")
-                        return
-                    }
-                    prepare(destination)
-                }
-            }
+        let router = routerType.perform(onDestination: dest, from: source, strictConfiguring: { (strictConfig, config) in
             let prepareModule = { (prepare: (ModuleConfig) -> Void) in
                 guard let moduleConfig = config as? ModuleConfig else {
                     assertionFailure("Bad implementation in router, configuration (\(config)) should be type (\(ModuleConfig.self))")
@@ -729,8 +611,8 @@ public extension ViewRouterType {
                 }
                 prepare(moduleConfig)
             }
-            configBuilder(config, prepareDestination, prepareModule)
-        }, removing: removeBuilder)
+            configBuilder(ViewRouteStrictConfig(configuration: strictConfig), prepareModule)
+        }, strictRemoving: removeBuilder)
         
         guard let routed = router else {
             return nil
@@ -745,8 +627,124 @@ public extension ViewRouterType {
         from source: ZIKViewRouteSource?,
         routeType: ViewRouteType
         ) -> ViewRouter<Destination, ModuleConfig>? {
-        return perform(onDestination: destination, from: source, configuring: { (config, _, _) in
+        return perform(onDestination: destination, from: source, configuring: { (config, _) in
             config.routeType = routeType
         })
+    }
+}
+
+// MARK: Strict Config
+
+///Proxy of ZIKViewRouteConfiguration to handle configuration in a type safe way.
+public class ViewRouteStrictConfig<Destination>: PerformRouteStrictConfig<Destination> {
+    internal override init(configuration: ZIKPerformRouteStrictConfiguration<AnyObject>) {
+        assert(configuration is ZIKViewRouteStrictConfiguration<AnyObject>)
+        super.init(configuration: configuration)
+    }
+    public var config: ZIKViewRouteStrictConfiguration<AnyObject> {
+        get { return configuration as! ZIKViewRouteStrictConfiguration<AnyObject> }
+    }
+    
+    /// Source ViewController or View for route.
+    ///
+    /// For ZIKViewRouteTypePush, ZIKViewRouteTypePresentModally, ZIKViewRouteTypePresentAsPopover, ZIKViewRouteTypePerformSegue,ZIKViewRouteTypeShow,ZIKViewRouteTypeShowDetail,ZIKViewRouteTypeAddAsChildViewController, source must be a UIViewController.
+    ///
+    /// For ZIKViewRouteTypeAddAsSubview, source must be a UIView.
+    ///
+    /// For ZIKViewRouteTypeMakeDestination, source is not needed.
+    public var source: ZIKViewRouteSource? {
+        get { return config.source }
+        set { config.source = newValue }
+    }
+    
+    ///The style of route, default is ZIKViewRouteTypePresentModally. Subclass router may return other default value.
+    public var routeType: ZIKViewRouteType {
+        get { return config.routeType }
+        set { config.routeType = newValue }
+    }
+    
+    ///For push/present, default is YES
+    public var animated: Bool {
+        get { return config.animated }
+        set { config.animated = newValue }
+    }
+    
+    /// Wrap destination in a UINavigationController, UITabBarController or UISplitViewController, and perform route on the container. Only available for ZIKViewRouteTypePush, ZIKViewRouteTypePresentModally, ZIKViewRouteTypePresentAsPopover, ZIKViewRouteTypeShow, ZIKViewRouteTypeShowDetail, ZIKViewRouteTypeAddAsChildViewController.
+    ///
+    /// a UINavigationController or UISplitViewController can't be pushed into another UINavigationController, so:
+    ///
+    /// For ZIKViewRouteTypePush, container can't be a UINavigationController or UISplitViewController
+    ///
+    /// For ZIKViewRouteTypeShow, if source is in a UINavigationController, container can't be a UINavigationController or UISplitViewController
+    ///
+    /// For ZIKViewRouteTypeShowDetail, if source is in a collapsed UISplitViewController, and master is a UINavigationController, container can't be a UINavigationController or UISplitViewController
+    ///
+    /// For ZIKViewRouteTypeAddAsChildViewController, will add container as source's child, so you have to add container's view to source's view in addingChildViewHandler, not the destination's view
+    public var containerWrapper: ZIKViewRouteContainerWrapper? {
+        get { return config.containerWrapper }
+        set { config.containerWrapper = newValue }
+    }
+    
+    ///Sender for -showViewController:sender: and -showDetailViewController:sender:
+    public var sender: AnyObject? {
+        get { return config.sender }
+        set { config.sender = newValue }
+    }
+    
+    ///Config popover for ZIKViewRouteTypePresentAsPopover
+    public var configurePopover: ZIKViewRoutePopoverConfiger? {
+        get { return config.configurePopover }
+    }
+    
+    ///Config segue for ZIKViewRouteTypePerformSegue
+    public var configureSegue: ZIKViewRouteSegueConfiger? {
+        get { return config.configureSegue }
+    }
+    
+    ///When use routeType ZIKViewRouteTypeAddAsChildViewController, add the destination's view to source's view in this block. If you wrap destination with -containerWrapper, the `destination` in this block is the wrapped UIViewController. You can add with animations, and must call completion when the adding action is finished.
+    public var addingChildViewHandler: ((UIViewController, @escaping () -> Void) -> Void)? {
+        get { return config.addingChildViewHandler }
+        set { config.addingChildViewHandler = newValue }
+    }
+    public var popoverConfiguration: ZIKViewRoutePopoverConfiguration? {
+        get { return config.popoverConfiguration }
+    }
+    public var segueConfiguration: ZIKViewRouteSegueConfiguration? {
+        get { return config.segueConfiguration }
+    }
+    
+    ///When set to YES and the router still exists, if the same destination instance is routed again from external, prepareDestination, successHandler, errorHandler, completion will be called.
+    public var handleExternalRoute: Bool {
+        get { return config.handleExternalRoute }
+        set { config.handleExternalRoute = newValue }
+    }
+}
+
+///Proxy of ZIKViewRemoveConfiguration to handle configuration in a type safe way.
+public class ViewRemoveStrictConfig<Destination>: RemoveRouteStrictConfig<Destination> {
+    internal override init(configuration: ZIKRemoveRouteStrictConfiguration<AnyObject>) {
+        assert(configuration is ZIKViewRemoveStrictConfiguration<AnyObject>)
+        super.init(configuration: configuration)
+    }
+    public var config: ZIKViewRemoveStrictConfiguration<AnyObject> {
+        get { return configuration as! ZIKViewRemoveStrictConfiguration<AnyObject> }
+    }
+    
+    ///For pop/dismiss, default is true
+    public var animated: Bool {
+        get { return config.animated }
+        set { config.animated = newValue }
+    }
+    
+    ///When use routeType ZIKViewRouteTypeAddAsChildViewController and remove, remove the destination's view from it's superview in this block. If you wrap destination with -containerWrapper, the `destination` in this block is the wrapped UIViewController. You can remove with animations, and must call completion when the removing action is finished.
+    public var removingChildViewHandler: ((UIViewController, @escaping () -> Void) -> Void)? {
+        get { return config.removingChildViewHandler }
+        set { config.removingChildViewHandler = newValue }
+    }
+    
+    ///When set to YES and the router still exists, if the same destination instance is removed from external, successHandler, errorHandler will be called.
+    public var handleExternalRoute: Bool {
+        get { return config.handleExternalRoute }
+        set { config.handleExternalRoute = newValue }
     }
 }

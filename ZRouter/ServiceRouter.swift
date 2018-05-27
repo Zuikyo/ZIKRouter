@@ -23,7 +23,6 @@ public class ServiceRouterType<Destination, ModuleConfig> {
     
     // MARK: Perform
     
-    public typealias DestinationPreparation = (@escaping (Destination) -> Void) -> Void
     public typealias ModulePreparation = ((ModuleConfig) -> Void) -> Void
     
     /// Set dependencies required by destination and perform route, and you can remove the route with remove configuration later.
@@ -31,38 +30,22 @@ public class ServiceRouterType<Destination, ModuleConfig> {
     /// - Parameters:
     ///   - configBuilder: Build the configuration for performing route.
     ///     - config: Config for performing route.
-    ///     - prepareDestination: Prepare destination before performing route. It's an escaping block, use weakSelf to avoid retain cycle.
     ///     - prepareModule: Prepare custom module config.
     ///   - removeConfigBuilder: Configure the configuration for removing route.
     ///     - config: Config for removing route.
-    ///     - prepareDestination: Prepare destination before removing route. It's an escaping block, use weakSelf to avoid retain cycle.
     /// - Returns: The service router for this route.
     public func perform(
-        configuring configBuilder: (PerformRouteConfig, DestinationPreparation, ModulePreparation) -> Void,
-        removing removeConfigBuilder: ((RemoveRouteConfig, DestinationPreparation) -> Void)? = nil
+        configuring configBuilder: (PerformRouteStrictConfig<Destination>, ModulePreparation) -> Void,
+        removing removeConfigBuilder: ((RemoveRouteStrictConfig<Destination>) -> Void)? = nil
         ) -> ServiceRouter<Destination, ModuleConfig>? {
-        var removeBuilder: ((RemoveRouteConfig) -> Void)? = nil
+        var removeBuilder: ((ZIKRemoveRouteStrictConfiguration<AnyObject>) -> Void)? = nil
         if let removeConfigBuilder = removeConfigBuilder {
-            removeBuilder = { (config: RemoveRouteConfig) in
-                let prepareDestination = { (prepare: @escaping (Destination) -> Void) in
-                    config.prepareDestination = { d in
-                        if let destination = d as? Destination {
-                            prepare(destination)
-                        }
-                    }
-                }
-                removeConfigBuilder(config, prepareDestination)
+            removeBuilder = { (config: ZIKRemoveRouteStrictConfiguration<AnyObject>) in
+                removeConfigBuilder(RemoveRouteStrictConfig(configuration: config))
             }
         }
         let routerType = self.routerType
-        let router = routerType.perform(configuring: { config in
-            let prepareDestination = { (prepare: @escaping (Destination) -> Void) in
-                config.prepareDestination = { d in
-                    if let destination = ServiceRouterType._castedDestination(d, routerType: routerType) {
-                        prepare(destination)
-                    }
-                }
-            }
+        let router = routerType.perform(strictConfiguring: { (strictConfig, config) in
             let prepareModule = { (prepare: (ModuleConfig) -> Void) in
                 guard let moduleConfig = config as? ModuleConfig else {
                     assertionFailure("Bad implementation in router, configuration (\(config)) should be type (\(ModuleConfig.self))")
@@ -70,7 +53,7 @@ public class ServiceRouterType<Destination, ModuleConfig> {
                 }
                 prepare(moduleConfig)
             }
-            configBuilder(config, prepareDestination, prepareModule)
+            configBuilder(PerformRouteStrictConfig(configuration: strictConfig), prepareModule)
             #if DEBUG
             let successHandler = config.successHandler
             config.successHandler = { d in
@@ -78,7 +61,7 @@ public class ServiceRouterType<Destination, ModuleConfig> {
                 assert(ServiceRouterType._castedDestination(d, routerType: routerType) != nil, "Router (\(String(describing: routerType))) returns wrong destination type (\(d)), destination should be \(Destination.self)")
             }
             #endif
-        }, removing: removeBuilder)
+        }, strictRemoving: removeBuilder)
         if let router = router {
             return ServiceRouter<Destination, ModuleConfig>(router: router)
         } else {
@@ -88,14 +71,10 @@ public class ServiceRouterType<Destination, ModuleConfig> {
     
     /// If this route action doesn't need any arguments, perform directly with successHandler and errorHandler for current performing.
     @discardableResult public func perform(successHandler performerSuccessHandler: ((Destination) -> Void)? = nil, errorHandler performerErrorHandler: ((ZIKRouteAction, Error) -> Void)? = nil) -> ServiceRouter<Destination, ModuleConfig>? {
-        return perform(configuring: { (config, _, _) in
+        return perform(configuring: { (config, _) in
             if let performerSuccessHandler = performerSuccessHandler {
                 let successHandler = config.performerSuccessHandler
-                config.performerSuccessHandler = { d in
-                    guard let destination  = d as? Destination else {
-                        assertionFailure("Bad implementation in router, destination (\(String(describing: d))) should be type (\(Destination.self))")
-                        return
-                    }
+                config.performerSuccessHandler = { destination in
                     successHandler?(destination)
                     performerSuccessHandler(destination)
                 }
@@ -155,19 +134,11 @@ public class ServiceRouterType<Destination, ModuleConfig> {
     ///
     /// - Parameter configBuilder: Build the configuration for performing route.
     ///     - config: Config for performing route.
-    ///     - prepareDestination: Prepare destination before performing route. It's an escaping block, use weakSelf to avoid retain cycle.
     ///     - prepareModule: Prepare custom module config.
     /// - Returns: Destination
-    public func makeDestination(configuring configBuilder: (PerformRouteConfig, DestinationPreparation, ModulePreparation) -> Void) -> Destination? {
+    public func makeDestination(configuring configBuilder: (PerformRouteStrictConfig<Destination>, ModulePreparation) -> Void) -> Destination? {
         let routerType = self.routerType
-        let destination = routerType.makeDestination(configuring: { config in
-            let prepareDestination = { (prepare: @escaping (Destination) -> Void) in
-                config.prepareDestination = { d in
-                    if let destination = ServiceRouterType._castedDestination(d, routerType: routerType) {
-                        prepare(destination)
-                    }
-                }
-            }
+        let destination = routerType.makeDestination(strictConfiguring: { (strictConfig, config) in
             let prepareModule = { (prepare: (ModuleConfig) -> Void) in
                 guard let moduleConfig = config as? ModuleConfig else {
                     assertionFailure("Bad implementation in router, configuration (\(config)) should be type (\(ModuleConfig.self))")
@@ -175,7 +146,7 @@ public class ServiceRouterType<Destination, ModuleConfig> {
                 }
                 prepare(moduleConfig)
             }
-            configBuilder(config, prepareDestination, prepareModule)
+            configBuilder(PerformRouteStrictConfig(configuration: strictConfig), prepareModule)
         })
         assert(destination == nil || ServiceRouterType._castedDestination(destination!, routerType: routerType) != nil, "Router (\(routerType)) returns wrong destination type (\(String(describing: destination))), destination should be \(Destination.self)")
         return destination as? Destination
@@ -279,24 +250,205 @@ public class ServiceRouter<Destination, ModuleConfig> {
         })
     }
     
-    public typealias DestinationPreparation = (@escaping (Destination) -> Void) -> Void
-    
     /// Remove route and prepare before removing.
     ///
     /// - Parameter configBuilder: Configure the configuration for removing route.
     ///     - config: Config for removing route.
-    ///     - prepareDestination: Prepare destination before removing route. It's an escaping block, use weakSelf to avoid retain cycle.
-    public func removeRoute(configuring configBuilder: @escaping (RemoveRouteConfig, DestinationPreparation) -> Void) {
-        let removeBuilder = { (config: RemoveRouteConfig) in
-            let prepareDestination = { (prepare: @escaping (Destination) -> Void) in
-                config.prepareDestination = { d in
-                    if let destination = d as? Destination {
-                        prepare(destination)
-                    }
+    public func removeRoute(configuring configBuilder: @escaping (RemoveRouteStrictConfig<Destination>) -> Void) {
+        let removeBuilder = { (config: ZIKRemoveRouteStrictConfiguration<AnyObject>) in
+            configBuilder(RemoveRouteStrictConfig(configuration: config))
+        }
+        router.removeRoute(strictConfiguring: removeBuilder)
+    }
+}
+
+// MARK: Strict Config
+
+///Proxy of ZIKRouteConfiguration to handle configuration in a type safe way.
+public class RouteStrictConfig<Config: ZIKRouteStrictConfiguration<AnyObject>> {
+    public fileprivate(set) var configuration: Config
+    internal init(configuration: Config) {
+        self.configuration = configuration
+    }
+    ///Error handler for router's provider. Each time the router was performed or removed, error handler will be called when the operation fails. It's an escaping block.
+    public var errorHandler: ((ZIKRouteAction, Error) -> Void)? {
+        get { return configuration.errorHandler }
+        set { configuration.errorHandler = newValue }
+    }
+    ///Error handler for current performing, will reset to nil after performed.
+    public var performerErrorHandler: ((ZIKRouteAction, Error) -> Void)? {
+        get { return configuration.performerErrorHandler }
+        set { configuration.performerErrorHandler = newValue }
+    }
+    ///Monitor state. It's an escaping block.
+    public var stateNotifier: ((ZIKRouterState, ZIKRouterState) -> Void)? {
+        get { return configuration.stateNotifier }
+        set { configuration.stateNotifier = newValue }
+    }
+}
+
+///Proxy of ZIKPerformRouteConfiguration to handle configuration in a type safe way.
+public class PerformRouteStrictConfig<Destination>: RouteStrictConfig<ZIKPerformRouteStrictConfiguration<AnyObject>> {
+    public fileprivate(set) override var configuration: ZIKPerformRouteStrictConfiguration<AnyObject> {
+        get { return super.configuration }
+        set { super.configuration = newValue }
+    }
+    internal override init(configuration: ZIKPerformRouteStrictConfiguration<AnyObject>) {
+        super.init(configuration: configuration)
+    }
+    ///Prepare for performRoute, and config other dependency for destination here. Subclass can offer more specific info. It's an escaping block.
+    public var prepareDestination: ((Destination) -> Void)? {
+        get {
+            if let prepare = configuration.prepareDestination {
+                return { destiantion in
+                    prepare(destiantion as AnyObject)
                 }
             }
-            configBuilder(config, prepareDestination)
+            return nil
         }
-        router.removeRoute(configuring: removeBuilder)
+        set {
+            if let prepare = newValue {
+                configuration.prepareDestination = { d in
+                    guard let destination = d as? Destination else {
+                        assertionFailure("Bad implementation in router, destination (\(d)) should be type (\(Destination.self))")
+                        return
+                    }
+                    prepare(destination)
+                }
+            } else {
+                configuration.prepareDestination = nil
+            }
+        }
+    }
+    
+    ///Success handler for router's provider. Each time the router was performed, success handler will be called when the operation succeed. It's an escaping block.
+    public var successHandler: ((Destination) -> Void)? {
+        get {
+            if let handler = configuration.successHandler {
+                return { destiantion in
+                    handler(destiantion as AnyObject)
+                }
+            }
+            return nil
+        }
+        set {
+            if let handler = newValue {
+                configuration.successHandler = { d in
+                    guard let destination = d as? Destination else {
+                        assertionFailure("Bad implementation in router, destination (\(d)) should be type (\(Destination.self))")
+                        return
+                    }
+                    handler(destination)
+                }
+            } else {
+                configuration.successHandler = nil
+            }
+        }
+    }
+    
+    ///Success handler for current performing, will reset to nil after performed.
+    public var performerSuccessHandler: ((Destination) -> Void)? {
+        get {
+            if let handler = configuration.performerSuccessHandler {
+                return { destiantion in
+                    handler(destiantion as AnyObject)
+                }
+            }
+            return nil
+        }
+        set {
+            if let handler = newValue {
+                configuration.performerSuccessHandler = { d in
+                    guard let destination = d as? Destination else {
+                        assertionFailure("Bad implementation in router, destination (\(d)) should be type (\(Destination.self))")
+                        return
+                    }
+                    handler(destination)
+                }
+            } else {
+                configuration.performerSuccessHandler = nil
+            }
+        }
+    }
+    
+    ///Completion handler for performRoute. It's an escaping block.
+    public var completionHandler: ((Bool, Destination?, ZIKRouteAction, Error?) -> Void)? {
+        get {
+            if let handler = configuration.completionHandler {
+                return { (success, destiantion: Destination?, action, error) in
+                    handler(success, destiantion as AnyObject, action, error)
+                }
+            }
+            return nil
+        }
+        set {
+            if let handler = newValue {
+                configuration.completionHandler = { (success, d, action, error) in
+                    if d == nil {
+                        handler(success, nil, action, error)
+                    } else if let destination = d as? Destination {
+                        handler(success, destination, action, error)
+                    } else {
+                        assertionFailure("Bad implementation in router, destination (\(d!)) should be type (\(Destination.self))")
+                    }
+                }
+            } else {
+                configuration.completionHandler = nil
+            }
+        }
+    }
+}
+
+///Proxy of ZIKRemoveRouteConfiguration to handle configuration in a type safe way.
+public class RemoveRouteStrictConfig<Destination>: RouteStrictConfig<ZIKRemoveRouteStrictConfiguration<AnyObject>> {
+    public fileprivate(set) override var configuration: ZIKRemoveRouteStrictConfiguration<AnyObject> {
+        get { return super.configuration }
+        set { super.configuration = newValue }
+    }
+    internal override init(configuration: ZIKRemoveRouteStrictConfiguration<AnyObject>) {
+        super.init(configuration: configuration)
+    }
+    
+    ///Prepare for removeRoute. Subclass can offer more specific info. It's an escaping block.
+    public var prepareDestination: ((Destination) -> Void)? {
+        get {
+            if let prepare = configuration.prepareDestination {
+                return { destiantion in
+                    prepare(destiantion as AnyObject)
+                }
+            }
+            return nil
+        }
+        set {
+            if let prepare = newValue {
+                configuration.prepareDestination = { d in
+                    guard let destination = d as? Destination else {
+                        assertionFailure("Bad implementation in router, destination (\(d)) should be type (\(Destination.self))")
+                        return
+                    }
+                    prepare(destination)
+                }
+            } else {
+                configuration.prepareDestination = nil
+            }
+        }
+    }
+    
+    ///Success handler for router's provider. Each time the router was removed, success handler will be called when the operation succeed. It's an escaping block.
+    public var successHandler: (() -> Void)? {
+        get { return configuration.successHandler }
+        set { configuration.successHandler = newValue }
+    }
+    
+    ///Success handler for current removing, will reset to nil after removed.
+    public var performerSuccessHandler: (() -> Void)? {
+        get { return configuration.performerSuccessHandler }
+        set { configuration.performerSuccessHandler = newValue }
+    }
+    
+    ///Completion handler for removeRoute. It's an escaping block.
+    public var completionHandler: ZIKRemoveRouteCompletion? {
+        get { return configuration.completionHandler }
+        set { configuration.completionHandler = newValue }
     }
 }

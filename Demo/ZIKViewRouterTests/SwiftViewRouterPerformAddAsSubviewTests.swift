@@ -21,7 +21,7 @@ class SwiftViewRouterPerformAddAsSubviewTests: ZIKViewRouterTestCase {
     
     override func leaveTestView(completion: @escaping (Bool, ZIKRouteAction, Error?) -> Void) {
         XCTAssertNotNil(testRouter)
-        testRouter?.removeRoute(configuring: { (config, _) in
+        testRouter?.removeRoute(configuring: { (config) in
             config.successHandler = {
                 print("LeaveTestView succeed")
                 self.leaveTestViewExpectation.fulfill()
@@ -84,15 +84,14 @@ class SwiftViewRouterPerformAddAsSubviewTests: ZIKViewRouterTestCase {
             self.testRouter = Router.perform(
                 to: RoutableView<BSwiftSubviewInput>(),
                 path: self.path(from: source),
-                configuring: { (config, prepareDest, _) in
-                    self.configure(routeConfiguration: config, source: source)
-                    prepareDest({ destination in
+                configuring: { (config, _) in
+                    self.configure(routeConfiguration: config.config.configuration, source: source)
+                    config.prepareDestination = { destination in
                         destination.title = "test title"
                         expectation.fulfill()
-                    })
+                    }
                     config.successHandler = { destination in
-                        XCTAssert(destination is BSwiftSubviewInput)
-                        XCTAssert((destination as! BSwiftSubviewInput).title == "test title")
+                        XCTAssert(destination.title == "test title")
                         self.handle({
                             XCTAssert(self.router?.state == .routed)
                             self.leaveTest()
@@ -109,8 +108,8 @@ class SwiftViewRouterPerformAddAsSubviewTests: ZIKViewRouterTestCase {
             self.testRouter = Router.perform(
                 to: RoutableView<BSwiftSubviewInput>(),
                 path: self.path(from: source),
-                configuring: { (config, prepareDest, _) in
-                    self.configure(routeConfiguration: config, source: source)
+                configuring: { (config, _) in
+                    self.configure(routeConfiguration: config.config.configuration, source: source)
                     config.completionHandler = { (success, destination, action, error) in
                         XCTAssertTrue(success)
                         XCTAssertNil(error)
@@ -131,8 +130,8 @@ class SwiftViewRouterPerformAddAsSubviewTests: ZIKViewRouterTestCase {
             self.testRouter = Router.perform(
                 to: RoutableView<BSwiftSubviewInput>(),
                 path: .extensible(path: ZIKViewRoutePath(routeType: self.routeType, source: nil)),
-                configuring: { (config, prepareDest, _) in
-                    self.configure(routeConfiguration: config, source: source)
+                configuring: { (config, _) in
+                    self.configure(routeConfiguration: config.config.configuration, source: source)
                     config.completionHandler = { (success, destination, action, error) in
                         XCTAssertFalse(success)
                         XCTAssertNotNil(error)
@@ -244,8 +243,8 @@ class SwiftViewRouterPerformAddAsSubviewTests: ZIKViewRouterTestCase {
             self.testRouter = Router.perform(
                 to: RoutableView<BSwiftSubviewInput>(),
                 path: self.path(from: source),
-                configuring: { (config, prepareDest, _) in
-                    self.configure(routeConfiguration: config, source: source)
+                configuring: { (config, _) in
+                    self.configure(routeConfiguration: config.config.configuration, source: source)
                     config.successHandler = { d in
                         expectation.fulfill()
                         self.handle({
@@ -267,8 +266,8 @@ class SwiftViewRouterPerformAddAsSubviewTests: ZIKViewRouterTestCase {
             self.testRouter = Router.perform(
                 to: RoutableView<BSwiftSubviewInput>(),
                 path: self.path(from: source),
-                configuring: { (config, prepareDest, _) in
-                    self.configure(routeConfiguration: config, source: source)
+                configuring: { (config, _) in
+                    self.configure(routeConfiguration: config.config.configuration, source: source)
                     config.successHandler = { d in
                         providerHandlerExpectation.fulfill()
                     }
@@ -297,8 +296,8 @@ class SwiftViewRouterPerformAddAsSubviewTests: ZIKViewRouterTestCase {
             self.testRouter = Router.perform(
                 to: RoutableView<BSwiftSubviewInput>(),
                 path: .extensible(path: ZIKViewRoutePath(routeType: self.routeType, source: nil)),
-                configuring: { (config, prepareDest, _) in
-                    self.configure(routeConfiguration: config, source: source)
+                configuring: { (config, _) in
+                    self.configure(routeConfiguration: config.config.configuration, source: source)
                     config.successHandler = { d in
                         XCTAssert(false, "successHandler should not be called")
                     }
@@ -331,8 +330,8 @@ class SwiftViewRouterPerformAddAsSubviewTests: ZIKViewRouterTestCase {
                 .perform(
                     onDestination: destination!,
                     path: self.path(from: source),
-                    configuring: { (config, _, _) in
-                        self.configure(routeConfiguration: config, source: source)
+                    configuring: { (config, _) in
+                        self.configure(routeConfiguration: config.config.configuration, source: source)
                         config.successHandler = { d in
                             providerHandlerExpectation.fulfill()
                         }

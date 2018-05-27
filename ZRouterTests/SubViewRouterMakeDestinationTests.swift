@@ -64,10 +64,10 @@ class SubviewRouterMakeDestinationTests: XCTestCase {
         let performerExpectation = self.expectation(description: "performerSuccessHandler")
         let completionHandlerExpectation = self.expectation(description: "completionHandler")
         XCTAssertTrue(Router.to(RoutableView<BSubviewInput>())!.canMakeDestination)
-        let destination = Router.makeDestination(to: RoutableView<BSubviewInput>(), configuring: { (config, prepareDestination, _) in
-            prepareDestination({ destination in
+        let destination = Router.makeDestination(to: RoutableView<BSubviewInput>(), configuring: { (config, prepareModule) in
+            config.prepareDestination = { destination in
                 destination.title = "test title"
-            })
+            }
             config.successHandler = { d in
                 providerExpectation.fulfill()
             }
@@ -82,7 +82,7 @@ class SubviewRouterMakeDestinationTests: XCTestCase {
             }
             config.completionHandler = { (success, destination, action, error) in
                 XCTAssertTrue(success)
-                XCTAssert(destination is BSubviewInput)
+                XCTAssert(destination != nil)
                 completionHandlerExpectation.fulfill()
             }
         })

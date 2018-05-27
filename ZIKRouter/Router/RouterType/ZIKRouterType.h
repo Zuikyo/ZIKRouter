@@ -48,12 +48,10 @@ NS_ASSUME_NONNULL_BEGIN
 /**
  Synchronously get destination, and prepare the destination in a type safe way inferred by generic parameters.
  
- @param configBuilder Type safe builder to build configuration, type of `strictConfig`'s properties are inferred by generic parameters.
+ @param configBuilder Type safe builder to build configuration, type of `config`'s properties are inferred by generic parameters.
  @return The prepared destination.
  */
-- (nullable Destination)makeDestinationWithStrictConfiguring:(void(NS_NOESCAPE ^ _Nullable)(RouteConfig config,
-                                                                                            ZIKPerformRouteStrictConfiguration<Destination> *strictConfig
-                                                                                            ))configBuilder;
+- (nullable Destination)makeDestinationWithStrictConfiguring:(void(NS_NOESCAPE ^ _Nullable)(ZIKPerformRouteStrictConfiguration<Destination> *config, RouteConfig module))configBuilder;
 
 #pragma mark Internal
 

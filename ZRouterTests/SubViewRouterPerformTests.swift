@@ -48,14 +48,14 @@ class SubviewRouterPerformTests: XCTestCase {
     func testPerformWithPrepareDestination() {
         let expectation = self.expectation(description: "prepareDestination")
         enterTest()
-        self.router = Router.perform(to: RoutableView<BSubviewInput>(), path: .makeDestination, configuring: { (config, prepareDestination, _) in
-            prepareDestination({ destination in
+        self.router = Router.perform(to: RoutableView<BSubviewInput>(), path: .makeDestination, configuring: { (config, prepareModule) in
+            config.prepareDestination = { destination in
                 destination.title = "test title"
                 expectation.fulfill()
                 self.handle({
                     self.leaveTest()
                 })
-            })
+            }
         })
         waitForExpectations(timeout: 5, handler: { if let error = $0 {print(error)}})
     }
@@ -63,11 +63,11 @@ class SubviewRouterPerformTests: XCTestCase {
     func testPerformWithSuccessCompletionHandler() {
         let expectation = self.expectation(description: "completionHandler")
         enterTest()
-        self.router = Router.perform(to: RoutableView<BSubviewInput>(), path: .makeDestination, configuring: { (config, prepareDestination, _) in
+        self.router = Router.perform(to: RoutableView<BSubviewInput>(), path: .makeDestination, configuring: { (config, prepareModule) in
             config.completionHandler = { (success, destination, action, error) in
                 XCTAssertTrue(success)
                 XCTAssertNotNil(destination)
-                XCTAssert(destination is BSubviewInput)
+                XCTAssert(destination != nil)
                 expectation.fulfill()
                 self.handle({
                     self.leaveTest()
@@ -81,7 +81,7 @@ class SubviewRouterPerformTests: XCTestCase {
         let expectation = self.expectation(description: "completionHandler")
         TestConfig.routeShouldFail = true
         enterTest()
-        self.router = Router.perform(to: RoutableView<BSubviewInput>(), path: .makeDestination, configuring: { (config, prepareDestination, _) in
+        self.router = Router.perform(to: RoutableView<BSubviewInput>(), path: .makeDestination, configuring: { (config, prepareModule) in
             config.completionHandler = { (success, destination, action, error) in
                 XCTAssertFalse(success)
                 XCTAssertNil(destination)
@@ -195,14 +195,13 @@ class SubviewRouterPerformTests: XCTestCase {
     func testPerformWithSuccess() {
         let expectation = self.expectation(description: "successHandler")
         enterTest()
-        self.router = Router.perform(to: RoutableView<BSubviewInput>(), path: .makeDestination, configuring: { (config, prepareDestination, _) in
-            prepareDestination({ destination in
+        self.router = Router.perform(to: RoutableView<BSubviewInput>(), path: .makeDestination, configuring: { (config, prepareModule) in
+            config.prepareDestination = { destination in
                 destination.title = "test title"
-            })
-            config.successHandler = { d in
-                let destination = d as? BSubviewInput
+            }
+            config.successHandler = { destination in
                 XCTAssertNotNil(destination)
-                XCTAssert(destination?.title == "test title")
+                XCTAssert(destination.title == "test title")
                 expectation.fulfill()
                 self.handle({
                     self.leaveTest()
@@ -223,20 +222,18 @@ class SubviewRouterPerformTests: XCTestCase {
         providerExpectation.expectedFulfillmentCount = 2
         let performerExpectation = self.expectation(description: "performerSuccessHandler")
         enterTest()
-        self.router = Router.perform(to: RoutableView<BSubviewInput>(), path: .makeDestination, configuring: { (config, prepareDestination, _) in
-            prepareDestination({ destination in
+        self.router = Router.perform(to: RoutableView<BSubviewInput>(), path: .makeDestination, configuring: { (config, prepareModule) in
+            config.prepareDestination = { destination in
                 destination.title = "test title"
-            })
-            config.successHandler = { d in
-                let destination = d as? BSubviewInput
+            }
+            config.successHandler = { destination in
                 XCTAssertNotNil(destination)
-                XCTAssert(destination?.title == "test title")
+                XCTAssert(destination.title == "test title")
                 providerExpectation.fulfill()
             }
-            config.performerSuccessHandler = { d in
-                let destination = d as? BSubviewInput
+            config.performerSuccessHandler = { destination in
                 XCTAssertNotNil(destination)
-                XCTAssert(destination?.title == "test title")
+                XCTAssert(destination.title == "test title")
                 performerExpectation.fulfill()
                 self.handle({
                     XCTAssert(self.router?.state == .routed)
@@ -261,10 +258,10 @@ class SubviewRouterPerformTests: XCTestCase {
         let performerExpectation = self.expectation(description: "performerErrorHandler")
         TestConfig.routeShouldFail = true
         enterTest()
-        self.router = Router.perform(to: RoutableView<BSubviewInput>(), path: .makeDestination, configuring: { (config, prepareDestination, _) in
-            prepareDestination({ destination in
+        self.router = Router.perform(to: RoutableView<BSubviewInput>(), path: .makeDestination, configuring: { (config, prepareModule) in
+            config.prepareDestination = { destination in
                 destination.title = "test title"
-            })
+            }
             config.successHandler = { d in
                 XCTAssert(false, "errorHandler should not be called")
             }

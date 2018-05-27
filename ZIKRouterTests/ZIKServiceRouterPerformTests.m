@@ -287,11 +287,11 @@
     {
         [self enterTest];
         self.router = [ZIKRouterToService(AServiceInput)
-                       performWithStrictConfiguring:^(ZIKPerformRouteConfiguration * _Nonnull config, ZIKPerformRouteStrictConfiguration<id<AServiceInput>> *strictConfig) {
-                           strictConfig.prepareDestination = ^(id<AServiceInput>  _Nonnull destination) {
+                       performWithStrictConfiguring:^(ZIKPerformRouteStrictConfiguration<id<AServiceInput>> *config, ZIKPerformRouteConfiguration * _Nonnull module) {
+                           config.prepareDestination = ^(id<AServiceInput>  _Nonnull destination) {
                                destination.title = @"test title";
                            };
-                           strictConfig.successHandler = ^(id<AServiceInput>  _Nonnull destination) {
+                           config.successHandler = ^(id<AServiceInput>  _Nonnull destination) {
                                XCTAssertNotNil(destination);
                                XCTAssert([destination.title isEqualToString:@"test title"]);
                                [expectation fulfill];
@@ -314,8 +314,8 @@
     {
         [self enterTest];
         self.router = [ZIKRouterToService(AServiceInput)
-                       performWithStrictConfiguring:^(ZIKPerformRouteConfiguration * _Nonnull config, ZIKPerformRouteStrictConfiguration<id<AServiceInput>> *strictConfig) {
-                           strictConfig.completionHandler = ^(BOOL success, id<AServiceInput> _Nullable destination, ZIKRouteAction  _Nonnull routeAction, NSError * _Nullable error) {
+                       performWithStrictConfiguring:^(ZIKPerformRouteStrictConfiguration<id<AServiceInput>> *config, ZIKPerformRouteConfiguration * _Nonnull module) {
+                           config.completionHandler = ^(BOOL success, id<AServiceInput> _Nullable destination, ZIKRouteAction  _Nonnull routeAction, NSError * _Nullable error) {
                                XCTAssertTrue(success);
                                XCTAssertNil(error);
                                [expectation fulfill];
@@ -338,8 +338,8 @@
         TestConfig.routeShouldFail = YES;
         [self enterTest];
         self.router = [ZIKRouterToService(AServiceInput)
-                       performWithStrictConfiguring:^(ZIKPerformRouteConfiguration * _Nonnull config, ZIKPerformRouteStrictConfiguration<id<AServiceInput>> *strictConfig) {
-                           strictConfig.completionHandler = ^(BOOL success, id<AServiceInput> _Nullable destination, ZIKRouteAction  _Nonnull routeAction, NSError * _Nullable error) {
+                       performWithStrictConfiguring:^(ZIKPerformRouteStrictConfiguration<id<AServiceInput>> *config, ZIKPerformRouteConfiguration * _Nonnull module) {
+                           config.completionHandler = ^(BOOL success, id<AServiceInput> _Nullable destination, ZIKRouteAction  _Nonnull routeAction, NSError * _Nullable error) {
                                XCTAssertFalse(success);
                                XCTAssertNotNil(error);
                                XCTAssert(self.router == nil || self.router.state == ZIKRouterStateUnrouted);
@@ -361,8 +361,8 @@
     {
         [self enterTest];
         self.router = [ZIKRouterToService(AServiceInput)
-                       performWithStrictConfiguring:^(ZIKPerformRouteConfiguration * _Nonnull config, ZIKPerformRouteStrictConfiguration<id<AServiceInput>> *strictConfig) {
-                           strictConfig.successHandler = ^(id<AServiceInput> _Nonnull destination) {
+                       performWithStrictConfiguring:^(ZIKPerformRouteStrictConfiguration<id<AServiceInput>> *config, ZIKPerformRouteConfiguration * _Nonnull module) {
+                           config.successHandler = ^(id<AServiceInput> _Nonnull destination) {
                                XCTAssertNotNil(destination);
                                [expectation fulfill];
                                [self handle:^{
@@ -386,12 +386,12 @@
     {
         [self enterTest];
         self.router = [ZIKRouterToService(AServiceInput)
-                       performWithStrictConfiguring:^(ZIKPerformRouteConfiguration * _Nonnull config, ZIKPerformRouteStrictConfiguration<id<AServiceInput>> *strictConfig) {
-                           strictConfig.successHandler = ^(id<AServiceInput>  _Nonnull destination) {
+                       performWithStrictConfiguring:^(ZIKPerformRouteStrictConfiguration<id<AServiceInput>> *config, ZIKPerformRouteConfiguration * _Nonnull module) {
+                           config.successHandler = ^(id<AServiceInput>  _Nonnull destination) {
                                XCTAssertNotNil(destination);
                                [successHandlerExpectation fulfill];
                            };
-                           strictConfig.performerSuccessHandler = ^(id<AServiceInput>  _Nonnull destination) {
+                           config.performerSuccessHandler = ^(id<AServiceInput>  _Nonnull destination) {
                                XCTAssertNotNil(destination);
                                [performerSuccessHandlerExpectation fulfill];
                                
@@ -421,11 +421,11 @@
         TestConfig.routeShouldFail = YES;
         [self enterTest];
         self.router = [ZIKRouterToService(AServiceInput)
-                       performWithStrictConfiguring:^(ZIKPerformRouteConfiguration * _Nonnull config, ZIKPerformRouteStrictConfiguration<id<AServiceInput>> *strictConfig) {
-                           strictConfig.successHandler = ^(id<AServiceInput>  _Nonnull destination) {
+                       performWithStrictConfiguring:^(ZIKPerformRouteStrictConfiguration<id<AServiceInput>> *config, ZIKPerformRouteConfiguration * _Nonnull module) {
+                           config.successHandler = ^(id<AServiceInput>  _Nonnull destination) {
                                XCTAssert(NO, @"successHandler should not be called");
                            };
-                           strictConfig.performerSuccessHandler = ^(id<AServiceInput>  _Nonnull destination) {
+                           config.performerSuccessHandler = ^(id<AServiceInput>  _Nonnull destination) {
                                XCTAssert(NO, @"successHandler should not be called");
                            };
                            config.errorHandler = ^(ZIKRouteAction  _Nonnull routeAction, NSError * _Nonnull error) {

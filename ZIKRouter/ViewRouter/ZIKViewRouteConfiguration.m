@@ -399,3 +399,98 @@ ZIKRouteAction const ZIKRouteActionPerformOnDestination = @"ZIKRouteActionPerfor
 @end
 @implementation UISplitViewController (ZIKViewRouteContainer)
 @end
+
+@implementation ZIKViewRouteStrictConfiguration
+@dynamic configuration;
+@dynamic prepareDestination;
+@dynamic successHandler;
+
+- (instancetype)initWithConfiguration:(ZIKViewRouteConfiguration *)configuration {
+    if (self = [super initWithConfiguration:configuration]) {
+        
+    }
+    return self;
+}
+- (id<ZIKViewRouteSource>)source {
+    return self.configuration.source;
+}
+- (void)setSource:(id<ZIKViewRouteSource>)source {
+    self.configuration.source = source;
+}
+- (ZIKViewRouteType)routeType {
+    return self.configuration.routeType;
+}
+- (void)setRouteType:(ZIKViewRouteType)routeType {
+    self.configuration.routeType = routeType;
+}
+- (BOOL)animated {
+    return self.configuration.animated;
+}
+- (void)setAnimated:(BOOL)animated {
+    self.configuration.animated = animated;
+}
+- (ZIKViewRouteContainerWrapper)containerWrapper {
+    return self.configuration.containerWrapper;
+}
+- (void)setContainerWrapper:(ZIKViewRouteContainerWrapper)containerWrapper {
+    self.configuration.containerWrapper = containerWrapper;
+}
+- (id)sender {
+    return self.configuration.sender;
+}
+- (void)setSender:(id)sender {
+    self.configuration.sender = sender;
+}
+- (ZIKViewRoutePopoverConfiger)configurePopover {
+    return self.configuration.configurePopover;
+}
+- (ZIKViewRouteSegueConfiger)configureSegue {
+    return self.configuration.configureSegue;
+}
+- (void(^)(UIViewController *destination, void(^completion)(void)))addingChildViewHandler {
+    return self.configuration.addingChildViewHandler;
+}
+- (void)setAddingChildViewHandler:(void (^)(UIViewController * _Nonnull, void (^ _Nonnull)(void)))addingChildViewHandler {
+    self.configuration.addingChildViewHandler = addingChildViewHandler;
+}
+- (ZIKViewRoutePopoverConfiguration *)popoverConfiguration {
+    return self.configuration.popoverConfiguration;
+}
+- (ZIKViewRouteSegueConfiguration *)segueConfiguration {
+    return self.configuration.segueConfiguration;
+}
+- (BOOL)handleExternalRoute {
+    return self.configuration.handleExternalRoute;
+}
+- (void)setHandleExternalRoute:(BOOL)handleExternalRoute {
+    self.configuration.handleExternalRoute = handleExternalRoute;
+}
+@end
+
+@implementation ZIKViewRemoveStrictConfiguration
+@dynamic configuration;
+- (instancetype)initWithConfiguration:(ZIKViewRemoveConfiguration *)configuration {
+    if (self = [super initWithConfiguration:configuration]) {
+        
+    }
+    return self;
+}
+- (BOOL)animated {
+    return self.configuration.animated;
+}
+- (void)setAnimated:(BOOL)animated {
+    self.configuration.animated = animated;
+}
+- (void(^)(UIViewController *destination, void(^completion)(void)))removingChildViewHandler {
+    return self.configuration.removingChildViewHandler;
+}
+- (void)setRemovingChildViewHandler:(void (^)(UIViewController * _Nonnull, void (^ _Nonnull)(void)))removingChildViewHandler {
+    self.configuration.removingChildViewHandler = removingChildViewHandler;
+}
+- (BOOL)handleExternalRoute {
+    return self.configuration.handleExternalRoute;
+}
+- (void)setHandleExternalRoute:(BOOL)handleExternalRoute {
+    self.configuration.handleExternalRoute = handleExternalRoute;
+}
+@end

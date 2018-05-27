@@ -326,4 +326,108 @@ typedef void(^ZIKViewRouteSegueConfiger)(NS_NOESCAPE ZIKViewRouteSegueConfigure)
 @interface UISplitViewController (ZIKViewRouteContainer) <ZIKViewRouteContainer>
 @end
 
+#pragma mark Strict Configuration
+
+///Proxy of ZIKViewRouteConfiguration to handle configuration in a type safe way.
+@interface ZIKViewRouteStrictConfiguration<__covariant Destination> : ZIKPerformRouteStrictConfiguration<Destination>
+@property (nonatomic, strong, readonly) ZIKViewRouteConfiguration *configuration;
+- (instancetype)initWithConfiguration:(ZIKViewRouteConfiguration *)configuration;
+
+/**
+ Source ViewController or View for route.
+ @discussion
+ For ZIKViewRouteTypePush, ZIKViewRouteTypePresentModally, ZIKViewRouteTypePresentAsPopover, ZIKViewRouteTypePerformSegue,ZIKViewRouteTypeShow,ZIKViewRouteTypeShowDetail,ZIKViewRouteTypeAddAsChildViewController, source must be a UIViewController.
+ 
+ For ZIKViewRouteTypeAddAsSubview, source must be a UIView.
+ 
+ For ZIKViewRouteTypeMakeDestination, source is not needed.
+ */
+@property (nonatomic, weak, nullable) id<ZIKViewRouteSource> source;
+///The style of route, default is ZIKViewRouteTypePresentModally. Subclass router may return other default value.
+@property (nonatomic, assign) ZIKViewRouteType routeType;
+///For push/present, default is YES
+@property (nonatomic, assign) BOOL animated;
+
+/**
+ Wrap destination in a UINavigationController, UITabBarController or UISplitViewController, and perform route on the container. Only available for ZIKViewRouteTypePush, ZIKViewRouteTypePresentModally, ZIKViewRouteTypePresentAsPopover, ZIKViewRouteTypeShow, ZIKViewRouteTypeShowDetail, ZIKViewRouteTypeAddAsChildViewController.
+ @discussion
+ a UINavigationController or UISplitViewController can't be pushed into another UINavigationController, so:
+ 
+ For ZIKViewRouteTypePush, container can't be a UINavigationController or UISplitViewController
+ 
+ For ZIKViewRouteTypeShow, if source is in a UINavigationController, container can't be a UINavigationController or UISplitViewController
+ 
+ For ZIKViewRouteTypeShowDetail, if source is in a collapsed UISplitViewController, and master is a UINavigationController, container can't be a UINavigationController or UISplitViewController
+ 
+ For ZIKViewRouteTypeAddAsChildViewController, will add container as source's child, so you have to add container's view to source's view in addingChildViewHandler, not the destination's view
+ */
+@property (nonatomic, copy, nullable) ZIKViewRouteContainerWrapper containerWrapper;
+
+/**
+ Prepare for performRoute, and config other dependencies for destination here.
+ 
+ @discussion
+ For ZIKViewRouteTypePush, ZIKViewRouteTypePresentModally, ZIKViewRouteTypePresentAsPopover, ZIKViewRouteTypePerformSegue, ZIKViewRouteTypeShow, ZIKViewRouteTypeShowDetail, ZIKViewRouteTypeAddAsChildViewController, destination is a UIViewController.
+ 
+ For ZIKViewRouteTypeAddAsSubview, destination is a UIView.
+ 
+ For ZIKViewRouteTypeCustom, destination is a UIViewController or UIView.
+ 
+ @note
+ Use weakSelf in prepareDestination to avoid retain cycle.
+ */
+@property (nonatomic, copy, nullable) void(^prepareDestination)(Destination destination);
+
+/**
+ Success handler for performRoute. Each time the router was performed, success handler will be called when the operation succeed.
+ 
+ @discussion
+ For ZIKViewRouteTypePush, ZIKViewRouteTypePresentModally, ZIKViewRouteTypePresentAsPopover, ZIKViewRouteTypePerformSegue, ZIKViewRouteTypeShow, ZIKViewRouteTypeShowDetail, ZIKViewRouteTypeAddAsChildViewController, destination is a UIViewController.
+ 
+ For ZIKViewRouteTypeAddAsSubview, destination is a UIView.
+ 
+ For ZIKViewRouteTypeCustom, destination is a UIViewController or UIView.
+ 
+ @note
+ Use weakSelf in successHandler to avoid retain cycle.
+ 
+ ZIKViewRouter use UIViewController's transitionCoordinator to do completion, so if you override segue's -perform or override -showViewController:sender: and provide custom transition, but didn't use a transitionCoordinator (such as use +[UIView animateWithDuration:animations:completion:] to animate), successHandler when be called immediately, before the animation really completes.
+ */
+@property (nonatomic, copy, nullable) void(^successHandler)(Destination destination);
+
+///Sender for -showViewController:sender: and -showDetailViewController:sender:
+@property (nonatomic, weak, nullable) id sender;
+
+///Config popover for ZIKViewRouteTypePresentAsPopover
+@property (nonatomic, readonly, copy) ZIKViewRoutePopoverConfiger configurePopover;
+
+///Config segue for ZIKViewRouteTypePerformSegue
+@property (nonatomic, readonly, copy) ZIKViewRouteSegueConfiger configureSegue;
+
+///When use routeType ZIKViewRouteTypeAddAsChildViewController, add the destination's view to source's view in this block. If you wrap destination with -containerWrapper, the `destination` in this block is the wrapped UIViewController. You can add with animations, and must call completion when the adding action is finished.
+@property (nonatomic, copy, nullable) void(^addingChildViewHandler)(UIViewController *destination, void(^completion)(void));
+
+@property (nonatomic, readonly, strong, nullable) ZIKViewRoutePopoverConfiguration *popoverConfiguration;
+@property (nonatomic, readonly, strong, nullable) ZIKViewRouteSegueConfiguration *segueConfiguration;
+
+///When set to YES and the router still exists, if the same destination instance is routed again from external, prepareDestination, successHandler, errorHandler, completion will be called.
+@property (nonatomic, assign) BOOL handleExternalRoute;
+
+@end
+
+///Proxy of ZIKViewRemoveConfiguration to handle configuration in a type safe way.
+@interface ZIKViewRemoveStrictConfiguration<__covariant Destination> : ZIKRemoveRouteStrictConfiguration<Destination>
+@property (nonatomic, strong, readonly) ZIKViewRemoveConfiguration *configuration;
+- (instancetype)initWithConfiguration:(ZIKViewRemoveConfiguration *)configuration;
+
+///For pop/dismiss, default is YES
+@property (nonatomic, assign) BOOL animated;
+
+///When use routeType ZIKViewRouteTypeAddAsChildViewController and remove, remove the destination's view from it's superview in this block. If you wrap destination with -containerWrapper, the `destination` in this block is the wrapped UIViewController. You can remove with animations, and must call completion when the removing action is finished.
+@property (nonatomic, copy, nullable) void(^removingChildViewHandler)(UIViewController *destination, void(^completion)(void));
+
+///When set to YES and the router still exists, if the same destination instance is removed from external, successHandler, errorHandler will be called.
+@property (nonatomic, assign) BOOL handleExternalRoute;
+@end
+
 NS_ASSUME_NONNULL_END

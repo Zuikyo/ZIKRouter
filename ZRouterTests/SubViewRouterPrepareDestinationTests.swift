@@ -50,12 +50,12 @@ class ViewRouterPrepareDestinationTests: XCTestCase {
         let completionHandlerExpectation = self.expectation(description: "completionHandler")
         enterTest()
         let destination = BSubview()
-        self.router = Router.to(RoutableView<BSubviewInput>())?.prepare(destination: destination, configuring: { (config, prepareDestination, _) in
-            prepareDestination({ destination in
+        self.router = Router.to(RoutableView<BSubviewInput>())?.prepare(destination: destination, configuring: { (config, prepareModule) in
+            config.prepareDestination = { destination in
                 destination.title = "test title"
-            })
+            }
             config.successHandler = { d in
-                XCTAssert((d as! BSubviewInput).title == "test title")
+                XCTAssert(d.title == "test title")
                 providerExpectation.fulfill()
             }
             config.performerSuccessHandler = { d in
@@ -69,7 +69,7 @@ class ViewRouterPrepareDestinationTests: XCTestCase {
             }
             config.completionHandler = { (success, destination, action, error) in
                 XCTAssertTrue(success)
-                XCTAssert(destination is BSubviewInput)
+                XCTAssert(destination != nil)
                 completionHandlerExpectation.fulfill()
                 self.handle({
                     self.leaveTest()

@@ -64,10 +64,10 @@ class ViewRouterMakeDestinationTests: XCTestCase {
         let performerExpectation = self.expectation(description: "performerSuccessHandler")
         let completionHandlerExpectation = self.expectation(description: "completionHandler")
         XCTAssertTrue(Router.to(RoutableView<AViewInput>())!.canMakeDestination)
-        let destination = Router.makeDestination(to: RoutableView<AViewInput>(), configuring: { (config, prepareDestination, _) in
-            prepareDestination({ destination in
+        let destination = Router.makeDestination(to: RoutableView<AViewInput>(), configuring: { (config, prepareModule) in
+            config.prepareDestination = { destination in
                 destination.title = "test title"
-            })
+            }
             config.successHandler = { d in
                 providerExpectation.fulfill()
             }
@@ -82,7 +82,7 @@ class ViewRouterMakeDestinationTests: XCTestCase {
             }
             config.completionHandler = { (success, destination, action, error) in
                 XCTAssertTrue(success)
-                XCTAssert(destination is AViewInput)
+                XCTAssert(destination != nil)
                 completionHandlerExpectation.fulfill()
             }
         })
@@ -96,10 +96,10 @@ class ViewRouterMakeDestinationTests: XCTestCase {
         let performerExpectation = self.expectation(description: "performerSuccessHandler")
         let completionHandlerExpectation = self.expectation(description: "completionHandler")
         XCTAssertTrue(Router.to(RoutableView<AViewInputAdapter>())!.canMakeDestination)
-        let destination = Router.makeDestination(to: RoutableView<AViewInput>(), configuring: { (config, prepareDestination, _) in
-            prepareDestination({ destination in
+        let destination = Router.makeDestination(to: RoutableView<AViewInput>(), configuring: { (config, prepareModule) in
+            config.prepareDestination = { destination in
                 destination.title = "test title"
-            })
+            }
             config.successHandler = { d in
                 providerExpectation.fulfill()
             }
@@ -114,7 +114,7 @@ class ViewRouterMakeDestinationTests: XCTestCase {
             }
             config.completionHandler = { (success, destination, action, error) in
                 XCTAssertTrue(success)
-                XCTAssert(destination is AViewInput)
+                XCTAssert(destination != nil)
                 completionHandlerExpectation.fulfill()
             }
         })
@@ -128,10 +128,10 @@ class ViewRouterMakeDestinationTests: XCTestCase {
         let performerExpectation = self.expectation(description: "performerSuccessHandler")
         let completionHandlerExpectation = self.expectation(description: "completionHandler")
         XCTAssertTrue(Router.to(RoutableView<AViewInputObjcAdapter>())!.canMakeDestination)
-        let destination = Router.makeDestination(to: RoutableView<AViewInput>(), configuring: { (config, prepareDestination, _) in
-            prepareDestination({ destination in
+        let destination = Router.makeDestination(to: RoutableView<AViewInput>(), configuring: { (config, prepareModule) in
+            config.prepareDestination = { destination in
                 destination.title = "test title"
-            })
+            }
             config.successHandler = { d in
                 providerExpectation.fulfill()
             }
@@ -146,7 +146,7 @@ class ViewRouterMakeDestinationTests: XCTestCase {
             }
             config.completionHandler = { (success, destination, action, error) in
                 XCTAssertTrue(success)
-                XCTAssert(destination is AViewInput)
+                XCTAssert(destination != nil)
                 completionHandlerExpectation.fulfill()
             }
         })

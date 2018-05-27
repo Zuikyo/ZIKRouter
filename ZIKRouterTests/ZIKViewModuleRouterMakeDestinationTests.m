@@ -167,12 +167,12 @@
     BOOL canMakeDestination = [ZIKRouterToViewModule(AViewModuleInput) canMakeDestination];
     XCTAssertTrue(canMakeDestination);
     id<AViewInput> destination = [ZIKRouterToViewModule(AViewModuleInput)
-                                  makeDestinationWithStrictConfiguring:^(ZIKViewRouteConfiguration<AViewModuleInput> * _Nonnull config, ZIKPerformRouteStrictConfiguration *strictConfig) {
-                                      strictConfig.prepareDestination = ^(id<AViewInput> destination) {
+                                  makeDestinationWithStrictConfiguring:^(ZIKPerformRouteStrictConfiguration *config, ZIKViewRouteConfiguration<AViewModuleInput> * _Nonnull module) {
+                                      config.prepareDestination = ^(id<AViewInput> destination) {
                                           destination.title = @"test title";
                                       };
-                                      config.title = @"test title";
-                                      [config makeDestinationCompletion:^(id<AViewInput> destination) {
+                                      module.title = @"test title";
+                                      [module makeDestinationCompletion:^(id<AViewInput> destination) {
                                           XCTAssert([destination.title isEqualToString:@"test title"]);
                                       }];
                                       config.successHandler = ^(id  _Nonnull destination) {
@@ -208,9 +208,9 @@
     BOOL canMakeDestination = [ZIKRouterToViewModule(AViewModuleInput) canMakeDestination];
     XCTAssertTrue(canMakeDestination);
     id<AViewInput> destination = [ZIKRouterToViewModule(AViewModuleInput)
-                                  makeDestinationWithStrictConfiguring:^(ZIKViewRouteConfiguration<AViewModuleInput> * _Nonnull config, ZIKPerformRouteStrictConfiguration *strictConfig) {
-                                      config.title = @"test title";
-                                      [config makeDestinationCompletion:^(id<AViewInput> destination) {
+                                  makeDestinationWithStrictConfiguring:^(ZIKPerformRouteStrictConfiguration *config, ZIKViewRouteConfiguration<AViewModuleInput> * _Nonnull module) {
+                                      module.title = @"test title";
+                                      [module makeDestinationCompletion:^(id<AViewInput> destination) {
                                           XCTAssert([destination.title isEqualToString:@"test title"]);
                                       }];
                                       config.successHandler = ^(id  _Nonnull destination) {
@@ -246,9 +246,9 @@
     BOOL canMakeDestination = [ZIKRouterToViewModule(AViewModuleInput) canMakeDestination];
     XCTAssertTrue(canMakeDestination);
     id<AViewInput> destination = [ZIKRouterToViewModule(AViewModuleInput)
-                                  makeDestinationWithStrictConfiguring:^(ZIKViewRouteConfiguration<AViewModuleInput> * _Nonnull config, ZIKPerformRouteStrictConfiguration *strictConfig) {
-                                      config.title = @"test title";
-                                      [config makeDestinationCompletion:^(id<AViewInput> destination) {
+                                  makeDestinationWithStrictConfiguring:^(ZIKPerformRouteStrictConfiguration *config, ZIKViewRouteConfiguration<AViewModuleInput> * _Nonnull module) {
+                                      module.title = @"test title";
+                                      [module makeDestinationCompletion:^(id<AViewInput> destination) {
                                           XCTAssert([destination.title isEqualToString:@"test title"]);
                                       }];
                                       config.successHandler = ^(id  _Nonnull destination) {

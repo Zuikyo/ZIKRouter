@@ -66,7 +66,7 @@ class ViewModuleRouterMakeDestinationTests: XCTestCase {
         let performerExpectation = self.expectation(description: "performerSuccessHandler")
         let completionHandlerExpectation = self.expectation(description: "completionHandler")
         XCTAssertTrue(Router.to(RoutableViewModule<AViewModuleInput>())!.canMakeDestination)
-        let destination = Router.makeDestination(to: RoutableViewModule<AViewModuleInput>(), configuring: { (config, prepareDestination, prepareModule) in
+        let destination = Router.makeDestination(to: RoutableViewModule<AViewModuleInput>(), configuring: { (config, prepareModule) in
             prepareModule({ module in
                 module.title = "test title"
                 module.makeDestinationCompletion({ (destination) in
@@ -100,7 +100,7 @@ class ViewModuleRouterMakeDestinationTests: XCTestCase {
         let performerExpectation = self.expectation(description: "performerSuccessHandler")
         let completionHandlerExpectation = self.expectation(description: "completionHandler")
         XCTAssertTrue(Router.to(RoutableViewModule<AViewModuleInputAdapter>())!.canMakeDestination)
-        let destination = Router.makeDestination(to: RoutableViewModule<AViewModuleInput>(), configuring: { (config, prepareDestination, prepareModule) in
+        let destination = Router.makeDestination(to: RoutableViewModule<AViewModuleInput>(), configuring: { (config, prepareModule) in
             prepareModule({ module in
                 module.title = "test title"
                 module.makeDestinationCompletion({ (destination) in
@@ -134,7 +134,7 @@ class ViewModuleRouterMakeDestinationTests: XCTestCase {
         let performerExpectation = self.expectation(description: "performerSuccessHandler")
         let completionHandlerExpectation = self.expectation(description: "completionHandler")
         XCTAssertTrue(Router.to(RoutableViewModule<AViewModuleInputObjcAdapter>())!.canMakeDestination)
-        let destination = Router.makeDestination(to: RoutableViewModule<AViewModuleInput>(), configuring: { (config, prepareDestination, prepareModule) in
+        let destination = Router.makeDestination(to: RoutableViewModule<AViewModuleInput>(), configuring: { (config, prepareModule) in
             prepareModule({ module in
                 module.title = "test title"
                 module.makeDestinationCompletion({ (destination) in
