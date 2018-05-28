@@ -223,6 +223,8 @@ typedef void(^ZIKViewRouteSegueConfiger)(NS_NOESCAPE ZIKViewRouteSegueConfigure)
 
 ///Route path for setting route type and those required parameters for each type. You can extend your custom transition type here, and use custom default configuration in router, override -configurePath: and set custom parameters to configuration.
 @interface ZIKViewRoutePath : NSObject
+///Use default setting of ZIKViewRouteConfiguration.
+@property (nonatomic) BOOL useDefault;
 @property (nonatomic, strong, readonly, nullable) id<ZIKViewRouteSource> source;
 @property (nonatomic, readonly) ZIKViewRouteType routeType;
 
@@ -258,6 +260,9 @@ typedef void(^ZIKViewRouteSegueConfiger)(NS_NOESCAPE ZIKViewRouteSegueConfigure)
 /// Perform custom transition type from the source.
 @property (nonatomic, class, readonly) ZIKViewRoutePath *(^customFrom)(id<ZIKViewRouteSource> _Nullable source) NS_SWIFT_UNAVAILABLE("Use custom(from:) instead");
 
+/// Use default setting of ZIKViewRouteConfiguration if you don't know which type to use.
+@property (nonatomic, class, readonly) ZIKViewRoutePath *(^defaultPathFrom)(UIViewController *source) NS_SWIFT_UNAVAILABLE("Use defaultPath(from:) instead");
+
 /// Just make destination.
 @property (nonatomic, class, readonly) ZIKViewRoutePath *makeDestination;
 
@@ -287,6 +292,9 @@ typedef void(^ZIKViewRouteSegueConfiger)(NS_NOESCAPE ZIKViewRouteSegueConfigure)
 
 /// Perform custom transition type from the source.
 + (instancetype)customFrom:(nullable id<ZIKViewRouteSource>)source NS_SWIFT_NAME(custom(from:));
+
+/// Use default setting of ZIKViewRouteConfiguration if you don't know which type to use.
++ (instancetype)defaultPathFrom:(UIViewController *)source NS_SWIFT_NAME(defaultPath(from:));
 
 ///It's preferred to use those type safe factory methods, rather than this unsafe initializer, because this initializer doesn't check source's type.
 - (instancetype)initWithRouteType:(ZIKViewRouteType)routeType source:(nullable id<ZIKViewRouteSource>)source NS_DESIGNATED_INITIALIZER;

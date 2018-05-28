@@ -86,6 +86,12 @@ ZIKRouteAction const ZIKRouteActionPerformOnDestination = @"ZIKRouteActionPerfor
     };
 }
 
++ (ZIKViewRoutePath *(^)(UIViewController *))defaultPathFrom {
+    return ^(UIViewController *source) {
+        return [self defaultPathFrom:source];
+    };
+}
+
 + (ZIKViewRoutePath *)makeDestination {
     return [[ZIKViewRoutePath alloc] initWithRouteType:ZIKViewRouteTypeMakeDestination source:nil];
 }
@@ -133,6 +139,12 @@ ZIKRouteAction const ZIKRouteActionPerformOnDestination = @"ZIKRouteActionPerfor
     return [[ZIKViewRoutePath alloc] initWithRouteType:ZIKViewRouteTypeCustom source:source];
 }
 
++ (instancetype)defaultPathFrom:(UIViewController *)source {
+    ZIKViewRoutePath *path = [[ZIKViewRoutePath alloc] initWithRouteType:ZIKViewRouteTypeCustom source:source];
+    path.useDefault = YES;
+    return path;
+}
+
 - (instancetype)initWithRouteType:(ZIKViewRouteType)routeType source:(id<ZIKViewRouteSource>)source {
     if (self= [super init]) {
         _source = source;
@@ -176,6 +188,17 @@ ZIKRouteAction const ZIKRouteActionPerformOnDestination = @"ZIKRouteActionPerfor
 }
 
 - (void)configurePath:(ZIKViewRoutePath *)path {
+    if (path.useDefault) {
+        if (self.source == nil) {
+            id source = path.source;
+            if (self.routeType == ZIKViewRouteTypeAddAsSubview && [source isKindOfClass:[UIViewController class]]) {
+                self.source = [(UIViewController *)path.source view];
+            } else {
+                self.source = path.source;
+            }
+        }
+        return;
+    }
     if (path.source) {
         self.source = path.source;
     }

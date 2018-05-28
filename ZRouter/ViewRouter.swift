@@ -425,6 +425,8 @@ public enum ViewRoutePath {
     case addAsSubview(from: UIView)
     /// Perform custom transition type from the source.
     case custom(from: ZIKViewRouteSource?)
+    /// Use default setting of ZIKViewRouteConfiguration if you don't know which type to use.
+    case defaultPath(from: UIViewController)
     /// Just make destination.
     case makeDestination
     /// Only use this when using custom transition type extended in ZIKViewRoutePath
@@ -439,7 +441,8 @@ public enum ViewRoutePath {
              .performSegue(from: let s, _, _),
              .show(from: let s),
              .showDetail(from: let s),
-             .addAsChildViewController(from: let s, _):
+             .addAsChildViewController(from: let s, _),
+             .defaultPath(from: let s):
             source = s
         case .addAsSubview(from: let s):
             source = s
@@ -473,6 +476,8 @@ public enum ViewRoutePath {
             return .addAsSubview
         case .custom(from: _):
             return .custom
+        case .defaultPath(from: _):
+            return .custom
         case .makeDestination:
             return .makeDestination
         case .extensible(let path):
@@ -489,6 +494,10 @@ public enum ViewRoutePath {
         case .addAsChildViewController(from: let source, addingChildViewHandler: let handler):
             return ZIKViewRoutePath.addAsChildViewController(from: source, addingChildViewHandler: handler)
         case .extensible(path: let path):
+            return path
+        case .defaultPath(from: let source):
+            let path = ZIKViewRoutePath(routeType: routeType, source: source)
+            path.useDefault = true
             return path
         default:
             return ZIKViewRoutePath(routeType: routeType, source: source)
