@@ -206,6 +206,22 @@ typedef void(^ZIKRemoveRouteCompletion)(BOOL success, ZIKRouteAction routeAction
  */
 @property (nonatomic, copy, nullable) void(^completionHandler)(BOOL success, Destination _Nullable destination, ZIKRouteAction routeAction, NSError *_Nullable error);
 
+///User info when handle route action from URL Scheme.
+@property (nonatomic, strong, readonly) NSDictionary<NSString *, id> *userInfo;
+
+/**
+ Add user info.
+ @note
+ You should only use user info when handle route action from URL Scheme, because it's not recommanded to passing parameters in dictionary. The compiler can't check parameters' type.
+ */
+- (void)addUserInfoForKey:(NSString *)key object:(id)object;
+/**
+ Add user info.
+ @note
+ You should only use user info when handle route action from URL Scheme, because it's not recommanded to passing parameters in dictionary. The compiler can't check parameters' type.
+ */
+- (void)addUserInfo:(NSDictionary<NSString *, id> *)userInfo;
+
 @end
 
 ///Proxy of ZIKRemoveRouteConfiguration to handle configuration in a type safe way.

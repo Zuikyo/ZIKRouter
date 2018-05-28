@@ -191,7 +191,7 @@
 @dynamic configuration;
 - (instancetype)initWithConfiguration:(ZIKPerformRouteConfiguration *)configuration {
     if (self = [super initWithConfiguration:configuration]) {
-        
+        NSCParameterAssert([configuration isKindOfClass:[ZIKPerformRouteConfiguration class]]);
     }
     return self;
 }
@@ -220,13 +220,25 @@
     self.configuration.completionHandler = completionHandler;
 }
 
+- (NSDictionary<NSString *, id> *)userInfo {
+    return self.configuration.userInfo;
+}
+
+- (void)addUserInfoForKey:(NSString *)key object:(id)object {
+    [self.configuration addUserInfoForKey:key object:object];
+}
+
+- (void)addUserInfo:(NSDictionary<NSString *,id> *)userInfo {
+    [self.configuration addUserInfo:userInfo];
+}
+
 @end
 
 @implementation ZIKRemoveRouteStrictConfiguration
 @dynamic configuration;
 - (instancetype)initWithConfiguration:(ZIKRemoveRouteConfiguration *)configuration {
     if (self = [super initWithConfiguration:configuration]) {
-        
+        NSCParameterAssert([configuration isKindOfClass:[ZIKRemoveRouteConfiguration class]]);
     }
     return self;
 }

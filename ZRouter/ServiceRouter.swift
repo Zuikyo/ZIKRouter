@@ -397,6 +397,25 @@ public class PerformRouteStrictConfig<Destination>: RouteStrictConfig<ZIKPerform
             }
         }
     }
+    
+    /// User info when handle route action from URL Scheme.
+    public var userInfo: [String : Any] {
+        get { return configuration.userInfo }
+    }
+    
+    /// Add user info.
+    ///
+    /// - Note: You should only use user info when handle route action from URL Scheme, because it's not recommanded to passing parameters in dictionary. The compiler can't check parameters' type.
+    public func addUserInfo(forKey key: String, object: Any) {
+        configuration.addUserInfo(forKey: key, object: object)
+    }
+    
+    /// Add user info.
+    ///
+    /// - Note: You should only use user info when handle route action from URL Scheme, because it's not recommanded to passing parameters in dictionary. The compiler can't check parameters' type.
+    public func addUserInfo(_ userInfo: [String : Any]) {
+        configuration.addUserInfo(userInfo)
+    }
 }
 
 /// Proxy of ZIKRemoveRouteConfiguration to handle configuration in a type safe way.

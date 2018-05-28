@@ -430,7 +430,7 @@ ZIKRouteAction const ZIKRouteActionPerformOnDestination = @"ZIKRouteActionPerfor
 
 - (instancetype)initWithConfiguration:(ZIKViewRouteConfiguration *)configuration {
     if (self = [super initWithConfiguration:configuration]) {
-        
+        NSCParameterAssert([configuration isKindOfClass:[ZIKViewRouteConfiguration class]]);
     }
     return self;
 }
@@ -494,7 +494,7 @@ ZIKRouteAction const ZIKRouteActionPerformOnDestination = @"ZIKRouteActionPerfor
 @dynamic configuration;
 - (instancetype)initWithConfiguration:(ZIKViewRemoveConfiguration *)configuration {
     if (self = [super initWithConfiguration:configuration]) {
-        
+        NSCParameterAssert([configuration isKindOfClass:[ZIKViewRemoveConfiguration class]]);
     }
     return self;
 }
