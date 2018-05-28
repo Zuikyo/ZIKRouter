@@ -14,7 +14,7 @@ class TestViewController: UIViewController {
         Router.perform(
             to: RoutableView<NoteEditorInput>(),
             path: .push(from: self),
-            configuring: { (config, prepareDestiantion, _) in
+            configuring: { (config, _) in
                 //路由相关的设置
                 config.successHandler = { destination in
                     //跳转成功处理
@@ -23,12 +23,12 @@ class TestViewController: UIViewController {
                     //跳转失败处理
                 }
                 //配置目的界面
-                prepareDestination({ destination in
+                config.prepareDestination = { [weak self] destination in
                     //destination 被 swift 自动推断为 NoteEditorInput 类型
                     //配置 editor 界面
                     destination.delegate = self
                     destination.constructForCreatingNewNote()
-                })
+                }
         })
     }
 }
@@ -76,7 +76,7 @@ class TestViewController: UIViewController {
 	                  destination.delegate = self;
 	                  [destination constructForCreatingNewNote];
 	              };
-	              config.routeCompletion = ^(id<NoteEditorInput> destination) {
+	              config.successHandler = ^(id<NoteEditorInput> destination) {
 	                  //界面显示完毕
 	              };
 	              config.errorHandler = ^(ZIKRouteAction routeAction, NSError *error) {
@@ -94,16 +94,15 @@ class TestViewController: UIViewController {
 - (void)showEditorViewController {
 	[ZIKRouterToView(NoteEditorInput)
 	          performPath:ZIKViewRoutePath.presentModallyFrom(self)
-	          routeConfiguring:^(ZIKViewRouteConfiguration *config,
-	          					  void (^prepareDest)(void (^)(id<NoteEditorInput>)),
-                        		  void (^prepareModule)(void (^)(ZIKViewRouteConfig *))) {
+	          strictConfiguring:^(ZIKViewRouteStrictConfiguration<id<NoteEditorInput>> *config,
+	          					  ZIKViewRouteConfiguration *module) {
 	              config.animated = YES;
-	              //Type of prepareDest block changes with the router's generic parameters.
-	              prepareDest(^(id<NoteEditorInput> destination){
+	              //Type of prepareDestination block changes with the router's generic parameters.
+	              config.prepareDestination = ^(id<NoteEditorInput> destination){
 	                  destination.delegate = self;
 	                  [destination constructForCreatingNewNote];
-	              });
-	              config.routeCompletion = ^(id<NoteEditorInput> destination) {
+	              };
+	              config.successHandler = ^(id<NoteEditorInput> destination) {
 	                  //Transition completed
 	              };
 	              config.errorHandler = ^(ZIKRouteAction routeAction, NSError *error) {
@@ -234,10 +233,10 @@ class SourceViewController: UIViewController, UIViewControllerPreviewingDelegate
 
 ```swift
 var destination: DestinationViewInput = ...
-Router.to(RoutableView<DestinationViewInput>())?.prepare(destination: destination, configuring: { (config, prepareDestination, _) in
-            prepareDestination({ destination in
+Router.to(RoutableView<DestinationViewInput>())?.prepare(destination: destination, configuring: { (config, _) in
+            config.prepareDestination = { destination in
                 // Prepare
-            })
+            }
         })
 
 ```
@@ -278,7 +277,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         }
         let params: [String : Any] = // url 里 取出的参数
         let rootViewController = // get rootViewController
-        routerType?.perform(path: .show(from: rootViewController), configuring: { (config, _, _) in
+        routerType?.perform(path: .show(from: rootViewController), configuring: { (config, _) in
             config.addUserInfo(params)
         })
         

@@ -42,7 +42,7 @@ You can handle the error when performing route:
 Router.perform(
             to: RoutableView<NoteEditorInput>(),
             path: .push(from: self),
-            configuring: { (config, prepareDestiantion, _) in
+            configuring: { (config, _) in
                 config.errorHandler = { (action, error) in
                     //Transition failed
                 }

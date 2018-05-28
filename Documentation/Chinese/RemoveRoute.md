@@ -18,10 +18,10 @@ class TestViewController: UIViewController {
             return
         }
         //使用之前保存的 router 移除界面
-        router.removeRoute(configuring: { (config, prepareDestination) in
-            prepareDestination({ destination in
+        router.removeRoute(configuring: { (config) in
+            config.prepareDestination = { destination in
                 //移除路由前的操作 destination
-            })
+            }
             config.successHandler = {
                 print("remove editor success")
             }

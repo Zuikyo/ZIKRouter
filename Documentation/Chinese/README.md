@@ -163,7 +163,7 @@ class TestViewController: UIViewController {
         Router.perform(
             to: RoutableView<NoteEditorInput>(),
             path: .push(from: self),
-            configuring: { (config, prepareDestination, _) in
+            configuring: { (config, _) in
                 //路由相关的设置
                 config.successHandler = { destination in
                     //跳转成功
@@ -172,11 +172,11 @@ class TestViewController: UIViewController {
                     //跳转失败
                 }
                 //跳转前配置界面
-                prepareDestination({ destination in
+                config.prepareDestination = { [weak self] destination in
                     //destination 自动推断为 NoteEditorInput
                     destination.delegate = self
                     destination.constructForCreatingNewNote()
-                })
+                }
         })
     }
 }
@@ -249,11 +249,11 @@ class TestViewController: UIViewController {
         guard let router = router, router.canRemove else {
             return
         }
-        router.removeRoute(configuring: { (config, prepareDestination) in
+        router.removeRoute(configuring: { (config) in
 	            config.animated = true
-	            prepareDestination({ destination in
+	            config.prepareDestination = { destination in
 	                //在消除界面之前调用界面的方法
-	            })
+	            }
             })
         router = nil
     }
@@ -500,13 +500,13 @@ class TestViewController: UIViewController {
         Router.perform(
             to: RoutableView<NoteEditorInput>(),
             path: .push(from: self),
-            configuring: { (config, prepareDestination, _) in
+            configuring: { (config, _) in
                 //跳转前配置 destination
-                prepareDestination({ destination in
+                config.prepareDestination = { [weak self] destination in
                     //destination 自动推断为 NoteEditorInput 类型
                     destination.delegate = self
                     destination.constructForCreatingNewNote()
-                })
+                }
         })
     }
 }

@@ -42,7 +42,7 @@ ZIKAnyViewRouter.globalErrorHandler = { (router, action, error) in
 Router.perform(
             to: RoutableView<NoteEditorInput>(),
             path: .push(from: self),
-            configuring: { (config, prepareDestiantion, _) in
+            configuring: { (config, _) in
                 config.errorHandler = { (action, error) in
                     //跳转失败处理
                 }

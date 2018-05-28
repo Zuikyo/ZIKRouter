@@ -169,7 +169,7 @@ class TestViewController: UIViewController {
         Router.perform(
             to: RoutableView<NoteEditorInput>(),
             path: .push(from: self),
-            configuring: { (config, prepareDestination, _) in
+            configuring: { (config, _) in
                 //Route config
                 config.successHandler = { destination in
                     //Transition succeed
@@ -178,11 +178,11 @@ class TestViewController: UIViewController {
                     //Transition failed
                 }
                 //Prepare the destination before transition
-                prepareDestination({ destination in
+                config.prepareDestination = { [weak self] destination in
                     //destination is inferred as NoteEditorInput
                     destination.delegate = self
                     destination.constructForCreatingNewNote()
-                })
+                }
         })
     }
 }
@@ -255,11 +255,11 @@ class TestViewController: UIViewController {
         guard let router = router, router.canRemove else {
             return
         }
-        router.removeRoute(configuring: { (config, prepareDestination) in
+        router.removeRoute(configuring: { (config) in
 	            config.animated = true
-	            prepareDestination({ destination in
+	            config.prepareDestination = { destination in
 	                //Use destination before remove it
-	            })
+	            }
             })
         router = nil
     }
@@ -506,13 +506,13 @@ class TestViewController: UIViewController {
         Router.perform(
             to: RoutableView<NoteEditorInput>(),
             path: .push(from: self),
-            configuring: { (config, prepareDestination, _) in
+            configuring: { (config, _) in
                 //Prepare the destination before transition
-                prepareDestination({ destination in
+                config.prepareDestination = { [weak self] destination in
                     //destination is inferred as NoteEditorInput
                     destination.delegate = self
                     destination.constructForCreatingNewNote()
-                })
+                }
         })
     }
 }

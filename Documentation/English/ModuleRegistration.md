@@ -120,7 +120,7 @@ Then you can get the router with the identifier:
 ```
 var userInfo: [String : Any] = ... // Pass parameters in a dictionary
 Router.to(viewIdentifier: "viewController-editor")?
-	.perform(path: .push(from: self), configuring: { (config, _, _) in
+	.perform(path: .push(from: self), configuring: { (config, _) in
     	config.addUserInfo(userInfo)
 	})
 ```

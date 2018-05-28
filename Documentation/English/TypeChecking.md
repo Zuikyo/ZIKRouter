@@ -45,16 +45,14 @@ And the protocol type will affect the parameters in methods:
 //The 3 parameters have inheritance relationship
 [ZIKRouterToView(NoteEditorInput) //1
      performPath:ZIKViewRoutePath.pushFrom(self)
-     routeConfiguring:^(ZIKViewRouteConfig *config,
-                        void (^prepareDest)(void (^)(id<NoteEditorInput>)), //2
-                        void (^prepareModule)(void (^)(ZIKViewRouteConfig *))) {
-         prepareDest(^(id<NoteEditorInput> dest){ //3
-             dest.delegate = weakSelf;
-             dest.name = @"zuik";
-             dest.age = 18;
-         });
+     strictConfiguring:^(ZIKViewRouteStrictConfiguration<id<NoteEditorInput>> *config, //2
+                         ZIKViewRouteConfiguration *module) {
+         config.prepareDestination = ^(id<NoteEditorInput> destination) { //3
+         	   destination.delegate = weakSelf;
+             destination.name = @"zuik";
+             destination.age = 18;
+         }
      }];
-
 ```
 
 It's not 100% perfect like in Swift. If the protocol is changed to parent protocol, the compiler won't give any errors.

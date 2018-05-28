@@ -45,16 +45,14 @@ ZIKRouterToView(NoteEditorInput)
 //3处地方的参数有继承关系
 [ZIKRouterToView(NoteEditorInput) //1
      performPath:ZIKViewRoutePath.pushFrom(self)
-     routeConfiguring:^(ZIKViewRouteConfig *config,
-                        void (^prepareDest)(void (^)(id<NoteEditorInput>)), //2
-                        void (^prepareModule)(void (^)(ZIKViewRouteConfig *))) {
-         prepareDest(^(id<NoteEditorInput> dest){ //3
-             dest.delegate = weakSelf;
-             dest.name = @"zuik";
-             dest.age = 18;
-         });
+     strictConfiguring:^(ZIKViewRouteStrictConfiguration<id<NoteEditorInput>> *config, //2
+                         ZIKViewRouteConfiguration *module) {
+         config.prepareDestination = ^(id<NoteEditorInput> destination) { //3
+         	   destination.delegate = weakSelf;
+             destination.name = @"zuik";
+             destination.age = 18;
+         }
      }];
-
 ```
 
 这里的编译检查并不像 Swift 中那样完美。编译器只会检查是否有继承关系，当参数变成了 parent protocol 时，并不会有编译错误。

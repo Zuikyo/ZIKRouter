@@ -264,7 +264,7 @@ public class ServiceRouter<Destination, ModuleConfig> {
 
 // MARK: Strict Config
 
-///Proxy of ZIKRouteConfiguration to handle configuration in a type safe way.
+/// Proxy of ZIKRouteConfiguration to handle configuration in a type safe way.
 public class RouteStrictConfig<Config: ZIKRouteStrictConfiguration<AnyObject>> {
     public fileprivate(set) var configuration: Config
     internal init(configuration: Config) {
@@ -287,7 +287,7 @@ public class RouteStrictConfig<Config: ZIKRouteStrictConfiguration<AnyObject>> {
     }
 }
 
-///Proxy of ZIKPerformRouteConfiguration to handle configuration in a type safe way.
+/// Proxy of ZIKPerformRouteConfiguration to handle configuration in a type safe way.
 public class PerformRouteStrictConfig<Destination>: RouteStrictConfig<ZIKPerformRouteStrictConfiguration<AnyObject>> {
     public fileprivate(set) override var configuration: ZIKPerformRouteStrictConfiguration<AnyObject> {
         get { return super.configuration }
@@ -296,7 +296,7 @@ public class PerformRouteStrictConfig<Destination>: RouteStrictConfig<ZIKPerform
     internal override init(configuration: ZIKPerformRouteStrictConfiguration<AnyObject>) {
         super.init(configuration: configuration)
     }
-    ///Prepare for performRoute, and config other dependency for destination here. Subclass can offer more specific info. It's an escaping block.
+    /// Prepare for performRoute, and config other dependency for destination here. Subclass can offer more specific info. It's an escaping block.
     public var prepareDestination: ((Destination) -> Void)? {
         get {
             if let prepare = configuration.prepareDestination {
@@ -321,7 +321,7 @@ public class PerformRouteStrictConfig<Destination>: RouteStrictConfig<ZIKPerform
         }
     }
     
-    ///Success handler for router's provider. Each time the router was performed, success handler will be called when the operation succeed. It's an escaping block.
+    /// Success handler for router's provider. Each time the router was performed, success handler will be called when the operation succeed. It's an escaping block.
     public var successHandler: ((Destination) -> Void)? {
         get {
             if let handler = configuration.successHandler {
@@ -346,7 +346,7 @@ public class PerformRouteStrictConfig<Destination>: RouteStrictConfig<ZIKPerform
         }
     }
     
-    ///Success handler for current performing, will reset to nil after performed.
+    /// Success handler for current performing, will reset to nil after performed.
     public var performerSuccessHandler: ((Destination) -> Void)? {
         get {
             if let handler = configuration.performerSuccessHandler {
@@ -371,7 +371,7 @@ public class PerformRouteStrictConfig<Destination>: RouteStrictConfig<ZIKPerform
         }
     }
     
-    ///Completion handler for performRoute. It's an escaping block.
+    /// Completion handler for performRoute. It's an escaping block.
     public var completionHandler: ((Bool, Destination?, ZIKRouteAction, Error?) -> Void)? {
         get {
             if let handler = configuration.completionHandler {
@@ -399,7 +399,7 @@ public class PerformRouteStrictConfig<Destination>: RouteStrictConfig<ZIKPerform
     }
 }
 
-///Proxy of ZIKRemoveRouteConfiguration to handle configuration in a type safe way.
+/// Proxy of ZIKRemoveRouteConfiguration to handle configuration in a type safe way.
 public class RemoveRouteStrictConfig<Destination>: RouteStrictConfig<ZIKRemoveRouteStrictConfiguration<AnyObject>> {
     public fileprivate(set) override var configuration: ZIKRemoveRouteStrictConfiguration<AnyObject> {
         get { return super.configuration }
@@ -409,7 +409,7 @@ public class RemoveRouteStrictConfig<Destination>: RouteStrictConfig<ZIKRemoveRo
         super.init(configuration: configuration)
     }
     
-    ///Prepare for removeRoute. Subclass can offer more specific info. It's an escaping block.
+    /// Prepare for removeRoute. Subclass can offer more specific info. It's an escaping block.
     public var prepareDestination: ((Destination) -> Void)? {
         get {
             if let prepare = configuration.prepareDestination {
@@ -434,19 +434,19 @@ public class RemoveRouteStrictConfig<Destination>: RouteStrictConfig<ZIKRemoveRo
         }
     }
     
-    ///Success handler for router's provider. Each time the router was removed, success handler will be called when the operation succeed. It's an escaping block.
+    /// Success handler for router's provider. Each time the router was removed, success handler will be called when the operation succeed. It's an escaping block.
     public var successHandler: (() -> Void)? {
         get { return configuration.successHandler }
         set { configuration.successHandler = newValue }
     }
     
-    ///Success handler for current removing, will reset to nil after removed.
+    /// Success handler for current removing, will reset to nil after removed.
     public var performerSuccessHandler: (() -> Void)? {
         get { return configuration.performerSuccessHandler }
         set { configuration.performerSuccessHandler = newValue }
     }
     
-    ///Completion handler for removeRoute. It's an escaping block.
+    /// Completion handler for removeRoute. It's an escaping block.
     public var completionHandler: ZIKRemoveRouteCompletion? {
         get { return configuration.completionHandler }
         set { configuration.completionHandler = newValue }

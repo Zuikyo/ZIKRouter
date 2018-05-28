@@ -14,7 +14,7 @@ class TestViewController: UIViewController {
         Router.perform(
             to: RoutableView<NoteEditorInput>(),
             path: .push(from: self),
-            configuring: { (config, prepareDestiantion, _) in
+            configuring: { (config, _) in
                 //Config the route
                 config.successHandler = { destination in
                     //Transition succeed
@@ -23,12 +23,12 @@ class TestViewController: UIViewController {
                     //Transition failed
                 }
                 //Config the destination before performing route
-                prepareDestination({ destination in
+                config.prepareDestination = { destination in
                     //destination is inferred as NoteEditorInput
                     //Config editor view
                     destination.delegate = self
                     destination.constructForCreatingNewNote()
-                })
+                }
         })
     }
 }
@@ -72,7 +72,7 @@ class TestViewController: UIViewController {
 	                  destination.delegate = self;
 	                  [destination constructForCreatingNewNote];
 	              };
-	              config.routeCompletion = ^(id<NoteEditorInput> destination) {
+	              config.succeeHandler = ^(id<NoteEditorInput> destination) {
 	                  //Transition completed
 	              };
 	              config.errorHandler = ^(ZIKRouteAction routeAction, NSError *error) {
@@ -90,15 +90,14 @@ It's much safer to prepare destination in `prepareDest` or `prepareModule` block
 - (void)showEditorViewController {
 	[ZIKRouterToView(NoteEditorInput)
 	          performPath:ZIKViewRoutePath.presentModallyFrom(self)
-	          strictConfiguring:^(ZIKViewRouteConfiguration *config,
-	          					  void (^prepareDest)(void (^)(id<NoteEditorInput>)),
-                        		  void (^prepareModule)(void (^)(ZIKViewRouteConfig *))) {
+	          strictConfiguring:^(ZIKViewRouteStrictConfiguration<id<NoteEditorInput>> *config,
+	          					   ZIKViewRouteConfiguration *module) {
 	              config.animated = YES;
 	              //Type of prepareDest block changes with the router's generic parameters.
-	              prepareDest(^(id<NoteEditorInput> destination){
+	              config.prepareDestination = ^(id<NoteEditorInput> destination){
 	                  destination.delegate = self;
 	                  [destination constructForCreatingNewNote];
-	              });
+	              };
 	              config.routeCompletion = ^(id<NoteEditorInput> destination) {
 	                  //Transition completed
 	              };
@@ -232,10 +231,10 @@ If the router do dependency injection inside it, this can properly setting the d
 
 ```swift
 var destination: DestinationViewInput = ...
-Router.to(RoutableView<DestinationViewInput>())?.prepare(destination: destination, configuring: { (config, prepareDestination, _) in
-            prepareDestination({ destination in
+Router.to(RoutableView<DestinationViewInput>())?.prepare(destination: destination, configuring: { (config, _) in
+            config.prepareDestination = { destination in
                 // Prepare
-            })
+            }
         })
 
 ```
@@ -276,7 +275,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         }
         let params: [String : Any] = // parameters from the url
         let rootViewController = // get rootViewController
-        routerType?.perform(path: .show(from: rootViewController), configuring: { (config, _, _) in
+        routerType?.perform(path: .show(from: rootViewController), configuring: { (config, _) in
             config.addUserInfo(params)
         })
         

@@ -30,10 +30,10 @@ protocol ModuleARequiredLoginViewInput {
 Router.perform(
     to RoutableView<ModuleARequiredLoginViewInput>(),
     path: .presentModally(from: self)
-    configuring { (config, prepareDestiantion, _) in
-        prepareDestination({ destination in
+    configuring { (config, _) in
+        config.prepareDestination = { destination in
             destination.message = "Please login to read this note"
-        })
+        }
     })
 ```
 <details><summary>Objective-C Sample</summary>

@@ -420,6 +420,9 @@ public enum ViewRoutePath {
     /// Show the destination as detail from the source view controller.
     case showDetail(from: UIViewController)
     /// Add the destination as child view controller to the parent source view controller. In addingChildViewHandler, add destination's view to source's view in addingChildViewHandler, and invoke the completion block when finished.
+    /// - addingChildViewHandler: Add destination's view to source's view.
+    ///     - source: Source view.
+    ///     - completion: Invoke the completion block when adding is finished.
     case addAsChildViewController(from: UIViewController, addingChildViewHandler: (UIViewController, @escaping () -> Void) -> Void)
     /// Add the destination as subview to the superview.
     case addAsSubview(from: UIView)
@@ -644,7 +647,7 @@ public extension ViewRouterType {
 
 // MARK: Strict Config
 
-///Proxy of ZIKViewRouteConfiguration to handle configuration in a type safe way.
+/// Proxy of ZIKViewRouteConfiguration to handle configuration in a type safe way.
 public class ViewRouteStrictConfig<Destination>: PerformRouteStrictConfig<Destination> {
     internal override init(configuration: ZIKPerformRouteStrictConfiguration<AnyObject>) {
         assert(configuration is ZIKViewRouteStrictConfiguration<AnyObject>)
@@ -666,13 +669,13 @@ public class ViewRouteStrictConfig<Destination>: PerformRouteStrictConfig<Destin
         set { config.source = newValue }
     }
     
-    ///The style of route, default is ZIKViewRouteTypePresentModally. Subclass router may return other default value.
+    /// The style of route, default is ZIKViewRouteTypePresentModally. Subclass router may return other default value.
     public var routeType: ZIKViewRouteType {
         get { return config.routeType }
         set { config.routeType = newValue }
     }
     
-    ///For push/present, default is YES
+    /// For push/present, default is true
     public var animated: Bool {
         get { return config.animated }
         set { config.animated = newValue }
@@ -694,23 +697,23 @@ public class ViewRouteStrictConfig<Destination>: PerformRouteStrictConfig<Destin
         set { config.containerWrapper = newValue }
     }
     
-    ///Sender for -showViewController:sender: and -showDetailViewController:sender:
+    /// Sender for -showViewController:sender: and -showDetailViewController:sender:
     public var sender: AnyObject? {
         get { return config.sender }
         set { config.sender = newValue }
     }
     
-    ///Config popover for ZIKViewRouteTypePresentAsPopover
+    /// Config popover for ZIKViewRouteTypePresentAsPopover
     public var configurePopover: ZIKViewRoutePopoverConfiger? {
         get { return config.configurePopover }
     }
     
-    ///Config segue for ZIKViewRouteTypePerformSegue
+    /// Config segue for ZIKViewRouteTypePerformSegue
     public var configureSegue: ZIKViewRouteSegueConfiger? {
         get { return config.configureSegue }
     }
     
-    ///When use routeType ZIKViewRouteTypeAddAsChildViewController, add the destination's view to source's view in this block. If you wrap destination with -containerWrapper, the `destination` in this block is the wrapped UIViewController. You can add with animations, and must call completion when the adding action is finished.
+    /// When use routeType ZIKViewRouteTypeAddAsChildViewController, add the destination's view to source's view in this block. If you wrap destination with -containerWrapper, the `destination` in this block is the wrapped UIViewController. You can add with animations, and must call completion when the adding action is finished.
     public var addingChildViewHandler: ((UIViewController, @escaping () -> Void) -> Void)? {
         get { return config.addingChildViewHandler }
         set { config.addingChildViewHandler = newValue }
@@ -722,14 +725,14 @@ public class ViewRouteStrictConfig<Destination>: PerformRouteStrictConfig<Destin
         get { return config.segueConfiguration }
     }
     
-    ///When set to YES and the router still exists, if the same destination instance is routed again from external, prepareDestination, successHandler, errorHandler, completion will be called.
+    /// When set to true and the router still exists, if the same destination instance is routed again from external, prepareDestination, successHandler, errorHandler, completion will be called.
     public var handleExternalRoute: Bool {
         get { return config.handleExternalRoute }
         set { config.handleExternalRoute = newValue }
     }
 }
 
-///Proxy of ZIKViewRemoveConfiguration to handle configuration in a type safe way.
+/// Proxy of ZIKViewRemoveConfiguration to handle configuration in a type safe way.
 public class ViewRemoveStrictConfig<Destination>: RemoveRouteStrictConfig<Destination> {
     internal override init(configuration: ZIKRemoveRouteStrictConfiguration<AnyObject>) {
         assert(configuration is ZIKViewRemoveStrictConfiguration<AnyObject>)
@@ -739,19 +742,19 @@ public class ViewRemoveStrictConfig<Destination>: RemoveRouteStrictConfig<Destin
         get { return configuration as! ZIKViewRemoveStrictConfiguration<AnyObject> }
     }
     
-    ///For pop/dismiss, default is true
+    /// For pop/dismiss, default is true
     public var animated: Bool {
         get { return config.animated }
         set { config.animated = newValue }
     }
     
-    ///When use routeType ZIKViewRouteTypeAddAsChildViewController and remove, remove the destination's view from it's superview in this block. If you wrap destination with -containerWrapper, the `destination` in this block is the wrapped UIViewController. You can remove with animations, and must call completion when the removing action is finished.
+    /// When use routeType ZIKViewRouteTypeAddAsChildViewController and remove, remove the destination's view from it's superview in this block. If you wrap destination with -containerWrapper, the `destination` in this block is the wrapped UIViewController. You can remove with animations, and must call completion when the removing action is finished.
     public var removingChildViewHandler: ((UIViewController, @escaping () -> Void) -> Void)? {
         get { return config.removingChildViewHandler }
         set { config.removingChildViewHandler = newValue }
     }
     
-    ///When set to YES and the router still exists, if the same destination instance is removed from external, successHandler, errorHandler will be called.
+    /// When set to true and the router still exists, if the same destination instance is removed from external, successHandler, errorHandler will be called.
     public var handleExternalRoute: Bool {
         get { return config.handleExternalRoute }
         set { config.handleExternalRoute = newValue }

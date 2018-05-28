@@ -18,10 +18,10 @@ class TestViewController: UIViewController {
             return
         }
         //Remove the view with the router
-        router.removeRoute(configuring: { (config, prepareDestination) in
-            prepareDestination({ destination in
+        router.removeRoute(configuring: { (config) in
+            config.prepareDestination = { destination in
                 //Prepare the destination before removing
-            })
+            }
             config.successHandler = {
                 print("remove editor success")
             }
