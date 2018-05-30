@@ -289,10 +289,6 @@ public class RouteStrictConfig<Config: ZIKRouteStrictConfiguration<AnyObject>> {
 
 /// Proxy of ZIKPerformRouteConfiguration to handle configuration in a type safe way.
 public class PerformRouteStrictConfig<Destination>: RouteStrictConfig<ZIKPerformRouteStrictConfiguration<AnyObject>> {
-    public fileprivate(set) override var configuration: ZIKPerformRouteStrictConfiguration<AnyObject> {
-        get { return super.configuration }
-        set { super.configuration = newValue }
-    }
     internal override init(configuration: ZIKPerformRouteStrictConfiguration<AnyObject>) {
         super.init(configuration: configuration)
     }
@@ -420,10 +416,6 @@ public class PerformRouteStrictConfig<Destination>: RouteStrictConfig<ZIKPerform
 
 /// Proxy of ZIKRemoveRouteConfiguration to handle configuration in a type safe way.
 public class RemoveRouteStrictConfig<Destination>: RouteStrictConfig<ZIKRemoveRouteStrictConfiguration<AnyObject>> {
-    public fileprivate(set) override var configuration: ZIKRemoveRouteStrictConfiguration<AnyObject> {
-        get { return super.configuration }
-        set { super.configuration = newValue }
-    }
     internal override init(configuration: ZIKRemoveRouteStrictConfiguration<AnyObject>) {
         super.init(configuration: configuration)
     }

@@ -64,7 +64,7 @@ NS_ASSUME_NONNULL_BEGIN
 - (instancetype)initWithExclusiveDestination:(Class)destinationClass makeDestination:(_Nullable Destination(^)(RouteConfig config, __kindof ZIKRouter<Destination, RouteConfig, RemoveConfig> *router))makeDestination NS_DESIGNATED_INITIALIZER;
 
 - (instancetype)init NS_UNAVAILABLE;
-- (instancetype)new NS_UNAVAILABLE;
++ (instancetype)new NS_UNAVAILABLE;
 
 @property (nonatomic, readonly) ZIKRoute<Destination, RouteConfig, RemoveConfig> *(^nameAs)(NSString *name);
 

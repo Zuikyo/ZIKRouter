@@ -120,7 +120,7 @@ public extension ZIKServiceRouteAdapter {
 
 ///Add Swift methods for ZIKViewRoute. Unavailable for any other classes.
 public protocol ViewRouteExtension: class {
-    #if swift(>=3.3)
+    #if swift(>=4.1)
     func register<Protocol>(_ routableView: RoutableView<Protocol>) -> Self
     func register<Protocol>(_ routableViewModule: RoutableViewModule<Protocol>) -> Self
     #else
@@ -131,7 +131,7 @@ public protocol ViewRouteExtension: class {
 
 public extension ViewRouteExtension {
     
-    #if swift(>=3.3)
+    #if swift(>=4.1)
     /// Register pure Swift protocol or objc protocol for your view with this ZIKViewRoute.
     ///
     /// - Parameter routableView: A routabe entry carrying a protocol conformed by the destination of the router.
@@ -172,7 +172,7 @@ extension ZIKViewRoute: ViewRouteExtension {
 
 ///Add Swift methods for ZIKServiceRoute. Unavailable for any other classes.
 public protocol ServiceRouteExtension: class {
-    #if swift(>=3.3)
+    #if swift(>=4.1)
     func register<Protocol>(_ routableService: RoutableService<Protocol>) -> Self
     func register<Protocol>(_ routableServiceModule: RoutableServiceModule<Protocol>) -> Self
     #else
@@ -183,7 +183,7 @@ public protocol ServiceRouteExtension: class {
 
 public extension ServiceRouteExtension {
     
-    #if swift(>=3.3)
+    #if swift(>=4.1)
     /// Register pure Swift protocol or objc protocol for your service with this ZIKServiceRoute.
     ///
     /// - Parameter routableService: A routabe entry carrying a protocol conformed by the destination of the router. Can be pure Swift protocol or objc protocol.

@@ -169,7 +169,7 @@
 }
 
 - (id)new {
-    return [[self routerClass] new];
+    return [[[self routerClass] alloc] init];
 }
 
 - (void(^)(ZIKPerformRouteConfiguration *config))_injectedConfigBuilder:(void(^)(ZIKPerformRouteConfiguration *config))builder {
