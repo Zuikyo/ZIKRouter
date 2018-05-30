@@ -92,12 +92,12 @@ extension RoutableView where Protocol == UIViewController & EditorViewInput {
 
 可以用类型别名简化:
 
-```
+```swift
 typealias RequiredEditorViewInput = UIViewController & EditorViewInput
 ```
 之后就能用组合 protocol 获取模块：
 
-```
+```swift
 Router.perform(
             to: RoutableView<RequiredEditorViewInput>(),
             path: .push(from: self),
@@ -121,7 +121,7 @@ Swift 语言是静态的，本身就是类型安全的，而在 Objective-C 中�
 
 当声明一个 protocol 可用于界面路由时，需要让 protocol 继承自`ZIKViewRoutable`。
 
-```
+```objectivec
 @protocol EditorViewInput <ZIKViewRoutable>
 @property (nonatomic, copy) NSString *editorTitle;
 @end
@@ -133,7 +133,7 @@ Swift 语言是静态的，本身就是类型安全的，而在 Objective-C 中�
 
 当声明一个 protocol 可用于界面模块路由时，需要让 protocol 继承自`ZIKViewModuleRoutable`。
 
-```
+```objectivec
 @protocol EditorModuleInput <ZIKViewModuleRoutable>
 @property (nonatomic, copy) NSString *editorTitle;
 @end

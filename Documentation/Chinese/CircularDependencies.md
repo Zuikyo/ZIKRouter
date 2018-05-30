@@ -24,7 +24,7 @@ class ChildObject: Child {
 }
 ```
 
-```
+```swift
 class ParentRouter: ZIKServiceRouter<ParentObject, ZIKPerformRouteConfigration> {
     ...    
     override func destination(with configuration: ZIKPerformRouteConfiguration) -> ParentObject? {

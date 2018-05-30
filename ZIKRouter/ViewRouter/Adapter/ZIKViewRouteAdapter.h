@@ -16,7 +16,7 @@ NS_ASSUME_NONNULL_BEGIN
 /**
  Adapter for adapting provided protocol to required protocol. It's only for register protocols for other ZIKViewRouter, don't use it's instance. Subclass it and register protocols for other ZIKViewRouter in the subclass's +registerRoutableDestination with +registerViewProtocol: or +registerModuleProtocol:, and let the view conforms to the required protocol with category, extension or proxy.
  @discussion
- About module adapter, read https://github.com/Zuikyo/ZIKRouter/blob/master/Documentation/English/CircularDependencies.md
+ About module adapter, read https://github.com/Zuikyo/ZIKRouter/blob/master/Documentation/English/ModuleAdapter.md
  
  Why you need an adapter to decouple? There is a situation: module A need to use a file log module inside it, and A use the log module with a required interface (ModuleALogProtocol). The app context provides the log module as module B, and module B uses a provided interface (ModuleBLogProtocol). So in the app context, you need to adapt required interface(ModuleALogProtocol) and provided interface(ModuleBLogProtocol). Use category, swift extension, NSProxy or custom mediator to forward ModuleALogProtocol to ModuleBLogProtocol. Then module A is totally decoupled with module B.
  */

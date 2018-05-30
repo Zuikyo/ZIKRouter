@@ -63,6 +63,28 @@ Service router用于模块寻找，通过protocol寻找对应的模块，并用p
 5. [循环依赖问题](CircularDependencies.md)
 6. [模块化和解耦](ModuleAdapter.md)
 
+## Requirements
+
+* iOS 7.0+
+* Swift 3.2+
+* Xcode 9.0+
+
+## Installation
+
+### Cocoapods
+
+可以用 Cocoapods 安装 ZIKRouter：
+
+```
+pod 'ZIKRouter', '>= 1.0.0'
+```
+
+如果是 Swift 项目，则使用 ZRouter：
+
+```
+pod 'ZRouter', '>= 1.0.0'
+```
+
 ## 示例代码
 
 下面演示 router 的基本使用。
@@ -371,31 +393,9 @@ Demo 目录下的 ZIKRouterDemo 展示了如何用 ZIKRouter 进行各种界面�
 
 想要查看 router 是如何应用在 VIPER 架构中的，可以参考这个项目：[ZIKViper](https://github.com/Zuikyo/ZIKViper)。
 
-## Requirements
-
-* iOS 7.0+
-* Swift 3.2+
-* Xcode 9.0+
-
-## Installation
-
-### Cocoapods
-
-可以用 Cocoapods 安装 ZIKRouter：
-
-```
-pod 'ZIKRouter', '>= 1.0.0'
-```
-
-如果是 Swift 项目，则使用 ZRouter：
-
-```
-pod 'ZRouter', '>= 1.0.0'
-```
-
 ## How to use
 
-简单演示如何使用ZIKRouter创建路由。
+简单演示如何使用 ZIKRouter 创建路由。
 
 ### 1.创建Router
 

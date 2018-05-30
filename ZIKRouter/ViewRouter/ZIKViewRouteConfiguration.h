@@ -78,7 +78,7 @@ typedef NS_OPTIONS(NSInteger, ZIKViewRouteTypeMask) {
     ZIKViewRouteTypeMaskViewDefault            = (ZIKViewRouteTypeMaskAddAsSubview | ZIKViewRouteTypeMaskMakeDestination),
     ZIKViewRouteTypeMaskUIViewControllerDefault NS_ENUM_DEPRECATED_IOS(7.0, 7.0, "Use ZIKViewRouteTypeMaskViewControllerDefault instead") = ZIKViewRouteTypeMaskViewControllerDefault,
     ZIKViewRouteTypeMaskUIViewDefault NS_ENUM_DEPRECATED_IOS(7.0, 7.0, "Use ZIKViewRouteTypeMaskViewDefault instead") = ZIKViewRouteTypeMaskViewDefault,
-    ZIKViewRouteTypeMaskGetDestination NS_ENUM_DEPRECATED_IOS(7.0, 7.0, "Use ZIKViewRouteTypeMaskMakeDestination instead") = (1 << ZIKViewRouteTypeMakeDestination)
+    ZIKViewRouteTypeMaskGetDestination NS_ENUM_DEPRECATED_IOS(7.0, 7.0, "Use ZIKViewRouteTypeMaskMakeDestination instead") = ZIKViewRouteTypeMaskMakeDestination
 };
 
 ///Real route type performed for those adaptative types in ZIKViewRouteType
@@ -185,7 +185,7 @@ typedef void(^ZIKViewRouteSegueConfiger)(NS_NOESCAPE ZIKViewRouteSegueConfigure)
 @property (nonatomic, readonly, strong, nullable) ZIKViewRoutePopoverConfiguration *popoverConfiguration;
 @property (nonatomic, readonly, strong, nullable) ZIKViewRouteSegueConfiguration *segueConfiguration;
 
-///When set to YES and the router still exists, if the same destination instance is routed again from external, prepareDestination, successHandler, errorHandler, completion will be called.
+///When set to YES and the router still exists, if the same destination instance is routed again from external, prepareDestination, successHandler, errorHandler, completionHandler will be called.
 @property (nonatomic, assign) BOOL handleExternalRoute;
 
 @end
@@ -217,13 +217,13 @@ typedef void(^ZIKViewRouteSegueConfiger)(NS_NOESCAPE ZIKViewRouteSegueConfigure)
 ///When use routeType ZIKViewRouteTypeAddAsChildViewController and remove, remove the destination's view from it's superview in this block. If you wrap destination with -containerWrapper, the `destination` in this block is the wrapped UIViewController. You can remove with animations, and must call completion when the removing action is finished.
 @property (nonatomic, copy, nullable) void(^removingChildViewHandler)(UIViewController *destination, void(^completion)(void));
 
-///When set to YES and the router still exists, if the same destination instance is removed from external, successHandler, errorHandler will be called
+///When set to YES and the router still exists, if the same destination instance is removed from external, successHandler, errorHandler, completionHandler will be called.
 @property (nonatomic, assign) BOOL handleExternalRoute;
 @end
 
 ///Route path for setting route type and those required parameters for each type. You can extend your custom transition type here, and use custom default configuration in router, override -configurePath: and set custom parameters to configuration.
 @interface ZIKViewRoutePath : NSObject
-///Use default setting of ZIKViewRouteConfiguration.
+///Use default setting of ZIKViewRouteConfiguration, then the path's routeType won't be set to configuration.
 @property (nonatomic) BOOL useDefault;
 @property (nonatomic, strong, readonly, nullable) id<ZIKViewRouteSource> source;
 @property (nonatomic, readonly) ZIKViewRouteType routeType;
@@ -418,7 +418,7 @@ typedef void(^ZIKViewRouteSegueConfiger)(NS_NOESCAPE ZIKViewRouteSegueConfigure)
 @property (nonatomic, readonly, strong, nullable) ZIKViewRoutePopoverConfiguration *popoverConfiguration;
 @property (nonatomic, readonly, strong, nullable) ZIKViewRouteSegueConfiguration *segueConfiguration;
 
-///When set to YES and the router still exists, if the same destination instance is routed again from external, prepareDestination, successHandler, errorHandler, completion will be called.
+///When set to YES and the router still exists, if the same destination instance is routed again from external, prepareDestination, successHandler, errorHandler, completionHandler will be called.
 @property (nonatomic, assign) BOOL handleExternalRoute;
 
 @end
@@ -434,7 +434,7 @@ typedef void(^ZIKViewRouteSegueConfiger)(NS_NOESCAPE ZIKViewRouteSegueConfigure)
 ///When use routeType ZIKViewRouteTypeAddAsChildViewController and remove, remove the destination's view from it's superview in this block. If you wrap destination with -containerWrapper, the `destination` in this block is the wrapped UIViewController. You can remove with animations, and must call completion when the removing action is finished.
 @property (nonatomic, copy, nullable) void(^removingChildViewHandler)(UIViewController *destination, void(^completion)(void));
 
-///When set to YES and the router still exists, if the same destination instance is removed from external, successHandler, errorHandler will be called.
+///When set to YES and the router still exists, if the same destination instance is removed from external, successHandler, errorHandler, completionHandler will be called.
 @property (nonatomic, assign) BOOL handleExternalRoute;
 @end
 

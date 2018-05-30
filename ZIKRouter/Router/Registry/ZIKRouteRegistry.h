@@ -19,7 +19,7 @@ NS_ASSUME_NONNULL_BEGIN
 @interface ZIKRouteRegistry : NSObject
 ///Whether auto register all routers when app launchs. Default is YES. You can set this to NO before UIApplicationMain, and manually register your routers with +registerAll or call +registerRoutableDestination for each router.
 @property (nonatomic, class) BOOL autoRegister;
-///Whetehr registration is finished.
+///Whether registration is finished.
 @property (nonatomic, class, readonly) BOOL registrationFinished;
 
 #pragma mark Manually Register

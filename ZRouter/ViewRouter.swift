@@ -725,7 +725,7 @@ public class ViewRouteStrictConfig<Destination>: PerformRouteStrictConfig<Destin
         get { return config.segueConfiguration }
     }
     
-    /// When set to true and the router still exists, if the same destination instance is routed again from external, prepareDestination, successHandler, errorHandler, completion will be called.
+    /// When set to true and the router still exists, if the same destination instance is routed again from external, prepareDestination, successHandler, errorHandler, completionHandler will be called.
     public var handleExternalRoute: Bool {
         get { return config.handleExternalRoute }
         set { config.handleExternalRoute = newValue }

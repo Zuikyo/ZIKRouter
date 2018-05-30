@@ -25,7 +25,7 @@ import ZIKRouter
  Router.perform(
  to: RoutableView<TestViewInput>(),
  from: self,
- configuring: { (config, prepareDestination, _) in
+ configuring: { (config, _) in
      config.routeType = .presentModally
      config.prepareDestination = { destination in
         //destination is inferred as TestViewInput
@@ -185,7 +185,7 @@ public struct RoutableServiceModule<Protocol> {
     }
 }
 
-///All protocols inherited from ZIKViewRoutable are routable as view protocol.
+///All protocols inheriting from ZIKViewRoutable are routable as view protocol.
 public extension RoutableView where Protocol: ZIKViewRoutable {
     init() {
         if let objcProtocol = ZIKRouter_objcProtocol(Protocol.self) {
@@ -197,7 +197,7 @@ public extension RoutableView where Protocol: ZIKViewRoutable {
     }
 }
 
-///All protocols inherited from ZIKViewModuleRoutable are routable as view module protocol.
+///All protocols inheriting from ZIKViewModuleRoutable are routable as view module protocol.
 public extension RoutableViewModule where Protocol: ZIKViewModuleRoutable {
     init() {
         if let objcProtocol = ZIKRouter_objcProtocol(Protocol.self) {
@@ -209,7 +209,7 @@ public extension RoutableViewModule where Protocol: ZIKViewModuleRoutable {
     }
 }
 
-///All protocols inherited from ZIKServiceRoutable are routable as service protocol.
+///All protocols inheriting from ZIKServiceRoutable are routable as service protocol.
 public extension RoutableService where Protocol: ZIKServiceRoutable {
     init() {
         if let objcProtocol = ZIKRouter_objcProtocol(Protocol.self) {
@@ -221,7 +221,7 @@ public extension RoutableService where Protocol: ZIKServiceRoutable {
     }
 }
 
-///All protocols inherited from ZIKViewRoutable are routable as service module protocol.
+///All protocols inheriting from ZIKViewRoutable are routable as service module protocol.
 public extension RoutableServiceModule where Protocol: ZIKServiceModuleRoutable {
     init() {
         if let objcProtocol = ZIKRouter_objcProtocol(Protocol.self) {

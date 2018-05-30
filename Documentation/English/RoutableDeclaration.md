@@ -91,12 +91,12 @@ extension RoutableView where Protocol == UIViewController & EditorViewInput {
 
 You can also use typealias:
 
-```
+```swift
 typealias RequiredEditorViewInput = UIViewController & EditorViewInput
 ```
 Then use it as:
 
-```
+```swift
 Router.perform(
             to: RoutableView<RequiredEditorViewInput>(),
             path: .push(from: self),
@@ -121,7 +121,7 @@ Swift is type safe, but Objective-C is not. In Objective-C, ZIKRouter uses anoth
 
 When a protocol is for view routing, the protocol should inherit from `ZIKViewRoutable`.
 
-```
+```objectivec
 @protocol EditorViewInput <ZIKViewRoutable>
 @property (nonatomic, copy) NSString *editorTitle;
 @end
@@ -133,7 +133,7 @@ When a protocol is for service routing, the protocol should inherit from `ZIKSer
 
 When a protocol is a view module config protocol, the protocol should inherit from `ZIKViewModuleRoutable`.
 
-```
+```objectivec
 @protocol EditorModuleInput <ZIKViewModuleRoutable>
 @property (nonatomic, copy) NSString *editorTitle;
 @end
