@@ -7,7 +7,8 @@
 //
 
 #import "___VARIABLE_productName___.h"
-@import ZIKRouter.Internal;
+#import <ZIKRouter/ZIKRouterInternal.h>
+#import <ZIKRouter/ZIKViewRouterInternal.h>
 #import "___VARIABLE_destinationClass___.h"
 
 DeclareRoutableView(___VARIABLE_destinationClass___, ___VARIABLE_productName___)

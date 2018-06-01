@@ -7,7 +7,8 @@
 //
 
 #import "___VARIABLE_productName___.h"
-@import ZIKRouter.Internal;
+#import <ZIKRouter/ZIKRouterInternal.h>
+#import <ZIKRouter/ZIKServiceRouterInternal.h>
 #import "___VARIABLE_destinationClass___.h"
 
 DeclareRoutableService(___VARIABLE_destinationClass___, ___VARIABLE_productName___)

@@ -24,13 +24,17 @@ protocol PureSwiftSampleViewInput {
 class SwiftSampleViewController: UIViewController, PureSwiftSampleViewInput, SwiftSampleViewInput, ZIKInfoViewDelegate, UIViewControllerPreviewingDelegate {
     
     var anyRouter: ZIKAnyViewRouter?
-    var infoRouter: ViewRouter<ZIKInfoViewProtocol, ViewRouteConfig>? {
+    var infoRouter: DestinationViewRouter<ZIKInfoViewProtocol>? {
         willSet { anyRouter = newValue?.router }
     }
-    var switchableRouter: ViewRouter<Any, ViewRouteConfig>? {
+    var switchableRouter: AnyViewRouter? {
         willSet { anyRouter = newValue?.router }
     }
-    var alertRouter: ViewRouter<Any, RequiredCompatibleAlertModuleInput>?
+    var alertRouter: ModuleViewRouter<RequiredCompatibleAlertModuleInput>?
+    
+    var adapterRouter: DestinationViewRouter<UIViewController & ZIKInfoViewProtocol>? {
+        willSet { anyRouter = newValue?.router }
+    }
     
     //You can inject alertRouter from outside, then use the router directly
     var injectedAlertRouter: ViewRouterType<Any, RequiredCompatibleAlertModuleInput>?
@@ -118,8 +122,6 @@ class SwiftSampleViewController: UIViewController, PureSwiftSampleViewInput, Swi
                         }
             })
     }
-    
-    var adapterRouter: DestinationViewRouter<UIViewController & ZIKInfoViewProtocol>?
     
     @IBAction func testAdapterWithComposedType(_ sender: UIButton) {
         adapterRouter = Router.perform(to: RoutableView<RequiredInfoViewInput>(), path: .presentModally(from: self), configuring: { (config, _) in

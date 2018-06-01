@@ -6,7 +6,7 @@
 //___COPYRIGHT___
 //
 
-@import ZIKRouter;
+#import <ZIKRouter/ZIKViewRoutable.h>
 
 NS_ASSUME_NONNULL_BEGIN
 

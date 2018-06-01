@@ -49,7 +49,6 @@ typedef NS_ENUM(NSInteger,ZIKRouterTestType) {
 @interface MasterViewController () <UIViewControllerPreviewingDelegate>
 @property (nonatomic, strong) NSArray<NSString *> *cellNames;
 @property (nonatomic, strong) NSArray<Class> *routerClasses;
-@property (nonatomic, strong) NSArray<NSString *> *routerIdentifiers;
 @end
 
 @implementation MasterViewController
@@ -97,28 +96,8 @@ typedef NS_ENUM(NSInteger,ZIKRouterTestType) {
                            [TestURLRouterViewRouter class],
                            [ZIKLoginViewRouter class]
                            ];
-    self.routerIdentifiers = @[
-                               @"testPush",
-                               @"testPresentModally",
-                               @"testPresentAsPopover",
-                               @"testPerformSegue",
-                               @"testShow",
-                               @"testShowDetail",
-                               @"testAddAsChild",
-                               @"testAddAsSubview",
-                               @"testCustom",
-                               @"testGetDestination",
-                               @"testAutoCreate",
-                               @"testCircularDependencies",
-                               @"testClassHierarchy",
-                               @"testServiceRouter",
-                               @"swiftSample",
-                               @"testURLRouter",
-                               @"loginView"
-                               ];
     
     NSAssert(self.cellNames.count == self.routerClasses.count, nil);
-    NSAssert(self.cellNames.count == self.routerIdentifiers.count, nil);
 }
 
 - (void)viewWillAppear:(BOOL)animated {
@@ -155,10 +134,7 @@ typedef NS_ENUM(NSInteger,ZIKRouterTestType) {
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
     [tableView deselectRowAtIndexPath:indexPath animated:YES];
     
-    id routerType;
-    routerType = [self routerClassForIndexPath:indexPath];
-    NSString *identifier = [self routerIdentifierForIndexPath:indexPath];
-    routerType = ZIKViewRouter.toIdentifier(identifier);
+    id routerType = [self routerClassForIndexPath:indexPath];
     ZIKViewRoutePath *routePath;
     ZIKRouterTestType testType = indexPath.row;
     switch (testType) {
@@ -185,13 +161,7 @@ typedef NS_ENUM(NSInteger,ZIKRouterTestType) {
     return routerClass;
 }
 
-- (NSString *)routerIdentifierForIndexPath:(NSIndexPath *)indexPath {
-    NSString *identifier;
-    if (self.routerIdentifiers.count > indexPath.row) {
-        identifier = self.routerIdentifiers[indexPath.row];
-    }
-    return identifier;
-}
+#pragma mark UIViewControllerPreviewingDelegate
 
 - (nullable UIViewController *)previewingContext:(id <UIViewControllerPreviewing>)previewingContext viewControllerForLocation:(CGPoint)location {
     NSIndexPath *indexPath = [self.tableView indexPathForRowAtPoint:location];

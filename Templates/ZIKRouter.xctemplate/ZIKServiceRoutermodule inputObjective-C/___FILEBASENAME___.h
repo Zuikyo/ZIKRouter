@@ -6,7 +6,7 @@
 //___COPYRIGHT___
 //
 
-@import ZIKRouter;
+#import <ZIKRouter/ZIKServiceRouter.h>
 #import "___VARIABLE_protocolName___.h"
 
 NS_ASSUME_NONNULL_BEGIN

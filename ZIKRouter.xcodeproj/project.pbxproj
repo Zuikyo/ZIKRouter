@@ -7,16 +7,16 @@
 	objects = {
 
 /* Begin PBXAggregateTarget section */
-		F8D11F4A1F2268CA0035240D /* multiBuild */ = {
+		F8D11F4A1F2268CA0035240D /* aggregateBuild */ = {
 			isa = PBXAggregateTarget;
-			buildConfigurationList = F8D11F4B1F2268CA0035240D /* Build configuration list for PBXAggregateTarget "multiBuild" */;
+			buildConfigurationList = F8D11F4B1F2268CA0035240D /* Build configuration list for PBXAggregateTarget "aggregateBuild" */;
 			buildPhases = (
 				F8D11F501F2268F80035240D /* ShellScript */,
 			);
 			dependencies = (
 				F8D11F4F1F2268D30035240D /* PBXTargetDependency */,
 			);
-			name = multiBuild;
+			name = aggregateBuild;
 			productName = multiBuild;
 		};
 /* End PBXAggregateTarget section */
@@ -922,7 +922,7 @@
 			targets = (
 				F85F4CFE1F223EB0003106C3 /* ZIKRouter */,
 				F85F4D261F2240D2003106C3 /* libZIKRouter */,
-				F8D11F4A1F2268CA0035240D /* multiBuild */,
+				F8D11F4A1F2268CA0035240D /* aggregateBuild */,
 				F81A33A5208726B5001D176A /* ZIKRouterTests */,
 			);
 		};
@@ -1347,7 +1347,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		F8D11F4B1F2268CA0035240D /* Build configuration list for PBXAggregateTarget "multiBuild" */ = {
+		F8D11F4B1F2268CA0035240D /* Build configuration list for PBXAggregateTarget "aggregateBuild" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				F8D11F4C1F2268CA0035240D /* Debug */,

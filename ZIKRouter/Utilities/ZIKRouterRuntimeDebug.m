@@ -261,7 +261,7 @@ bool _swift_typeIsTargetType(id sourceType, id targetType) {
         if (type != ZIKSwiftMetadataKindExistential) {
             return false;
         } else {
-            //For pure objc class, can't check conformance with swift_conformsToProtocols
+            //For pure objc class, can't check conformance with swift_conformsToProtocols, need to use swift type metadata of this class as sourceTypeMetadata, or just search protocol witness table for this class
             if (object_isClass(sourceType) && isSourceSwiftObjectType == NO &&
                 [[NSStringFromClass(sourceType) demangledAsSwift] containsString:@"."] == NO) {
                 return _objcClassConformsToSwiftProtocolName(sourceType, [targetType description]);
@@ -276,7 +276,7 @@ bool _swift_typeIsTargetType(id sourceType, id targetType) {
         targetTypeOpaqueValue = (uintptr_t)targetType;
     }
     
-    bool result = swift_conformsToProtocols(sourceTypeOpaqueValue, sourceTypeMetadata, targetTypeMetadata, &targetWitnessTables);
+    bool result = swift_conformsToProtocols(0, sourceTypeMetadata, targetTypeMetadata, &targetWitnessTables);
     return result;
 }
 
