@@ -76,13 +76,13 @@ Service router用于模块寻找，通过protocol寻找对应的模块，并用p
 可以用 Cocoapods 安装 ZIKRouter：
 
 ```
-pod 'ZIKRouter', '>= 1.0.0'
+pod 'ZIKRouter', '>= 1.0.1'
 ```
 
 如果是 Swift 项目，则使用 ZRouter：
 
 ```
-pod 'ZRouter', '>= 1.0.0'
+pod 'ZRouter', '>= 1.0.1'
 ```
 
 ## 示例代码

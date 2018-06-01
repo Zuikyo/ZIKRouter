@@ -184,13 +184,21 @@ App 启动时会遍历所有的类，自动执行所有 router 的`registerRouta
 * `ZIKRouter: register with subclass`指的是用 router 子类进行注册
 * `ZRouter: register with string`指的是用`init(declaredTypeName:)`声明并注册纯 swift 的 protocol；由于 ZRouter 需要支持 objc protocol 和纯 swift protocol，因此性能会比 ZIKRouter 稍微降低
 
-![自动注册和手动注册 - 500 个 view controller](../Resources/Auto-register-manually-register-500.png)
+<p align="center">
+  <img src="../Resources/Auto-register-manually-register-500.png" width="70%">
+</p>
 
-![自动注册和手动注册 - 1000 个 view controller](../Resources/Auto-register-manually-register-1000.png)
+<p align="center">
+  <img src="../Resources/Auto-register-manually-register-1000.png" width="70%">
+</p>
 
-![自动注册和手动注册 - 2000 个 view controller](../Resources/Auto-register-manually-register-2000.png)
+<p align="center">
+  <img src="../Resources/Auto-register-manually-register-2000.png" width="70%">
+</p>
 
-![自动注册和手动注册 - 5000 个 view controller](../Resources/Auto-register-manually-register-5000.png)
+<p align="center">
+  <img src="../Resources/Auto-register-manually-register-5000.png" width="70%">
+</p>
 
 在 64 位机型上完全没有性能问题，在 32 位老机型上耗时会比较多，而大部分耗时都是在 objc 的方法调用上，经测试，即便把注册方法都替换为空方法，耗时也是差不多的。
 
@@ -205,14 +213,21 @@ App 启动时会遍历所有的类，自动执行所有 router 的`registerRouta
 * `ZRouter: register with type`指的是用`init(declaredProtocol:)`声明并注册纯 swift 的 protocol
 * 其他 URL router 注册对应数量的`/user/TestViewControllerxxx/:userID`格式的 url
 
-![性能比较 - 500 个 view controller](../Resources/Registration-performance-500.jpg)
+<p align="center">
+  <img src="../Resources/Registration-performance-500.jpg" width="90%">
+</p>
 
-![性能比较 - 1000 个 view controller](../Resources/Registration-performance-1000.jpg)
+<p align="center">
+  <img src="../Resources/Registration-performance-1000.jpg" width="90%">
+</p>
 
-![性能比较 - 2000 个 view controller](../Resources/Registration-performance-2000.jpg)
+<p align="center">
+  <img src="../Resources/Registration-performance-2000.jpg" width="90%">
+</p>
 
-![性能比较 - 5000 个 view controller](../Resources/Registration-performance-5000.jpg)
-
+<p align="center">
+  <img src="../Resources/Registration-performance-5000.jpg" width="90%">
+</p>
 
 测试结果：
 

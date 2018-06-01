@@ -185,13 +185,21 @@ Here is the test of auto registration and manually registration:
 * `ZIKRouter: register with subclass` means registering with router subclasses
 * `ZRouter: register with string` means declaring and registering routable pure swift protocols with `init(declaredTypeName:)`. The performance of ZRouter is slightly worse than ZIKRouter, bacause ZRouter needs to support both objc protocols and pure swift protocols.
 
-![Auto registration and manually registration - 500 view controllers](../Resources/Auto-register-manually-register-500.png)
+<p align="center">
+  <img src="../Resources/Auto-register-manually-register-500.png" width="70%">
+</p>
 
-![Auto registration and manually registration - 1000 view controllers](../Resources/Auto-register-manually-register-1000.png)
+<p align="center">
+  <img src="../Resources/Auto-register-manually-register-1000.png" width="70%">
+</p>
 
-![Auto registration and manually registration - 2000 view controllers](../Resources/Auto-register-manually-register-2000.png)
+<p align="center">
+  <img src="../Resources/Auto-register-manually-register-2000.png" width="70%">
+</p>
 
-![Auto registration and manually registration - 5000 view controllers](../Resources/Auto-register-manually-register-5000.png)
+<p align="center">
+  <img src="../Resources/Auto-register-manually-register-5000.png" width="70%">
+</p>
 
 There is no performance problem in 64 bit device. In 32 bit device like iPhone 5, most time is costed in objc method invocations. The time is almost the same even we replace registration methods with empty methods that do nothing.
 
@@ -206,14 +214,21 @@ Here is the performance with other frameworks:
 * `ZRouter: register with type` means declaring and registering routable pure swift protocols with `init(declaredProtocol:)`
 * Registering urls for other URL routers in a format like `/user/TestViewControllerxxx/:userID`
 
-![Performance - 500 个 view controller](../Resources/Registration-performance-500.jpg)
+<p align="center">
+  <img src="../Resources/Registration-performance-500.jpg" width="90%">
+</p>
 
-![Performance - 1000 个 view controller](../Resources/Registration-performance-1000.jpg)
+<p align="center">
+  <img src="../Resources/Registration-performance-1000.jpg" width="90%">
+</p>
 
-![Performance - 2000 个 view controller](../Resources/Registration-performance-2000.jpg)
+<p align="center">
+  <img src="../Resources/Registration-performance-2000.jpg" width="90%">
+</p>
 
-![Performance - 5000 个 view controller](../Resources/Registration-performance-5000.jpg)
-
+<p align="center">
+  <img src="../Resources/Registration-performance-5000.jpg" width="90%">
+</p>
 
 Result:
 
