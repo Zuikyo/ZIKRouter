@@ -264,7 +264,17 @@ bool _swift_typeIsTargetType(id sourceType, id targetType) {
             //For pure objc class, can't check conformance with swift_conformsToProtocols, need to use swift type metadata of this class as sourceTypeMetadata, or just search protocol witness table for this class
             if (object_isClass(sourceType) && isSourceSwiftObjectType == NO &&
                 [[NSStringFromClass(sourceType) demangledAsSwift] containsString:@"."] == NO) {
-                return _objcClassConformsToSwiftProtocolName(sourceType, [targetType description]);
+                static void*(*swift_getObjCClassMetadata)(void*);
+                static dispatch_once_t onceToken;
+                dispatch_once(&onceToken, ^{
+                    ZIKImageRef libswiftCoreImage = [ZIKImageSymbol imageByName:"libswiftCore.dylib"];
+                    swift_getObjCClassMetadata = [ZIKImageSymbol findSymbolInImage:libswiftCoreImage name:"_swift_getObjCClassMetadata"];
+                });
+                if (swift_getObjCClassMetadata) {
+                    sourceTypeMetadata = (uintptr_t)swift_getObjCClassMetadata((__bridge void *)(sourceType));
+                } else {
+                    return _objcClassConformsToSwiftProtocolName(sourceType, [targetType description]);
+                }
             }
         }
     } else {
