@@ -80,13 +80,13 @@ ZIKAnyServiceRouterType *_Nullable _ZIKServiceRouterToIdentifier(NSString *ident
 
 @implementation ZIKServiceRouter (Discover)
 
-+ (ZIKServiceRouterType<id<ZIKServiceRoutable>, ZIKPerformRouteConfiguration *> *(^)(Protocol *))toService {
++ (ZIKServiceRouterType<id, ZIKPerformRouteConfiguration *> *(^)(Protocol<ZIKServiceRoutable> *))toService {
     return ^(Protocol *serviceProtocol) {
         return _ZIKServiceRouterToService(serviceProtocol);
     };
 }
 
-+ (ZIKServiceRouterType<id, ZIKPerformRouteConfiguration *> *(^)(Protocol *))toModule {
++ (ZIKServiceRouterType<id, ZIKPerformRouteConfiguration *> *(^)(Protocol<ZIKServiceModuleRoutable> *))toModule {
     return ^(Protocol *configProtocol) {
         return _ZIKServiceRouterToModule(configProtocol);
     };

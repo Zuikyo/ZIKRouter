@@ -79,13 +79,13 @@ ZIKAnyViewRouterType *_Nullable _ZIKViewRouterToIdentifier(NSString *identifier)
 
 @implementation ZIKViewRouter (Discover)
 
-+ (ZIKViewRouterType<id<ZIKViewRoutable>, ZIKViewRouteConfiguration *> *(^)(Protocol *))toView {
++ (ZIKViewRouterType<id, ZIKViewRouteConfiguration *> *(^)(Protocol<ZIKViewRoutable> *))toView {
     return ^(Protocol *viewProtocol) {
         return _ZIKViewRouterToView(viewProtocol);
     };
 }
 
-+ (ZIKViewRouterType<id, ZIKViewRouteConfiguration *> *(^)(Protocol *))toModule {
++ (ZIKViewRouterType<id, ZIKViewRouteConfiguration *> *(^)(Protocol<ZIKViewModuleRoutable> *))toModule {
     return ^(Protocol *configProtocol) {
         return _ZIKViewRouterToModule(configProtocol);
     };
