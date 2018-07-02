@@ -12,7 +12,11 @@
 #import "UIStoryboardSegue+ZIKViewRouterPrivate.h"
 #import <objc/runtime.h>
 
+#if ZIK_HAS_UIKIT
 @implementation UIStoryboardSegue (ZIKViewRouterPrivate)
+#else
+@implementation NSStoryboardSegue (ZIKViewRouterPrivate)
+#endif
 - (nullable Class)zix_currentClassCallingPerform {
     return objc_getAssociatedObject(self, "zix_currentClassCallingPerform");
 }

@@ -12,8 +12,17 @@
 import Foundation
 import ZIKRouter
 
-extension UIViewController: NamespaceWrappable { }
-public extension TypeWrapperProtocol where WrappedType: UIViewController {
+#if os(iOS) || os(watchOS) || os(tvOS)
+public typealias ViewController = UIViewController
+public typealias View = UIView
+#elseif os(OSX)
+public typealias ViewController = NSViewController
+public typealias View = NSView
+#else
+#endif
+
+extension ViewController: NamespaceWrappable { }
+public extension TypeWrapperProtocol where WrappedType: ViewController {
     
     ///See zix_routed
     public var routed: Bool {
@@ -26,8 +35,8 @@ public extension TypeWrapperProtocol where WrappedType: UIViewController {
     }
 }
 
-extension UIView: NamespaceWrappable { }
-public extension TypeWrapperProtocol where WrappedType: UIView {
+extension View: NamespaceWrappable { }
+public extension TypeWrapperProtocol where WrappedType: View {
     
     ///See zix_routed
     public var routed: Bool {

@@ -12,7 +12,12 @@
 #import "ZIKRouteRegistry.h"
 #import "ZIKRouteRegistryInternal.h"
 #import "ZIKRouterInternal.h"
+#import "ZIKClassCapabilities.h"
+#if ZIK_HAS_UIKIT
 #import <UIKit/UIKit.h>
+#else
+#import <AppKit/AppKit.h>
+#endif
 #import <objc/runtime.h>
 #import "ZIKRouterRuntime.h"
 #import "ZIKRouter.h"
@@ -41,20 +46,20 @@ static BOOL _registrationFinished = NO;
 + (void)load {
     static dispatch_once_t onceToken;
     dispatch_once(&onceToken, ^{
-        ZIKRouter_replaceMethodWithMethod([UIApplication class], @selector(setDelegate:),
+        ZIKRouter_replaceMethodWithMethod([XXApplication class], @selector(setDelegate:),
                                           self, @selector(ZIKRouteRegistry_hook_setDelegate:));
-        ZIKRouter_replaceMethodWithMethodType([UIStoryboard class], @selector(storyboardWithName:bundle:), true, self, @selector(ZIKRouteRegistry_hook_storyboardWithName:bundle:), true);
+        ZIKRouter_replaceMethodWithMethodType([XXStoryboard class], @selector(storyboardWithName:bundle:), true, self, @selector(ZIKRouteRegistry_hook_storyboardWithName:bundle:), true);
     });
 }
 
-+ (void)ZIKRouteRegistry_hook_setDelegate:(id<UIApplicationDelegate>)delegate {
++ (void)ZIKRouteRegistry_hook_setDelegate:(id)delegate {
     if (ZIKRouteRegistry.autoRegister) {
         [ZIKRouteRegistry registerAll];
     }
     [self ZIKRouteRegistry_hook_setDelegate:delegate];
 }
 
-+ (UIStoryboard *)ZIKRouteRegistry_hook_storyboardWithName:(NSString *)name bundle:(nullable NSBundle *)storyboardBundleOrNil {
++ (XXStoryboard *)ZIKRouteRegistry_hook_storyboardWithName:(NSString *)name bundle:(nullable NSBundle *)storyboardBundleOrNil {
     if (ZIKRouteRegistry.autoRegister) {
         [ZIKRouteRegistry registerAll];
     }
@@ -148,8 +153,8 @@ static BOOL _registrationFinished = NO;
 }
 
 + (nullable ZIKRouterType *)routerToRegisteredDestinationClass:(Class)destinationClass {
-    NSParameterAssert([destinationClass isSubclassOfClass:[UIView class]] ||
-                      [destinationClass isSubclassOfClass:[UIViewController class]]);
+    NSParameterAssert([destinationClass isSubclassOfClass:[XXView class]] ||
+                      [destinationClass isSubclassOfClass:[XXViewController class]]);
     NSParameterAssert([self isDestinationClassRoutable:destinationClass]);
     CFDictionaryRef destinationToDefaultRouterMap = self.destinationToDefaultRouterMap;
     while (destinationClass) {

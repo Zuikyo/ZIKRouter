@@ -911,7 +911,7 @@ private class _ViewRouterValidater: ZIKViewRouteAdapter {
             let badDestinationClass: AnyClass? = ZIKViewRouteRegistry.validateDestinations(forRoute: route, handler: { (destinationClass) -> Bool in
                 return _swift_typeIsTargetType(destinationClass, viewProtocol)
             })
-            assert(badDestinationClass == nil, "Registered view class (\(badDestinationClass!) for router (\(route)) should conform to registered view protocol (\(viewProtocol)).")
+            assert(badDestinationClass == nil, "Registered view class (\(badDestinationClass!)) for router (\(route)) should conform to registered view protocol (\(viewProtocol)).")
         }
         
         // Destination should conforms to registered adapter destination protocols

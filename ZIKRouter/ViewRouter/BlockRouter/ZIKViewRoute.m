@@ -22,6 +22,7 @@
 #import "ZIKBlockCustomOnlyViewRouter.h"
 #import "ZIKBlockAnyViewRouter.h"
 #import "ZIKBlockAllViewRouter.h"
+#import "ZIKClassCapabilities.h"
 
 @interface ZIKViewRoute()
 @property (nonatomic, copy, nullable) BOOL(^destinationFromExternalPreparedBlock)(id destination, ZIKViewRouter *router);
@@ -297,12 +298,12 @@ strictConfiguring:(void (^)(ZIKPerformRouteStrictConfiguration<id> * _Nonnull, Z
     return [[self routerClass] prepareDestination:destination strictConfiguring:configBuilder strictRemoving:removeConfigBuilder];
 }
 
-- (id)routerFromSegueIdentifier:(NSString *)identifier sender:(nullable id)sender destination:(UIViewController *)destination source:(UIViewController *)source {
+- (id)routerFromSegueIdentifier:(NSString *)identifier sender:(nullable id)sender destination:(XXViewController *)destination source:(XXViewController *)source {
     ZIKBlockViewRouter *router = [[self routerClass] routerFromSegueIdentifier:identifier sender:sender destination:destination source:source];
     router.original_configuration.route = self;
     return router;
 }
-- (id)routerFromView:(UIView *)destination source:(UIView *)source {
+- (id)routerFromView:(XXView *)destination source:(XXView *)source {
     ZIKBlockViewRouter *router = [[self routerClass] routerFromView:destination source:source];
     router.original_configuration.route = self;
     return router;

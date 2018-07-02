@@ -407,29 +407,42 @@ public class ViewRouter<Destination, ModuleConfig> {
 
 /// Route path for setting route type and those required parameters for each type. You can extend your custom transition type in ZIKViewRoutePath, and use custom default configuration in router, override -configurePath: and set custom parameters to configuration.
 public enum ViewRoutePath {
+#if os(iOS) || os(watchOS) || os(tvOS)
     /// Push the destination from the source view controller.
-    case push(from: UIViewController)
+    case push(from: ViewController)
+#endif
     /// Present the destination modally from the source view controller.
-    case presentModally(from: UIViewController)
+    case presentModally(from: ViewController)
     /// Present the destination as popover from the source view controller, and configure the popover.
-    case presentAsPopover(from: UIViewController, configure: ZIKViewRoutePopoverConfigure)
+    case presentAsPopover(from: ViewController, configure: ZIKViewRoutePopoverConfigure)
+#if os(OSX)
+    /// Present the destination as sheet from the source view controller.
+    case presentAsSheet(from: ViewController)
+    /// Present the destination with animator from the source view controller.
+    case present(from: ViewController, animator: NSViewControllerPresentationAnimator)
+#endif
     /// Perform segue from the source view controller, with the segue identifier
-    case performSegue(from: UIViewController, identifier: String, sender: Any?)
+    case performSegue(from: ViewController, identifier: String, sender: Any?)
+#if os(iOS) || os(watchOS) || os(tvOS)
     /// Show the destination from the source view controller.
-    case show(from: UIViewController)
+    case show(from: ViewController)
     /// Show the destination as detail from the source view controller.
-    case showDetail(from: UIViewController)
+    case showDetail(from: ViewController)
+#elseif os(OSX)
+    /// Show the destination with `NSWindowController.showWindow(_ sender: Any?)`.
+    case show(from: ViewController?)
+#endif
     /// Add the destination as child view controller to the parent source view controller. In addingChildViewHandler, add destination's view to source's view in addingChildViewHandler, and invoke the completion block when finished.
     /// - addingChildViewHandler: Add destination's view to source's view.
     ///     - source: Source view.
     ///     - completion: Invoke the completion block when adding is finished.
-    case addAsChildViewController(from: UIViewController, addingChildViewHandler: (UIViewController, @escaping () -> Void) -> Void)
+    case addAsChildViewController(from: ViewController, addingChildViewHandler: (ViewController, @escaping () -> Void) -> Void)
     /// Add the destination as subview to the superview.
-    case addAsSubview(from: UIView)
+    case addAsSubview(from: View)
     /// Perform custom transition type from the source.
     case custom(from: ZIKViewRouteSource?)
     /// Use default setting of ZIKViewRouteConfiguration if you don't know which type to use.
-    case defaultPath(from: UIViewController)
+    case defaultPath(from: ViewController)
     /// Just make destination.
     case makeDestination
     /// Only use this when using custom transition type extended in ZIKViewRoutePath
@@ -438,12 +451,22 @@ public enum ViewRoutePath {
     public var source: ZIKViewRouteSource? {
         let source: ZIKViewRouteSource?
         switch self {
+#if os(iOS) || os(watchOS) || os(tvOS)
         case .push(from: let s),
-             .presentModally(from: let s),
+             .show(from: let s),
+             .showDetail(from: let s):
+            source = s
+#endif
+#if os(OSX)
+        case .presentAsSheet(from: let s),
+             .present(from: let s, animator: _):
+            source = s
+        case .show(from: let s):
+            source = s
+#endif
+        case .presentModally(from: let s),
              .presentAsPopover(from: let s, _),
              .performSegue(from: let s, _, _),
-             .show(from: let s),
-             .showDetail(from: let s),
              .addAsChildViewController(from: let s, _),
              .defaultPath(from: let s):
             source = s
@@ -461,18 +484,28 @@ public enum ViewRoutePath {
     
     public var routeType: ZIKViewRouteType {
         switch self {
+#if os(iOS) || os(watchOS) || os(tvOS)
         case .push(from: _):
             return .push
+#endif
         case .presentModally(from: _):
             return .presentModally
         case .presentAsPopover(from: _):
             return .presentAsPopover
+#if os(OSX)
+        case .presentAsSheet(from: _):
+            return .presentAsSheet
+        case .present(from: _, animator: _):
+            return .presentWithAnimator
+#endif
         case .performSegue(from: _):
             return .performSegue
         case .show(from: _):
             return .show
+#if os(iOS) || os(watchOS) || os(tvOS)
         case .showDetail(from: _):
             return .showDetail
+#endif
         case .addAsChildViewController(from: _):
             return .addAsChildViewController
         case .addAsSubview(from: _):
@@ -492,6 +525,10 @@ public enum ViewRoutePath {
         switch self {
         case .presentAsPopover(from: let source, configure: let configure):
             return ZIKViewRoutePath.presentAsPopover(from: source, configure: configure)
+#if os(OSX)
+        case .present(from: let source, animator: let animator):
+            return ZIKViewRoutePath.present(from: source, animator: animator)
+#endif
         case .performSegue(from: let source, let identifier, let sender):
             return ZIKViewRoutePath.performSegue(from: source, identifier: identifier, sender: sender)
         case .addAsChildViewController(from: let source, addingChildViewHandler: let handler):
@@ -509,33 +546,50 @@ public enum ViewRoutePath {
     
     public init?(path: ZIKViewRoutePath) {
         switch (path.routeType, path.source) {
-        case (.push, let source as UIViewController):
+#if os(iOS) || os(watchOS) || os(tvOS)
+        case (.push, let source as ViewController):
             self = .push(from: source)
-        case (.presentModally, let source as UIViewController):
+#endif
+        case (.presentModally, let source as ViewController):
             self = .presentModally(from: source)
-        case (.presentAsPopover, let source as UIViewController):
+        case (.presentAsPopover, let source as ViewController):
             if let configure = path.configurePopover {
                 self = .presentAsPopover(from: source, configure: configure)
             } else {
                 return nil
             }
-        case (.performSegue, let source as UIViewController):
+#if os(OSX)
+        case (.presentAsSheet, let source as ViewController):
+            self = .presentAsSheet(from: source)
+        case (.presentWithAnimator, let source as ViewController):
+            if let animator = path.animator {
+                self = .present(from: source, animator: animator)
+            } else {
+                return nil
+            }
+#endif
+        case (.performSegue, let source as ViewController):
             if let identifier = path.segueIdentifier {
                 self = .performSegue(from: source, identifier: identifier, sender: path.segueSender)
             } else {
                 return nil
             }
-        case (.show, let source as UIViewController):
+#if os(iOS) || os(watchOS) || os(tvOS)
+        case (.show, let source as ViewController):
             self = .show(from: source)
-        case (.showDetail, let source as UIViewController):
+        case (.showDetail, let source as ViewController):
             self = .showDetail(from: source)
-        case (.addAsChildViewController, let source as UIViewController):
+#elseif os(OSX)
+        case (.show, let source as ViewController?):
+            self = .show(from: source)
+#endif
+        case (.addAsChildViewController, let source as ViewController):
             if let addingChildViewHandler = path.addingChildViewHandler {
                 self = .addAsChildViewController(from: source, addingChildViewHandler: addingChildViewHandler)
             } else {
                 return nil
             }
-        case (.addAsSubview, let source as UIView):
+        case (.addAsSubview, let source as View):
             self = .addAsSubview(from: source)
         case (.custom, let source):
             self = .custom(from: source)
@@ -659,7 +713,7 @@ public class ViewRouteStrictConfig<Destination>: PerformRouteStrictConfig<Destin
     
     /// Source ViewController or View for route.
     ///
-    /// For ZIKViewRouteTypePush, ZIKViewRouteTypePresentModally, ZIKViewRouteTypePresentAsPopover, ZIKViewRouteTypePerformSegue,ZIKViewRouteTypeShow,ZIKViewRouteTypeShowDetail,ZIKViewRouteTypeAddAsChildViewController, source must be a UIViewController.
+    /// For ZIKViewRouteTypePush, ZIKViewRouteTypePresentModally, ZIKViewRouteTypePresentAsPopover, ZIKViewRouteTypePerformSegue,ZIKViewRouteTypeShow,ZIKViewRouteTypeShowDetail,ZIKViewRouteTypeAddAsChildViewController, source must be a ViewController.
     ///
     /// For ZIKViewRouteTypeAddAsSubview, source must be a UIView.
     ///
@@ -713,8 +767,8 @@ public class ViewRouteStrictConfig<Destination>: PerformRouteStrictConfig<Destin
         get { return config.configureSegue }
     }
     
-    /// When use routeType ZIKViewRouteTypeAddAsChildViewController, add the destination's view to source's view in this block. If you wrap destination with -containerWrapper, the `destination` in this block is the wrapped UIViewController. You can add with animations, and must call completion when the adding action is finished.
-    public var addingChildViewHandler: ((UIViewController, @escaping () -> Void) -> Void)? {
+    /// When use routeType ZIKViewRouteTypeAddAsChildViewController, add the destination's view to source's view in this block. If you wrap destination with -containerWrapper, the `destination` in this block is the wrapped ViewController. You can add with animations, and must call completion when the adding action is finished.
+    public var addingChildViewHandler: ((ViewController, @escaping () -> Void) -> Void)? {
         get { return config.addingChildViewHandler }
         set { config.addingChildViewHandler = newValue }
     }
@@ -748,8 +802,8 @@ public class ViewRemoveStrictConfig<Destination>: RemoveRouteStrictConfig<Destin
         set { config.animated = newValue }
     }
     
-    /// When use routeType ZIKViewRouteTypeAddAsChildViewController and remove, remove the destination's view from it's superview in this block. If you wrap destination with -containerWrapper, the `destination` in this block is the wrapped UIViewController. You can remove with animations, and must call completion when the removing action is finished.
-    public var removingChildViewHandler: ((UIViewController, @escaping () -> Void) -> Void)? {
+    /// When use routeType ZIKViewRouteTypeAddAsChildViewController and remove, remove the destination's view from it's superview in this block. If you wrap destination with -containerWrapper, the `destination` in this block is the wrapped ViewController. You can remove with animations, and must call completion when the removing action is finished.
+    public var removingChildViewHandler: ((ViewController, @escaping () -> Void) -> Void)? {
         get { return config.removingChildViewHandler }
         set { config.removingChildViewHandler = newValue }
     }

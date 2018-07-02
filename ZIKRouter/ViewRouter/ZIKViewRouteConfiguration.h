@@ -10,7 +10,12 @@
 //
 
 #import <Foundation/Foundation.h>
+#import "ZIKPlatformCapabilities.h"
+#if ZIK_HAS_UIKIT
 #import <UIKit/UIKit.h>
+#else
+#import <AppKit/AppKit.h>
+#endif
 #import "ZIKRouteConfiguration.h"
 
 NS_ASSUME_NONNULL_BEGIN
@@ -26,23 +31,40 @@ extern ZIKRouteAction const ZIKRouteActionPerformOnDestination;
 
 ///Route types for view.
 typedef NS_ENUM(NSInteger,ZIKViewRouteType) {
+#if ZIK_HAS_UIKIT
     ///Navigation using @code-[source pushViewController:animated:]@endcode Source must be a UIViewController.
-    ZIKViewRouteTypePush = 0,
-    ///Navigation using @code-[source presentViewController:animated:completion:]@endcode Source must be a UIViewController.
-    ZIKViewRouteTypePresentModally,
-    ///Adaptative type. Popover for iPad, present modally for iPhone.
-    ZIKViewRouteTypePresentAsPopover,
+    ZIKViewRouteTypePush                     NS_ENUM_AVAILABLE_IOS(2_0) = 0,
+#endif
+    ///Navigation using @code-[source presentViewController:animated:completion:]@endcode for iOS, @code-[source presentViewControllerAsModalWindow:destination]@endcode for Mac OS. Source must be a UIViewController / NSViewController.
+    ZIKViewRouteTypePresentModally           NS_ENUM_AVAILABLE(10_10, 5_0) = 1,
+    ///Adaptative type. Popover for iPad, present modally for iPhone, `-presentViewController:asPopoverRelativeToRect:ofView:preferredEdge:behavior:` for Mac OS.
+    ZIKViewRouteTypePresentAsPopover         NS_ENUM_AVAILABLE(10_10, 3_2) = 2,
+#if !ZIK_HAS_UIKIT
+    ///Navigation in Mac OS using @code[source presentViewControllerAsSheet:destination]@endcode Source must be a NSViewController.
+    ZIKViewRouteTypePresentAsSheet           NS_ENUM_AVAILABLE_MAC(10_10) = 3,
+    ///Navigation in Mac OS using @code[source presentViewController:destination animator:animator]@endcode Source must be a NSViewController.
+    ZIKViewRouteTypePresentWithAnimator      NS_ENUM_AVAILABLE_MAC(10_10) = 4,
+#endif
     ///Navigation using @code[source performSegueWithIdentifier:destination sender:sender]@endcode If segue's destination doesn't comform to ZIKRoutableView, just use ZIKViewRouter to perform the segue.
-    ZIKViewRouteTypePerformSegue,
+    ZIKViewRouteTypePerformSegue             NS_ENUM_AVAILABLE(10_10, 5_0) = 5,
     /**
-     Adaptative type. Navigation using @code-[source showViewController:destination sender:sender]@endcode
+     For iOS, adaptative type using @code-[source showViewController:destination sender:sender]@endcode
+     For Mac OS @code
+     NSWindow *window = [NSWindow windowWithContentViewController:destination];
+     NSWindowController *windowController = [[NSWindowController alloc] initWithWindow:window];
+     [windowController showWindow:sender];
+     @endcode
+     
+     For `-showViewController:sender:`:
+     
      In UISplitViewController (source is master/detail or in master/detail's navigation stack): if master/detail is a UINavigationController and destination is not a UINavigationController, push destination on master/detail's stack, else replace master/detail with destination.
      
      In UINavigationController, push destination on stack.
      
      Without a container, present modally.
      */
-    ZIKViewRouteTypeShow NS_ENUM_AVAILABLE_IOS(8_0) = 4,
+    ZIKViewRouteTypeShow                     NS_ENUM_AVAILABLE(10_7, 8_0) = 6,
+#if ZIK_HAS_UIKIT
     /**
      Adaptative type. Navigation using @code-[source showDetailViewController:destination sender:sender]@endcode
      In UISplitViewController, replace detail with destination, if collapsed, forward to master view controller, if master is a UINavigationController, push on stack, else replace master with destination.
@@ -51,52 +73,90 @@ typedef NS_ENUM(NSInteger,ZIKViewRouteType) {
      
      Without a container, present modally.
      */
-    ZIKViewRouteTypeShowDetail NS_ENUM_AVAILABLE_IOS(8_0) = 5,
+    ZIKViewRouteTypeShowDetail               NS_ENUM_AVAILABLE_IOS(8_0) = 7,
+#endif
     ///Get destination viewController and do @code[source addChildViewController:destination]@endcode; You need to add destination's view to soruce's view in addingChildViewHandler; source must be a UIViewController.
-    ZIKViewRouteTypeAddAsChildViewController,
+    ZIKViewRouteTypeAddAsChildViewController NS_ENUM_AVAILABLE(10_10, 5_0) = 8,
     ///Get your custom UIView and do @code[source addSubview:destination]@endcode; source must be a UIView.
-    ZIKViewRouteTypeAddAsSubview,
+    ZIKViewRouteTypeAddAsSubview             = 9,
     ///Subclass router can provide custom presentation. Class of source and destination is specified by subclass router.
-    ZIKViewRouteTypeCustom,
+    ZIKViewRouteTypeCustom                   = 10,
     ///Just create and return a UIViewController or UIView in successHandler; Source is not needed for this type.
-    ZIKViewRouteTypeMakeDestination = 9,
-    ZIKViewRouteTypeGetDestination NS_ENUM_DEPRECATED_IOS(7.0, 7.0, "Use ZIKViewRouteTypeMakeDestination instead") = 9
+    ZIKViewRouteTypeMakeDestination          = 11,
+    ZIKViewRouteTypeGetDestination           NS_ENUM_DEPRECATED_IOS(7.0, 7.0, "Use ZIKViewRouteTypeMakeDestination instead") = ZIKViewRouteTypeMakeDestination
 };
 
 typedef NS_OPTIONS(NSInteger, ZIKViewRouteTypeMask) {
+#if ZIK_HAS_UIKIT
     ZIKViewRouteTypeMaskPush                     = (1 << ZIKViewRouteTypePush),
+#endif
     ZIKViewRouteTypeMaskPresentModally           = (1 << ZIKViewRouteTypePresentModally),
     ZIKViewRouteTypeMaskPresentAsPopover         = (1 << ZIKViewRouteTypePresentAsPopover),
+#if !ZIK_HAS_UIKIT
+    ZIKViewRouteTypeMaskPresentAsSheet           = (1 << ZIKViewRouteTypePresentAsSheet),
+    ZIKViewRouteTypeMaskPresentWithAnimator      = (1 << ZIKViewRouteTypePresentWithAnimator),
+#endif
     ZIKViewRouteTypeMaskPerformSegue             = (1 << ZIKViewRouteTypePerformSegue),
-    ZIKViewRouteTypeMaskShow                     = (1 << 4 /*ZIKViewRouteTypeShow*/),
-    ZIKViewRouteTypeMaskShowDetail               = (1 << 5 /*ZIKViewRouteTypeShowDetail*/),
+    ZIKViewRouteTypeMaskShow                     = (1 << 6 /*ZIKViewRouteTypeShow*/),
+#if ZIK_HAS_UIKIT
+    ZIKViewRouteTypeMaskShowDetail               = (1 << 7 /*ZIKViewRouteTypeShowDetail*/),
+#endif
     ZIKViewRouteTypeMaskAddAsChildViewController = (1 << ZIKViewRouteTypeAddAsChildViewController),
     ZIKViewRouteTypeMaskAddAsSubview             = (1 << ZIKViewRouteTypeAddAsSubview),
     ZIKViewRouteTypeMaskCustom                   = (1 << ZIKViewRouteTypeCustom),
     ZIKViewRouteTypeMaskMakeDestination          = (1 << ZIKViewRouteTypeMakeDestination),
-    ZIKViewRouteTypeMaskViewControllerDefault    = (ZIKViewRouteTypeMaskPush | ZIKViewRouteTypeMaskPresentModally | ZIKViewRouteTypeMaskPresentAsPopover | ZIKViewRouteTypeMaskPerformSegue | ZIKViewRouteTypeMaskShow | ZIKViewRouteTypeMaskShowDetail | ZIKViewRouteTypeMaskAddAsChildViewController | ZIKViewRouteTypeMaskMakeDestination),
-    ZIKViewRouteTypeMaskViewDefault            = (ZIKViewRouteTypeMaskAddAsSubview | ZIKViewRouteTypeMaskMakeDestination),
-    ZIKViewRouteTypeMaskUIViewControllerDefault NS_ENUM_DEPRECATED_IOS(7.0, 7.0, "Use ZIKViewRouteTypeMaskViewControllerDefault instead") = ZIKViewRouteTypeMaskViewControllerDefault,
-    ZIKViewRouteTypeMaskUIViewDefault NS_ENUM_DEPRECATED_IOS(7.0, 7.0, "Use ZIKViewRouteTypeMaskViewDefault instead") = ZIKViewRouteTypeMaskViewDefault,
-    ZIKViewRouteTypeMaskGetDestination NS_ENUM_DEPRECATED_IOS(7.0, 7.0, "Use ZIKViewRouteTypeMaskMakeDestination instead") = ZIKViewRouteTypeMaskMakeDestination
+#if ZIK_HAS_UIKIT
+    ZIKViewRouteTypeMaskViewControllerDefault    = (ZIKViewRouteTypeMaskPush
+                                                    | ZIKViewRouteTypeMaskPresentModally
+                                                    | ZIKViewRouteTypeMaskPresentAsPopover
+                                                    | ZIKViewRouteTypeMaskPerformSegue
+                                                    | ZIKViewRouteTypeMaskShow
+                                                    | ZIKViewRouteTypeMaskShowDetail
+                                                    | ZIKViewRouteTypeMaskAddAsChildViewController
+                                                    | ZIKViewRouteTypeMaskMakeDestination),
+#else
+    ZIKViewRouteTypeMaskViewControllerDefault    = (ZIKViewRouteTypeMaskPresentModally
+                                                    | ZIKViewRouteTypeMaskPresentAsPopover
+                                                    | ZIKViewRouteTypeMaskPresentAsSheet
+                                                    | ZIKViewRouteTypeMaskPresentWithAnimator
+                                                    | ZIKViewRouteTypeMaskPerformSegue
+                                                    | ZIKViewRouteTypeMaskShow
+                                                    | ZIKViewRouteTypeMaskAddAsChildViewController
+                                                    | ZIKViewRouteTypeMaskMakeDestination),
+#endif
+    ZIKViewRouteTypeMaskViewDefault              = (ZIKViewRouteTypeMaskAddAsSubview | ZIKViewRouteTypeMaskMakeDestination),
+    ZIKViewRouteTypeMaskUIViewControllerDefault  NS_ENUM_DEPRECATED_IOS(7.0, 7.0, "Use ZIKViewRouteTypeMaskViewControllerDefault instead") = ZIKViewRouteTypeMaskViewControllerDefault,
+    ZIKViewRouteTypeMaskUIViewDefault            NS_ENUM_DEPRECATED_IOS(7.0, 7.0, "Use ZIKViewRouteTypeMaskViewDefault instead") = ZIKViewRouteTypeMaskViewDefault,
+    ZIKViewRouteTypeMaskGetDestination           NS_ENUM_DEPRECATED_IOS(7.0, 7.0, "Use ZIKViewRouteTypeMaskMakeDestination instead") = ZIKViewRouteTypeMaskMakeDestination
 };
 
 ///Real route type performed for those adaptative types in ZIKViewRouteType
 typedef NS_ENUM(NSInteger, ZIKViewRouteRealType) {
     ///Didn't perform any route yet. Router will reset type to this after removed
-    ZIKViewRouteRealTypeUnknown,
-    ZIKViewRouteRealTypePush,
-    ZIKViewRouteRealTypePresentModally,
-    ZIKViewRouteRealTypePresentAsPopover,
-    ZIKViewRouteRealTypeAddAsChildViewController,
-    ZIKViewRouteRealTypeAddAsSubview,
-    ZIKViewRouteRealTypeUnwind,
-    ZIKViewRouteRealTypeCustom
+    ZIKViewRouteRealTypeUnknown                  = 0,
+#if ZIK_HAS_UIKIT
+    ZIKViewRouteRealTypePush                     = 1,
+#endif
+    ZIKViewRouteRealTypePresentModally           = 2,
+    ZIKViewRouteRealTypePresentAsPopover         = 3,
+#if !ZIK_HAS_UIKIT
+    ZIKViewRouteRealTypePresentAsSheet           = 4,
+    ZIKViewRouteRealTypePresentWithAnimator      = 5,
+    ZIKViewRouteRealTypeShowWindw                = 6,
+#endif
+    ZIKViewRouteRealTypeAddAsChildViewController = 7,
+    ZIKViewRouteRealTypeAddAsSubview             = 8,
+    ZIKViewRouteRealTypeUnwind                   = 9,
+    ZIKViewRouteRealTypeCustom                   = 10
 };
 
 @class ZIKViewRoutePath, ZIKViewRoutePopoverConfiguration, ZIKViewRouteSegueConfiguration;
 @protocol ZIKViewRouteSource, ZIKViewRouteContainer;
+#if ZIK_HAS_UIKIT
 typedef UIViewController<ZIKViewRouteContainer>*_Nonnull(^ZIKViewRouteContainerWrapper)(UIViewController *destination);
+#else
+typedef NSViewController<ZIKViewRouteContainer>*_Nonnull(^ZIKViewRouteContainerWrapper)(NSViewController *destination);
+#endif
 typedef void(^ZIKViewRoutePopoverConfigure)(ZIKViewRoutePopoverConfiguration *popoverConfig);
 typedef void(^ZIKViewRouteSegueConfigure)(ZIKViewRouteSegueConfiguration *segueConfig);
 typedef void(^ZIKViewRoutePopoverConfiger)(NS_NOESCAPE ZIKViewRoutePopoverConfigure);
@@ -170,8 +230,13 @@ typedef void(^ZIKViewRouteSegueConfiger)(NS_NOESCAPE ZIKViewRouteSegueConfigure)
  */
 @property (nonatomic, copy, nullable) void(^successHandler)(id destination);
 
-///Sender for -showViewController:sender: and -showDetailViewController:sender:
+///Sender for -showViewController:sender: ,-showDetailViewController:sender:, -showWindow:.
 @property (nonatomic, weak, nullable) id sender;
+
+#if !ZIK_HAS_UIKIT
+///Animator for -presentViewController:animator: in Mac OS.
+@property (nonatomic, strong, nullable) id<NSViewControllerPresentationAnimator> animator;
+#endif
 
 ///Config popover for ZIKViewRouteTypePresentAsPopover
 @property (nonatomic, readonly, copy) ZIKViewRoutePopoverConfiger configurePopover;
@@ -179,8 +244,12 @@ typedef void(^ZIKViewRouteSegueConfiger)(NS_NOESCAPE ZIKViewRouteSegueConfigure)
 ///config segue for ZIKViewRouteTypePerformSegue
 @property (nonatomic, readonly, copy) ZIKViewRouteSegueConfiger configureSegue;
 
-///When use routeType ZIKViewRouteTypeAddAsChildViewController, add the destination's view to source's view in this block. If you wrap destination with -containerWrapper, the `destination` in this block is the wrapped UIViewController. You can add with animations, and must call completion when the adding action is finished.
+///When use routeType ZIKViewRouteTypeAddAsChildViewController, add the destination's view to source's view in this block. If you wrap destination with -containerWrapper, the `destination` in this block is the wrapped ViewController. You can add with animations, and must call completion when the adding action is finished.
+#if ZIK_HAS_UIKIT
 @property (nonatomic, copy, nullable) void(^addingChildViewHandler)(UIViewController *destination, void(^completion)(void));
+#else
+@property (nonatomic, copy, nullable) void(^addingChildViewHandler)(NSViewController *destination, void(^completion)(void));
+#endif
 
 @property (nonatomic, readonly, strong, nullable) ZIKViewRoutePopoverConfiguration *popoverConfiguration;
 @property (nonatomic, readonly, strong, nullable) ZIKViewRouteSegueConfiguration *segueConfiguration;
@@ -192,6 +261,7 @@ typedef void(^ZIKViewRouteSegueConfiger)(NS_NOESCAPE ZIKViewRouteSegueConfigure)
 
 @interface ZIKViewRoutePopoverConfiguration : ZIKRouteConfiguration <NSCopying>
 
+#if ZIK_HAS_UIKIT
 ///UIPopoverPresentationControllerDelegate for iOS8 and above, UIPopoverControllerDelegate for iOS7
 @property (nonatomic, weak, nullable) id<UIPopoverPresentationControllerDelegate> delegate;
 @property (nonatomic, weak, nullable) UIBarButtonItem *barButtonItem;
@@ -202,6 +272,14 @@ typedef void(^ZIKViewRouteSegueConfiger)(NS_NOESCAPE ZIKViewRouteSegueConfigure)
 @property (nonatomic, copy, nullable) UIColor *backgroundColor NS_AVAILABLE_IOS(7_0);
 @property (nonatomic, assign) UIEdgeInsets popoverLayoutMargins;
 @property (nonatomic, strong, nullable) Class popoverBackgroundViewClass;
+#else
+/// positioningView
+@property (nonatomic, weak, nullable) NSView *sourceView;
+/// positioningRect
+@property (nonatomic, assign) NSRect sourceRect;
+@property (nonatomic, assign) NSRectEdge preferredEdge;
+@property (nonatomic, assign) NSPopoverBehavior behavior;
+#endif
 @end
 
 @interface ZIKViewRouteSegueConfiguration : ZIKRouteConfiguration <NSCopying>
@@ -214,8 +292,12 @@ typedef void(^ZIKViewRouteSegueConfiger)(NS_NOESCAPE ZIKViewRouteSegueConfigure)
 ///For pop/dismiss, default is YES
 @property (nonatomic, assign) BOOL animated;
 
-///When use routeType ZIKViewRouteTypeAddAsChildViewController and remove, remove the destination's view from it's superview in this block. If you wrap destination with -containerWrapper, the `destination` in this block is the wrapped UIViewController. You can remove with animations, and must call completion when the removing action is finished.
+///When use routeType ZIKViewRouteTypeAddAsChildViewController and remove, remove the destination's view from it's superview in this block. If you wrap destination with -containerWrapper, the `destination` in this block is the wrapped ViewController. You can remove with animations, and must call completion when the removing action is finished.
+#if ZIK_HAS_UIKIT
 @property (nonatomic, copy, nullable) void(^removingChildViewHandler)(UIViewController *destination, void(^completion)(void));
+#else
+@property (nonatomic, copy, nullable) void(^removingChildViewHandler)(NSViewController *destination, void(^completion)(void));
+#endif
 
 ///When set to YES and the router still exists, if the same destination instance is removed from external, successHandler, errorHandler, completionHandler will be called.
 @property (nonatomic, assign) BOOL handleExternalRoute;
@@ -231,6 +313,8 @@ typedef void(^ZIKViewRouteSegueConfiger)(NS_NOESCAPE ZIKViewRouteSegueConfigure)
 @property (nonatomic, strong, readonly, nullable) ZIKViewRoutePopoverConfigure configurePopover;
 @property (nonatomic, copy, readonly, nullable) NSString *segueIdentifier;
 @property (nonatomic, strong, readonly, nullable) id segueSender;
+
+#if ZIK_HAS_UIKIT
 @property (nonatomic, copy, readonly, nullable) void(^addingChildViewHandler)(UIViewController *destination, void(^completion)(void));
 
 /// Push the destination from the source view controller.
@@ -296,6 +380,78 @@ typedef void(^ZIKViewRouteSegueConfiger)(NS_NOESCAPE ZIKViewRouteSegueConfigure)
 /// Use default setting of ZIKViewRouteConfiguration if you don't know which type to use.
 + (instancetype)defaultPathFrom:(UIViewController *)source NS_SWIFT_NAME(defaultPath(from:));
 
+#else
+
+@property (nonatomic, copy, readonly, nullable) void(^addingChildViewHandler)(NSViewController *destination, void(^completion)(void));
+
+///Animator for -presentViewController:animator: in Mac OS.
+@property (nonatomic, strong, readonly, nullable) id<NSViewControllerPresentationAnimator> animator;
+
+/// Present the destination modally from the source view controller.
+@property (nonatomic, class, readonly) ZIKViewRoutePath *(^presentModallyFrom)(NSViewController *source) NS_SWIFT_UNAVAILABLE("Use presentModally(from:) instead");
+
+/// Present the destination as popover from the source view controller, and configure the popover.
+@property (nonatomic, class, readonly) ZIKViewRoutePath *(^presentAsPopoverFrom)(NSViewController *source, ZIKViewRoutePopoverConfigure configurePopover) NS_SWIFT_UNAVAILABLE("Use presentAsPopover(from:configure:) instead");
+
+/// Present the destination as sheet from the source view controller.
+@property (nonatomic, class, readonly) ZIKViewRoutePath *(^presentAsSheetFrom)(NSViewController *source) NS_SWIFT_UNAVAILABLE("Use presentAsSheet(from:) instead");
+
+/// Present the destination with animator from the source view controller.
+@property (nonatomic, class, readonly) ZIKViewRoutePath *(^presentWithAnimatorFrom)(NSViewController *source, id<NSViewControllerPresentationAnimator> animator) NS_SWIFT_UNAVAILABLE("Use present(from:animator:) instead");
+
+/// Perform segue from the source view controller, with the segue identifier
+@property (nonatomic, class, readonly) ZIKViewRoutePath *(^performSegueFrom)(NSViewController *source, NSString *identifier, id _Nullable sender) NS_SWIFT_UNAVAILABLE("Use performSegue(from:identifier:sender:) instead");
+
+/// Show the destination with `-[NSWindowController showWindow:sender]`.
+@property (nonatomic, class, readonly) ZIKViewRoutePath *(^showFrom)(NSViewController * _Nullable source) NS_SWIFT_UNAVAILABLE("Use show(from:) instead");
+
+/// Add the destination as child view controller to the parent source view controller. Adding destination's view to source's view in addingChildViewHandler, and invoke the completion block when finished.
+@property (nonatomic, class, readonly) ZIKViewRoutePath *(^addAsChildViewControllerFrom)(NSViewController *source, void(^addingChildViewHandler)(NSViewController *destination, void(^completion)(void))) NS_SWIFT_UNAVAILABLE("Use addAsChildViewController(from:addingChildViewHandler) instead");
+
+/// Add the destination as subview to the superview.
+@property (nonatomic, class, readonly) ZIKViewRoutePath *(^addAsSubviewFrom)(NSView *source) NS_SWIFT_UNAVAILABLE("Use addAsSubview(from:) instead");
+
+/// Perform custom transition type from the source.
+@property (nonatomic, class, readonly) ZIKViewRoutePath *(^customFrom)(id<ZIKViewRouteSource> _Nullable source) NS_SWIFT_UNAVAILABLE("Use custom(from:) instead");
+
+/// Use default setting of ZIKViewRouteConfiguration if you don't know which type to use.
+@property (nonatomic, class, readonly) ZIKViewRoutePath *(^defaultPathFrom)(NSViewController *source) NS_SWIFT_UNAVAILABLE("Use defaultPath(from:) instead");
+
+/// Just make destination.
+@property (nonatomic, class, readonly) ZIKViewRoutePath *makeDestination;
+
+/// Present the destination modally from the source view controller.
++ (instancetype)presentModallyFrom:(NSViewController *)source NS_SWIFT_NAME(presentModally(from:));
+
+/// Present the destination as popover from the source view controller, and configure the popover.
++ (instancetype)presentAsPopoverFrom:(NSViewController *)source configure:(ZIKViewRoutePopoverConfigure)configure NS_SWIFT_NAME(presentAsPopover(from:configure:));
+
+/// Present the destination as sheet from the source view controller.
++ (instancetype)presentAsSheetFrom:(NSViewController *)source NS_SWIFT_NAME(presentAsSheet(from:));
+
+/// Present the destination with animator from the source view controller.
++ (instancetype)presentFrom:(NSViewController *)source animator:(id<NSViewControllerPresentationAnimator>)animator NS_SWIFT_NAME(present(from:animator:));
+
+/// Perform segue from the source view controller, with the segue identifier
++ (instancetype)performSegueFrom:(NSViewController *)source identifier:(NSString *)identifier sender:(nullable id)sender NS_SWIFT_NAME(performSegue(from:identifier:sender:));
+
+/// Show the destination with `-[NSWindowController showWindow:sender]`.
++ (instancetype)showFrom:(nullable NSViewController *)source NS_SWIFT_NAME(show(from:));
+
+/// Add the destination as child view controller to the parent source view controller. Adding destination's view to source's view in addingChildViewHandler, and invoke the completion block when finished.
++ (instancetype)addAsChildViewControllerFrom:(NSViewController *)source addingChildViewHandler:(void(^)(NSViewController *destination, void(^completion)(void)))addingChildViewHandler NS_SWIFT_NAME(addAsChildViewController(from:addingChildViewHandler:));
+
+/// Add the destination as subview to the superview.
++ (instancetype)addAsSubviewFrom:(NSView *)source NS_SWIFT_NAME(addAsSubview(from:));
+
+/// Perform custom transition type from the source.
++ (instancetype)customFrom:(nullable id<ZIKViewRouteSource>)source NS_SWIFT_NAME(custom(from:));
+
+/// Use default setting of ZIKViewRouteConfiguration if you don't know which type to use.
++ (instancetype)defaultPathFrom:(NSViewController *)source NS_SWIFT_NAME(defaultPath(from:));
+
+#endif
+
 ///It's preferred to use those type safe factory methods, rather than this unsafe initializer, because this initializer doesn't check source's type.
 - (instancetype)initWithRouteType:(ZIKViewRouteType)routeType source:(nullable id<ZIKViewRouteSource>)source NS_DESIGNATED_INITIALIZER;
 - (instancetype)init NS_UNAVAILABLE;
@@ -319,6 +475,8 @@ typedef void(^ZIKViewRouteSegueConfiger)(NS_NOESCAPE ZIKViewRouteSegueConfigure)
 
 @end
 
+#if ZIK_HAS_UIKIT
+
 @interface UIView (ZIKViewRouteSource) <ZIKViewRouteSource>
 @end
 @interface UIViewController (ZIKViewRouteSource) <ZIKViewRouteSource>
@@ -333,6 +491,23 @@ typedef void(^ZIKViewRouteSegueConfiger)(NS_NOESCAPE ZIKViewRouteSegueConfigure)
 @end
 @interface UISplitViewController (ZIKViewRouteContainer) <ZIKViewRouteContainer>
 @end
+
+#else
+
+@interface NSView (ZIKViewRouteSource) <ZIKViewRouteSource>
+@end
+@interface NSViewController (ZIKViewRouteSource) <ZIKViewRouteSource>
+@end
+
+///NSTabViewController, or NSSplitViewController.
+@protocol ZIKViewRouteContainer <NSObject>
+@end
+@interface NSTabViewController (ZIKViewRouteContainer) <ZIKViewRouteContainer>
+@end
+@interface NSSplitViewController (ZIKViewRouteContainer) <ZIKViewRouteContainer>
+@end
+
+#endif
 
 #pragma mark Strict Configuration
 
@@ -413,7 +588,11 @@ typedef void(^ZIKViewRouteSegueConfiger)(NS_NOESCAPE ZIKViewRouteSegueConfigure)
 @property (nonatomic, readonly, copy) ZIKViewRouteSegueConfiger configureSegue;
 
 ///When use routeType ZIKViewRouteTypeAddAsChildViewController, add the destination's view to source's view in this block. If you wrap destination with -containerWrapper, the `destination` in this block is the wrapped UIViewController. You can add with animations, and must call completion when the adding action is finished.
+#if ZIK_HAS_UIKIT
 @property (nonatomic, copy, nullable) void(^addingChildViewHandler)(UIViewController *destination, void(^completion)(void));
+#else
+@property (nonatomic, copy, nullable) void(^addingChildViewHandler)(NSViewController *destination, void(^completion)(void));
+#endif
 
 @property (nonatomic, readonly, strong, nullable) ZIKViewRoutePopoverConfiguration *popoverConfiguration;
 @property (nonatomic, readonly, strong, nullable) ZIKViewRouteSegueConfiguration *segueConfiguration;
@@ -432,7 +611,11 @@ typedef void(^ZIKViewRouteSegueConfiger)(NS_NOESCAPE ZIKViewRouteSegueConfigure)
 @property (nonatomic, assign) BOOL animated;
 
 ///When use routeType ZIKViewRouteTypeAddAsChildViewController and remove, remove the destination's view from it's superview in this block. If you wrap destination with -containerWrapper, the `destination` in this block is the wrapped UIViewController. You can remove with animations, and must call completion when the removing action is finished.
+#if ZIK_HAS_UIKIT
 @property (nonatomic, copy, nullable) void(^removingChildViewHandler)(UIViewController *destination, void(^completion)(void));
+#else
+@property (nonatomic, copy, nullable) void(^removingChildViewHandler)(NSViewController *destination, void(^completion)(void));
+#endif
 
 ///When set to YES and the router still exists, if the same destination instance is removed from external, successHandler, errorHandler, completionHandler will be called.
 @property (nonatomic, assign) BOOL handleExternalRoute;

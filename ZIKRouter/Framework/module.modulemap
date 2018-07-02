@@ -5,6 +5,7 @@ framework module ZIKRouter {
   module * { export * }
   
   explicit module Internal {
+      header "ZIKClassCapabilities.h"
       header "ZIKRoute.h"
       header "ZIKRouterInternal.h"
       header "ZIKRouteRegistry.h"

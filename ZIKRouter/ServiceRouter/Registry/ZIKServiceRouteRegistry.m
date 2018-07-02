@@ -18,7 +18,12 @@
 #import "ZIKServiceRoute.h"
 #import "ZIKRouterRuntime.h"
 #import <objc/runtime.h>
+#import "ZIKPlatformCapabilities.h"
+#if ZIK_HAS_UIKIT
 #import <UIKit/UIKit.h>
+#else
+#import <AppKit/AppKit.h>
+#endif
 
 static CFMutableDictionaryRef _destinationProtocolToRouterMap;
 static CFMutableDictionaryRef _moduleConfigProtocolToRouterMap;
@@ -183,7 +188,12 @@ static NSMutableArray<Class> *_routerClasses;
         [self _checkAllRoutableProtocols];
         return;
     }
-    [[NSNotificationCenter defaultCenter] addObserverForName:UIApplicationDidFinishLaunchingNotification object:nil queue:[NSOperationQueue mainQueue] usingBlock:^(NSNotification * _Nonnull note) {
+#if ZIK_HAS_UIKIT
+    NSNotificationName name = UIApplicationDidFinishLaunchingNotification;
+#else
+    NSNotificationName name = NSApplicationDidFinishLaunchingNotification;
+#endif
+    [[NSNotificationCenter defaultCenter] addObserverForName:name object:nil queue:[NSOperationQueue mainQueue] usingBlock:^(NSNotification * _Nonnull note) {
         [self _checkAllRouters];
     }];
 #endif

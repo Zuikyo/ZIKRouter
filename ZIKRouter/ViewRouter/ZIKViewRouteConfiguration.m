@@ -14,6 +14,7 @@
 #import "ZIKPresentationState.h"
 #import "ZIKRouterInternal.h"
 #import "ZIKViewRouteError.h"
+#import "ZIKClassCapabilities.h"
 
 ZIKRouteAction const ZIKRouteActionToView = @"ZIKRouteActionToView";
 ZIKRouteAction const ZIKRouteActionToViewModule = @"ZIKRouteActionToViewModule";
@@ -26,56 +27,77 @@ ZIKRouteAction const ZIKRouteActionPerformOnDestination = @"ZIKRouteActionPerfor
 @property (nonatomic, strong, nullable) ZIKViewRoutePopoverConfigure configurePopover;
 @property (nonatomic, copy, nullable) NSString *segueIdentifier;
 @property (nonatomic, strong, nullable) id segueSender;
-@property (nonatomic, copy, nullable) void(^addingChildViewHandler)(UIViewController *destination, void(^completion)(void));
-
+@property (nonatomic, copy, nullable) void(^addingChildViewHandler)(XXViewController *destination, void(^completion)(void));
+#if !ZIK_HAS_UIKIT
+@property (nonatomic, strong) id<NSViewControllerPresentationAnimator> animator;
+@property (nonatomic, strong) id sender;
+#endif
 @end
 
 @implementation ZIKViewRoutePath
 
-+ (ZIKViewRoutePath *(^)(UIViewController *))pushFrom {
-    return ^(UIViewController *source) {
+#if ZIK_HAS_UIKIT
++ (ZIKViewRoutePath *(^)(XXViewController *))pushFrom {
+    return ^(XXViewController *source) {
         return [self pushFrom:source];
     };
 }
+#endif
 
-+ (ZIKViewRoutePath *(^)(UIViewController *))presentModallyFrom {
-    return ^(UIViewController *source) {
++ (ZIKViewRoutePath *(^)(XXViewController *))presentModallyFrom {
+    return ^(XXViewController *source) {
         return [self presentModallyFrom:source];
     };
 }
 
-+ (ZIKViewRoutePath *(^)(UIViewController *, ZIKViewRoutePopoverConfigure))presentAsPopoverFrom {
-    return ^(UIViewController *source, ZIKViewRoutePopoverConfigure configure) {
++ (ZIKViewRoutePath *(^)(XXViewController *, ZIKViewRoutePopoverConfigure))presentAsPopoverFrom {
+    return ^(XXViewController *source, ZIKViewRoutePopoverConfigure configure) {
         return [self presentAsPopoverFrom:source configure:configure];
     };
 }
 
-+ (ZIKViewRoutePath *(^)(UIViewController *, NSString *, id))performSegueFrom {
-    return ^(UIViewController *source, NSString *identifier, id _Nullable sender) {
+#if !ZIK_HAS_UIKIT
++ (ZIKViewRoutePath *(^)(XXViewController *))presentAsSheetFrom {
+    return ^(XXViewController *source) {
+        return [self presentAsSheetFrom:source];
+    };
+}
+
++ (ZIKViewRoutePath *(^)(XXViewController *, id<NSViewControllerPresentationAnimator>))presentWithAnimatorFrom {
+    return ^(XXViewController *source, id<NSViewControllerPresentationAnimator> animator) {
+        return [self presentFrom:source animator:animator];
+    };
+}
+#endif
+
++ (ZIKViewRoutePath *(^)(XXViewController *, NSString *, id))performSegueFrom {
+    return ^(XXViewController *source, NSString *identifier, id _Nullable sender) {
         return [self performSegueFrom:source identifier:identifier sender:sender];
     };
 }
 
-+ (ZIKViewRoutePath *(^)(UIViewController *))showFrom {
-    return ^(UIViewController *source) {
++ (ZIKViewRoutePath *(^)(XXViewController *))showFrom {
+    return ^(XXViewController *source) {
         return [self showFrom:source];
     };
 }
 
-+ (ZIKViewRoutePath *(^)(UIViewController *))showDetailFrom {
-    return ^(UIViewController *source) {
+#if ZIK_HAS_UIKIT
++ (ZIKViewRoutePath *(^)(XXViewController *))showDetailFrom {
+    return ^(XXViewController *source) {
         return [self showDetailFrom:source];
     };
 }
+#endif
 
-+ (ZIKViewRoutePath *(^)(UIViewController *, void(^)(UIViewController *destination, void(^completion)(void))))addAsChildViewControllerFrom {
-    return ^(UIViewController *source, void(^addingChildViewHandler)(UIViewController *destination, void(^completion)(void))) {
++ (ZIKViewRoutePath *(^)(XXViewController *, void(^)(XXViewController *destination, void(^completion)(void))))addAsChildViewControllerFrom {
+    return ^(XXViewController *source, void(^addingChildViewHandler)(XXViewController *destination, void(^completion)(void))) {
         return [self addAsChildViewControllerFrom:source addingChildViewHandler:addingChildViewHandler];
     };
 }
 
-+ (ZIKViewRoutePath *(^)(UIView *))addAsSubviewFrom {
-    return ^(UIView *source) {
++ (ZIKViewRoutePath *(^)(XXView *))addAsSubviewFrom {
+    return ^(XXView *source) {
         return [self addAsSubviewFrom:source];
     };
 }
@@ -86,8 +108,8 @@ ZIKRouteAction const ZIKRouteActionPerformOnDestination = @"ZIKRouteActionPerfor
     };
 }
 
-+ (ZIKViewRoutePath *(^)(UIViewController *))defaultPathFrom {
-    return ^(UIViewController *source) {
++ (ZIKViewRoutePath *(^)(XXViewController *))defaultPathFrom {
+    return ^(XXViewController *source) {
         return [self defaultPathFrom:source];
     };
 }
@@ -96,50 +118,66 @@ ZIKRouteAction const ZIKRouteActionPerformOnDestination = @"ZIKRouteActionPerfor
     return [[ZIKViewRoutePath alloc] initWithRouteType:ZIKViewRouteTypeMakeDestination source:nil];
 }
 
-+ (instancetype)pushFrom:(UIViewController *)source {
+#if ZIK_HAS_UIKIT
++ (instancetype)pushFrom:(XXViewController *)source {
     return [[ZIKViewRoutePath alloc] initWithRouteType:ZIKViewRouteTypePush source:source];
 }
+#endif
 
-+ (instancetype)presentModallyFrom:(UIViewController *)source {
++ (instancetype)presentModallyFrom:(XXViewController *)source {
     return [[ZIKViewRoutePath alloc] initWithRouteType:ZIKViewRouteTypePresentModally source:source];
 }
 
-+ (instancetype)presentAsPopoverFrom:(UIViewController *)source configure:(ZIKViewRoutePopoverConfigure)configure {
++ (instancetype)presentAsPopoverFrom:(XXViewController *)source configure:(ZIKViewRoutePopoverConfigure)configure {
     ZIKViewRoutePath *path = [[ZIKViewRoutePath alloc] initWithRouteType:ZIKViewRouteTypePresentAsPopover source:source];
     path.configurePopover = configure;
     return path;
 }
 
-+ (instancetype)performSegueFrom:(UIViewController *)source identifier:(nonnull NSString *)identifier sender:(nullable id)sender {
+#if !ZIK_HAS_UIKIT
++ (instancetype)presentAsSheetFrom:(NSViewController *)source {
+    return [[ZIKViewRoutePath alloc] initWithRouteType:ZIKViewRouteTypePresentAsSheet source:source];
+}
+
++ (instancetype)presentFrom:(NSViewController *)source animator:(id<NSViewControllerPresentationAnimator>)animator {
+    ZIKViewRoutePath *path = [[ZIKViewRoutePath alloc] initWithRouteType:ZIKViewRouteTypePresentWithAnimator source:source];
+    path.animator = animator;
+    return path;
+}
+#endif
+
++ (instancetype)performSegueFrom:(XXViewController *)source identifier:(nonnull NSString *)identifier sender:(nullable id)sender {
     ZIKViewRoutePath *path = [[ZIKViewRoutePath alloc] initWithRouteType:ZIKViewRouteTypePerformSegue source:source];
     path.segueIdentifier = identifier;
     path.segueSender = sender;
     return path;
 }
 
-+ (instancetype)showFrom:(UIViewController *)source {
++ (instancetype)showFrom:(XXViewController *)source {
     return [[ZIKViewRoutePath alloc] initWithRouteType:ZIKViewRouteTypeShow source:source];
 }
 
-+ (instancetype)showDetailFrom:(UIViewController *)source {
+#if ZIK_HAS_UIKIT
++ (instancetype)showDetailFrom:(XXViewController *)source {
     return [[ZIKViewRoutePath alloc] initWithRouteType:ZIKViewRouteTypeShowDetail source:source];
 }
+#endif
 
-+ (instancetype)addAsChildViewControllerFrom:(UIViewController *)source addingChildViewHandler:(void(^)(UIViewController *destination, void(^completion)(void)))addingChildViewHandler {
++ (instancetype)addAsChildViewControllerFrom:(XXViewController *)source addingChildViewHandler:(void(^)(XXViewController *destination, void(^completion)(void)))addingChildViewHandler {
     ZIKViewRoutePath *path = [[ZIKViewRoutePath alloc] initWithRouteType:ZIKViewRouteTypeAddAsChildViewController source:source];
     path.addingChildViewHandler = addingChildViewHandler;
     return path;
 }
 
-+ (instancetype)addAsSubviewFrom:(UIViewController *)source {
++ (instancetype)addAsSubviewFrom:(XXViewController *)source {
     return [[ZIKViewRoutePath alloc] initWithRouteType:ZIKViewRouteTypeAddAsSubview source:source];
 }
 
-+ (instancetype)customFrom:(UIViewController *)source {
++ (instancetype)customFrom:(XXViewController *)source {
     return [[ZIKViewRoutePath alloc] initWithRouteType:ZIKViewRouteTypeCustom source:source];
 }
 
-+ (instancetype)defaultPathFrom:(UIViewController *)source {
++ (instancetype)defaultPathFrom:(XXViewController *)source {
     ZIKViewRoutePath *path = [[ZIKViewRoutePath alloc] initWithRouteType:ZIKViewRouteTypeCustom source:source];
     path.useDefault = YES;
     return path;
@@ -171,9 +209,11 @@ ZIKRouteAction const ZIKRouteActionPerformOnDestination = @"ZIKRouteActionPerfor
 @end
 
 @interface ZIKViewRouteSegueConfiguration ()
-@property (nonatomic, weak, nullable) UIViewController *segueSource;
-@property (nonatomic, weak, nullable) UIViewController *segueDestination;
+@property (nonatomic, weak, nullable) XXViewController *segueSource;
+@property (nonatomic, weak, nullable) XXViewController *segueDestination;
+#if ZIK_HAS_UIKIT
 @property (nonatomic, strong) ZIKPresentationState *destinationStateBeforeRoute;
+#endif
 @end
 
 @implementation ZIKViewRouteConfiguration
@@ -191,8 +231,8 @@ ZIKRouteAction const ZIKRouteActionPerformOnDestination = @"ZIKRouteActionPerfor
     if (path.useDefault) {
         if (self.source == nil) {
             id source = path.source;
-            if (self.routeType == ZIKViewRouteTypeAddAsSubview && [source isKindOfClass:[UIViewController class]]) {
-                self.source = [(UIViewController *)path.source view];
+            if (self.routeType == ZIKViewRouteTypeAddAsSubview && [source isKindOfClass:[XXViewController class]]) {
+                self.source = [(XXViewController *)path.source view];
             } else {
                 self.source = path.source;
             }
@@ -225,6 +265,13 @@ ZIKRouteAction const ZIKRouteActionPerformOnDestination = @"ZIKRouteActionPerfor
                 self.addingChildViewHandler = path.addingChildViewHandler;
             }
             break;
+#if !ZIK_HAS_UIKIT
+        case ZIKViewRouteTypePresentWithAnimator:
+            if (path.animator) {
+                self.animator = path.animator;
+            }
+            break;
+#endif
         default:
             break;
     }
@@ -285,7 +332,11 @@ ZIKRouteAction const ZIKRouteActionPerformOnDestination = @"ZIKRouteActionPerfor
                                                  error:[ZIKViewRouter errorWithCode:ZIKRouteErrorInvalidConfiguration
                                                         localizedDescriptionFormat:@"When configurePopover for configuration : %@, configure should not be nil !",self]];
         }
-        if (!popoverConfiguration.sourceView && !popoverConfiguration.barButtonItem) {
+        if (!popoverConfiguration.sourceView
+#if ZIK_HAS_UIKIT
+            && !popoverConfiguration.barButtonItem
+#endif
+            ) {
             [ZIKViewRouter notifyGlobalErrorWithRouter:nil
                                                 action:ZIKRouteActionPerformRoute
                                                  error:[ZIKViewRouter errorWithCode:ZIKRouteErrorInvalidConfiguration
@@ -303,6 +354,9 @@ ZIKRouteAction const ZIKRouteActionPerformOnDestination = @"ZIKRouteActionPerfor
     config.autoCreated = self.autoCreated;
     config.containerWrapper = self.containerWrapper;
     config.sender = self.sender;
+#if !ZIK_HAS_UIKIT
+    config.animator = self.animator;
+#endif
     config.addingChildViewHandler = self.addingChildViewHandler;
     config.popoverConfiguration = [self.popoverConfiguration copy];
     config.segueConfiguration = [self.segueConfiguration copy];
@@ -333,9 +387,12 @@ ZIKRouteAction const ZIKRouteActionPerformOnDestination = @"ZIKRouteActionPerfor
 }
 
 - (void)configDefaultValue {
+#if ZIK_HAS_UIKIT
     _permittedArrowDirections = UIPopoverArrowDirectionAny;
+#endif
 }
 
+#if ZIK_HAS_UIKIT
 - (void)setSourceRect:(CGRect)sourceRect {
     self.sourceRectConfiged = YES;
     _sourceRect = sourceRect;
@@ -345,9 +402,11 @@ ZIKRouteAction const ZIKRouteActionPerformOnDestination = @"ZIKRouteActionPerfor
     self.popoverLayoutMarginsConfiged = YES;
     _popoverLayoutMargins = popoverLayoutMargins;
 }
+#endif
 
 - (id)copyWithZone:(nullable NSZone *)zone {
     ZIKViewRoutePopoverConfiguration *config = [super copyWithZone:zone];
+#if ZIK_HAS_UIKIT
     config.delegate = self.delegate;
     config.barButtonItem = self.barButtonItem;
     config.sourceRectConfiged = self.sourceRectConfiged;
@@ -359,12 +418,15 @@ ZIKRouteAction const ZIKRouteActionPerformOnDestination = @"ZIKRouteActionPerfor
     config.popoverLayoutMarginsConfiged = self.popoverLayoutMarginsConfiged;
     config->_popoverLayoutMargins = self.popoverLayoutMargins;
     config.popoverBackgroundViewClass = self.popoverBackgroundViewClass;
+#endif
     return config;
 }
 
+#if ZIK_HAS_UIKIT
 - (NSString *)description {
     return [NSString stringWithFormat:@"barButtonItem:%@, sourceView:%@, sourceRect:%@", self.barButtonItem,self.sourceView,NSStringFromCGRect(self.sourceRect)];
 }
+#endif
 
 @end
 
@@ -412,6 +474,7 @@ ZIKRouteAction const ZIKRouteActionPerformOnDestination = @"ZIKRouteActionPerfor
 
 @end
 
+#if ZIK_HAS_UIKIT
 @implementation UIView (ZIKViewRouteSource)
 @end
 @implementation UIViewController (ZIKViewRouteSource)
@@ -422,6 +485,14 @@ ZIKRouteAction const ZIKRouteActionPerformOnDestination = @"ZIKRouteActionPerfor
 @end
 @implementation UISplitViewController (ZIKViewRouteContainer)
 @end
+#else
+@implementation NSView (ZIKViewRouteSource)
+@end
+@implementation NSViewController (ZIKViewRouteSource)
+@end
+@implementation NSSplitViewController (ZIKViewRouteContainer)
+@end
+#endif
 
 @implementation ZIKViewRouteStrictConfiguration
 @dynamic configuration;
@@ -470,10 +541,10 @@ ZIKRouteAction const ZIKRouteActionPerformOnDestination = @"ZIKRouteActionPerfor
 - (ZIKViewRouteSegueConfiger)configureSegue {
     return self.configuration.configureSegue;
 }
-- (void(^)(UIViewController *destination, void(^completion)(void)))addingChildViewHandler {
+- (void(^)(XXViewController *destination, void(^completion)(void)))addingChildViewHandler {
     return self.configuration.addingChildViewHandler;
 }
-- (void)setAddingChildViewHandler:(void (^)(UIViewController * _Nonnull, void (^ _Nonnull)(void)))addingChildViewHandler {
+- (void)setAddingChildViewHandler:(void (^)(XXViewController * _Nonnull, void (^ _Nonnull)(void)))addingChildViewHandler {
     self.configuration.addingChildViewHandler = addingChildViewHandler;
 }
 - (ZIKViewRoutePopoverConfiguration *)popoverConfiguration {
@@ -504,10 +575,10 @@ ZIKRouteAction const ZIKRouteActionPerformOnDestination = @"ZIKRouteActionPerfor
 - (void)setAnimated:(BOOL)animated {
     self.configuration.animated = animated;
 }
-- (void(^)(UIViewController *destination, void(^completion)(void)))removingChildViewHandler {
+- (void(^)(XXViewController *destination, void(^completion)(void)))removingChildViewHandler {
     return self.configuration.removingChildViewHandler;
 }
-- (void)setRemovingChildViewHandler:(void (^)(UIViewController * _Nonnull, void (^ _Nonnull)(void)))removingChildViewHandler {
+- (void)setRemovingChildViewHandler:(void (^)(XXViewController * _Nonnull, void (^ _Nonnull)(void)))removingChildViewHandler {
     self.configuration.removingChildViewHandler = removingChildViewHandler;
 }
 - (BOOL)handleExternalRoute {

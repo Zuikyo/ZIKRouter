@@ -15,7 +15,6 @@
 #import "ZIKServiceRouteRegistry.h"
 #import "ZIKRouteRegistryInternal.h"
 #import <objc/runtime.h>
-#import <UIKit/UIKit.h>
 #import "ZIKRouterRuntime.h"
 
 ZIKRouteAction const ZIKRouteActionToService = @"ZIKRouteActionToService";

@@ -9,20 +9,33 @@
 //  LICENSE file in the root directory of this source tree.
 //
 
+#import "ZIKPlatformCapabilities.h"
+#if ZIK_HAS_UIKIT
 #import <UIKit/UIKit.h>
+#else
+#import <AppKit/AppKit.h>
+#endif
 
 NS_ASSUME_NONNULL_BEGIN
 
+#if ZIK_HAS_UIKIT
 @interface UIView ()
+#else
+@interface NSView ()
+#endif
 - (void)setZix_routed:(BOOL)routed;
 @end
 
 @class ZIKViewRouter;
+#if ZIK_HAS_UIKIT
 @interface UIView (ZIKViewRouterPrivate)
-///Temporary bind auto created router to a UIView when it's not addSubView: by router. Reset to nil when view is removed.
+#else
+@interface NSView (ZIKViewRouterPrivate)
+#endif
+///Temporary bind auto created router to a UIView when it's not addSubView: by router. Reset to nil when finish routing.
 - (__kindof ZIKViewRouter *)zix_destinationViewRouter;
 - (void)setZix_destinationViewRouter:(nullable ZIKViewRouter *)viewRouter;
-///Route type when view is routed from a router, will reset to nil when view is removed
+///Route type when view is routed from a router, will reset to nil when finish routing.
 - (nullable NSNumber *)zix_routeTypeFromRouter;
 - (void)setZix_routeTypeFromRouter:(nullable NSNumber *)routeType;
 @end

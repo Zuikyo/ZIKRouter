@@ -13,6 +13,7 @@
 #import "ZIKViewRoute.h"
 #import "ZIKViewRouteError.h"
 #import "ZIKViewRouterType.h"
+#import "ZIKPlatformCapabilities.h"
 
 NS_ASSUME_NONNULL_BEGIN
 
@@ -123,15 +124,17 @@ NS_ASSUME_NONNULL_BEGIN
 
 ///Check view controller state in -canPerformCustomRoute, -canRemoveCustomRoute or -performCustomRouteOnDestination:fromSource:configuration:.
 
-///Whether the source can perform push now.
-- (BOOL)_canPerformPush;
 ///Whether the source can perform present now.
 - (BOOL)_canPerformPresent;
+#if ZIK_HAS_UIKIT
+///Whether the source can perform push now.
+- (BOOL)_canPerformPush;
 ///Whether the destination is not in navigation stack of the source. If the destination is already pushed, it can't be pushed again.
 + (BOOL)_validateDestination:(UIViewController *)destination notInNavigationStackOfSource:(UIViewController *)source;
 
 ///Whether the destination can pop.
 - (BOOL)_canPop;
+#endif
 ///Whether the destination can dismiss.
 - (BOOL)_canDismiss;
 ///Whether the destination can remove from parant.
@@ -147,7 +150,11 @@ NS_ASSUME_NONNULL_BEGIN
 - (void)beginPerformRoute;
 
 ///If your custom route type is performing a segue, use this to perform the segue, don't need to use -beginPerformRoute and -endPerformRouteWithSuccess. `source` is the view controller to perform the segue.
+#if ZIK_HAS_UIKIT
 - (void)_performSegueWithIdentifier:(NSString *)identifier fromSource:(UIViewController *)source sender:(nullable id)sender;
+#else
+- (void)_performSegueWithIdentifier:(NSString *)identifier fromSource:(NSViewController *)source sender:(nullable id)sender;
+#endif
 
 ///Call it when route will begin custom remove.
 - (void)beginRemoveRouteFromSource:(nullable id)source;

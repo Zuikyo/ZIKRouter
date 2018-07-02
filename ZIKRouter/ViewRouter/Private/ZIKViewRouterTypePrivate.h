@@ -10,15 +10,16 @@
 //
 
 #import "ZIKViewRouterType.h"
+#import "ZIKClassCapabilities.h"
 
 NS_ASSUME_NONNULL_BEGIN
 
 @class ZIKRoute;
 @interface ZIKViewRouterType<__covariant Destination: id, __covariant RouteConfig: ZIKViewRouteConfiguration *> ()
 
-- (ZIKViewRouter<Destination, RouteConfig> *)routerFromSegueIdentifier:(NSString *)identifier sender:(nullable id)sender destination:(UIViewController *)destination source:(UIViewController *)source;
-- (ZIKViewRouter<Destination, RouteConfig> *)routerFromView:(UIView *)destination source:(UIView *)source;
-- (BOOL)_validateSupportedRouteTypesForUIView;
+- (ZIKViewRouter<Destination, RouteConfig> *)routerFromSegueIdentifier:(NSString *)identifier sender:(nullable id)sender destination:(XXViewController *)destination source:(XXViewController *)source;
+- (ZIKViewRouter<Destination, RouteConfig> *)routerFromView:(XXView *)destination source:(XXView *)source;
+- (BOOL)_validateSupportedRouteTypesForXXView;
 
 - (void)router:(nullable ZIKViewRouter *)router willPerformRouteOnDestination:(id)destination fromSource:(nullable id)source;
 

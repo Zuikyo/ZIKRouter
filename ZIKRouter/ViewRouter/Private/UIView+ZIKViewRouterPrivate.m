@@ -13,7 +13,11 @@
 #import "ZIKViewRouter.h"
 #import <objc/runtime.h>
 
+#if ZIK_HAS_UIKIT
 @implementation UIView (ZIKViewRouterPrivate)
+#else
+@implementation NSView (ZIKViewRouterPrivate)
+#endif
 
 ///Temporary bind auto created router to a UIView when it's not addSubView: by router. Reset to nil when view is routed or removed.
 - (__kindof ZIKViewRouter *)zix_destinationViewRouter {

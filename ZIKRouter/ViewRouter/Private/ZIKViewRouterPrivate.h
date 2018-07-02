@@ -10,6 +10,7 @@
 //
 
 #import "ZIKViewRouter.h"
+#import "ZIKClassCapabilities.h"
 
 NS_ASSUME_NONNULL_BEGIN
 
@@ -18,9 +19,8 @@ NS_ASSUME_NONNULL_BEGIN
 
 #pragma mark Internal Initializer
 
-//TODO: really private
-+ (instancetype)routerFromSegueIdentifier:(NSString *)identifier sender:(nullable id)sender destination:(UIViewController *)destination source:(UIViewController *)source;
-+ (instancetype)routerFromView:(UIView *)destination source:(UIView *)source;
++ (instancetype)routerFromSegueIdentifier:(NSString *)identifier sender:(nullable id)sender destination:(XXViewController *)destination source:(XXViewController *)source;
++ (instancetype)routerFromView:(XXView *)destination source:(XXView *)source;
 
 @end
 

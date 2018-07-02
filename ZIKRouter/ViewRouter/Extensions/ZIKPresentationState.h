@@ -9,6 +9,8 @@
 //  LICENSE file in the root directory of this source tree.
 //
 
+#import "ZIKPlatformCapabilities.h"
+#if ZIK_HAS_UIKIT
 #import <UIKit/UIKit.h>
 
 NS_ASSUME_NONNULL_BEGIN
@@ -60,3 +62,4 @@ typedef NS_ENUM(NSInteger,ZIKViewRouteDetailType) {
 @end
 
 NS_ASSUME_NONNULL_END
+#endif

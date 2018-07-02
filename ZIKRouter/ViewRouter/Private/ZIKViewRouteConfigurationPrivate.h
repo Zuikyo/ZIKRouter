@@ -10,6 +10,7 @@
 //
 
 #import "ZIKViewRouteConfiguration.h"
+#import "ZIKClassCapabilities.h"
 
 NS_ASSUME_NONNULL_BEGIN
 
@@ -26,9 +27,12 @@ NS_ASSUME_NONNULL_BEGIN
 
 @class ZIKPresentationState;
 @interface ZIKViewRouteSegueConfiguration ()
-@property (nonatomic, weak, nullable) UIViewController *segueSource;
-@property (nonatomic, weak, nullable) UIViewController *segueDestination;
+
+@property (nonatomic, weak, nullable) XXViewController *segueSource;
+@property (nonatomic, weak, nullable) XXViewController *segueDestination;
+#if ZIK_HAS_UIKIT
 @property (nonatomic, strong, nullable) ZIKPresentationState *destinationStateBeforeRoute;
+#endif
 @end
 
 NS_ASSUME_NONNULL_END

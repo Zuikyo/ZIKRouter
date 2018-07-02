@@ -14,8 +14,13 @@
 #import "ZIKPresentationState.h"
 #import "ZIKRouterInternal.h"
 #import <objc/runtime.h>
+#import "ZIKClassCapabilities.h"
 
+#if ZIK_HAS_UIKIT
 @implementation UIViewController (ZIKViewRouter)
+#else
+@implementation NSViewController (ZIKViewRouter)
+#endif
 
 - (BOOL)zix_routed {
     NSNumber *result = objc_getAssociatedObject(self, "zix_routed");
@@ -35,38 +40,51 @@
     objc_setAssociatedObject(self, "zix_removing", @(removing), OBJC_ASSOCIATION_RETAIN);
 }
 
+#if ZIK_HAS_UIKIT
+
 - (BOOL)zix_isAppRootViewController {
-    Class UIApplication = NSClassFromString(@"UIApplication");
-    id sharedApplication = [UIApplication performSelector:@selector(sharedApplication)];
+    Class XXApplication = NSClassFromString(@"UIApplication");
+    id sharedApplication = [XXApplication performSelector:@selector(sharedApplication)];
     id appDelegate = [sharedApplication performSelector:@selector(delegate)];
-    UIWindow *window = [appDelegate performSelector:@selector(window)];
-    UIViewController *rootViewController = window.rootViewController;
+    XXWindow *window = [appDelegate performSelector:@selector(window)];
+    XXViewController *rootViewController = window.rootViewController;
     if (rootViewController) {
         return rootViewController == self;
     }
     //Maybe in app extension
     id nextResponder = [self nextResponder];
-    if ([nextResponder isKindOfClass:[UIWindow class]]) {
-        if ([[nextResponder nextResponder] isKindOfClass:UIApplication]) {
+    if ([nextResponder isKindOfClass:[XXWindow class]]) {
+        if ([[nextResponder nextResponder] isKindOfClass:XXApplication]) {
             return YES;
         }
     }
     return NO;
 }
 
-- (BOOL)zix_isRootViewControllerInContainer {
-    if (self.navigationController) {
-        return self.navigationController.viewControllers.firstObject == self;
-    } else if (self.tabBarController) {
-        return [self.tabBarController.viewControllers containsObject:self];
-    } else if (self.splitViewController) {
-        return [self.splitViewController.viewControllers containsObject:self];
+#else
+
+- (BOOL)zix_isAppRootViewController {
+    NSArray<NSWindow *> *windows = [NSApplication sharedApplication].windows;
+    for (NSWindow *window in windows) {
+        XXResponder *rootViewController;
+        if (@available(macOS 10.10, *)) {
+            rootViewController = window.contentViewController;
+        } else {
+            rootViewController = [window.contentView nextResponder];
+        }
+        if (rootViewController && rootViewController == self) {
+            return YES;
+        }
     }
     return NO;
 }
 
+#endif
+
+#if ZIK_HAS_UIKIT
 - (ZIKPresentationState *)zix_presentationState {
     return [[ZIKPresentationState alloc] initFromViewController:self];
 }
+#endif
 
 @end

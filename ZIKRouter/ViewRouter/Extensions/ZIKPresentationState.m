@@ -11,6 +11,7 @@
 
 #import "ZIKPresentationState.h"
 
+#if ZIK_HAS_UIKIT
 @interface ZIKPresentationState ()
 @property (nonatomic, strong, nullable) NSNumber *viewController;
 @property (nonatomic, strong, nullable) NSNumber *presentingViewController;
@@ -433,3 +434,4 @@
 }
 
 @end
+#endif

@@ -138,6 +138,7 @@
 		F88D8B631FECF1AA00157E71 /* exec.h in Headers */ = {isa = PBXBuildFile; fileRef = F88D8B621FECF1AA00157E71 /* exec.h */; };
 		F88D8B661FECFB0900157E71 /* ZIKImageSymbol.h in Headers */ = {isa = PBXBuildFile; fileRef = F88D8B641FECFB0900157E71 /* ZIKImageSymbol.h */; };
 		F88D8B671FECFB0900157E71 /* ZIKImageSymbol.mm in Sources */ = {isa = PBXBuildFile; fileRef = F88D8B651FECFB0900157E71 /* ZIKImageSymbol.mm */; };
+		F8A15AA420D2BE3E00E6862A /* ZIKClassCapabilities.h in Headers */ = {isa = PBXBuildFile; fileRef = F8EF187620D2B82F00496EED /* ZIKClassCapabilities.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		F8A2B70D2087867E001F9B57 /* TestConfig.m in Sources */ = {isa = PBXBuildFile; fileRef = F8A2B70C2087867E001F9B57 /* TestConfig.m */; };
 		F8A2B70F2087C02A001F9B57 /* ZIKServiceRouterMakeDestinationTests.m in Sources */ = {isa = PBXBuildFile; fileRef = F8A2B70E2087C02A001F9B57 /* ZIKServiceRouterMakeDestinationTests.m */; };
 		F8A2B7112087C111001F9B57 /* ZIKRouterTestCase.m in Sources */ = {isa = PBXBuildFile; fileRef = F8A2B7102087C111001F9B57 /* ZIKRouterTestCase.m */; };
@@ -165,6 +166,7 @@
 		F8D414CD207BC8F50036CED5 /* ZIKViewRoute.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = F8566ABD2078B5B60075675C /* ZIKViewRoute.h */; };
 		F8D414CE207BC8FD0036CED5 /* ZIKServiceRoute.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = F8566ADD207929C80075675C /* ZIKServiceRoute.h */; };
 		F8D414CF207BC90A0036CED5 /* ZIKServiceRouterType.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = F85183CE2079B0E800DC3ED6 /* ZIKServiceRouterType.h */; };
+		F8EF187520D2B1C500496EED /* ZIKPlatformCapabilities.h in Headers */ = {isa = PBXBuildFile; fileRef = F8EF187420D2AD7700496EED /* ZIKPlatformCapabilities.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		F8F6B1BB20A6142100110B03 /* ZIKRouterRuntimeDebug.h in Headers */ = {isa = PBXBuildFile; fileRef = F8F6B1B920A6142100110B03 /* ZIKRouterRuntimeDebug.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		F8F6B1BC20A6142100110B03 /* ZIKRouterRuntimeDebug.m in Sources */ = {isa = PBXBuildFile; fileRef = F8F6B1BA20A6142100110B03 /* ZIKRouterRuntimeDebug.m */; };
 		F8F6B1BD20A6156300110B03 /* ZIKRouterRuntimeDebug.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = F8F6B1B920A6142100110B03 /* ZIKRouterRuntimeDebug.h */; };
@@ -266,7 +268,6 @@
 		F81A33B92087301E001D176A /* TestRouteRegistry.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = TestRouteRegistry.m; sourceTree = "<group>"; };
 		F81A33BB2087302F001D176A /* TestConfig.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = TestConfig.h; sourceTree = "<group>"; };
 		F83290F120B350DA00BB0597 /* ZIKRouter-umbrella.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "ZIKRouter-umbrella.h"; sourceTree = "<group>"; };
-		F83290F220B350DA00BB0597 /* module.modulemap */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = "sourcecode.module-map"; path = module.modulemap; sourceTree = "<group>"; };
 		F83315341F6FC77A00891004 /* UIView+ZIKViewRouterPrivate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "UIView+ZIKViewRouterPrivate.h"; sourceTree = "<group>"; };
 		F83315351F6FC77A00891004 /* UIView+ZIKViewRouterPrivate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = "UIView+ZIKViewRouterPrivate.m"; sourceTree = "<group>"; };
 		F83315381F6FC86600891004 /* UIViewController+ZIKViewRouterPrivate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "UIViewController+ZIKViewRouterPrivate.h"; sourceTree = "<group>"; };
@@ -367,6 +368,9 @@
 		F8B99A5F1F4ADB4A0063127F /* ZIKServiceModuleRoutable.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ZIKServiceModuleRoutable.h; sourceTree = "<group>"; };
 		F8C0D10F1FB011C7003D3B3B /* ZIKViewRouteError.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ZIKViewRouteError.h; sourceTree = "<group>"; };
 		F8C0D1101FB011C7003D3B3B /* ZIKViewRouteError.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ZIKViewRouteError.m; sourceTree = "<group>"; };
+		F8EF187420D2AD7700496EED /* ZIKPlatformCapabilities.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ZIKPlatformCapabilities.h; sourceTree = "<group>"; };
+		F8EF187620D2B82F00496EED /* ZIKClassCapabilities.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ZIKClassCapabilities.h; sourceTree = "<group>"; };
+		F8EF187720D2BB9900496EED /* module.modulemap */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = "sourcecode.module-map"; path = module.modulemap; sourceTree = "<group>"; };
 		F8F6B1B920A6142100110B03 /* ZIKRouterRuntimeDebug.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ZIKRouterRuntimeDebug.h; sourceTree = "<group>"; };
 		F8F6B1BA20A6142100110B03 /* ZIKRouterRuntimeDebug.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ZIKRouterRuntimeDebug.m; sourceTree = "<group>"; };
 		F8F6B1FD20AA90F200110B03 /* NSString+Demangle.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = "NSString+Demangle.mm"; sourceTree = "<group>"; };
@@ -429,7 +433,9 @@
 			isa = PBXGroup;
 			children = (
 				F83290F120B350DA00BB0597 /* ZIKRouter-umbrella.h */,
-				F83290F220B350DA00BB0597 /* module.modulemap */,
+				F8EF187420D2AD7700496EED /* ZIKPlatformCapabilities.h */,
+				F8EF187620D2B82F00496EED /* ZIKClassCapabilities.h */,
+				F8EF187720D2BB9900496EED /* module.modulemap */,
 			);
 			path = Framework;
 			sourceTree = "<group>";
@@ -796,6 +802,8 @@
 				F85183C82079AD5E00DC3ED6 /* ZIKViewRouterType.h in Headers */,
 				F83290F420B350DA00BB0597 /* ZIKRouter-umbrella.h in Headers */,
 				F8F6B1BB20A6142100110B03 /* ZIKRouterRuntimeDebug.h in Headers */,
+				F8EF187520D2B1C500496EED /* ZIKPlatformCapabilities.h in Headers */,
+				F8A15AA420D2BE3E00E6862A /* ZIKClassCapabilities.h in Headers */,
 				F85183D42079B20100DC3ED6 /* ZIKServiceRouter+Discover.h in Headers */,
 				F80847D5208A007100DF5E09 /* ZIKBlockSubviewRouter.h in Headers */,
 				F85183D02079B0E800DC3ED6 /* ZIKServiceRouterType.h in Headers */,
@@ -1078,7 +1086,7 @@
 				GCC_C_LANGUAGE_STANDARD = gnu11;
 				INFOPLIST_FILE = ZIKRouterTests/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 11.3;
-				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks @executable_path/../Frameworks @loader_path/../Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = com.zuik.ZIKRouterTests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				TARGETED_DEVICE_FAMILY = "1,2";
@@ -1099,7 +1107,7 @@
 				GCC_C_LANGUAGE_STANDARD = gnu11;
 				INFOPLIST_FILE = ZIKRouterTests/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 11.3;
-				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks @executable_path/../Frameworks @loader_path/../Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = com.zuik.ZIKRouterTests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				TARGETED_DEVICE_FAMILY = "1,2";
@@ -1158,11 +1166,14 @@
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				IPHONEOS_DEPLOYMENT_TARGET = 7.0;
+				MACOSX_DEPLOYMENT_TARGET = 10.10;
 				MODULEMAP_FILE = ZIKRouter/Framework/module.modulemap;
 				MTL_ENABLE_DEBUG_INFO = YES;
 				ONLY_ACTIVE_ARCH = YES;
 				SDKROOT = iphoneos;
+				SUPPORTED_PLATFORMS = "iphonesimulator iphoneos macosx";
 				TARGETED_DEVICE_FAMILY = "1,2";
+				VALID_ARCHS = "arm64 armv7 armv7s i386 x86_64";
 				VERSIONING_SYSTEM = "apple-generic";
 				VERSION_INFO_PREFIX = "";
 			};
@@ -1214,11 +1225,14 @@
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				IPHONEOS_DEPLOYMENT_TARGET = 7.0;
+				MACOSX_DEPLOYMENT_TARGET = 10.10;
 				MODULEMAP_FILE = ZIKRouter/Framework/module.modulemap;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				SDKROOT = iphoneos;
+				SUPPORTED_PLATFORMS = "iphonesimulator iphoneos macosx";
 				TARGETED_DEVICE_FAMILY = "1,2";
 				VALIDATE_PRODUCT = YES;
+				VALID_ARCHS = "arm64 armv7 armv7s i386 x86_64";
 				VERSIONING_SYSTEM = "apple-generic";
 				VERSION_INFO_PREFIX = "";
 			};
@@ -1237,7 +1251,7 @@
 				INFOPLIST_FILE = ZIKRouter/Info.plist;
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
 				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
-				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks @executable_path/../Frameworks @loader_path/../Frameworks";
 				MACH_O_TYPE = mh_dylib;
 				MODULEMAP_FILE = ZIKRouter/Framework/module.modulemap;
 				PRODUCT_BUNDLE_IDENTIFIER = com.zuik.ZIKRouter;
@@ -1259,7 +1273,7 @@
 				INFOPLIST_FILE = ZIKRouter/Info.plist;
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
 				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
-				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks @executable_path/../Frameworks @loader_path/../Frameworks";
 				MACH_O_TYPE = mh_dylib;
 				MODULEMAP_FILE = ZIKRouter/Framework/module.modulemap;
 				PRODUCT_BUNDLE_IDENTIFIER = com.zuik.ZIKRouter;
@@ -1273,7 +1287,7 @@
 			buildSettings = {
 				DEVELOPMENT_TEAM = 8FE9268LAG;
 				EXECUTABLE_PREFIX = "";
-				IPHONEOS_DEPLOYMENT_TARGET = 10.3;
+				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
 				OTHER_LDFLAGS = "-ObjC";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
@@ -1285,7 +1299,7 @@
 			buildSettings = {
 				DEVELOPMENT_TEAM = 8FE9268LAG;
 				EXECUTABLE_PREFIX = "";
-				IPHONEOS_DEPLOYMENT_TARGET = 10.3;
+				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
 				OTHER_LDFLAGS = "-ObjC";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;

@@ -38,15 +38,17 @@ NSNotificationName kZIKViewRouteRemoveRouteCancelledNotification = @"kZIKViewRou
 
 static ZIKViewRouteGlobalErrorHandler g_globalErrorHandler;
 static dispatch_semaphore_t g_globalErrorSema;
-static NSMutableArray *g_preparingUIViewRouters;
+static NSMutableArray *g_preparingXXViewRouters;
 
 @interface ZIKViewRouter ()
 @property (nonatomic, assign) BOOL routingFromInternal;
 @property (nonatomic, assign) ZIKViewRouteRealType realRouteType;
 ///Destination prepared. Only for UIView destination
 @property (nonatomic, assign) BOOL prepared;
+#if ZIK_HAS_UIKIT
 @property (nonatomic, strong, nullable) ZIKPresentationState *stateBeforeRoute;
-@property (nonatomic, weak, nullable) UIViewController<ZIKViewRouteContainer> *container;
+#endif
+@property (nonatomic, weak, nullable) XXViewController<ZIKViewRouteContainer> *container;
 @property (nonatomic, strong, nullable) ZIKViewRouter *retainedSelf;
 @end
 
@@ -58,46 +60,77 @@ static NSMutableArray *g_preparingUIViewRouters;
 + (void)load {
     [ZIKRouteRegistry addRegistry:[ZIKViewRouteRegistry class]];
     g_globalErrorSema = dispatch_semaphore_create(1);
-    g_preparingUIViewRouters = [NSMutableArray array];
+    g_preparingXXViewRouters = [NSMutableArray array];
     
     Class ZIKViewRouterClass = [ZIKViewRouter class];
-    Class UIViewControllerClass = [UIViewController class];
-    Class UIStoryboardSegueClass = [UIStoryboardSegue class];
+    Class XXViewControllerClass = [XXViewController class];
+    Class XXStoryboardSegueClass = [XXStoryboardSegue class];
     
-    ZIKRouter_replaceMethodWithMethod(UIViewControllerClass, @selector(willMoveToParentViewController:),
+#if ZIK_HAS_UIKIT
+    ZIKRouter_replaceMethodWithMethod(XXViewControllerClass, @selector(willMoveToParentViewController:),
                                       ZIKViewRouterClass, @selector(ZIKViewRouter_hook_willMoveToParentViewController:));
-    ZIKRouter_replaceMethodWithMethod(UIViewControllerClass, @selector(didMoveToParentViewController:),
+    ZIKRouter_replaceMethodWithMethod(XXViewControllerClass, @selector(didMoveToParentViewController:),
                                       ZIKViewRouterClass, @selector(ZIKViewRouter_hook_didMoveToParentViewController:));
-    ZIKRouter_replaceMethodWithMethod(UIViewControllerClass, @selector(viewWillAppear:),
+    ZIKRouter_replaceMethodWithMethod(XXViewControllerClass, @selector(viewWillAppear:),
                                       ZIKViewRouterClass, @selector(ZIKViewRouter_hook_viewWillAppear:));
-    ZIKRouter_replaceMethodWithMethod(UIViewControllerClass, @selector(viewDidAppear:),
+    ZIKRouter_replaceMethodWithMethod(XXViewControllerClass, @selector(viewDidAppear:),
                                       ZIKViewRouterClass, @selector(ZIKViewRouter_hook_viewDidAppear:));
-    ZIKRouter_replaceMethodWithMethod(UIViewControllerClass, @selector(viewWillDisappear:),
+    ZIKRouter_replaceMethodWithMethod(XXViewControllerClass, @selector(viewWillDisappear:),
                                       ZIKViewRouterClass, @selector(ZIKViewRouter_hook_viewWillDisappear:));
     if (NSClassFromString(@"SLComposeServiceViewController")) {
         //fix SLComposeServiceViewController doesn't call -[super viewWillDisappear:]
         ZIKRouter_replaceMethodWithMethod(NSClassFromString(@"SLComposeServiceViewController"), @selector(viewWillDisappear:),
                                           ZIKViewRouterClass, @selector(ZIKViewRouter_hook_viewWillDisappear:));
     }
-    ZIKRouter_replaceMethodWithMethod(UIViewControllerClass, @selector(viewDidDisappear:),
+    ZIKRouter_replaceMethodWithMethod(XXViewControllerClass, @selector(viewDidDisappear:),
                                       ZIKViewRouterClass, @selector(ZIKViewRouter_hook_viewDidDisappear:));
-    ZIKRouter_replaceMethodWithMethod(UIViewControllerClass, @selector(viewDidLoad),
+    
+    ZIKRouter_replaceMethodWithMethod([XXView class], @selector(willMoveToSuperview:),
+                                      ZIKViewRouterClass, @selector(ZIKViewRouter_hook_willMoveToSuperview:));
+    ZIKRouter_replaceMethodWithMethod([XXView class], @selector(didMoveToSuperview),
+                                      ZIKViewRouterClass, @selector(ZIKViewRouter_hook_didMoveToSuperview));
+    ZIKRouter_replaceMethodWithMethod([XXView class], @selector(willMoveToWindow:),
+                                      ZIKViewRouterClass, @selector(ZIKViewRouter_hook_willMoveToWindow:));
+    ZIKRouter_replaceMethodWithMethod([XXView class], @selector(didMoveToWindow),
+                                      ZIKViewRouterClass, @selector(ZIKViewRouter_hook_didMoveToWindow));
+#else
+    [[NSNotificationCenter defaultCenter] addObserverForName:NSWindowWillCloseNotification object:nil queue:nil usingBlock:^(NSNotification * _Nonnull note) {
+        [ZIKViewRouter handleWindowWillCloseNotification:note];
+    }];
+    ZIKRouter_replaceMethodWithMethod(XXViewControllerClass, @selector(presentViewController:animator:), ZIKViewRouterClass, @selector(ZIKViewRouter_hook_presentViewController:animator:));
+    ZIKRouter_replaceMethodWithMethod([NSWindow class], @selector(setContentViewController:), ZIKViewRouterClass, @selector(ZIKViewRouter_hook_setContentViewController:));
+    ZIKRouter_replaceMethodWithMethod(XXViewControllerClass, @selector(viewWillAppear),
+                                      ZIKViewRouterClass, @selector(ZIKViewRouter_hook_viewWillAppear));
+    ZIKRouter_replaceMethodWithMethod(XXViewControllerClass, @selector(viewDidAppear),
+                                      ZIKViewRouterClass, @selector(ZIKViewRouter_hook_viewDidAppear));
+    ZIKRouter_replaceMethodWithMethod(XXViewControllerClass, @selector(viewWillDisappear),
+                                      ZIKViewRouterClass, @selector(ZIKViewRouter_hook_viewWillDisappear));
+    ZIKRouter_replaceMethodWithMethod(XXViewControllerClass, @selector(viewDidDisappear),
+                                      ZIKViewRouterClass, @selector(ZIKViewRouter_hook_viewDidDisappear));
+    
+    ZIKRouter_replaceMethodWithMethod([XXView class], @selector(viewWillMoveToSuperview:),
+                                      ZIKViewRouterClass, @selector(ZIKViewRouter_hook_willMoveToSuperview:));
+    ZIKRouter_replaceMethodWithMethod([XXView class], @selector(viewDidMoveToSuperview),
+                                      ZIKViewRouterClass, @selector(ZIKViewRouter_hook_didMoveToSuperview));
+    ZIKRouter_replaceMethodWithMethod([XXView class], @selector(viewWillMoveToWindow:),
+                                      ZIKViewRouterClass, @selector(ZIKViewRouter_hook_willMoveToWindow:));
+    ZIKRouter_replaceMethodWithMethod([XXView class], @selector(viewDidMoveToWindow),
+                                      ZIKViewRouterClass, @selector(ZIKViewRouter_hook_didMoveToWindow));
+#endif
+    ZIKRouter_replaceMethodWithMethod(XXViewControllerClass, @selector(viewDidLoad),
                                       ZIKViewRouterClass, @selector(ZIKViewRouter_hook_viewDidLoad));
     
-    ZIKRouter_replaceMethodWithMethod([UIView class], @selector(willMoveToSuperview:),
-                                      ZIKViewRouterClass, @selector(ZIKViewRouter_hook_willMoveToSuperview:));
-    ZIKRouter_replaceMethodWithMethod([UIView class], @selector(didMoveToSuperview),
-                                      ZIKViewRouterClass, @selector(ZIKViewRouter_hook_didMoveToSuperview));
-    ZIKRouter_replaceMethodWithMethod([UIView class], @selector(willMoveToWindow:),
-                                      ZIKViewRouterClass, @selector(ZIKViewRouter_hook_willMoveToWindow:));
-    ZIKRouter_replaceMethodWithMethod([UIView class], @selector(didMoveToWindow),
-                                      ZIKViewRouterClass, @selector(ZIKViewRouter_hook_didMoveToWindow));
     
-    ZIKRouter_replaceMethodWithMethod(UIViewControllerClass, @selector(prepareForSegue:sender:),
+    
+    ZIKRouter_replaceMethodWithMethod(XXViewControllerClass, @selector(prepareForSegue:sender:),
                                       ZIKViewRouterClass, @selector(ZIKViewRouter_hook_prepareForSegue:sender:));
-    ZIKRouter_replaceMethodWithMethod(UIStoryboardSegueClass, @selector(perform),
+    ZIKRouter_replaceMethodWithMethod(XXStoryboardSegueClass, @selector(perform),
                                       ZIKViewRouterClass, @selector(ZIKViewRouter_hook_seguePerform));
-    ZIKRouter_replaceMethodWithMethod([UIStoryboard class], @selector(instantiateInitialViewController), ZIKViewRouterClass, @selector(ZIKViewRouter_hook_instantiateInitialViewController));
+#if ZIK_HAS_UIKIT
+    ZIKRouter_replaceMethodWithMethod([XXStoryboard class], @selector(instantiateInitialViewController), ZIKViewRouterClass, @selector(ZIKViewRouter_hook_instantiateInitialViewController));
+#else
+    ZIKRouter_replaceMethodWithMethod([XXStoryboard class], @selector(instantiateInitialController), ZIKViewRouterClass, @selector(ZIKViewRouter_hook_instantiateInitialViewController));
+#endif
 }
 
 + (void)_didFinishRegistration {
@@ -343,30 +376,36 @@ static NSMutableArray *g_preparingUIViewRouters;
 }
 
 - (BOOL)_canPerformPush {
-    UIViewController *source = (UIViewController *)self.original_configuration.source;
+    XXViewController *source = (XXViewController *)self.original_configuration.source;
     if (!source) {
         return NO;
     }
-    if ([source isKindOfClass:[UIViewController class]] == NO) {
+    if ([source isKindOfClass:[XXViewController class]] == NO) {
         return NO;
     }
+#if ZIK_HAS_UIKIT
     if ([[self class] _validateSourceInNavigationStack:source] == NO) {
         return NO;
     }
+#else
+    return NO;
+#endif
     return YES;
 }
 
 - (BOOL)_canPerformPresent {
-    UIViewController *source = (UIViewController *)self.original_configuration.source;
+    XXViewController *source = (XXViewController *)self.original_configuration.source;
     if (!source) {
         return NO;
     }
-    if ([source isKindOfClass:[UIViewController class]] == NO) {
+    if ([source isKindOfClass:[XXViewController class]] == NO) {
         return NO;
     }
+#if ZIK_HAS_UIKIT
     if ([[self class] _validateSourceNotPresentedAnyView:source] == NO) {
         return NO;
     }
+#endif
     if ([[self class] _validateSourceInWindowHierarchy:source] == NO) {
         return NO;
     }
@@ -410,9 +449,11 @@ static NSMutableArray *g_preparingUIViewRouters;
         }
     }
     
-    id destination = self.destination;
     switch (type) {
+            
+#if ZIK_HAS_UIKIT
         case ZIKViewRouteTypePush: {
+            id destination = self.destination;
             if (![[self class] _validateSourceInNavigationStack:source]) {
                 if (message) {
                     *message = [NSString stringWithFormat:@"Source (%@) is not in any navigation stack now, can't push.",source];
@@ -427,8 +468,10 @@ static NSMutableArray *g_preparingUIViewRouters;
             }
             break;
         }
+#endif
             
         case ZIKViewRouteTypePresentModally:
+#if ZIK_HAS_UIKIT
         case ZIKViewRouteTypePresentAsPopover: {
             if (![[self class] _validateSourceNotPresentedAnyView:source]) {
                 if (message) {
@@ -438,6 +481,7 @@ static NSMutableArray *g_preparingUIViewRouters;
             }
             break;
         }
+#endif
         default:
             break;
     }
@@ -473,9 +517,12 @@ static NSMutableArray *g_preparingUIViewRouters;
     id source = configuration.source;
     ZIKViewRouteType routeType = configuration.routeType;
     switch (routeType) {
+            
+#if ZIK_HAS_UIKIT
         case ZIKViewRouteTypePush:
             [self _performPushOnDestination:destination fromSource:source];
             break;
+#endif
             
         case ZIKViewRouteTypePresentModally:
             [self _performPresentModallyOnDestination:destination fromSource:source];
@@ -484,6 +531,16 @@ static NSMutableArray *g_preparingUIViewRouters;
         case ZIKViewRouteTypePresentAsPopover:
             [self _performPresentAsPopoverOnDestination:destination fromSource:source popoverConfiguration:configuration.popoverConfiguration];
             break;
+            
+#if !ZIK_HAS_UIKIT
+        case ZIKViewRouteTypePresentAsSheet:
+            [self _performPresentAsSheetOnDestination:destination fromSource:source];
+            break;
+            
+        case ZIKViewRouteTypePresentWithAnimator:
+            [self _performPresentWithAnimatorOnDestination:destination fromSource:source];
+            break;
+#endif
             
         case ZIKViewRouteTypeAddAsChildViewController:
             [self _performAddChildViewControllerOnDestination:destination fromSource:source];
@@ -497,9 +554,11 @@ static NSMutableArray *g_preparingUIViewRouters;
             [self _performShowOnDestination:destination fromSource:source];
             break;
             
+#if ZIK_HAS_UIKIT
         case ZIKViewRouteTypeShowDetail:
             [self _performShowDetailOnDestination:destination fromSource:source];
             break;
+#endif
             
         case ZIKViewRouteTypeAddAsSubview:
             [self _performAddSubviewOnDestination:destination fromSource:source];
@@ -515,9 +574,10 @@ static NSMutableArray *g_preparingUIViewRouters;
     }
 }
 
-- (void)_performPushOnDestination:(UIViewController *)destination fromSource:(UIViewController *)source {
-    NSParameterAssert([destination isKindOfClass:[UIViewController class]]);
-    NSParameterAssert([source isKindOfClass:[UIViewController class]]);
+#if ZIK_HAS_UIKIT
+- (void)_performPushOnDestination:(XXViewController *)destination fromSource:(XXViewController *)source {
+    NSParameterAssert([destination isKindOfClass:[XXViewController class]]);
+    NSParameterAssert([source isKindOfClass:[XXViewController class]]);
     
     if (![[self class] _validateSourceInNavigationStack:source]) {
         [self notifyRouteState:self.preState];
@@ -531,7 +591,7 @@ static NSMutableArray *g_preparingUIViewRouters;
                              errorDescription:@"Pushing the same view controller instance more than once is not supported. Source: (%@), destination: (%@), viewControllers in navigation stack: (%@)",source,destination,source.navigationController.viewControllers];
         return;
     }
-    UIViewController *wrappedDestination = [self _wrappedDestination:destination];
+    XXViewController *wrappedDestination = [self _wrappedDestination:destination];
     [self beginPerformRoute];
     [destination setZix_routeTypeFromRouter:@(ZIKViewRouteTypePush)];
     self.realRouteType = ZIKViewRouteRealTypePush;
@@ -541,17 +601,20 @@ static NSMutableArray *g_preparingUIViewRouters;
         [self endPerformRouteWithSuccess];
     }];
 }
+#endif
 
-- (void)_performPresentModallyOnDestination:(UIViewController *)destination fromSource:(UIViewController *)source {
-    NSParameterAssert([destination isKindOfClass:[UIViewController class]]);
-    NSParameterAssert([source isKindOfClass:[UIViewController class]]);
+- (void)_performPresentModallyOnDestination:(XXViewController *)destination fromSource:(XXViewController *)source {
+    NSParameterAssert([destination isKindOfClass:[XXViewController class]]);
+    NSParameterAssert([source isKindOfClass:[XXViewController class]]);
     
+#if ZIK_HAS_UIKIT
     if (![[self class] _validateSourceNotPresentedAnyView:source]) {
         [self notifyRouteState:self.preState];
         [self notifyError_invalidSourceWithAction:ZIKRouteActionPerformRoute
                                  errorDescription:@"Warning: Attempt to present %@ on %@ whose view is not in the window hierarchy! %@ already presented %@.",destination,source,source,source.presentedViewController];
         return;
     }
+#endif
     if (![[self class] _validateSourceInWindowHierarchy:source]) {
         [self notifyRouteState:self.preState];
         [self notifyError_invalidSourceWithAction:ZIKRouteActionPerformRoute
@@ -565,18 +628,26 @@ static NSMutableArray *g_preparingUIViewRouters;
         return;
     }
     
-    UIViewController *wrappedDestination = [self _wrappedDestination:destination];
+    XXViewController *wrappedDestination = [self _wrappedDestination:destination];
     [self beginPerformRoute];
     [destination setZix_routeTypeFromRouter:@(ZIKViewRouteTypePresentModally)];
+#if ZIK_HAS_UIKIT
     self.realRouteType = ZIKViewRouteRealTypePresentModally;
     [source presentViewController:wrappedDestination animated:self.original_configuration.animated completion:^{
         [self endPerformRouteWithSuccess];
     }];
+#else
+    self.realRouteType = ZIKViewRouteRealTypePresentModally;
+    [source presentViewControllerAsModalWindow:wrappedDestination];
+    [ZIKViewRouter _completeWithMacTransitionCompletion:^{
+        [self endPerformRouteWithSuccess];
+    }];
+#endif
 }
 
-- (void)_performPresentAsPopoverOnDestination:(UIViewController *)destination fromSource:(UIViewController *)source popoverConfiguration:(ZIKViewRoutePopoverConfiguration *)popoverConfiguration {
-    NSParameterAssert([destination isKindOfClass:[UIViewController class]]);
-    NSParameterAssert([source isKindOfClass:[UIViewController class]]);
+- (void)_performPresentAsPopoverOnDestination:(XXViewController *)destination fromSource:(XXViewController *)source popoverConfiguration:(ZIKViewRoutePopoverConfiguration *)popoverConfiguration {
+    NSParameterAssert([destination isKindOfClass:[XXViewController class]]);
+    NSParameterAssert([source isKindOfClass:[XXViewController class]]);
     
     if (!popoverConfiguration) {
         [self notifyRouteState:self.preState];
@@ -584,12 +655,14 @@ static NSMutableArray *g_preparingUIViewRouters;
                                         errorDescription:@"Miss popoverConfiguration when perform presentAsPopover on source: (%@), router: (%@).",source,self];
         return;
     }
+#if ZIK_HAS_UIKIT
     if (![[self class] _validateSourceNotPresentedAnyView:source]) {
         [self notifyRouteState:self.preState];
         [self notifyError_invalidSourceWithAction:ZIKRouteActionPerformRoute
                                  errorDescription:@"Warning: Attempt to present %@ on %@ whose view is not in the window hierarchy! %@ already presented %@.",destination,source,source,source.presentedViewController];
         return;
     }
+#endif
     if (![[self class] _validateSourceInWindowHierarchy:source]) {
         [self notifyRouteState:self.preState];
         [self notifyError_invalidSourceWithAction:ZIKRouteActionPerformRoute
@@ -603,9 +676,8 @@ static NSMutableArray *g_preparingUIViewRouters;
         return;
     }
     
-    ZIKViewRouteRealType realRouteType = ZIKViewRouteRealTypePresentAsPopover;
+#if ZIK_HAS_UIKIT
     ZIKViewRouteConfiguration *configuration = self.original_configuration;
-    
     if (NSClassFromString(@"UIPopoverPresentationController")) {
         destination.modalPresentationStyle = UIModalPresentationPopover;
         UIPopoverPresentationController *popoverPresentationController = destination.popoverPresentationController;
@@ -641,9 +713,9 @@ static NSMutableArray *g_preparingUIViewRouters;
             popoverPresentationController.popoverBackgroundViewClass = popoverConfiguration.popoverBackgroundViewClass;
         }
         
-        UIViewController *wrappedDestination = [self _wrappedDestination:destination];
+        XXViewController *wrappedDestination = [self _wrappedDestination:destination];
         [self beginPerformRoute];
-        self.realRouteType = realRouteType;
+        self.realRouteType = ZIKViewRouteRealTypePresentAsPopover;
         [destination setZix_routeTypeFromRouter:@(ZIKViewRouteTypePresentAsPopover)];
         [source presentViewController:wrappedDestination animated:configuration.animated completion:^{
             [self endPerformRouteWithSuccess];
@@ -653,7 +725,7 @@ static NSMutableArray *g_preparingUIViewRouters;
     
     //iOS7 iPad
     if ([UIDevice currentDevice].userInterfaceIdiom == UIUserInterfaceIdiomPad) {
-        UIViewController *wrappedDestination = [self _wrappedDestination:destination];
+        XXViewController *wrappedDestination = [self _wrappedDestination:destination];
 #pragma clang diagnostic push
 #pragma clang diagnostic ignored "-Wdeprecated"
         UIPopoverController *popover = [[UIPopoverController alloc] initWithContentViewController:wrappedDestination];
@@ -681,11 +753,11 @@ static NSMutableArray *g_preparingUIViewRouters;
         [self prepareDestinationForPerforming];
         [destination setZix_routeTypeFromRouter:@(ZIKViewRouteTypePresentAsPopover)];
         if (popoverConfiguration.barButtonItem) {
-            self.realRouteType = realRouteType;
+            self.realRouteType = ZIKViewRouteRealTypePresentAsPopover;
             [ZIKViewRouter AOP_notifyAll_router:self willPerformRouteOnDestination:destination fromSource:source];
             [popover presentPopoverFromBarButtonItem:popoverConfiguration.barButtonItem permittedArrowDirections:popoverConfiguration.permittedArrowDirections animated:configuration.animated];
         } else if (popoverConfiguration.sourceView) {
-            self.realRouteType = realRouteType;
+            self.realRouteType = ZIKViewRouteRealTypePresentAsPopover;
             [ZIKViewRouter AOP_notifyAll_router:self willPerformRouteOnDestination:destination fromSource:source];
             [popover presentPopoverFromRect:popoverConfiguration.sourceRect inView:popoverConfiguration.sourceView permittedArrowDirections:popoverConfiguration.permittedArrowDirections animated:configuration.animated];
         } else {
@@ -707,22 +779,93 @@ static NSMutableArray *g_preparingUIViewRouters;
     }
     
     //iOS7 iPhone
-    UIViewController *wrappedDestination = [self _wrappedDestination:destination];
+    XXViewController *wrappedDestination = [self _wrappedDestination:destination];
     [self beginPerformRoute];
     [destination setZix_routeTypeFromRouter:@(ZIKViewRouteTypePresentAsPopover)];
     self.realRouteType = ZIKViewRouteRealTypePresentModally;
     [source presentViewController:wrappedDestination animated:configuration.animated completion:^{
         [self endPerformRouteWithSuccess];
     }];
+#else
+    XXViewController *wrappedDestination = [self _wrappedDestination:destination];
+    [self beginPerformRoute];
+    [destination setZix_routeTypeFromRouter:@(ZIKViewRouteTypePresentAsPopover)];
+    self.realRouteType = ZIKViewRouteRealTypePresentAsPopover;
+    [source presentViewController:wrappedDestination asPopoverRelativeToRect:popoverConfiguration.sourceRect ofView:popoverConfiguration.sourceView preferredEdge:popoverConfiguration.preferredEdge behavior:popoverConfiguration.behavior];
+    [ZIKViewRouter _completeWithMacTransitionCompletion:^{
+        [self endPerformRouteWithSuccess];
+    }];
+#endif
 }
 
-- (void)_performSegueWithIdentifier:(NSString *)identifier fromSource:(UIViewController *)source sender:(nullable id)sender {
+#if !ZIK_HAS_UIKIT
+- (void)_performPresentAsSheetOnDestination:(XXViewController *)destination fromSource:(XXViewController *)source {
+    NSParameterAssert([destination isKindOfClass:[XXViewController class]]);
+    NSParameterAssert([source isKindOfClass:[XXViewController class]]);
+    if (![[self class] _validateSourceInWindowHierarchy:source]) {
+        [self notifyRouteState:self.preState];
+        [self notifyError_invalidSourceWithAction:ZIKRouteActionPerformRoute
+                                 errorDescription:@"Warning: Attempt to present %@ on %@ whose view is not in the window hierarchy! %@ 's view not in any superview.",destination,source,source];
+        return;
+    }
+    if (source == destination) {
+        [self notifyRouteState:self.preState];
+        [self notifyError_invalidSourceWithAction:ZIKRouteActionPerformRoute
+                                 errorDescription:@"Application tried to present an active controller %@, destination: %@",source, destination];
+        return;
+    }
+    
+    XXViewController *wrappedDestination = [self _wrappedDestination:destination];
+    [self beginPerformRoute];
+    [destination setZix_routeTypeFromRouter:@(ZIKViewRouteTypePresentAsSheet)];
+    self.realRouteType = ZIKViewRouteRealTypePresentAsSheet;
+    [source presentViewControllerAsSheet:wrappedDestination];
+    [ZIKViewRouter _completeWithMacTransitionCompletion:^{
+        [self endPerformRouteWithSuccess];
+    }];
+}
+
+- (void)_performPresentWithAnimatorOnDestination:(XXViewController *)destination fromSource:(XXViewController *)source {
+    NSParameterAssert([destination isKindOfClass:[XXViewController class]]);
+    NSParameterAssert([source isKindOfClass:[XXViewController class]]);
+    if (![[self class] _validateSourceInWindowHierarchy:source]) {
+        [self notifyRouteState:self.preState];
+        [self notifyError_invalidSourceWithAction:ZIKRouteActionPerformRoute
+                                 errorDescription:@"Warning: Attempt to present %@ on %@ whose view is not in the window hierarchy! %@ 's view not in any superview.",destination,source,source];
+        return;
+    }
+    if (source == destination) {
+        [self notifyRouteState:self.preState];
+        [self notifyError_invalidSourceWithAction:ZIKRouteActionPerformRoute
+                                 errorDescription:@"Application tried to present an active controller %@, destination: %@",source, destination];
+        return;
+    }
+    
+    id<NSViewControllerPresentationAnimator> animator = self.original_configuration;
+    if (animator == nil) {
+        [self _performPresentModallyOnDestination:destination fromSource:source];
+        return;
+    }
+    XXViewController *wrappedDestination = [self _wrappedDestination:destination];
+    [self beginPerformRoute];
+    [destination setZix_routeTypeFromRouter:@(ZIKViewRouteTypePresentWithAnimator)];
+    self.realRouteType = ZIKViewRouteRealTypePresentWithAnimator;
+    [source presentViewController:wrappedDestination animator:animator];
+    [ZIKViewRouter _completeWithMacTransitionCompletion:^{
+        [self endPerformRouteWithSuccess];
+    }];
+}
+#endif
+
+- (void)_performSegueWithIdentifier:(NSString *)identifier fromSource:(XXViewController *)source sender:(nullable id)sender {
     
     ZIKViewRouteConfiguration *configuration = self.original_configuration;
     ZIKViewRouteSegueConfiguration *segueConfig = configuration.segueConfiguration;
     segueConfig.segueSource = nil;
     segueConfig.segueDestination = nil;
+#if ZIK_HAS_UIKIT
     segueConfig.destinationStateBeforeRoute = nil;
+#endif
     
     self.routingFromInternal = YES;
     //Set nil in -ZIKViewRouter_hook_prepareForSegue:sender:
@@ -739,7 +882,7 @@ static NSMutableArray *g_preparingUIViewRouters;
      */
     [source performSegueWithIdentifier:identifier sender:sender];
     
-    UIViewController *destination = segueConfig.segueDestination;//segueSource and segueDestination was set in -ZIKViewRouter_hook_prepareForSegue:sender:
+    XXViewController *destination = segueConfig.segueDestination;//segueSource and segueDestination was set in -ZIKViewRouter_hook_prepareForSegue:sender:
     
     /*When perform a unwind segue, if destination's -canPerformUnwindSegueAction:fromViewController:withSender: return NO, here will be nil
      This inspection relies on synchronized call -prepareForSegue:sender: and -canPerformUnwindSegueAction:fromViewController:withSender: in -performSegueWithIdentifier:sender:
@@ -758,19 +901,21 @@ static NSMutableArray *g_preparingUIViewRouters;
         [self _validateDestinationConformance:destination];
     }
 #endif
-    NSParameterAssert([destination isKindOfClass:[UIViewController class]]);
-    NSParameterAssert([source isKindOfClass:[UIViewController class]]);
+    NSParameterAssert([destination isKindOfClass:[XXViewController class]]);
+    NSParameterAssert([source isKindOfClass:[XXViewController class]]);
     NSAssert(![source zix_sourceViewRouter], @"Didn't set sourceViewRouter to nil in -ZIKViewRouter_hook_prepareForSegue:sender:, router will not be dealloced before source was dealloced");
 }
 
-- (void)_performShowOnDestination:(UIViewController *)destination fromSource:(UIViewController *)source {
-    NSParameterAssert([destination isKindOfClass:[UIViewController class]]);
-    NSParameterAssert([source isKindOfClass:[UIViewController class]]);
+- (void)_performShowOnDestination:(XXViewController *)destination fromSource:(XXViewController *)source {
+    NSParameterAssert([destination isKindOfClass:[XXViewController class]]);
+    NSParameterAssert([source isKindOfClass:[XXViewController class]]);
     [destination setZix_routeTypeFromRouter:@(ZIKViewRouteTypeShow)];
-    UIViewController *wrappedDestination = [self _wrappedDestination:destination];
+    XXViewController *wrappedDestination = [self _wrappedDestination:destination];
+#if ZIK_HAS_UIKIT
     ZIKPresentationState *destinationStateBeforeRoute = [destination zix_presentationState];
+#endif
     [self beginPerformRoute];
-    
+#if ZIK_HAS_UIKIT
     [source showViewController:wrappedDestination sender:self.original_configuration.sender];
     
     id<UIViewControllerTransitionCoordinator> transitionCoordinator = [source zix_currentTransitionCoordinator];
@@ -785,13 +930,23 @@ static NSMutableArray *g_preparingUIViewRouters;
                           completion:^{
                               [self endPerformRouteWithSuccess];
                           }];
+#else
+    self.realRouteType = ZIKViewRouteRealTypeShowWindw;
+    NSWindow *window = [NSWindow windowWithContentViewController:wrappedDestination];
+    NSWindowController *windowController = [[NSWindowController alloc] initWithWindow:window];
+    [windowController showWindow:self.original_configuration.sender];
+    [ZIKViewRouter _completeWithMacTransitionCompletion:^{
+        [self endPerformRouteWithSuccess];
+    }];
+#endif
 }
 
-- (void)_performShowDetailOnDestination:(UIViewController *)destination fromSource:(UIViewController *)source {
-    NSParameterAssert([destination isKindOfClass:[UIViewController class]]);
-    NSParameterAssert([source isKindOfClass:[UIViewController class]]);
+#if ZIK_HAS_UIKIT
+- (void)_performShowDetailOnDestination:(XXViewController *)destination fromSource:(XXViewController *)source {
+    NSParameterAssert([destination isKindOfClass:[XXViewController class]]);
+    NSParameterAssert([source isKindOfClass:[XXViewController class]]);
     [destination setZix_routeTypeFromRouter:@(ZIKViewRouteTypeShowDetail)];
-    UIViewController *wrappedDestination = [self _wrappedDestination:destination];
+    XXViewController *wrappedDestination = [self _wrappedDestination:destination];
     ZIKPresentationState *destinationStateBeforeRoute = [destination zix_presentationState];
     [self beginPerformRoute];
     
@@ -810,22 +965,26 @@ static NSMutableArray *g_preparingUIViewRouters;
                               [self endPerformRouteWithSuccess];
                           }];
 }
+#endif
 
-- (void)_performAddChildViewControllerOnDestination:(UIViewController *)destination fromSource:(UIViewController *)source {
-    NSParameterAssert([destination isKindOfClass:[UIViewController class]]);
-    NSParameterAssert([source isKindOfClass:[UIViewController class]]);
-    UIViewController *wrappedDestination = [self _wrappedDestination:destination];
+- (void)_performAddChildViewControllerOnDestination:(XXViewController *)destination fromSource:(XXViewController *)source {
+    NSParameterAssert([destination isKindOfClass:[XXViewController class]]);
+    NSParameterAssert([source isKindOfClass:[XXViewController class]]);
+    XXViewController *wrappedDestination = [self _wrappedDestination:destination];
 //    [self beginPerformRoute];
+    ///Call AOP in -viewWillAppear: and -viewDidAppear:
     self.routingFromInternal = YES;
     [self prepareDestinationForPerforming];
     [destination setZix_routeTypeFromRouter:@(ZIKViewRouteTypeAddAsChildViewController)];
     [source addChildViewController:wrappedDestination];
-    
+    //TODO:Mac
     self.realRouteType = ZIKViewRouteRealTypeUnknown;
-    void(^addingChildViewHandler)(UIViewController *, void(^)(void)) = self.original_configuration.addingChildViewHandler;
+    void(^addingChildViewHandler)(XXViewController *, void(^)(void)) = self.original_configuration.addingChildViewHandler;
     if (addingChildViewHandler) {
         addingChildViewHandler(wrappedDestination, ^{
+#if ZIK_HAS_UIKIT
             [wrappedDestination didMoveToParentViewController:source];
+#endif
             self.realRouteType = ZIKViewRouteRealTypeAddAsChildViewController;
             [self notifyRouteState:ZIKRouterStateRouted];
             self.routingFromInternal = NO;
@@ -839,9 +998,9 @@ static NSMutableArray *g_preparingUIViewRouters;
     [self notifyPerformRouteSuccessWithDestination:destination];
 }
 
-- (void)_performAddSubviewOnDestination:(UIView *)destination fromSource:(UIView *)source {
-    NSParameterAssert([destination isKindOfClass:[UIView class]]);
-    NSParameterAssert([source isKindOfClass:[UIView class]]);
+- (void)_performAddSubviewOnDestination:(XXView *)destination fromSource:(XXView *)source {
+    NSParameterAssert([destination isKindOfClass:[XXView class]]);
+    NSParameterAssert([source isKindOfClass:[XXView class]]);
     [self beginPerformRoute];
     [destination setZix_routeTypeFromRouter:@(ZIKViewRouteTypeAddAsSubview)];
     
@@ -861,9 +1020,11 @@ static NSMutableArray *g_preparingUIViewRouters;
     [destination setZix_routeTypeFromRouter:@(ZIKViewRouteTypeMakeDestination)];
     self.routingFromInternal = YES;
     [self prepareDestinationForPerforming];
+#if ZIK_HAS_UIKIT
     if ([destination respondsToSelector:@selector(zix_presentationState)]) {
         self.stateBeforeRoute = [destination zix_presentationState];
     }
+#endif
     self.realRouteType = ZIKViewRouteRealTypeUnknown;
     [self notifyRouteState:ZIKRouterStateRouted];
     [self notifyPerformRouteSuccessWithDestination:destination];
@@ -878,52 +1039,55 @@ static NSMutableArray *g_preparingUIViewRouters;
     NSAssert(NO, @"Subclass (%@) must override -performCustomRouteOnDestination:fromSource:configuration: to support custom route", [self class]);
 }
 
-- (UIViewController *)_wrappedDestination:(UIViewController *)destination {
+- (XXViewController *)_wrappedDestination:(XXViewController *)destination {
     self.container = nil;
     ZIKViewRouteConfiguration *configuration = self.original_configuration;
     if (!configuration.containerWrapper) {
         return destination;
     }
-    UIViewController<ZIKViewRouteContainer> *container = configuration.containerWrapper(destination);
+    XXViewController<ZIKViewRouteContainer> *container = configuration.containerWrapper(destination);
     
     NSString *errorDescription;
     if (!container) {
         errorDescription = @"container is nil";
-    } else if ([container isKindOfClass:[UINavigationController class]]) {
+    }
+#if ZIK_HAS_UIKIT
+    else if ([container isKindOfClass:[UINavigationController class]]) {
         if (configuration.routeType == ZIKViewRouteTypePush) {
             errorDescription = [NSString stringWithFormat:@"navigationController:(%@) can't be pushed into another navigationController",container];
         } else if (configuration.routeType == ZIKViewRouteTypeShow
-                   && [configuration.source isKindOfClass:[UIViewController class]]
-                   && [(UIViewController *)configuration.source navigationController]) {
+                   && [configuration.source isKindOfClass:[XXViewController class]]
+                   && [(XXViewController *)configuration.source navigationController]) {
             errorDescription = [NSString stringWithFormat:@"navigationController:(%@) can't be pushed into another navigationController",container];
         } else if (configuration.routeType == ZIKViewRouteTypeShowDetail
-                   && [configuration.source isKindOfClass:[UIViewController class]]
-                   && [(UIViewController *)configuration.source splitViewController].isCollapsed &&
-                   [[[(UIViewController *)configuration.source splitViewController].viewControllers firstObject] isKindOfClass:[UINavigationController class]]) {
+                   && [configuration.source isKindOfClass:[XXViewController class]]
+                   && [(XXViewController *)configuration.source splitViewController].isCollapsed &&
+                   [[[(XXViewController *)configuration.source splitViewController].viewControllers firstObject] isKindOfClass:[UINavigationController class]]) {
             errorDescription = [NSString stringWithFormat:@"navigationController:(%@) can't be pushed into another navigationController",container];
         } else if ([[(UINavigationController *)container viewControllers] firstObject] != destination) {
             errorDescription = [NSString stringWithFormat:@"container:(%@) must set destination as root view controller, destination:(%@), container's viewcontrollers:(%@)",container,destination,[(UINavigationController *)container viewControllers]];
         }
-    } else if ([container isKindOfClass:[UITabBarController class]]) {
-        if (![[(UITabBarController *)container viewControllers] containsObject:destination]) {
+    } else if ([container isKindOfClass:[XXTabBarController class]]) {
+        if (![[(XXTabBarController *)container viewControllers] containsObject:destination]) {
             errorDescription = [NSString stringWithFormat:@"container:(%@) must contains destination in it's viewControllers, destination:(%@), container's viewcontrollers:(%@)",container,destination,[(UITabBarController *)container viewControllers]];
         }
-    } else if ([container isKindOfClass:[UISplitViewController class]]) {
+    } else if ([container isKindOfClass:[XXSplitViewController class]]) {
         if (configuration.routeType == ZIKViewRouteTypePush) {
             errorDescription = [NSString stringWithFormat:@"Split View Controllers cannot be pushed to a Navigation Controller %@",destination];
         } else if (configuration.routeType == ZIKViewRouteTypeShow
-                   && [configuration.source isKindOfClass:[UIViewController class]]
-                   && [(UIViewController *)configuration.source navigationController]) {
+                   && [configuration.source isKindOfClass:[XXViewController class]]
+                   && [(XXViewController *)configuration.source navigationController]) {
             errorDescription = [NSString stringWithFormat:@"Split View Controllers cannot be pushed to a Navigation Controller %@",destination];
         } else if (configuration.routeType == ZIKViewRouteTypeShowDetail
-                   && [configuration.source isKindOfClass:[UIViewController class]]
-                   && [(UIViewController *)configuration.source splitViewController].isCollapsed &&
-                   [[[(UIViewController *)configuration.source splitViewController].viewControllers firstObject] isKindOfClass:[UINavigationController class]]) {
+                   && [configuration.source isKindOfClass:[XXViewController class]]
+                   && [(XXViewController *)configuration.source splitViewController].isCollapsed &&
+                   [[[(XXViewController *)configuration.source splitViewController].viewControllers firstObject] isKindOfClass:[UINavigationController class]]) {
             errorDescription = [NSString stringWithFormat:@"Split View Controllers cannot be pushed to a Navigation Controller %@",destination];
-        } else if (![[(UISplitViewController *)container viewControllers] containsObject:destination]) {
+        } else if (![[(XXSplitViewController *)container viewControllers] containsObject:destination]) {
             errorDescription = [NSString stringWithFormat:@"container:(%@) must contains destination in it's viewControllers, destination:(%@), container's viewcontrollers:(%@)",container,destination,[(UITabBarController *)container viewControllers]];
         }
     }
+#endif
     if (errorDescription) {
         [self notifyError_invalidContainerWithAction:ZIKRouteActionPerformRoute errorDescription:@"containerWrapper returns invalid container: %@",errorDescription];
         return destination;
@@ -969,6 +1133,7 @@ static NSMutableArray *g_preparingUIViewRouters;
     [router prepareDestinationForPerforming];
 }
 
+#if ZIK_HAS_UIKIT
 + (void)_completeRouter:(ZIKViewRouter *)router
 analyzeRouteTypeForDestination:(UIViewController *)destination
                    source:(UIViewController *)source
@@ -1006,6 +1171,23 @@ destinationStateBeforeRoute:(ZIKPresentationState *)destinationStateBeforeRoute
         completion();
     }];
 }
+#else
+
++ (void)_completeWithMacTransitionCompletion:(void(^)(void))completion {
+    NSAnimationContext *context = [NSAnimationContext currentContext];
+    if (context == nil) {
+        if (completion) {
+            completion();
+        }
+        return;
+    }
+    context.completionHandler = ^{
+        if (completion) {
+            completion();
+        }
+    };
+}
+#endif
 
 - (void)notifyPerformRouteSuccessWithDestination:(id)destination {
     [super notifySuccessWithAction:ZIKRouteActionPerformRoute];
@@ -1047,6 +1229,7 @@ destinationStateBeforeRoute:(ZIKPresentationState *)destinationStateBeforeRoute
     }
 }
 
+#if ZIK_HAS_UIKIT
 + (ZIKViewRouteRealType)_realRouteTypeFromDetailType:(ZIKViewRouteDetailType)detailType {
     ZIKViewRouteRealType realType;
     switch (detailType) {
@@ -1081,6 +1264,7 @@ destinationStateBeforeRoute:(ZIKPresentationState *)destinationStateBeforeRoute
     }
     return realType;
 }
+#endif
 
 #pragma mark Remove Route
 
@@ -1131,25 +1315,37 @@ destinationStateBeforeRoute:(ZIKPresentationState *)destinationStateBeforeRoute
             return [NSString stringWithFormat:@"Router can't remove, realRouteType is %ld, doesn't support remove, router:%@",(long)realRouteType,self];
             break;
         }
-            
+#if ZIK_HAS_UIKIT
         case ZIKViewRouteRealTypePush: {
             if (![self _canPop]) {
                 return [NSString stringWithFormat:@"Router can't remove, destination doesn't have navigationController when pop, router:%@",self];
             }
             break;
         }
+#endif
             
         case ZIKViewRouteRealTypePresentModally:
-        case ZIKViewRouteRealTypePresentAsPopover: {
+        case ZIKViewRouteRealTypePresentAsPopover:
+#if !ZIK_HAS_UIKIT
+        case ZIKViewRouteRealTypePresentAsSheet:
+        case ZIKViewRouteRealTypePresentWithAnimator:
+#endif
+        {
             if (![self _canDismiss]) {
-                return [NSString stringWithFormat:@"Router can't remove, destination is not presented when dismiss. router:%@",self];
+                return [NSString stringWithFormat:@"Router can't remove, destination is not presented when dismiss. router:%@", self];
             }
             break;
         }
-            
+#if !ZIK_HAS_UIKIT
+        case ZIKViewRouteRealTypeShowWindw:
+            if (![self _canCloseWindow]) {
+                return [NSString stringWithFormat:@"Router can't remove, destination is not in any window, router:%@", self];
+            }
+            break;
+#endif
         case ZIKViewRouteRealTypeAddAsChildViewController: {
             if (![self _canRemoveFromParentViewController]) {
-                return [NSString stringWithFormat:@"Router can't remove, doesn't have parent view controller when remove from parent. router:%@",self];
+                return [NSString stringWithFormat:@"Router can't remove, doesn't have parent view controller when remove from parent. router:%@", self];
             }
             break;
         }
@@ -1164,9 +1360,10 @@ destinationStateBeforeRoute:(ZIKPresentationState *)destinationStateBeforeRoute
     return nil;
 }
 
+#if ZIK_HAS_UIKIT
 - (BOOL)_canPop {
-    UIViewController *destination = self.destination;
-    if ([destination isKindOfClass:[UIViewController class]] == NO) {
+    XXViewController *destination = self.destination;
+    if ([destination isKindOfClass:[XXViewController class]] == NO) {
         return NO;
     }
     if (!destination.navigationController) {
@@ -1174,23 +1371,42 @@ destinationStateBeforeRoute:(ZIKPresentationState *)destinationStateBeforeRoute
     }
     return YES;
 }
+#endif
 
 - (BOOL)_canDismiss {
-    UIViewController *destination = self.destination;
-    if ([destination isKindOfClass:[UIViewController class]] == NO) {
+    XXViewController *destination = self.destination;
+    if ([destination isKindOfClass:[XXViewController class]] == NO) {
         return NO;
     }
+#if ZIK_HAS_UIKIT
     if (!destination.presentingViewController && /*can dismiss destination itself*/
         !destination.presentedViewController /*can dismiss destination's presentedViewController*/
         ) {
         return NO;
     }
+#endif
     return YES;
 }
 
+#if !ZIK_HAS_UIKIT
+- (BOOL)_canCloseWindow {
+    XXViewController *destination = self.destination;
+    if ([destination isKindOfClass:[XXViewController class]] == NO) {
+        return NO;
+    }
+    if (destination.isViewLoaded == NO) {
+        return NO;
+    }
+    if (destination.view.window == nil) {
+        return NO;
+    }
+    return YES;
+}
+#endif
+
 - (BOOL)_canRemoveFromParentViewController {
-    UIViewController *destination = self.destination;
-    if ([destination isKindOfClass:[UIViewController class]] == NO) {
+    XXViewController *destination = self.destination;
+    if ([destination isKindOfClass:[XXViewController class]] == NO) {
         return NO;
     }
     if (!destination.parentViewController) {
@@ -1200,8 +1416,8 @@ destinationStateBeforeRoute:(ZIKPresentationState *)destinationStateBeforeRoute
 }
 
 - (BOOL)_canRemoveFromSuperview {
-    UIView *destination = self.destination;
-    if ([destination isKindOfClass:[UIView class]] == NO) {
+    XXView *destination = self.destination;
+    if ([destination isKindOfClass:[XXView class]] == NO) {
         return NO;
     }
     if (!destination.superview) {
@@ -1233,9 +1449,12 @@ destinationStateBeforeRoute:(ZIKPresentationState *)destinationStateBeforeRoute
     NSString *errorDescription;
     
     switch (realRouteType) {
+            
+#if ZIK_HAS_UIKIT
         case ZIKViewRouteRealTypePush:
             [self _popOnDestination:destination];
             break;
+#endif
             
         case ZIKViewRouteRealTypePresentModally:
             [self _dismissOnDestination:destination];
@@ -1244,7 +1463,16 @@ destinationStateBeforeRoute:(ZIKPresentationState *)destinationStateBeforeRoute
         case ZIKViewRouteRealTypePresentAsPopover:
             [self _dismissPopoverOnDestination:destination];
             break;
+#if !ZIK_HAS_UIKIT
+        case ZIKViewRouteRealTypePresentAsSheet:
+        case ZIKViewRouteRealTypePresentWithAnimator:
+            [self _dismissOnDestination:destination];
+            break;
             
+        case ZIKViewRouteRealTypeShowWindw:
+            [self _closeWindowOnDestination:destination];
+            break;
+#endif
         case ZIKViewRouteRealTypeAddAsChildViewController:
             [self _removeFromParentViewControllerOnDestination:destination];
             break;
@@ -1272,9 +1500,10 @@ destinationStateBeforeRoute:(ZIKPresentationState *)destinationStateBeforeRoute
     }
 }
 
-- (void)_popOnDestination:(UIViewController *)destination {
+#if ZIK_HAS_UIKIT
+- (void)_popOnDestination:(XXViewController *)destination {
     [destination setZix_routeTypeFromRouter:@(ZIKViewRouteTypePush)];
-    UIViewController *source = destination.navigationController.visibleViewController;
+    XXViewController *source = destination.navigationController.visibleViewController;
     [self beginRemoveRouteFromSource:source];
     
     UINavigationController *navigationController;
@@ -1283,7 +1512,7 @@ destinationStateBeforeRoute:(ZIKPresentationState *)destinationStateBeforeRoute
     } else {
         navigationController = destination.navigationController;
     }
-    UIViewController *popTo = (UIViewController *)self.original_configuration.source;
+    XXViewController *popTo = (XXViewController *)self.original_configuration.source;
     
     if ([navigationController.viewControllers containsObject:popTo]) {
         [navigationController popToViewController:popTo animated:self.original_removeConfiguration.animated];
@@ -1296,22 +1525,44 @@ destinationStateBeforeRoute:(ZIKPresentationState *)destinationStateBeforeRoute
         [self endRemoveRouteWithSuccessOnDestination:destination fromSource:source];
     }];
 }
+#endif
 
-- (void)_dismissOnDestination:(UIViewController *)destination {
+- (void)_dismissOnDestination:(XXViewController *)destination {
     [destination setZix_routeTypeFromRouter:@(ZIKViewRouteTypePresentModally)];
-    UIViewController *source = destination.presentingViewController;
+    XXViewController *source = destination.presentingViewController;
     [self beginRemoveRouteFromSource:source];
-    
+#if ZIK_HAS_UIKIT
     [destination dismissViewControllerAnimated:self.original_removeConfiguration.animated completion:^{
         [self endRemoveRouteWithSuccessOnDestination:destination fromSource:source];
     }];
+#else
+    if (@available(macOS 10.10, *)) {
+        [destination dismissController:nil];
+    } else {
+        [destination.view removeFromSuperview];
+    }
+    [ZIKViewRouter _completeWithMacTransitionCompletion:^{
+        [self endRemoveRouteWithSuccessOnDestination:destination fromSource:source];
+    }];
+#endif
 }
 
-- (void)_dismissPopoverOnDestination:(UIViewController *)destination {
+#if !ZIK_HAS_UIKIT
+- (void)_closeWindowOnDestination:(XXViewController *)destination {
+    [self beginRemoveRouteFromSource:nil];
+    [destination.view.window close];
+    [ZIKViewRouter _completeWithMacTransitionCompletion:^{
+        [self endRemoveRouteWithSuccessOnDestination:destination fromSource:nil];
+    }];
+}
+#endif
+
+- (void)_dismissPopoverOnDestination:(XXViewController *)destination {
     [destination setZix_routeTypeFromRouter:@(ZIKViewRouteTypePresentAsPopover)];
-    UIViewController *source = destination.presentingViewController;
+    XXViewController *source = destination.presentingViewController;
     [self beginRemoveRouteFromSource:source];
     
+#if ZIK_HAS_UIKIT
     if (NSClassFromString(@"UIPopoverPresentationController") ||
         [UIDevice currentDevice].userInterfaceIdiom != UIUserInterfaceIdiomPad) {
         [destination dismissViewControllerAnimated:self.original_removeConfiguration.animated completion:^{
@@ -1336,20 +1587,27 @@ destinationStateBeforeRoute:(ZIKPresentationState *)destinationStateBeforeRoute
                                  transitionCompletion:^{
         [self endRemoveRouteWithSuccessOnDestination:destination fromSource:source];
     }];
+#else
+    [destination dismissController:nil];
+    [ZIKViewRouter _completeWithMacTransitionCompletion:^{
+        [self endRemoveRouteWithSuccessOnDestination:destination fromSource:source];
+    }];
+#endif
 }
 
-- (void)_removeFromParentViewControllerOnDestination:(UIViewController *)destination {
+- (void)_removeFromParentViewControllerOnDestination:(XXViewController *)destination {
     [destination setZix_routeTypeFromRouter:@(ZIKViewRouteTypeAddAsChildViewController)];
     
-    UIViewController *wrappedDestination = self.container;
+    XXViewController *wrappedDestination = self.container;
     if (!wrappedDestination) {
         wrappedDestination = destination;
     }
-    UIViewController *source = wrappedDestination.parentViewController;
+    XXViewController *source = wrappedDestination.parentViewController;
     [self beginRemoveRouteFromSource:source];
     
+#if ZIK_HAS_UIKIT
     [wrappedDestination willMoveToParentViewController:nil];
-    
+#endif
     void(^completion)(void) = ^{
         [wrappedDestination removeFromParentViewController];
         [self endRemoveRouteWithSuccessOnDestination:destination fromSource:source];
@@ -1358,9 +1616,11 @@ destinationStateBeforeRoute:(ZIKPresentationState *)destinationStateBeforeRoute
         }
     };
     
-    void(^removingChildViewHandler)(UIViewController *destination, void(^completion)(void)) = self.original_removeConfiguration.removingChildViewHandler;
+    void(^removingChildViewHandler)(XXViewController *destination, void(^completion)(void)) = self.original_removeConfiguration.removingChildViewHandler;
     if (removingChildViewHandler) {
+#if ZIK_HAS_UIKIT
         [wrappedDestination willMoveToParentViewController:nil];
+#endif
         removingChildViewHandler(wrappedDestination, completion);
         return;
     }
@@ -1376,10 +1636,10 @@ destinationStateBeforeRoute:(ZIKPresentationState *)destinationStateBeforeRoute
     }
 }
 
-- (void)_removeFromSuperviewOnDestination:(UIView *)destination {
+- (void)_removeFromSuperviewOnDestination:(XXView *)destination {
     NSAssert(destination.superview, @"Destination doesn't have superview when remove from superview.");
     [destination setZix_routeTypeFromRouter:@(ZIKViewRouteTypeAddAsSubview)];
-    UIView *source = destination.superview;
+    XXView *source = destination.superview;
     [self beginRemoveRouteFromSource:source];
     
     [destination removeFromSuperview];
@@ -1523,9 +1783,12 @@ destinationStateBeforeRoute:(ZIKPresentationState *)destinationStateBeforeRoute
             self.realRouteType = ZIKViewRouteRealTypeAddAsChildViewController;
             return;
         }
-        if (state != ZIKRouterStateRouted ||
-            (self.stateBeforeRoute && configuration.routeType == ZIKViewRouteTypeMakeDestination)
-             ) {
+        if (state != ZIKRouterStateRouted || (
+#if ZIK_HAS_UIKIT
+                self.stateBeforeRoute &&
+#endif
+                configuration.routeType == ZIKViewRouteTypeMakeDestination
+                )) {
             [self notifyRouteState:ZIKRouterStateRouting];//not performed from router (dealed by system, or your code)
             if (configuration.handleExternalRoute) {
                 [self prepareDestinationForPerforming];
@@ -1542,6 +1805,7 @@ destinationStateBeforeRoute:(ZIKPresentationState *)destinationStateBeforeRoute
     if (!self.destination || self.destination != destination) {
         return;
     }
+#if ZIK_HAS_UIKIT
     if (self.stateBeforeRoute &&
         self.original_configuration.routeType == ZIKViewRouteTypeMakeDestination) {
         NSAssert(self.realRouteType == ZIKViewRouteRealTypeUnknown, @"real route type is unknown before destination is real routed");
@@ -1552,6 +1816,7 @@ destinationStateBeforeRoute:(ZIKPresentationState *)destinationStateBeforeRoute
             self.stateBeforeRoute = nil;
         }
     }
+#endif
     if (!self.routingFromInternal &&
         self.state != ZIKRouterStateRouted) {
         [self notifyRouteState:ZIKRouterStateRouted];//not performed from router (dealed by system, or your code)
@@ -1568,9 +1833,11 @@ destinationStateBeforeRoute:(ZIKPresentationState *)destinationStateBeforeRoute
     }
     ZIKRouterState state = self.state;
     if (!self.routingFromInternal && state != ZIKRouterStateRemoving) {
-        if (state != ZIKRouterStateRemoved ||
-            (self.stateBeforeRoute &&
-             self.original_configuration.routeType == ZIKViewRouteTypeMakeDestination)) {
+        if (state != ZIKRouterStateRemoved || (
+#if ZIK_HAS_UIKIT
+                self.stateBeforeRoute &&
+#endif
+                self.original_configuration.routeType == ZIKViewRouteTypeMakeDestination)) {
                 [self notifyRouteState:ZIKRouterStateRemoving];//not performed from router (dealed by system, or your code)
             }
     }
@@ -1584,6 +1851,7 @@ destinationStateBeforeRoute:(ZIKPresentationState *)destinationStateBeforeRoute
     if (!self.destination || self.destination != destination) {
         return;
     }
+#if ZIK_HAS_UIKIT
     if (self.stateBeforeRoute &&
         self.original_configuration.routeType == ZIKViewRouteTypeMakeDestination) {
         NSAssert(self.realRouteType == ZIKViewRouteRealTypeUnknown, @"real route type is unknown before destination is real routed");
@@ -1594,6 +1862,7 @@ destinationStateBeforeRoute:(ZIKPresentationState *)destinationStateBeforeRoute
             self.stateBeforeRoute = nil;
         }
     }
+#endif
     if (!self.routingFromInternal &&
         self.state != ZIKRouterStateRemoved) {
         [self notifyRouteState:ZIKRouterStateRemoved];//not performed from router (dealed by system, or your code)
@@ -1631,29 +1900,26 @@ static  ZIKViewRouterType *_Nullable _routerTypeToRegisteredView(Class viewClass
     return nil;
 }
 
-- (void)ZIKViewRouter_hook_willMoveToParentViewController:(UIViewController *)parent {
+#if ZIK_HAS_UIKIT
+
+- (void)ZIKViewRouter_hook_willMoveToParentViewController:(XXViewController *)parent {
     [self ZIKViewRouter_hook_willMoveToParentViewController:parent];
     if (parent) {
-        [(UIViewController *)self setZix_parentMovingTo:parent];
+        [(XXViewController *)self setZix_parentMovingTo:parent];
     } else {
-        UIViewController *currentParent = [(UIViewController *)self parentViewController];
+        XXViewController *currentParent = [(XXViewController *)self parentViewController];
         NSAssert(currentParent, @"currentParent shouldn't be nil when removing from parent");
-        [(UIViewController *)self setZix_parentRemovingFrom:currentParent];
+        [(XXViewController *)self setZix_parentRemovingFrom:currentParent];
     }
 }
 
-- (void)ZIKViewRouter_hook_didMoveToParentViewController:(UIViewController *)parent {
+- (void)ZIKViewRouter_hook_didMoveToParentViewController:(XXViewController *)parent {
     [self ZIKViewRouter_hook_didMoveToParentViewController:parent];
     if (parent) {
-//        NSAssert([(UIViewController *)self zix_parentMovingTo] ||
-//                 [(UIViewController *)self zix_isRootViewControllerInContainer], @"parentMovingTo should be set in -ZIKViewRouter_hook_willMoveToParentViewController:. But if a container is from storyboard, it's not created with initWithRootViewController:, so rootViewController may won't call willMoveToParentViewController: before didMoveToParentViewController:.");
-        
-        [(UIViewController *)self setZix_parentMovingTo:nil];
+        [(XXViewController *)self setZix_parentMovingTo:nil];
     } else {
-        //If you do removeFromSuperview before removeFromParentViewController, -didMoveToParentViewController:nil in child view controller may be called twice.
-        //        NSAssert([(UIViewController *)self zix_parentRemovingFrom], @"RemovingFrom should be set in -ZIKViewRouter_hook_willMoveToParentViewController.");
-        
-        [(UIViewController *)self setZix_parentRemovingFrom:nil];
+        //If you do removeFromSuperview before removeFromParentViewController, -didMoveToParentViewController:nil in child view controller may be called twice.        
+        [(XXViewController *)self setZix_parentRemovingFrom:nil];
     }
 }
 
@@ -1815,6 +2081,185 @@ static  ZIKViewRouterType *_Nullable _routerTypeToRegisteredView(Class viewClass
     [self ZIKViewRouter_hook_viewDidDisappear:animated];
 }
 
+#else
+
+// Transition methods for Mac OS
+
+- (void)ZIKViewRouter_hook_presentViewController:(NSViewController *)viewController animator:(id <NSViewControllerPresentationAnimator>)animator {
+    ZIKRouter_replaceMethodWithMethod([animator class], @selector(animatePresentationOfViewController:fromViewController:), [ZIKViewRouter class], @selector(ZIKViewRouter_hook_animatePresentationOfViewController:fromViewController:));
+    ZIKRouter_replaceMethodWithMethod([animator class], @selector(animateDismissalOfViewController:fromViewController:), [ZIKViewRouter class], @selector(ZIKViewRouter_hook_animateDismissalOfViewController:fromViewController:));
+    [self ZIKViewRouter_hook_presentViewController:viewController animator:animator];
+}
+
+- (void)ZIKViewRouter_hook_animatePresentationOfViewController:(NSViewController *)viewController fromViewController:(NSViewController *)fromViewController {
+    [viewController setZix_parentMovingTo:fromViewController];
+    [self ZIKViewRouter_hook_animatePresentationOfViewController:viewController fromViewController:fromViewController];
+}
+- (void)ZIKViewRouter_hook_animateDismissalOfViewController:(NSViewController *)viewController fromViewController:(NSViewController *)fromViewController {
+    [viewController setZix_parentRemovingFrom:fromViewController];
+    [self ZIKViewRouter_hook_animateDismissalOfViewController:viewController fromViewController:fromViewController];
+}
+
+- (void)ZIKViewRouter_hook_setContentViewController:(NSViewController *)contentViewController {
+    if (contentViewController) {
+        NSWindow *window = (NSWindow *)self;
+        id parent = window.windowController;
+        if (parent == nil) {
+            parent = window;
+        }
+        if (contentViewController.zix_parentMovingTo == nil) {
+            [contentViewController setZix_parentMovingTo:parent];
+        }
+    }
+    [self ZIKViewRouter_hook_setContentViewController:contentViewController];
+}
+
++ (void)handleWindowWillCloseNotification:(NSNotification *)notification {
+    NSWindow *window = (NSWindow *)notification.object;
+    NSViewController *contentViewController = window.contentViewController;
+    if (contentViewController == nil) {
+        return;
+    }
+    id parent = window.windowController;
+    if (parent == nil) {
+        parent = window;
+    }
+    if (contentViewController.zix_parentRemovingFrom == nil) {
+        [contentViewController setZix_parentRemovingFrom:parent];
+    }
+}
+
+- (void)ZIKViewRouter_hook_viewWillAppear {
+    XXViewController *destination = (XXViewController *)self;
+    BOOL removing = destination.zix_removing;
+    BOOL isRoutableView = ([self conformsToProtocol:@protocol(ZIKRoutableView)] == YES);
+    if (removing) {
+        [destination setZix_removing:NO];
+        if (isRoutableView) {
+            [[NSNotificationCenter defaultCenter] postNotificationName:kZIKViewRouteRemoveRouteCancelledNotification object:destination];
+        }
+    }
+    if (isRoutableView) {
+        BOOL routed = [(XXViewController *)self zix_routed];
+        if (!routed) {
+            id parentMovingTo = [(XXViewController *)self zix_parentMovingTo];
+            [[NSNotificationCenter defaultCenter] postNotificationName:kZIKViewRouteWillPerformRouteNotification object:destination];
+            NSNumber *routeTypeFromRouter = [destination zix_routeTypeFromRouter];
+            if (!routeTypeFromRouter ||
+                [routeTypeFromRouter integerValue] == ZIKViewRouteTypeMakeDestination ||
+                [routeTypeFromRouter integerValue] == ZIKViewRouteTypeAddAsChildViewController) {
+                id source = parentMovingTo;
+                [ZIKViewRouter AOP_notifyAll_router:nil willPerformRouteOnDestination:destination fromSource:source];
+            }
+        }
+    }
+    
+    [self ZIKViewRouter_hook_viewWillAppear];
+}
+
+- (void)ZIKViewRouter_hook_viewDidAppear {
+    BOOL routed = [(XXViewController *)self zix_routed];
+    id parentMovingTo = [(XXViewController *)self zix_parentMovingTo];
+    if (!routed &&
+        [self conformsToProtocol:@protocol(ZIKRoutableView)]) {
+        XXViewController *destination = (XXViewController *)self;
+        [[NSNotificationCenter defaultCenter] postNotificationName:kZIKViewRouteDidPerformRouteNotification object:destination];
+        NSNumber *routeTypeFromRouter = [destination zix_routeTypeFromRouter];//This destination is routing from router
+        if (!routeTypeFromRouter ||
+            [routeTypeFromRouter integerValue] == ZIKViewRouteTypeMakeDestination ||
+            [routeTypeFromRouter integerValue] == ZIKViewRouteTypeAddAsChildViewController) {
+            id source = parentMovingTo;
+            [ZIKViewRouter AOP_notifyAll_router:nil didPerformRouteOnDestination:destination fromSource:source];
+        }
+        if (routeTypeFromRouter) {
+            [destination setZix_routeTypeFromRouter:nil];
+        }
+    }
+    
+    [self ZIKViewRouter_hook_viewDidAppear];
+    if (!routed) {
+        [(XXViewController *)self setZix_parentMovingTo:nil];
+        [(XXViewController *)self setZix_routed:YES];
+    }
+}
+
+- (void)ZIKViewRouter_hook_viewWillDisappear {
+    XXViewController *destination = (XXViewController *)self;
+    if (destination.zix_removing == NO) {
+        XXViewController *node = destination;
+        while (node) {
+            id parentRemovingFrom = node.zix_parentRemovingFrom;
+            id source;
+            if (parentRemovingFrom ||
+                (!node.parentViewController && ![node zix_isAppRootViewController])) {
+                source = parentRemovingFrom;
+            } else {
+                node = node.parentViewController;
+                continue;
+            }
+            if ([self conformsToProtocol:@protocol(ZIKRoutableView)]) {
+                [[NSNotificationCenter defaultCenter] postNotificationName:kZIKViewRouteWillRemoveRouteNotification object:destination];
+                NSNumber *routeTypeFromRouter = [destination zix_routeTypeFromRouter];
+                if (!routeTypeFromRouter ||
+                    [routeTypeFromRouter integerValue] == ZIKViewRouteTypeMakeDestination) {
+                    [ZIKViewRouter AOP_notifyAll_router:nil willRemoveRouteOnDestination:destination fromSource:source];
+                }
+            }
+            [destination setZix_parentRemovingFrom:source];
+            [destination setZix_removing:YES];
+            break;
+        }
+    }
+    
+    [self ZIKViewRouter_hook_viewWillDisappear];
+}
+
+- (void)ZIKViewRouter_hook_viewDidDisappear {
+    XXViewController *destination = (XXViewController *)self;
+    BOOL removing = destination.zix_removing;
+    if ([self conformsToProtocol:@protocol(ZIKRoutableView)]) {
+        if (removing) {
+            id source = destination.zix_parentRemovingFrom;
+            [[NSNotificationCenter defaultCenter] postNotificationName:kZIKViewRouteDidRemoveRouteNotification object:destination];
+            NSNumber *routeTypeFromRouter = [destination zix_routeTypeFromRouter];
+            if (!routeTypeFromRouter ||
+                [routeTypeFromRouter integerValue] == ZIKViewRouteTypeMakeDestination) {
+                [ZIKViewRouter AOP_notifyAll_router:nil didRemoveRouteOnDestination:destination fromSource:source];
+            }
+            if (routeTypeFromRouter) {
+                [destination setZix_routeTypeFromRouter:nil];
+            }
+        }
+    }
+    if (removing) {
+        [destination setZix_parentRemovingFrom:nil];
+        [destination setZix_removing:NO];
+        [destination setZix_routed:NO];
+    } else if (ZIKRouter_classIsCustomClass([destination class])) {
+        //Check unbalanced calls to begin/end appearance transitions
+        XXViewController *node = destination;
+        while (node) {
+            id parentRemovingFrom = node.zix_parentRemovingFrom;
+            id source;
+            if (parentRemovingFrom ||
+                (!node.parentViewController && ![node zix_isAppRootViewController])) {
+                source = parentRemovingFrom;
+            } else {
+                node = node.parentViewController;
+                continue;
+            }
+            
+            [destination setZix_parentRemovingFrom:source];
+            [ZIKViewRouter notifyGlobalErrorWithRouter:nil action:ZIKRouteActionPerformRoute error:[ZIKViewRouter errorWithCode:ZIKViewRouteErrorUnbalancedTransition localizedDescriptionFormat:@"Unbalanced calls to begin/end appearance transitions for %@. This error occurs when you try and display a view controller before the current view controller is finished displaying. This may cause the UIViewController skips or messes up the order calling -viewWillAppear:, -viewDidAppear:, -viewWillDisAppear: and -viewDidDisappear:, and messes up the route state. Current error reason is already removed destination but destination appears again before -viewDidDisappear:, callStack:%@",self,[NSThread callStackSymbols]]];
+            break;
+        }
+    }
+    
+    [self ZIKViewRouter_hook_viewDidDisappear];
+}
+
+#endif
+
 /**
  Note: in -viewWillAppear:, if the view controller contains sub routable UIView added from external (addSubview:, storyboard or xib), the subview may not be ready yet. The UIView has to search the performer with -nextResponder to prepare itself, nextResponder can only be gained after -viewDidLoad or -willMoveToWindow:. But -willMoveToWindow: may not be called yet in -viewWillAppear:. If the subview is not ready, config the subview in -handleViewReady may fail.
  So we have to make sure routable UIView is prepared before -viewDidLoad if it's added to the superview when superview is not on screen yet.
@@ -1824,13 +2269,13 @@ static  ZIKViewRouterType *_Nullable _routerTypeToRegisteredView(Class viewClass
     [self ZIKViewRouter_hook_viewDidLoad];
     
     //Find performer and prepare for destination added to a superview not on screen in -ZIKViewRouter_hook_willMoveToSuperview
-    NSMutableArray *preparingRouters = g_preparingUIViewRouters;
+    NSMutableArray *preparingRouters = g_preparingXXViewRouters;
     
     NSMutableArray *preparedRouters;
     if (preparingRouters.count > 0) {
         for (ZIKViewRouter *router in preparingRouters) {
-            UIView *destination = router.destination;
-            NSAssert([destination isKindOfClass:[UIView class]], @"Only UIView destination need fix.");
+            XXView *destination = router.destination;
+            NSAssert([destination isKindOfClass:[XXView class]], @"Only UIView destination need fix.");
             id performer = [destination zix_routePerformer];
             if (performer) {
                 [ZIKViewRouter _prepareDestinationFromExternal:destination router:router performer:performer];
@@ -1960,23 +2405,23 @@ static  ZIKViewRouterType *_Nullable _routerTypeToRegisteredView(Class viewClass
  7.didMoveToSuperview
  */
 
-- (void)ZIKViewRouter_hook_willMoveToSuperview:(nullable UIView *)newSuperview {
-    UIView *destination = (UIView *)self;
+- (void)ZIKViewRouter_hook_willMoveToSuperview:(nullable XXView *)newSuperview {
+    XXView *destination = (XXView *)self;
     if ([self conformsToProtocol:@protocol(ZIKRoutableView)]) {
         if (!newSuperview) {
             //Removing from superview
             ZIKViewRouter *destinationRouter = [destination zix_destinationViewRouter];
             if (destinationRouter) {
                 //This is routing from router
-                if ([g_preparingUIViewRouters containsObject:destinationRouter]) {
+                if ([g_preparingXXViewRouters containsObject:destinationRouter]) {
                     //Didn't find the performer of UIView until it's removing from superview, maybe it's superview was never added to any view controller
-                    [g_preparingUIViewRouters removeObject:destinationRouter];
+                    [g_preparingXXViewRouters removeObject:destinationRouter];
                     NSString *description = [NSString stringWithFormat:@"Didn't fine the performer of UIView until it's removing from superview, maybe it's superview was never added to any view controller. Can't find which custom UIView or UIViewController added destination:(%@) as subview, so we can't notify the performer to config the destination. You may add destination to a UIWindow in code directly, and the UIWindow is not a custom class. Please change your code and add subview by a custom view router with ZIKViewRouteTypeAddAsSubview. Destination superview: (%@).",destination, newSuperview];
                     [destinationRouter endPerformRouteWithError:[ZIKViewRouter errorWithCode:ZIKViewRouteErrorInvalidPerformer localizedDescription:description]];
                 }
                 //Destination don't need prepare, but it's superview never be added to a view controller, so destination is never on a window
                 if (destinationRouter.state == ZIKRouterStateRouting &&
-                    ![destination zix_firstAvailableUIViewController]) {
+                    ![destination zix_firstAvailableViewController]) {
                     //end perform
                     [ZIKViewRouter AOP_notifyAll_router:destinationRouter willPerformRouteOnDestination:destination fromSource:destination.superview];
                     [destinationRouter endPerformRouteWithSuccess];
@@ -1997,7 +2442,7 @@ static  ZIKViewRouterType *_Nullable _routerTypeToRegisteredView(Class viewClass
                 //Not routing from router
                 ZIKViewRouterType *route = _routerTypeToRegisteredView([destination class]);
                 if (route) {
-                    NSAssert([route _validateSupportedRouteTypesForUIView], @"Router for UIView only suppourts ZIKViewRouteTypeAddAsSubview, ZIKViewRouteTypeMakeDestination and ZIKViewRouteTypeCustom, override +supportedRouteTypes in your router.");
+                    NSAssert([route _validateSupportedRouteTypesForXXView], @"Router for UIView only suppourts ZIKViewRouteTypeAddAsSubview, ZIKViewRouteTypeMakeDestination and ZIKViewRouteTypeCustom, override +supportedRouteTypes in your router.");
                     ZIKViewRouter *destinationRouter = [route routerFromView:destination source:newSuperview];
                     destinationRouter.routingFromInternal = YES;
                     [destinationRouter notifyRouteState:ZIKRouterStateRouting];
@@ -2013,7 +2458,7 @@ static  ZIKViewRouterType *_Nullable _routerTypeToRegisteredView(Class viewClass
                             performer = [newSuperview zix_routePerformer];
                         }
                         //Adding to a superview on screen.
-                        if (!performer && (newSuperview.window || [newSuperview isKindOfClass:[UIWindow class]])) {
+                        if (!performer && (newSuperview.window || [newSuperview isKindOfClass:[XXWindow class]])) {
                             NSString *description = [NSString stringWithFormat:@"Adding to a superview on screen. Can't find which custom UIView or UIViewController added destination:(%@) as subview, so we can't notify the performer to config the destination. You may add destination to a UIWindow in code directly. Please fix your code and add subview by a custom view router with ZIKViewRouteTypeAddAsSubview. Destination superview: (%@).",destination, newSuperview];
                             [ZIKViewRouter notifyError_invalidPerformerWithAction:ZIKRouteActionPerformRoute errorDescription:description];
                         }
@@ -2023,11 +2468,11 @@ static  ZIKViewRouterType *_Nullable _routerTypeToRegisteredView(Class viewClass
                             [ZIKViewRouter _prepareDestinationFromExternal:destination router:destinationRouter performer:performer];
                             destinationRouter.prepared = YES;
                         } else {
-                            if (!newSuperview.window && ![newSuperview isKindOfClass:[UIWindow class]]) {
+                            if (!newSuperview.window && ![newSuperview isKindOfClass:[XXWindow class]]) {
                                 //Adding to a superview not on screen, can't search performer before -viewDidLoad. willMoveToSuperview: is called before willMoveToWindow:. Find performer and prepare in -ZIKViewRouter_hook_viewDidLoad, do willPerformRoute AOP in -ZIKViewRouter_hook_willMoveToWindow:
-                                [g_preparingUIViewRouters addObject:destinationRouter];
+                                [g_preparingXXViewRouters addObject:destinationRouter];
                             }
-                            NSAssert1(!newSuperview.window && ![newSuperview isKindOfClass:[UIWindow class]], @"When new superview is already on screen, performer should not be nil.You may add destination to a system UIViewController in code directly. Please fix your code and add subview by a custom view router with ZIKViewRouteTypeAddAsSubview. Destination superview: (%@).",newSuperview);
+                            NSAssert1(!newSuperview.window && ![newSuperview isKindOfClass:[XXWindow class]], @"When new superview is already on screen, performer should not be nil.You may add destination to a system UIViewController in code directly. Please fix your code and add subview by a custom view router with ZIKViewRouteTypeAddAsSubview. Destination superview: (%@).",newSuperview);
                         }
                     } else {
                         [destinationRouter prepareDestination:destination configuration:destinationRouter.original_configuration];
@@ -2038,7 +2483,7 @@ static  ZIKViewRouterType *_Nullable _routerTypeToRegisteredView(Class viewClass
                 }
                 
                 //Adding to a superview on screen.
-                if (newSuperview.window || [newSuperview isKindOfClass:[UIWindow class]]) {
+                if (newSuperview.window || [newSuperview isKindOfClass:[XXWindow class]]) {
                     [[NSNotificationCenter defaultCenter] postNotificationName:kZIKViewRouteWillPerformRouteNotification object:destination];
                     NSNumber *routeTypeFromRouter = [destination zix_routeTypeFromRouter];
                     if (!routeTypeFromRouter ||
@@ -2057,8 +2502,8 @@ static  ZIKViewRouterType *_Nullable _routerTypeToRegisteredView(Class viewClass
 }
 
 - (void)ZIKViewRouter_hook_didMoveToSuperview {
-    UIView *destination = (UIView *)self;
-    UIView *superview = destination.superview;
+    XXView *destination = (XXView *)self;
+    XXView *superview = destination.superview;
     if ([self conformsToProtocol:@protocol(ZIKRoutableView)]) {
         if (!superview) {
             [[NSNotificationCenter defaultCenter] postNotificationName:kZIKViewRouteDidRemoveRouteNotification object:destination];
@@ -2076,22 +2521,22 @@ static  ZIKViewRouterType *_Nullable _routerTypeToRegisteredView(Class viewClass
     [self ZIKViewRouter_hook_didMoveToSuperview];
 }
 
-- (void)ZIKViewRouter_hook_willMoveToWindow:(nullable UIWindow *)newWindow {
-    UIView *destination = (UIView *)self;
+- (void)ZIKViewRouter_hook_willMoveToWindow:(nullable XXWindow *)newWindow {
+    XXView *destination = (XXView *)self;
     BOOL routed = destination.zix_routed;
     if ([self conformsToProtocol:@protocol(ZIKRoutableView)]) {
         if (!routed) {
             ZIKViewRouter *router;
-            UIView *source;
+            XXView *source;
             NSNumber *routeTypeFromRouter = [destination zix_routeTypeFromRouter];
             BOOL searchPerformerInDidMoveToWindow = NO;
             if (!routeTypeFromRouter) {
                 ZIKViewRouter *destinationRouter = [destination zix_destinationViewRouter];
                 NSString *failedToPrepareDescription;
                 if (destinationRouter) {
-                    if ([g_preparingUIViewRouters containsObject:destinationRouter]) {
+                    if ([g_preparingXXViewRouters containsObject:destinationRouter]) {
                         //Didn't fine the performer of UIView route  before it's displayed on screen. But maybe can find in -didMoveToWindow.
-                        [g_preparingUIViewRouters removeObject:destinationRouter];
+                        [g_preparingXXViewRouters removeObject:destinationRouter];
                         failedToPrepareDescription = [NSString stringWithFormat:@"Didn't fine the performer of UIView route before it's displayed on screen. Can't find which custom UIView or UIViewController added destination:(%@) as subview, so we can't notify the performer to config the destination. You may add destination to a UIWindow in code directly, and the UIWindow is not a custom class. Please change your code and add subview by a custom view router with ZIKViewRouteTypeAddAsSubview. Destination superview: %@.",destination, destination.superview];
                     }
                 }
@@ -2100,7 +2545,7 @@ static  ZIKViewRouterType *_Nullable _routerTypeToRegisteredView(Class viewClass
                 if (destination.superview) {
                     ZIKViewRouterType *route = _routerTypeToRegisteredView([destination class]);
                     if (route) {
-                        NSAssert([route _validateSupportedRouteTypesForUIView], @"Router for UIView only suppourts ZIKViewRouteTypeAddAsSubview, ZIKViewRouteTypeMakeDestination and ZIKViewRouteTypeCustom, override +supportedRouteTypes in your router.");
+                        NSAssert([route _validateSupportedRouteTypesForXXView], @"Router for UIView only suppourts ZIKViewRouteTypeAddAsSubview, ZIKViewRouteTypeMakeDestination and ZIKViewRouteTypeCustom, override +supportedRouteTypes in your router.");
                         
                         source = destination.superview;
                         
@@ -2117,7 +2562,7 @@ static  ZIKViewRouterType *_Nullable _routerTypeToRegisteredView(Class viewClass
                             BOOL onScreen = NO;
                             if (![destinationRouter destinationFromExternalPrepared:destination]) {
                                 needPrepare = YES;
-                                onScreen = ([destination zix_firstAvailableUIViewController] != nil);
+                                onScreen = ([destination zix_firstAvailableViewController] != nil);
                                 
                                 if (onScreen) {
                                     performer = [destination zix_routePerformer];
@@ -2145,7 +2590,7 @@ static  ZIKViewRouterType *_Nullable _routerTypeToRegisteredView(Class viewClass
                                 }
                             } else {
                                 searchPerformerInDidMoveToWindow = YES;
-                                [g_preparingUIViewRouters addObject:destinationRouter];
+                                [g_preparingXXViewRouters addObject:destinationRouter];
                             }
                         }
                         
@@ -2169,9 +2614,9 @@ static  ZIKViewRouterType *_Nullable _routerTypeToRegisteredView(Class viewClass
 }
 
 - (void)ZIKViewRouter_hook_didMoveToWindow {
-    UIView *destination = (UIView *)self;
-    UIWindow *window = destination.window;
-    UIView *superview = destination.superview;
+    XXView *destination = (XXView *)self;
+    XXWindow *window = destination.window;
+    XXView *superview = destination.superview;
     BOOL routed = destination.zix_routed;
     if ([self conformsToProtocol:@protocol(ZIKRoutableView)]) {
         if (!routed) {
@@ -2183,9 +2628,9 @@ static  ZIKViewRouterType *_Nullable _routerTypeToRegisteredView(Class viewClass
                 router = destinationRouter;
                 
                 //Find performer and prepare for destination added to a superview not on screen in -ZIKViewRouter_hook_willMoveToSuperview
-                if (g_preparingUIViewRouters.count > 0) {
-                    if ([g_preparingUIViewRouters containsObject:destinationRouter]) {
-                        [g_preparingUIViewRouters removeObject:destinationRouter];
+                if (g_preparingXXViewRouters.count > 0) {
+                    if ([g_preparingXXViewRouters containsObject:destinationRouter]) {
+                        [g_preparingXXViewRouters removeObject:destinationRouter];
                         id performer = [destination zix_routePerformer];
                         if (performer) {
                             [ZIKViewRouter _prepareDestinationFromExternal:destination router:destinationRouter performer:performer];
@@ -2229,21 +2674,26 @@ static  ZIKViewRouterType *_Nullable _routerTypeToRegisteredView(Class viewClass
 }
 
 ///Auto prepare storyboard's routable initial view controller or it's routable child view controllers
-- (nullable __kindof UIViewController *)ZIKViewRouter_hook_instantiateInitialViewController {
-    UIViewController *initialViewController = [self ZIKViewRouter_hook_instantiateInitialViewController];
-    
-    NSMutableArray<UIViewController *> *routableViews;
-    if ([initialViewController conformsToProtocol:@protocol(ZIKRoutableView)]) {
-        routableViews = [NSMutableArray arrayWithObject:initialViewController];
+- (nullable __kindof XXViewController *)ZIKViewRouter_hook_instantiateInitialViewController {
+    id initialViewController = [self ZIKViewRouter_hook_instantiateInitialViewController];
+    XXViewController *parentViewController = initialViewController;
+    NSMutableArray<XXViewController *> *routableViews;
+#if !ZIK_HAS_UIKIT
+    if ([parentViewController isKindOfClass:[NSWindowController class]]) {
+        parentViewController = [(NSWindowController *)parentViewController contentViewController];
     }
-    NSArray<UIViewController *> *childViews = [ZIKViewRouter routableViewsInContainerViewController:initialViewController];
+#endif
+    if ([parentViewController conformsToProtocol:@protocol(ZIKRoutableView)]) {
+        routableViews = [NSMutableArray arrayWithObject:parentViewController];
+    }
+    NSArray<XXViewController *> *childViews = [ZIKViewRouter routableViewsInContainerViewController:parentViewController];
     if (childViews.count > 0) {
         if (routableViews == nil) {
             routableViews = [NSMutableArray array];
         }
         [routableViews addObjectsFromArray:childViews];
     }
-    for (UIViewController *destination in routableViews) {
+    for (XXViewController *destination in routableViews) {
         ZIKViewRouterType *route = _routerTypeToRegisteredView([destination class]);
         if (route) {
             [route prepareDestination:destination configuring:^(ZIKViewRouteConfiguration * _Nonnull config) {
@@ -2254,7 +2704,7 @@ static  ZIKViewRouterType *_Nullable _routerTypeToRegisteredView(Class viewClass
     return initialViewController;
 }
 
-- (void)ZIKViewRouter_hook_prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender {
+- (void)ZIKViewRouter_hook_prepareForSegue:(XXStoryboardSegue *)segue sender:(id)sender {
     /**
      We hooked every UIViewController and subclasses in +load, because a vc may override -prepareForSegue:sender: and not call [super prepareForSegue:sender:].
      If subclass vc call [super prepareForSegue:sender:] in it's -prepareForSegue:sender:, because it's superclass's -prepareForSegue:sender: was alse hooked, we will enter -ZIKViewRouter_hook_prepareForSegue:sender: for superclass. But we can't invoke superclass's original implementation by [self ZIKViewRouter_hook_prepareForSegue:sender:], it will call current class's original implementation, then there is an endless loop.
@@ -2262,23 +2712,23 @@ static  ZIKViewRouterType *_Nullable _routerTypeToRegisteredView(Class viewClass
      
      Something else: this solution relies on correct use of [super prepareForSegue:sender:]. Every time -prepareForSegue:sender: was invoked, the 'currentClassCalling' will be updated as 'currentClassCalling = [currentClassCalling superclass]'.So these codes will lead to bug:
      1.
-     - (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender {
+     - (void)prepareForSegue:(XXStoryboardSegue *)segue sender:(id)sender {
          [super prepareForSegue:segue sender:sender];
          [super prepareForSegue:segue sender:sender];
      }
      2.
-     - (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender {
+     - (void)prepareForSegue:(XXStoryboardSegue *)segue sender:(id)sender {
          dispatch_async(dispatch_get_main_queue(), ^{
              [super prepareForSegue:segue sender:sender];
          });
      }
      These bad implementations should never exist in your code, so we ignore these situations.
      */
-    Class currentClassCalling = [(UIViewController *)self zix_currentClassCallingPrepareForSegue];
+    Class currentClassCalling = [(XXViewController *)self zix_currentClassCallingPrepareForSegue];
     if (!currentClassCalling) {
         currentClassCalling = [self class];
     }
-    [(UIViewController *)self setZix_currentClassCallingPrepareForSegue:[currentClassCalling superclass]];
+    [(XXViewController *)self setZix_currentClassCallingPrepareForSegue:[currentClassCalling superclass]];
     
     if (currentClassCalling != [self class]) {
         //Call [super prepareForSegue:segue sender:sender]
@@ -2286,13 +2736,13 @@ static  ZIKViewRouterType *_Nullable _routerTypeToRegisteredView(Class viewClass
         IMP superImp = method_getImplementation(superMethod);
         NSAssert(superMethod && superImp, @"ZIKViewRouter_hook_prepareForSegue:sender: should exist in super");
         if (superImp) {
-            ((void(*)(id, SEL, UIStoryboardSegue *, id))superImp)(self, @selector(prepareForSegue:sender:), segue, sender);
+            ((void(*)(id, SEL, XXStoryboardSegue *, id))superImp)(self, @selector(prepareForSegue:sender:), segue, sender);
         }
         return;
     }
-    
-    UIViewController *source = segue.sourceViewController;
-    UIViewController *destination = segue.destinationViewController;
+#if ZIK_HAS_UIKIT
+    XXViewController *source = segue.sourceViewController;
+    XXViewController *destination = segue.destinationViewController;
     
     BOOL isUnwindSegue = YES;
     if (![destination isViewLoaded] ||
@@ -2300,9 +2750,14 @@ static  ZIKViewRouterType *_Nullable _routerTypeToRegisteredView(Class viewClass
          !destination.presentingViewController)) {
             isUnwindSegue = NO;
         }
+#else
+    BOOL isUnwindSegue = NO;
+    id source = segue.sourceController;
+    id destination = segue.destinationController;
+#endif
     
     //The router performing route for this view controller
-    ZIKViewRouter *sourceRouter = [(UIViewController *)self zix_sourceViewRouter];
+    ZIKViewRouter *sourceRouter = [(XXViewController *)self zix_sourceViewRouter];
     if (sourceRouter) {
         //This segue is performed from router, see -_performSegueWithIdentifier:fromSource:sender:
         ZIKViewRouteSegueConfiguration *configuration = [(ZIKViewRouteConfiguration *)sourceRouter.original_configuration segueConfiguration];
@@ -2311,32 +2766,41 @@ static  ZIKViewRouterType *_Nullable _routerTypeToRegisteredView(Class viewClass
             [sourceRouter attachDestination:destination];
             configuration.segueSource = source;
             configuration.segueDestination = destination;
+#if ZIK_HAS_UIKIT
             configuration.destinationStateBeforeRoute = [destination zix_presentationState];
             if (isUnwindSegue) {
                 sourceRouter.realRouteType = ZIKViewRouteRealTypeUnwind;
             }
+#endif
         }
         
-        [(UIViewController *)self setZix_sourceViewRouter:nil];
+        [(XXViewController *)self setZix_sourceViewRouter:nil];
         [source setZix_sourceViewRouter:sourceRouter];//Set nil in -ZIKViewRouter_hook_seguePerform
     }
     
     //The sourceRouter and routers for child view controllers conform to ZIKRoutableView in destination
     NSMutableArray<ZIKViewRouter *> *destinationRouters;
-    NSMutableArray<UIViewController *> *routableViews;
+    NSMutableArray<XXViewController *> *routableViews;
     
     if (!isUnwindSegue) {
         destinationRouters = [NSMutableArray array];
-        if ([destination conformsToProtocol:@protocol(ZIKRoutableView)]) {//if destination is ZIKRoutableView, create router for it
-            if (sourceRouter && [(ZIKViewRouteConfiguration *)sourceRouter.original_configuration segueConfiguration].segueDestination == destination) {
+        XXViewController *parentViewController = destination;
+#if !ZIK_HAS_UIKIT
+        //NSWindowController is not supported by ZIKViewRouter
+        if ([parentViewController isKindOfClass:[NSWindowController class]]) {
+            parentViewController = [(NSWindowController *)parentViewController contentViewController];
+        }
+#endif
+        if ([parentViewController conformsToProtocol:@protocol(ZIKRoutableView)]) {//if destination is ZIKRoutableView, create router for it
+            if (sourceRouter && [(ZIKViewRouteConfiguration *)sourceRouter.original_configuration segueConfiguration].segueDestination == parentViewController) {
                 [destinationRouters addObject:sourceRouter];//If this segue is performed from router, don't auto create router again
             } else {
                 routableViews = [NSMutableArray array];
-                [routableViews addObject:destination];
+                [routableViews addObject:parentViewController];
             }
         }
-        
-        NSArray<UIViewController *> *subRoutableViews = [ZIKViewRouter routableViewsInContainerViewController:destination];//Search child view controllers conform to ZIKRoutableView in destination
+
+        NSArray<XXViewController *> *subRoutableViews = [ZIKViewRouter routableViewsInContainerViewController:parentViewController];//Search child view controllers conform to ZIKRoutableView in destination
         if (subRoutableViews.count > 0) {
             if (!routableViews) {
                 routableViews = [NSMutableArray array];
@@ -2346,16 +2810,18 @@ static  ZIKViewRouterType *_Nullable _routerTypeToRegisteredView(Class viewClass
         
         //Generate router for each routable view
         if (routableViews.count > 0) {
-            for (UIViewController *routableView in routableViews) {
+            for (XXViewController *routableView in routableViews) {
                 ZIKViewRouterType *route = _routerTypeToRegisteredView([routableView class]);
                 if (route == nil) {
                     continue;
                 }
-                ZIKViewRouter *destinationRouter = [route routerFromSegueIdentifier:segue.identifier sender:sender destination:routableView source:(UIViewController *)self];
+                ZIKViewRouter *destinationRouter = [route routerFromSegueIdentifier:segue.identifier sender:sender destination:routableView source:(XXViewController *)self];
                 destinationRouter.routingFromInternal = YES;
                 ZIKViewRouteSegueConfiguration *segueConfig = [(ZIKViewRouteConfiguration *)destinationRouter.original_configuration segueConfiguration];
                 NSAssert(destinationRouter && segueConfig, @"Failed to create router.");
+#if ZIK_HAS_UIKIT
                 segueConfig.destinationStateBeforeRoute = [routableView zix_presentationState];
+#endif
                 if (destinationRouter) {
                     [destinationRouters addObject:destinationRouter];
                 }
@@ -2368,7 +2834,7 @@ static  ZIKViewRouterType *_Nullable _routerTypeToRegisteredView(Class viewClass
     
     //Call original implementation of current class
     [self ZIKViewRouter_hook_prepareForSegue:segue sender:sender];
-    [(UIViewController *)self setZix_currentClassCallingPrepareForSegue:nil];
+    [(XXViewController *)self setZix_currentClassCallingPrepareForSegue:nil];
     
     //Prepare for unwind destination or unroutable views
     if (sourceRouter && [(ZIKViewRouteConfiguration *)sourceRouter.original_configuration segueConfiguration].segueDestination == destination) {
@@ -2391,7 +2857,7 @@ static  ZIKViewRouterType *_Nullable _routerTypeToRegisteredView(Class viewClass
     //Prepare routable views
     for (NSInteger idx = 0; idx < destinationRouters.count; idx++) {
         ZIKViewRouter *router = [destinationRouters objectAtIndex:idx];
-        UIViewController * routableView = router.destination;
+        XXViewController * routableView = router.destination;
         NSAssert(routableView, @"Destination wasn't set when create destinationRouters");
         [routableView setZix_routeTypeFromRouter:@(ZIKViewRouteTypePerformSegue)];
         if (router != sourceRouter) {
@@ -2402,18 +2868,18 @@ static  ZIKViewRouterType *_Nullable _routerTypeToRegisteredView(Class viewClass
             [router prepareDestinationForPerforming];
         } else {
             //View controller is from storyboard, need to notify the performer of segue to config the destination
-            [ZIKViewRouter _prepareDestinationFromExternal:routableView router:router performer:(UIViewController *)self];
+            [ZIKViewRouter _prepareDestinationFromExternal:routableView router:router performer:(XXViewController *)self];
         }
         [ZIKViewRouter AOP_notifyAll_router:router willPerformRouteOnDestination:routableView fromSource:source];
     }
 }
 
 - (void)ZIKViewRouter_hook_seguePerform {
-    Class currentClassCalling = [(UIStoryboardSegue *)self zix_currentClassCallingPerform];
+    Class currentClassCalling = [(XXStoryboardSegue *)self zix_currentClassCallingPerform];
     if (!currentClassCalling) {
         currentClassCalling = [self class];
     }
-    [(UIStoryboardSegue *)self setZix_currentClassCallingPerform:[currentClassCalling superclass]];
+    [(XXStoryboardSegue *)self setZix_currentClassCallingPerform:[currentClassCalling superclass]];
     
     if (currentClassCalling != [self class]) {
         //[super perform]
@@ -2426,14 +2892,20 @@ static  ZIKViewRouterType *_Nullable _routerTypeToRegisteredView(Class viewClass
         return;
     }
     
-    UIViewController *destination = [(UIStoryboardSegue *)self destinationViewController];
-    UIViewController *source = [(UIStoryboardSegue *)self sourceViewController];
+#if ZIK_HAS_UIKIT
+    XXViewController *destination = [(XXStoryboardSegue *)self destinationViewController];
+    XXViewController *source = [(XXStoryboardSegue *)self sourceViewController];
+#else
+    id source = [(XXStoryboardSegue *)self sourceController];
+    id destination = [(XXStoryboardSegue *)self destinationController];
+#endif
+    
     ZIKViewRouter *sourceRouter = [source zix_sourceViewRouter];//Was set in -ZIKViewRouter_hook_prepareForSegue:sender:
     NSArray<ZIKViewRouter *> *destinationRouters = [destination zix_destinationViewRouters];
     
     //Call original implementation of current class
     [self ZIKViewRouter_hook_seguePerform];
-    [(UIStoryboardSegue *)self setZix_currentClassCallingPerform:nil];
+    [(XXStoryboardSegue *)self setZix_currentClassCallingPerform:nil];
     
     if (destinationRouters.count > 0) {
         [destination setZix_destinationViewRouters:nil];
@@ -2442,6 +2914,7 @@ static  ZIKViewRouterType *_Nullable _routerTypeToRegisteredView(Class viewClass
         [source setZix_sourceViewRouter:nil];
     }
     
+#if ZIK_HAS_UIKIT
     id <UIViewControllerTransitionCoordinator> transitionCoordinator = [source zix_currentTransitionCoordinator];
     if (!transitionCoordinator) {
         transitionCoordinator = [destination zix_currentTransitionCoordinator];
@@ -2458,11 +2931,26 @@ static  ZIKViewRouterType *_Nullable _routerTypeToRegisteredView(Class viewClass
             return;
         }
     }
+#endif
     
     //Complete routable views
     for (NSInteger idx = 0; idx < destinationRouters.count; idx++) {
         ZIKViewRouter *router = [destinationRouters objectAtIndex:idx];
-        UIViewController *routableView = router.destination;
+        XXViewController *routableView = router.destination;
+        void(^transitionCompletion)(void) = ^{
+            NSAssert(router.state == ZIKRouterStateRouting, @"state should be routing when end route");
+            [router notifyRouteState:ZIKRouterStateRouted];
+            if (sourceRouter) {
+                if (routableView == sourceRouter.destination) {
+                    NSAssert(idx == 0, @"If destination is in destinationRouters, it should be at index 0.");
+                    NSAssert(router == sourceRouter, nil);
+                }
+            }
+            [ZIKViewRouter AOP_notifyAll_router:router didPerformRouteOnDestination:routableView fromSource:source];
+            router.routingFromInternal = NO;
+            [router notifyPerformRouteSuccessWithDestination:routableView];
+        };
+#if ZIK_HAS_UIKIT
         ZIKPresentationState *destinationStateBeforeRoute = [(ZIKViewRouteConfiguration *)router.original_configuration segueConfiguration].destinationStateBeforeRoute;
         NSAssert(destinationStateBeforeRoute, @"Didn't set state in -ZIKViewRouter_hook_prepareForSegue:sender:");
         [ZIKViewRouter _completeRouter:router
@@ -2470,22 +2958,19 @@ static  ZIKViewRouterType *_Nullable _routerTypeToRegisteredView(Class viewClass
                                   source:source
              destinationStateBeforeRoute:destinationStateBeforeRoute
                    transitionCoordinator:transitionCoordinator
-                              completion:^{
-                                  NSAssert(router.state == ZIKRouterStateRouting, @"state should be routing when end route");
-                                  [router notifyRouteState:ZIKRouterStateRouted];
-                                  if (sourceRouter) {
-                                      if (routableView == sourceRouter.destination) {
-                                          NSAssert(idx == 0, @"If destination is in destinationRouters, it should be at index 0.");
-                                          NSAssert(router == sourceRouter, nil);
-                                      }
-                                  }
-                                  [ZIKViewRouter AOP_notifyAll_router:router didPerformRouteOnDestination:routableView fromSource:source];
-                                  router.routingFromInternal = NO;
-                                  [router notifyPerformRouteSuccessWithDestination:routableView];
-                              }];
+                              completion:transitionCompletion];
+#else
+        [ZIKViewRouter _completeWithMacTransitionCompletion:transitionCompletion];
+#endif
     }
     //Complete unroutable view
     if (sourceRouter && [(ZIKViewRouteConfiguration *)sourceRouter.original_configuration segueConfiguration].segueDestination == destination && ![destination conformsToProtocol:@protocol(ZIKRoutableView)]) {
+        void(^transitionCompletion)(void) = ^{
+            [sourceRouter notifyRouteState:ZIKRouterStateRouted];
+            sourceRouter.routingFromInternal = NO;
+            [sourceRouter notifyPerformRouteSuccessWithDestination:destination];
+        };
+#if ZIK_HAS_UIKIT
         ZIKPresentationState *destinationStateBeforeRoute = [(ZIKViewRouteConfiguration *)sourceRouter.original_configuration segueConfiguration].destinationStateBeforeRoute;
         NSAssert(destinationStateBeforeRoute, @"Didn't set state in -ZIKViewRouter_hook_prepareForSegue:sender:");
         [ZIKViewRouter _completeRouter:sourceRouter
@@ -2493,41 +2978,63 @@ static  ZIKViewRouterType *_Nullable _routerTypeToRegisteredView(Class viewClass
                                   source:source
              destinationStateBeforeRoute:destinationStateBeforeRoute
                    transitionCoordinator:transitionCoordinator
-                              completion:^{
-                                  [sourceRouter notifyRouteState:ZIKRouterStateRouted];
-                                  sourceRouter.routingFromInternal = NO;
-                                  [sourceRouter notifyPerformRouteSuccessWithDestination:destination];
-                              }];
+                              completion:transitionCompletion];
+#else
+        [ZIKViewRouter _completeWithMacTransitionCompletion:transitionCompletion];
+#endif
     }
 }
 
 ///Search child view controllers conforming to ZIKRoutableView in vc, if the vc is a container or is system class
-+ (nullable NSArray<UIViewController *> *)routableViewsInContainerViewController:(UIViewController *)vc {
++ (nullable NSArray<XXViewController *> *)routableViewsInContainerViewController:(XXViewController *)vc {
     NSMutableArray *routableViews;
-    NSArray<__kindof UIViewController *> *childViewControllers = vc.childViewControllers;
+    NSArray<__kindof XXViewController *> *childViewControllers = vc.childViewControllers;
     if (childViewControllers.count == 0) {
         return routableViews;
     }
     
     BOOL isContainerVC = NO;
     BOOL isSystemViewController = NO;
-    NSArray<UIViewController *> *rootVCs;
+    NSArray<XXViewController *> *rootVCs;
+#if ZIK_HAS_UIKIT
     if ([vc isKindOfClass:[UINavigationController class]]) {
         isContainerVC = YES;
         if ([(UINavigationController *)vc viewControllers].count > 0) {
-            UIViewController *rootViewController = [[(UINavigationController *)vc viewControllers] firstObject];
+            XXViewController *rootViewController = [[(UINavigationController *)vc viewControllers] firstObject];
             if (rootViewController) {
                 rootVCs = @[rootViewController];
             } else {
                 rootVCs = @[];
             }
         }
-    } else if ([vc isKindOfClass:[UITabBarController class]]) {
+    } else
+#endif
+    if ([vc isKindOfClass:[XXTabBarController class]]) {
         isContainerVC = YES;
-        rootVCs = [(UITabBarController *)vc viewControllers];
-    } else if ([vc isKindOfClass:[UISplitViewController class]]) {
+#if ZIK_HAS_UIKIT
+        rootVCs = [(XXTabBarController *)vc viewControllers];
+#else
+        NSMutableArray<XXViewController *> *VCs = [NSMutableArray array];
+        for (NSTabViewItem *item in [(XXTabBarController *)vc tabViewItems]) {
+            if (item.viewController) {
+                [VCs addObject:item.viewController];
+            }
+        }
+        rootVCs = VCs;
+#endif
+    } else if ([vc isKindOfClass:[XXSplitViewController class]]) {
         isContainerVC = YES;
-        rootVCs = [(UISplitViewController *)vc viewControllers];
+#if ZIK_HAS_UIKIT
+        rootVCs = [(XXSplitViewController *)vc viewControllers];
+#else
+        NSMutableArray<XXViewController *> *VCs = [NSMutableArray array];
+        for (NSSplitViewItem *item in [(XXSplitViewController *)vc splitViewItems]) {
+            if (item.viewController) {
+                [VCs addObject:item.viewController];
+            }
+        }
+        rootVCs = VCs;
+#endif
     }
     
     if (ZIKRouter_classIsCustomClass([vc class]) == NO) {
@@ -2537,11 +3044,11 @@ static  ZIKViewRouterType *_Nullable _routerTypeToRegisteredView(Class viewClass
         if (!routableViews) {
             routableViews = [NSMutableArray array];
         }
-        for (UIViewController *child in rootVCs) {
+        for (XXViewController *child in rootVCs) {
             if ([child conformsToProtocol:@protocol(ZIKRoutableView)]) {
                 [routableViews addObject:child];
             } else {
-                NSArray<UIViewController *> *routableViewsInChild = [self routableViewsInContainerViewController:child];
+                NSArray<XXViewController *> *routableViewsInChild = [self routableViewsInContainerViewController:child];
                 if (routableViewsInChild.count > 0) {
                     [routableViews addObjectsFromArray:routableViewsInChild];
                 }
@@ -2552,14 +3059,14 @@ static  ZIKViewRouterType *_Nullable _routerTypeToRegisteredView(Class viewClass
         if (!routableViews) {
             routableViews = [NSMutableArray array];
         }
-        for (UIViewController *child in vc.childViewControllers) {
+        for (XXViewController *child in vc.childViewControllers) {
             if (rootVCs && [rootVCs containsObject:child]) {
                 continue;
             }
             if ([child conformsToProtocol:@protocol(ZIKRoutableView)]) {
                 [routableViews addObject:child];
             } else {
-                NSArray<UIViewController *> *routableViewsInChild = [self routableViewsInContainerViewController:child];
+                NSArray<XXViewController *> *routableViewsInChild = [self routableViewsInContainerViewController:child];
                 if (routableViewsInChild.count > 0) {
                     [routableViews addObjectsFromArray:routableViewsInChild];
                 }
@@ -2600,7 +3107,7 @@ static  ZIKViewRouterType *_Nullable _routerTypeToRegisteredView(Class viewClass
     id source = configuration.source;
     switch (configuration.routeType) {
         case ZIKViewRouteTypeAddAsSubview:
-            if (![source isKindOfClass:[UIView class]]) {
+            if (![source isKindOfClass:[XXView class]]) {
                 return NO;
             }
             break;
@@ -2612,7 +3119,7 @@ static  ZIKViewRouterType *_Nullable _routerTypeToRegisteredView(Class viewClass
         case ZIKViewRouteTypeMakeDestination:
             break;
         default:
-            if (![source isKindOfClass:[UIViewController class]]) {
+            if (![source isKindOfClass:[XXViewController class]]) {
                 return NO;
             }
             break;
@@ -2638,7 +3145,12 @@ static  ZIKViewRouterType *_Nullable _routerTypeToRegisteredView(Class viewClass
 + (BOOL)_validatePopoverInConfiguration:(ZIKViewRouteConfiguration *)configuration {
     ZIKViewRoutePopoverConfiguration *popoverConfig = configuration.popoverConfiguration;
     if (!popoverConfig ||
-        (!popoverConfig.barButtonItem && !popoverConfig.sourceView)) {
+        (
+#if ZIK_HAS_UIKIT
+         !popoverConfig.barButtonItem &&
+#endif
+         !popoverConfig.sourceView
+         )) {
         return NO;
     }
     return YES;
@@ -2656,17 +3168,17 @@ static  ZIKViewRouterType *_Nullable _routerTypeToRegisteredView(Class viewClass
     
     switch (configuration.routeType) {
         case ZIKViewRouteTypeAddAsSubview:
-            if ([destination isKindOfClass:[UIView class]]) {
-                NSAssert([[self class] _validateSupportedRouteTypesForUIView], @"%@ 's +supportedRouteTypes returns error types, if destination is a UIView, %@ should support ZIKViewRouteTypeAddAsSubview or ZIKViewRouteTypeCustom",[self class], [self class]);
+            if ([destination isKindOfClass:[XXView class]]) {
+                NSAssert([[self class] _validateSupportedRouteTypesForXXView], @"%@ 's +supportedRouteTypes returns error types, if destination is a UIView, %@ should support ZIKViewRouteTypeAddAsSubview or ZIKViewRouteTypeCustom",[self class], [self class]);
                 return YES;
             }
             break;
         case ZIKViewRouteTypeCustom:
-            if ([destination isKindOfClass:[UIView class]]) {
-                NSAssert([[self class] _validateSupportedRouteTypesForUIView], @"%@ 's +supportedRouteTypes returns error types, if destination is a UIView, %@ should support ZIKViewRouteTypeAddAsSubview or ZIKViewRouteTypeCustom, if use ZIKViewRouteTypeCustom, router must implement -performCustomRouteOnDestination:fromSource:configuration:.",[self class], [self class]);
+            if ([destination isKindOfClass:[XXView class]]) {
+                NSAssert([[self class] _validateSupportedRouteTypesForXXView], @"%@ 's +supportedRouteTypes returns error types, if destination is a UIView, %@ should support ZIKViewRouteTypeAddAsSubview or ZIKViewRouteTypeCustom, if use ZIKViewRouteTypeCustom, router must implement -performCustomRouteOnDestination:fromSource:configuration:.",[self class], [self class]);
                 return YES;
-            } else if ([destination isKindOfClass:[UIViewController class]]) {
-                NSAssert([[self class] _validateSupportedRouteTypesForUIViewController], @"%@ 's +supportedRouteTypes returns error types, if destination is a UIViewController, %@ can't only support ZIKViewRouteTypeAddAsSubview, if use ZIKViewRouteTypeCustom, router must implement -performCustomRouteOnDestination:fromSource:configuration:.",[self class], [self class]);
+            } else if ([destination isKindOfClass:[XXViewController class]]) {
+                NSAssert([[self class] _validateSupportedRouteTypesForXXViewController], @"%@ 's +supportedRouteTypes returns error types, if destination is a UIViewController, %@ can't only support ZIKViewRouteTypeAddAsSubview, if use ZIKViewRouteTypeCustom, router must implement -performCustomRouteOnDestination:fromSource:configuration:.",[self class], [self class]);
                 return YES;
             }
             break;
@@ -2677,14 +3189,14 @@ static  ZIKViewRouterType *_Nullable _routerTypeToRegisteredView(Class viewClass
             break;
         
         case ZIKViewRouteTypeMakeDestination:
-            if ([destination isKindOfClass:[UIViewController class]] || [destination isKindOfClass:[UIView class]]) {
+            if ([destination isKindOfClass:[XXViewController class]] || [destination isKindOfClass:[XXView class]]) {
                 return YES;
             }
             break;
             
         default:
-            if ([destination isKindOfClass:[UIViewController class]]) {
-                NSAssert([[self class] _validateSupportedRouteTypesForUIViewController], @"%@ 's +supportedRouteTypes returns error types, if destination is a UIViewController, %@ can't only support ZIKViewRouteTypeAddAsSubview",[self class], [self class]);
+            if ([destination isKindOfClass:[XXViewController class]]) {
+                NSAssert([[self class] _validateSupportedRouteTypesForXXViewController], @"%@ 's +supportedRouteTypes returns error types, if destination is a UIViewController, %@ can't only support ZIKViewRouteTypeAddAsSubview",[self class], [self class]);
                 return YES;
             }
             break;
@@ -2692,7 +3204,8 @@ static  ZIKViewRouterType *_Nullable _routerTypeToRegisteredView(Class viewClass
     return NO;
 }
 
-+ (BOOL)_validateSourceInNavigationStack:(UIViewController *)source {
+#if ZIK_HAS_UIKIT
++ (BOOL)_validateSourceInNavigationStack:(XXViewController *)source {
     BOOL canPerformPush = [source respondsToSelector:@selector(navigationController)];
     if (!canPerformPush ||
         (canPerformPush && !source.navigationController)) {
@@ -2701,22 +3214,24 @@ static  ZIKViewRouterType *_Nullable _routerTypeToRegisteredView(Class viewClass
     return YES;
 }
 
-+ (BOOL)_validateDestination:(UIViewController *)destination notInNavigationStackOfSource:(UIViewController *)source {
-    NSArray<UIViewController *> *viewControllersInStack = source.navigationController.viewControllers;
++ (BOOL)_validateDestination:(XXViewController *)destination notInNavigationStackOfSource:(XXViewController *)source {
+    NSArray<XXViewController *> *viewControllersInStack = source.navigationController.viewControllers;
     if ([viewControllersInStack containsObject:destination]) {
         return NO;
     }
     return YES;
 }
 
-+ (BOOL)_validateSourceNotPresentedAnyView:(UIViewController *)source {
+
++ (BOOL)_validateSourceNotPresentedAnyView:(XXViewController *)source {
     if (source.presentedViewController) {
         return NO;
     }
     return YES;
 }
+#endif
 
-+ (BOOL)_validateSourceInWindowHierarchy:(UIViewController *)source {
++ (BOOL)_validateSourceInWindowHierarchy:(XXViewController *)source {
     if (source.parentViewController) {
         if ([self _validateSourceInWindowHierarchy:source.parentViewController]) {
             return YES;
@@ -2734,7 +3249,7 @@ static  ZIKViewRouterType *_Nullable _routerTypeToRegisteredView(Class viewClass
     return YES;
 }
 
-+ (BOOL)_validateSupportedRouteTypesForUIView {
++ (BOOL)_validateSupportedRouteTypesForXXView {
     ZIKViewRouteTypeMask supportedRouteTypes = [self supportedRouteTypes];
     if ((supportedRouteTypes & ZIKViewRouteTypeMaskCustom) == ZIKViewRouteTypeMaskCustom) {
         if (![self instancesRespondToSelector:@selector(performCustomRouteOnDestination:fromSource:configuration:)]) {
@@ -2749,7 +3264,7 @@ static  ZIKViewRouterType *_Nullable _routerTypeToRegisteredView(Class viewClass
     return YES;
 }
 
-+ (BOOL)_validateSupportedRouteTypesForUIViewController {
++ (BOOL)_validateSupportedRouteTypesForXXViewController {
     ZIKViewRouteTypeMask supportedRouteTypes = [self supportedRouteTypes];
     if ((supportedRouteTypes & ZIKViewRouteTypeMaskCustom) == ZIKViewRouteTypeMaskCustom) {
         if (![self instancesRespondToSelector:@selector(performCustomRouteOnDestination:fromSource:configuration:)]) {
@@ -2879,24 +3394,36 @@ static  ZIKViewRouterType *_Nullable _routerTypeToRegisteredView(Class viewClass
 + (NSString *)descriptionOfRouteType:(ZIKViewRouteType)routeType {
     NSString *description;
     switch (routeType) {
+#if ZIK_HAS_UIKIT
         case ZIKViewRouteTypePush:
             description = @"Push";
             break;
+#endif
         case ZIKViewRouteTypePresentModally:
             description = @"PresentModally";
             break;
         case ZIKViewRouteTypePresentAsPopover:
             description = @"PresentAsPopover";
             break;
+#if !ZIK_HAS_UIKIT
+        case ZIKViewRouteTypePresentAsSheet:
+            description = @"PresentAsSheet";
+            break;
+        case ZIKViewRouteTypePresentWithAnimator:
+            description = @"PresentWithAnimator";
+            break;
+#endif
         case ZIKViewRouteTypePerformSegue:
             description = @"PerformSegue";
             break;
         case ZIKViewRouteTypeShow:
             description = @"Show";
             break;
+#if ZIK_HAS_UIKIT
         case ZIKViewRouteTypeShowDetail:
             description = @"ShowDetail";
             break;
+#endif
         case ZIKViewRouteTypeAddAsChildViewController:
             description = @"AddAsChildViewController";
             break;
@@ -2919,15 +3446,28 @@ static  ZIKViewRouterType *_Nullable _routerTypeToRegisteredView(Class viewClass
         case ZIKViewRouteRealTypeUnknown:
             description = @"Unknown";
             break;
+#if ZIK_HAS_UIKIT
         case ZIKViewRouteRealTypePush:
             description = @"Push";
             break;
+#endif
         case ZIKViewRouteRealTypePresentModally:
             description = @"PresentModally";
             break;
         case ZIKViewRouteRealTypePresentAsPopover:
             description = @"PresentAsPopover";
             break;
+#if !ZIK_HAS_UIKIT
+        case ZIKViewRouteRealTypePresentAsSheet:
+            description = @"PresentAsSheet";
+            break;
+        case ZIKViewRouteRealTypePresentWithAnimator:
+            description = @"PresentWithAnimator";
+            break;
+        case ZIKViewRouteRealTypeShowWindw:
+            description = @"ShowWindw";
+            break;
+#endif
         case ZIKViewRouteRealTypeAddAsChildViewController:
             description = @"AddAsChildViewController";
             break;
@@ -3244,15 +3784,15 @@ static  ZIKViewRouterType *_Nullable _routerTypeToRegisteredView(Class viewClass
 }
 
 + (void)registerView:(Class)viewClass {
-    NSParameterAssert([viewClass isSubclassOfClass:[UIView class]] ||
-                      [viewClass isSubclassOfClass:[UIViewController class]]);
+    NSParameterAssert([viewClass isSubclassOfClass:[XXView class]] ||
+                      [viewClass isSubclassOfClass:[XXViewController class]]);
     NSAssert(!ZIKViewRouteRegistry.registrationFinished, @"Only register in +registerRoutableDestination.");
     [ZIKViewRouteRegistry registerDestination:viewClass router:self];
 }
 
 + (void)registerExclusiveView:(Class)viewClass {
-    NSCParameterAssert([viewClass isSubclassOfClass:[UIView class]] ||
-                       [viewClass isSubclassOfClass:[UIViewController class]]);
+    NSCParameterAssert([viewClass isSubclassOfClass:[XXView class]] ||
+                       [viewClass isSubclassOfClass:[XXViewController class]]);
     NSCAssert(!ZIKViewRouteRegistry.registrationFinished, @"Only register in +registerRoutableDestination.");
     [ZIKViewRouteRegistry registerExclusiveDestination:viewClass router:self];
 }
@@ -3283,13 +3823,13 @@ static  ZIKViewRouterType *_Nullable _routerTypeToRegisteredView(Class viewClass
 
 @implementation ZIKViewRouter (Private)
 
-+ (instancetype)routerFromView:(UIView *)destination source:(UIView *)source {
++ (instancetype)routerFromView:(XXView *)destination source:(XXView *)source {
     NSParameterAssert(destination);
     NSParameterAssert(source);
     if (!destination || !source) {
         return nil;
     }
-    NSAssert([self _validateSupportedRouteTypesForUIView], @"Router for UIView only suppourts ZIKViewRouteTypeAddAsSubview, ZIKViewRouteTypeMakeDestination and ZIKViewRouteTypeCustom, override +supportedRouteTypes in your router.");
+    NSAssert([self _validateSupportedRouteTypesForXXView], @"Router for UIView only suppourts ZIKViewRouteTypeAddAsSubview, ZIKViewRouteTypeMakeDestination and ZIKViewRouteTypeCustom, override +supportedRouteTypes in your router.");
     
     ZIKViewRouter *router = [[self alloc] initWithConfiguring:^(ZIKPerformRouteConfiguration * _Nonnull config) {
         ZIKViewRouteConfiguration *configuration = (ZIKViewRouteConfiguration *)config;
@@ -3302,9 +3842,9 @@ static  ZIKViewRouterType *_Nullable _routerTypeToRegisteredView(Class viewClass
     return router;
 }
 
-+ (instancetype)routerFromSegueIdentifier:(NSString *)identifier sender:(nullable id)sender destination:(UIViewController *)destination source:(UIViewController *)source {
-    NSParameterAssert([destination isKindOfClass:[UIViewController class]]);
-    NSParameterAssert([source isKindOfClass:[UIViewController class]]);
++ (instancetype)routerFromSegueIdentifier:(NSString *)identifier sender:(nullable id)sender destination:(XXViewController *)destination source:(XXViewController *)source {
+    NSParameterAssert([destination isKindOfClass:[XXViewController class]]);
+    NSParameterAssert([source isKindOfClass:[XXViewController class]]);
     
     ZIKViewRouter *router = [[self alloc] initWithConfiguring:^(ZIKPerformRouteConfiguration * _Nonnull config) {
         ZIKViewRouteConfiguration *configuration = (ZIKViewRouteConfiguration *)config;

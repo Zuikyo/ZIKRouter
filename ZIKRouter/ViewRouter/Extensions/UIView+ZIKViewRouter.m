@@ -13,9 +13,13 @@
 #import "UIViewController+ZIKViewRouter.h"
 #import <objc/runtime.h>
 #import "ZIKRouterRuntime.h"
+#import "ZIKClassCapabilities.h"
 
+#if ZIK_HAS_UIKIT
 @implementation UIView (ZIKViewRouter)
-
+#else
+@implementation NSView (ZIKViewRouter)
+#endif
 - (BOOL)zix_routed {
     NSNumber *result = objc_getAssociatedObject(self, "zix_routed");
     return [result boolValue];
@@ -25,47 +29,67 @@
 }
 
 ///https://stackoverflow.com/a/3732812/6380485
-- (nullable UIViewController *)zix_firstAvailableUIViewController {
+- (nullable XXViewController *)zix_firstAvailableUIViewController {
+    return [self zix_firstAvailableViewController];
+}
+- (nullable XXViewController *)zix_firstAvailableViewController {
     id nextResponder = [self nextResponder];
-    if ([nextResponder isKindOfClass:[UIViewController class]]) {
+    if ([nextResponder isKindOfClass:[XXViewController class]]) {
         return nextResponder;
-    } else if ([nextResponder isKindOfClass:[UIView class]]) {
-        return [nextResponder zix_firstAvailableUIViewController];
+    } else if ([nextResponder isKindOfClass:[XXView class]]) {
+        return [nextResponder zix_firstAvailableViewController];
     } else {
         return nil;
     }
 }
 
 - (nullable id)zix_routePerformer {
-    NSAssert(self.nextResponder || [self isKindOfClass:[UIWindow class]], @"View is not in any view hierarchy.");
+    NSAssert(self.nextResponder || [self isKindOfClass:[XXWindow class]], @"View is not in any view hierarchy.");
     
-    if ([self isKindOfClass:[UIWindow class]]) {
-        UIViewController *performer = [(UIWindow *)self rootViewController];
-        if (![performer isKindOfClass:[UIApplication class]] &&
+    if ([self isKindOfClass:[XXWindow class]]) {
+        XXViewController *performer;
+        XXWindow *window = (XXWindow *)self;
+#if ZIK_HAS_UIKIT
+        performer = window.rootViewController;
+#else
+        if (@available(macOS 10.10, *)) {
+            performer = window.contentViewController;
+        }
+        if (performer == nil) {
+            XXResponder *nextResponder = [window.contentView nextResponder];
+            if ([nextResponder isKindOfClass:[XXViewController class]]) {
+                performer = (XXViewController *)nextResponder;
+            }
+        }
+#endif
+        if (![performer isKindOfClass:[XXApplication class]] &&
             !ZIKRouter_classIsCustomClass([performer class])) {
             return nil;
         }
         return performer;
     }
     
-    UIResponder *nextResponder = [self nextResponder];
-    if ([nextResponder isKindOfClass:[UIViewController class]]) {
+    XXResponder *nextResponder = [self nextResponder];
+    if ([nextResponder isKindOfClass:[XXViewController class]]) {
         if (ZIKRouter_classIsCustomClass([nextResponder class])) {
             return nextResponder;
         }
         
-        UIViewController *parent = [(UIViewController *)nextResponder parentViewController];
-        NSAssert(parent, @"view controller should have parent. This UIView may be added to a system UIViewController's view, you should use a custom UIViewController and prepare this UIView inside the custom UIViewController.");
+        XXViewController *parent = [(XXViewController *)nextResponder parentViewController];
+        NSAssert(parent, @"view controller should have parent. This View may be added to a system ViewController's view, you should use a custom ViewController and prepare this View inside the custom ViewController.");
         while (parent &&
                (!ZIKRouter_classIsCustomClass([parent class]) ||
-               [parent isKindOfClass:[UITabBarController class]] ||
-               [parent isKindOfClass:[UINavigationController class]] ||
-               [parent isKindOfClass:[UISplitViewController class]])) {
+#if ZIK_HAS_UIKIT
+                [parent isKindOfClass:[UINavigationController class]] ||
+#endif
+               [parent isKindOfClass:[XXTabBarController class]] ||
+               [parent isKindOfClass:[XXSplitViewController class]]
+                )) {
             parent = parent.parentViewController;
         }
         return parent;
-    } else if ([nextResponder isKindOfClass:[UIView class]]) {
-        return [(UIView *)nextResponder zix_routePerformer];
+    } else if ([nextResponder isKindOfClass:[XXView class]]) {
+        return [(XXView *)nextResponder zix_routePerformer];
     } else {
         return nil;
     }

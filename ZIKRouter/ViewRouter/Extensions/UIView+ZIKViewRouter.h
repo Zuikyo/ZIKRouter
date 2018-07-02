@@ -9,31 +9,46 @@
 //  LICENSE file in the root directory of this source tree.
 //
 
+#import "ZIKPlatformCapabilities.h"
+#if ZIK_HAS_UIKIT
 #import <UIKit/UIKit.h>
+#else
+#import <AppKit/AppKit.h>
+#endif
 
 NS_ASSUME_NONNULL_BEGIN
 
+#if ZIK_HAS_UIKIT
 @interface UIView (ZIKViewRouter)
+#else
+@interface NSView (ZIKViewRouter)
+#endif
 
 /**
- Check UIView is routed or not, then determine a UIView is first appear or is removing from superview. Routed means the UIView is added to a superview and appeared once. This property is for all UIView. The implementation is in ZIKViewRouter.
+ Check UIView/NSView is routed or not, then determine a UIView/NSView is first appear or is removing from superview. Routed means the UIView/NSView is added to a superview and appeared once. This property is for all UIView/NSView. The implementation is in ZIKViewRouter.
  @discussion
- If a UIView is adding to superview, -willMoveToSuperview:newSuperview will be called, newSuperview is not nil. If a UIView is removing from superview, -willMoveToSuperview:nil will be called.
+ If a UIView/NSView is adding to superview, -willMoveToSuperview:newSuperview will be called, newSuperview is not nil. If a UIView/NSView is removing from superview, -willMoveToSuperview:nil will be called.
  
- If view is first appear, zix_routed will be NO in -willMoveToSuperview:, -didMoveToSuperview, -willMoveToWindow:, -didMoveToWindow (before [super didMoveToWindow], after [super didMoveToWindow], it's YES). If view is removing from superview, zix_routed will be NO in -willMoveToSuperview: and -didMoveToSuperview, but it's still YES in -willMoveToWindow: and -didMoveToWindow. When a UIView has appeared once, that means it's routed, zix_routed is YES.
+ If view is first appear, zix_routed will be NO in -willMoveToSuperview:, -didMoveToSuperview, -willMoveToWindow:, -didMoveToWindow (before [super didMoveToWindow], after [super didMoveToWindow], it's YES). If view is removing from superview, zix_routed will be NO in -willMoveToSuperview: and -didMoveToSuperview, but it's still YES in -willMoveToWindow: and -didMoveToWindow. When a UIView/NSView has appeared once, that means it's routed, zix_routed is YES.
 
- @return If the UIView is already routed, return YES, otherwise return NO.
+ @return If the UIView/NSView is already routed, return YES, otherwise return NO.
  */
 @property (nonatomic, readonly) BOOL zix_routed;
 
-///Get the UIViewController containing the view. Only available in and after -willMoveToWindow:.
-- (nullable UIViewController *)zix_firstAvailableUIViewController;
+///Get the ViewController containing the view. Only available in and after -willMoveToWindow:.
+#if ZIK_HAS_UIKIT
+- (nullable UIViewController *)zix_firstAvailableUIViewController API_DEPRECATED_WITH_REPLACEMENT("zix_firstAvailableViewController", ios(7.0, 7.0));
+- (nullable UIViewController *)zix_firstAvailableViewController;
+#else
+- (nullable NSViewController *)zix_firstAvailableViewController;
+#endif
+
 
 /**
- Get the performer UIViewController who routed this view. Only available in and after -willMoveToWindow:.
+ Get the performer UIViewController/NSViewController who routed this view. Only available in and after -willMoveToWindow:.
  @discussion
- A performer must be a UIViewController, and is custom class, rather than classes from system's frameworks. Search the UIViewController and UIView in nextResponder and parentViewController/superview 's nextResponder.
- @return a UIViewController who add this view as it's subview. return nil when this view is not in any superview or view controller of custom class.
+ A performer must be a UIViewController/NSViewController, and is custom class, rather than classes from system's frameworks. Search the UIViewController/NSViewController in nextResponder and parentViewController/superview's nextResponder.
+ @return a UIViewController/NSViewController who add this view as it's subview. return nil when this view is not in any superview or view controller of custom class.
  */
 - (nullable id)zix_routePerformer;
 @end

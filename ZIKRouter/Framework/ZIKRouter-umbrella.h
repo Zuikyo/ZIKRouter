@@ -10,6 +10,7 @@
 //
 
 #import <Foundation/Foundation.h>
+#import "ZIKPlatformCapabilities.h"
 #import "ZIKRouter.h"
 #import "ZIKRouteConfiguration.h"
 #import "ZIKRouterType.h"
