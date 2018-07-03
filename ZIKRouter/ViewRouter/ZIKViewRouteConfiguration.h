@@ -142,7 +142,7 @@ typedef NS_ENUM(NSInteger, ZIKViewRouteRealType) {
 #if !ZIK_HAS_UIKIT
     ZIKViewRouteRealTypePresentAsSheet           = 4,
     ZIKViewRouteRealTypePresentWithAnimator      = 5,
-    ZIKViewRouteRealTypeShowWindw                = 6,
+    ZIKViewRouteRealTypeShowWindow               = 6,
 #endif
     ZIKViewRouteRealTypeAddAsChildViewController = 7,
     ZIKViewRouteRealTypeAddAsSubview             = 8,

@@ -933,7 +933,7 @@ static NSMutableArray *g_preparingXXViewRouters;
                               [self endPerformRouteWithSuccess];
                           }];
 #else
-    self.realRouteType = ZIKViewRouteRealTypeShowWindw;
+    self.realRouteType = ZIKViewRouteRealTypeShowWindow;
     NSWindow *window = [NSWindow windowWithContentViewController:wrappedDestination];
     NSWindowController *windowController = [[NSWindowController alloc] initWithWindow:window];
     [windowController showWindow:self.original_configuration.sender];
@@ -1339,7 +1339,7 @@ destinationStateBeforeRoute:(ZIKPresentationState *)destinationStateBeforeRoute
             break;
         }
 #if !ZIK_HAS_UIKIT
-        case ZIKViewRouteRealTypeShowWindw:
+        case ZIKViewRouteRealTypeShowWindow:
             if (![self _canCloseWindow]) {
                 return [NSString stringWithFormat:@"Router can't remove, destination is not in any window, router:%@", self];
             }
@@ -1471,7 +1471,7 @@ destinationStateBeforeRoute:(ZIKPresentationState *)destinationStateBeforeRoute
             [self _dismissOnDestination:destination];
             break;
             
-        case ZIKViewRouteRealTypeShowWindw:
+        case ZIKViewRouteRealTypeShowWindow:
             [self _closeWindowOnDestination:destination];
             break;
 #endif
@@ -2094,6 +2094,15 @@ static  ZIKViewRouterType *_Nullable _routerTypeToRegisteredView(Class viewClass
 }
 
 - (void)ZIKViewRouter_hook_animatePresentationOfViewController:(NSViewController *)viewController fromViewController:(NSViewController *)fromViewController {
+    NSArray<ZIKViewRouter *> *destinationViewRouters = viewController.zix_destinationViewRouters;
+    if (destinationViewRouters) {
+        //Auto created routers
+        for (ZIKViewRouter *router in destinationViewRouters) {
+            if (router.destination == viewController) {
+                router.realRouteType = ZIKViewRouteRealTypePresentWithAnimator;
+            }
+        }
+    }
     [viewController setZix_parentMovingTo:fromViewController];
     [self ZIKViewRouter_hook_animatePresentationOfViewController:viewController fromViewController:fromViewController];
 }
@@ -2104,6 +2113,16 @@ static  ZIKViewRouterType *_Nullable _routerTypeToRegisteredView(Class viewClass
 
 - (void)ZIKViewRouter_hook_setContentViewController:(NSViewController *)contentViewController {
     if (contentViewController) {
+        NSArray<ZIKViewRouter *> *destinationViewRouters = contentViewController.zix_destinationViewRouters;
+        if (destinationViewRouters) {
+            //Auto created routers
+            for (ZIKViewRouter *router in destinationViewRouters) {
+                if (router.destination == contentViewController) {
+                    router.realRouteType = ZIKViewRouteRealTypeShowWindow;
+                }
+            }
+        }
+        
         NSWindow *window = (NSWindow *)self;
         id parent = window.windowController;
         if (parent == nil) {
@@ -3507,8 +3526,8 @@ static  ZIKViewRouterType *_Nullable _routerTypeToRegisteredView(Class viewClass
         case ZIKViewRouteRealTypePresentWithAnimator:
             description = @"PresentWithAnimator";
             break;
-        case ZIKViewRouteRealTypeShowWindw:
-            description = @"ShowWindw";
+        case ZIKViewRouteRealTypeShowWindow:
+            description = @"ShowWindow";
             break;
 #endif
         case ZIKViewRouteRealTypeAddAsChildViewController:
@@ -3881,6 +3900,7 @@ static  ZIKViewRouterType *_Nullable _routerTypeToRegisteredView(Class viewClass
         configuration.source = source;
     } removing:nil];
     [router attachDestination:destination];
+    router.realRouteType = ZIKViewRouteRealTypeAddAsSubview;
     
     return router;
 }
