@@ -908,7 +908,9 @@ static NSMutableArray *g_preparingXXViewRouters;
 
 - (void)_performShowOnDestination:(XXViewController *)destination fromSource:(XXViewController *)source {
     NSParameterAssert([destination isKindOfClass:[XXViewController class]]);
+#if ZIK_HAS_UIKIT
     NSParameterAssert([source isKindOfClass:[XXViewController class]]);
+#endif
     [destination setZix_routeTypeFromRouter:@(ZIKViewRouteTypeShow)];
     XXViewController *wrappedDestination = [self _wrappedDestination:destination];
 #if ZIK_HAS_UIKIT
@@ -3015,16 +3017,16 @@ static  ZIKViewRouterType *_Nullable _routerTypeToRegisteredView(Class viewClass
     
     BOOL isContainerVC = NO;
     BOOL isSystemViewController = NO;
-    NSArray<XXViewController *> *rootVCs;
+    NSArray<XXViewController *> *containedVCs;
 #if ZIK_HAS_UIKIT
     if ([vc isKindOfClass:[UINavigationController class]]) {
         isContainerVC = YES;
         if ([(UINavigationController *)vc viewControllers].count > 0) {
             XXViewController *rootViewController = [[(UINavigationController *)vc viewControllers] firstObject];
             if (rootViewController) {
-                rootVCs = @[rootViewController];
+                containedVCs = @[rootViewController];
             } else {
-                rootVCs = @[];
+                containedVCs = @[];
             }
         }
     } else
@@ -3032,7 +3034,7 @@ static  ZIKViewRouterType *_Nullable _routerTypeToRegisteredView(Class viewClass
     if ([vc isKindOfClass:[XXTabBarController class]]) {
         isContainerVC = YES;
 #if ZIK_HAS_UIKIT
-        rootVCs = [(XXTabBarController *)vc viewControllers];
+        containedVCs = [(XXTabBarController *)vc viewControllers];
 #else
         NSMutableArray<XXViewController *> *VCs = [NSMutableArray array];
         for (NSTabViewItem *item in [(XXTabBarController *)vc tabViewItems]) {
@@ -3040,12 +3042,12 @@ static  ZIKViewRouterType *_Nullable _routerTypeToRegisteredView(Class viewClass
                 [VCs addObject:item.viewController];
             }
         }
-        rootVCs = VCs;
+        containedVCs = VCs;
 #endif
     } else if ([vc isKindOfClass:[XXSplitViewController class]]) {
         isContainerVC = YES;
 #if ZIK_HAS_UIKIT
-        rootVCs = [(XXSplitViewController *)vc viewControllers];
+        containedVCs = [(XXSplitViewController *)vc viewControllers];
 #else
         NSMutableArray<XXViewController *> *VCs = [NSMutableArray array];
         for (NSSplitViewItem *item in [(XXSplitViewController *)vc splitViewItems]) {
@@ -3053,7 +3055,17 @@ static  ZIKViewRouterType *_Nullable _routerTypeToRegisteredView(Class viewClass
                 [VCs addObject:item.viewController];
             }
         }
-        rootVCs = VCs;
+        containedVCs = VCs;
+#endif
+    } else if ([vc isKindOfClass:[XXPageViewController class]]) {
+        isContainerVC = YES;
+#if ZIK_HAS_UIKIT
+        containedVCs = [(XXPageViewController *)vc viewControllers];
+#else
+        NSViewController *selectedViewController = [(XXPageViewController *)vc selectedViewController];
+        if (selectedViewController) {
+            containedVCs = @[selectedViewController];
+        }
 #endif
     }
     
@@ -3064,7 +3076,7 @@ static  ZIKViewRouterType *_Nullable _routerTypeToRegisteredView(Class viewClass
         if (!routableViews) {
             routableViews = [NSMutableArray array];
         }
-        for (XXViewController *child in rootVCs) {
+        for (XXViewController *child in containedVCs) {
             if ([child conformsToProtocol:@protocol(ZIKRoutableView)]) {
                 [routableViews addObject:child];
             } else {
@@ -3080,7 +3092,7 @@ static  ZIKViewRouterType *_Nullable _routerTypeToRegisteredView(Class viewClass
             routableViews = [NSMutableArray array];
         }
         for (XXViewController *child in vc.childViewControllers) {
-            if (rootVCs && [rootVCs containsObject:child]) {
+            if (containedVCs && [containedVCs containsObject:child]) {
                 continue;
             }
             if ([child conformsToProtocol:@protocol(ZIKRoutableView)]) {
@@ -3111,8 +3123,12 @@ static  ZIKViewRouterType *_Nullable _routerTypeToRegisteredView(Class viewClass
 
 + (BOOL)_validateRouteSourceNotMissedInConfiguration:(ZIKViewRouteConfiguration *)configuration {
     if (!configuration.source &&
-        (configuration.routeType != ZIKViewRouteTypeCustom &&
-        configuration.routeType != ZIKViewRouteTypeMakeDestination)) {
+        (
+#if !ZIK_HAS_UIKIT
+         configuration.routeType != ZIKViewRouteTypeShow &&
+#endif
+         configuration.routeType != ZIKViewRouteTypeCustom &&
+         configuration.routeType != ZIKViewRouteTypeMakeDestination)) {
         return NO;
     }
     return YES;
@@ -3120,7 +3136,11 @@ static  ZIKViewRouterType *_Nullable _routerTypeToRegisteredView(Class viewClass
 
 + (BOOL)_validateRouteSourceClassInConfiguration:(ZIKViewRouteConfiguration *)configuration {
     if (!configuration.source &&
-        (configuration.routeType != ZIKViewRouteTypeCustom &&
+        (
+#if !ZIK_HAS_UIKIT
+         configuration.routeType != ZIKViewRouteTypeShow &&
+#endif
+         configuration.routeType != ZIKViewRouteTypeCustom &&
          configuration.routeType != ZIKViewRouteTypeMakeDestination)) {
         return NO;
     }
@@ -3135,6 +3155,9 @@ static  ZIKViewRouterType *_Nullable _routerTypeToRegisteredView(Class viewClass
         case ZIKViewRouteTypePerformSegue:
             break;
             
+#if !ZIK_HAS_UIKIT
+        case ZIKViewRouteTypeShow:
+#endif
         case ZIKViewRouteTypeCustom:
         case ZIKViewRouteTypeMakeDestination:
             break;

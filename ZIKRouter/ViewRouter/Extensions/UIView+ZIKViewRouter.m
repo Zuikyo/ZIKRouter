@@ -79,11 +79,7 @@
         NSAssert(parent, @"view controller should have parent. This View may be added to a system ViewController's view, you should use a custom ViewController and prepare this View inside the custom ViewController.");
         while (parent &&
                (!ZIKRouter_classIsCustomClass([parent class]) ||
-#if ZIK_HAS_UIKIT
-                [parent isKindOfClass:[UINavigationController class]] ||
-#endif
-               [parent isKindOfClass:[XXTabBarController class]] ||
-               [parent isKindOfClass:[XXSplitViewController class]]
+                [parent conformsToProtocol:@protocol(ZIKViewRouteContainer)]
                 )) {
             parent = parent.parentViewController;
         }

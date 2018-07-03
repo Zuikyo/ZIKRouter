@@ -24,6 +24,7 @@ typedef UIStoryboard XXStoryboard;
 typedef UIStoryboardSegue XXStoryboardSegue;
 typedef UITabBarController XXTabBarController;
 typedef UISplitViewController XXSplitViewController;
+typedef UIPageViewController XXPageViewController;
 
 #else
 
@@ -38,6 +39,8 @@ typedef NSStoryboard XXStoryboard;
 typedef NSStoryboardSegue XXStoryboardSegue;
 typedef NSTabViewController XXTabBarController;
 typedef NSSplitViewController XXSplitViewController;
+typedef NSPageController XXPageViewController;
+
 #endif
 
 #endif /* ZIKClassCapabilities_h */

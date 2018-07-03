@@ -489,12 +489,16 @@ ZIKRouteAction const ZIKRouteActionPerformOnDestination = @"ZIKRouteActionPerfor
 @end
 @implementation UISplitViewController (ZIKViewRouteContainer)
 @end
+@implementation UIPageViewController (ZIKViewRouteContainer)
+@end
 #else
 @implementation NSView (ZIKViewRouteSource)
 @end
 @implementation NSViewController (ZIKViewRouteSource)
 @end
 @implementation NSSplitViewController (ZIKViewRouteContainer)
+@end
+@implementation NSPageController (ZIKViewRouteContainer)
 @end
 #endif
 

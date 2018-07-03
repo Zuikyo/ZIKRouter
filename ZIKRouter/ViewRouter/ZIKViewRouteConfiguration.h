@@ -479,7 +479,7 @@ typedef void(^ZIKViewRouteSegueConfiger)(NS_NOESCAPE ZIKViewRouteSegueConfigure)
 @interface UIViewController (ZIKViewRouteSource) <ZIKViewRouteSource>
 @end
 
-///UINavigationController, or UITabBarController, or UISplitViewController.
+///UINavigationController, UITabBarController, UISplitViewController, or UIPageViewController.
 @protocol ZIKViewRouteContainer <NSObject>
 @end
 @interface UINavigationController (ZIKViewRouteContainer) <ZIKViewRouteContainer>
@@ -487,6 +487,8 @@ typedef void(^ZIKViewRouteSegueConfiger)(NS_NOESCAPE ZIKViewRouteSegueConfigure)
 @interface UITabBarController (ZIKViewRouteContainer) <ZIKViewRouteContainer>
 @end
 @interface UISplitViewController (ZIKViewRouteContainer) <ZIKViewRouteContainer>
+@end
+@interface UIPageViewController (ZIKViewRouteContainer) <ZIKViewRouteContainer>
 @end
 
 #else
@@ -496,12 +498,14 @@ typedef void(^ZIKViewRouteSegueConfiger)(NS_NOESCAPE ZIKViewRouteSegueConfigure)
 @interface NSViewController (ZIKViewRouteSource) <ZIKViewRouteSource>
 @end
 
-///NSTabViewController, or NSSplitViewController.
+///NSTabViewController, NSSplitViewController, or NSPageController.
 @protocol ZIKViewRouteContainer <NSObject>
 @end
 @interface NSTabViewController (ZIKViewRouteContainer) <ZIKViewRouteContainer>
 @end
 @interface NSSplitViewController (ZIKViewRouteContainer) <ZIKViewRouteContainer>
+@end
+@interface NSPageController (ZIKViewRouteContainer) <ZIKViewRouteContainer>
 @end
 
 #endif
