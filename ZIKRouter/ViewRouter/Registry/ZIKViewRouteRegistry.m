@@ -61,7 +61,12 @@ static NSMutableArray<Class> *_routerClasses;
     return [self ZIKViewRouteRegistry_hook_initWithCoder:aDecoder];
 }
 
-- (instancetype)ZIKViewRouteRegistry_hook_initWithIdentifier:(nullable NSString *)identifier source:(XXViewController *)source destination:(XXViewController *)destination {
+#if ZIK_HAS_UIKIT
+- (instancetype)ZIKViewRouteRegistry_hook_initWithIdentifier:(nullable NSString *)identifier source:(UIViewController *)source destination:(UIViewController *)destination
+#else
+- (instancetype)ZIKViewRouteRegistry_hook_initWithIdentifier:(nullable NSString *)identifier source:(NSViewController *)source destination:(NSViewController *)destination
+#endif
+{
     [ZIKViewRouteRegistry hookPerformForStoryboardSegueClass:[self class]];
     return [self ZIKViewRouteRegistry_hook_initWithIdentifier:identifier source:source destination:destination];
 }

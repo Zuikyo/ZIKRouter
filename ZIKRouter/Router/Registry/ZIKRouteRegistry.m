@@ -59,7 +59,12 @@ static BOOL _registrationFinished = NO;
     [self ZIKRouteRegistry_hook_setDelegate:delegate];
 }
 
-+ (XXStoryboard *)ZIKRouteRegistry_hook_storyboardWithName:(NSString *)name bundle:(nullable NSBundle *)storyboardBundleOrNil {
+#if ZIK_HAS_UIKIT
++ (UIStoryboard *)ZIKRouteRegistry_hook_storyboardWithName:(NSString *)name bundle:(nullable NSBundle *)storyboardBundleOrNil
+#else
++ (NSStoryboard *)ZIKRouteRegistry_hook_storyboardWithName:(NSString *)name bundle:(nullable NSBundle *)storyboardBundleOrNil
+#endif
+{
     if (ZIKRouteRegistry.autoRegister) {
         [ZIKRouteRegistry registerAll];
     }

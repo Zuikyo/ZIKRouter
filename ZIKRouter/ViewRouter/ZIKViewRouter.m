@@ -127,9 +127,9 @@ static NSMutableArray *g_preparingXXViewRouters;
     ZIKRouter_replaceMethodWithMethod(XXStoryboardSegueClass, @selector(perform),
                                       ZIKViewRouterClass, @selector(ZIKViewRouter_hook_seguePerform));
 #if ZIK_HAS_UIKIT
-    ZIKRouter_replaceMethodWithMethod([XXStoryboard class], @selector(instantiateInitialViewController), ZIKViewRouterClass, @selector(ZIKViewRouter_hook_instantiateInitialViewController));
+    ZIKRouter_replaceMethodWithMethod([UIStoryboard class], @selector(instantiateInitialViewController), ZIKViewRouterClass, @selector(ZIKViewRouter_hook_instantiateInitialViewController));
 #else
-    ZIKRouter_replaceMethodWithMethod([XXStoryboard class], @selector(instantiateInitialController), ZIKViewRouterClass, @selector(ZIKViewRouter_hook_instantiateInitialViewController));
+    ZIKRouter_replaceMethodWithMethod([NSStoryboard class], @selector(instantiateInitialController), ZIKViewRouterClass, @selector(ZIKViewRouter_hook_instantiateInitialViewController));
 #endif
 }
 
@@ -1902,7 +1902,7 @@ static  ZIKViewRouterType *_Nullable _routerTypeToRegisteredView(Class viewClass
 
 #if ZIK_HAS_UIKIT
 
-- (void)ZIKViewRouter_hook_willMoveToParentViewController:(XXViewController *)parent {
+- (void)ZIKViewRouter_hook_willMoveToParentViewController:(UIViewController *)parent {
     [self ZIKViewRouter_hook_willMoveToParentViewController:parent];
     if (parent) {
         [(XXViewController *)self setZix_parentMovingTo:parent];
@@ -1913,7 +1913,7 @@ static  ZIKViewRouterType *_Nullable _routerTypeToRegisteredView(Class viewClass
     }
 }
 
-- (void)ZIKViewRouter_hook_didMoveToParentViewController:(XXViewController *)parent {
+- (void)ZIKViewRouter_hook_didMoveToParentViewController:(UIViewController *)parent {
     [self ZIKViewRouter_hook_didMoveToParentViewController:parent];
     if (parent) {
         [(XXViewController *)self setZix_parentMovingTo:nil];
@@ -2405,7 +2405,12 @@ static  ZIKViewRouterType *_Nullable _routerTypeToRegisteredView(Class viewClass
  7.didMoveToSuperview
  */
 
-- (void)ZIKViewRouter_hook_willMoveToSuperview:(nullable XXView *)newSuperview {
+#if ZIK_HAS_UIKIT
+- (void)ZIKViewRouter_hook_willMoveToSuperview:(nullable UIView *)newSuperview
+#else
+- (void)ZIKViewRouter_hook_willMoveToSuperview:(nullable NSView *)newSuperview
+#endif
+{
     XXView *destination = (XXView *)self;
     if ([self conformsToProtocol:@protocol(ZIKRoutableView)]) {
         if (!newSuperview) {
@@ -2521,7 +2526,12 @@ static  ZIKViewRouterType *_Nullable _routerTypeToRegisteredView(Class viewClass
     [self ZIKViewRouter_hook_didMoveToSuperview];
 }
 
-- (void)ZIKViewRouter_hook_willMoveToWindow:(nullable XXWindow *)newWindow {
+#if ZIK_HAS_UIKIT
+- (void)ZIKViewRouter_hook_willMoveToWindow:(nullable UIWindow *)newWindow
+#else
+- (void)ZIKViewRouter_hook_willMoveToWindow:(nullable NSWindow *)newWindow
+#endif
+{
     XXView *destination = (XXView *)self;
     BOOL routed = destination.zix_routed;
     if ([self conformsToProtocol:@protocol(ZIKRoutableView)]) {
@@ -2674,7 +2684,12 @@ static  ZIKViewRouterType *_Nullable _routerTypeToRegisteredView(Class viewClass
 }
 
 ///Auto prepare storyboard's routable initial view controller or it's routable child view controllers
-- (nullable __kindof XXViewController *)ZIKViewRouter_hook_instantiateInitialViewController {
+#if ZIK_HAS_UIKIT
+- (nullable __kindof UIViewController *)ZIKViewRouter_hook_instantiateInitialViewController
+#else
+- (nullable __kindof NSViewController *)ZIKViewRouter_hook_instantiateInitialViewController
+#endif
+{
     id initialViewController = [self ZIKViewRouter_hook_instantiateInitialViewController];
     XXViewController *parentViewController = initialViewController;
     NSMutableArray<XXViewController *> *routableViews;
@@ -2704,7 +2719,12 @@ static  ZIKViewRouterType *_Nullable _routerTypeToRegisteredView(Class viewClass
     return initialViewController;
 }
 
-- (void)ZIKViewRouter_hook_prepareForSegue:(XXStoryboardSegue *)segue sender:(id)sender {
+#if ZIK_HAS_UIKIT
+- (void)ZIKViewRouter_hook_prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender
+#else
+- (void)ZIKViewRouter_hook_prepareForSegue:(NSStoryboardSegue *)segue sender:(id)sender
+#endif
+{
     /**
      We hooked every UIViewController and subclasses in +load, because a vc may override -prepareForSegue:sender: and not call [super prepareForSegue:sender:].
      If subclass vc call [super prepareForSegue:sender:] in it's -prepareForSegue:sender:, because it's superclass's -prepareForSegue:sender: was alse hooked, we will enter -ZIKViewRouter_hook_prepareForSegue:sender: for superclass. But we can't invoke superclass's original implementation by [self ZIKViewRouter_hook_prepareForSegue:sender:], it will call current class's original implementation, then there is an endless loop.
