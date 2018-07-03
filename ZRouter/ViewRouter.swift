@@ -430,7 +430,7 @@ public enum ViewRoutePath {
     case showDetail(from: ViewController)
 #elseif os(OSX)
     /// Show the destination with `NSWindowController.showWindow(_ sender: Any?)`.
-    case show(from: ViewController?)
+    case show
 #endif
     /// Add the destination as child view controller to the parent source view controller. In addingChildViewHandler, add destination's view to source's view in addingChildViewHandler, and invoke the completion block when finished.
     /// - addingChildViewHandler: Add destination's view to source's view.
@@ -461,8 +461,8 @@ public enum ViewRoutePath {
         case .presentAsSheet(from: let s),
              .present(from: let s, animator: _):
             source = s
-        case .show(from: let s):
-            source = s
+        case .show:
+            source = nil
 #endif
         case .presentModally(from: let s),
              .presentAsPopover(from: let s, _),
@@ -500,7 +500,7 @@ public enum ViewRoutePath {
 #endif
         case .performSegue(from: _):
             return .performSegue
-        case .show(from: _):
+        case .show:
             return .show
 #if os(iOS) || os(watchOS) || os(tvOS)
         case .showDetail(from: _):
@@ -580,8 +580,8 @@ public enum ViewRoutePath {
         case (.showDetail, let source as ViewController):
             self = .showDetail(from: source)
 #elseif os(OSX)
-        case (.show, let source as ViewController?):
-            self = .show(from: source)
+        case (.show, _):
+            self = .show
 #endif
         case (.addAsChildViewController, let source as ViewController):
             if let addingChildViewHandler = path.addingChildViewHandler {

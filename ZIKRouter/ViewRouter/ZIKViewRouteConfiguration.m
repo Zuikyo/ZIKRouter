@@ -76,17 +76,21 @@ ZIKRouteAction const ZIKRouteActionPerformOnDestination = @"ZIKRouteActionPerfor
     };
 }
 
+#if ZIK_HAS_UIKIT
 + (ZIKViewRoutePath *(^)(XXViewController *))showFrom {
     return ^(XXViewController *source) {
         return [self showFrom:source];
     };
 }
 
-#if ZIK_HAS_UIKIT
 + (ZIKViewRoutePath *(^)(XXViewController *))showDetailFrom {
     return ^(XXViewController *source) {
         return [self showDetailFrom:source];
     };
+}
+#else
++ (ZIKViewRoutePath *)show {
+    return [[ZIKViewRoutePath alloc] initWithRouteType:ZIKViewRouteTypeShow source:nil];
 }
 #endif
 
@@ -153,11 +157,11 @@ ZIKRouteAction const ZIKRouteActionPerformOnDestination = @"ZIKRouteActionPerfor
     return path;
 }
 
+#if ZIK_HAS_UIKIT
 + (instancetype)showFrom:(XXViewController *)source {
     return [[ZIKViewRoutePath alloc] initWithRouteType:ZIKViewRouteTypeShow source:source];
 }
 
-#if ZIK_HAS_UIKIT
 + (instancetype)showDetailFrom:(XXViewController *)source {
     return [[ZIKViewRoutePath alloc] initWithRouteType:ZIKViewRouteTypeShowDetail source:source];
 }

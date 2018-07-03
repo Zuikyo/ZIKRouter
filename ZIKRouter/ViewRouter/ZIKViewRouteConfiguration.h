@@ -403,7 +403,7 @@ typedef void(^ZIKViewRouteSegueConfiger)(NS_NOESCAPE ZIKViewRouteSegueConfigure)
 @property (nonatomic, class, readonly) ZIKViewRoutePath *(^performSegueFrom)(NSViewController *source, NSString *identifier, id _Nullable sender) NS_SWIFT_UNAVAILABLE("Use performSegue(from:identifier:sender:) instead");
 
 /// Show the destination with `-[NSWindowController showWindow:sender]`.
-@property (nonatomic, class, readonly) ZIKViewRoutePath *(^showFrom)(NSViewController * _Nullable source) NS_SWIFT_UNAVAILABLE("Use show(from:) instead");
+@property (nonatomic, class, readonly) ZIKViewRoutePath *show;
 
 /// Add the destination as child view controller to the parent source view controller. Adding destination's view to source's view in addingChildViewHandler, and invoke the completion block when finished.
 @property (nonatomic, class, readonly) ZIKViewRoutePath *(^addAsChildViewControllerFrom)(NSViewController *source, void(^addingChildViewHandler)(NSViewController *destination, void(^completion)(void))) NS_SWIFT_UNAVAILABLE("Use addAsChildViewController(from:addingChildViewHandler) instead");
@@ -434,9 +434,6 @@ typedef void(^ZIKViewRouteSegueConfiger)(NS_NOESCAPE ZIKViewRouteSegueConfigure)
 
 /// Perform segue from the source view controller, with the segue identifier
 + (instancetype)performSegueFrom:(NSViewController *)source identifier:(NSString *)identifier sender:(nullable id)sender NS_SWIFT_NAME(performSegue(from:identifier:sender:));
-
-/// Show the destination with `-[NSWindowController showWindow:sender]`.
-+ (instancetype)showFrom:(nullable NSViewController *)source NS_SWIFT_NAME(show(from:));
 
 /// Add the destination as child view controller to the parent source view controller. Adding destination's view to source's view in addingChildViewHandler, and invoke the completion block when finished.
 + (instancetype)addAsChildViewControllerFrom:(NSViewController *)source addingChildViewHandler:(void(^)(NSViewController *destination, void(^completion)(void)))addingChildViewHandler NS_SWIFT_NAME(addAsChildViewController(from:addingChildViewHandler:));
