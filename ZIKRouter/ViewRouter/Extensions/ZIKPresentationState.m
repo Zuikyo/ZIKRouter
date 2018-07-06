@@ -42,9 +42,11 @@
 #else
             if ([UIDevice currentDevice].systemVersion.floatValue >= 8.0) {
 #endif
+#if !TARGET_OS_TV
                 if (viewController.modalPresentationStyle == UIModalPresentationPopover) {
                     _isModalPresentationPopover = YES;
                 }
+#endif
             }
         }
         

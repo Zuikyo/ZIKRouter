@@ -678,6 +678,7 @@ static NSMutableArray *g_preparingXXViewRouters;
     
 #if ZIK_HAS_UIKIT
     ZIKViewRouteConfiguration *configuration = self.original_configuration;
+#if !TARGET_OS_TV
     if (NSClassFromString(@"UIPopoverPresentationController")) {
         destination.modalPresentationStyle = UIModalPresentationPopover;
         UIPopoverPresentationController *popoverPresentationController = destination.popoverPresentationController;
@@ -722,9 +723,19 @@ static NSMutableArray *g_preparingXXViewRouters;
         }];
         return;
     }
+#endif
     
-    //iOS7 iPad
+    //iOS7 iPad, or TV
+    BOOL shouldPopover = NO;
     if ([UIDevice currentDevice].userInterfaceIdiom == UIUserInterfaceIdiomPad) {
+        shouldPopover = YES;
+    }
+    if (@available(iOS 9.0, *)) {
+        if ([UIDevice currentDevice].userInterfaceIdiom == UIUserInterfaceIdiomTV) {
+            shouldPopover = YES;
+        }
+    }
+    if (shouldPopover) {
         XXViewController *wrappedDestination = [self _wrappedDestination:destination];
 #pragma clang diagnostic push
 #pragma clang diagnostic ignored "-Wdeprecated"

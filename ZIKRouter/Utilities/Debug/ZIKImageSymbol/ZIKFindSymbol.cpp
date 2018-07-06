@@ -15,6 +15,10 @@
 
 #include "ZIKFindSymbol.h"
 
+#ifdef __APPLE__
+#include <TargetConditionals.h>
+#endif
+
 #include <mach/mach.h>
 #include <mach/mach_init.h>
 
@@ -28,6 +32,8 @@ extern "C" {
 
 #define BSD_KERNEL_PRIVATE
 #include <machine/types.h>
+#include <sys/sysctl.h>
+
 #include "exec.h"
 
 #include <stdio.h>
@@ -81,20 +87,28 @@ fat:
     const struct exec *buf(reinterpret_cast<const struct exec *>(base));
     
     if (OSSwapBigToHostInt32(buf->a_magic) == FAT_MAGIC) {
+        cpu_type_t cpu_type;
+#if !TARGET_OS_TV && !TARGET_OS_WATCH
         struct host_basic_info hbi; {
             host_t host(mach_host_self());
             mach_msg_type_number_t count(HOST_BASIC_INFO_COUNT);
             if (host_info(host, HOST_BASIC_INFO, reinterpret_cast<host_info_t>(&hbi), &count) != KERN_SUCCESS)
                 return -1;
             mach_port_deallocate(mach_task_self(), host);
+            cpu_type = hbi.cpu_type;
         }
+#else
+        size_t size;
+        size = sizeof(cpu_type);
+        sysctlbyname("hw.cputype", &cpu_type, &size, NULL, 0);
+#endif
         
         const struct fat_header *fh(reinterpret_cast<const struct fat_header *>(base));
         uint32_t nfat_arch(OSSwapBigToHostInt32(fh->nfat_arch));
         const struct fat_arch *fat_archs(reinterpret_cast<const struct fat_arch *>(fh + 1));
         
         for (uint32_t i(0); i != nfat_arch; ++i)
-            if (static_cast<cpu_type_t>(OSSwapBigToHostInt32(fat_archs[i].cputype)) == hbi.cpu_type) {
+            if (static_cast<cpu_type_t>(OSSwapBigToHostInt32(fat_archs[i].cputype)) == cpu_type) {
                 buf = reinterpret_cast<const struct exec *>(base + OSSwapBigToHostInt32(fat_archs[i].offset));
                 goto thin;
             }

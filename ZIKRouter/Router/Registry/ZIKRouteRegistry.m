@@ -104,33 +104,32 @@ static BOOL _registrationFinished = NO;
 }
 
 + (void)registerAll {
-    static dispatch_once_t onceToken;
-    dispatch_once(&onceToken, ^{
-        
-        NSSet *registries = [[self registries] copy];
+    if (self.registrationFinished) {
+        return;
+    }
+    NSSet *registries = [[self registries] copy];
+    for (Class registry in registries) {
+        [registry willEnumerateClasses];
+    }
+    ZIKRouter_enumerateClassList(^(__unsafe_unretained Class class) {
         for (Class registry in registries) {
-            [registry willEnumerateClasses];
+            [registry handleEnumerateClasses:class];
         }
-        ZIKRouter_enumerateClassList(^(__unsafe_unretained Class class) {
-            for (Class registry in registries) {
-                [registry handleEnumerateClasses:class];
-            }
-        });
-        for (Class registry in registries) {
-            [registry didFinishEnumerateClasses];
-        }
-#if ZIKROUTER_CHECK
-        ZIKRouter_enumerateProtocolList(^(Protocol *protocol) {
-            for (Class registry in registries) {
-                [registry handleEnumerateProtocoles:protocol];
-            }
-        });
-#endif
-        for (Class registry in registries) {
-            [registry didFinishRegistration];
-        }
-        self.registrationFinished = YES;
     });
+    for (Class registry in registries) {
+        [registry didFinishEnumerateClasses];
+    }
+#if ZIKROUTER_CHECK
+    ZIKRouter_enumerateProtocolList(^(Protocol *protocol) {
+        for (Class registry in registries) {
+            [registry handleEnumerateProtocoles:protocol];
+        }
+    });
+#endif
+    for (Class registry in registries) {
+        [registry didFinishRegistration];
+    }
+    self.registrationFinished = YES;
 }
 
 #pragma mark Discover
@@ -158,8 +157,6 @@ static BOOL _registrationFinished = NO;
 }
 
 + (nullable ZIKRouterType *)routerToRegisteredDestinationClass:(Class)destinationClass {
-    NSParameterAssert([destinationClass isSubclassOfClass:[XXView class]] ||
-                      [destinationClass isSubclassOfClass:[XXViewController class]]);
     NSParameterAssert([self isDestinationClassRoutable:destinationClass]);
     CFDictionaryRef destinationToDefaultRouterMap = self.destinationToDefaultRouterMap;
     while (destinationClass) {
