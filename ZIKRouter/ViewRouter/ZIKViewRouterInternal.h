@@ -38,7 +38,7 @@ NS_ASSUME_NONNULL_BEGIN
  This methods is only responsible for create the destination. The additional initialization should be in -prepareDestination:configuration:.
  
  @param configuration Configuration for route.
- @return A UIViewController or UIView, If the configuration is invalid, return nil to make this route failed.
+ @return an UIViewController or UIView, If the configuration is invalid, return nil to make this route failed.
  */
 //- (nullable Destination)destinationWithConfiguration:(RouteConfig)configuration;
 
@@ -47,7 +47,7 @@ NS_ASSUME_NONNULL_BEGIN
 ///Invoked after all registrations are finished when ZIKROUTER_CHECK is enabled, when ZIKROUTER_CHECK is disabled, this won't be invoked. You can override and do some debug checking.
 + (void)_didFinishRegistration;
 
-///Supported route types of this router. Default is ZIKViewRouteTypeMaskViewControllerDefault for UIViewController type destination, if your destination is a UIView, override this and return ZIKViewRouteTypeMaskViewDefault. Router subclass can also limit the route type.
+///Supported route types of this router. Default is ZIKViewRouteTypeMaskViewControllerDefault for UIViewController type destination, if your destination is an UIView, override this and return ZIKViewRouteTypeMaskViewDefault. Router subclass can also limit the route type.
 + (ZIKViewRouteTypeMask)supportedRouteTypes;
 
 /**
@@ -60,9 +60,9 @@ NS_ASSUME_NONNULL_BEGIN
  @discussion
  ## About auto create: read https://github.com/Zuikyo/ZIKRouter/blob/master/Documentation/English/Storyboard.md
  
- When a UIViewController conforms to ZIKRoutableView, and is routing from storyboard segue or from -instantiateInitialViewController, a router will be auto created to prepare the UIViewController. If the destination needs preparing (-destinationFromExternalPrepared: returns NO), the segue's sourceViewController is responsible for preparing in delegate method -prepareDestinationFromExternal:configuration:. But When you show destination without router, such as use `[source presentViewController:destination animated:NO completion:nil]`, the routers can get AOP callback, but can't search source view controller to prepare the destination. So the router won't be auto created. If you use a router as a dependency injector for preparing the UIViewController, you should always display the UIViewController instance with router.
+ When an UIViewController conforms to ZIKRoutableView, and is routing from storyboard segue or from -instantiateInitialViewController, a router will be auto created to prepare the UIViewController. If the destination needs preparing (-destinationFromExternalPrepared: returns NO), the segue's sourceViewController is responsible for preparing in delegate method -prepareDestinationFromExternal:configuration:. But When you show destination without router, such as use `[source presentViewController:destination animated:NO completion:nil]`, the routers can get AOP callback, but can't search source view controller to prepare the destination. So the router won't be auto created. If you use a router as a dependency injector for preparing the UIViewController, you should always display the UIViewController instance with router.
  
- When Adding a registered UIView by code or xib, a router will be auto created. We search the view controller of custom class (not system class like native UINavigationController, or any container view controller) in it's responder hierarchy as the performer. If the registered UIView needs preparing (-destinationFromExternalPrepared: returns NO), you have to add the view to a superview in a view controller before it's removed from superview. There will be an assert failure if there is no view controller to prepare it (such as: 1. add it to a superview, and the superview is never added to a view controller; 2. add it to a UIWindow). If your custom class view use a routable view as it's subview, the custom view should use a router to add and prepare the routable view, then the routable view doesn't need to search performer because it's already prepared.
+ When Adding a registered UIView by code or xib, a router will be auto created. We search the view controller of custom class (not system class like native UINavigationController, or any container view controller) in it's responder hierarchy as the performer. If the registered UIView needs preparing (-destinationFromExternalPrepared: returns NO), you have to add the view to a superview in a view controller before it's removed from superview. There will be an assert failure if there is no view controller to prepare it (such as: 1. add it to a superview, and the superview is never added to a view controller; 2. add it to an UIWindow). If your custom class view use a routable view as it's subview, the custom view should use a router to add and prepare the routable view, then the routable view doesn't need to search performer because it's already prepared.
  
  @param destination The view from external, such as UIViewController from storyboard and UIView from -addSubview:.
  @return If the destination requires the performer to prepare it, return NO, then router will call performer's -prepareDestinationFromExternal:configuration:. Default is YES.
@@ -91,7 +91,7 @@ NS_ASSUME_NONNULL_BEGIN
 - (void)prepareDestination:(Destination)destination configuration:(RouteConfig)configuration;
 
 /**
- Called when view first appears and it's preparation is finished. You can check whether destination is preapred correctly. Unwind segue to destination won't call this method.
+ Called when view first appears and it's preparation is finished. You can check whether destination is prepared correctly. Unwind segue to destination won't call this method.
  @warning
  when it's removed and routed again, it's alse treated as first appearance, so this method may be called more than once. You should check whether the destination is already prepared to avoid unnecessary preparation.
  

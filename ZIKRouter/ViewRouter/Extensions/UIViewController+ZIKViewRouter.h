@@ -27,9 +27,9 @@ NS_ASSUME_NONNULL_BEGIN
 @interface NSViewController (ZIKViewRouter)
 #endif
 /**
- Check UIViewController/NSViewController is routed or not, then determine a UIViewController/NSViewController is first appear or is removing. This property is for all UIViewController/NSViewController.  The implementation is in ZIKViewRouter.
+ Check UIViewController/NSViewController is routed or not, then determine an UIViewController/NSViewController is first appear or is removing. This property is for all UIViewController/NSViewController.  The implementation is in ZIKViewRouter.
  @discussion
- If a UIViewController/NSViewController is first appear, zix_routed will be NO in -viewWillAppear: and -viewDidAppear: (before [super viewDidAppear:], after [super viewDidAppear:], it's YES). If a UIViewController/NSViewController is removing, zix_routed will be NO in -viewDidDisappear:. When a UIViewController/NSViewController is displaying (even invisible), that means it's routed, zix_routed is YES.
+ If an UIViewController/NSViewController is first appear, zix_routed will be NO in -viewWillAppear: and -viewDidAppear: (before [super viewDidAppear:], after [super viewDidAppear:], it's YES). If an UIViewController/NSViewController is removing, zix_routed will be NO in -viewDidDisappear:. When an UIViewController/NSViewController is displaying (even invisible), that means it's routed, zix_routed is YES.
  
  @return If the UIViewController/NSViewController is already routed, return YES, otherwise return NO.
  */
@@ -38,7 +38,7 @@ NS_ASSUME_NONNULL_BEGIN
 /**
  Check UIViewController/NSViewController is removing or not. This property is for all UIViewController/NSViewController. The implementation is in ZIKViewRouter.
  @discussion
- If a UIViewController/NSViewController is removing, zix_removing will be YES in -viewWillDisappear: and -viewDidDisappear: (before [super viewDidDisappear:], after [super viewDidDisappear:], it's NO). A removing may be cancelled, such as user swipes to pop view controller from navigation stack but the swiping gesture is cancelled.
+ If an UIViewController/NSViewController is removing, zix_removing will be YES in -viewWillDisappear: and -viewDidDisappear: (before [super viewDidDisappear:], after [super viewDidDisappear:], it's NO). A removing may be cancelled, such as user swipes to pop view controller from navigation stack but the swiping gesture is cancelled.
  
  @return If the UIViewController/NSViewController is removing, return YES, otherwise return NO.
  */

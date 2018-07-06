@@ -236,7 +236,7 @@ public class ServiceRouter<Destination, ModuleConfig> {
         return router.canRemove()
     }
     
-    /// Remove with success handler and error handler. If canRemove return false, this will failed.
+    /// Remove with success handler and error handler. If canRemove return false, this will fail.
     public func removeRoute(successHandler performerSuccessHandler: (() -> Void)? = nil, errorHandler performerErrorHandler: ((ZIKRouteAction, Error) -> Void)? = nil) {
         router.removeRoute(successHandler: performerSuccessHandler, errorHandler: performerErrorHandler)
     }

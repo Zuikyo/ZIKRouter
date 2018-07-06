@@ -371,7 +371,7 @@ public class ViewRouter<Destination, ModuleConfig> {
     ///
     /// 5. Router was auto created when a destination is displayed and not from storyboard, so router don't know destination's state before route, and can't analyze it's real route type to do corresponding remove action.
     ///
-    /// 6. Destination's route type is complicated and is considered as custom route type. Such as destination is added to a UITabBarController, then added to a UINavigationController, and finally presented modally. We don't know the remove action should do dismiss or pop or remove from it's UITabBarController.
+    /// 6. Destination's route type is complicated and is considered as custom route type. Such as destination is added to an UITabBarController, then added to an UINavigationController, and finally presented modally. We don't know the remove action should do dismiss or pop or remove from it's UITabBarController.
     ///
     /// - Note: Router should be removed be the performer, but not inside the destination. Only the performer knows how the destination was displayed (situation 6).
     ///
@@ -380,7 +380,7 @@ public class ViewRouter<Destination, ModuleConfig> {
         return router.canRemove()
     }
     
-    /// Remove a routed destination. Auto choose proper remove action in pop/dismiss/removeFromParentViewController/removeFromSuperview/custom. If canRemove return false, this will failed, use removeRouteWithSuccessHandler:errorHandler: to get error info. Main thread only.
+    /// Remove a routed destination. Auto choose proper remove action in pop/dismiss/removeFromParentViewController/removeFromSuperview/custom. If canRemove return false, this will fail, use removeRouteWithSuccessHandler:errorHandler: to get error info. Main thread only.
     public func removeRoute(successHandler performerSuccessHandler: (() -> Void)? = nil, errorHandler performerErrorHandler: ((ZIKRouteAction, Error) -> Void)? = nil) {
         router.removeRoute(successHandler: performerSuccessHandler, errorHandler: performerErrorHandler)
     }
@@ -394,7 +394,7 @@ public class ViewRouter<Destination, ModuleConfig> {
         })
     }
     
-    /// Remove route and prepare before removing. Auto choose proper remove action in pop/dismiss/removeFromParentViewController/removeFromSuperview/custom. If canRemove return false, this will failed, use removeRouteWithSuccessHandler:errorHandler: to get error info. Main thread only.
+    /// Remove route and prepare before removing. Auto choose proper remove action in pop/dismiss/removeFromParentViewController/removeFromSuperview/custom. If canRemove return false, this will fail, use removeRouteWithSuccessHandler:errorHandler: to get error info. Main thread only.
     ///
     /// - Parameter configBuilder: Configure the configuration for removing view.
     ///     - config: Config for removing view route.
@@ -715,7 +715,7 @@ public class ViewRouteStrictConfig<Destination>: PerformRouteStrictConfig<Destin
     ///
     /// For ZIKViewRouteTypePush, ZIKViewRouteTypePresentModally, ZIKViewRouteTypePresentAsPopover, ZIKViewRouteTypePerformSegue,ZIKViewRouteTypeShow,ZIKViewRouteTypeShowDetail,ZIKViewRouteTypeAddAsChildViewController, source must be a ViewController.
     ///
-    /// For ZIKViewRouteTypeAddAsSubview, source must be a UIView.
+    /// For ZIKViewRouteTypeAddAsSubview, source must be an UIView.
     ///
     /// For ZIKViewRouteTypeMakeDestination, source is not needed.
     public var source: ZIKViewRouteSource? {
@@ -735,15 +735,15 @@ public class ViewRouteStrictConfig<Destination>: PerformRouteStrictConfig<Destin
         set { config.animated = newValue }
     }
     
-    /// Wrap destination in a UINavigationController, UITabBarController or UISplitViewController, and perform route on the container. Only available for ZIKViewRouteTypePush, ZIKViewRouteTypePresentModally, ZIKViewRouteTypePresentAsPopover, ZIKViewRouteTypeShow, ZIKViewRouteTypeShowDetail, ZIKViewRouteTypeAddAsChildViewController.
+    /// Wrap destination in an UINavigationController, UITabBarController or UISplitViewController, and perform route on the container. Only available for ZIKViewRouteTypePush, ZIKViewRouteTypePresentModally, ZIKViewRouteTypePresentAsPopover, ZIKViewRouteTypeShow, ZIKViewRouteTypeShowDetail, ZIKViewRouteTypeAddAsChildViewController.
     ///
-    /// a UINavigationController or UISplitViewController can't be pushed into another UINavigationController, so:
+    /// an UINavigationController or UISplitViewController can't be pushed into another UINavigationController, so:
     ///
-    /// For ZIKViewRouteTypePush, container can't be a UINavigationController or UISplitViewController
+    /// For ZIKViewRouteTypePush, container can't be an UINavigationController or UISplitViewController
     ///
-    /// For ZIKViewRouteTypeShow, if source is in a UINavigationController, container can't be a UINavigationController or UISplitViewController
+    /// For ZIKViewRouteTypeShow, if source is in an UINavigationController, container can't be an UINavigationController or UISplitViewController
     ///
-    /// For ZIKViewRouteTypeShowDetail, if source is in a collapsed UISplitViewController, and master is a UINavigationController, container can't be a UINavigationController or UISplitViewController
+    /// For ZIKViewRouteTypeShowDetail, if source is in a collapsed UISplitViewController, and master is an UINavigationController, container can't be an UINavigationController or UISplitViewController
     ///
     /// For ZIKViewRouteTypeAddAsChildViewController, will add container as source's child, so you have to add container's view to source's view in addingChildViewHandler, not the destination's view
     public var containerWrapper: ZIKViewRouteContainerWrapper? {

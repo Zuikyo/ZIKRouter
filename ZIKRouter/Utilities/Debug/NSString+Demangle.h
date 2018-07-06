@@ -28,7 +28,7 @@ NS_ASSUME_NONNULL_BEGIN
 - (nullable NSString *)demangledAsSwift;
 
 /**
- Demangle as a simplified Swift symbol. Module name, extension name, where clauses will be striped. Only available when use swift code.
+ Demangle as a simplified Swift symbol. Module name, extension name, `where` clauses will be striped. Only available when use swift code.
  
  @return The demangled string or nil if it can't be demangled as Swift.
  */

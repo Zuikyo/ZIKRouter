@@ -21,8 +21,7 @@ NS_ASSUME_NONNULL_BEGIN
  This function is for type safe checking in DEBUG mode. It uses private APIs in Swift bridging class, and these code won't be compiled in release mode. It will search private function pointer in libswiftCore.dylib when first invoked:
  `bool _conformsToProtocols(const OpaqueValue *value, const Metadata *type, const ExistentialTypeMetadata *existentialType, const WitnessTable **conformances)`. See `https://github.com/apple/swift/blob/master/stdlib/public/runtime/Casting.cpp`.
  
- This private function may change in later version of swift, so this function may not work then.
- @since swift 3.2
+ @since Swift 3.2
  
  @param sourceType Any type of swift class, objc class, swift struct, swift enum, swift function, swift tuple, objc protocol, swift protocol.
  @param targetType The target type to check, can be swift protocol, objc protocol, swift class, objc class, swift struct, swift enum, swift function, swift tuple.
@@ -37,7 +36,7 @@ extern bool _swift_typeIsTargetType(id sourceType, id targetType);
  @warning
  It uses private API in libswiftCore.dylib, and these code won't be compiled in release mode.
  
- @param handler  Handler for each mangled symbol name, return NO to stop. `demangledAsSwift` is for demangling a mangled swift symbol, when `simplified` is true, the demangled symbol will strip module name, extension name and where clauses in the swift symbol.
+ @param handler  Handler for each mangled symbol name, return false to stop. `demangledAsSwift` is for demangling a mangled swift symbol, when `simplified` is true, the demangled symbol will strip module name, extension name and `where` clauses in the swift symbol.
  */
 extern void _enumerateSymbolName(bool(^handler)(const char *name, NSString *(^demangledAsSwift)(const char *mangledName, bool simplified)));
 

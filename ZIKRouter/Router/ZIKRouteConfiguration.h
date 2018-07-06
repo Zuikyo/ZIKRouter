@@ -42,7 +42,7 @@ extern ZIKRouteAction const ZIKRouteActionRemoveRoute;
 typedef void(^ZIKRouteErrorHandler)(ZIKRouteAction routeAction, NSError *error);
 typedef void(^ZIKRouteStateNotifier)(ZIKRouterState oldState, ZIKRouterState newState);
 
-///Configuration for destination module. You can use a subclass to add complex dependencies for destination. The subclass must conforms to NSCopying, because the configuration will be copied.
+///Configuration for destination module. You can use a subclass to add complex dependencies for destination. The subclass must conform to NSCopying, because the configuration will be copied.
 @interface ZIKRouteConfiguration : NSObject <NSCopying>
 
 /**
@@ -62,7 +62,7 @@ typedef void(^ZIKRouteStateNotifier)(ZIKRouterState oldState, ZIKRouterState new
  */
 @property (nonatomic, copy, nullable) ZIKRouteStateNotifier stateNotifier;
 
-///Initialize properties in currrent configuration class from another configuration, the other configuration must be same class or subclass of self. This is a convenient method to initialize a copy from an existing configuration in -copyWithZone:.
+///Initialize properties in current configuration class from another configuration, the other configuration must be same class or subclass of self. This is a convenient method to initialize a copy from an existing configuration in -copyWithZone:.
 - (BOOL)setPropertiesFromConfiguration:(ZIKRouteConfiguration *)configuration NS_SWIFT_UNAVAILABLE("Can't get properties for Swift");
 
 @end

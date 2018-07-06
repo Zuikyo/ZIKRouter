@@ -20,7 +20,7 @@ NS_ASSUME_NONNULL_BEGIN
 ///Subclass can get the real configuration to avoid unnecessary copy.
 @property (nonatomic, readonly, copy) RouteConfig original_configuration;
 @property (nonatomic, readonly, copy) RemoveConfig original_removeConfiguration;
-///Destination after performed. The router only keep weak reference to the destination, the performer is responsible for holding it if needed.
+///Destination after performed. The router only keeps weak reference to the destination, the performer is responsible for holding it if needed.
 @property (nonatomic, readonly, weak, nullable) Destination destination;
 
 #pragma mark Required Override

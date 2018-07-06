@@ -30,7 +30,7 @@ NS_ASSUME_NONNULL_BEGIN
 ///Prepare the destination after -prepareDestination is invoked.
 - (void)prepareDestination:(Destination)destination configuration:(RouteConfig)configuration;
 
-///Check whether destination is preapred correctly.
+///Check whether destination is prepared correctly.
 - (void)didFinishPrepareDestination:(Destination)destination configuration:(RouteConfig)configuration;
 
 #pragma mark Notify Error

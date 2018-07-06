@@ -137,7 +137,7 @@
 }
 
 /**
- Add to a UIWindow.  This should get an assert failure when subview need prepare.
+ Add to an UIWindow.  This should get an assert failure when subview need prepare.
  Invoking order in subview when subview needs prepare:
  1.willMoveToWindow:newWindow
  2.willMoveToSuperview:newSuperview

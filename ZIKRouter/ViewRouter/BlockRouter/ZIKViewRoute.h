@@ -29,7 +29,7 @@ typedef NS_OPTIONS(NSInteger, ZIKBlockViewRouteTypeMask) {
 ///Register view class with this route. See +registerView:.
 @property (nonatomic, readonly) ZIKViewRoute<Destination, RouteConfig> *(^registerDestination)(Class destinationClass);
 
-///Register a UIViewController or UIView class with this route, then no other router can be registered for this view class. See +registerExclusiveView:.
+///Register an UIViewController or UIView class with this route, then no other router can be registered for this view class. See +registerExclusiveView:.
 @property (nonatomic, readonly) ZIKViewRoute<Destination, RouteConfig> *(^registerExclusiveDestination)(Class destinationClass);
 
 ///Register a view protocol that all views registered with the router conforming to, then use ZIKRouterToView() to get the router class. In Swift, use `register(RoutableView<ViewProtocol>())` in ZRouter instead. See +registerViewProtocol:.
@@ -50,13 +50,13 @@ typedef NS_OPTIONS(NSInteger, ZIKBlockViewRouteTypeMask) {
 ///Prepare the destination with the configuration when view first appears. See +prepareDestination:configuration:.
 @property (nonatomic, readonly) ZIKViewRoute<Destination, RouteConfig> *(^prepareDestination)(void(^)(Destination destination, RouteConfig config, ZIKViewRouter *router));
 
-///Called when view first appears and it's preparation is finished. You can check whether destination is preapred correctly. See +didFinishPrepareDestination:configuration:.
+///Called when view first appears and it's preparation is finished. You can check whether destination is prepared correctly. See +didFinishPrepareDestination:configuration:.
 @property (nonatomic, readonly) ZIKViewRoute<Destination, RouteConfig> *(^didFinishPrepareDestination)(void(^)(Destination destination, RouteConfig config, ZIKViewRouter *router));
 
 ///Whether the destination is all prepared, if not, it requires the performer to prepare it. This method is for destination from storyboard and UIView from -addSubview:. See -destinationFromExternalPrepared:.
 @property (nonatomic, readonly) ZIKViewRoute<Destination, RouteConfig> *(^destinationFromExternalPrepared)(BOOL(^)(Destination destination, ZIKViewRouter *router));
 
-///Supported route types of this router. Default is ZIKViewRouteTypeMaskViewControllerDefault for UIViewController type destination, if your destination is a UIView, override this and return ZIKViewRouteTypeMaskViewDefault. Router can limit the route type.
+///Supported route types of this router. Default is ZIKViewRouteTypeMaskViewControllerDefault for UIViewController type destination, if your destination is an UIView, override this and return ZIKViewRouteTypeMaskViewDefault. Router can limit the route type.
 @property (nonatomic, readonly) ZIKViewRoute<Destination, RouteConfig> *(^makeSupportedRouteTypes)(ZIKBlockViewRouteTypeMask(^)(void));
 
 ///Whether the router can perform custom route now. Default is NO.

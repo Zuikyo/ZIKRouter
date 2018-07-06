@@ -59,7 +59,7 @@ public struct RoutableView<Protocol> {
     /// - Parameter declaredProtocol: The protocol must be declared in extension.
     public init(declaredProtocol: Protocol.Type) { typeName = String(describing: Protocol.self) }
     
-    /// Only use this in initializers in extension, never use it in other place. This function provides much higher performence. When registering more than 500 routable modules, it will cost more than 100 ms, because `String(describing:)` has poor performance. This initializer can avoid using `String(describing:)`, and gives us a factor of 10 improvement in performance.
+    /// Only use this in initializers in extension, never use it in other place. This function provides much higher performance. When registering more than 500 routable modules, it will cost more than 100 ms, because `String(describing:)` has poor performance. This initializer can avoid using `String(describing:)`, and gives us a factor of 10 improvement in performance.
     ///
     /// - Parameter declaredTypeName: The name of declared protocol in extension. Must be equal to the name from `String(describing: Protocol.self)`, or there will be assert failure.
     public init(declaredTypeName: String) {
@@ -98,7 +98,7 @@ public struct RoutableViewModule<Protocol> {
     /// - Parameter declaredProtocol: The protocol must be declared in extension.
     public init(declaredProtocol: Protocol.Type) { typeName = String(describing: Protocol.self) }
     
-    /// Only use this in initializers in extension, never use it in other place. This function provides much higher performence. When registering more than 500 routable modules, it will cost more than 100 ms, because `String(describing:)` has poor performance. This initializer can avoid using `String(describing:)`, and gives use a factor of 10 improvement in performance.
+    /// Only use this in initializers in extension, never use it in other place. This function provides much higher performance. When registering more than 500 routable modules, it will cost more than 100 ms, because `String(describing:)` has poor performance. This initializer can avoid using `String(describing:)`, and gives use a factor of 10 improvement in performance.
     ///
     /// - Parameter declaredTypeName: The name of declared protocol in extension. Must be equal to the name from `String(describing: Protocol.self)`, or there will be assert failure.
     public init(declaredTypeName: String) {
@@ -141,7 +141,7 @@ public struct RoutableService<Protocol> {
     /// - Parameter declaredProtocol: The protocol must be declared in extension.
     public init(declaredProtocol: Protocol.Type) { typeName = String(describing: Protocol.self) }
     
-    /// Only use this in initializers in extension, never use it in other place. This function provides much higher performence. When registering more than 500 routable modules, it will cost more than 100 ms, because `String(describing:)` has poor performance. This initializer can avoid using `String(describing:)`, and gives use a factor of 10 improvement in performance.
+    /// Only use this in initializers in extension, never use it in other place. This function provides much higher performance. When registering more than 500 routable modules, it will cost more than 100 ms, because `String(describing:)` has poor performance. This initializer can avoid using `String(describing:)`, and gives use a factor of 10 improvement in performance.
     ///
     /// - Parameter declaredTypeName: The name of declared protocol in extension. Must be equal to the name from `String(describing: Protocol.self)`, or there will be assert failure.
     public init(declaredTypeName: String) {
@@ -176,7 +176,7 @@ public struct RoutableServiceModule<Protocol> {
     /// - Parameter declaredProtocol: The protocol must be declared in extension.
     public init(declaredProtocol: Protocol.Type) { typeName = String(describing: Protocol.self) }
     
-    /// Only use this in initializers in extension, never use it in other place. This function provides much higher performence. When registering more than 500 routable modules, it will cost more than 100 ms, because `String(describing:)` has poor performance. This initializer can avoid using `String(describing:)`, and gives use a factor of 10 improvement in performance.
+    /// Only use this in initializers in extension, never use it in other place. This function provides much higher performance. When registering more than 500 routable modules, it will cost more than 100 ms, because `String(describing:)` has poor performance. This initializer can avoid using `String(describing:)`, and gives use a factor of 10 improvement in performance.
     ///
     /// - Parameter declaredTypeName: The name of declared protocol in extension. Must be equal to the name from `String(describing: Protocol.self)`, or there will be assert failure.
     public init(declaredTypeName: String) {

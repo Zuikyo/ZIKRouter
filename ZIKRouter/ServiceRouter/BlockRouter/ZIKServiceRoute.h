@@ -44,7 +44,7 @@ NS_ASSUME_NONNULL_BEGIN
 ///Prepare the destination after -prepareDestination is invoked.
 @property (nonatomic, readonly) ZIKServiceRoute<Destination, RouteConfig> *(^prepareDestination)(void(^)(Destination destination, RouteConfig config, ZIKServiceRouter *router));
 
-///Check whether destination is preapred correctly.
+///Check whether destination is prepared correctly.
 @property (nonatomic, readonly) ZIKServiceRoute<Destination, RouteConfig> *(^didFinishPrepareDestination)(void(^)(Destination destination, RouteConfig config, ZIKServiceRouter *router));
 
 @end

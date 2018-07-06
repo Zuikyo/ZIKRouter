@@ -14,7 +14,7 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-///Enble this to check whether all routers and routable protocols are properly implemented.
+///Enable this to check whether all routers and routable protocols are properly implemented.
 #ifdef DEBUG
 #define ZIKROUTER_CHECK 1
 #else
@@ -24,7 +24,7 @@ NS_ASSUME_NONNULL_BEGIN
 /**
  Abstract superclass for router that can perform route and remove route.
  @note
- The router only keep weak reference to the destination, the performer is responsible for holding it if needed.
+ The router only keeps weak reference to the destination, the performer is responsible for holding it if needed.
  */
 @interface ZIKRouter<__covariant Destination, __covariant RouteConfig: ZIKPerformRouteConfiguration *, __covariant RemoveConfig: ZIKRemoveRouteConfiguration *> : NSObject
 ///State of route. View router's state will be auto changed when the destination's state is changed.
@@ -62,10 +62,10 @@ NS_ASSUME_NONNULL_BEGIN
 
 ///Perform route directly.
 - (void)performRoute;
-///Perform with success handler and error handler. Blocks are only for currrent performing.
+///Perform with success handler and error handler. Blocks are only for current performing.
 - (void)performRouteWithSuccessHandler:(void(^ _Nullable)(Destination destination))performerSuccessHandler
                           errorHandler:(void(^ _Nullable)(ZIKRouteAction routeAction, NSError *error))performerErrorHandler;
-///Perform with completion. The completion is only for currrent performing.
+///Perform with completion. The completion is only for current performing.
 - (void)performRouteWithCompletion:(void(^)(BOOL success, Destination _Nullable destination, ZIKRouteAction routeAction, NSError *_Nullable error))performerCompletion;
 
 ///If this route action doesn't need any arguments, just perform directly.
@@ -107,7 +107,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 ///Whether the router can remove route now.
 - (BOOL)canRemove;
-///Remove route directly. If -canRemove return NO, this will failed.
+///Remove route directly. If -canRemove return NO, this will fail.
 - (void)removeRoute;
 ///Remove with success handler and error handler for current removing.
 - (void)removeRouteWithSuccessHandler:(void(^ _Nullable)(void))performerSuccessHandler
