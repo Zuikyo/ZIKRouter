@@ -47,7 +47,7 @@
 - (void)login:(UIButton *)sender {
     NSString *password = self.passwordView.text;
     if ([password isEqualToString:@"123"] == NO) {
-        [ZIKRouterToViewModule(ZIKLoginModuleRequiredAlertInput) performPath:ZIKViewRoutePath.customFrom(self) configuring:^(ZIKViewRouteConfiguration<ZIKLoginModuleRequiredAlertInput> * _Nonnull config) {
+        [ZIKRouterToViewModule(ZIKLoginModuleRequiredAlertInput) performPath:ZIKViewRoutePath.defaultPathFrom(self) configuring:^(ZIKViewRouteConfiguration<ZIKLoginModuleRequiredAlertInput> * _Nonnull config) {
             config.title = @"Invalid Password";
             config.message = @"The password is 123";
             [config addOtherButtonTitle:@"OK" handler:^{
@@ -55,7 +55,7 @@
             }];
         }];
     } else {
-        [ZIKRouterToViewModule(ZIKLoginModuleRequiredAlertInput) performPath:ZIKViewRoutePath.customFrom(self) configuring:^(ZIKViewRouteConfiguration<ZIKLoginModuleRequiredAlertInput> * _Nonnull config) {
+        [ZIKRouterToViewModule(ZIKLoginModuleRequiredAlertInput) performPath:ZIKViewRoutePath.defaultPathFrom(self) configuring:^(ZIKViewRouteConfiguration<ZIKLoginModuleRequiredAlertInput> * _Nonnull config) {
             config.title = @"Login Success";
             [config addCancelButtonTitle:@"Cancel" handler:^{
                 

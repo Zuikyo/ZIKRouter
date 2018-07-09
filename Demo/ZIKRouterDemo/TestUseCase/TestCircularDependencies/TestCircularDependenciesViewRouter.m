@@ -45,7 +45,7 @@
          performPath:ZIKViewRoutePath.makeDestination
          configuring:^(ZIKViewRouteConfiguration * _Nonnull config) {
             
-            //The child may fetch parent in it's router, you must set child's parent to avoid infinite recursion
+            //The child may fetch parent in its router, you must set child's parent to avoid infinite recursion
             config.prepareDestination = ^(id<ZIKChildViewProtocol> child) {
                 child.parent = destination;
             };

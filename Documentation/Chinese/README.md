@@ -24,6 +24,7 @@ Service router用于模块寻找，通过protocol寻找对应的模块，并用p
 ## Features
 
 - [x] 支持 Swift 和 Objective-C，以及两者混编
+- [x] 支持 iOS、macOS、tvOS
 - [x] 支持界面路由和任意模块的路由
 - [x] 支持对模块进行静态依赖注入和动态依赖注入
 - [x] **用 protocol 动态获取界面和模块，隐藏具体类**
@@ -40,7 +41,6 @@ Service router用于模块寻找，通过protocol寻找对应的模块，并用p
 - [x] 支持界面跳转过程中的 AOP 回调
 - [x] 两种注册方式：自动注册和手动注册
 - [x] 用 router 子类添加模块，也可以用 block 添加 router
-- [ ] 增加支持 Mac OS 和 tv OS
 
 ## Table of Contents
 

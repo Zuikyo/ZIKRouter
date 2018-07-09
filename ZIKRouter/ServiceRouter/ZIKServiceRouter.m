@@ -73,11 +73,11 @@ static dispatch_semaphore_t g_globalErrorSema;
 }
 
 - (void)prepareDestination:(id)destination configuration:(__kindof ZIKPerformRouteConfiguration *)configuration {
-    NSAssert([self class] != [ZIKServiceRouter class], @"Prepare destination with it's router.");
+    NSAssert([self class] != [ZIKServiceRouter class], @"Prepare destination with its router.");
 }
 
 - (void)didFinishPrepareDestination:(id)destination configuration:(__kindof ZIKPerformRouteConfiguration *)configuration {
-    NSAssert([self class] != [ZIKServiceRouter class], @"Prepare destination with it's router.");
+    NSAssert([self class] != [ZIKServiceRouter class], @"Prepare destination with its router.");
 }
 
 + (__kindof ZIKPerformRouteConfiguration *)defaultRouteConfiguration {

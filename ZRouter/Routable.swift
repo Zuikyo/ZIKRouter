@@ -42,7 +42,7 @@ import ZIKRouter
  ```
  When a type is declared as routable, you should register it in router's `registerRoutableDestiantion()`. In DEBUG mode, ZRouter will enumerate all declared type and make sure they are all registered.
  - Warning
- Never add extension for RoutableView without generic constraint and expose it's initializer.
+ Never add extension for RoutableView without generic constraint and expose its initializer.
  - Note
  When there is only one declared protocol, swift complier will use that protocol as default generic parameter.
  */
@@ -83,7 +83,7 @@ public struct RoutableView<Protocol> {
  ```
   When a type is declared as routable, you should register it in router's `registerRoutableDestiantion()`. In DEBUG mode, ZRouter will enumerate all declared type and make sure they are all registered.
  - Warning
- Never add extension for RoutableViewModule without generic constraint and expose it's initializer.
+ Never add extension for RoutableViewModule without generic constraint and expose its initializer.
  */
 public struct RoutableViewModule<Protocol> {
     
@@ -126,7 +126,7 @@ public struct RoutableViewModule<Protocol> {
  ```
   When a type is declared as routable, you should register it in router's `registerRoutableDestiantion()`. In DEBUG mode, ZRouter will enumerate all declared type and make sure they are all registered.
  - Warning
- Never add extension for RoutableServiceModule without generic constraint and expose it's initializer.
+ Never add extension for RoutableServiceModule without generic constraint and expose its initializer.
  */
 public struct RoutableService<Protocol> {
     
@@ -161,7 +161,7 @@ public struct RoutableService<Protocol> {
  ```
   When a type is declared as routable, you should register it in router's `registerRoutableDestiantion()`. In DEBUG mode, ZRouter will enumerate all declared type and make sure they are all registered.
  - Warning
- Never add extension for RoutableServiceModule without generic constraint and expose it's initializer.
+ Never add extension for RoutableServiceModule without generic constraint and expose its initializer.
  */
 public struct RoutableServiceModule<Protocol> {
     

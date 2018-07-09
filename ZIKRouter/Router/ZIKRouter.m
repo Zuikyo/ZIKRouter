@@ -557,11 +557,11 @@ NSErrorDomain const ZIKRouteErrorDomain = @"ZIKRouteErrorDomain";
 }
 
 - (void)prepareDestination:(id)destination configuration:(ZIKPerformRouteConfiguration *)configuration {
-    NSAssert([self class] != [ZIKRouter class], @"Prepare destination with it's router.");
+    NSAssert([self class] != [ZIKRouter class], @"Prepare destination with its router.");
 }
 
 - (void)didFinishPrepareDestination:(id)destination configuration:(ZIKPerformRouteConfiguration *)configuration {
-    NSAssert([self class] != [ZIKRouter class], @"Prepare destination with it's router.");
+    NSAssert([self class] != [ZIKRouter class], @"Prepare destination with its router.");
 }
 
 + (ZIKPerformRouteConfiguration *)defaultRouteConfiguration {

@@ -50,7 +50,7 @@ typedef NS_OPTIONS(NSInteger, ZIKBlockViewRouteTypeMask) {
 ///Prepare the destination with the configuration when view first appears. See +prepareDestination:configuration:.
 @property (nonatomic, readonly) ZIKViewRoute<Destination, RouteConfig> *(^prepareDestination)(void(^)(Destination destination, RouteConfig config, ZIKViewRouter *router));
 
-///Called when view first appears and it's preparation is finished. You can check whether destination is prepared correctly. See +didFinishPrepareDestination:configuration:.
+///Called when view first appears and its preparation is finished. You can check whether destination is prepared correctly. See +didFinishPrepareDestination:configuration:.
 @property (nonatomic, readonly) ZIKViewRoute<Destination, RouteConfig> *(^didFinishPrepareDestination)(void(^)(Destination destination, RouteConfig config, ZIKViewRouter *router));
 
 ///Whether the destination is all prepared, if not, it requires the performer to prepare it. This method is for destination from storyboard and UIView from -addSubview:. See -destinationFromExternalPrepared:.

@@ -15,7 +15,7 @@ An interface-oriented router for discovering modules and injecting dependencies 
 
 The view router can perform all navigation types in UIKit through one method.
 
-The service router can discover and prepare corresponding module with it's protocol.
+The service router can discover and prepare corresponding module with its protocol.
 
 ---
 
@@ -32,9 +32,10 @@ Service router 用于模块寻找，通过 protocol 寻找对应的模块，并�
 ## Features
 
 - [x] Support Swift and Objective-C
-- [x] Routing for UIViewController, UIView and any classes
+- [x] Support iOS, macOS and tvOS
+- [x] Routing for UIViewController / NSViewController, UIView / NSView and any classes
 - [x] Dependency injection
-- [x] **Locate module with it's protocol**
+- [x] **Locate module with its protocol**
 - [x] **Locate module with identifier, compatible with other URL router**
 - [x] **Prepare the module with it's protocol when performing route, rather than passing a parameter dictionary**
 - [x] **Use different adapter protocols inside module and module's user for the same module to make thorough decouple**
@@ -42,13 +43,12 @@ Service router 用于模块寻找，通过 protocol 寻找对应的模块，并�
 - [x] Declare a specific router with generic parameters
 - [x] **Decouple modules and add compatible interfaces with adapter**
 - [x] Encapsulate navigation methods in UIKit (push, present modally, present as popover, segue, show, showDetail, addChildViewController, addSubview) and custom transitions into one method
-- [x] Remove a UIviewController/UIView or unload a module through one method, without using pop、dismiss、removeFromParentViewController、removeFromSuperview in different situation. Router can choose the proper method
+- [x] Remove an UIviewController/UIView or unload a module through one method, without using pop、dismiss、removeFromParentViewController、removeFromSuperview in different situation. Router can choose the proper method
 - [x] **Support storyboard. UIViewController and UIView from a segue can auto create it's registered router**
 - [x] Error checking for UIKit view transition
 - [x] AOP for view transition
 - [x] Auto register all routers, or manually register each router
 - [x] Add route with router subclasses, or with blocks
-- [ ] Support Mac OS and tv OS (only iOS now)
 
 ## Table of Contents
 

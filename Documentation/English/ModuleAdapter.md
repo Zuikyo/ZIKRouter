@@ -12,7 +12,7 @@ See `Required Interface` and `Provided Interface` in component diagrams[componen
 
 Read [VIPER architecture](https://github.com/Zuikyo/ZIKViper) to get more details about implementing `Required Interface` and `Provided Interface`.
 
-App Context is responsible for adapting interfaces. The module's user use `Required Interface`, and the adapter forwards `Required Interface` to `Provided Interface`.
+App Context is responsible for adapting interfaces. The module's user uses `Required Interface`, and the adapter forwards `Required Interface` to `Provided Interface`.
 
 ## Add `Required Interface` for module
 
@@ -201,7 +201,7 @@ class ModuleAReqiredEditorViewRouter: ZIKViewRouter {
 ```objectivec
 @implementation ZIKModuleARequiredEditorViewRouter
 + (void)registerRoutableDestination {
-	//注册ModuleARequiredLoginViewInput，和新的ZIKModuleARequiredEditorViewRouter配对，而不是目的模块中的ZIKEditorViewRouter
+	//Register ModuleARequiredLoginViewInput with ZIKModuleARequiredEditorViewRouter
 	[self registerView:/* proxy class*/];
 	[self registerViewProtocol:ZIKRoutable(NoteListRequiredNoteEditorProtocol)];
 }
@@ -216,6 +216,6 @@ class ModuleAReqiredEditorViewRouter: ZIKViewRouter {
 ```
 </details>
 
-For simple objc classes, you can use NSProxy to create a proxy. For those complex classes such as UIViewController in UIKit, you can subclass the UIViewController, and override methods to adapte interface.
+For simple objc classes, you can use NSProxy to create a proxy. For those complex classes such as UIViewController in UIKit, you can subclass the UIViewController, and override methods to adapt interface.
 
 You don't have to always separate `requiredProtocol` and `providedProtocol`. It's ok to use the same protocol in module and it's user. Change it only when you need it.

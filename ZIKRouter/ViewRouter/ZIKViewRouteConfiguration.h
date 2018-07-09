@@ -296,7 +296,7 @@ typedef void(^ZIKViewRouteSegueConfiger)(NS_NOESCAPE ZIKViewRouteSegueConfigure)
 ///For pop/dismiss, default is YES
 @property (nonatomic, assign) BOOL animated;
 
-///When use routeType ZIKViewRouteTypeAddAsChildViewController and remove, remove the destination's view from it's superview in this block. If you wrap destination with -containerWrapper, the `destination` in this block is the wrapped ViewController. You can remove with animations, and must call completion when the removing action is finished.
+///When use routeType ZIKViewRouteTypeAddAsChildViewController and remove, remove the destination's view from its superview in this block. If you wrap destination with -containerWrapper, the `destination` in this block is the wrapped ViewController. You can remove with animations, and must call completion when the removing action is finished.
 #if ZIK_HAS_UIKIT
 @property (nonatomic, copy, nullable) void(^removingChildViewHandler)(UIViewController *destination, void(^completion)(void));
 #else
@@ -617,7 +617,7 @@ typedef void(^ZIKViewRouteSegueConfiger)(NS_NOESCAPE ZIKViewRouteSegueConfigure)
 ///For pop/dismiss, default is YES
 @property (nonatomic, assign) BOOL animated;
 
-///When use routeType ZIKViewRouteTypeAddAsChildViewController and remove, remove the destination's view from it's superview in this block. If you wrap destination with -containerWrapper, the `destination` in this block is the wrapped UIViewController. You can remove with animations, and must call completion when the removing action is finished.
+///When use routeType ZIKViewRouteTypeAddAsChildViewController and remove, remove the destination's view from its superview in this block. If you wrap destination with -containerWrapper, the `destination` in this block is the wrapped UIViewController. You can remove with animations, and must call completion when the removing action is finished.
 #if ZIK_HAS_UIKIT
 @property (nonatomic, copy, nullable) void(^removingChildViewHandler)(UIViewController *destination, void(^completion)(void));
 #else

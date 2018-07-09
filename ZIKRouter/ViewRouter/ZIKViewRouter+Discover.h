@@ -29,7 +29,7 @@ NS_ASSUME_NONNULL_BEGIN
  
  The return Class of the block is a router class matched with the view. Return nil if protocol is nil or not registered. There will be an assert failure when result is nil.
  @discussion
- This function is for decoupling route behavior with router class. If a view conforms to a protocol for configuring it's dependencies, and the protocol is only used by this view, you can use +registerViewProtocol: to register the protocol, then you don't need to import the router's header when performing route.
+ This function is for decoupling route behavior with router class. If a view conforms to a protocol for configuring its dependencies, and the protocol is only used by this view, you can use +registerViewProtocol: to register the protocol, then you don't need to import the router's header when performing route.
  @code
  //ZIKLoginViewInput
  @protocol ZIKLoginViewInput <ZIKViewRoutable>

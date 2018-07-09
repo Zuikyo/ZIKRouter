@@ -116,7 +116,7 @@ But there is bug in Xcode auto completions. These parameters in block are not co
 
 You can create the router, then perform it later. This let you separate the router's provider and performer.
 
-When performer performs the router, it may fail. The router may be performed already and can't be performed unless it's removed. So the performer need to check the router's state.
+When performer performs the router, it may fail. The router may be performed already and can't be performed unless it's removed. So the performer needs to check the router's state.
 
 ```swift
 class TestViewController: UIViewController {
@@ -174,9 +174,9 @@ After performing, you will get a router instance. You can hold the router and re
 
 ## Perform on Destination
 
-If you get a destination from other place, you can perform on the destination with it's router.
+If you get a destination from other place, you can perform on the destination with its router.
 
-For example, a UIViewController supports 3D touch, and implments `UIViewControllerPreviewingDelegate`:
+For example, an UIViewController supports 3D touch, and implments `UIViewControllerPreviewingDelegate`:
 
 ```swift
 class SourceViewController: UIViewController, UIViewControllerPreviewingDelegate {
@@ -227,7 +227,7 @@ class SourceViewController: UIViewController, UIViewControllerPreviewingDelegate
 
 If you don't want to show the destination, but just want to prepare an existing destination, you can prepare the destination with router.
 
-If the router do dependency injection inside it, this can properly setting the destination object.
+If the router injects dependencies inside it, this can properly setting the destination instance.
 
 ```swift
 var destination: DestinationViewInput = ...

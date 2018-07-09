@@ -229,9 +229,9 @@ bool _swift_typeIsTargetType(id sourceType, id targetType) {
         sourceTypeMetadata = (uintptr_t)[sourceType performSelector:NSSelectorFromString(@"_swiftTypeMetadata")];
         //Get the first member `Kind` in TargetMetadata, it's an enum `MetadataKind`
         ZIKSwiftMetadataKind type = (ZIKSwiftMetadataKind)dereferencedPointer(sourceTypeMetadata);
-        //Source is a metatype, get it's metadata
+        //Source is a metatype, get its metadata
         if (type == ZIKSwiftMetadataKindMetatype || type == ZIKSwiftMetadataKindExistentialMetatype) {
-            //OpaqueValue is struct SwiftValueHeader, `Metadata *` is it's first member
+            //OpaqueValue is struct SwiftValueHeader, `Metadata *` is its first member
             sourceTypeMetadata = dereferencedPointer(sourceTypeOpaqueValue);
         }
     } else {
@@ -251,9 +251,9 @@ bool _swift_typeIsTargetType(id sourceType, id targetType) {
         targetTypeMetadata = (uintptr_t)[targetType performSelector:NSSelectorFromString(@"_swiftTypeMetadata")];
         //Get the first member `Kind` in TargetMetadata, it's an enum `MetadataKind`
         ZIKSwiftMetadataKind type = (ZIKSwiftMetadataKind)dereferencedPointer(targetTypeMetadata);
-        //Target is a metatype, get it's metadata
+        //Target is a metatype, get its metadata
         if (type == ZIKSwiftMetadataKindMetatype || type == ZIKSwiftMetadataKindExistentialMetatype) {
-            //OpaqueValue is struct SwiftValueHeader, `Metadata *` is it's first member
+            //OpaqueValue is struct SwiftValueHeader, `Metadata *` is its first member
             targetTypeMetadata = dereferencedPointer(targetTypeOpaqueValue);
             type = (ZIKSwiftMetadataKind)dereferencedPointer(targetTypeMetadata);
         }

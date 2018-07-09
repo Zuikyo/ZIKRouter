@@ -16,7 +16,7 @@
  @discussion
  ZIKViewRoutable is for:
  1. Let module declare routable protocol in header as the module's provided interface
- 1. Checking whether declared protocol is correctly supported in it's view router
+ 1. Checking whether declared protocol is correctly supported in its view router
  
  It's safe to use objc protocols inheriting from ZIKViewRoutable with ZIKRouterToView() and won't get nil. When ZIKROUTER_CHECK is enabled, ZIKViewRouter will validate all ZIKViewRoutable protocols when registration is finished, then we can make sure all routable view protocols have been registered with a router.
  */

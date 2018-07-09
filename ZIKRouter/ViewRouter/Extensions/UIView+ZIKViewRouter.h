@@ -48,7 +48,7 @@ NS_ASSUME_NONNULL_BEGIN
  Get the performer UIViewController/NSViewController who routed this view. Only available in and after -willMoveToWindow:.
  @discussion
  A performer must be an UIViewController/NSViewController, and is custom class, rather than classes from system's frameworks. Search the UIViewController/NSViewController in nextResponder and parentViewController/superview's nextResponder.
- @return an UIViewController/NSViewController who add this view as it's subview. return nil when this view is not in any superview or view controller of custom class.
+ @return an UIViewController/NSViewController who add this view as its subview. return nil when this view is not in any superview or view controller of custom class.
  */
 - (nullable id)zix_routePerformer;
 @end

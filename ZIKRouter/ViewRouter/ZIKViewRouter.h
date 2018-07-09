@@ -233,11 +233,11 @@ NS_ASSUME_NONNULL_BEGIN
  
  3. Use ZIKViewRouteTypeCustom and the router didn't provide removeRoute, or -canRemoveCustomRoute return NO.
  
- 4. If route type is adaptative type, it will choose different presentation for different situation (ZIKViewRouteTypePerformSegue, ZIKViewRouteTypeShow, ZIKViewRouteTypeShowDetail). Then if it's real route type is not Push/PresentModally/PresentAsPopover/AddAsChildViewController, destination can't be removed.
+ 4. If route type is adaptative type, it will choose different presentation for different situation (ZIKViewRouteTypePerformSegue, ZIKViewRouteTypeShow, ZIKViewRouteTypeShowDetail). Then if its real route type is not Push/PresentModally/PresentAsPopover/AddAsChildViewController, destination can't be removed.
  
- 5. Router was auto created when a destination is displayed and not from storyboard, so router don't know destination's state before route, and can't analyze it's real route type to do corresponding remove action.
+ 5. Router was auto created when a destination is displayed and not from storyboard, so router don't know destination's state before route, and can't analyze its real route type to do corresponding remove action.
  
- 6. Destination's route type is complicated and is considered as custom route type. Such as destination is added to an UITabBarController, then pushed into an UINavigationController, and finally presented modally. We don't know the remove action should do dismiss or pop or remove from it's UITabBarController.
+ 6. Destination's route type is complicated and is considered as custom route type. Such as destination is added to an UITabBarController, then pushed into an UINavigationController, and finally presented modally. We don't know the remove action should do dismiss or pop or remove from its UITabBarController.
  
  @note Router should be removed by the performer, but not inside the destination. Only the performer knows how the destination was displayed (situation 6).
 
@@ -281,7 +281,7 @@ typedef void(^ZIKViewRouteGlobalErrorHandler)(__kindof ZIKViewRouter * _Nullable
 /**
  Register an UIViewController or UIView class with this router class, then no other router class can be registered for this view class.
  @discussion
- If the view will hold and use it's router, or you inject dependencies in the router, that means the view is coupled with the router. Then use this method to register. If another router class try to register with the view class, there will be an assert failure.
+ If the view will hold and use its router, or you inject dependencies in the router, that means the view is coupled with the router. Then use this method to register. If another router class try to register with the view class, there will be an assert failure.
  
  @param viewClass The view class uniquely registered with this router class.
  */
@@ -308,7 +308,7 @@ typedef void(^ZIKViewRouteGlobalErrorHandler)(__kindof ZIKViewRouter * _Nullable
 + (BOOL)isRegistrationFinished;
 @end
 
-///If an UIViewController or UIView conforms to ZIKRoutableView, there must be a router for it and it's subclass, then we can auto create it's router. Don't use it in other place.
+///If an UIViewController or UIView conforms to ZIKRoutableView, there must be a router for it and its subclass, then we can auto create its router. Don't use it in other place.
 @protocol ZIKRoutableView <NSObject>
 
 @end

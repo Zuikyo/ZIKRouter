@@ -160,7 +160,7 @@
                 }
                 return ZIKViewRouteDetailTypeChangeParentViewController;//removed from navigation stack or parent in a navigation stack, then pushed into another navigation stack or added to a parent in another navigation stack
             } else {
-                return ZIKViewRouteDetailTypeParentChangeNavigationController;//it's parent changed navigationController
+                return ZIKViewRouteDetailTypeParentChangeNavigationController;//its parent changed navigationController
             }
         }
         
@@ -178,21 +178,21 @@
                 return ZIKViewRouteDetailTypeNavigationPopOthers;
             } else if (navigationViewControllersBefore.count < navigationViewControllersAfter.count) {
                 return ZIKViewRouteDetailTypeNavigationPushOthers;
-            } else if (![before.navigationControllerState isEqual:after.navigationControllerState]) {//it's navigationController changed presentation
+            } else if (![before.navigationControllerState isEqual:after.navigationControllerState]) {//its navigationController changed presentation
                 return [[self class] detailRouteTypeFromStateBeforeRoute:before.navigationControllerState stateAfterRoute:after.navigationControllerState];
             }
         } else if ([navigationViewControllersBefore containsObject:viewController] &&
                    ![navigationViewControllersAfter containsObject:viewController]) {//before:in navigation stack, after:added to a parent in a  navigation stack
             NSAssert([navBefore isEqual:parentViewControllerBefore], @"UINavigationController's viewControllers' parent should be the UINavigationController");
-            NSAssert(![navAfter isEqual:parentViewControllerAfter], @"If a view controller is not in it's UINavigationController's viewControllers, it should be in child of a vc in those viewControllers");
-            NSAssert(![parentViewControllerBefore isEqual:parentViewControllerAfter], @"View controller was removed from it's navigation stack, so it's parent should be different");
+            NSAssert(![navAfter isEqual:parentViewControllerAfter], @"If a view controller is not in its UINavigationController's viewControllers, it should be in child of a vc in those viewControllers");
+            NSAssert(![parentViewControllerBefore isEqual:parentViewControllerAfter], @"View controller was removed from its navigation stack, so its parent should be different");
             
             return ZIKViewRouteDetailTypeChangeParentViewController;//removed from navigation stack, then  added to a parent in same navigation stack
         } else if (![navigationViewControllersBefore containsObject:viewController] &&
                    [navigationViewControllersAfter containsObject:viewController]) {//before:child of a parent in a navigation stack, after: pushed in same navigation stack
-            NSAssert(![navBefore isEqual:parentViewControllerBefore], @"If a view controller is not in it's UINavigationController's viewControllers, it should be in child of a vc in those viewControllers");
+            NSAssert(![navBefore isEqual:parentViewControllerBefore], @"If a view controller is not in its UINavigationController's viewControllers, it should be in child of a vc in those viewControllers");
             NSAssert([navAfter isEqual:parentViewControllerAfter], @"UINavigationController's viewControllers' parent should be the UINavigationController");
-            NSAssert(![parentViewControllerBefore isEqual:parentViewControllerAfter], @"View controller was pushed into navigation stack, so it's parent should be different");
+            NSAssert(![parentViewControllerBefore isEqual:parentViewControllerAfter], @"View controller was pushed into navigation stack, so its parent should be different");
             
             return ZIKViewRouteDetailTypeChangeParentViewController;
         }

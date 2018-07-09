@@ -35,9 +35,12 @@ When registering and getting router with protocol, use macro `ZIKRoutable` to wr
 Use macro `ZIKRouterToView`, `ZIKRouterToViewModule`, `ZIKRouterToService`, `ZIKRouterToServiceModule` to get router class:
 
 ```objectivec
-//If the protocol is not inherited from ZIKViewRoutable, there will be compile error
-ZIKRouterToView(NoteEditorInput)
+//If the protocol doesn't inherit from ZIKViewRoutable, there will be compile warning:
+//'incompatible pointer types passing 'Protocol<UndeclaredProtocol> *' to parameter of type 'Protocol<ZIKViewRoutable> *'
+ZIKRouterToView(UndeclaredProtocol)
 ```
+
+You can set`Build Settings`->`Treat Incompatible Pointer Type Warnings as Errors`to YES.
 
 And the protocol type will affect the parameters in methods:
 

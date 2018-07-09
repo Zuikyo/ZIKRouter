@@ -17,7 +17,7 @@
 
 - (nullable instancetype)initWithConfiguration:(__kindof ZIKPerformRouteConfiguration *)configuration
                            removeConfiguration:(nullable __kindof ZIKRouteConfiguration *)removeConfiguration {
-    NSAssert(NO, @"ZIKServiceRouteAdapter is only for register protocol for other ZIKServiceRouter in it's +registerRoutableDestination, don't use it's instance");
+    NSAssert(NO, @"ZIKServiceRouteAdapter is only for register protocol for other ZIKServiceRouter in its +registerRoutableDestination, don't use its instance");
     return nil;
 }
 

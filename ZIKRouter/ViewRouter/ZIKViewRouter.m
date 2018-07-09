@@ -344,7 +344,7 @@ static NSMutableArray *g_preparingXXViewRouters;
 }
 
 + (BOOL)destinationPrepared:(id)destination {
-    NSAssert(self != [ZIKViewRouter class], @"Check destination prepared with it's router.");
+    NSAssert(self != [ZIKViewRouter class], @"Check destination prepared with its router.");
     return YES;
 }
 
@@ -352,7 +352,7 @@ static NSMutableArray *g_preparingXXViewRouters;
 #pragma clang diagnostic ignored "-Wdeprecated-declarations"
 
 - (BOOL)destinationFromExternalPrepared:(id)destination {
-    NSAssert(self != [ZIKViewRouter class], @"Check destination prepared with it's router.");
+    NSAssert(self != [ZIKViewRouter class], @"Check destination prepared with its router.");
     return [[self class] destinationPrepared:destination];
 }
 
@@ -360,7 +360,7 @@ static NSMutableArray *g_preparingXXViewRouters;
 
 - (void)prepareDestination:(id)destination configuration:(__kindof ZIKViewRouteConfiguration *)configuration {
     NSAssert([self class] != [ZIKViewRouter class] ||
-             configuration.routeType == ZIKViewRouteTypePerformSegue, @"Prepare destination with it's router.");
+             configuration.routeType == ZIKViewRouteTypePerformSegue, @"Prepare destination with its router.");
 }
 
 - (void)didFinishPrepareDestination:(id)destination configuration:(nonnull __kindof ZIKViewRouteConfiguration *)configuration {
@@ -1082,7 +1082,7 @@ static NSMutableArray *g_preparingXXViewRouters;
         }
     } else if ([container isKindOfClass:[XXTabBarController class]]) {
         if (![[(XXTabBarController *)container viewControllers] containsObject:destination]) {
-            errorDescription = [NSString stringWithFormat:@"container:(%@) must contains destination in it's viewControllers, destination:(%@), container's viewcontrollers:(%@)",container,destination,[(UITabBarController *)container viewControllers]];
+            errorDescription = [NSString stringWithFormat:@"container:(%@) must contains destination in its viewControllers, destination:(%@), container's viewcontrollers:(%@)",container,destination,[(UITabBarController *)container viewControllers]];
         }
     } else if ([container isKindOfClass:[XXSplitViewController class]]) {
         if (configuration.routeType == ZIKViewRouteTypePush) {
@@ -1097,7 +1097,7 @@ static NSMutableArray *g_preparingXXViewRouters;
                    [[[(XXViewController *)configuration.source splitViewController].viewControllers firstObject] isKindOfClass:[UINavigationController class]]) {
             errorDescription = [NSString stringWithFormat:@"Split View Controllers cannot be pushed to a Navigation Controller %@",destination];
         } else if (![[(XXSplitViewController *)container viewControllers] containsObject:destination]) {
-            errorDescription = [NSString stringWithFormat:@"container:(%@) must contains destination in it's viewControllers, destination:(%@), container's viewcontrollers:(%@)",container,destination,[(UITabBarController *)container viewControllers]];
+            errorDescription = [NSString stringWithFormat:@"container:(%@) must contains destination in its viewControllers, destination:(%@), container's viewcontrollers:(%@)",container,destination,[(UITabBarController *)container viewControllers]];
         }
     }
 #endif
@@ -1779,7 +1779,7 @@ destinationStateBeforeRoute:(ZIKPresentationState *)destinationStateBeforeRoute
  all UIStoryboardSegues' -perform
  -instantiateInitialViewController
  
- ZIKViewRouter hooks these methods for AOP and storyboard. In -willMoveToSuperview, -willMoveToWindow:, -prepareForSegue:sender:, it detects if the view is registered with a router, and auto create a router if it's not routed from it's router.
+ ZIKViewRouter hooks these methods for AOP and storyboard. In -willMoveToSuperview, -willMoveToWindow:, -prepareForSegue:sender:, it detects if the view is registered with a router, and auto create a router if it's not routed from its router.
  */
 
 ///Update state when route action is not performed from router
@@ -2324,7 +2324,7 @@ static  ZIKViewRouterType *_Nullable _routerTypeToRegisteredView(Class viewClass
     }
 }
 
-///Add subview by code or storyboard will auto create a corresponding router. We assume it's superview's view controller is the performer. If your custom class view uses a routable view as it's part, the custom view should use a router to add and prepare the routable view, then the routable view doesn't need to search performer.
+///Add subview by code or storyboard will auto create a corresponding router. We assume its superview's view controller is the performer. If your custom class view uses a routable view as its part, the custom view should use a router to add and prepare the routable view, then the routable view doesn't need to search performer.
 
 /**
  When a routable view is added from storyboard or xib
@@ -2376,7 +2376,7 @@ static  ZIKViewRouterType *_Nullable _routerTypeToRegisteredView(Class viewClass
 /**
  Add a routable subview to a superview, then add the superview to an UIView in view controller.
  Invoking order in subview when subview needs prepare:
- 1.willMoveToSuperview: (add to prepare list if it's superview chain is not in window)
+ 1.willMoveToSuperview: (add to prepare list if its superview chain is not in window)
  2.didMoveToSuperview
  3.willMoveToWindow: (still in preparing list, if destination is already on screen, search performer fail, else search in didMoveToWindow)
  4.didMoveToWindow
@@ -2451,12 +2451,12 @@ static  ZIKViewRouterType *_Nullable _routerTypeToRegisteredView(Class viewClass
             if (destinationRouter) {
                 //This is routing from router
                 if ([g_preparingXXViewRouters containsObject:destinationRouter]) {
-                    //Didn't find the performer of UIView until it's removing from superview, maybe it's superview was never added to any view controller
+                    //Didn't find the performer of UIView until it's removing from superview, maybe its superview was never added to any view controller
                     [g_preparingXXViewRouters removeObject:destinationRouter];
-                    NSString *description = [NSString stringWithFormat:@"Didn't fine the performer of UIView until it's removing from superview, maybe it's superview was never added to any view controller. Can't find which custom UIView or UIViewController added destination:(%@) as subview, so we can't notify the performer to config the destination. You may add destination to an UIWindow in code directly, and the UIWindow is not a custom class. Please change your code and add subview by a custom view router with ZIKViewRouteTypeAddAsSubview. Destination superview: (%@).",destination, newSuperview];
+                    NSString *description = [NSString stringWithFormat:@"Didn't fine the performer of UIView until it's removing from superview, maybe its superview was never added to any view controller. Can't find which custom UIView or UIViewController added destination:(%@) as subview, so we can't notify the performer to config the destination. You may add destination to an UIWindow in code directly, and the UIWindow is not a custom class. Please change your code and add subview by a custom view router with ZIKViewRouteTypeAddAsSubview. Destination superview: (%@).",destination, newSuperview];
                     [destinationRouter endPerformRouteWithError:[ZIKViewRouter errorWithCode:ZIKViewRouteErrorInvalidPerformer localizedDescription:description]];
                 }
-                //Destination don't need prepare, but it's superview never be added to a view controller, so destination is never on a window
+                //Destination don't need prepare, but its superview never be added to a view controller, so destination is never on a window
                 if (destinationRouter.state == ZIKRouterStateRouting &&
                     ![destination zix_firstAvailableViewController]) {
                     //end perform
@@ -2759,7 +2759,7 @@ static  ZIKViewRouterType *_Nullable _routerTypeToRegisteredView(Class viewClass
 {
     /**
      We hooked every UIViewController and subclasses in +load, because a vc may override -prepareForSegue:sender: and not call [super prepareForSegue:sender:].
-     If subclass vc call [super prepareForSegue:sender:] in it's -prepareForSegue:sender:, because it's superclass's -prepareForSegue:sender: was alse hooked, we will enter -ZIKViewRouter_hook_prepareForSegue:sender: for superclass. But we can't invoke superclass's original implementation by [self ZIKViewRouter_hook_prepareForSegue:sender:], it will call current class's original implementation, then there is an endless loop.
+     If subclass vc call [super prepareForSegue:sender:] in its -prepareForSegue:sender:, because its superclass's -prepareForSegue:sender: was alse hooked, we will enter -ZIKViewRouter_hook_prepareForSegue:sender: for superclass. But we can't invoke superclass's original implementation by [self ZIKViewRouter_hook_prepareForSegue:sender:], it will call current class's original implementation, then there is an endless loop.
      To sovle this, we use a 'currentClassCalling' variable to mark the next class which calling -prepareForSegue:sender:, if -prepareForSegue:sender: was called again in a same call stack, fetch the original implementation in 'currentClassCalling', and just call original implementation, don't enter -ZIKViewRouter_hook_prepareForSegue:sender: again.
      
      Something else: this solution relies on correct use of [super prepareForSegue:sender:]. Every time -prepareForSegue:sender: was invoked, the 'currentClassCalling' will be updated as 'currentClassCalling = [currentClassCalling superclass]'.So these codes will lead to bug:

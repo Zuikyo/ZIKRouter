@@ -35,9 +35,12 @@ Swift 中，用条件 extension 来声明可路由的 protocol，从而利用编
 使用宏定义 `ZIKRouterToView`、`ZIKRouterToViewModule`、`ZIKRouterToService`、`ZIKRouterToServiceModule` 来获取router类：
 
 ```objectivec
-//如果 protocol 不是继承自 ZIKViewRoutable，将会编译错误
-ZIKRouterToView(NoteEditorInput)
+//如果 protocol 不是继承自 ZIKViewRoutable，将会产生编译警告：
+//'incompatible pointer types passing 'Protocol<UndeclaredProtocol> *' to parameter of type 'Protocol<ZIKViewRoutable> *'
+ZIKRouterToView(UndeclaredProtocol)
 ```
+
+你可以开启工程的`Build Settings`->`Treat Incompatible Pointer Type Warnings as Errors`，把编译警告变为编译错误。
 
 在调用方法时，方法中的参数也会自动进行编译检查：
 

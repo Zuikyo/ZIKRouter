@@ -927,7 +927,7 @@ private class _ViewRouterValidater: ZIKViewRouteAdapter {
                 adapterProtocol = NSProtocolFromString(adapter.key)
             }
             guard let viewProtocol = adapterProtocol else {
-                assertionFailure("Invalid adapter (\(adapter.key)), can't get it's type")
+                assertionFailure("Invalid adapter (\(adapter.key)), can't get its type")
                 continue
             }
             let badDestinationClass: AnyClass? = ZIKViewRouteRegistry.validateDestinations(forRoute: route, handler: { (destinationClass) -> Bool in
@@ -959,7 +959,7 @@ private class _ViewRouterValidater: ZIKViewRouteAdapter {
                 adapterProtocol = NSProtocolFromString(adapter.key)
             }
             guard let configProtocol = adapterProtocol else {
-                assertionFailure("Invalid adapter (\(adapter.key)), can't get it's type")
+                assertionFailure("Invalid adapter (\(adapter.key)), can't get its type")
                 continue
             }
             let config = routerType.defaultRouteConfiguration()
@@ -1034,7 +1034,7 @@ private class _ServiceRouterValidater: ZIKServiceRouteAdapter {
                 adapterProtocol = NSProtocolFromString(adapter.key)
             }
             guard let serviceProtocol = adapterProtocol else {
-                assertionFailure("Invalid adapter (\(adapter.key)), can't get it's type")
+                assertionFailure("Invalid adapter (\(adapter.key)), can't get its type")
                 continue
             }
             let badDestinationClass: AnyClass? = ZIKServiceRouteRegistry.validateDestinations(forRoute: route, handler: { (destinationClass) -> Bool in
@@ -1066,7 +1066,7 @@ private class _ServiceRouterValidater: ZIKServiceRouteAdapter {
                 adapterProtocol = NSProtocolFromString(adapter.key)
             }
             guard let configProtocol = adapterProtocol else {
-                assertionFailure("Invalid adapter (\(adapter.key)), can't get it's type")
+                assertionFailure("Invalid adapter (\(adapter.key)), can't get its type")
                 continue
             }
             let configType = Swift.type(of: routerType.defaultRouteConfiguration())

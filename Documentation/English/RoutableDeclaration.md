@@ -111,7 +111,7 @@ let destination = Router.makeDestination(to: RoutableView<RequiredEditorViewInpu
 // destination is inferred as UIViewController & EditorViewInput
 ```
 
-With composed protocol, you can designate multi types for the destination, and don't need to do type casting when you need to use destination as a UIViewControler.
+With composed protocol, you can designate multi types for the destination, and don't need to do type casting when you need to use destination as an UIViewControler.
 
 ### Routable in Objective-C
 

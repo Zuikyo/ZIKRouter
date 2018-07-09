@@ -14,7 +14,7 @@
 NS_ASSUME_NONNULL_BEGIN
 
 /**
- Adapter for adapting provided protocol to required protocol. It's only for register protocols for other ZIKServiceRouter, don't use it's instance. Subclass it and register protocols for other ZIKServiceRouter in the subclass's +registerRoutableDestination with +registerServiceProtocol: or +registerModuleProtocol:, and let the service conforms to the required protocol with category, extension or proxy.
+ Adapter for adapting provided protocol to required protocol. It's only for register protocols for other ZIKServiceRouter, don't use its instance. Subclass it and register protocols for other ZIKServiceRouter in the subclass's +registerRoutableDestination with +registerServiceProtocol: or +registerModuleProtocol:, and let the service conforms to the required protocol with category, extension or proxy.
  @discussion
  About module adapter, read https://github.com/Zuikyo/ZIKRouter/blob/master/Documentation/English/ModuleAdapter.md
  

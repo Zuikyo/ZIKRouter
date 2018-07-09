@@ -17,7 +17,7 @@
 
 @implementation EmptyContainerViewController
 
-///Add subview by code or storyboard will auto create a corresponding router. We assume it's superview's view controller as the performer. If your custom class view use a routable view as it's part, the custom view should use a router to add and prepare the routable view, then the routable view don't need to search performer.
+///Add subview by code or storyboard will auto create a corresponding router. We assume its superview's view controller as the performer. If your custom class view use a routable view as its part, the custom view should use a router to add and prepare the routable view, then the routable view don't need to search performer.
 
 /**
  When a routable view is added from storyboard

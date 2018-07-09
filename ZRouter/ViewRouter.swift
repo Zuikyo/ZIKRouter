@@ -367,11 +367,11 @@ public class ViewRouter<Destination, ModuleConfig> {
     ///
     /// 3. Use ZIKViewRouteTypeCustom and the router didn't provide removeRoute, or canRemoveCustomRoute return false.
     ///
-    /// 4. If route type is adaptative type, it will choose different presentation for different situation (ZIKViewRouteTypePerformSegue, ZIKViewRouteTypeShow, ZIKViewRouteTypeShowDetail). Then if it's real route type is not Push/PresentModally/PresentAsPopover/AddAsChildViewController, destination can't be removed.
+    /// 4. If route type is adaptative type, it will choose different presentation for different situation (ZIKViewRouteTypePerformSegue, ZIKViewRouteTypeShow, ZIKViewRouteTypeShowDetail). Then if its real route type is not Push/PresentModally/PresentAsPopover/AddAsChildViewController, destination can't be removed.
     ///
-    /// 5. Router was auto created when a destination is displayed and not from storyboard, so router don't know destination's state before route, and can't analyze it's real route type to do corresponding remove action.
+    /// 5. Router was auto created when a destination is displayed and not from storyboard, so router don't know destination's state before route, and can't analyze its real route type to do corresponding remove action.
     ///
-    /// 6. Destination's route type is complicated and is considered as custom route type. Such as destination is added to an UITabBarController, then added to an UINavigationController, and finally presented modally. We don't know the remove action should do dismiss or pop or remove from it's UITabBarController.
+    /// 6. Destination's route type is complicated and is considered as custom route type. Such as destination is added to an UITabBarController, then added to an UINavigationController, and finally presented modally. We don't know the remove action should do dismiss or pop or remove from its UITabBarController.
     ///
     /// - Note: Router should be removed be the performer, but not inside the destination. Only the performer knows how the destination was displayed (situation 6).
     ///
@@ -802,7 +802,7 @@ public class ViewRemoveStrictConfig<Destination>: RemoveRouteStrictConfig<Destin
         set { config.animated = newValue }
     }
     
-    /// When use routeType ZIKViewRouteTypeAddAsChildViewController and remove, remove the destination's view from it's superview in this block. If you wrap destination with -containerWrapper, the `destination` in this block is the wrapped ViewController. You can remove with animations, and must call completion when the removing action is finished.
+    /// When use routeType ZIKViewRouteTypeAddAsChildViewController and remove, remove the destination's view from its superview in this block. If you wrap destination with -containerWrapper, the `destination` in this block is the wrapped ViewController. You can remove with animations, and must call completion when the removing action is finished.
     public var removingChildViewHandler: ((ViewController, @escaping () -> Void) -> Void)? {
         get { return config.removingChildViewHandler }
         set { config.removingChildViewHandler = newValue }

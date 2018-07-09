@@ -67,7 +67,7 @@ typedef void(^ZIKServiceRouteGlobalErrorHandler)(__kindof ZIKServiceRouter * _Nu
 /**
  Combine service class with this router class, then no other router can be registered for this service class.
  @discussion
- If the service will hold and use it's router, and the router has it's custom functions for this service, that means the service is coupled with the router. You can use this method to register. If another router class try to register with the service class, there will be an assert failure.
+ If the service will hold and use its router, and the router has its custom functions for this service, that means the service is coupled with the router. You can use this method to register. If another router class try to register with the service class, there will be an assert failure.
  
  @param serviceClass The service class uniquely registered with this router class.
  */
@@ -97,7 +97,7 @@ typedef void(^ZIKServiceRouteGlobalErrorHandler)(__kindof ZIKServiceRouter * _Nu
 
 @end
 
-///If a class conforms to ZIKRoutableService, there must be a router for it and it's subclass. Don't use it in other place.
+///If a class conforms to ZIKRoutableService, there must be a router for it and its subclass. Don't use it in other place.
 @protocol ZIKRoutableService
 
 @end

@@ -1,6 +1,6 @@
 # Module Registration
 
-You have to override `registerRoutableDestination` in router to register your module's class and it's protocol. All routers' `registerRoutableDestination` will be automatically called when app is launched.
+You have to override `registerRoutableDestination` in router to register your module's class and its protocol. All routers' `registerRoutableDestination` will be automatically called when app is launched.
 
 ## Register destination class
 
@@ -29,7 +29,7 @@ The propose of registering destination class, is for error checking, and support
 
 ## Exclusiveness
 
-When you create router and inject required dependencies for your own module, the user have to use this router and can't create another router. You can use `+registerExclusiveView:` to make an exclusive registration. Then other router can't register this view, or there will be an assert failure.
+When you create router and inject required dependencies for your own module, the user has to use this router and can't create another router. You can use `+registerExclusiveView:` to make an exclusive registration. Then other router can't register this view, or there will be an assert failure.
 
 ```swift
 class EditorViewRouter: ZIKAnyViewRouter {
@@ -156,7 +156,7 @@ But if some modules require some routers before you register them, then there wi
 
 ### 2. Register Routers
 
-Then you can register each routers:
+Then you can register each router:
 
 ```objectivec
 @import ZIKRouter.Internal;
@@ -201,7 +201,7 @@ Here is the test of auto registration and manually registration:
   <img src="../Resources/Auto-register-manually-register-5000.png" width="70%">
 </p>
 
-There is no performance problem in 64 bit device. In 32 bit device like iPhone 5, most time is costed in objc method invocations. The time is almost the same even we replace registration methods with empty methods that do nothing.
+There is no performance problem in 64 bit devices. In 32 bit devices like iPhone 5, most time is costed in objc method invocations. The time is almost the same even we replace registration methods with empty methods that do nothing.
 
 If your project needs to support 32 bit device, and your modules are more than 1000, you can use manually registration. But you will not use manually registration in most of the time, because even in Wechat app, there are only about 600 hundred view controllers.
 
