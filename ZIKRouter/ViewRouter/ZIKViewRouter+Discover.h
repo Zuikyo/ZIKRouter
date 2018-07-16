@@ -25,7 +25,7 @@ NS_ASSUME_NONNULL_BEGIN
 /**
  Get the view router class registered with a view protocol. Always use macro `ZIKViewRouterToView`, don't use this method directly.
  
- The parameter viewProtocol of the block is the protocol conformed by the view. Should be a ZIKViewRoutable protocol when ZIKROUTER_CHECK is enabled.
+ The parameter viewProtocol of the block is the protocol conformed by the view. Should be a ZIKViewRoutable protocol.
  
  The return Class of the block is a router class matched with the view. Return nil if protocol is nil or not registered. There will be an assert failure when result is nil.
  @discussion
@@ -68,7 +68,7 @@ NS_ASSUME_NONNULL_BEGIN
 /**
  Get the view router class combined with a custom ZIKViewRouteConfiguration conforming to a module config protocol. Always use macro `ZIKViewRouterToModule`, don't use this method directly.
  
- The parameter configProtocol of the block is: The protocol conformed by defaultConfiguration of router. Should be a ZIKViewModuleRoutable protocol when ZIKROUTER_CHECK is enabled.
+ The parameter configProtocol of the block is: The protocol conformed by defaultConfiguration of router. Should be a ZIKViewModuleRoutable protocol.
  
  The return Class of the block is a router class matched with the view. Return nil if protocol is nil or not registered. There will be an assert failure when result is nil.
  @discussion

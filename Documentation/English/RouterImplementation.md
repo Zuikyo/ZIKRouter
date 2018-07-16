@@ -182,11 +182,22 @@ If you don't want to create a complex router subclass for a simple module, you c
 ```swift
 ZIKViewRoute<EditorViewController, ViewRouteConfig>
     .make(withDestination: EditorViewController.self,
-          makeDestination: { (config, router) -> SwiftService? in
+          makeDestination: { (config, router) -> EditorViewController? in
             return EditorViewController()
     })
     .register(RoutableView<NoteEditorInput>())
 ```
+
+<details><summary>Objective-C Sample</summary>
+
+```objectivec
+[ZIKViewRoute<EditorViewController *, ZIKViewRouteConfig *> 
+	makeRouteWithDestination:[EditorViewController class] 
+	makeDestination:^ EditorViewController * _Nullable(ZIKViewRouteConfig * _Nonnull config, __kindof ZIKRouter<EditorViewController *,ZIKViewRouteConfig *,ZIKViewRemoveConfiguration *> * _Nonnull router) {
+        return [[EditorViewController alloc] init];
+    }];
+```
+</details>
 
 ---
 #### Next section: [Module Registration](ModuleRegistration.md)

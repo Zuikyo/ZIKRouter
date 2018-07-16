@@ -12,7 +12,7 @@
 #import <Foundation/Foundation.h>
 
 /**
- Protocols inheriting from ZIKViewRoutable can be used to fetch view router with ZIKRouterToView().
+ Protocols inheriting from ZIKViewRoutable can be used to fetch view router with ZIKRouterToView(), and the router's destination certainly conforms to the protocol. See +[ZIKViewRouter toView].
  @discussion
  ZIKViewRoutable is for:
  1. Let module declare routable protocol in header as the module's provided interface

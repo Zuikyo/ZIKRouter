@@ -177,11 +177,22 @@ class EditorViewRouter: ZIKViewRouter<EditorViewController, ZIKViewRouteConfigur
 ```swift
 ZIKViewRoute<EditorViewController, ViewRouteConfig>
     .make(withDestination: EditorViewController.self,
-          makeDestination: { (config, router) -> SwiftService? in
+          makeDestination: { (config, router) -> EditorViewController? in
             return EditorViewController()
     })
     .register(RoutableView<NoteEditorInput>())
 ```
+
+<details><summary>Objective-C Sample</summary>
+
+```objectivec
+[ZIKViewRoute<EditorViewController *, ZIKViewRouteConfig *> 
+	makeRouteWithDestination:[EditorViewController class] 
+	makeDestination:^ EditorViewController * _Nullable(ZIKViewRouteConfig * _Nonnull config, __kindof ZIKRouter<EditorViewController *,ZIKViewRouteConfig *,ZIKViewRemoveConfiguration *> * _Nonnull router) {
+        return [[EditorViewController alloc] init];
+    }];
+```
+</details>
 
 ---
 #### 下一节：[模块注册](ModuleRegistration.md)

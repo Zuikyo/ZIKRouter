@@ -52,7 +52,7 @@ class TestViewController: UIViewController {
   }
   [self.editorRouter removeRouteWithSuccessHandler:^{
       NSLog(@"remove editor success");
-  } errorHandler:^(SEL routeAction, NSError *error) {
+  } errorHandler:^(ZIKRouteAction routeAction, NSError *error) {
       NSLog(@"remove failed, error:%@",error);
   }];
   self.editorRouter = nil

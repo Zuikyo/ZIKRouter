@@ -13,11 +13,11 @@
 
 一个用于模块间路由，基于接口进行模块发现和依赖注入的解耦工具，能够同时实现高度解耦和类型安全。
 
-View router将UIKit中的所有界面跳转方式封装成一个统一的方法。
+View router 将 UIKit / AppKit 中的所有界面跳转方式封装成一个统一的方法。
 
-Service router用于模块寻找，通过protocol寻找对应的模块，并用protocol进行依赖注入和模块调用。可和其他 URL router 兼容。
+Service router 用于模块寻找，通过 protocol 寻找对应的模块，并用 protocol 进行依赖注入和模块调用。
 
-`ZRouter`为Swift提供更加Swifty、更加安全的路由方式。
+`ZRouter`为 Swift 提供更加 Swifty、更加安全的路由方式。
 
 ---
 
@@ -30,11 +30,11 @@ Service router用于模块寻找，通过protocol寻找对应的模块，并用p
 - [x] **用 protocol 动态获取界面和模块，隐藏具体类**
 - [x] **用 protocol 向模块传递参数，基于接口进行类型安全的模块调用和参数传递**
 - [x] **可以用 idntifier 获取模块，和其他 URL router 兼容**
-- [x] **在模块和模块使用者中用不同的 protocol 指向同一个模块，因此路由时不必和某个固定的 protocol 耦合**
 - [x] **明确声明可用于路由的 protocol，进行编译时检查和运行时检查，避免了动态特性带来的过于自由的安全问题**
-- [x] 使用泛型表明指定功能的 router
+- [x] **在模块和模块使用者中用不同的 protocol 指向同一个模块，因此路由时不必和某个固定的 protocol 耦合**
 - [x] 用 adapter 对两个模块进行解耦和接口兼容
-- [x] 封装 UIKit 里的所有界面跳转方式（push、present modally、present as popover、segue、show、showDetail、addChildViewController、addSubview）以及自定义的展示方式，封装成一个统一的方法
+- [x] 使用泛型表明指定功能的 router
+- [x] 封装 UIKit 和 AppKit 里的所有界面跳转方式（push、present modally、present as popover、present as sheet、segue、show、showDetail、addChildViewController、addSubview）以及自定义的展示方式，封装成一个统一的方法
 - [x] 支持用一个方法执行界面回退和模块销毁，不必区分使用pop、dismiss、removeFromParentViewController、removeFromSuperview
 - [x] **支持 storyboard，可以对从segue中跳转的界面自动执行依赖注入**
 - [x] 完备的错误检查，可以检测界面跳转时的大部分问题
@@ -223,7 +223,7 @@ class TestViewController: UIViewController {
 	         config.successHandler = ^(id<NoteEditorInput> destination) {
 	             //跳转结束
 	         };
-	         config.errorHandler = ^(SEL routeAction, NSError * error) {
+	         config.errorHandler = ^(ZIKRouteAction routeAction, NSError * error) {
 	             //跳转失败
 	         };
 	     }];

@@ -27,9 +27,9 @@
      1. Register each router by calling +registerRoutableDestination
      
      Problems you may meet:
-     You have to register routers before any module reqiures them.
+     You have to register routers before their modules are required.
      
-     If there're modules running before registration is finished, and modules require some routers before you register them, then there will be assert failure, you should register those required routers earlier.
+     If there're modules running before registration is finished, there will be assert failure. You should register those required routers earlier.
      Such as routable initial view controller from storyboard, or any routers used in this initial view controller.
     */
     [AppRouteRegistry manuallyRegisterEachRouter];
@@ -41,7 +41,12 @@
     ZIKViewRouter.globalErrorHandler = ^(__kindof ZIKViewRouter * _Nullable router,
                                          ZIKRouteAction  _Nonnull action,
                                          NSError * _Nonnull error) {
-        NSLog(@"❌ZIKRouter Error: router's action (%@) catch error! code:%@, description: %@,\nrouter:(%@)", action, @(error.code), error.localizedDescription,router);
+        NSLog(@"❌ZIKViewRouter Error: router's action (%@) catch error! code:%@, description: %@,\nrouter:(%@)", action, @(error.code), error.localizedDescription,router);
+    };
+    ZIKServiceRouter.globalErrorHandler = ^(__kindof ZIKServiceRouter * _Nullable router,
+                                            ZIKRouteAction  _Nonnull action,
+                                            NSError * _Nonnull error) {
+        NSLog(@"❌ZIKServiceRouter Error: router's action (%@) catch error! code:%@, description: %@,\nrouter:(%@)", action, @(error.code), error.localizedDescription,router);
     };
     
     UISplitViewController *splitViewController = (UISplitViewController *)self.window.rootViewController;

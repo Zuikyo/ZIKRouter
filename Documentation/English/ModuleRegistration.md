@@ -53,7 +53,7 @@ If your module is simple and all dependencies can be set on destination, you onl
 
 ### Module protocol
 
-If your module contains multi components, and those components' dependencies can't be passed through destination, you need a module config protocol, and config components' dependencies inside router.
+If your module contains multi components, and those components' dependencies can't be passed through destination, you need a module config protocol, and configure components' dependencies inside router.
 
 For example, when you pass a model to a VIPER module, the destination is the view in VIPER, and the view is not responsible for accepting any models.
 

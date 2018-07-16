@@ -12,7 +12,7 @@
 #import <Foundation/Foundation.h>
 
 /**
- Protocols inheriting from ZIKServiceRoutable can be used to fetch service router with ZIKRouterToService().
+ Protocols inheriting from ZIKServiceRoutable can be used to fetch service router with ZIKRouterToService(), and the router's destination certainly conforms to the protocol. See +[ZIKServiceRouter toService].
  
  It's safe to use objc protocols inheriting from ZIKServiceRoutable with ZIKRouterToService() and won't get nil. When ZIKROUTER_CHECK is enabled, ZIKServiceRouter will validate all ZIKServiceRoutable protocols when registration is finished, then we can make sure all routable service protocols have been registered with a router.
  */

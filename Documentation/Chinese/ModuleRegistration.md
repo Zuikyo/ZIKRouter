@@ -51,7 +51,7 @@ class EditorViewRouter: ZIKAnyViewRouter {
 
 ### module protocol
 
-如果 destination 是属于一个复杂模块，有多个组件类，而这些组件类的配置无法全部在一个 destination 类上进行，则应该使用 module config protocol，让 router 在内部初始化各个组件。例如一个需要向一个 VIPER 模块传递 model 对象，此时 destination 类是 VIPER 中的 View，而 View 在设计上不能接触到 model。
+如果 destination 是属于一个复杂模块，有多个组件类，而这些组件类的配置无法全部在一个 destination 类上进行，则应该使用 module config protocol，让 router 在内部初始化各个组件。例如需要向一个 VIPER 模块传递 model 对象，此时 destination 类是 VIPER 中的 View，而 View 在设计上不能接触到 model。此时就可以用 module config protocol 配置 router 的configuration，再在 router 内部用 configuration 去配置模块内的各个部分。
 
 ```swift
 ///模块配置协议
