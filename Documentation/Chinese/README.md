@@ -34,15 +34,19 @@ Service router 用于模块寻找，通过 protocol 寻找对应的模块，并�
 - [x] **在模块和模块使用者中用不同的 protocol 指向同一个模块，因此路由时不必和某个固定的 protocol 耦合**
 - [x] 用 adapter 对两个模块进行解耦和接口兼容
 - [x] 使用泛型表明指定功能的 router
-- [x] 封装 UIKit 和 AppKit 里的所有界面跳转方式（push、present modally、present as popover、present as sheet、segue、show、showDetail、addChildViewController、addSubview）以及自定义的展示方式，封装成一个统一的方法
-- [x] 支持用一个方法执行界面回退和模块销毁，不必区分使用pop、dismiss、removeFromParentViewController、removeFromSuperview
-- [x] **支持 storyboard，可以对从segue中跳转的界面自动执行依赖注入**
+- [x] 封装 UIKit 和 AppKit 里的所有界面跳转方式（push、present modally、present as popover、present as sheet、segue、show、showDetail、addChildViewController、addSubview）以及自定义的展示方式，统一成一个方法
+- [x] 用一个方法执行界面回退和模块销毁，不必区分使用pop、dismiss、removeFromParentViewController、removeFromSuperview
+- [x] **支持 storyboard，可以对从 segue 中跳转的界面自动执行依赖注入**
 - [x] 完备的错误检查，可以检测界面跳转时的大部分问题
 - [x] 支持界面跳转过程中的 AOP 回调
 - [x] 两种注册方式：自动注册和手动注册
 - [x] 用 router 子类添加模块，也可以用 block 添加 router
 
-## Table of Contents
+## 目录
+
+### 设计思想
+
+[设计思想](DesignPhilosophy.md)
 
 ### Basics
 
@@ -85,13 +89,13 @@ pod 'ZIKRouter', '>= 1.0.1'
 pod 'ZRouter', '>= 1.0.1'
 ```
 
-## 示例代码
+## 功能演示
 
 下面演示 router 的基本使用。
 
 ### View Router
 
-演示用的界面和 protocol。
+演示用的界面和 protocol:
 
 ```swift
 ///Editor 模块的接口和依赖
@@ -234,6 +238,8 @@ class TestViewController: UIViewController {
 
 </details>
 
+更详细的内容，可以参考[执行路由](PerformRoute.md)。
+
 #### Remove
 
 用`removeRoute`一键移除界面，无需区分调用 pop / dismiss / removeFromParentViewController / removeFromSuperview:
@@ -333,9 +339,65 @@ class TestViewController: UIViewController {
 
 </details>
 
+更详细的内容，可以参考[移除路由](RemoveRoute.md)。
+
+### Adapter
+
+可以用另一个 protocol 获取 router，只要两个 protocol 提供了相同功能的接口即可。即便接口有稍微不同，也可以通过 category、extension、proxy 等方式进行接口适配。
+
+使用者需要用到的接口：
+
+```swift
+///使用者需要用到的 editor 模块的接口
+protocol RequiredNoteEditorInput: class {
+    weak var delegate: EditorDelegate? { get set }
+    func constructForCreatingNewNote()
+}
+```
+
+<details><summary>Objective-C Sample</summary>
+  
+```objectivec
+///使用者需要用到的 editor 模块的接口
+@protocol RequiredNoteEditorInput <ZIKViewRoutable>
+@property (nonatomic, weak) id<EditorDelegate> delegate;
+- (void)constructForCreatingNewNote;
+@end
+```
+
+</details>
+
+使用`RequiredNoteEditorInput`获取模块：
+
+```swift
+class TestViewController: UIViewController {
+
+    func showEditorDirectly() {
+        Router.perform(to: RoutableView<RequiredNoteEditorInput>(), path: .push(from: self))
+    }
+}
+```
+
+<details><summary>Objective-C Sample</summary>
+
+```objectivec
+@implementation TestViewController
+
+- (void)showEditorDirectly {
+    [ZIKRouterToView(RequiredNoteEditorInput) performPath:ZIKViewRoutePath.pushFrom(self)];
+}
+
+@end
+```
+</details>
+
+使用 required protocol 和 provided protocol，就可以让模块间完美解耦，并进行接口适配，同时还能用 required protocol 声明模块所需的依赖。
+
+使用 required protocol 需要将 required protocol 和 provided protocol 进行对接。更详细的内容，可以参考[模块化和解耦](ModuleAdapter.md)。
+
 ### Service Router
 
-获取模块:
+除了界面模块，也可以用 service router 获取普通模块:
 
 ```swift
 ///time service 的接口

@@ -39,7 +39,7 @@ Service router 用于模块寻找，通过 protocol 寻找对应的模块，并�
 - [x] **Locate module with identifier, compatible with other URL router**
 - [x] **Prepare the module with its protocol when performing route, rather than passing a parameter dictionary**
 - [x] **Declare routable protocol. There're compile-time checking and runtime checking to make reliable routing**
-- - [x] **Use different require protocol and provided protocol inside module and module's user to make thorough decouple**
+- [x] **Use different require protocol and provided protocol inside module and module's user to make thorough decouple**
 - [x] **Decouple modules and add compatible interfaces with adapter**
 - [x] Declare a specific router with generic parameters
 - [x] Encapsulate navigation methods in UIKit and AppKit (push, present modally, present as popover present as sheet, segue, show, showDetail, addChildViewController, addSubview) and custom transitions into one method
@@ -239,6 +239,8 @@ class TestViewController: UIViewController {
 
 </details>
 
+For more detail, read [Perform Route](Documentation/English/PerformRoute.md).
+
 #### Remove
 
 You can remove the view by `removeRoute`, without using pop / dismiss / removeFromParentViewController / removeFromSuperview:
@@ -337,6 +339,62 @@ class TestViewController: UIViewController {
 ```
 
 </details>
+
+For more detail, read [Remove Route](Documentation/English/RemoveRoute.md).
+
+### Adapter
+
+You can use another protocol to get router, as long as the protocol provides the same interface of the real protocol. Even the protocol is little different from the real protocol, you can  adapt two protocols with category, extension and proxy.
+
+Required protocol used by the user:
+
+```swift
+///Required protocol to use editor module
+protocol RequiredNoteEditorInput: class {
+    weak var delegate: EditorDelegate? { get set }
+    func constructForCreatingNewNote()
+}
+```
+
+<details><summary>Objective-C Sample</summary>
+  
+```objectivec
+///Required protocol to use editor module
+@protocol RequiredNoteEditorInput <ZIKViewRoutable>
+@property (nonatomic, weak) id<EditorDelegate> delegate;
+- (void)constructForCreatingNewNote;
+@end
+```
+
+</details>
+
+Use`RequiredNoteEditorInput`to get module:
+
+```swift
+class TestViewController: UIViewController {
+
+    func showEditorDirectly() {
+        Router.perform(to: RoutableView<RequiredNoteEditorInput>(), path: .push(from: self))
+    }
+}
+```
+
+<details><summary>Objective-C Sample</summary>
+
+```objectivec
+@implementation TestViewController
+
+- (void)showEditorDirectly {
+    [ZIKRouterToView(RequiredNoteEditorInput) performPath:ZIKViewRoutePath.pushFrom(self)];
+}
+
+@end
+```
+</details>
+
+Use `required protocol` and `provided protocol` to perfectly decouple modules, adapt interface and declare dependencies of the module.
+
+You need to connect required protocol and provided protocol. For more detail, read [Module Adapter](ModuleAdapter.md).
 
 ### Service Router
 

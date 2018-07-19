@@ -990,25 +990,26 @@ static NSMutableArray *g_preparingXXViewRouters;
     [self prepareDestinationForPerforming];
     [destination setZix_routeTypeFromRouter:@(ZIKViewRouteTypeAddAsChildViewController)];
     [source addChildViewController:wrappedDestination];
-    //TODO:Mac
+    
     self.realRouteType = ZIKViewRouteRealTypeUnknown;
     void(^addingChildViewHandler)(XXViewController *, void(^)(void)) = self.original_configuration.addingChildViewHandler;
-    if (addingChildViewHandler) {
-        addingChildViewHandler(wrappedDestination, ^{
+    void(^completion)(void) = ^{
 #if ZIK_HAS_UIKIT
-            [wrappedDestination didMoveToParentViewController:source];
+        [wrappedDestination didMoveToParentViewController:source];
 #endif
-            self.realRouteType = ZIKViewRouteRealTypeAddAsChildViewController;
-            [self notifyRouteState:ZIKRouterStateRouted];
-            self.routingFromInternal = NO;
-            [self notifyPerformRouteSuccessWithDestination:destination];
-        });
+        self.realRouteType = ZIKViewRouteRealTypeAddAsChildViewController;
+        [self notifyRouteState:ZIKRouterStateRouted];
+        self.routingFromInternal = NO;
+        [self notifyPerformRouteSuccessWithDestination:destination];
+    };
+    if (addingChildViewHandler) {
+        addingChildViewHandler(wrappedDestination, completion);
         return;
+    } else {
+        [source.view addSubview:destination.view];
+        //    [self endPerformRouteWithSuccess];
+        completion();
     }
-//    [self endPerformRouteWithSuccess];
-    [self notifyRouteState:ZIKRouterStateRouted];
-    self.routingFromInternal = NO;
-    [self notifyPerformRouteSuccessWithDestination:destination];
 }
 
 - (void)_performAddSubviewOnDestination:(XXView *)destination fromSource:(XXView *)source {
