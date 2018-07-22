@@ -89,13 +89,9 @@ pod 'ZIKRouter', '>= 1.0.1'
 pod 'ZRouter', '>= 1.0.1'
 ```
 
-## 功能演示
+## Getting Started
 
-下面演示 router 的基本使用。
-
-### View Router
-
-演示用的界面和 protocol:
+下面演示 router 的基本使用。演示用的界面和 protocol:
 
 ```swift
 ///Editor 模块的接口和依赖
@@ -129,6 +125,104 @@ class NoteEditorViewController: UIViewController, NoteEditorInput {
 ```
 
 </details>
+
+创建路由只需要2步。
+
+### 1. 创建 Router
+
+为你的模块创建 router 子类：
+
+```swift
+import ZIKRouter.Internal
+import ZRouter
+
+class NoteEditorViewRouter: ZIKViewRouter<NoteEditorViewController, ViewRouteConfig> {
+    override class func registerRoutableDestination() {
+        // 注册 class；一个 router 可以注册多个界面，一个界面也可以使用多个 router
+        registerView(NoteEditorViewController.self)
+        // 注册 protocol；之后就可以用这个 protocol 获取 此 router
+        register(RoutableView<NoteEditorInput>())
+    }
+    
+    // 创建模块
+    override func destination(with configuration: ViewRouteConfig) -> NoteEditorViewController? {
+        let destination: NoteEditorViewController? = ... ///实例化 view controller
+        return destination
+    }
+    
+    override func prepareDestination(_ destination: NoteEditorViewController, configuration: ViewRouteConfig) {
+        //为 destination 注入依赖
+    }
+}
+```
+
+<details><summary>Objective-C Sample</summary>
+
+```objectivec
+//NoteEditorViewRouter.h
+@import ZIKRouter;
+
+@interface NoteEditorViewRouter : ZIKViewRouter
+@end
+
+//NoteEditorViewRouter.m
+@import ZIKRouter.Internal;
+
+@implementation NoteEditorViewRouter
+
++ (void)registerRoutableDestination {
+    // 注册 class；一个 Router 可以注册多个界面，一个界面也可以使用多个 Router
+    [self registerView:[NoteEditorViewController class]];
+    // 注册 protocol；之后就可以用这个 protocol 获取 此 router
+    [self registerViewProtocol:ZIKRoutable(NoteEditorInput)];
+}
+
+// 创建模块
+- (NoteEditorViewController *)destinationWithConfiguration:(ZIKViewRouteConfiguration *)configuration {
+    NoteEditorViewController *destination = ... ///实例化 view controller
+    return destination;
+}
+
+- (void)prepareDestination:(NoteEditorViewController *)destination configuration:(ZIKViewRouteConfiguration *)configuration {
+    //为 destination 注入依赖
+}
+
+@end
+```
+
+</details>
+
+关于更多可用于 override 的方法，请参考详细文档。
+
+### 2. 声明 Routable 类型
+
+```swift
+//声明 NoteEditorViewController 为 routable
+extension NoteEditorViewController: ZIKRoutableView {
+}
+
+//声明 NoteEditorInput 为 routable
+extension RoutableView where Protocol == NoteEditorInput {
+    init() { self.init(declaredProtocol: Protocol.self) }
+}
+```
+
+<details><summary>Objective-C Sample</summary>
+
+```objectivec
+//声明 NoteEditorViewController 为 routable
+DeclareRoutableView(NoteEditorViewController, NoteEditorViewRouter)
+
+///当 protocol 继承自 ZIKViewRoutable, 就是 routable 的
+@protocol NoteEditorInput <ZIKViewRoutable>
+@property (nonatomic, weak) id<EditorDelegate> delegate;
+- (void)constructForCreatingNewNote;
+@end
+```
+
+</details>
+
+### View Router
 
 #### 直接跳转
 
@@ -395,6 +489,97 @@ class TestViewController: UIViewController {
 
 使用 required protocol 需要将 required protocol 和 provided protocol 进行对接。更详细的内容，可以参考[模块化和解耦](ModuleAdapter.md)。
 
+### URL Router
+
+ZIKRouter 和其他 URL Router 框架兼容。
+
+你可以给 router 注册自定义字符串：
+
+```swift
+class NoteEditorViewRouter: ZIKViewRouter<NoteEditorViewController, ViewRouteConfig> {
+    override class func registerRoutableDestination() {
+        //注册字符串
+        registerIdentifier("myapp://noteEditor")
+    }
+}
+```
+
+<details><summary>Objective-C Sample</summary>
+
+```objectivec
+@implementation NoteEditorViewRouter
+
++ (void)registerRoutableDestination {
+    //注册字符串
+    [self registerIdentifier:@"myapp://noteEditor"];
+}
+
+@end
+```
+</details>
+
+之后就可以用相应的字符串获取 router:
+
+```swift
+Router.to(viewIdentifier: "myapp://noteEditor")?.perform(path .push(from: self))
+```
+
+<details><summary>Objective-C Sample</summary>
+
+```objectivec
+[ZIKViewRouter.toIdentifier(@"myapp://noteEditor") performPath:ZIKViewRoutePath.pushFrom(self)];
+```
+</details>
+
+以及处理 URL Scheme:
+
+```swift
+public func application(_ app: UIApplication, open url: URL, options: [UIApplicationOpenURLOptionsKey : Any] = [:]) -> Bool {
+        //可以使用其他的第三方 URL router 库
+        let routerIdentifier = URLRouter.routerIdentifierFromURL(url)
+        guard let identifier = routerIdentifier else {
+            return false
+        }
+        guard let routerType = Router.to(viewIdentifier: identifier) else {
+            return false
+        }
+        let params: [String : Any] = [ "url": url, "options": options ]
+        routerType.perform(path: .show(from: rootViewController), configuring: { (config, _) in
+            // 传递参数
+            config.addUserInfo(params)
+        })
+        return true
+    }
+```
+
+<details><summary>Objective-C Sample</summary>
+
+```objectivec
+- (BOOL)application:(UIApplication *)app openURL:(NSURL *)url options:(NSDictionary<UIApplicationOpenURLOptionsKey,id> *)options {
+    
+    //可以使用其他的第三方 URL router 库
+    NSString *identifier = [URLRouter routerIdentifierFromURL:url];
+    if (identifier == nil) {
+        return NO;
+    }
+    ZIKViewRouterType *routerType = ZIKViewRouter.toIdentifier(identifier);
+    if (routerType == nil) {
+        return NO;
+    }
+    
+    NSDictionary *params = @{ @"url": url,
+                              @"options" : options
+                              };
+    [routerType performPath:ZIKViewRoutePath.showFrom(self.rootViewController)
+                configuring:^(ZIKViewRouteConfiguration * _Nonnull config) {
+                    //传递参数
+                    [config addUserInfo:params];
+                }];
+    return YES;
+}
+```
+</details>
+
 ### Service Router
 
 除了界面模块，也可以用 service router 获取普通模块:
@@ -447,7 +632,7 @@ class TestViewController: UIViewController {
 ```
 </details>
 
-## Demo和实践
+## Demo 和实践
 
 ZIKRouter 是为了实践 VIPER 架构而开发的，但是也能用于 MVC、MVVM，并没有任何限制。
 
@@ -455,155 +640,7 @@ Demo 目录下的 ZIKRouterDemo 展示了如何用 ZIKRouter 进行各种界面�
 
 想要查看 router 是如何应用在 VIPER 架构中的，可以参考这个项目：[ZIKViper](https://github.com/Zuikyo/ZIKViper)。
 
-## How to use
-
-简单演示如何使用 ZIKRouter 创建路由。
-
-### 1.创建Router
-
-为你的模块创建 router 子类：
-
-```swift
-import ZIKRouter.Internal
-import ZRouter
-
-class NoteEditorViewRouter: ZIKViewRouter<NoteEditorViewController, ViewRouteConfig> {
-    override class func registerRoutableDestination() {
-        registerView(NoteEditorViewController.self)
-        register(RoutableView<NoteEditorInput>())
-    }
-    
-    override func destination(with configuration: ViewRouteConfig) -> NoteEditorViewController? {
-        let destination: NoteEditorViewController? = ... ///实例化 view controller
-        return destination
-    }
-    
-    override func prepareDestination(_ destination: NoteEditorViewController, configuration: ViewRouteConfig) {
-        //为 destination 注入依赖
-    }
-}
-```
-
-<details><summary>Objective-C Sample</summary>
-
-```objectivec
-//NoteEditorViewRouter.h
-@import ZIKRouter;
-
-@interface NoteEditorViewRouter : ZIKViewRouter
-@end
-
-//NoteEditorViewRouter.m
-@import ZIKRouter.Internal;
-
-@implementation NoteEditorViewRouter
-
-+ (void)registerRoutableDestination {
-    [self registerView:[NoteEditorViewController class]];
-    [self registerViewProtocol:ZIKRoutable(NoteEditorInput)];
-}
-
-- (NoteEditorViewController *)destinationWithConfiguration:(ZIKViewRouteConfiguration *)configuration {
-    NoteEditorViewController *destination = ... ///实例化 view controller
-    return destination;
-}
-
-- (void)prepareDestination:(NoteEditorViewController *)destination configuration:(ZIKViewRouteConfiguration *)configuration {
-    //为 destination 注入依赖
-}
-
-@end
-```
-
-</details>
-
-关于更多可用于 override 的方法，请参考详细文档。
-
-### 2.声明 Routable 类型
-
-```swift
-//声明 NoteEditorViewController 为 routable
-extension NoteEditorViewController: ZIKRoutableView {
-}
-
-//声明 NoteEditorInput 为 routable
-extension RoutableView where Protocol == NoteEditorInput {
-    init() { self.init(declaredProtocol: Protocol.self) }
-}
-```
-
-<details><summary>Objective-C Sample</summary>
-
-```objectivec
-//声明 NoteEditorViewController 为 routable
-DeclareRoutableView(NoteEditorViewController, NoteEditorViewRouter)
-
-///当 protocol 继承自 ZIKViewRoutable, 就是 routable 的
-@protocol NoteEditorInput <ZIKViewRoutable>
-@property (nonatomic, weak) id<EditorDelegate> delegate;
-- (void)constructForCreatingNewNote;
-@end
-```
-
-</details>
-
-### 3.Use
-
-```swift
-class TestViewController: UIViewController {
-
-    //直接跳转
-    func showEditorDirectly() {
-        Router.perform(to: RoutableView<NoteEditorInput>(), path: .push(from: self))
-    }
-    
-    //跳转到 editor 界面；通过 protocol 获取对应的 router 类，同时用 protocol 配置界面
-    func showEditor() {
-        Router.perform(
-            to: RoutableView<NoteEditorInput>(),
-            path: .push(from: self),
-            configuring: { (config, _) in
-                //跳转前配置 destination
-                config.prepareDestination = { [weak self] destination in
-                    //destination 自动推断为 NoteEditorInput 类型
-                    destination.delegate = self
-                    destination.constructForCreatingNewNote()
-                }
-        })
-    }
-}
-```
-
-<details><summary>Objective-C Sample</summary>
-
-```objectivec
-@implementation TestViewController
-
-//直接跳转
-- (void)showEditorDirectly {
-    //Transition to editor view directly
-    [ZIKRouterToView(NoteEditorInput) performPath:ZIKViewRoutePath.pushFrom(self)];
-}
-
-//跳转到 editor 界面；通过 protocol 获取对应的router类，同时用 protocol 配置界面
-- (void)showEditor {
-    [ZIKRouterToView(NoteEditorInput)
-	     performPath:ZIKViewRoutePath.pushFrom(self)
-	     configuring:^(ZIKViewRouteConfig *config) {
-	         //跳转前配置 destination
-	         config.prepareDestination = ^(id<NoteEditorInput> destination) {
-	             destination.delegate = self;
-	             [destination constructForCreatingNewNote];
-	         };
-	     }];
-}
-
-@end
-```
-
-</details>
-
-### File Template
+## File Template
 
 可以用 Xcode 的文件模板快速生成 router 和 protocol 的代码：
 

@@ -43,9 +43,9 @@ URL router 的缺点：
 
 ### 基于反射的模块管理工具
 
-有一些模块管理工具基于 Objective-C 的 runtime、category 特性动态获取模块。例如通过`NSClassFromString`获取类并创建实例，通过`performSelector:``NSInvocation`动态调用方法。
+有一些模块管理工具基于 Objective-C 的 runtime、category 特性动态获取模块。例如通过`NSClassFromString`获取类并创建实例，通过`performSelector:` `NSInvocation`动态调用方法。
 
-这些工具的实现思路，大致是利用 category 为路由工具添加新接口，在接口汇总通过字符串获取对应的类，再用 runtime 创建实例，动态调用实例的方法。
+这些工具的实现思路，大致是利用 category 为路由工具添加新接口，在接口中通过字符串获取对应的类，再用 runtime 创建实例，动态调用实例的方法。
 
 优点：
 
@@ -56,8 +56,9 @@ URL router 的缺点：
 
 * 在 category 中仍然引入了字符串硬编码
 * 无法区分 required protocol 和 provided protocol，因此无法彻底解耦
-* 过于依赖 runtime 特性，无法应用到纯 swift 上
-* 使用 runtime 相关的接口调用任意类的任意方法，有被苹果审核拒绝的风险
+* 过于依赖 runtime 特性，无法应用到纯 swift 上，也无法确保对应的模块是否存在
+* 使用 runtime 相关的接口调用任意类的任意方法，有被苹果审核拒绝的风险。参考：[Are performSelector and respondsToSelector banned by App Store?
+](https://stackoverflow.com/questions/42662028/are-performselector-and-respondstoselector-banned-by-app-store)
 
 #### ZIKRouter 的改进
 
