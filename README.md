@@ -88,12 +88,12 @@ Service router 用于模块寻找，通过 protocol 寻找对应的模块，并�
 For Objective-C project:
 
 ```
-pod 'ZIKRouter', '>= 1.0.1'
+pod 'ZIKRouter', '>= 1.0.2'
 ```
 For Swift project:
 
 ```
-pod 'ZRouter', '>= 1.0.1'
+pod 'ZRouter', '>= 1.0.2'
 ```
 
 ## Getting Started

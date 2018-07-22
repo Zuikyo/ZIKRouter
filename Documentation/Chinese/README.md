@@ -80,13 +80,13 @@ Service router 用于模块寻找，通过 protocol 寻找对应的模块，并�
 可以用 Cocoapods 安装 ZIKRouter：
 
 ```
-pod 'ZIKRouter', '>= 1.0.1'
+pod 'ZIKRouter', '>= 1.0.2'
 ```
 
 如果是 Swift 项目，则使用 ZRouter：
 
 ```
-pod 'ZRouter', '>= 1.0.1'
+pod 'ZRouter', '>= 1.0.2'
 ```
 
 ## Getting Started
