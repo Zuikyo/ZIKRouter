@@ -9,6 +9,7 @@
 ![ZIKRouter](https://img.shields.io/cocoapods/v/ZIKRouter.svg?style=flat)
 ![](https://img.shields.io/badge/language-swift-orange.svg)
 ![ZRouter](https://img.shields.io/cocoapods/v/ZRouter.svg?style=flat)
+![Carthage compatible](https://img.shields.io/badge/Carthage-compatible-4BC51D.svg?style=flat)
 ![license](https://img.shields.io/github/license/mashape/apistatus.svg)
 
 一个用于模块间路由，基于接口进行模块发现和依赖注入的解耦工具，能够同时实现高度解耦和类型安全。
@@ -88,6 +89,39 @@ pod 'ZIKRouter', '>= 1.0.2'
 ```
 pod 'ZRouter', '>= 1.0.2'
 ```
+
+### Carthage
+
+添加到 Cartfile 文件：
+
+```
+github "Zuikyo/ZIKRouter" >= 1.0.2
+```
+
+编译 iOS 版本：
+
+```
+carthage update --platform iOS
+```
+tvOS 版本：
+
+```
+carthage update --platform tvOS
+```
+mac OS 版本：
+
+```
+carthage update --platform Mac
+```
+
+编译 DEBUG 版本，开启运行时路由检查：
+
+```
+carthage update --platform iOS --configuration Debug
+```
+记得不要把 debug 版本的库用在 release 版本的 app 中。一定要在 release 版本的 app 中使用替换为 release 版本的库。
+
+对于 Objective-C 的项目，使用 `ZIKRouter.framework`。对于 Swift 项目，使用`ZRouter.framework`。
 
 ## Getting Started
 

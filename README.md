@@ -9,6 +9,7 @@
 ![ZIKRouter](https://img.shields.io/cocoapods/v/ZIKRouter.svg?style=flat)
 ![](https://img.shields.io/badge/language-swift-orange.svg)
 ![ZRouter](https://img.shields.io/cocoapods/v/ZRouter.svg?style=flat)
+![Carthage compatible](https://img.shields.io/badge/Carthage-compatible-4BC51D.svg?style=flat)
 ![license](https://img.shields.io/github/license/mashape/apistatus.svg)
 
 An interface-oriented router for discovering modules and injecting dependencies with protocol.
@@ -85,6 +86,8 @@ Service router 用于模块寻找，通过 protocol 寻找对应的模块，并�
 
 ### Cocoapods
 
+Add this to your Podfile.
+
 For Objective-C project:
 
 ```
@@ -95,6 +98,39 @@ For Swift project:
 ```
 pod 'ZRouter', '>= 1.0.2'
 ```
+
+### Carthage
+
+Add this to your Cartfile:
+
+```
+github "Zuikyo/ZIKRouter" >= 1.0.2
+```
+
+Build frameworks for iOS:
+
+```
+carthage update --platform iOS
+```
+tvOS:
+
+```
+carthage update --platform tvOS
+```
+mac OS:
+
+```
+carthage update --platform Mac
+```
+
+Build DEBUG version to enable route checking:
+
+```
+carthage update --platform iOS --configuration Debug
+```
+Remember to use release version in final product.
+
+For Objective-C project, use `ZIKRouter.framework`. For Swift project, use `ZRouter.framework`.
 
 ## Getting Started
 
