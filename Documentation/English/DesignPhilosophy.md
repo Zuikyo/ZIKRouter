@@ -6,7 +6,7 @@
 
 ## Design Idea
 
-ZIKRouter uses protocol to manage moudles. The advantages of interface oriented programming:
+ZIKRouter uses protocol to manage modules. The advantages of interface oriented programming:
 
 * Strict type safety with compile time check
 * Reduce refactoring costs with compile time check
@@ -43,7 +43,7 @@ All disadvantages of URL router can be resolved if we use protocol to manage mod
 
 ### Module Manager with Reflection
 
-Some module manager use runtime and category features in Objective-C to get moudles. Such as getting class with `NSClassFromString `, then use `performSelector:` `NSInvocation`to perform methods.
+Some module manager use runtime and category features in Objective-C to get modules. Such as getting class with `NSClassFromString `, then use `performSelector:` `NSInvocation`to perform methods.
 
 The general implementation is adding new interfaces with categories in the module manager, and in the category method, use strings to get class with runtime and perform methods.
 
