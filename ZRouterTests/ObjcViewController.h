@@ -6,7 +6,7 @@
 //  Copyright © 2018 zuik. All rights reserved.
 //
 
-#import "ZIKPlatformCapabilities.h"
+#import <ZIKRouter/ZIKPlatformCapabilities.h>
 #if ZIK_HAS_UIKIT
 #import <UIKit/UIKit.h>
 #else

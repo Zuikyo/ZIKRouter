@@ -74,6 +74,9 @@
 		F85183D42079B20100DC3ED6 /* ZIKServiceRouter+Discover.h in Headers */ = {isa = PBXBuildFile; fileRef = F85183D22079B20100DC3ED6 /* ZIKServiceRouter+Discover.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		F85183D52079B20100DC3ED6 /* ZIKServiceRouter+Discover.m in Sources */ = {isa = PBXBuildFile; fileRef = F85183D32079B20100DC3ED6 /* ZIKServiceRouter+Discover.m */; };
 		F85183D72079DF2200DC3ED6 /* ZIKViewRouterTypePrivate.h in Headers */ = {isa = PBXBuildFile; fileRef = F85183D62079DF2200DC3ED6 /* ZIKViewRouterTypePrivate.h */; };
+		F853049721045F1E00C0BC71 /* ZIKRouter-umbrella.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = F83290F120B350DA00BB0597 /* ZIKRouter-umbrella.h */; };
+		F853049821045F1E00C0BC71 /* ZIKPlatformCapabilities.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = F8EF187420D2AD7700496EED /* ZIKPlatformCapabilities.h */; };
+		F853049921045F1E00C0BC71 /* ZIKClassCapabilities.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = F8EF187620D2B82F00496EED /* ZIKClassCapabilities.h */; };
 		F853196C2083BFA4006D12F5 /* ZIKViewRouteRegistryPrivate.h in Headers */ = {isa = PBXBuildFile; fileRef = F853196B2083BFA4006D12F5 /* ZIKViewRouteRegistryPrivate.h */; };
 		F8564E1A1F717F2700C16A8A /* ZIKRouterRuntime.h in Headers */ = {isa = PBXBuildFile; fileRef = F8564E181F717F2700C16A8A /* ZIKRouterRuntime.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		F8564E1B1F717F2700C16A8A /* ZIKRouterRuntime.m in Sources */ = {isa = PBXBuildFile; fileRef = F8564E191F717F2700C16A8A /* ZIKRouterRuntime.m */; };
@@ -201,6 +204,9 @@
 			dstPath = include;
 			dstSubfolderSpec = 16;
 			files = (
+				F853049721045F1E00C0BC71 /* ZIKRouter-umbrella.h in CopyFiles */,
+				F853049821045F1E00C0BC71 /* ZIKPlatformCapabilities.h in CopyFiles */,
+				F853049921045F1E00C0BC71 /* ZIKClassCapabilities.h in CopyFiles */,
 				F8F6B1BD20A6156300110B03 /* ZIKRouterRuntimeDebug.h in CopyFiles */,
 				F8D414CF207BC90A0036CED5 /* ZIKServiceRouterType.h in CopyFiles */,
 				F8D414CE207BC8FD0036CED5 /* ZIKServiceRoute.h in CopyFiles */,
@@ -1085,7 +1091,7 @@
 				DEVELOPMENT_TEAM = 8FE9268LAG;
 				GCC_C_LANGUAGE_STANDARD = gnu11;
 				INFOPLIST_FILE = ZIKRouterTests/Info.plist;
-				IPHONEOS_DEPLOYMENT_TARGET = 11.3;
+				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks @executable_path/../Frameworks @loader_path/../Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = com.zuik.ZIKRouterTests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -1106,7 +1112,7 @@
 				DEVELOPMENT_TEAM = 8FE9268LAG;
 				GCC_C_LANGUAGE_STANDARD = gnu11;
 				INFOPLIST_FILE = ZIKRouterTests/Info.plist;
-				IPHONEOS_DEPLOYMENT_TARGET = 11.3;
+				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks @executable_path/../Frameworks @loader_path/../Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = com.zuik.ZIKRouterTests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
