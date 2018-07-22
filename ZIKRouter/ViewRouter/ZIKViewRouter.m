@@ -2870,9 +2870,10 @@ static  ZIKViewRouterType *_Nullable _routerTypeToRegisteredView(Class viewClass
                 }
                 ZIKViewRouter *destinationRouter = [route routerFromSegueIdentifier:segue.identifier sender:sender destination:routableView source:(XXViewController *)self];
                 destinationRouter.routingFromInternal = YES;
+#if ZIK_HAS_UIKIT
                 ZIKViewRouteSegueConfiguration *segueConfig = [(ZIKViewRouteConfiguration *)destinationRouter.original_configuration segueConfiguration];
                 NSAssert(destinationRouter && segueConfig, @"Failed to create router.");
-#if ZIK_HAS_UIKIT
+
                 segueConfig.destinationStateBeforeRoute = [routableView zix_presentationState];
 #endif
                 if (destinationRouter) {

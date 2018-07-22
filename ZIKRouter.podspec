@@ -11,12 +11,15 @@ Pod::Spec.new do |s|
   s.author       = { "Zuikyo" => "zuikxyo@gmail.com" }
 
   s.ios.deployment_target = "7.0"
-  s.osx.deployment_target = "10.10"
   s.tvos.deployment_target = "9.0"
+  s.osx.deployment_target = "10.10"
+
 
   s.source       = { :git => "https://github.com/Zuikyo/ZIKRouter.git", :tag => "#{s.version}" }
 
-  s.frameworks = "Foundation", "UIKit"
+  s.ios.frameworks = "Foundation", "UIKit"
+  s.tvos.frameworks = "Foundation", "UIKit"
+  s.osx.frameworks = "Foundation", "AppKit"
   s.requires_arc = true
 
   s.preserve_path = 'ZIKRouter/Framework/module.modulemap'
