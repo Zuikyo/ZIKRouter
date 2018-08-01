@@ -33,13 +33,19 @@ Disadvantages of URL router:
 
 * Type of parameters is limited when routing, and there is no compile time check
 * Only for view module, not for any service module
+* Can't use designated initializer to provide required parameters
+* Need to add new initializer in the view controller to support it's url
+* Doesn't support storyboard
 * Can't declare module's interface, highly rely on documentation. So it's not that safe when refactoring
+* Can't make sure whether the module exists or not when you use it
 * Hard to manage route strings
 * Can't separate required protocol and provided protocol. So you can't thoroughly decouple
 
 #### Improvement
 
-All disadvantages of URL router can be resolved if we use protocol to manage modules. And ZIKRouter also allows you to get router with string identifier. So it's easy to use ZIKRouter with other URL router frameworks.
+All disadvantages of URL router can be resolved if we use protocol to manage modules. We can pass parameters with protocols and check type of parameters with the compile. And with routable declaration and compile-time check, ZIKRouter can make sure the module exists when you use it. You don't need to modify the module when adding route for it.
+
+ZIKRouter also allows you to get router with string identifier. So it's easy to use ZIKRouter with other URL router frameworks.
 
 ### Module Manager with Reflection
 
@@ -55,8 +61,9 @@ Advantages:
 Disadvantages:
 
 * Still use strings in category
+* Can't make sure whether the module exists or not when you use it
 * Can't separate required protocol and provided protocol in category methods. So you can't thoroughly decouple
-* Rely too much on runtime feature, can be used in pure Swift, and can't checking whether the module exists at compile time
+* Rely too much on runtime feature, can't be used in pure Swift
 * According to the [App Store Review Guidelines](https://developer.apple.com/app-store/review/guidelines/), it's not recommanded to invoke arbitrary methods with runtime. See [Are performSelector and respondsToSelector banned by App Store?
 ](https://stackoverflow.com/questions/42662028/are-performselector-and-respondstoselector-banned-by-app-store)
 

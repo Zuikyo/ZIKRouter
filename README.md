@@ -76,6 +76,8 @@ Service router 用于模块寻找，通过 protocol 寻找对应的模块，并�
 5. [Circular Dependency](Documentation/English/CircularDependencies.md)
 6. [Module Adapter](Documentation/English/ModuleAdapter.md)
 
+[FAQ](Documentation/English/FAQ.md)
+
 ## Requirements
 
 * iOS 7.0+
@@ -107,28 +109,18 @@ Add this to your Cartfile:
 github "Zuikyo/ZIKRouter" >= 1.0.2
 ```
 
-Build frameworks for iOS:
+Build frameworks:
 
 ```
-carthage update --platform iOS
-```
-tvOS:
-
-```
-carthage update --platform tvOS
-```
-mac OS:
-
-```
-carthage update --platform Mac
+carthage update
 ```
 
 Build DEBUG version to enable route checking:
 
 ```
-carthage update --platform iOS --configuration Debug
+carthage update --configuration Debug
 ```
-Remember to use release version in final product.
+Remember to use release version in production environment.
 
 For Objective-C project, use `ZIKRouter.framework`. For Swift project, use `ZRouter.framework`.
 
@@ -239,12 +231,17 @@ Read the documentation for more details and more methods to override.
 
 ### 2. Declare Routable Type
 
+The declaration is for checking routes at compile time, and supporting storyboard.
+
 ```swift
-//Declare NoteEditorViewController is routable
+// Declare NoteEditorViewController is routable
+// This means there is a router for NoteEditorViewController
 extension NoteEditorViewController: ZIKRoutableView {
 }
 
-//Declare NoteEditorInput is routable
+// Declare NoteEditorInput is routable
+// This means you can use NoteEditorInput to fetch router
+// If you use an undeclared protocol, there will be compile time error
 extension RoutableView where Protocol == NoteEditorInput {
     init() { self.init(declaredProtocol: Protocol.self) }
 }
@@ -253,10 +250,13 @@ extension RoutableView where Protocol == NoteEditorInput {
 <details><summary>Objective-C Sample</summary>
 
 ```objectivec
-//Declare NoteEditorViewController is routable
+// Declare NoteEditorViewController is routable
+// This means there is a router for NoteEditorViewController
 DeclareRoutableView(NoteEditorViewController, NoteEditorViewRouter)
 
-///If the protocol inherits from ZIKViewRoutable, it's routable
+// If the protocol inherits from ZIKViewRoutable, it's routable
+// This means you can use NoteEditorInput to fetch router
+// If you use an undeclared protocol, there will be compile time warning
 @protocol NoteEditorInput <ZIKViewRoutable>
 @property (nonatomic, weak) id<EditorDelegate> delegate;
 - (void)constructForCreatingNewNote;
@@ -265,7 +265,7 @@ DeclareRoutableView(NoteEditorViewController, NoteEditorViewRouter)
 
 </details>
 
-Now your can get and show `NoteEditorViewController` with router.
+Now you can get and show `NoteEditorViewController` with router.
 
 ### View Router
 
@@ -392,6 +392,7 @@ class TestViewController: UIViewController {
         router = Router.perform(to: RoutableView<NoteEditorInput>(), path: .push(from: self))
     }
     
+    // Router will pop the editor view controller
     func removeEditorDirectly() {
         guard let router = router, router.canRemove else {
             return
@@ -440,6 +441,7 @@ class TestViewController: UIViewController {
     self.router = [ZIKRouterToView(NoteEditorInput) performPath:ZIKViewRoutePath.pushFrom(self)];
 }
 
+// Router will pop the editor view controller
 - (void)removeEditorDirectly {
     if (![self.router canRemove]) {
         return;
@@ -530,7 +532,7 @@ class TestViewController: UIViewController {
 ```
 </details>
 
-Use `required protocol` and `provided protocol` to perfectly decouple modules, adapt interface and declare dependencies of the module.
+Use `required protocol` and `provided protocol` to perfectly decouple modules, adapt interface and declare dependencies of the module. And you don't have to use a public header to manage those protocols.
 
 You need to connect required protocol and provided protocol. For more detail, read [Module Adapter](Documentation/English/ModuleAdapter.md).
 
@@ -625,9 +627,22 @@ public func application(_ app: UIApplication, open url: URL, options: [UIApplica
 ```
 </details>
 
-### Service Router
+### Make Destination & Service Router
 
-Get a module and use:
+If you don't wan't to show a view, but only need to get instance of the module, you can use `makeDestination`:
+
+```swift
+let destination = Router.makeDestination(to: RoutableView<NoteEditorInput>())
+```
+
+<details><summary>Objective-C Sample</summary>
+
+```objectivec
+id<NoteEditorInput> destination = [ZIKRouterToView(NoteEditorInput) makeDestination];
+```
+</details>
+
+And you can also get any custom modules:
 
 ```swift
 ///time service's interface

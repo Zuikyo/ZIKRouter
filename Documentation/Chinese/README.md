@@ -28,11 +28,11 @@ Service router 用于模块寻找，通过 protocol 寻找对应的模块，并�
 - [x] 支持 iOS、macOS、tvOS
 - [x] 支持界面路由和任意模块的路由
 - [x] 支持对模块进行静态依赖注入和动态依赖注入
-- [x] **用 protocol 动态获取界面和模块，隐藏具体类**
+- [x] **用 protocol 动态获取模块**
 - [x] **用 protocol 向模块传递参数，基于接口进行类型安全的模块调用和参数传递**
-- [x] **可以用 idntifier 获取模块，和其他 URL router 兼容**
+- [x] **可以用 identifier 获取模块，和其他 URL router 兼容**
 - [x] **明确声明可用于路由的 protocol，进行编译时检查和运行时检查，避免了动态特性带来的过于自由的安全问题**
-- [x] **在模块和模块使用者中用不同的 protocol 指向同一个模块，因此路由时不必和某个固定的 protocol 耦合**
+- [x] **在模块和模块使用者中用不同的 protocol 指向同一个模块，因此路由时不必和某个固定的 protocol 耦合，也无需在一个公共库中集中管理所有的 protocol**
 - [x] 用 adapter 对两个模块进行解耦和接口兼容
 - [x] 使用泛型表明指定功能的 router
 - [x] 封装 UIKit 和 AppKit 里的所有界面跳转方式（push、present modally、present as popover、present as sheet、segue、show、showDetail、addChildViewController、addSubview）以及自定义的展示方式，统一成一个方法
@@ -68,6 +68,8 @@ Service router 用于模块寻找，通过 protocol 寻找对应的模块，并�
 5. [循环依赖问题](CircularDependencies.md)
 6. [模块化和解耦](ModuleAdapter.md)
 
+[FAQ](FAQ.md)
+
 ## Requirements
 
 * iOS 7.0+
@@ -98,28 +100,18 @@ pod 'ZRouter', '>= 1.0.2'
 github "Zuikyo/ZIKRouter" >= 1.0.2
 ```
 
-编译 iOS 版本：
+编译 framework：
 
 ```
-carthage update --platform iOS
-```
-tvOS 版本：
-
-```
-carthage update --platform tvOS
-```
-mac OS 版本：
-
-```
-carthage update --platform Mac
+carthage update
 ```
 
 编译 DEBUG 版本，开启运行时路由检查：
 
 ```
-carthage update --platform iOS --configuration Debug
+carthage update --configuration Debug
 ```
-记得不要把 debug 版本的库用在 release 版本的 app 中。一定要在 release 版本的 app 中使用替换为 release 版本的库。
+记得不要把 debug 版本的库用在 release 版本的 app 中。一定要在 release 版本的 app 中使用 release 版本的库。
 
 对于 Objective-C 的项目，使用 `ZIKRouter.framework`。对于 Swift 项目，使用`ZRouter.framework`。
 
@@ -230,12 +222,17 @@ class NoteEditorViewRouter: ZIKViewRouter<NoteEditorViewController, ViewRouteCon
 
 ### 2. 声明 Routable 类型
 
+对路由进行声明，用于编译检查和支持 storyboard。
+
 ```swift
 //声明 NoteEditorViewController 为 routable
+//这表明 NoteEditorViewController 至少存在一个 对应的 router
 extension NoteEditorViewController: ZIKRoutableView {
 }
 
 //声明 NoteEditorInput 为 routable
+//这份声明意味着我们可以用 NoteEditorInput 来获取路由
+//如果获取路由时，protocol 未经过声明，将会产生编译错误
 extension RoutableView where Protocol == NoteEditorInput {
     init() { self.init(declaredProtocol: Protocol.self) }
 }
@@ -245,9 +242,12 @@ extension RoutableView where Protocol == NoteEditorInput {
 
 ```objectivec
 //声明 NoteEditorViewController 为 routable
+//这表明 NoteEditorViewController 至少存在一个 对应的 router
 DeclareRoutableView(NoteEditorViewController, NoteEditorViewRouter)
 
 ///当 protocol 继承自 ZIKViewRoutable, 就是 routable 的
+//这份声明意味着我们可以用 NoteEditorInput 来获取路由
+//如果获取路由时，protocol 未经过声明，将会产生编译错误
 @protocol NoteEditorInput <ZIKViewRoutable>
 @property (nonatomic, weak) id<EditorDelegate> delegate;
 - (void)constructForCreatingNewNote;
@@ -255,6 +255,8 @@ DeclareRoutableView(NoteEditorViewController, NoteEditorViewRouter)
 ```
 
 </details>
+
+现在你可以用所声明的 protocol 进行路由操作了。
 
 ### View Router
 
@@ -381,6 +383,7 @@ class TestViewController: UIViewController {
         router = Router.perform(to: RoutableView<NoteEditorInput>(), path: .push(from: self))
     }
     
+    //Router 会对 editor view controller 执行 pop 操作，移除界面
     func removeEditorDirectly() {
         guard let router = router, router.canRemove else {
             return
@@ -429,6 +432,7 @@ class TestViewController: UIViewController {
     self.router = [ZIKRouterToView(NoteEditorInput) performPath:ZIKViewRoutePath.pushFrom(self)];
 }
 
+//Router 会对 editor view controller 执行 pop 操作，移除界面
 - (void)removeEditorDirectly {
     if (![self.router canRemove]) {
         return;
@@ -471,7 +475,7 @@ class TestViewController: UIViewController {
 
 ### Adapter
 
-可以用另一个 protocol 获取 router，只要两个 protocol 提供了相同功能的接口即可。即便接口有稍微不同，也可以通过 category、extension、proxy 等方式进行接口适配。
+可以用另一个 protocol 获取 router，只要两个 protocol 提供了相同功能的接口即可，因此模块不会和某个固定的 protocol 耦合。即便接口有稍微不同，也可以通过 category、extension、proxy 等方式进行接口适配。
 
 使用者需要用到的接口：
 
@@ -519,7 +523,7 @@ class TestViewController: UIViewController {
 ```
 </details>
 
-使用 required protocol 和 provided protocol，就可以让模块间完美解耦，并进行接口适配，同时还能用 required protocol 声明模块所需的依赖。
+使用 required protocol 和 provided protocol，就可以让模块间完美解耦，并进行接口适配，同时还能用 required protocol 声明模块所需的依赖。不再需要用一个公共库来集中存放所有的 protocol 了。
 
 使用 required protocol 需要将 required protocol 和 provided protocol 进行对接。更详细的内容，可以参考[模块化和解耦](ModuleAdapter.md)。
 
@@ -614,7 +618,20 @@ public func application(_ app: UIApplication, open url: URL, options: [UIApplica
 ```
 </details>
 
-### Service Router
+### Make Destination & Service Router
+
+如果不想执行界面跳转，只是想获取模块，执行自定义操作，可以使用`makeDestination`：
+
+```swift
+let destination = Router.makeDestination(to: RoutableView<NoteEditorInput>())
+```
+
+<details><summary>Objective-C Sample</summary>
+
+```objectivec
+id<NoteEditorInput> destination = [ZIKRouterToView(NoteEditorInput) makeDestination];
+```
+</details>
 
 除了界面模块，也可以用 service router 获取普通模块:
 
@@ -641,7 +658,7 @@ class TestViewController: UIViewController {
 }
 ```
 
-<details><summary>Objective-C示例</summary>
+<details><summary>Objective-C Sample</summary>
 
 ```objectivec
 ///time service 的接口

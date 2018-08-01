@@ -9,7 +9,7 @@
 ZIKRouter 使用接口管理和使用模块。使用接口的优点：
 
 * 依赖编译检查，实现严格的类型安全
-* 依赖编译检查，减少重构时的成本
+* 利用编译检查，减少重构时的成本
 * 通过接口检查，保证模块正确实现所提供的接口
 * 通过接口明确声明模块所需的依赖，允许外部进行依赖注入
 * 保持动态特性的同时，进行路由检查，避免使用不存在的路由模块
@@ -33,13 +33,19 @@ URL router 的缺点：
 
 * 传参方式有限，并且无法利用编译器进行参数类型检查
 * 只适用于界面模块，不适用于通用模块
+* 不能使用 designated initializer 声明必需参数
+* 要让 view controller 支持 url，需要为其新增初始化方法，因此需要对模块做出修改
+* 不支持 storyboard
 * 无法明确声明模块提供的接口，只能依赖于接口文档，重构时无法确保修改正确
 * 依赖于字符串硬编码，难以管理
+* 无法保证所使用的模块一定存在
 * 无法区分required protocol 和 provided protocol，因此无法彻底解耦
 
 #### ZIKRouter 的改进
 
-通过接口管理模块，有效避免了 URL router 的缺点。同时 ZIKRouter 可以通过字符串匹配 router，因此可以轻易地和其他 URL router 对接。
+通过接口管理模块，有效避免了 URL router 的缺点。参数可以通过 protocol 直接传递，能够利用编译器检查参数类型，并且 ZIKRouter 能通过路由声明和编译检查，保证所使用的模块一定存在。在为模块创建路由时，也无需修改模块的代码。
+
+同时 ZIKRouter 可以通过字符串匹配 router，因此可以轻易地和其他 URL router 对接。
 
 ### 基于反射的模块管理工具
 
@@ -55,8 +61,9 @@ URL router 的缺点：
 缺点：
 
 * 在 category 中仍然引入了字符串硬编码
+* 无法保证所使用的模块一定存在
 * 无法区分 required protocol 和 provided protocol，因此无法彻底解耦
-* 过于依赖 runtime 特性，无法应用到纯 swift 上，也无法确保对应的模块是否存在
+* 过于依赖 runtime 特性，无法应用到纯 swift 上
 * 使用 runtime 相关的接口调用任意类的任意方法，有被苹果审核拒绝的风险。参考：[Are performSelector and respondsToSelector banned by App Store?
 ](https://stackoverflow.com/questions/42662028/are-performselector-and-respondstoselector-banned-by-app-store)
 
