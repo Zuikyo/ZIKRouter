@@ -156,7 +156,7 @@ typedef ZIKRouteConfiguration ZIKRouteConfig;
 typedef ZIKPerformRouteConfiguration ZIKPerformRouteConfig;
 typedef ZIKRemoveRouteConfiguration ZIKRemoveRouteConfig;
 
-///Check whether the protocol is routable at complie time when passing protocols to `+registerViewProtocol:`, `+registerServiceProtocol:`, `+registerModuleProtocol:`, `toView:`, `toService:`, `toModule:`.
+///Check whether the protocol is routable at compile time when passing protocols to `+registerViewProtocol:`, `+registerServiceProtocol:`, `+registerModuleProtocol:`, `toView:`, `toService:`, `toModule:`.
 #define ZIKRoutable(RoutableProtocol) (Protocol<RoutableProtocol>*)@protocol(RoutableProtocol)
 
 #pragma mark Error

@@ -75,13 +75,13 @@ typedef NS_ENUM(NSInteger,ZIKViewRouteType) {
      */
     ZIKViewRouteTypeShowDetail               NS_ENUM_AVAILABLE_IOS(8_0)    = 7,
 #endif
-    ///Get destination viewController and do @code[source addChildViewController:destination]@endcode; You need to add destination's view to soruce's view in addingChildViewHandler; source must be an UIViewController.
+    ///Get destination viewController and do @code[source addChildViewController:destination]@endcode; You need to add destination's view to soruce's view in addingChildViewHandler; source must be an UIViewController / NSViewController.
     ZIKViewRouteTypeAddAsChildViewController NS_ENUM_AVAILABLE(10_10, 5_0) = 8,
-    ///Get your custom UIView and do @code[source addSubview:destination]@endcode; source must be an UIView.
+    ///Get your custom UIView / NSView and do @code[source addSubview:destination]@endcode; source must be an UIView / NSView.
     ZIKViewRouteTypeAddAsSubview             = 9,
     ///Subclass router can provide custom presentation. Class of source and destination is specified by subclass router.
     ZIKViewRouteTypeCustom                   = 10,
-    ///Just create and return an UIViewController or UIView in successHandler; Source is not needed for this type.
+    ///Just create and return an UIViewController / NSViewController or UIView / NSView in successHandler; Source is not needed for this type.
     ZIKViewRouteTypeMakeDestination          = 11,
     ZIKViewRouteTypeGetDestination           NS_ENUM_DEPRECATED_IOS(7.0, 7.0, "Use ZIKViewRouteTypeMakeDestination instead") = ZIKViewRouteTypeMakeDestination
 };
@@ -171,9 +171,9 @@ typedef void(^ZIKViewRouteSegueConfiger)(NS_NOESCAPE ZIKViewRouteSegueConfigure)
 /**
  Source ViewController or View for route.
  @discussion
- For ZIKViewRouteTypePush, ZIKViewRouteTypePresentModally, ZIKViewRouteTypePresentAsPopover, ZIKViewRouteTypePerformSegue,ZIKViewRouteTypeShow,ZIKViewRouteTypeShowDetail,ZIKViewRouteTypeAddAsChildViewController, source must be an UIViewController.
+ For ZIKViewRouteTypePush, ZIKViewRouteTypePresentModally, ZIKViewRouteTypePresentAsPopover, ZIKViewRouteTypePresentAsSheet, ZIKViewRouteTypePresentWithAnimator,  ZIKViewRouteTypePerformSegue,ZIKViewRouteTypeShow,ZIKViewRouteTypeShowDetail,ZIKViewRouteTypeAddAsChildViewController, source must be an UIViewController / NSViewController.
  
- For ZIKViewRouteTypeAddAsSubview, source must be an UIView.
+ For ZIKViewRouteTypeAddAsSubview, source must be an UIView / NSView.
  
  For ZIKViewRouteTypeMakeDestination, source is not needed.
  */
@@ -202,11 +202,11 @@ typedef void(^ZIKViewRouteSegueConfiger)(NS_NOESCAPE ZIKViewRouteSegueConfigure)
  Prepare for performRoute, and config other dependencies for destination here.
  
  @discussion
- For ZIKViewRouteTypePush, ZIKViewRouteTypePresentModally, ZIKViewRouteTypePresentAsPopover, ZIKViewRouteTypePerformSegue, ZIKViewRouteTypeShow, ZIKViewRouteTypeShowDetail, ZIKViewRouteTypeAddAsChildViewController, destination is an UIViewController.
+ For ZIKViewRouteTypePush, ZIKViewRouteTypePresentModally, ZIKViewRouteTypePresentAsPopover, ZIKViewRouteTypePresentAsSheet, ZIKViewRouteTypePresentWithAnimator, ZIKViewRouteTypePerformSegue, ZIKViewRouteTypeShow, ZIKViewRouteTypeShowDetail, ZIKViewRouteTypeAddAsChildViewController, destination is an UIViewController / NSViewController.
  
- For ZIKViewRouteTypeAddAsSubview, destination is an UIView.
+ For ZIKViewRouteTypeAddAsSubview, destination is an UIView / NSView.
  
- For ZIKViewRouteTypeCustom, destination is an UIViewController or UIView.
+ For ZIKViewRouteTypeCustom, destination is an UIViewController / NSViewController or UIView / NSView.
  
  @note
  Use weakSelf in prepareDestination to avoid retain cycle.
@@ -217,11 +217,11 @@ typedef void(^ZIKViewRouteSegueConfiger)(NS_NOESCAPE ZIKViewRouteSegueConfigure)
  Success handler for performRoute. Each time the router was performed, success handler will be called when the operation succeed.
  
  @discussion
- For ZIKViewRouteTypePush, ZIKViewRouteTypePresentModally, ZIKViewRouteTypePresentAsPopover, ZIKViewRouteTypePerformSegue, ZIKViewRouteTypeShow, ZIKViewRouteTypeShowDetail, ZIKViewRouteTypeAddAsChildViewController, destination is an UIViewController.
+ For ZIKViewRouteTypePush, ZIKViewRouteTypePresentModally, ZIKViewRouteTypePresentAsPopover, ZIKViewRouteTypePresentAsSheet, ZIKViewRouteTypePresentWithAnimator, ZIKViewRouteTypePerformSegue, ZIKViewRouteTypeShow, ZIKViewRouteTypeShowDetail, ZIKViewRouteTypeAddAsChildViewController, destination is an UIViewController / NSViewController.
  
- For ZIKViewRouteTypeAddAsSubview, destination is an UIView.
+ For ZIKViewRouteTypeAddAsSubview, destination is an UIView / NSView.
  
- For ZIKViewRouteTypeCustom, destination is an UIViewController or UIView.
+ For ZIKViewRouteTypeCustom, destination is an UIViewController / NSViewController or UIView / NSView.
  
  @note
  Use weakSelf in successHandler to avoid retain cycle.
@@ -462,14 +462,14 @@ typedef void(^ZIKViewRouteSegueConfiger)(NS_NOESCAPE ZIKViewRouteSegueConfigure)
 
 @end
 
-///Should only be conformed by UIViewController and UIView.
+///Should only be conformed by UIViewController / NSViewController and UIView / NSView.
 @protocol ZIKViewRouteSource <NSObject>
 
 @optional
 
 /**
- If an UIViewController/UIView is routing from storyboard or an UIView is added by -addSubview:, the view will be detected, and a router will be created to prepare it. If the view need prepare, the router will search the performer of current route and call this method to prepare the destination.
- @note If an UIViewController is routing from manually code (like directly use [performer.navigationController pushViewController:destination animated:YES]), the view will be detected, but won't create a router to search performer and prepare the destination, because we don't know which view controller is the performer calling -pushViewController:animated: (any child view controller in navigationController's stack can perform the route).
+ If an UIViewController / NSViewController is routing from storyboard or an UIView / NSView is added by -addSubview:, the view will be detected, and a router will be created to prepare it. If the view need prepare, the router will search the performer of current route and call this method to prepare the destination.
+ @note If an UIViewController / NSViewController is routing from manually code (like directly use [performer.navigationController pushViewController:destination animated:YES]), the view will be detected, but won't create a router to search performer and prepare the destination, because we don't know which view controller is the performer calling -pushViewController:animated: (any child view controller in navigationController's stack can perform the route).
  
  @param destination The view to be routed. You can distinguish destinations with their view protocols.
  @param configuration Config for the route. You can distinguish destinations with their router's config protocols. You can modify this to prepare the route, but source, routeType, segueConfiguration, handleExternalRoute won't be modified even you change them.
@@ -526,9 +526,9 @@ typedef void(^ZIKViewRouteSegueConfiger)(NS_NOESCAPE ZIKViewRouteSegueConfigure)
 /**
  Source ViewController or View for route.
  @discussion
- For ZIKViewRouteTypePush, ZIKViewRouteTypePresentModally, ZIKViewRouteTypePresentAsPopover, ZIKViewRouteTypePerformSegue,ZIKViewRouteTypeShow,ZIKViewRouteTypeShowDetail,ZIKViewRouteTypeAddAsChildViewController, source must be an UIViewController.
+ For ZIKViewRouteTypePush, ZIKViewRouteTypePresentModally, ZIKViewRouteTypePresentAsPopover, ZIKViewRouteTypePerformSegue,ZIKViewRouteTypeShow,ZIKViewRouteTypeShowDetail,ZIKViewRouteTypeAddAsChildViewController, source must be an UIViewController / NSViewController.
  
- For ZIKViewRouteTypeAddAsSubview, source must be an UIView.
+ For ZIKViewRouteTypeAddAsSubview, source must be an UIView / NSView.
  
  For ZIKViewRouteTypeMakeDestination, source is not needed.
  */
@@ -557,11 +557,11 @@ typedef void(^ZIKViewRouteSegueConfiger)(NS_NOESCAPE ZIKViewRouteSegueConfigure)
  Prepare for performRoute, and config other dependencies for destination here.
  
  @discussion
- For ZIKViewRouteTypePush, ZIKViewRouteTypePresentModally, ZIKViewRouteTypePresentAsPopover, ZIKViewRouteTypePerformSegue, ZIKViewRouteTypeShow, ZIKViewRouteTypeShowDetail, ZIKViewRouteTypeAddAsChildViewController, destination is an UIViewController.
+ For ZIKViewRouteTypePush, ZIKViewRouteTypePresentModally, ZIKViewRouteTypePresentAsPopover, ZIKViewRouteTypePresentAsSheet, ZIKViewRouteTypePresentWithAnimator, ZIKViewRouteTypePerformSegue, ZIKViewRouteTypeShow, ZIKViewRouteTypeShowDetail, ZIKViewRouteTypeAddAsChildViewController, destination is an UIViewController / NSViewController.
  
- For ZIKViewRouteTypeAddAsSubview, destination is an UIView.
+ For ZIKViewRouteTypeAddAsSubview, destination is an UIView / NSView.
  
- For ZIKViewRouteTypeCustom, destination is an UIViewController or UIView.
+ For ZIKViewRouteTypeCustom, destination is an UIViewController / NSViewController or UIView / NSView.
  
  @note
  Use weakSelf in prepareDestination to avoid retain cycle.
@@ -572,11 +572,11 @@ typedef void(^ZIKViewRouteSegueConfiger)(NS_NOESCAPE ZIKViewRouteSegueConfigure)
  Success handler for performRoute. Each time the router was performed, success handler will be called when the operation succeed.
  
  @discussion
- For ZIKViewRouteTypePush, ZIKViewRouteTypePresentModally, ZIKViewRouteTypePresentAsPopover, ZIKViewRouteTypePerformSegue, ZIKViewRouteTypeShow, ZIKViewRouteTypeShowDetail, ZIKViewRouteTypeAddAsChildViewController, destination is an UIViewController.
+ For ZIKViewRouteTypePush, ZIKViewRouteTypePresentModally, ZIKViewRouteTypePresentAsPopover, ZIKViewRouteTypePresentAsSheet, ZIKViewRouteTypePresentWithAnimator, ZIKViewRouteTypePerformSegue, ZIKViewRouteTypeShow, ZIKViewRouteTypeShowDetail, ZIKViewRouteTypeAddAsChildViewController, destination is an UIViewController / NSViewController.
  
- For ZIKViewRouteTypeAddAsSubview, destination is an UIView.
+ For ZIKViewRouteTypeAddAsSubview, destination is an UIView / NSView.
  
- For ZIKViewRouteTypeCustom, destination is an UIViewController or UIView.
+ For ZIKViewRouteTypeCustom, destination is an UIViewController / NSViewController or UIView / NSView.
  
  @note
  Use weakSelf in successHandler to avoid retain cycle.
@@ -594,7 +594,7 @@ typedef void(^ZIKViewRouteSegueConfiger)(NS_NOESCAPE ZIKViewRouteSegueConfigure)
 ///Config segue for ZIKViewRouteTypePerformSegue
 @property (nonatomic, readonly, copy) ZIKViewRouteSegueConfiger configureSegue;
 
-///When use routeType ZIKViewRouteTypeAddAsChildViewController, add the destination's view to source's view in this block. If you wrap destination with -containerWrapper, the `destination` in this block is the wrapped UIViewController. You can add with animations, and must call completion when the adding action is finished.
+///When use routeType ZIKViewRouteTypeAddAsChildViewController, add the destination's view to source's view in this block. If you wrap destination with -containerWrapper, the `destination` in this block is the wrapped ViewController. You can add with animations, and must call completion when the adding action is finished.
 #if ZIK_HAS_UIKIT
 @property (nonatomic, copy, nullable) void(^addingChildViewHandler)(UIViewController *destination, void(^completion)(void));
 #else
@@ -617,7 +617,7 @@ typedef void(^ZIKViewRouteSegueConfiger)(NS_NOESCAPE ZIKViewRouteSegueConfigure)
 ///For pop/dismiss, default is YES
 @property (nonatomic, assign) BOOL animated;
 
-///When use routeType ZIKViewRouteTypeAddAsChildViewController and remove, remove the destination's view from its superview in this block. If you wrap destination with -containerWrapper, the `destination` in this block is the wrapped UIViewController. You can remove with animations, and must call completion when the removing action is finished.
+///When use routeType ZIKViewRouteTypeAddAsChildViewController and remove, remove the destination's view from its superview in this block. If you wrap destination with -containerWrapper, the `destination` in this block is the wrapped ViewController. You can remove with animations, and must call completion when the removing action is finished.
 #if ZIK_HAS_UIKIT
 @property (nonatomic, copy, nullable) void(^removingChildViewHandler)(UIViewController *destination, void(^completion)(void));
 #else

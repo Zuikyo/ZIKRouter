@@ -22,7 +22,7 @@ NS_ASSUME_NONNULL_BEGIN
  */
 @interface ZIKViewRouter<__covariant Destination, __covariant RouteConfig: ZIKViewRouteConfiguration *> : ZIKRouter<Destination, RouteConfig, ZIKViewRemoveConfiguration *>
 
-///If this router's view is an UIViewController routed from storyboard, or an UIView added as subview from xib or code, a router will be auto created to prepare the view, and the router's autoCreated is YES; But when an UIViewController is routed from code manually, router won't be auto created because we can't find the performer to prepare the destination.
+///If this router's view is an UIViewController / NSViewController routed from storyboard, or an UIView / NSView added as subview from xib or code, a router will be auto created to prepare the view, and the router's autoCreated is YES; But when an UIViewController / NSViewController is routed from code manually, router won't be auto created because we can't find the performer to prepare the destination.
 @property (nonatomic, readonly, assign) BOOL autoCreated;
 ///Whether current routing action is from router, or from external
 @property (nonatomic, readonly, assign) BOOL routingFromInternal;
@@ -269,7 +269,7 @@ typedef void(^ZIKViewRouteGlobalErrorHandler)(__kindof ZIKViewRouter * _Nullable
 
 @interface ZIKViewRouter (Register)
 /**
- Register an UIViewController or UIView class with this router class, then we can find the view's router class when we need to auto create router for a view.
+ Register an UIViewController / NSViewController or UIView / NSView class with this router class, then we can find the view's router class when we need to auto create router for a view.
  @note
  One view may be registered with multi routers, when view is routed from storyboard or -addSubview:, a router will be auto created from one of the registered router classes randomly. If you want to use a certain router, see +registerExclusiveView:.
  One router may manage multi views. You can register multi view classes to a same router class.
@@ -279,7 +279,7 @@ typedef void(^ZIKViewRouteGlobalErrorHandler)(__kindof ZIKViewRouter * _Nullable
 + (void)registerView:(Class)viewClass;
 
 /**
- Register an UIViewController or UIView class with this router class, then no other router class can be registered for this view class.
+ Register an UIViewController / NSViewController or UIView / NSView class with this router class, then no other router class can be registered for this view class.
  @discussion
  If the view will hold and use its router, or you inject dependencies in the router, that means the view is coupled with the router. Then use this method to register. If another router class try to register with the view class, there will be an assert failure.
  
@@ -308,12 +308,12 @@ typedef void(^ZIKViewRouteGlobalErrorHandler)(__kindof ZIKViewRouter * _Nullable
 + (BOOL)isRegistrationFinished;
 @end
 
-///If an UIViewController or UIView conforms to ZIKRoutableView, there must be a router for it and its subclass, then we can auto create its router. Don't use it in other place.
+///If an UIViewController / NSViewController or UIView / NSView conforms to ZIKRoutableView, there must be a router for it and its subclass, then we can auto create its router. Don't use it in other place.
 @protocol ZIKRoutableView <NSObject>
 
 @end
 
-///Convenient macro to let UIViewController or UIView conform to ZIKRoutableView, and declare that it's routable.
+///Convenient macro to let UIViewController / NSViewController or UIView / NSView conform to ZIKRoutableView, and declare that it's routable.
 #define DeclareRoutableView(RoutableView, ExtensionName)    \
 @interface RoutableView (ExtensionName) <ZIKRoutableView>    \
 @end    \

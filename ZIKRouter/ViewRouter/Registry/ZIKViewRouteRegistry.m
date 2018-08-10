@@ -224,14 +224,7 @@ static NSMutableArray<Class> *_routerClasses;
         [self _checkAllRoutableProtocols];
         return;
     }
-#if ZIK_HAS_UIKIT
-    NSNotificationName name = UIApplicationDidFinishLaunchingNotification;
-#else
-    NSNotificationName name = NSApplicationDidFinishLaunchingNotification;
-#endif
-    [[NSNotificationCenter defaultCenter] addObserverForName:name object:nil queue:[NSOperationQueue mainQueue] usingBlock:^(NSNotification * _Nonnull note) {
-        [self _checkAllRouters];
-    }];
+    [self _checkAllRouters];
 #endif
 }
 

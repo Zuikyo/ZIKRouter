@@ -34,6 +34,7 @@
 #import "URLRouteHandler.h"
 #import "ZIKInfoViewRouter.h"
 #import <ZIKAlertModule/ZIKCompatibleAlertViewRouter.h>
+#import <ZIKLoginModule/ZIKLoginModule.h>
 #import "ZIKTimeServiceRouter.h"
 
 #pragma mark Objc Adapter
@@ -72,6 +73,7 @@
 #endif
     
     // Objc routers
+    [ZIKLoginViewRouter registerRoutableDestination];
     [TestShowViewRouter registerRoutableDestination];
     [TestServiceRouterViewRouter registerRoutableDestination];
     [ZIKSimpleLabelRouter registerRoutableDestination];

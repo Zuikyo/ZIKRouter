@@ -862,6 +862,16 @@ internal extension Registry {
 
 #if DEBUG
 
+extension String {
+    func subString(forRegex regex: NSRegularExpression) -> String? {
+        if let result = regex.firstMatch(in: self, options: .reportCompletion, range: NSRange(location: 0, length: self.utf8.count)) {
+            let subString = (self as NSString).substring(with: result.range)
+            return subString
+        }
+        return nil
+    }
+}
+
 ///Make sure all registered view classes conform to their registered view protocols.
 private class _ViewRouterValidater: ZIKViewRouteAdapter {
     override class func isAbstractRouter() -> Bool {
@@ -870,13 +880,31 @@ private class _ViewRouterValidater: ZIKViewRouteAdapter {
     override class func _didFinishRegistration() {
         
         // Declared protocol by extend RoutableView and RoutableViewModule should be registered
-        var symbolNames = [String]()
+        var declaredRoutableTypes = [String]()
+        // Types used as RoutableView<Type>(), RoutableView<Type>(declaredProtocol: Type.self) and RoutableView<Type>(declaredTypeName: typeName), maybe not declared yet
+        var viewRoutingTypes = [(String, String)]()
+        // Types used as RoutableViewModule<Type>(), RoutableViewModule<Type>(declaredProtocol: Type.self) and RoutableViewModule<Type>(declaredTypeName: typeName), maybe not declared yet
+        var viewModuleRoutingTypes = [(String, String)]()
+        let viewRoutingTypeRegex = try! NSRegularExpression(pattern: "(?<=RoutableView<).*(?=>$)", options: [.anchorsMatchLines])
+        let viewModuleRoutingTypeRegex = try! NSRegularExpression(pattern: "(?<=RoutableViewModule<).*(?=>$)", options: [.anchorsMatchLines])
         _enumerateSymbolName { (name, demangledAsSwift) -> Bool in
             if (strstr(name, "RoutableView") != nil) {
                 let symbolName = demangledAsSwift(name, false)
                 if symbolName.contains("(extension in"), symbolName.contains(">.init"), symbolName.contains("(extension in ZRouter)") == false {
                     let simplifiedName = demangledAsSwift(name, true)
-                    symbolNames.append(simplifiedName)
+                    declaredRoutableTypes.append(simplifiedName)
+                } else if symbolName.hasPrefix("type metadata accessor for ZRouter.RoutableView<") {
+                    let simplifiedName = demangledAsSwift(name, true)
+                    if let routingType = symbolName.subString(forRegex: viewRoutingTypeRegex),
+                        let simplifiedRoutingType = simplifiedName.subString(forRegex: viewRoutingTypeRegex) {
+                        viewRoutingTypes.append((routingType, simplifiedRoutingType))
+                    }
+                } else if symbolName.hasPrefix("type metadata accessor for ZRouter.RoutableViewModule<") {
+                    let simplifiedName = demangledAsSwift(name, true)
+                    if let routingType = symbolName.subString(forRegex: viewModuleRoutingTypeRegex),
+                        let simplifiedRoutingType = simplifiedName.subString(forRegex: viewModuleRoutingTypeRegex) {
+                        viewModuleRoutingTypes.append((routingType, simplifiedRoutingType))
+                    }
                 }
             }
             return true
@@ -886,12 +914,10 @@ private class _ViewRouterValidater: ZIKViewRouteAdapter {
         let moduleProtocolRegex = try! NSRegularExpression(pattern: "(?<=-> RoutableViewModule<).*(?=>$)", options: [.anchorsMatchLines])
         var declaredDestinationProtocols = [String]()
         var declaredModuleProtocols = [String]()
-        for declaration in symbolNames {
-            if let result = destinationProtocolRegex.firstMatch(in: declaration, options: .reportCompletion, range: NSRange(location: 0, length: declaration.utf8.count)) {
-                let declaredProtocol = (declaration as NSString).substring(with: result.range)
+        for declaration in declaredRoutableTypes {
+            if let declaredProtocol = declaration.subString(forRegex: destinationProtocolRegex) {
                 declaredDestinationProtocols.append(declaredProtocol)
-            } else if let result = moduleProtocolRegex.firstMatch(in: declaration, options: .reportCompletion, range: NSRange(location: 0, length: declaration.utf8.count)) {
-                let declaredProtocol = (declaration as NSString).substring(with: result.range)
+            } else if let declaredProtocol = declaration.subString(forRegex: moduleProtocolRegex) {
                 declaredModuleProtocols.append(declaredProtocol)
             }
         }
@@ -903,6 +929,29 @@ private class _ViewRouterValidater: ZIKViewRouteAdapter {
         for declaredProtocol in declaredModuleProtocols {
             assert(Registry.viewModuleProtocolContainer.keys.contains(_RouteKey(key: declaredProtocol)) ||
                 Registry.viewModuleAdapterContainer.keys.contains(_RouteKey(key: declaredProtocol)), "Declared view protocol (\(declaredProtocol)) is not registered with any router.")
+        }
+        
+        for (routingType, simplifiedName) in viewRoutingTypes {
+            var routingTypeName = routingType
+            var routableProtocol: Protocol?
+            if routingTypeName.hasPrefix("__ObjC.") {
+                routingTypeName = simplifiedName
+            }
+            if let objcProtocol = NSProtocolFromString(routingTypeName) {
+                routableProtocol  = _routableViewProtocolFromObject(objcProtocol)
+            }
+            assert(declaredDestinationProtocols.contains(simplifiedName) || routableProtocol != nil, "Find invalid generic type usage for routing: RoutableView<\(simplifiedName)>. You should only use declared protocol type as generic type, don't use \"RoutableView<\(simplifiedName)>\" in your code !")
+        }
+        for (routingType, simplifiedName) in viewModuleRoutingTypes {
+            var routingTypeName = routingType
+            var routableProtocol: Protocol?
+            if routingTypeName.hasPrefix("__ObjC.") {
+                routingTypeName = simplifiedName
+            }
+            if let objcProtocol = NSProtocolFromString(routingTypeName) {
+                routableProtocol  = _routableViewModuleProtocolFromObject(objcProtocol)
+            }
+            assert(declaredModuleProtocols.contains(simplifiedName) || routableProtocol != nil, "Find invalid generic type usage for routing: RoutableViewModule<\(simplifiedName)>. You should only use declared protocol type as generic type, don't use \"RoutableViewModule<\(simplifiedName)>\" in your code!")
         }
         
         // Destination should conform to registered destination protocols
@@ -977,13 +1026,32 @@ private class _ServiceRouterValidater: ZIKServiceRouteAdapter {
     override class func _didFinishRegistration() {
         
         // Declared protocol by extend RoutableView and RoutableViewModule should be registered
-        var symbolNames = [String]()
+        var declaredRoutableTypes = [String]()
+        // Types used as RoutableView<Type>(), RoutableView<Type>(declaredProtocol: Type.self) and RoutableView<Type>(declaredTypeName: typeName), maybe not declared yet
+        var serviceRoutingTypes = [(String, String)]()
+        // Types used as RoutableViewModule<Type>(), RoutableViewModule<Type>(declaredProtocol: Type.self) and RoutableViewModule<Type>(declaredTypeName: typeName), maybe not declared yet
+        var serviceModuleRoutingTypes = [(String, String)]()
+        
+        let serviceRoutingTypeRegex = try! NSRegularExpression(pattern: "(?<=RoutableService<).*(?=>$)", options: [.anchorsMatchLines])
+        let serviceModuleRoutingTypeRegex = try! NSRegularExpression(pattern: "(?<=RoutableServiceModule<).*(?=>$)", options: [.anchorsMatchLines])
         _enumerateSymbolName { (name, demangledAsSwift) -> Bool in
             if (strstr(name, "RoutableService") != nil) {
                 let symbolName = demangledAsSwift(name, false)
                 if symbolName.contains("(extension in"), symbolName.contains(">.init"), symbolName.contains("(extension in ZRouter)") == false {
                     let simplifiedName = demangledAsSwift(name, true)
-                    symbolNames.append(simplifiedName)
+                    declaredRoutableTypes.append(simplifiedName)
+                } else if symbolName.hasPrefix("type metadata accessor for ZRouter.RoutableService<") {
+                    let simplifiedName = demangledAsSwift(name, true)
+                    if let routingType = symbolName.subString(forRegex: serviceRoutingTypeRegex),
+                        let simplifiedRoutingType = simplifiedName.subString(forRegex: serviceRoutingTypeRegex) {
+                        serviceRoutingTypes.append((routingType, simplifiedRoutingType))
+                    }
+                } else if symbolName.hasPrefix("type metadata accessor for ZRouter.RoutableServiceModule<") {
+                    let simplifiedName = demangledAsSwift(name, true)
+                    if let routingType = symbolName.subString(forRegex: serviceModuleRoutingTypeRegex),
+                        let simplifiedRoutingType = simplifiedName.subString(forRegex: serviceModuleRoutingTypeRegex) {
+                        serviceModuleRoutingTypes.append((routingType, simplifiedRoutingType))
+                    }
                 }
             }
             return true
@@ -993,12 +1061,10 @@ private class _ServiceRouterValidater: ZIKServiceRouteAdapter {
         let moduleProtocolRegex = try! NSRegularExpression(pattern: "(?<=-> RoutableServiceModule<).*(?=>$)", options: [.anchorsMatchLines])
         var declaredDestinationProtocols = [String]()
         var declaredModuleProtocols = [String]()
-        for declaration in symbolNames {
-            if let result = destinationProtocolRegex.firstMatch(in: declaration, options: .reportCompletion, range: NSRange(location: 0, length: declaration.utf8.count)) {
-                let declaredProtocol = (declaration as NSString).substring(with: result.range)
+        for declaration in declaredRoutableTypes {
+            if let declaredProtocol = declaration.subString(forRegex: destinationProtocolRegex) {
                 declaredDestinationProtocols.append(declaredProtocol)
-            } else if let result = moduleProtocolRegex.firstMatch(in: declaration, options: .reportCompletion, range: NSRange(location: 0, length: declaration.utf8.count)) {
-                let declaredProtocol = (declaration as NSString).substring(with: result.range)
+            } else if let declaredProtocol = declaration.subString(forRegex: moduleProtocolRegex) {
                 declaredModuleProtocols.append(declaredProtocol)
             }
         }
@@ -1010,6 +1076,29 @@ private class _ServiceRouterValidater: ZIKServiceRouteAdapter {
         for declaredProtocol in declaredModuleProtocols {
             assert(Registry.serviceModuleProtocolContainer.keys.contains(_RouteKey(key: declaredProtocol)) ||
                 Registry.serviceModuleAdapterContainer.keys.contains(_RouteKey(key: declaredProtocol)), "Declared service protocol (\(declaredProtocol)) is not registered with any router.")
+        }
+        
+        for (routingType, simplifiedName) in serviceRoutingTypes {
+            var routingTypeName = routingType
+            var routableProtocol: Protocol?
+            if routingTypeName.hasPrefix("__ObjC.") {
+                routingTypeName = simplifiedName
+            }
+            if let objcProtocol = NSProtocolFromString(routingTypeName) {
+                routableProtocol  = _routableServiceProtocolFromObject(objcProtocol)
+            }
+            assert(declaredDestinationProtocols.contains(simplifiedName) || routableProtocol != nil, "Find invalid generic type usage for routing: RoutableService<\(simplifiedName)>. You should only use declared protocol type as generic type, don't use \"RoutableService<\(simplifiedName)>\" in your code!")
+        }
+        for (routingType, simplifiedName) in serviceModuleRoutingTypes {
+            var routingTypeName = routingType
+            var routableProtocol: Protocol?
+            if routingTypeName.hasPrefix("__ObjC.") {
+                routingTypeName = simplifiedName
+            }
+            if let objcProtocol = NSProtocolFromString(routingTypeName) {
+                routableProtocol  = _routableServiceModuleProtocolFromObject(objcProtocol)
+            }
+            assert(declaredModuleProtocols.contains(simplifiedName) || routableProtocol != nil, "Find invalid generic type usage for routing: RoutableServiceModule<\(simplifiedName)>. You should only use declared protocol type as generic type, don't use \"RoutableServiceModule<\(simplifiedName)>\" in your code!")
         }
         
         // Destination should conforms to registered destination protocols
