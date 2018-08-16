@@ -123,3 +123,51 @@
 }
 
 @end
+
+@implementation ZIKBlockCustomViewRouter
+
++ (ZIKViewRouteTypeMask)supportedRouteTypes {
+    return ZIKViewRouteTypeMaskViewControllerDefault | ZIKViewRouteTypeMaskCustom;
+}
+
+@end
+
+@implementation ZIKBlockSubviewRouter
+
++ (ZIKViewRouteTypeMask)supportedRouteTypes {
+    return ZIKViewRouteTypeMaskViewDefault;
+}
+
+@end
+
+@implementation ZIKBlockCustomSubviewRouter
+
++ (ZIKViewRouteTypeMask)supportedRouteTypes {
+    return ZIKViewRouteTypeMaskViewDefault | ZIKViewRouteTypeMaskCustom;
+}
+
+@end
+
+@implementation ZIKBlockCustomOnlyViewRouter
+
++ (ZIKViewRouteTypeMask)supportedRouteTypes {
+    return ZIKViewRouteTypeMaskCustom;
+}
+
+@end
+
+@implementation ZIKBlockAnyViewRouter
+
++ (ZIKViewRouteTypeMask)supportedRouteTypes {
+    return ZIKViewRouteTypeMaskViewControllerDefault | ZIKViewRouteTypeMaskViewDefault;
+}
+
+@end
+
+@implementation ZIKBlockAllViewRouter
+
++ (ZIKViewRouteTypeMask)supportedRouteTypes {
+    return ZIKViewRouteTypeMaskViewControllerDefault | ZIKViewRouteTypeMaskViewDefault | ZIKViewRouteTypeMaskCustom;
+}
+
+@end
