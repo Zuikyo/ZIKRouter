@@ -493,7 +493,8 @@
 			children = (
 				F8566ABD2078B5B60075675C /* ZIKViewRoute.h */,
 				F8566ABE2078B5B60075675C /* ZIKViewRoute.m */,
-				F8BB006D20B34B3100B17797 /* BlockViewRouters */,
+				F8566AC52078C95F0075675C /* ZIKBlockViewRouter.h */,
+				F8566AC62078C95F0075675C /* ZIKBlockViewRouter.m */,
 			);
 			path = BlockRouter;
 			sourceTree = "<group>";
@@ -711,15 +712,6 @@
 				F810F64E208922F10020382E /* BSubviewModuleRouter.m */,
 			);
 			path = TestRouters;
-			sourceTree = "<group>";
-		};
-		F8BB006D20B34B3100B17797 /* BlockViewRouters */ = {
-			isa = PBXGroup;
-			children = (
-				F8566AC52078C95F0075675C /* ZIKBlockViewRouter.h */,
-				F8566AC62078C95F0075675C /* ZIKBlockViewRouter.m */,
-			);
-			path = BlockViewRouters;
 			sourceTree = "<group>";
 		};
 		F8F6B1FC20AA90F200110B03 /* Debug */ = {
