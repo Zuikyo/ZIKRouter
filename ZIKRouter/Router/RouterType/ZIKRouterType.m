@@ -70,6 +70,13 @@
     return [self.routeObject respondsToSelector:aSelector];
 }
 
+- (BOOL)conformsToProtocol:(Protocol *)protocol {
+    if ([super conformsToProtocol:protocol]) {
+        return YES;
+    }
+    return [self.routeObject conformsToProtocol:protocol];
+}
+
 - (id)forwardingTargetForSelector:(SEL)aSelector {
     return self.routeObject;
 }

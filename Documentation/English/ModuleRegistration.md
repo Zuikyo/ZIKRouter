@@ -171,6 +171,22 @@ Then you can register each router:
 
 ```
 
+You can use this functions to generate code for importing router headers and registering routers:
+
+```swift
+import ZIKRouter.Private
+
+let importCode = codeForImportRouters()
+let registeringCode = codeForRegisteringRouters()
+```
+
+```objectivec
+@import ZIKRouter.Private;
+
+NSString *importCode = codeForImportRouters();
+NSString *registeringCode = codeForRegisteringRouters();
+```
+
 ## Performance
 
 You may worry about the performance of registration, the next tests will resolve your doubt.

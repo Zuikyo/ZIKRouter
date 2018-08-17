@@ -160,6 +160,13 @@
     return [[self routerClass] respondsToSelector:aSelector];
 }
 
+- (BOOL)conformsToProtocol:(Protocol *)protocol {
+    if ([super conformsToProtocol:protocol]) {
+        return YES;
+    }
+    return [[self routerClass] conformsToProtocol:protocol];
+}
+
 - (instancetype)alloc {
     return self;
 }

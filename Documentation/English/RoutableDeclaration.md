@@ -29,7 +29,7 @@ DeclareRoutableView(EditorViewController, EditorViewRouter)
 
 </details>
 
-The routable declaration here is for supporting storyboard. When a segue is performed and the UIViewController is routable, ZIKRouter will search it's view router and prepare it.
+The routable declaration here is for supporting storyboard. When a segue is performed and the UIViewController is routable, ZIKRouter will search its view router and prepare it.
 
 ## Routable protocol
 
@@ -147,7 +147,7 @@ If you declare a routable protocol, but didn't register it with any router, ther
 
 When app is launched and in DEBUG mode, ZIKRouter will enumerate all objc protocols inheriting form `ZIKViewRoutable`,`ZIKServiceRoutable `,`ZIKViewModuleRoutable` and `ZIKServiceModuleRoutable`, to check whether all protocols were registered with a router, and the router's destination or defaultConfiguration conforms to the protocol.
 
-Even for pure swift type, ZIKRouter can dynamically enumerate all declared protocols and check it's conformance. It uses private APIs in `libswiftCore.dylib`, and these code won't be compiled in release mode.
+Even for pure swift type, ZIKRouter can dynamically enumerate all declared protocols and check its conformance. It uses private APIs in `libswiftCore.dylib`, and these code won't be compiled in release mode.
 
 Protocols inheriting from `ZIKViewRoutable`,`ZIKServiceRoutable `,`ZIKViewModuleRoutable` and `ZIKServiceModuleRoutable` is also routable in Swift. You don't need to declare them in Swift again.
 

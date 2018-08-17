@@ -940,7 +940,7 @@ private class _ViewRouterValidater: ZIKViewRouteAdapter {
             if let objcProtocol = NSProtocolFromString(routingTypeName) {
                 routableProtocol  = _routableViewProtocolFromObject(objcProtocol)
             }
-            assert(declaredDestinationProtocols.contains(simplifiedName) || routableProtocol != nil, "Find invalid generic type usage for routing: RoutableView<\(simplifiedName)>. You should only use declared protocol type as generic type, don't use \"RoutableView<\(simplifiedName)>\" in your code !")
+            assert(declaredDestinationProtocols.contains(simplifiedName) || routableProtocol != nil, "Find invalid generic type usage for routing: RoutableView<\(simplifiedName)>. You should only use declared protocol type as generic type, don't use \"RoutableView<\(simplifiedName)>\" or \"RoutableView(declaredProtocol:\(simplifiedName))\" in your code !")
         }
         for (routingType, simplifiedName) in viewModuleRoutingTypes {
             var routingTypeName = routingType
@@ -951,7 +951,7 @@ private class _ViewRouterValidater: ZIKViewRouteAdapter {
             if let objcProtocol = NSProtocolFromString(routingTypeName) {
                 routableProtocol  = _routableViewModuleProtocolFromObject(objcProtocol)
             }
-            assert(declaredModuleProtocols.contains(simplifiedName) || routableProtocol != nil, "Find invalid generic type usage for routing: RoutableViewModule<\(simplifiedName)>. You should only use declared protocol type as generic type, don't use \"RoutableViewModule<\(simplifiedName)>\" in your code!")
+            assert(declaredModuleProtocols.contains(simplifiedName) || routableProtocol != nil, "Find invalid generic type usage for routing: RoutableViewModule<\(simplifiedName)>. You should only use declared protocol type as generic type, don't use \"RoutableViewModule<\(simplifiedName)>\" or \"RoutableViewModule(declaredProtocol:\(simplifiedName))\" in your code!")
         }
         
         // Destination should conform to registered destination protocols
@@ -1087,7 +1087,7 @@ private class _ServiceRouterValidater: ZIKServiceRouteAdapter {
             if let objcProtocol = NSProtocolFromString(routingTypeName) {
                 routableProtocol  = _routableServiceProtocolFromObject(objcProtocol)
             }
-            assert(declaredDestinationProtocols.contains(simplifiedName) || routableProtocol != nil, "Find invalid generic type usage for routing: RoutableService<\(simplifiedName)>. You should only use declared protocol type as generic type, don't use \"RoutableService<\(simplifiedName)>\" in your code!")
+            assert(declaredDestinationProtocols.contains(simplifiedName) || routableProtocol != nil, "Find invalid generic type usage for routing: RoutableService<\(simplifiedName)>. You should only use declared protocol type as generic type, don't use \"RoutableService<\(simplifiedName)>\" or \"RoutableService(declaredProtocol:\(simplifiedName))\" in your code!")
         }
         for (routingType, simplifiedName) in serviceModuleRoutingTypes {
             var routingTypeName = routingType
@@ -1098,7 +1098,7 @@ private class _ServiceRouterValidater: ZIKServiceRouteAdapter {
             if let objcProtocol = NSProtocolFromString(routingTypeName) {
                 routableProtocol  = _routableServiceModuleProtocolFromObject(objcProtocol)
             }
-            assert(declaredModuleProtocols.contains(simplifiedName) || routableProtocol != nil, "Find invalid generic type usage for routing: RoutableServiceModule<\(simplifiedName)>. You should only use declared protocol type as generic type, don't use \"RoutableServiceModule<\(simplifiedName)>\" in your code!")
+            assert(declaredModuleProtocols.contains(simplifiedName) || routableProtocol != nil, "Find invalid generic type usage for routing: RoutableServiceModule<\(simplifiedName)>. You should only use declared protocol type as generic type, don't use \"RoutableServiceModule<\(simplifiedName)>\" or \"RoutableServiceModule(declaredProtocol:\(simplifiedName))\" in your code!")
         }
         
         // Destination should conforms to registered destination protocols

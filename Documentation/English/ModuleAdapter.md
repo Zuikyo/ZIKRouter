@@ -218,4 +218,4 @@ class ModuleAReqiredEditorViewRouter: ZIKViewRouter {
 
 For simple objc classes, you can use NSProxy to create a proxy. For those complex classes such as UIViewController in UIKit, you can subclass the UIViewController, and override methods to adapt interface.
 
-You don't have to always separate `requiredProtocol` and `providedProtocol`. It's ok to use the same protocol in module and it's user. Change it only when you need it.
+You don't have to always separate `requiredProtocol` and `providedProtocol`. It's ok to use the same protocol in module and its user. Change it only when you need it.

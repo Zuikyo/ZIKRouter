@@ -40,6 +40,13 @@ extern bool _swift_typeIsTargetType(id sourceType, id targetType);
  */
 extern void _enumerateSymbolName(bool(^handler)(const char *name, NSString *(^demangledAsSwift)(const char *mangledName, bool simplified)));
 
+
+/// Generate code for import routers when manually registering routers.
+extern NSString *codeForImportRouters(void);
+
+/// Generate code for manually registering routers.
+extern NSString *codeForRegisteringRouters(void);
+
 #endif
 
 NS_ASSUME_NONNULL_END

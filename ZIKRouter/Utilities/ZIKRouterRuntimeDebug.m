@@ -333,4 +333,178 @@ void _enumerateSymbolName(bool(^handler)(const char *name, NSString *(^demangled
     }];
 }
 
+#import "ZIKRouterInternal.h"
+#import "ZIKRouteRegistryInternal.h"
+#import "ZIKViewRouteRegistry.h"
+#import "ZIKServiceRouteRegistry.h"
+
+NSString *codeForImportRouters() {
+    NSMutableArray<Class> *objcViewRouters = [NSMutableArray array];
+    NSMutableArray<Class> *objcViewAdapters = [NSMutableArray array];
+    
+    NSMutableArray<Class> *objcServiceRouters = [NSMutableArray array];
+    NSMutableArray<Class> *objcServiceAdapters = [NSMutableArray array];
+    
+    ZIKRouter_enumerateClassList(^(__unsafe_unretained Class class) {
+        if ([ZIKViewRouteRegistry isRegisterableRouterClass:class]) {
+            if ([NSStringFromClass(class) containsString:@"."]) {
+                return;
+            }
+            if ([class isAdapter]) {
+                [objcViewAdapters addObject:class];
+            } else {
+                [objcViewRouters addObject:class];
+            }
+        } else if ([ZIKServiceRouteRegistry isRegisterableRouterClass:class]) {
+            if ([NSStringFromClass(class) containsString:@"."]) {
+                return;
+            }
+            if ([class isAdapter]) {
+                [objcServiceAdapters addObject:class];
+            } else {
+                [objcServiceRouters addObject:class];
+            }
+        }
+    });
+    
+    NSBundle *mainBundle = [NSBundle mainBundle];
+    
+    NSMutableString *code = [NSMutableString string];
+    
+    void(^generateCodeForImportingRouters)(NSArray<Class> *) = ^(NSArray<Class> *routers) {
+        for (Class class in routers) {
+            NSBundle *bundle = [NSBundle bundleForClass:class];
+            NSCAssert1(bundle, @"Failed to get bundle for class %@",NSStringFromClass(class));
+            if ([bundle isEqual:mainBundle]) {
+                [code appendFormat:@"\n#import \"%@.h\"",NSStringFromClass(class)];
+            } else {
+                NSString *bundleName = [bundle.infoDictionary objectForKey:(__bridge NSString *)kCFBundleNameKey];
+                NSCAssert2(bundle, @"Failed to get bundle name for class %@, bundle:%@",NSStringFromClass(class), bundle);
+                NSString *headerPath = [bundle.bundlePath stringByAppendingPathComponent:[NSString stringWithFormat:@"Headers/%@.h",NSStringFromClass(class)]];
+                if ([[NSFileManager defaultManager] fileExistsAtPath:headerPath]) {
+                    [code appendFormat:@"\n#import <%@/%@.h>",bundleName,NSStringFromClass(class)];
+                } else {
+                    [code appendFormat:@"\n#import <%@/%@.h>",bundleName,bundleName];
+                }
+            }
+        }
+    };
+    
+    if (objcViewRouters.count > 0) {
+        [code appendString:@"\n\n#pragma mark Objc View Router\n"];
+        generateCodeForImportingRouters(objcViewRouters);
+    }
+    if (objcViewAdapters.count > 0) {
+        [code appendString:@"\n\n#pragma mark Objc View Adapter\n"];
+        generateCodeForImportingRouters(objcViewAdapters);
+    }
+    if (objcServiceRouters.count > 0) {
+        [code appendString:@"\n\n#pragma mark Objc Service Router\n"];
+        generateCodeForImportingRouters(objcServiceRouters);
+    }
+    if (objcServiceAdapters.count > 0) {
+        [code appendString:@"\n\n#pragma mark Objc Service Adapter\n"];
+        generateCodeForImportingRouters(objcServiceAdapters);
+    }
+    
+    
+    return code;
+}
+
+NSString *codeForRegisteringRouters() {
+    NSMutableArray<Class> *objcViewRouters = [NSMutableArray array];
+    NSMutableArray<Class> *objcViewAdapters = [NSMutableArray array];
+    NSMutableArray<Class> *swiftViewRouters = [NSMutableArray array];
+    NSMutableArray<Class> *swiftViewAdapters = [NSMutableArray array];
+    
+    NSMutableArray<Class> *objcServiceRouters = [NSMutableArray array];
+    NSMutableArray<Class> *objcServiceAdapters = [NSMutableArray array];
+    NSMutableArray<Class> *swiftServiceRouters = [NSMutableArray array];
+    NSMutableArray<Class> *swiftServiceAdapters = [NSMutableArray array];
+    
+    ZIKRouter_enumerateClassList(^(__unsafe_unretained Class class) {
+        if ([ZIKViewRouteRegistry isRegisterableRouterClass:class]) {
+            if ([class isAdapter]) {
+                if ([NSStringFromClass(class) containsString:@"."]) {
+                    [swiftViewAdapters addObject:class];
+                } else {
+                    [objcViewAdapters addObject:class];
+                }
+            } else {
+                if ([NSStringFromClass(class) containsString:@"."]) {
+                    [swiftViewRouters addObject:class];
+                } else {
+                    [objcViewRouters addObject:class];
+                }
+            }
+        } else if ([ZIKServiceRouteRegistry isRegisterableRouterClass:class]) {
+            if ([class isAdapter]) {
+                if ([NSStringFromClass(class) containsString:@"."]) {
+                    [swiftServiceAdapters addObject:class];
+                } else {
+                    [objcServiceAdapters addObject:class];
+                }
+            } else {
+                if ([NSStringFromClass(class) containsString:@"."]) {
+                    [swiftServiceRouters addObject:class];
+                } else {
+                    [objcServiceRouters addObject:class];
+                }
+            }
+        }
+    });
+    
+    NSMutableString *code = [NSMutableString string];
+    
+    void(^generateCodeForObjcRouters)(NSArray<Class> *) = ^(NSArray<Class> *routers) {
+        for (Class class in routers) {
+            [code appendFormat:@"[%@ registerRoutableDestination];\n",NSStringFromClass(class)];
+        }
+    };
+    void(^generateCodeForSwiftRouters)(NSArray<Class> *) = ^(NSArray<Class> *routers) {
+        for (Class class in routers) {
+            [code appendFormat:@"%@.registerRoutableDestination()\n",NSStringFromClass(class)];
+        }
+    };
+    
+    if (objcViewRouters.count > 0) {
+        [code appendString:@"\n// Objc view routers\n"];
+        generateCodeForObjcRouters(objcViewRouters);
+    }
+    if (objcViewAdapters.count > 0) {
+        [code appendString:@"\n// Objc view adapters\n"];
+        generateCodeForObjcRouters(objcViewAdapters);
+    }
+    if (swiftViewRouters.count > 0) {
+        [code appendString:@"\n// Swift view routers\n"];
+        [code appendString:@"///Can't access swift routers, because they use generic. You have to register swift router in swift code.\n"];
+        generateCodeForSwiftRouters(swiftViewRouters);
+    }
+    if (swiftViewAdapters.count > 0) {
+        [code appendString:@"\n// Swift view adapters\n"];
+        [code appendString:@"///Can't access swift adapters, because they use generic. You have to register swift router in swift code.\n"];
+        generateCodeForSwiftRouters(swiftViewAdapters);
+    }
+    if (objcServiceRouters.count > 0) {
+        [code appendString:@"\n// Objc service routers\n"];
+        generateCodeForObjcRouters(objcServiceRouters);
+    }
+    if (objcServiceAdapters.count > 0) {
+        [code appendString:@"\n// Objc service adapters\n"];
+        generateCodeForObjcRouters(objcServiceAdapters);
+    }
+    if (swiftServiceRouters.count > 0) {
+        [code appendString:@"\n// Swift service routers\n"];
+        [code appendString:@"///Can't access swift routers, because they use generic. You have to register swift router in swift code.\n"];
+        generateCodeForSwiftRouters(swiftServiceRouters);
+    }
+    if (swiftServiceAdapters.count > 0) {
+        [code appendString:@"\n// Swift service adapters\n"];
+        [code appendString:@"///Can't access swift adapters, because they use generic. You have to register swift router in swift code.\n"];
+        generateCodeForSwiftRouters(swiftServiceAdapters);
+    }
+    [code appendString:@"[ZIKRouteRegistry notifyRegistrationFinished];"];
+    return code;
+}
+
 #endif

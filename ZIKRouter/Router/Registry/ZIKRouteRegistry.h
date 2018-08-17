@@ -30,23 +30,6 @@ NS_ASSUME_NONNULL_BEGIN
 ///Notify that registration is finished, when you register routers by calling each router's +registerRoutableDestination. It's for rejecting any registration later and let routers call +_didFinishRegistration.
 + (void)notifyRegistrationFinished;
 
-#pragma mark Debug
-
-///Get all router class, then you can format code to register routers by calling their +registerRoutableDestination.
-
-///All routers that are not abstract router or adapter.
-+ (NSArray<Class> *)allExternalRouters;
-///All objc routers that are not abstract router or adapter.
-+ (NSArray<Class> *)allExternalObjcRouters;
-///All swift routers that are not abstract router or adapter.
-+ (NSArray<Class> *)allExternalSwiftRouters;
-///All adapters that are not abstract.
-+ (NSArray<Class> *)allAdapters;
-///All objc adapters that are not abstract.
-+ (NSArray<Class> *)allObjcAdapters;
-///All swift adapters that are not abstract.
-+ (NSArray<Class> *)allSwiftAdapters;
-
 @end
 
 NS_ASSUME_NONNULL_END

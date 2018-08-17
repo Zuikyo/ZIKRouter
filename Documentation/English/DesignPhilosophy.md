@@ -34,7 +34,7 @@ Disadvantages of URL router:
 * Type of parameters is limited when routing, and there is no compile time check
 * Only for view module, not for any service module
 * Can't use designated initializer to provide required parameters
-* Need to add new initializer in the view controller to support it's url
+* Need to add new initializer in the view controller to support its url
 * Doesn't support storyboard
 * Can't declare module's interface, highly rely on documentation. So it's not that safe when refactoring
 * Can't make sure whether the module exists or not when you use it

@@ -2508,7 +2508,9 @@ static  ZIKViewRouterType *_Nullable _routerTypeToRegisteredView(Class viewClass
                         } else {
                             if (!newSuperview.window && ![newSuperview isKindOfClass:[XXWindow class]]) {
                                 //Adding to a superview not on screen, can't search performer before -viewDidLoad. willMoveToSuperview: is called before willMoveToWindow:. Find performer and prepare in -ZIKViewRouter_hook_viewDidLoad, do willPerformRoute AOP in -ZIKViewRouter_hook_willMoveToWindow:
-                                [g_preparingXXViewRouters addObject:destinationRouter];
+                                if (destinationRouter) {
+                                    [g_preparingXXViewRouters addObject:destinationRouter];
+                                }
                             }
                             NSAssert1(!newSuperview.window && ![newSuperview isKindOfClass:[XXWindow class]], @"When new superview is already on screen, performer should not be nil.You may add destination to a system UIViewController in code directly. Please fix your code and add subview by a custom view router with ZIKViewRouteTypeAddAsSubview. Destination superview: (%@).",newSuperview);
                         }
@@ -2633,7 +2635,9 @@ static  ZIKViewRouterType *_Nullable _routerTypeToRegisteredView(Class viewClass
                                 }
                             } else {
                                 searchPerformerInDidMoveToWindow = YES;
-                                [g_preparingXXViewRouters addObject:destinationRouter];
+                                if (destinationRouter) {
+                                    [g_preparingXXViewRouters addObject:destinationRouter];
+                                }
                             }
                         }
                         

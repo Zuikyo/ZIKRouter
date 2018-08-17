@@ -170,6 +170,22 @@ App 启动时会遍历所有的类，自动执行所有 router 的`registerRouta
 
 ```
 
+你可以用这两个函数自动生成 import router 头文件的代码和注册 router 的代码:
+
+```swift
+import ZIKRouter.Private
+
+let importCode = codeForImportRouters()
+let registeringCode = codeForRegisteringRouters()
+```
+
+```objectivec
+@import ZIKRouter.Private;
+
+NSString *importCode = codeForImportRouters();
+NSString *registeringCode = codeForRegisteringRouters();
+```
+
 ## 性能测试
 
 你可能会怀疑模块注册可能会对性能产生影响，接下来的性能测试将会打消你的这部分疑虑。

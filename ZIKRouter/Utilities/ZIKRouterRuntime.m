@@ -119,9 +119,15 @@ void ZIKRouter_enumerateClassList(void(^handler)(Class aClass)) {
     numClasses = objc_getClassList(classes, numClasses);
     
     for (NSInteger i = 0; i < numClasses; i++) {
-        // If `Zombie Objects` in Xcode Diagnostics is enabled, the last two class may be not readable, there will be EXC_BAD_ACCESS. Disabling `Zombie Objects` can resolve it.
         Class aClass = classes[i];
         if (aClass) {
+#if DEBUG
+            // If `Zombie Objects` in Xcode Diagnostics is enabled, the last two classes may be not readable, there will be EXC_BAD_ACCESS. Disabling `Zombie Objects` can resolve it.
+            Class superClass = class_getSuperclass(aClass);
+            if ((intptr_t)superClass > 0x5000000000000000) {
+                continue;
+            }
+#endif
             handler(aClass);
         }
     }
@@ -147,15 +153,7 @@ bool ZIKRouter_classIsSubclassOfClass(Class aClass, Class parentClass) {
     NSCParameterAssert(parentClass);
     Class superClass = aClass;
     do {
-        // If `Zombie Objects` in Xcode Diagnostics is enabled, the last two class when enumerating may be not readable, there will be EXC_BAD_ACCESS. Disabling `Zombie Objects` can resolve it.
         superClass = class_getSuperclass(superClass);
-#if DEBUG
-        if ((intptr_t)superClass > 0x5000000000000000) {
-            superClass = nil;
-            break;
-        }
-#endif
-        
     } while (superClass != parentClass && superClass);
     
     if (superClass == nil) {
