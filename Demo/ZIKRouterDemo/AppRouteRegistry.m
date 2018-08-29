@@ -71,9 +71,9 @@
 + (void)manuallyRegisterEachRouter {
     
 #if DEBUG
-    NSString *importCode = codeForImportRouters();
+    NSString *importingCode = codeForImportingRouters();
     NSString *registeringCode = codeForRegisteringRouters();
-    NSLog(@"\n\n---Code for importing routers when manually register routers:---\n%@\n\n---Code for manually registering routers:---\n%@\n", importCode, registeringCode);
+    NSLog(@"\n\n---Code for importing routers when manually register routers:---\n%@\n\n---Code for manually registering routers:---\n%@\n", importingCode, registeringCode);
 #endif
     
     // Objc routers

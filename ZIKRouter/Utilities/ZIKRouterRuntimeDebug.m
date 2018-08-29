@@ -338,7 +338,7 @@ void _enumerateSymbolName(bool(^handler)(const char *name, NSString *(^demangled
 #import "ZIKViewRouteRegistry.h"
 #import "ZIKServiceRouteRegistry.h"
 
-NSString *codeForImportRouters() {
+NSString *codeForImportingRouters() {
     NSMutableArray<Class> *objcViewRouters = [NSMutableArray array];
     NSMutableArray<Class> *objcViewAdapters = [NSMutableArray array];
     

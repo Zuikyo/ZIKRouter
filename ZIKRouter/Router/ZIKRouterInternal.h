@@ -47,7 +47,7 @@ NS_ASSUME_NONNULL_BEGIN
  1. Use -destinationWithConfiguration: to create destination
  2. Check destination for nil, if destination is nil, end perform with DestinationUnavailable error
  3. Attach destination to router with -attachDestination:
- 3. Call -performRouteOnDestination:configuration:
+ 4. Call -performRouteOnDestination:configuration:
  */
 - (void)performWithConfiguration:(RouteConfig)configuration;
 
