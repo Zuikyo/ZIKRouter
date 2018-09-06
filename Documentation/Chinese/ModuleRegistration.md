@@ -116,7 +116,7 @@ class EditorViewRouter: ZIKAnyViewRouter {
 
 之后就能用这个唯一码获取模块：
 
-```
+```swift
 var userInfo: [String : Any] = ... // 用字典传递参数
 Router.to(viewIdentifier: "viewController-editor")?
 	.perform(path: .push(from: self), configuring: { (config, _, _) in

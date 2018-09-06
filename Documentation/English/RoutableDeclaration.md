@@ -75,7 +75,7 @@ class TestViewController: UIViewController {
 
 If you pass a wrong protocol, such as `RoutableView<UnroutableProtocol>()`, there will be a compile error.
 
-The `init(declaredProtocol: Protocol.Type)` is only to silence the warning of `initializer for struct 'xxx' must use "self.init(...)" or "self = ..." because it is not in module xxx`. See [restrict-cross-module-struct-initializers](https://github.com/apple/swift-evolution/blob/master/proposals/0189-restrict-cross-module-struct-initializers.md). You should only use it in extension.
+The `init(declaredProtocol: Protocol.Type)` is only to silence the warning of `initializer for struct 'xxx' must use "self.init(...)" or "self = ..." because it is not in module xxx`. See [restrict-cross-module-struct-initializers](https://github.com/apple/swift-evolution/blob/master/proposals/0189-restrict-cross-module-struct-initializers.md). You should only use it in extension. If you use wrong type with these initializer, there will be assert failure when registration is finished.
 
 ### Composed Protocol
 

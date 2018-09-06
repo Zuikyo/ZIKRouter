@@ -66,7 +66,7 @@ class TestViewController: UIViewController {
 @implementation TestViewController
 
 - (void)showEditorViewController {
-	//用EditorViewInput获取router类
+	//用 NoteEditorInput 获取router类
 	[ZIKRouterToView(NoteEditorInput)
 	          performPath:ZIKViewRoutePath.presentModallyFrom(self)
 	          configuring:^(ZIKViewRouteConfiguration *config) {
@@ -86,7 +86,7 @@ class TestViewController: UIViewController {
 }
 ```
 
-用`prepareDest` 或者 `prepareModule` block 来配置 destination 更加安全： 
+比起`performPath:configuring:`方法，`performPath:strictConfiguring:`提供了更严格的编译检查： 
 
 ```objectivec
 @implementation TestViewController
@@ -112,9 +112,9 @@ class TestViewController: UIViewController {
 }
 ```
 
-`prepareDest` 和 `prepareModule` block 的类型会随着 router 的泛型值而改变。当你改变了 protocol，编译器会帮助你进行检查。
+`ZIKViewRouteStrictConfiguration`的类型会随着泛型值而改变，对应属性和方法的类型也会随着改变。当你改变了 protocol，编译器会帮助你进行检查。
 
-不过 Xcode 的自动补全在这种情况下有 bug。`prepareDest` 和 `prepareModule`里的参数没有被正确地补全，你需要手动改成正确的参数类型。
+不过 Xcode 的自动补全在这种情况下有 bug。调用`ZIKViewRouteStrictConfiguration`的方法时参数没有被正确地补全，你需要手动改成正确的参数类型。
 
 ## Lazy Perform
 
@@ -219,7 +219,7 @@ class SourceViewController: UIViewController, UIViewControllerPreviewingDelegate
     } else {
         return;
     }
-    [ZIKRouterToView(ZIKInfoViewProtocol) performOnDestination: destination path:ZIKViewRoutePath.presentModallyFrom(self)];
+    [ZIKRouterToView(DestinationViewInput) performOnDestination:destination path:ZIKViewRoutePath.presentModallyFrom(self)];
 }
 
 @end

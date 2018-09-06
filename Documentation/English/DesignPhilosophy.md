@@ -77,7 +77,7 @@ Some module manager matchs module with its class or protocol.
 
 #### Improvement
 
-It's similar to ZIKRouter. But ZIKRouter doesn't match protocol or class with the module directly, it matchs protocol with its router subclass, and let the router subclass to instantiate the module object.
+It's similar to ZIKRouter, but it doesn't support pure Swift type, and it can't apply additional configuration to the module. ZIKRouter doesn't match protocol or class with the module directly, it matchs protocol with its router subclass, and let the router subclass to instantiate the module object.
 
 Adding a router layer can let the module be matched with multi protocols. And in the router subclass, you can also inject dependencies, adapt different protocols and do additional actions.
 

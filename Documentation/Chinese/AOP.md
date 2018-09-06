@@ -20,7 +20,7 @@ override class func router(_ router: ZIKAnyViewRouter?, didRemoveRouteOnDestinat
 
 ```
 
-<details><summary>Objecive-C示例</summary>
+<details><summary>Objective-C示例</summary>
 
 ```objectivec
 //路由时的 AOP 回调

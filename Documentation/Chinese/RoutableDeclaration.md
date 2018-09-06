@@ -12,7 +12,7 @@ extension EditorViewController: ZIKRoutableView {
 }
 ```
 
-<details><summary>Objecive-C示例</summary>
+<details><summary>Objective-C示例</summary>
 
 ```objectivec
 @interface EditorViewController(EditorViewRouter)<ZIKRoutableView>
@@ -77,7 +77,7 @@ class TestViewController: UIViewController {
 
 因此当你传入一个错误的 protocol 时，例如`RoutableView<UnroutableProtocol>()`，会产生编译错误。
 
-初始化方法 `init(declaredProtocol: Protocol.Type)` 只是用来消除 swift 的编译检查 `initializer for struct 'xxx' must use "self.init(...)" or "self = ..." because it is not in module xxx`. 参考 [restrict-cross-module-struct-initializers](https://github.com/apple/swift-evolution/blob/master/proposals/0189-restrict-cross-module-struct-initializers.md)。不要在除了 extension 之外的地方使用此初始化方法。
+初始化方法 `init(declaredProtocol: Protocol.Type)` 只是用来消除 swift 的编译检查 `initializer for struct 'xxx' must use "self.init(...)" or "self = ..." because it is not in module xxx`. 参考 [restrict-cross-module-struct-initializers](https://github.com/apple/swift-evolution/blob/master/proposals/0189-restrict-cross-module-struct-initializers.md)。不要在除了 extension 之外的地方使用此初始化方法。如果你错误地在其他地方使用了这些初始化方法，在启动时会给出断言错误。
 
 ### 多 Protocol 组合
 

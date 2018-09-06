@@ -83,7 +83,7 @@ class EditorViewRouter: ZIKViewRouter<EditorViewController, ZIKViewRouteConfigur
 }
 ```
 
-<details><summary>Objecive-C示例</summary>
+<details><summary>Objective-C示例</summary>
 
 ```objectivec
 //NoteEditorInput.h

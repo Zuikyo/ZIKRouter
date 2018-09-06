@@ -82,7 +82,7 @@ class TestViewController: UIViewController {
 }
 ```
 
-It's much safer to prepare destination in `prepareDest` or `prepareModule` block with those strict methods: 
+Comparing to `performPath:configuring:` method, `performPath:strictConfiguring:` method can give much strict compiler checking:
 
 ```objectivec
 @implementation TestViewController
@@ -108,9 +108,9 @@ It's much safer to prepare destination in `prepareDest` or `prepareModule` block
 }
 ```
 
-Type of `prepareDest` and `prepareModule` block changes with the router's generic parameters. So there will be compile checking when you change the protocol in `ZIKRouterToView()`.
+Type of `ZIKViewRouteStrictConfiguration` changes with it's generic parameter. So there will be compile checking when you configuring the configuration.
 
-But there is bug in Xcode auto completions. These parameters in block are not correctly completed, you have to manually fix the code.
+But there is bug in Xcode auto completions. Parameters in `ZIKViewRouteStrictConfiguration`'s methods are not correctly completed, you have to manually fix the type.
 
 ## Lazy Perform
 
@@ -215,7 +215,7 @@ class SourceViewController: UIViewController, UIViewControllerPreviewingDelegate
     } else {
         return;
     }
-    [ZIKRouterToView(ZIKInfoViewProtocol) performOnDestination: destination path:ZIKViewRoutePath.presentModallyFrom(self)];
+    [ZIKRouterToView(DestinationViewInput) performOnDestination:destination path:ZIKViewRoutePath.presentModallyFrom(self)];
 }
 
 @end
