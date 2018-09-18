@@ -47,7 +47,7 @@ NSErrorDomain const ZIKRouteErrorDomain = @"ZIKRouteErrorDomain";
     return self;
 }
 
-- (instancetype)initWithConfiguring:(void(^)(ZIKPerformRouteConfiguration *configuration))configBuilder removing:(void(^ _Nullable)(ZIKRemoveRouteConfiguration *configuration))removeConfigBuilder {
+- (instancetype)initWithConfiguring:(void(NS_NOESCAPE ^)(ZIKPerformRouteConfiguration *configuration))configBuilder removing:(void(NS_NOESCAPE ^ _Nullable)(ZIKRemoveRouteConfiguration *configuration))removeConfigBuilder {
     NSParameterAssert(configBuilder);
     ZIKPerformRouteConfiguration *configuration = [[self class] defaultRouteConfiguration];
     if (configBuilder) {
@@ -69,8 +69,8 @@ NSErrorDomain const ZIKRouteErrorDomain = @"ZIKRouteErrorDomain";
     return [self initWithConfiguration:configuration removeConfiguration:removeConfiguration];
 }
 
-- (instancetype)initWithStrictConfiguring:(void (^)(ZIKPerformRouteStrictConfiguration<id> * _Nonnull, ZIKPerformRouteConfiguration * _Nonnull))configBuilder
-                           strictRemoving:(void (^)(ZIKRemoveRouteStrictConfiguration<id> * _Nonnull))removeConfigBuilder {
+- (instancetype)initWithStrictConfiguring:(void (NS_NOESCAPE ^)(ZIKPerformRouteStrictConfiguration<id> * _Nonnull, ZIKPerformRouteConfiguration * _Nonnull))configBuilder
+                           strictRemoving:(void (NS_NOESCAPE ^)(ZIKRemoveRouteStrictConfiguration<id> * _Nonnull))removeConfigBuilder {
     NSParameterAssert(configBuilder);
     ZIKPerformRouteConfiguration *configuration = [[self class] defaultRouteConfiguration];
     if (configBuilder) {
@@ -282,23 +282,23 @@ NSErrorDomain const ZIKRouteErrorDomain = @"ZIKRouteErrorDomain";
     }];
 }
 
-+ (instancetype)performWithConfiguring:(void(^)(ZIKPerformRouteConfiguration *configuration))configBuilder {
++ (instancetype)performWithConfiguring:(void(NS_NOESCAPE ^)(ZIKPerformRouteConfiguration *configuration))configBuilder {
     return [self performWithConfiguring:configBuilder removing:nil];
 }
 
-+ (instancetype)performWithConfiguring:(void(^)(ZIKPerformRouteConfiguration *configuration))configBuilder removing:(void(^)(ZIKRemoveRouteConfiguration *configuration))removeConfigBuilder {
++ (instancetype)performWithConfiguring:(void(NS_NOESCAPE ^)(ZIKPerformRouteConfiguration *configuration))configBuilder removing:(void(NS_NOESCAPE ^)(ZIKRemoveRouteConfiguration *configuration))removeConfigBuilder {
     NSParameterAssert(configBuilder);
     ZIKRouter *router = [[self alloc] initWithConfiguring:configBuilder removing:removeConfigBuilder];
     [router performRoute];
     return router;
 }
 
-+ (instancetype)performWithStrictConfiguring:(void (^)(ZIKPerformRouteStrictConfiguration<id> * _Nonnull, ZIKPerformRouteConfiguration * _Nonnull))configBuilder {
++ (instancetype)performWithStrictConfiguring:(void (NS_NOESCAPE ^)(ZIKPerformRouteStrictConfiguration<id> * _Nonnull, ZIKPerformRouteConfiguration * _Nonnull))configBuilder {
     return [self performWithStrictConfiguring:configBuilder strictRemoving:nil];
 }
 
-+ (instancetype)performWithStrictConfiguring:(void (^)(ZIKPerformRouteStrictConfiguration<id> * _Nonnull, ZIKPerformRouteConfiguration * _Nonnull))configBuilder
-                              strictRemoving:(void (^)(ZIKRemoveRouteStrictConfiguration<id> * _Nonnull))removeConfigBuilder {
++ (instancetype)performWithStrictConfiguring:(void (NS_NOESCAPE ^)(ZIKPerformRouteStrictConfiguration<id> * _Nonnull, ZIKPerformRouteConfiguration * _Nonnull))configBuilder
+                              strictRemoving:(void (NS_NOESCAPE ^)(ZIKRemoveRouteStrictConfiguration<id> * _Nonnull))removeConfigBuilder {
     NSParameterAssert(configBuilder);
     ZIKRouter *router = [[self alloc] initWithStrictConfiguring:configBuilder strictRemoving:removeConfigBuilder];
     [router performRoute];
@@ -440,7 +440,7 @@ NSErrorDomain const ZIKRouteErrorDomain = @"ZIKRouteErrorDomain";
     [self removeDestination:self.destination removeConfiguration:configuration];
 }
 
-- (void)removeRouteWithStrictConfiguring:(void (^)(ZIKRemoveRouteStrictConfiguration<id> * _Nonnull))removeConfigBuilder {
+- (void)removeRouteWithStrictConfiguring:(void (NS_NOESCAPE ^)(ZIKRemoveRouteStrictConfiguration<id> * _Nonnull))removeConfigBuilder {
     if (self.state != ZIKRouterStateRouted || !self.original_configuration) {
         ZIKRouteAction action = ZIKRouteActionRemoveRoute;
         NSError *error = [ZIKRouter errorWithCode:ZIKRouteErrorActionFailed localizedDescriptionFormat:@"State should be ZIKRouterStateRouted when removeRoute, current state:%ld, configuration:%@",self.state,self.original_configuration];
@@ -477,7 +477,7 @@ NSErrorDomain const ZIKRouteErrorDomain = @"ZIKRouteErrorDomain";
     }];
 }
 
-+ (nullable id)makeDestinationWithConfiguring:(void(^ _Nullable)(ZIKPerformRouteConfiguration *config))configBuilder {
++ (nullable id)makeDestinationWithConfiguring:(void(NS_NOESCAPE ^ _Nullable)(ZIKPerformRouteConfiguration *config))configBuilder {
     NSAssert(self != [ZIKRouter class], @"Only get destination from router subclass");
     if (![self canMakeDestination]) {
         NSAssert1(NO, @"The router (%@) doesn't support makeDestination",self);
@@ -503,7 +503,7 @@ NSErrorDomain const ZIKRouteErrorDomain = @"ZIKRouteErrorDomain";
     return dest;
 }
 
-+ (nullable id)makeDestinationWithStrictConfiguring:(void (^)(ZIKPerformRouteStrictConfiguration<id> * _Nonnull, ZIKPerformRouteConfiguration * _Nonnull))configBuilder {
++ (nullable id)makeDestinationWithStrictConfiguring:(void (NS_NOESCAPE ^)(ZIKPerformRouteStrictConfiguration<id> * _Nonnull, ZIKPerformRouteConfiguration * _Nonnull))configBuilder {
     NSAssert(self != [ZIKRouter class], @"Only get destination from router subclass");
     if (![self canMakeDestination]) {
         NSAssert1(NO, @"The router (%@) doesn't support makeDestination",self);

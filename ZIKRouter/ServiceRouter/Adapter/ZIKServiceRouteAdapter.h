@@ -44,13 +44,8 @@ NS_ASSUME_NONNULL_BEGIN
                            removeConfiguration:(nullable __kindof ZIKRouteConfiguration *)removeConfiguration NS_UNAVAILABLE;
 - (nullable instancetype)initWithConfiguring:(void(NS_NOESCAPE ^)(__kindof ZIKPerformRouteConfiguration *config))configBuilder
                            removing:(void(NS_NOESCAPE ^ _Nullable)( __kindof ZIKRouteConfiguration *config))removeConfigBuilder NS_UNAVAILABLE;
-- (nullable instancetype)initWithStrictConfiguring:(void(NS_NOESCAPE ^)(ZIKPerformRouteConfiguration *config,
-                                                                        void(^prepareDest)(void(^prepare)(id dest)),
-                                                                        void(^prepareModule)(void(NS_NOESCAPE ^prepare)(ZIKPerformRouteConfiguration *module))
-                                                                        ))configBuilder
-                                    strictRemoving:(void(NS_NOESCAPE ^ _Nullable)(ZIKRouteConfiguration *config,
-                                                                                  void(^prepareDest)(void(^prepare)(id dest))
-                                                                                  ))removeConfigBuilder NS_UNAVAILABLE;
+- (nullable instancetype)initWithStrictConfiguring:(void(NS_NOESCAPE ^)(ZIKPerformRouteStrictConfiguration *config, ZIKPerformRouteConfiguration *module))configBuilder
+                                    strictRemoving:(void(NS_NOESCAPE ^ _Nullable)(ZIKRemoveRouteStrictConfiguration *config))removeConfigBuilder NS_UNAVAILABLE;
 - (BOOL)canPerform NS_UNAVAILABLE;
 - (void)performRoute NS_UNAVAILABLE;
 - (void)performRouteWithSuccessHandler:(void(^ __nullable)(void))performerSuccessHandler
@@ -81,11 +76,8 @@ NS_ASSUME_NONNULL_BEGIN
 + (BOOL)canMakeDestination NS_UNAVAILABLE;
 + (nullable id)makeDestination NS_UNAVAILABLE;
 + (nullable id)makeDestinationWithPreparation:(void(^ _Nullable)(id destination))prepare NS_UNAVAILABLE;
-+ (nullable id)makeDestinationWithConfiguring:(void(^ _Nullable)(ZIKPerformRouteConfiguration *config))configBuilder NS_UNAVAILABLE;
-+ (nullable id)makeDestinationWithStrictConfiguring:(void(^ _Nullable)(ZIKPerformRouteConfiguration *config,
-                                                                       void(^prepareDest)(void(^prepare)(id dest)),
-                                                                       void(^prepareModule)(void(NS_NOESCAPE ^prepare)(ZIKPerformRouteConfiguration *module))
-                                                                       ))configBuilder NS_UNAVAILABLE;
++ (nullable id)makeDestinationWithConfiguring:(void(NS_NOESCAPE ^ _Nullable)(ZIKPerformRouteConfiguration *config))configBuilder NS_UNAVAILABLE;
++ (nullable id)makeDestinationWithStrictConfiguring:(void(NS_NOESCAPE ^ _Nullable)(ZIKPerformRouteStrictConfiguration *config, ZIKPerformRouteConfiguration *module))configBuilder NS_UNAVAILABLE;
 @end
 
 NS_ASSUME_NONNULL_END
