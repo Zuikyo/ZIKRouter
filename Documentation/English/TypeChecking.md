@@ -15,7 +15,7 @@ See [Routable Declaration](RoutableDeclaration.md#Routable).
 
 #### Objective-C
 
-In Objective-C, we use some fake classes and macros to make compile time checking.
+In Objective-C, we use generic and macros to make compile time checking.
 
 When registering and getting router with protocol, use macro `ZIKRoutable` to wrap the protocol:
 
@@ -25,7 +25,7 @@ When registering and getting router with protocol, use macro `ZIKRoutable` to wr
 + (void)registerRoutableDestination {
     [self registerView:[EditorViewController class]];
     
-    //If the protocol is not inherited from ZIKViewRoutable, there will be compile error
+    //If the protocol is not inherited from ZIKViewRoutable, there will be compile warning
     [self registerViewProtocol:ZIKRoutable(NoteEditorInput)];
 }
 
@@ -72,12 +72,12 @@ After auto registration is finished, ZIKRouter will check:
 
 For dynamically checking swift types, ZIKRouter uses private APIs in `libswiftCore.dylib`, and these code won't be compiled in release mode.
 
-You can also do custom checking. In DEBUG mode, all routers' `+_registrationDidFinished` will be invoked when all registrations are finished. You can do custom checking here:
+You can also do custom checking. In DEBUG mode, all routers' `+_didFinishRegistration` will be invoked when all registrations are finished. You can do custom checking here:
 
 ```swift
 class SwiftSampleViewRouter: ZIKAnyViewRouter {
     ...
-    override class func _registrationDidFinished() {
+    override class func _didFinishRegistration() {
         // Custom checking
     }
     ...

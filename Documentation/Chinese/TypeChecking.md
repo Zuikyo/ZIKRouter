@@ -15,7 +15,7 @@ Swift 中，用条件 extension 来声明可路由的 protocol，从而利用编
 
 #### Objective-C
 
-在 Objective-C 中，使用一些虚假类和宏定义制造编译检查。
+在 Objective-C 中，使用泛型和宏定义制造编译检查。
 
 在注册 protocol 和获取 router 类时，用`ZIKRoutable`包裹 protocol：
 
@@ -25,7 +25,7 @@ Swift 中，用条件 extension 来声明可路由的 protocol，从而利用编
 + (void)registerRoutableDestination {
     [self registerView:[EditorViewController class]];
     
-    //如果 protocol 不是继承自 ZIKViewRoutable，将会编译错误
+    //如果 protocol 不是继承自 ZIKViewRoutable，将会产生编译警告
     [self registerViewProtocol:ZIKRoutable(NoteEditorInput)];
 }
 
@@ -72,12 +72,12 @@ ZIKRouterToView(UndeclaredProtocol)
 
 你也可以做一些自定义的检查。
 
-在 DEBUG 模式下，注册结束时会调用所有 router 的 `+_registrationDidFinished`方法，你可以在这里做一些检查：
+在 DEBUG 模式下，注册结束时会调用所有 router 的 `+_didFinishRegistration`方法，你可以在这里做一些检查：
 
 ```swift
 class SwiftSampleViewRouter: ZIKAnyViewRouter {
     ...
-    override class func _registrationDidFinished() {
+    override class func _didFinishRegistration() {
         // 自定义检查
     }
     ...
