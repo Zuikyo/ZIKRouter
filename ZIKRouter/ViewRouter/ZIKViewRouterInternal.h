@@ -10,7 +10,7 @@
 //
 
 #import "ZIKViewRouter.h"
-#import "ZIKViewRoute.h"
+#import "ZIKRouterInternal.h"
 #import "ZIKViewRouteError.h"
 #import "ZIKViewRouterType.h"
 #import "ZIKPlatformCapabilities.h"

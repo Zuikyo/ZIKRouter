@@ -92,6 +92,20 @@ ZIKAnyServiceRouterType *_Nullable _ZIKServiceRouterToIdentifier(NSString *ident
     };
 }
 
++ (NSArray<ZIKAnyServiceRouterType *> *(^)(Class))routersToClass {
+    return ^(Class destinationClass) {
+        NSMutableArray<ZIKAnyServiceRouterType *> *routers = [NSMutableArray array];
+        NSParameterAssert([destinationClass conformsToProtocol:@protocol(ZIKRoutableService)]);
+        [ZIKServiceRouteRegistry enumerateRoutersForDestinationClass:[destinationClass class] handler:^(ZIKRouterType * _Nonnull route) {
+            ZIKServiceRouterType *r = (ZIKServiceRouterType *)route;
+            if (r) {
+                [routers addObject:r];
+            }
+        }];
+        return routers;
+    };
+}
+
 + (ZIKAnyServiceRouterType *(^)(NSString *))toIdentifier {
     return ^(NSString *identifier) {
         return _ZIKServiceRouterToIdentifier(identifier);

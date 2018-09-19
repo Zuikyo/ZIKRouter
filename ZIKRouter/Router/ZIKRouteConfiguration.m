@@ -157,6 +157,13 @@
     return [_configuration respondsToSelector:aSelector];
 }
 
+- (BOOL)conformsToProtocol:(Protocol *)aProtocol {
+    if ([super conformsToProtocol:aProtocol]) {
+        return YES;
+    }
+    return [_configuration conformsToProtocol:aProtocol];
+}
+
 - (id)forwardingTargetForSelector:(SEL)aSelector {
     return _configuration;
 }

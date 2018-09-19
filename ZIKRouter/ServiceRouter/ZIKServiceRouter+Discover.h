@@ -39,6 +39,16 @@ NS_ASSUME_NONNULL_BEGIN
  */
 @property (nonatomic,class,readonly) ZIKServiceRouterType<Destination, RouteConfig> * _Nullable (^toModule)(Protocol<ZIKServiceModuleRoutable> *configProtocol) NS_SWIFT_UNAVAILABLE("Use `Router.to(RoutableServiceModule<ModuleProtocol>())` in ZRouter instead");
 
+/**
+ Get all service routers for the destination class and its super class. The result will be empty if destination class doesn't conform to ZIKRoutableService. This method is for handling external destination. You can prepare the external destination when you don't know its router.
+ 
+ @note
+ It searchs routers for the destination class, then its super class. If you want to perform route on the destination, choose the first router in the array.
+ @warning
+ If the router requires to prepare the destination with its protocol, the route action may fail. So only use this method when necessary.
+ */
+@property (nonatomic, class, readonly) NSArray<ZIKAnyServiceRouterType *> * (^routersToClass)(Class destinationClass);
+
 ///Find service router registered with the unique identifier.
 @property (nonatomic, class, readonly) ZIKAnyServiceRouterType * _Nullable (^toIdentifier)(NSString *identifier);
 

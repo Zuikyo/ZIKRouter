@@ -276,14 +276,14 @@ static BOOL _registrationFinished = NO;
         }
         CFMutableSetRef routers = (CFMutableSetRef)CFDictionaryGetValue(destinationToRoutersMap, (__bridge const void *)(destinationClass));
         NSSet *routes = (__bridge NSSet *)(routers);
-        for (id route in routes) {
+        [routes enumerateObjectsUsingBlock:^(id  _Nonnull route, BOOL * _Nonnull stop) {
             if (handler) {
                 ZIKRouterType *r = [self _routerTypeForObject:route];
                 if (r) {
                     handler(r);
                 }
             }
-        }
+        }];
         destinationClass = class_getSuperclass(destinationClass);
     }
 }

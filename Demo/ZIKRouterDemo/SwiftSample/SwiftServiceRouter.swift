@@ -9,6 +9,7 @@
 import Foundation
 import ZIKRouter
 import ZRouter
+import ZIKRouter.Internal
 
 protocol SwiftServiceConfig {
     
@@ -21,6 +22,7 @@ class SwiftServiceConfiguration: ZIKPerformRouteConfiguration, SwiftServiceConfi
     }
 }
 
+//Router for SwiftService. Generic of ZIKRouter can't be pure swift type, so we use `AnyObject` here.
 class SwiftServiceRouter: ZIKServiceRouter<AnyObject, SwiftServiceConfiguration> {
     override class func registerRoutableDestination() {
         registerService(SwiftService.self)
