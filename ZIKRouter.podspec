@@ -1,7 +1,7 @@
 Pod::Spec.new do |s|
 
   s.name         = "ZIKRouter"
-  s.version      = "1.0.2"
+  s.version      = "1.0.3"
   s.summary      = "Interface-Oriented iOS router for discovering modules and injecting dependencies with protocol in both Swift and Objective-C."
   s.description  = <<-DESC
                 Interface-Oriented iOS router for discovering modules and injecting dependencies with protocol in both Swift and Objective-C, designed for VIPER. The view router can perform all navigation types in UIKit through one method. The service router can discover service with protocol.
@@ -47,7 +47,7 @@ Pod::Spec.new do |s|
   s.private_header_files = "ZIKRouter/Router/Private/*.h",
                            "ZIKRouter/ServiceRouter/BlockRouter/ZIKBlockServiceRouter.h",
                            "ZIKRouter/ViewRouter/Private/*.h",
-                           "ZIKRouter/ViewRouter/BlockRouter/BlockViewRouters/*.h"
+                           "ZIKRouter/ViewRouter/BlockRouter/ZIKBlockViewRouter.h"
                            "ZIKRouter/Utilities/Debug/*.h"
 
 end

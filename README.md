@@ -93,12 +93,12 @@ Add this to your Podfile.
 For Objective-C project:
 
 ```
-pod 'ZIKRouter', '>= 1.0.2'
+pod 'ZIKRouter', '>= 1.0.3'
 ```
 For Swift project:
 
 ```
-pod 'ZRouter', '>= 1.0.2'
+pod 'ZRouter', '>= 1.0.3'
 ```
 
 ### Carthage
@@ -106,7 +106,7 @@ pod 'ZRouter', '>= 1.0.2'
 Add this to your Cartfile:
 
 ```
-github "Zuikyo/ZIKRouter" >= 1.0.2
+github "Zuikyo/ZIKRouter" >= 1.0.3
 ```
 
 Build frameworks:
