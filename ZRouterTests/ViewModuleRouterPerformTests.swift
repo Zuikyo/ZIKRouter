@@ -179,7 +179,7 @@ class ViewModuleRouterPerformTests: XCTestCase {
             config.successHandler = { d in
                 let destination = d as? AViewInput
                 XCTAssertNotNil(destination)
-                XCTAssert(destination?.title == "test title")
+                XCTAssert(destination?.viewTitle == "test title")
                 expectation.fulfill()
                 self.handle({
                     self.leaveTest()
@@ -207,13 +207,13 @@ class ViewModuleRouterPerformTests: XCTestCase {
             config.successHandler = { d in
                 let destination = d as? AViewInput
                 XCTAssertNotNil(destination)
-                XCTAssert(destination?.title == "test title")
+                XCTAssert(destination?.viewTitle == "test title")
                 providerExpectation.fulfill()
             }
             config.performerSuccessHandler = { d in
                 let destination = d as? AViewInput
                 XCTAssertNotNil(destination)
-                XCTAssert(destination?.title == "test title")
+                XCTAssert(destination?.viewTitle == "test title")
                 performerExpectation.fulfill()
                 self.handle({
                     XCTAssert(self.router?.state == .routed)

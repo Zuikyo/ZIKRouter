@@ -22,7 +22,7 @@ class AViewController: UIViewController {
 }
 
 protocol AViewInput: class {
-    var title: String? { get set }
+    var viewTitle: String? { get set }
 }
 
 @objc protocol AViewObjcInput: ZIKViewRoutable {
@@ -38,7 +38,14 @@ protocol AViewInputAdapter: class {
 }
 
 extension AViewController: ZIKRoutableView, AViewInput, AViewObjcInput, AViewInputAdapter, AViewInputObjcAdapter {
-    
+    var viewTitle: String? {
+        get {
+            return title
+        }
+        set {
+            title = newValue
+        }
+    }
 }
 
 extension RoutableView where Protocol == AViewInput {

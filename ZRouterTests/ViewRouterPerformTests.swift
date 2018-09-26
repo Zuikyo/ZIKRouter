@@ -50,7 +50,7 @@ class ViewRouterPerformTests: XCTestCase {
         enterTest()
         self.router = Router.perform(to: RoutableView<AViewInput>(), path: .makeDestination, configuring: { (config, prepareModule) in
             config.prepareDestination = { destination in
-                destination.title = "test title"
+                destination.viewTitle = "test title"
                 expectation.fulfill()
                 self.handle({
                     self.leaveTest()
@@ -196,11 +196,11 @@ class ViewRouterPerformTests: XCTestCase {
         enterTest()
         self.router = Router.perform(to: RoutableView<AViewInput>(), path: .makeDestination, configuring: { (config, prepareModule) in
             config.prepareDestination = { destination in
-                destination.title = "test title"
+                destination.viewTitle = "test title"
             }
             config.successHandler = { destination in
                 XCTAssertNotNil(destination)
-                XCTAssert(destination.title == "test title")
+                XCTAssert(destination.viewTitle == "test title")
                 expectation.fulfill()
                 self.handle({
                     self.leaveTest()
@@ -223,16 +223,16 @@ class ViewRouterPerformTests: XCTestCase {
         enterTest()
         self.router = Router.perform(to: RoutableView<AViewInput>(), path: .makeDestination, configuring: { (config, prepareModule) in
             config.prepareDestination = { destination in
-                destination.title = "test title"
+                destination.viewTitle = "test title"
             }
             config.successHandler = { destination in
                 XCTAssertNotNil(destination)
-                XCTAssert(destination.title == "test title")
+                XCTAssert(destination.viewTitle == "test title")
                 providerExpectation.fulfill()
             }
             config.performerSuccessHandler = { destination in
                 XCTAssertNotNil(destination)
-                XCTAssert(destination.title == "test title")
+                XCTAssert(destination.viewTitle == "test title")
                 performerExpectation.fulfill()
                 self.handle({
                     XCTAssert(self.router?.state == .routed)
@@ -259,7 +259,7 @@ class ViewRouterPerformTests: XCTestCase {
         enterTest()
         self.router = Router.perform(to: RoutableView<AViewInput>(), path: .makeDestination, configuring: { (config, prepareModule) in
             config.prepareDestination = { destination in
-                destination.title = "test title"
+                destination.viewTitle = "test title"
             }
             config.successHandler = { d in
                 XCTAssert(false, "errorHandler should not be called")

@@ -55,7 +55,7 @@ class ViewModuleRouterMakeDestinationTests: XCTestCase {
         let destination = Router.makeDestination(to: RoutableViewModule<AViewModuleInput>(), preparation: { (module) in
             module.title = "test title"
             module.makeDestinationCompletion({ (destination) in
-                XCTAssert(destination.title == "test title")
+                XCTAssert(destination.viewTitle == "test title")
             })
         })
         XCTAssertNotNil(destination is AViewInput)
@@ -70,7 +70,7 @@ class ViewModuleRouterMakeDestinationTests: XCTestCase {
             prepareModule({ module in
                 module.title = "test title"
                 module.makeDestinationCompletion({ (destination) in
-                    XCTAssert(destination.title == "test title")
+                    XCTAssert(destination.viewTitle == "test title")
                 })
             })
             config.successHandler = { d in
@@ -104,7 +104,7 @@ class ViewModuleRouterMakeDestinationTests: XCTestCase {
             prepareModule({ module in
                 module.title = "test title"
                 module.makeDestinationCompletion({ (destination) in
-                    XCTAssert(destination.title == "test title")
+                    XCTAssert(destination.viewTitle == "test title")
                 })
             })
             config.successHandler = { d in
@@ -138,7 +138,7 @@ class ViewModuleRouterMakeDestinationTests: XCTestCase {
             prepareModule({ module in
                 module.title = "test title"
                 module.makeDestinationCompletion({ (destination) in
-                    XCTAssert(destination.title == "test title")
+                    XCTAssert(destination.viewTitle == "test title")
                 })
             })
             config.successHandler = { d in

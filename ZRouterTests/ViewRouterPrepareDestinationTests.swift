@@ -52,10 +52,10 @@ class SubviewRouterPrepareDestinationTests: XCTestCase {
         let destination = AViewController()
         self.router = Router.to(RoutableView<AViewInput>())?.prepare(destination: destination, configuring: { (config, prepareModule) in
             config.prepareDestination = { destination in
-                destination.title = "test title"
+                destination.viewTitle = "test title"
             }
             config.successHandler = { d in
-                XCTAssert(d.title == "test title")
+                XCTAssert(d.viewTitle == "test title")
                 providerExpectation.fulfill()
             }
             config.performerSuccessHandler = { d in
