@@ -168,10 +168,10 @@ bool ZIKRouter_classIsCustomClass(Class aClass) {
         return false;
     }
     NSString *bundlePath = [[NSBundle bundleForClass:aClass] bundlePath];
-    if ([bundlePath containsString:@"System/Library/"]) {
+    if ([bundlePath rangeOfString:@"/System/Library/"].length != 0) {
         return false;
     }
-    if ([bundlePath containsString:@"usr/"]) {
+    if ([bundlePath rangeOfString:@"/usr/"].length != 0) {
         return false;
     }
     return true;

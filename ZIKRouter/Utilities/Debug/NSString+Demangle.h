@@ -34,13 +34,6 @@ NS_ASSUME_NONNULL_BEGIN
  */
 - (nullable NSString *)demangledAsSimplifiedSwift;
 
-/**
- Demangle as a C++ symbol.
- 
- @return The demangled string or nil if it can't be demangled as C++.
- */
-- (nullable NSString *)demangledAsCPP;
-
 @end
 
 #endif

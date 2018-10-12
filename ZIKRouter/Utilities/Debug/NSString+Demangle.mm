@@ -13,7 +13,6 @@
 
 #if DEBUG
 
-#include <cxxabi.h>
 #include <string>
 #import "ZIKFindSymbol.h"
 
@@ -102,22 +101,6 @@ static std::string _demangleSymbolAsString(const char *mangledName, size_t mangl
         return nil;
     }
     return [NSString stringWithUTF8String:demangled.c_str()];
-}
-
-- (NSString *)demangledAsCPP {
-    NSString *result = nil;
-    int status = 0;
-    char* demangled = __cxxabiv1::__cxa_demangle(self.UTF8String, NULL, NULL, &status);
-    
-    if(status == 0 && demangled != NULL) {
-        result = [NSString stringWithUTF8String:demangled];
-    }
-    
-    if(demangled != NULL) {
-        free(demangled);
-    }
-    
-    return result;
 }
 
 @end

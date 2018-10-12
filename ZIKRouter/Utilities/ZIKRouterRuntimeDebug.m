@@ -18,6 +18,15 @@
 #import <objc/runtime.h>
 #import "NSString+Demangle.h"
 
+@interface NSString (ZIXContainsString)
+- (BOOL)zix_containsString:(NSString *)str;
+@end
+@implementation NSString (ZIXContainsString)
+- (BOOL)zix_containsString:(NSString *)str {
+    return [self rangeOfString:str].length != 0;
+}
+@end
+
 /**
  Check whether a type conforms to the given protocol. Use private C++ function inside libswiftCore.dylib:
  `bool _conformsToProtocols(const OpaqueValue *value, const Metadata *type, const ExistentialTypeMetadata *existentialType, const WitnessTable **conformances)`.
@@ -39,9 +48,9 @@ static bool swift_conformsToProtocols(uintptr_t value, uintptr_t type, uintptr_t
             return NO;
         }];
         NSCAssert(_conformsToProtocols != NULL, @"Can't find _conformsToProtocols in libswiftCore.dylib. You should use swift 3.3 or higher.");
-        NSCAssert1([[ZIKImageSymbol symbolNameForAddress:_conformsToProtocols] containsString:@"OpaqueValue"] &&
-                   [[ZIKImageSymbol symbolNameForAddress:_conformsToProtocols] containsString:@"TargetMetadata"] &&
-                   [[ZIKImageSymbol symbolNameForAddress:_conformsToProtocols] containsString:@"WitnessTable"]
+        NSCAssert1([[ZIKImageSymbol symbolNameForAddress:_conformsToProtocols] zix_containsString:@"OpaqueValue"] &&
+                   [[ZIKImageSymbol symbolNameForAddress:_conformsToProtocols] zix_containsString:@"TargetMetadata"] &&
+                   [[ZIKImageSymbol symbolNameForAddress:_conformsToProtocols] zix_containsString:@"WitnessTable"]
                    , @"The symbol name is not matched: %@", [ZIKImageSymbol symbolNameForAddress:_conformsToProtocols]);
     });
     if (_conformsToProtocols == NULL) {
@@ -51,7 +60,7 @@ static bool swift_conformsToProtocols(uintptr_t value, uintptr_t type, uintptr_t
 }
 
 static bool _objcClassConformsToSwiftProtocolName(Class objcClass, NSString *swiftProtocolName) {
-    NSCAssert1([swiftProtocolName containsString:@"."], @"Invalid swift protocol name: %@", swiftProtocolName);
+    NSCAssert1([swiftProtocolName zix_containsString:@"."], @"Invalid swift protocol name: %@", swiftProtocolName);
     static NSMutableSet<NSString *> *conformancesCache;
     static dispatch_once_t onceToken;
     dispatch_once(&onceToken, ^{
@@ -117,10 +126,10 @@ static bool _objcClassConformsToSwiftProtocolName(Class objcClass, NSString *swi
             return YES;
         }
         NSString *demangledName = demangledAsSwift(name, false);
-        if ([demangledName containsString:@"protocol witness table for"]) {
+        if ([demangledName zix_containsString:@"protocol witness table for"]) {
 
             for (NSString *protocolName in protocolNames) {
-                if ([demangledName containsString:[NSString stringWithFormat:@"__ObjC.%@ : %@", containedClassName, protocolName]]) {
+                if ([demangledName zix_containsString:[NSString stringWithFormat:@"__ObjC.%@ : %@", containedClassName, protocolName]]) {
                     [conformedProtocolNames addObject:protocolName];
                     if (conformedProtocolNames.count == protocolCount) {
                         conform = YES;
@@ -159,6 +168,13 @@ typedef NS_ENUM(NSInteger, ZIKSwiftMetadataKind) {
     ZIKSwiftMetadataKindErrorObject              = 128
 };
 
+static BOOL object_is_class(id obj) {
+    if ([obj class] == obj) {
+        return YES;
+    }
+    return NO;
+}
+
 #pragma clang diagnostic push
 #pragma clang diagnostic ignored "-Warc-performSelector-leaks"
 
@@ -189,23 +205,23 @@ bool _swift_typeIsTargetType(id sourceType, id targetType) {
         }
     }
     if ([targetType isKindOfClass:NSClassFromString(@"Protocol")]) {
-        if (object_isClass(sourceType)) {
+        if (object_is_class(sourceType)) {
             return [sourceType conformsToProtocol:targetType];
         }
         return false;
     }
-    if ((isSourceSwiftObjectType && object_isClass(sourceType) == NO) ||
-        (isSourceSwiftType == NO && object_isClass(sourceType) == NO)) {
+    if ((isSourceSwiftObjectType && object_is_class(sourceType) == NO) ||
+        (isSourceSwiftType == NO && object_is_class(sourceType) == NO)) {
         NSCAssert(NO, @"This function only accept type parameter, not instance parameter.");
         return false;
     }
-    if ((isTargetSwiftObjectType && object_isClass(targetType) == NO) ||
-        (isTargetSwiftType == NO && object_isClass(targetType) == NO)) {
+    if ((isTargetSwiftObjectType && object_is_class(targetType) == NO) ||
+        (isTargetSwiftType == NO && object_is_class(targetType) == NO)) {
         NSCAssert(NO, @"This function only accept type parameter, not instance parameter.");
         return false;
     }
     
-    if (object_isClass(sourceType) && object_isClass(targetType)) {
+    if (object_is_class(sourceType) && object_is_class(targetType)) {
         return [sourceType isSubclassOfClass:targetType] || sourceType == targetType;
     } else if (isSourceSwiftValueType && isTargetSwiftValueType) {
         NSString *sourceTypeName = [sourceType performSelector:NSSelectorFromString(@"_swiftTypeName")];
@@ -262,8 +278,8 @@ bool _swift_typeIsTargetType(id sourceType, id targetType) {
             return false;
         } else {
             //For pure objc class, can't check conformance with swift_conformsToProtocols, need to use swift type metadata of this class as sourceTypeMetadata, or just search protocol witness table for this class
-            if (object_isClass(sourceType) && isSourceSwiftObjectType == NO &&
-                [[NSStringFromClass(sourceType) demangledAsSwift] containsString:@"."] == NO) {
+            if (object_is_class(sourceType) && isSourceSwiftObjectType == NO &&
+                [[NSStringFromClass(sourceType) demangledAsSwift] zix_containsString:@"."] == NO) {
                 static void*(*swift_getObjCClassMetadata)(void*);
                 static dispatch_once_t onceToken;
                 dispatch_once(&onceToken, ^{
@@ -318,9 +334,9 @@ void _enumerateSymbolName(bool(^handler)(const char *name, NSString *(^demangled
     };
     
     [ZIKImageSymbol enumerateImages:^BOOL(ZIKImageRef  _Nonnull image, NSString * _Nonnull path) {
-        if ([path containsString:@"/System/Library/"] == YES ||
-            [path containsString:@"/usr/"] == YES ||
-            ([path containsString:@"libswift"] && [path containsString:@"dylib"])) {
+        if ([path zix_containsString:@"/System/Library/"] == YES ||
+            [path zix_containsString:@"/usr/"] == YES ||
+            ([path zix_containsString:@"libswift"] && [path zix_containsString:@".dylib"])) {
             return YES;
         }
         void *value = [ZIKImageSymbol findSymbolInImage:image matching:^BOOL(const char * _Nonnull symbolName) {
@@ -347,7 +363,7 @@ NSString *codeForImportingRouters() {
     
     ZIKRouter_enumerateClassList(^(__unsafe_unretained Class class) {
         if ([ZIKViewRouteRegistry isRegisterableRouterClass:class]) {
-            if ([NSStringFromClass(class) containsString:@"."]) {
+            if ([NSStringFromClass(class) zix_containsString:@"."]) {
                 return;
             }
             if ([class isAdapter]) {
@@ -356,7 +372,7 @@ NSString *codeForImportingRouters() {
                 [objcViewRouters addObject:class];
             }
         } else if ([ZIKServiceRouteRegistry isRegisterableRouterClass:class]) {
-            if ([NSStringFromClass(class) containsString:@"."]) {
+            if ([NSStringFromClass(class) zix_containsString:@"."]) {
                 return;
             }
             if ([class isAdapter]) {
@@ -425,13 +441,13 @@ NSString *codeForRegisteringRouters() {
     ZIKRouter_enumerateClassList(^(__unsafe_unretained Class class) {
         if ([ZIKViewRouteRegistry isRegisterableRouterClass:class]) {
             if ([class isAdapter]) {
-                if ([NSStringFromClass(class) containsString:@"."]) {
+                if ([NSStringFromClass(class) zix_containsString:@"."]) {
                     [swiftViewAdapters addObject:class];
                 } else {
                     [objcViewAdapters addObject:class];
                 }
             } else {
-                if ([NSStringFromClass(class) containsString:@"."]) {
+                if ([NSStringFromClass(class) zix_containsString:@"."]) {
                     [swiftViewRouters addObject:class];
                 } else {
                     [objcViewRouters addObject:class];
@@ -439,13 +455,13 @@ NSString *codeForRegisteringRouters() {
             }
         } else if ([ZIKServiceRouteRegistry isRegisterableRouterClass:class]) {
             if ([class isAdapter]) {
-                if ([NSStringFromClass(class) containsString:@"."]) {
+                if ([NSStringFromClass(class) zix_containsString:@"."]) {
                     [swiftServiceAdapters addObject:class];
                 } else {
                     [objcServiceAdapters addObject:class];
                 }
             } else {
-                if ([NSStringFromClass(class) containsString:@"."]) {
+                if ([NSStringFromClass(class) zix_containsString:@"."]) {
                     [swiftServiceRouters addObject:class];
                 } else {
                     [objcServiceRouters addObject:class];
