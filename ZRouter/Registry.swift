@@ -872,6 +872,13 @@ extension String {
     }
 }
 
+internal func imagePathOfAddress(_ address: UnsafePointer<Int8>) -> String {
+    var info: Dl_info = Dl_info()
+    dladdr(address, &info)
+    let imagePath = String(cString: info.dli_fname)
+    return imagePath
+}
+
 ///Make sure all registered view classes conform to their registered view protocols.
 private class _ViewRouterValidater: ZIKViewRouteAdapter {
     override class func isAbstractRouter() -> Bool {
@@ -881,18 +888,74 @@ private class _ViewRouterValidater: ZIKViewRouteAdapter {
         
         // Declared protocol by extend RoutableView and RoutableViewModule should be registered
         var declaredRoutableTypes = [String]()
-        // Types used as RoutableView<Type>(), RoutableView<Type>(declaredProtocol: Type.self) and RoutableView<Type>(declaredTypeName: typeName), maybe not declared yet
+        // Types in method signature used as RoutableView<Type>(), RoutableView<Type>(declaredProtocol: Type.self) and RoutableView<Type>(declaredTypeName: typeName), maybe not declared yet
         var viewRoutingTypes = [(String, String)]()
-        // Types used as RoutableViewModule<Type>(), RoutableViewModule<Type>(declaredProtocol: Type.self) and RoutableViewModule<Type>(declaredTypeName: typeName), maybe not declared yet
+        // Types in method signature used as RoutableViewModule<Type>(), RoutableViewModule<Type>(declaredProtocol: Type.self) and RoutableViewModule<Type>(declaredTypeName: typeName), maybe not declared yet
         var viewModuleRoutingTypes = [(String, String)]()
         let viewRoutingTypeRegex = try! NSRegularExpression(pattern: "(?<=RoutableView<).*(?=>$)", options: [.anchorsMatchLines])
         let viewModuleRoutingTypeRegex = try! NSRegularExpression(pattern: "(?<=RoutableViewModule<).*(?=>$)", options: [.anchorsMatchLines])
         _enumerateSymbolName { (name, demangledAsSwift) -> Bool in
             if (strstr(name, "RoutableView") != nil) {
                 let symbolName = demangledAsSwift(name, false)
-                if symbolName.contains("(extension in"), symbolName.contains(">.init"), symbolName.contains("(extension in ZRouter)") == false {
-                    let simplifiedName = demangledAsSwift(name, true)
-                    declaredRoutableTypes.append(simplifiedName)
+                if symbolName.hasPrefix("(extension in"), symbolName.contains(">.init") {
+                    if symbolName.contains("(extension in ZRouter)") == false {
+                        let simplifiedName = demangledAsSwift(name, true)
+                        declaredRoutableTypes.append(simplifiedName)
+                    } else if symbolName.contains(".UIViewController"), symbolName.contains(".ZIKViewRoutable") {
+                        let imagePath = imagePathOfAddress(name)
+                        assert(imagePath.contains("/ZRouter.framework/"), """
+                            Don't use an UIViewController as generic parameter of RoutableView:
+                            ```
+                            @objc protocol SomeViewProtocol: ZIKViewRoutable {
+
+                            }
+                            class SomeViewController: UIViewController, SomeViewProtocol {
+
+                            }
+                            ```
+                            ```
+                            // Invalid usage
+                            RoutableView<SomeViewController>()
+                            ```
+                            You should use the protocol to get its router.
+                            How to resolve: search code in \((imagePath as NSString).lastPathComponent), fix `RoutableView<SomeViewController>()` to `RoutableView<SomeViewProtocol>()`
+                            If it's hard to find out the bad code, you can use `Hopper Disassembler` to analyze your app and see references to this symbol:
+                            (extension in ZRouter):ZRouter.RoutableView<A where A: __ObjC.UIViewController, A: __ObjC.ZIKViewRoutable>.init() -> ZRouter.RoutableView<A>
+                            """)
+                    } else if symbolName.contains(".ZIKViewRouteConfiguration"), symbolName.contains(".ZIKViewModuleRoutable") {
+                        let imagePath = imagePathOfAddress(name)
+                        assert(imagePath.contains("/ZRouter.framework/"), """
+                            Don't use a ZIKViewRouteConfiguration as generic parameter of RoutableViewModule:
+                            ```
+                            @objc protocol SomeViewModuleProtocol: ZIKViewModuleRoutable {
+
+                            }
+                            class SomeViewRouteConfiguration: ZIKViewRouteConfiguration, SomeViewModuleProtocol {
+
+                            }
+                            ```
+                            ```
+                            // Invalid usage
+                            RoutableViewModule<SomeViewRouteConfiguration>()
+                            ```
+                            You should use the protocol to get its router.
+                            How to resolve: search code in \((imagePath as NSString).lastPathComponent), fix `RoutableViewModule<SomeViewRouteConfiguration>()` to `RoutableViewModule<SomeViewModuleProtocol>()`
+                            If it's hard to find out the bad code, you can use `Hopper Disassembler` to analyze your app and see references to this symbol:
+                            (extension in ZRouter):ZRouter.RoutableViewModule<A where A: __ObjC.ZIKViewRouteConfiguration, A: __ObjC.ZIKViewModuleRoutable>.init() -> ZRouter.RoutableViewModule<A>
+                            """)
+                    } else if symbolName.contains("where"), symbolName.contains("=="), (symbolName.contains(".ZIKViewRoutable>") || symbolName.contains(".ZIKViewModuleRoutable>")) {
+                        let imagePath = imagePathOfAddress(name)
+                        assert(imagePath.contains("/ZRouter.framework/"), """
+                            Don't use ZIKViewRoutable or ZIKViewModuleRoutable as generic parameter:
+                            ```
+                            // Invalid usage
+                            RoutableView<ZIKViewRoutable>()
+                            RoutableViewModule<ZIKViewModuleRoutable>()
+                            ```
+                            You should use the explicit protocol to get its router.
+                            How to resolve: search code in \((imagePath as NSString).lastPathComponent), fix `RoutableView<ZIKViewRoutable>()` to `RoutableView<SomeViewProtocol>()` or `RoutableViewModule<ZIKViewModuleRoutable>()` to `RoutableViewModule<SomeViewModuleProtocol>()`
+                            """)
+                    }
                 } else if symbolName.hasPrefix("type metadata accessor for ZRouter.RoutableView<") {
                     let simplifiedName = demangledAsSwift(name, true)
                     if let routingType = symbolName.subString(forRegex: viewRoutingTypeRegex),
@@ -1025,11 +1088,11 @@ private class _ServiceRouterValidater: ZIKServiceRouteAdapter {
     }
     override class func _didFinishRegistration() {
         
-        // Declared protocol by extend RoutableView and RoutableViewModule should be registered
+        // Declared protocol by extend RoutableService and RoutableServiceModule should be registered
         var declaredRoutableTypes = [String]()
-        // Types used as RoutableView<Type>(), RoutableView<Type>(declaredProtocol: Type.self) and RoutableView<Type>(declaredTypeName: typeName), maybe not declared yet
+        // Types in method signature used as RoutableService<Type>(), RoutableService<Type>(declaredProtocol: Type.self) and RoutableService<Type>(declaredTypeName: typeName), maybe not declared yet
         var serviceRoutingTypes = [(String, String)]()
-        // Types used as RoutableViewModule<Type>(), RoutableViewModule<Type>(declaredProtocol: Type.self) and RoutableViewModule<Type>(declaredTypeName: typeName), maybe not declared yet
+        // Types in method signature used as RoutableServiceModule<Type>(), RoutableServiceModule<Type>(declaredProtocol: Type.self) and RoutableServiceModule<Type>(declaredTypeName: typeName), maybe not declared yet
         var serviceModuleRoutingTypes = [(String, String)]()
         
         let serviceRoutingTypeRegex = try! NSRegularExpression(pattern: "(?<=RoutableService<).*(?=>$)", options: [.anchorsMatchLines])
@@ -1037,9 +1100,65 @@ private class _ServiceRouterValidater: ZIKServiceRouteAdapter {
         _enumerateSymbolName { (name, demangledAsSwift) -> Bool in
             if (strstr(name, "RoutableService") != nil) {
                 let symbolName = demangledAsSwift(name, false)
-                if symbolName.contains("(extension in"), symbolName.contains(">.init"), symbolName.contains("(extension in ZRouter)") == false {
-                    let simplifiedName = demangledAsSwift(name, true)
-                    declaredRoutableTypes.append(simplifiedName)
+                if symbolName.hasPrefix("(extension in"), symbolName.contains(">.init") {
+                    if symbolName.contains("(extension in ZRouter)") == false {
+                        let simplifiedName = demangledAsSwift(name, true)
+                        declaredRoutableTypes.append(simplifiedName)
+                    } else if symbolName.contains(".NSObject"), symbolName.contains(".ZIKServiceRoutable") {
+                        let imagePath = imagePathOfAddress(name)
+                        assert(imagePath.contains("/ZRouter.framework/"), """
+                            Don't use a Class type as generic parameter of RoutableService:
+                            ```
+                            @objc protocol SomeServiceProtocol: ZIKServiceRoutable {
+
+                            }
+                            class SomeClassType: NSObject, SomeServiceProtocol {
+
+                            }
+                            ```
+                            ```
+                            // Invalid usage
+                            RoutableService<SomeClassType>()
+                            ```
+                            You should use the protocol to get its router.
+                            How to resolve: search code in \((imagePath as NSString).lastPathComponent), fix `RoutableService<SomeClassType>()` to `RoutableService<SomeServiceProtocol>()`
+                            If it's hard to find out the bad code, you can use `Hopper Disassembler` to analyze your app and see references to this symbol:
+                            (extension in ZRouter):ZRouter.RoutableService<A where A: __ObjC.NSObject, A: __ObjC.ZIKServiceRoutable>.init() -> ZRouter.RoutableService<A>
+                            """)
+                    } else if symbolName.contains(".ZIKPerformRouteConfiguration"), symbolName.contains(".ZIKServiceModuleRoutable") {
+                        let imagePath = imagePathOfAddress(name)
+                        assert(imagePath.contains("/ZRouter.framework/"), """
+                            Don't use a ZIKPerformRouteConfiguration as generic parameter of RoutableServiceModule:
+                            ```
+                            @objc protocol SomeServiceModuleProtocol: ZIKServiceModuleRoutable {
+
+                            }
+                            class SomeServiceRouteConfiguration: ZIKPerformRouteConfiguration, SomeServiceModuleProtocol {
+
+                            }
+                            ```
+                            ```
+                            // Invalid usage
+                            RoutableServiceModule<SomeServiceRouteConfiguration>()
+                            ```
+                            You should use the protocol to get its router.
+                            How to resolve: search code in \((imagePath as NSString).lastPathComponent), fix `RoutableServiceModule<SomeServiceRouteConfiguration>()` to `RoutableServiceModule<SomeServiceModuleProtocol>()`
+                            If it's hard to find out the bad code, you can use `Hopper Disassembler` to analyze your app and see references to this symbol:
+                            (extension in ZRouter):ZRouter.RoutableServiceModule<A where A: __ObjC.ZIKPerformRouteConfiguration, A: __ObjC.ZIKServiceModuleRoutable>.init() -> ZRouter.RoutableServiceModule<A>
+                            """)
+                    } else if symbolName.contains("where"), symbolName.contains("=="), (symbolName.contains(".ZIKServiceRoutable>") || symbolName.contains(".ZIKServiceModuleRoutable>")) {
+                        let imagePath = imagePathOfAddress(name)
+                        assert(imagePath.contains("/ZRouter.framework/"), """
+                            Don't use ZIKServiceRoutable or ZIKServiceModuleRoutable as generic parameter:
+                            ```
+                            // Invalid usage
+                            RoutableService<ZIKServiceRoutable>()
+                            RoutableServiceModule<ZIKServiceModuleRoutable>()
+                            ```
+                            You should use the explicit protocol to get its router.
+                            How to resolve: search code in \((imagePath as NSString).lastPathComponent), fix `RoutableService<ZIKServiceRoutable>()` to `RoutableService<SomeServiceProtocol>()` or `RoutableServiceModule<ZIKServiceModuleRoutable>()` to `RoutableServiceModule<SomeServiceModuleProtocol>()`
+                            """)
+                    }
                 } else if symbolName.hasPrefix("type metadata accessor for ZRouter.RoutableService<") {
                     let simplifiedName = demangledAsSwift(name, true)
                     if let routingType = symbolName.subString(forRegex: serviceRoutingTypeRegex),

@@ -27,7 +27,7 @@ NS_ASSUME_NONNULL_BEGIN
  
  The parameter serviceProtocol of the block is: the protocol conformed by the service. Should be a ZIKServiceRoutable protocol.
  
- The return Class of the block is: a router class matched with the service. Return nil if protocol is nil or not declared. There will be an assert failure when result is nil.
+ The return value `ZIKServiceRouterType` of the block is a router matched with the service. Return nil if protocol is nil or not declared. There will be an assert failure when result is nil.
  */
 @property (nonatomic,class,readonly) ZIKServiceRouterType<Destination, RouteConfig> * _Nullable (^toService)(Protocol<ZIKServiceRoutable> *serviceProtocol) NS_SWIFT_UNAVAILABLE("Use `Router.to(RoutableService<ServiceProtocol>())` in ZRouter instead");
 
@@ -35,7 +35,7 @@ NS_ASSUME_NONNULL_BEGIN
  Get the router class combined with a custom ZIKRouteConfiguration conforming to a unique protocol. Always use `ZIKServiceRouterToModule`, don't use this method directly.
  
  The parameter configProtocol of the block is: the protocol conformed by defaultConfiguration of router. Should be a ZIKServiceModuleRoutable protocol.
- The return Class of the block is: a router class matched with the service. Return nil if protocol is nil or not declared. There will be an assert failure when result is nil.
+ The return value `ZIKServiceRouterType` of the block is a router matched with the service. Return nil if protocol is nil or not declared. There will be an assert failure when result is nil.
  */
 @property (nonatomic,class,readonly) ZIKServiceRouterType<Destination, RouteConfig> * _Nullable (^toModule)(Protocol<ZIKServiceModuleRoutable> *configProtocol) NS_SWIFT_UNAVAILABLE("Use `Router.to(RoutableServiceModule<ModuleProtocol>())` in ZRouter instead");
 

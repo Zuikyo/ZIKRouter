@@ -111,7 +111,7 @@ public struct RoutableViewModule<Protocol> {
  
  Declare that protocol `TestServiceInput` is routable as a service protocol:
  ```
- extension RoutableServiceModule where Protocol == TestServiceInput {
+ extension RoutableService where Protocol == TestServiceInput {
      init() { self.init(declaredProtocol: Protocol.self) }
  }
  ```
@@ -191,7 +191,7 @@ public extension RoutableView where Protocol: ZIKViewRoutable {
             typeName = objcProtocol.name
         } else {
             typeName = String(describing: Protocol.self)
-            assert(false,"Generic parameter \(Protocol.self) should be protocol type.")
+            assertionFailure("Generic parameter \(Protocol.self) should be protocol type.")
         }
     }
 }
@@ -203,7 +203,7 @@ public extension RoutableViewModule where Protocol: ZIKViewModuleRoutable {
             typeName = objcProtocol.name
         } else {
             typeName = String(describing: Protocol.self)
-            assert(false,"Generic parameter \(Protocol.self) should be protocol type.")
+            assertionFailure("Generic parameter \(Protocol.self) should be protocol type.")
         }
     }
 }
@@ -215,7 +215,7 @@ public extension RoutableService where Protocol: ZIKServiceRoutable {
             typeName = objcProtocol.name
         } else {
             typeName = String(describing: Protocol.self)
-            assert(false,"Generic parameter \(Protocol.self) should be protocol type.")
+            assertionFailure("Generic parameter \(Protocol.self) should be protocol type.")
         }
     }
 }
@@ -227,7 +227,151 @@ public extension RoutableServiceModule where Protocol: ZIKServiceModuleRoutable 
             typeName = objcProtocol.name
         } else {
             typeName = String(describing: Protocol.self)
-            assert(false,"Generic parameter \(Protocol.self) should be protocol type.")
+            assertionFailure("Generic parameter \(Protocol.self) should be protocol type.")
         }
     }
 }
+
+#if DEBUG
+
+// MARK: Invalid Check
+
+/// These symbols should never be linked in your code, if linked, that means you are using some undeclared type as generic parameter of RoutableView / RoutableViewModule / RoutableService / RoutableServiceModule.
+
+/* Invalid usage of RoutableView. Don't use an UIViewController as generic parameter of RoutableView:
+ ```
+ @objc protocol SomeViewProtocol: ZIKViewRoutable {
+ 
+ }
+ // There is a view controller conforms to ZIKViewRoutable
+ class SomeViewController: UIViewController, SomeViewProtocol {
+ 
+ }
+ ```
+ ```
+ // Invalid usage, can't get router with it
+ RoutableView<SomeViewController>()
+ ```
+ You should use the protocol to get its router, although the compiler won't give error when `SomeViewController` is used as generic parameter of RoutableView. These invalid usages will be detected when registration is finished.
+ 
+ If it's hard to find out the bad code, you can use `Hopper Disassembler` to analyze your app and see references to this symbol:
+ (extension in ZRouter):ZRouter.RoutableView<A where A: __ObjC.UIViewController, A: __ObjC.ZIKViewRoutable>.init() -> ZRouter.RoutableView<A>
+ */
+public extension RoutableView where Protocol: ZIKViewRoutable, Protocol: UIViewController {
+    init() {
+        typeName = String(describing: Protocol.self)
+        assertionFailure("Generic parameter \(Protocol.self) should be protocol type.")
+    }
+}
+
+/// Invalid usage: RoutableView<ZIKViewRoutable>()
+public extension RoutableView where Protocol == ZIKViewRoutable {
+    init() {
+        typeName = String(describing: Protocol.self)
+        assertionFailure("Don't use ZIKViewRoutable as generic parameter, can't get any router.")
+    }
+}
+
+/* Invalid usage of RoutableViewModule. Don't use a ZIKViewRouteConfiguration as generic parameter of RoutableViewModule:
+ ```
+ @objc protocol SomeViewModuleProtocol: ZIKViewModuleRoutable {
+ 
+ }
+ // There is a custom view configuration conforms to ZIKViewModuleRoutable
+ class SomeViewRouteConfiguration: ZIKViewRouteConfiguration, SomeViewModuleProtocol {
+ 
+ }
+ ```
+ ```
+ // Invalid usage, can't get router with it
+ RoutableViewModule<SomeViewRouteConfiguration>()
+ ```
+ You should use the protocol to get its router, although the compiler won't give error when `SomeViewRouteConfiguration` is used as generic parameter of RoutableViewModule. These invalid usages will be detected when registration is finished.
+ 
+ If it's hard to find out the bad code, you can use `Hopper Disassembler` to analyze your app and see references to this symbol:
+ (extension in ZRouter):ZRouter.RoutableViewModule<A where A: __ObjC.ZIKViewRouteConfiguration, A: __ObjC.ZIKViewModuleRoutable>.init() -> ZRouter.RoutableViewModule<A>
+ */
+public extension RoutableViewModule where Protocol: ZIKViewModuleRoutable, Protocol: ZIKViewRouteConfiguration {
+    init() {
+        typeName = String(describing: Protocol.self)
+        assertionFailure("Generic parameter \(Protocol.self) should be protocol type.")
+    }
+}
+
+/// Invalid usage: RoutableViewModule<ZIKViewModuleRoutable>()
+public extension RoutableViewModule where Protocol == ZIKViewModuleRoutable {
+    init() {
+        typeName = String(describing: Protocol.self)
+        assertionFailure("Don't use ZIKViewModuleRoutable as generic parameter, can't get any router.")
+    }
+}
+
+/* Invalid usage of RoutableService. Don't use an object type as generic parameter of RoutableService:
+ ```
+ @objc protocol SomeServiceProtocol: ZIKServiceRoutable {
+ 
+ }
+ // There is a class conforms to ZIKServiceRoutable
+ class SomeClassType: NSObject, SomeServiceProtocol {
+ 
+ }
+ ```
+ ```
+ // Invalid usage, can't get router with it
+ RoutableService<SomeClassType>()
+ ```
+ You should use the protocol to get its router, although the compiler won't give error when `SomeClassType` is used as generic parameter of RoutableService. These invalid usages will be detected when registration is finished.
+ 
+ If it's hard to find out the bad code, you can use `Hopper Disassembler` to analyze your app and see references to this symbol:
+ (extension in ZRouter):ZRouter.RoutableService<A where A: __ObjC.NSObject, A: __ObjC.ZIKServiceRoutable>.init() -> ZRouter.RoutableService<A>
+ */
+public extension RoutableService where Protocol: ZIKServiceRoutable, Protocol: NSObject {
+    init() {
+        typeName = String(describing: Protocol.self)
+        assertionFailure("Generic parameter \(Protocol.self) should be protocol type.")
+    }
+}
+
+/// Invalid usage: RoutableService<ZIKServiceRoutable>()
+public extension RoutableService where Protocol == ZIKServiceRoutable {
+    init() {
+        typeName = String(describing: Protocol.self)
+        assertionFailure("Don't use ZIKServiceRoutable as generic parameter, can't get any router.")
+    }
+}
+
+/* Invalid usage of RoutableServiceModule. Don't use a ZIKPerformRouteConfiguration as generic parameter of RoutableServiceModule:
+ ```
+ @objc protocol SomeServiceModuleProtocol: ZIKServiceModuleRoutable {
+ 
+ }
+ // There is a custom configuration conforms to ZIKServiceModuleRoutable
+ class SomeServiceRouteConfiguration: ZIKPERFORMRouteConfiguration, SomeServiceModuleProtocol {
+ 
+ }
+ ```
+ ```
+ // Invalid usage, can't get router with it
+ RoutableViewModule<SomeServiceRouteConfiguration>()
+ ```
+ You should use the protocol to get its router, although the compiler won't give error when `SomeServiceRouteConfiguration` is used as generic parameter of RoutableServiceModule. These invalid usages will be detected when registration is finished.
+ 
+ If it's hard to find out the bad code, you can use `Hopper Disassembler` to analyze your app and see references to this symbol:
+ (extension in ZRouter):ZRouter.RoutableServiceModule<A where A: __ObjC.ZIKPerformRouteConfiguration, A: __ObjC.ZIKServiceModuleRoutable>.init() -> ZRouter.RoutableServiceModule<A>
+ */
+public extension RoutableServiceModule where Protocol: ZIKServiceModuleRoutable, Protocol: ZIKPerformRouteConfiguration {
+    init() {
+        typeName = String(describing: Protocol.self)
+        assertionFailure("Generic parameter \(Protocol.self) should be protocol type.")
+    }
+}
+
+/// Invalid usage: RoutableServiceModule<ZIKServiceModuleRoutable>()
+public extension RoutableServiceModule where Protocol == ZIKServiceModuleRoutable {
+    init() {
+        typeName = String(describing: Protocol.self)
+        assertionFailure("Don't use ZIKServiceModuleRoutable as generic parameter, can't get any router.")
+    }
+}
+
+#endif
