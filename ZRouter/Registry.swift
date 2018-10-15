@@ -901,7 +901,7 @@ private class _ViewRouterValidater: ZIKViewRouteAdapter {
                     if symbolName.contains("(extension in ZRouter)") == false {
                         let simplifiedName = demangledAsSwift(name, true)
                         declaredRoutableTypes.append(simplifiedName)
-                    } else if symbolName.contains(".UIViewController"), symbolName.contains(".ZIKViewRoutable") {
+                    } else if symbolName.contains("." + String(describing: ViewController.self)), symbolName.contains(".ZIKViewRoutable") {
                         let imagePath = imagePathOfAddress(name)
                         assert(imagePath.contains("/ZRouter.framework/"), """
                             Don't use an UIViewController as generic parameter of RoutableView:
@@ -909,7 +909,7 @@ private class _ViewRouterValidater: ZIKViewRouteAdapter {
                             @objc protocol SomeViewProtocol: ZIKViewRoutable {
 
                             }
-                            class SomeViewController: UIViewController, SomeViewProtocol {
+                            class SomeViewController: \(String(describing: ViewController.self)), SomeViewProtocol {
 
                             }
                             ```
@@ -920,7 +920,28 @@ private class _ViewRouterValidater: ZIKViewRouteAdapter {
                             You should use the protocol to get its router.
                             How to resolve: search code in \((imagePath as NSString).lastPathComponent), fix `RoutableView<SomeViewController>()` to `RoutableView<SomeViewProtocol>()`
                             If it's hard to find out the bad code, you can use `Hopper Disassembler` to analyze your app and see references to this symbol:
-                            (extension in ZRouter):ZRouter.RoutableView<A where A: __ObjC.UIViewController, A: __ObjC.ZIKViewRoutable>.init() -> ZRouter.RoutableView<A>
+                            (extension in ZRouter):ZRouter.RoutableView<A where A: __ObjC.\(String(describing: ViewController.self)), A: __ObjC.ZIKViewRoutable>.init() -> ZRouter.RoutableView<A>
+                            """)
+                    } else if symbolName.contains("." + String(describing: View.self)), symbolName.contains(".ZIKViewRoutable") {
+                        let imagePath = imagePathOfAddress(name)
+                        assert(imagePath.contains("/ZRouter.framework/"), """
+                            Don't use an UIViewController as generic parameter of RoutableView:
+                            ```
+                            @objc protocol SomeViewProtocol: ZIKViewRoutable {
+                            
+                            }
+                            class SomeView: \(String(describing: View.self)), SomeViewProtocol {
+                            
+                            }
+                            ```
+                            ```
+                            // Invalid usage
+                            RoutableView<SomeView>()
+                            ```
+                            You should use the protocol to get its router.
+                            How to resolve: search code in \((imagePath as NSString).lastPathComponent), fix `RoutableView<SomeView>()` to `RoutableView<SomeViewProtocol>()`
+                            If it's hard to find out the bad code, you can use `Hopper Disassembler` to analyze your app and see references to this symbol:
+                            (extension in ZRouter):ZRouter.RoutableView<A where A: __ObjC.\(String(describing: View.self)), A: __ObjC.ZIKViewRoutable>.init() -> ZRouter.RoutableView<A>
                             """)
                     } else if symbolName.contains(".ZIKViewRouteConfiguration"), symbolName.contains(".ZIKViewModuleRoutable") {
                         let imagePath = imagePathOfAddress(name)

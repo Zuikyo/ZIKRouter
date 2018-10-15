@@ -257,7 +257,14 @@ public extension RoutableServiceModule where Protocol: ZIKServiceModuleRoutable 
  If it's hard to find out the bad code, you can use `Hopper Disassembler` to analyze your app and see references to this symbol:
  (extension in ZRouter):ZRouter.RoutableView<A where A: __ObjC.UIViewController, A: __ObjC.ZIKViewRoutable>.init() -> ZRouter.RoutableView<A>
  */
-public extension RoutableView where Protocol: ZIKViewRoutable, Protocol: UIViewController {
+public extension RoutableView where Protocol: ZIKViewRoutable, Protocol: ViewController {
+    init() {
+        typeName = String(describing: Protocol.self)
+        assertionFailure("Generic parameter \(Protocol.self) should be protocol type.")
+    }
+}
+
+public extension RoutableView where Protocol: ZIKViewRoutable, Protocol: View {
     init() {
         typeName = String(describing: Protocol.self)
         assertionFailure("Generic parameter \(Protocol.self) should be protocol type.")
