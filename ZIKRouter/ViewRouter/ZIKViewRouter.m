@@ -2738,7 +2738,7 @@ static  ZIKViewRouterType *_Nullable _routerTypeToRegisteredView(Class viewClass
     if ([parentViewController conformsToProtocol:@protocol(ZIKRoutableView)]) {
         routableViews = [NSMutableArray arrayWithObject:parentViewController];
     }
-    NSArray<XXViewController *> *childViews = [ZIKViewRouter routableViewsInContainerViewController:parentViewController];
+    NSArray<XXViewController *> *childViews = [ZIKViewRouter routableViewsInParentViewController:parentViewController];
     if (childViews.count > 0) {
         if (routableViews == nil) {
             routableViews = [NSMutableArray array];
@@ -2857,7 +2857,7 @@ static  ZIKViewRouterType *_Nullable _routerTypeToRegisteredView(Class viewClass
             }
         }
 
-        NSArray<XXViewController *> *subRoutableViews = [ZIKViewRouter routableViewsInContainerViewController:parentViewController];//Search child view controllers conform to ZIKRoutableView in destination
+        NSArray<XXViewController *> *subRoutableViews = [ZIKViewRouter routableViewsInParentViewController:parentViewController];//Search child view controllers conform to ZIKRoutableView in destination
         if (subRoutableViews.count > 0) {
             if (!routableViews) {
                 routableViews = [NSMutableArray array];
@@ -3043,8 +3043,8 @@ static  ZIKViewRouterType *_Nullable _routerTypeToRegisteredView(Class viewClass
     }
 }
 
-///Search child view controllers conforming to ZIKRoutableView in vc, if the vc is a container or is system class
-+ (nullable NSArray<XXViewController *> *)routableViewsInContainerViewController:(XXViewController *)vc {
+///Search child view controllers conforming to ZIKRoutableView in vc
++ (nullable NSArray<XXViewController *> *)routableViewsInParentViewController:(XXViewController *)vc {
     NSMutableArray *routableViews;
     NSArray<__kindof XXViewController *> *childViewControllers = vc.childViewControllers;
     if (childViewControllers.count == 0) {
@@ -3108,6 +3108,7 @@ static  ZIKViewRouterType *_Nullable _routerTypeToRegisteredView(Class viewClass
     if (ZIKRouter_classIsCustomClass([vc class]) == NO) {
         isSystemViewController = YES;
     }
+    // Find in container's childs
     if (isContainerVC) {
         if (!routableViews) {
             routableViews = [NSMutableArray array];
@@ -3115,14 +3116,14 @@ static  ZIKViewRouterType *_Nullable _routerTypeToRegisteredView(Class viewClass
         for (XXViewController *child in containedVCs) {
             if ([child conformsToProtocol:@protocol(ZIKRoutableView)]) {
                 [routableViews addObject:child];
-            } else {
-                NSArray<XXViewController *> *routableViewsInChild = [self routableViewsInContainerViewController:child];
-                if (routableViewsInChild.count > 0) {
-                    [routableViews addObjectsFromArray:routableViewsInChild];
-                }
+            }
+            NSArray<XXViewController *> *routableViewsInChild = [self routableViewsInParentViewController:child];
+            if (routableViewsInChild.count > 0) {
+                [routableViews addObjectsFromArray:routableViewsInChild];
             }
         }
     }
+    // Find in childViewControllers
     if (isSystemViewController) {
         if (!routableViews) {
             routableViews = [NSMutableArray array];
@@ -3133,11 +3134,10 @@ static  ZIKViewRouterType *_Nullable _routerTypeToRegisteredView(Class viewClass
             }
             if ([child conformsToProtocol:@protocol(ZIKRoutableView)]) {
                 [routableViews addObject:child];
-            } else {
-                NSArray<XXViewController *> *routableViewsInChild = [self routableViewsInContainerViewController:child];
-                if (routableViewsInChild.count > 0) {
-                    [routableViews addObjectsFromArray:routableViewsInChild];
-                }
+            }
+            NSArray<XXViewController *> *routableViewsInChild = [self routableViewsInParentViewController:child];
+            if (routableViewsInChild.count > 0) {
+                [routableViews addObjectsFromArray:routableViewsInChild];
             }
         }
     }
