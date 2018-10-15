@@ -1324,6 +1324,11 @@ destinationStateBeforeRoute:(ZIKPresentationState *)destinationStateBeforeRoute
     
     switch (realRouteType) {
         case ZIKViewRouteRealTypeUnknown:
+            if ([self _guessCanRemove]) {
+                return nil;
+            }
+            return [NSString stringWithFormat:@"Router can't remove, realRouteType is ZIKViewRouteRealTypeUnknown, doesn't support remove, router:%@",self];
+            break;
         case ZIKViewRouteRealTypeUnwind:
         case ZIKViewRouteRealTypeCustom: {
             return [NSString stringWithFormat:@"Router can't remove, realRouteType is %ld, doesn't support remove, router:%@",(long)realRouteType,self];
@@ -1383,6 +1388,9 @@ destinationStateBeforeRoute:(ZIKPresentationState *)destinationStateBeforeRoute
     if (!destination.navigationController) {
         return NO;
     }
+    if ([destination.navigationController.viewControllers firstObject] == destination) {
+        return NO;
+    }
     return YES;
 }
 #endif
@@ -1396,6 +1404,19 @@ destinationStateBeforeRoute:(ZIKPresentationState *)destinationStateBeforeRoute
     if (!destination.presentingViewController && /*can dismiss destination itself*/
         !destination.presentedViewController /*can dismiss destination's presentedViewController*/
         ) {
+        return NO;
+    }
+#else
+    if (@available(macOS 10.10, *)) {
+        if (!destination.presentingViewController &&
+            !destination.presentedViewControllers) {
+            return NO;
+        }
+    }
+    if (!destination.view) {
+        return NO;
+    }
+    if (!destination.view.superview) {
         return NO;
     }
 #endif
@@ -1438,6 +1459,22 @@ destinationStateBeforeRoute:(ZIKPresentationState *)destinationStateBeforeRoute
         return NO;
     }
     return YES;
+}
+
+- (BOOL)_guessCanRemove {
+#if ZIK_HAS_UIKIT
+    if ([self _canPop]) {
+        return YES;
+    }
+#endif
+    if ([self _canDismiss]) {
+        return YES;
+    }
+    if (self.original_configuration.routeType == ZIKViewRouteTypeAddAsChildViewController &&
+        [self _canRemoveFromParentViewController]) {
+        return YES;
+    }
+    return NO;
 }
 
 - (void)removeDestination:(id)destination removeConfiguration:(__kindof ZIKRemoveRouteConfiguration *)removeConfiguration {
@@ -1496,7 +1533,9 @@ destinationStateBeforeRoute:(ZIKPresentationState *)destinationStateBeforeRoute
             break;
             
         case ZIKViewRouteRealTypeUnknown:
-            errorDescription = @"RouteType(Unknown) can't removeRoute";
+            if ([self _guessToRemoveDestination:destination] == NO) {
+                errorDescription = @"RouteType(Unknown) can't removeRoute";
+            }
             break;
             
         case ZIKViewRouteRealTypeUnwind:
@@ -1512,6 +1551,49 @@ destinationStateBeforeRoute:(ZIKPresentationState *)destinationStateBeforeRoute
         [self notifyError_actionFailedWithAction:ZIKRouteActionRemoveRoute
                                 errorDescription:errorDescription];
     }
+}
+
+- (BOOL)_guessToRemoveDestination:(id)destination {
+    if ([destination isKindOfClass:[XXViewController class]]) {
+#if ZIK_HAS_UIKIT
+        ZIKViewRouteType routeType = self.original_configuration.routeType;
+        BOOL preferDismiss = YES;
+        if (routeType == ZIKViewRouteTypePush) {
+            preferDismiss = NO;
+        }
+        if (@available(iOS 8, *)) {
+            if (routeType == ZIKViewRouteTypeShow) {
+                preferDismiss = NO;
+            }
+        }
+        if (preferDismiss == NO && [self _canPop]) {
+            [self _popOnDestination:destination];
+            return YES;
+        }
+#endif
+        if ([self _canDismiss]) {
+            [self _dismissOnDestination:destination];
+            return YES;
+        }
+#if ZIK_HAS_UIKIT
+        if (preferDismiss == YES && [self _canPop]) {
+            [self _popOnDestination:destination];
+            return YES;
+        }
+#endif
+        if (self.original_configuration.routeType == ZIKViewRouteTypeAddAsChildViewController) {
+            if ([self _canRemoveFromParentViewController]) {
+                [self _removeFromParentViewControllerOnDestination:destination];
+                return YES;
+            }
+        }
+    } else if ([destination isKindOfClass:[XXView class]]) {
+        if ([self _canRemoveFromSuperview]) {
+            [self _removeFromSuperviewOnDestination:destination];
+            return YES;
+        }
+    }
+    return NO;
 }
 
 #if ZIK_HAS_UIKIT
