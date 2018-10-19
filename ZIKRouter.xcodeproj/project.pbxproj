@@ -66,6 +66,33 @@
 		F853049821045F1E00C0BC71 /* ZIKPlatformCapabilities.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = F8EF187420D2AD7700496EED /* ZIKPlatformCapabilities.h */; };
 		F853049921045F1E00C0BC71 /* ZIKClassCapabilities.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = F8EF187620D2B82F00496EED /* ZIKClassCapabilities.h */; };
 		F853196C2083BFA4006D12F5 /* ZIKViewRouteRegistryPrivate.h in Headers */ = {isa = PBXBuildFile; fileRef = F853196B2083BFA4006D12F5 /* ZIKViewRouteRegistryPrivate.h */; };
+		F85389B5217192E2003EA2DD /* ZIKRouteConfiguration.m in Sources */ = {isa = PBXBuildFile; fileRef = F85A69941F90E37100F33285 /* ZIKRouteConfiguration.m */; };
+		F85389B6217192E2003EA2DD /* ZIKRouterType.m in Sources */ = {isa = PBXBuildFile; fileRef = F85C584420149B3F0096821B /* ZIKRouterType.m */; };
+		F85389B7217192E2003EA2DD /* ZIKRoute.m in Sources */ = {isa = PBXBuildFile; fileRef = F8566AB820780D450075675C /* ZIKRoute.m */; };
+		F85389B8217192E2003EA2DD /* ZIKRouteRegistry.m in Sources */ = {isa = PBXBuildFile; fileRef = F8AD32D21FBC6B3F00186A22 /* ZIKRouteRegistry.m */; };
+		F85389B9217192E2003EA2DD /* ZIKServiceRouter.m in Sources */ = {isa = PBXBuildFile; fileRef = F8FD8EB31F3AAEAB00D7EECB /* ZIKServiceRouter.m */; };
+		F85389BA217192E2003EA2DD /* ZIKServiceRouter+Discover.m in Sources */ = {isa = PBXBuildFile; fileRef = F85183D32079B20100DC3ED6 /* ZIKServiceRouter+Discover.m */; };
+		F85389BB217192E2003EA2DD /* ZIKServiceRouterType.m in Sources */ = {isa = PBXBuildFile; fileRef = F85183CF2079B0E800DC3ED6 /* ZIKServiceRouterType.m */; };
+		F85389BC217192E2003EA2DD /* ZIKServiceRoute.m in Sources */ = {isa = PBXBuildFile; fileRef = F8566ADE207929C80075675C /* ZIKServiceRoute.m */; };
+		F85389BD217192E2003EA2DD /* ZIKBlockServiceRouter.m in Sources */ = {isa = PBXBuildFile; fileRef = F8566AD2207920000075675C /* ZIKBlockServiceRouter.m */; };
+		F85389BE217192E2003EA2DD /* ZIKServiceRouteRegistry.m in Sources */ = {isa = PBXBuildFile; fileRef = F8AD32F11FBD5C5F00186A22 /* ZIKServiceRouteRegistry.m */; };
+		F85389BF217192E2003EA2DD /* ZIKServiceRouteAdapter.m in Sources */ = {isa = PBXBuildFile; fileRef = F850CF921F4B1E52004319A0 /* ZIKServiceRouteAdapter.m */; };
+		F85389C0217192E2003EA2DD /* ZIKViewRouter+Discover.m in Sources */ = {isa = PBXBuildFile; fileRef = F85C584C201517040096821B /* ZIKViewRouter+Discover.m */; };
+		F85389C1217192E2003EA2DD /* ZIKViewRouteError.m in Sources */ = {isa = PBXBuildFile; fileRef = F8C0D1101FB011C7003D3B3B /* ZIKViewRouteError.m */; };
+		F85389C2217192E2003EA2DD /* ZIKViewRouteConfiguration.m in Sources */ = {isa = PBXBuildFile; fileRef = F83315411F6FE03900891004 /* ZIKViewRouteConfiguration.m */; };
+		F85389C3217192E2003EA2DD /* ZIKViewRouterType.m in Sources */ = {isa = PBXBuildFile; fileRef = F85183C72079AD5E00DC3ED6 /* ZIKViewRouterType.m */; };
+		F85389C4217192E2003EA2DD /* ZIKViewRoute.m in Sources */ = {isa = PBXBuildFile; fileRef = F8566ABE2078B5B60075675C /* ZIKViewRoute.m */; };
+		F85389C5217192E2003EA2DD /* ZIKBlockViewRouter.m in Sources */ = {isa = PBXBuildFile; fileRef = F8566AC62078C95F0075675C /* ZIKBlockViewRouter.m */; };
+		F85389C6217192E2003EA2DD /* ZIKViewRouteRegistry.m in Sources */ = {isa = PBXBuildFile; fileRef = F8AD32D81FBC8C6A00186A22 /* ZIKViewRouteRegistry.m */; };
+		F85389C7217192E2003EA2DD /* ZIKViewRouteAdapter.m in Sources */ = {isa = PBXBuildFile; fileRef = F850CF8E1F4B1C01004319A0 /* ZIKViewRouteAdapter.m */; };
+		F85389C8217192E2003EA2DD /* UIView+ZIKViewRouterPrivate.m in Sources */ = {isa = PBXBuildFile; fileRef = F83315351F6FC77A00891004 /* UIView+ZIKViewRouterPrivate.m */; };
+		F85389C9217192E2003EA2DD /* UIViewController+ZIKViewRouterPrivate.m in Sources */ = {isa = PBXBuildFile; fileRef = F83315391F6FC86600891004 /* UIViewController+ZIKViewRouterPrivate.m */; };
+		F85389CA217192E2003EA2DD /* UIStoryboardSegue+ZIKViewRouterPrivate.m in Sources */ = {isa = PBXBuildFile; fileRef = F833153D1F6FCC3E00891004 /* UIStoryboardSegue+ZIKViewRouterPrivate.m */; };
+		F85389CB217192E2003EA2DD /* ZIKRouterRuntime.m in Sources */ = {isa = PBXBuildFile; fileRef = F8564E191F717F2700C16A8A /* ZIKRouterRuntime.m */; };
+		F85389CC217192E2003EA2DD /* ZIKRouterRuntimeDebug.m in Sources */ = {isa = PBXBuildFile; fileRef = F8F6B1BA20A6142100110B03 /* ZIKRouterRuntimeDebug.m */; };
+		F85389CD217192E2003EA2DD /* NSString+Demangle.mm in Sources */ = {isa = PBXBuildFile; fileRef = F8F6B1FD20AA90F200110B03 /* NSString+Demangle.mm */; };
+		F85389CE217192E2003EA2DD /* ZIKFindSymbol.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F88D8B5E1FECECE200157E71 /* ZIKFindSymbol.cpp */; };
+		F85389CF217192E2003EA2DD /* ZIKImageSymbol.mm in Sources */ = {isa = PBXBuildFile; fileRef = F88D8B651FECFB0900157E71 /* ZIKImageSymbol.mm */; };
 		F8564E1A1F717F2700C16A8A /* ZIKRouterRuntime.h in Headers */ = {isa = PBXBuildFile; fileRef = F8564E181F717F2700C16A8A /* ZIKRouterRuntime.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		F8564E1B1F717F2700C16A8A /* ZIKRouterRuntime.m in Sources */ = {isa = PBXBuildFile; fileRef = F8564E191F717F2700C16A8A /* ZIKRouterRuntime.m */; };
 		F8564E1C1F71810300C16A8A /* ZIKRouterRuntime.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = F8564E181F717F2700C16A8A /* ZIKRouterRuntime.h */; };
@@ -853,7 +880,6 @@
 				TargetAttributes = {
 					F81A33A5208726B5001D176A = {
 						CreatedOnToolsVersion = 9.3;
-						DevelopmentTeam = 8FE9268LAG;
 						ProvisioningStyle = Automatic;
 					};
 					F85F4CFE1F223EB0003106C3 = {
@@ -998,6 +1024,33 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				F85389B5217192E2003EA2DD /* ZIKRouteConfiguration.m in Sources */,
+				F85389B6217192E2003EA2DD /* ZIKRouterType.m in Sources */,
+				F85389B7217192E2003EA2DD /* ZIKRoute.m in Sources */,
+				F85389B8217192E2003EA2DD /* ZIKRouteRegistry.m in Sources */,
+				F85389B9217192E2003EA2DD /* ZIKServiceRouter.m in Sources */,
+				F85389BA217192E2003EA2DD /* ZIKServiceRouter+Discover.m in Sources */,
+				F85389BB217192E2003EA2DD /* ZIKServiceRouterType.m in Sources */,
+				F85389BC217192E2003EA2DD /* ZIKServiceRoute.m in Sources */,
+				F85389BD217192E2003EA2DD /* ZIKBlockServiceRouter.m in Sources */,
+				F85389BE217192E2003EA2DD /* ZIKServiceRouteRegistry.m in Sources */,
+				F85389BF217192E2003EA2DD /* ZIKServiceRouteAdapter.m in Sources */,
+				F85389C0217192E2003EA2DD /* ZIKViewRouter+Discover.m in Sources */,
+				F85389C1217192E2003EA2DD /* ZIKViewRouteError.m in Sources */,
+				F85389C2217192E2003EA2DD /* ZIKViewRouteConfiguration.m in Sources */,
+				F85389C3217192E2003EA2DD /* ZIKViewRouterType.m in Sources */,
+				F85389C4217192E2003EA2DD /* ZIKViewRoute.m in Sources */,
+				F85389C5217192E2003EA2DD /* ZIKBlockViewRouter.m in Sources */,
+				F85389C6217192E2003EA2DD /* ZIKViewRouteRegistry.m in Sources */,
+				F85389C7217192E2003EA2DD /* ZIKViewRouteAdapter.m in Sources */,
+				F85389C8217192E2003EA2DD /* UIView+ZIKViewRouterPrivate.m in Sources */,
+				F85389C9217192E2003EA2DD /* UIViewController+ZIKViewRouterPrivate.m in Sources */,
+				F85389CA217192E2003EA2DD /* UIStoryboardSegue+ZIKViewRouterPrivate.m in Sources */,
+				F85389CB217192E2003EA2DD /* ZIKRouterRuntime.m in Sources */,
+				F85389CC217192E2003EA2DD /* ZIKRouterRuntimeDebug.m in Sources */,
+				F85389CD217192E2003EA2DD /* NSString+Demangle.mm in Sources */,
+				F85389CE217192E2003EA2DD /* ZIKFindSymbol.cpp in Sources */,
+				F85389CF217192E2003EA2DD /* ZIKImageSymbol.mm in Sources */,
 				F85F4D311F224116003106C3 /* ZIKRouter.m in Sources */,
 				F85F4D321F224116003106C3 /* ZIKViewRouter.m in Sources */,
 				F85F4D331F224116003106C3 /* ZIKPresentationState.m in Sources */,
@@ -1032,7 +1085,7 @@
 				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				CODE_SIGN_STYLE = Automatic;
-				DEVELOPMENT_TEAM = 8FE9268LAG;
+				DEVELOPMENT_TEAM = "";
 				GCC_C_LANGUAGE_STANDARD = gnu11;
 				INFOPLIST_FILE = ZIKRouterTests/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
@@ -1053,7 +1106,7 @@
 				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				CODE_SIGN_STYLE = Automatic;
-				DEVELOPMENT_TEAM = 8FE9268LAG;
+				DEVELOPMENT_TEAM = "";
 				GCC_C_LANGUAGE_STANDARD = gnu11;
 				INFOPLIST_FILE = ZIKRouterTests/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
@@ -1210,7 +1263,7 @@
 				MODULEMAP_FILE = ZIKRouter/Framework/module.modulemap;
 				PRODUCT_BUNDLE_IDENTIFIER = com.zuik.ZIKRouter;
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				SDKROOT = macosx;
+				SDKROOT = iphoneos;
 				SKIP_INSTALL = YES;
 				TVOS_DEPLOYMENT_TARGET = 9.0;
 			};
@@ -1234,7 +1287,7 @@
 				MODULEMAP_FILE = ZIKRouter/Framework/module.modulemap;
 				PRODUCT_BUNDLE_IDENTIFIER = com.zuik.ZIKRouter;
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				SDKROOT = macosx;
+				SDKROOT = iphoneos;
 				SKIP_INSTALL = YES;
 				TVOS_DEPLOYMENT_TARGET = 9.0;
 			};
@@ -1243,11 +1296,13 @@
 		F85F4D2E1F2240D2003106C3 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				DEVELOPMENT_TEAM = 8FE9268LAG;
+				DEVELOPMENT_TEAM = "";
 				EXECUTABLE_PREFIX = "";
-				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 7.0;
+				ONLY_ACTIVE_ARCH = NO;
 				OTHER_LDFLAGS = "-ObjC";
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = iphoneos;
 				SKIP_INSTALL = YES;
 			};
 			name = Debug;
@@ -1255,11 +1310,13 @@
 		F85F4D2F1F2240D2003106C3 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				DEVELOPMENT_TEAM = 8FE9268LAG;
+				DEVELOPMENT_TEAM = "";
 				EXECUTABLE_PREFIX = "";
-				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 7.0;
+				ONLY_ACTIVE_ARCH = NO;
 				OTHER_LDFLAGS = "-ObjC";
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = iphoneos;
 				SKIP_INSTALL = YES;
 			};
 			name = Release;
@@ -1267,7 +1324,7 @@
 		F8D11F4C1F2268CA0035240D /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				DEVELOPMENT_TEAM = 8FE9268LAG;
+				DEVELOPMENT_TEAM = "";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
 			name = Debug;
@@ -1275,7 +1332,7 @@
 		F8D11F4D1F2268CA0035240D /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				DEVELOPMENT_TEAM = 8FE9268LAG;
+				DEVELOPMENT_TEAM = "";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
 			name = Release;
