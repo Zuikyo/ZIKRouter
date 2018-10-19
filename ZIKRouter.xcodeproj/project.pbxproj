@@ -1263,7 +1263,7 @@
 				MODULEMAP_FILE = ZIKRouter/Framework/module.modulemap;
 				PRODUCT_BUNDLE_IDENTIFIER = com.zuik.ZIKRouter;
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				SDKROOT = iphoneos;
+				SDKROOT = macosx;
 				SKIP_INSTALL = YES;
 				TVOS_DEPLOYMENT_TARGET = 9.0;
 			};
@@ -1287,7 +1287,7 @@
 				MODULEMAP_FILE = ZIKRouter/Framework/module.modulemap;
 				PRODUCT_BUNDLE_IDENTIFIER = com.zuik.ZIKRouter;
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				SDKROOT = iphoneos;
+				SDKROOT = macosx;
 				SKIP_INSTALL = YES;
 				TVOS_DEPLOYMENT_TARGET = 9.0;
 			};
