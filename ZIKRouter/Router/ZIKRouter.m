@@ -480,7 +480,7 @@ NSErrorDomain const ZIKRouteErrorDomain = @"ZIKRouteErrorDomain";
 + (nullable id)makeDestinationWithConfiguring:(void(NS_NOESCAPE ^ _Nullable)(ZIKPerformRouteConfiguration *config))configBuilder {
     NSAssert(self != [ZIKRouter class], @"Only get destination from router subclass");
     if (![self canMakeDestination]) {
-        NSAssert1(NO, @"The router (%@) doesn't support makeDestination",self);
+        NSAssert1(NO, @"+canMakeDestination return NO, the router (%@) can't makeDestination",self);
         return nil;
     }
     __block id dest;
@@ -506,7 +506,7 @@ NSErrorDomain const ZIKRouteErrorDomain = @"ZIKRouteErrorDomain";
 + (nullable id)makeDestinationWithStrictConfiguring:(void (NS_NOESCAPE ^)(ZIKPerformRouteStrictConfiguration<id> * _Nonnull, ZIKPerformRouteConfiguration * _Nonnull))configBuilder {
     NSAssert(self != [ZIKRouter class], @"Only get destination from router subclass");
     if (![self canMakeDestination]) {
-        NSAssert1(NO, @"The router (%@) doesn't support makeDestination",self);
+        NSAssert1(NO, @"+canMakeDestination return NO, the router (%@) can't makeDestination",self);
         return nil;
     }
     __block id dest;
