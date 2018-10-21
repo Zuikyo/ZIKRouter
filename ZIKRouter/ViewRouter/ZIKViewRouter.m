@@ -680,9 +680,11 @@ static NSMutableArray *g_preparingXXViewRouters;
     ZIKViewRouteConfiguration *configuration = self.original_configuration;
 #if !TARGET_OS_TV
     if (NSClassFromString(@"UIPopoverPresentationController")) {
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wunguarded-availability"
         destination.modalPresentationStyle = UIModalPresentationPopover;
         UIPopoverPresentationController *popoverPresentationController = destination.popoverPresentationController;
-        
+#pragma clang diagnostic pop
         if (popoverConfiguration.barButtonItem) {
             popoverPresentationController.barButtonItem = popoverConfiguration.barButtonItem;
         } else if (popoverConfiguration.sourceView) {
@@ -921,7 +923,13 @@ static NSMutableArray *g_preparingXXViewRouters;
     NSParameterAssert([destination isKindOfClass:[XXViewController class]]);
 #if ZIK_HAS_UIKIT
     NSParameterAssert([source isKindOfClass:[XXViewController class]]);
+    if ([source respondsToSelector:@selector(showViewController:sender:)] == NO) {
+        [self _performPushOnDestination:destination fromSource:source];
+        return;
+    }
 #endif
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wunguarded-availability"
     [destination setZix_routeTypeFromRouter:@(ZIKViewRouteTypeShow)];
     XXViewController *wrappedDestination = [self _wrappedDestination:destination];
 #if ZIK_HAS_UIKIT
@@ -930,7 +938,8 @@ static NSMutableArray *g_preparingXXViewRouters;
     [self beginPerformRoute];
 #if ZIK_HAS_UIKIT
     [source showViewController:wrappedDestination sender:self.original_configuration.sender];
-    
+
+#pragma clang diagnostic pop
     id<UIViewControllerTransitionCoordinator> transitionCoordinator = [source zix_currentTransitionCoordinator];
     if (!transitionCoordinator) {
         transitionCoordinator = [destination zix_currentTransitionCoordinator];
@@ -958,6 +967,12 @@ static NSMutableArray *g_preparingXXViewRouters;
 - (void)_performShowDetailOnDestination:(XXViewController *)destination fromSource:(XXViewController *)source {
     NSParameterAssert([destination isKindOfClass:[XXViewController class]]);
     NSParameterAssert([source isKindOfClass:[XXViewController class]]);
+    if ([source respondsToSelector:@selector(showDetailViewController:sender:)] == NO) {
+        [self _performPresentModallyOnDestination:destination fromSource:source];
+        return;
+    }
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wunguarded-availability"
     [destination setZix_routeTypeFromRouter:@(ZIKViewRouteTypeShowDetail)];
     XXViewController *wrappedDestination = [self _wrappedDestination:destination];
     ZIKPresentationState *destinationStateBeforeRoute = [destination zix_presentationState];
@@ -965,6 +980,7 @@ static NSMutableArray *g_preparingXXViewRouters;
     
     [source showDetailViewController:wrappedDestination sender:self.original_configuration.sender];
     
+#pragma clang diagnostic pop
     id<UIViewControllerTransitionCoordinator> transitionCoordinator = [source zix_currentTransitionCoordinator];
     if (!transitionCoordinator) {
         transitionCoordinator = [destination zix_currentTransitionCoordinator];
@@ -1066,6 +1082,8 @@ static NSMutableArray *g_preparingXXViewRouters;
         errorDescription = @"container is nil";
     }
 #if ZIK_HAS_UIKIT
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wunguarded-availability"
     else if ([container isKindOfClass:[UINavigationController class]]) {
         if (configuration.routeType == ZIKViewRouteTypePush) {
             errorDescription = [NSString stringWithFormat:@"navigationController:(%@) can't be pushed into another navigationController",container];
@@ -1075,6 +1093,7 @@ static NSMutableArray *g_preparingXXViewRouters;
             errorDescription = [NSString stringWithFormat:@"navigationController:(%@) can't be pushed into another navigationController",container];
         } else if (configuration.routeType == ZIKViewRouteTypeShowDetail
                    && [configuration.source isKindOfClass:[XXViewController class]]
+                   && [[(XXViewController *)configuration.source splitViewController] respondsToSelector:@selector(isCancelled)]
                    && [(XXViewController *)configuration.source splitViewController].isCollapsed &&
                    [[[(XXViewController *)configuration.source splitViewController].viewControllers firstObject] isKindOfClass:[UINavigationController class]]) {
             errorDescription = [NSString stringWithFormat:@"navigationController:(%@) can't be pushed into another navigationController",container];
@@ -1094,6 +1113,7 @@ static NSMutableArray *g_preparingXXViewRouters;
             errorDescription = [NSString stringWithFormat:@"Split View Controllers cannot be pushed to a Navigation Controller %@",destination];
         } else if (configuration.routeType == ZIKViewRouteTypeShowDetail
                    && [configuration.source isKindOfClass:[XXViewController class]]
+                   && [[(XXViewController *)configuration.source splitViewController] respondsToSelector:@selector(isCancelled)]
                    && [(XXViewController *)configuration.source splitViewController].isCollapsed &&
                    [[[(XXViewController *)configuration.source splitViewController].viewControllers firstObject] isKindOfClass:[UINavigationController class]]) {
             errorDescription = [NSString stringWithFormat:@"Split View Controllers cannot be pushed to a Navigation Controller %@",destination];
@@ -1101,6 +1121,7 @@ static NSMutableArray *g_preparingXXViewRouters;
             errorDescription = [NSString stringWithFormat:@"container:(%@) must contains destination in its viewControllers, destination:(%@), container's viewcontrollers:(%@)",container,destination,[(UITabBarController *)container viewControllers]];
         }
     }
+#pragma clang diagnostic pop
 #endif
     if (errorDescription) {
         [self notifyError_invalidContainerWithAction:ZIKRouteActionPerformRoute errorDescription:@"containerWrapper returns invalid container: %@",errorDescription];
