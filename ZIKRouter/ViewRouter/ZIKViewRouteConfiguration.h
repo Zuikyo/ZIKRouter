@@ -336,10 +336,10 @@ typedef void(^ZIKViewRouteSegueConfiger)(NS_NOESCAPE ZIKViewRouteSegueConfigure)
 @property (nonatomic, class, readonly) ZIKViewRoutePath *(^performSegueFrom)(UIViewController *source, NSString *identifier, id _Nullable sender) NS_SWIFT_UNAVAILABLE("Use performSegue(from:identifier:sender:) instead");
 
 /// Show the destination from the source view controller.
-@property (nonatomic, class, readonly) ZIKViewRoutePath *(^showFrom)(UIViewController *source) NS_SWIFT_UNAVAILABLE("Use show(from:) instead");
+@property (nonatomic, class, readonly) ZIKViewRoutePath *(^showFrom)(UIViewController *source) API_AVAILABLE(ios(8.0)) NS_SWIFT_UNAVAILABLE("Use show(from:) instead");
 
 /// Show the destination as detail from the source view controller.
-@property (nonatomic, class, readonly) ZIKViewRoutePath *(^showDetailFrom)(UIViewController *source) NS_SWIFT_UNAVAILABLE("Use showDetail(from:) instead");
+@property (nonatomic, class, readonly) ZIKViewRoutePath *(^showDetailFrom)(UIViewController *source) API_AVAILABLE(ios(8.0)) NS_SWIFT_UNAVAILABLE("Use showDetail(from:) instead");
 
 /// Add the destination as child view controller to the parent source view controller. Adding destination's view to source's view in addingChildViewHandler, and invoke the completion block when finished.
 @property (nonatomic, class, readonly) ZIKViewRoutePath *(^addAsChildViewControllerFrom)(UIViewController *source, void(^addingChildViewHandler)(UIViewController *destination, void(^completion)(void))) NS_SWIFT_UNAVAILABLE("Use addAsChildViewController(from:addingChildViewHandler) instead");
@@ -369,10 +369,10 @@ typedef void(^ZIKViewRouteSegueConfiger)(NS_NOESCAPE ZIKViewRouteSegueConfigure)
 + (instancetype)performSegueFrom:(UIViewController *)source identifier:(NSString *)identifier sender:(nullable id)sender NS_SWIFT_NAME(performSegue(from:identifier:sender:));
 
 /// Show the destination from the source view controller.
-+ (instancetype)showFrom:(UIViewController *)source NS_SWIFT_NAME(show(from:));
++ (instancetype)showFrom:(UIViewController *)source API_AVAILABLE(ios(8.0)) NS_SWIFT_NAME(show(from:));
 
 /// Show the destination as detail from the source view controller.
-+ (instancetype)showDetailFrom:(UIViewController *)source NS_SWIFT_NAME(showDetail(from:));
++ (instancetype)showDetailFrom:(UIViewController *)source API_AVAILABLE(ios(8.0)) NS_SWIFT_NAME(showDetail(from:));
 
 /// Add the destination as child view controller to the parent source view controller. Adding destination's view to source's view in addingChildViewHandler, and invoke the completion block when finished.
 + (instancetype)addAsChildViewControllerFrom:(UIViewController *)source addingChildViewHandler:(void(^)(UIViewController *destination, void(^completion)(void)))addingChildViewHandler NS_SWIFT_NAME(addAsChildViewController(from:addingChildViewHandler:));
