@@ -29,7 +29,7 @@
 
 - (void)testPerformWithPrepareDestination {
     XCTestExpectation *expectation = [self expectationWithDescription:@"prepareDestination"];
-    {
+    @autoreleasepool {
         [self enterTest];
         self.router = [ZIKRouterToServiceModule(AServiceModuleInput) performWithConfiguring:^(ZIKPerformRouteConfiguration<AServiceModuleInput> * _Nonnull config) {
             config.title = @"test title";
@@ -41,6 +41,7 @@
                 [expectation fulfill];
             };
             config.completionHandler = ^(BOOL success, id  _Nullable destination, ZIKRouteAction  _Nonnull routeAction, NSError * _Nullable error) {
+                self.destination = destination;
                 XCTAssertTrue(success);
                 [self handle:^{
                     [self leaveTest];
@@ -56,7 +57,7 @@
 
 - (void)testPerformWithSuccessCompletionHandler {
     XCTestExpectation *expectation = [self expectationWithDescription:@"completionHandler"];
-    {
+    @autoreleasepool {
         [self enterTest];
         self.router = [ZIKRouterToServiceModule(AServiceModuleInput) performWithConfiguring:^(ZIKPerformRouteConfiguration<AServiceModuleInput> * _Nonnull config) {
             config.title = @"test title";
@@ -64,6 +65,7 @@
                 XCTAssert([destination.title isEqualToString:@"test title"]);
             }];
             config.completionHandler = ^(BOOL success, id  _Nullable destination, ZIKRouteAction  _Nonnull routeAction, NSError * _Nullable error) {
+                self.destination = destination;
                 XCTAssertTrue(success);
                 XCTAssertNil(error);
                 [expectation fulfill];
@@ -82,7 +84,7 @@
 
 - (void)testPerformWithErrorCompletionHandler {
     XCTestExpectation *expectation = [self expectationWithDescription:@"completionHandler"];
-    {
+    @autoreleasepool {
         TestConfig.routeShouldFail = YES;
         [self enterTest];
         self.router = [ZIKRouterToServiceModule(AServiceModuleInput) performWithConfiguring:^(ZIKPerformRouteConfiguration<AServiceModuleInput> * _Nonnull config) {
@@ -109,9 +111,10 @@
 
 - (void)testPerformWithSuccessCompletion {
     XCTestExpectation *expectation = [self expectationWithDescription:@"completionHandler"];
-    {
+    @autoreleasepool {
         [self enterTest];
         self.router = [ZIKRouterToServiceModule(AServiceModuleInput) performWithCompletion:^(BOOL success, id  _Nullable destination, ZIKRouteAction  _Nonnull routeAction, NSError * _Nullable error) {
+            self.destination = destination;
             XCTAssertTrue(success);
             XCTAssertNil(error);
             [expectation fulfill];
@@ -129,10 +132,11 @@
 
 - (void)testPerformWithErrorCompletion {
     XCTestExpectation *expectation = [self expectationWithDescription:@"completionHandler"];
-    {
+    @autoreleasepool {
         TestConfig.routeShouldFail = YES;
         [self enterTest];
         self.router = [ZIKRouterToServiceModule(AServiceModuleInput) performWithCompletion:^(BOOL success, id  _Nullable destination, ZIKRouteAction  _Nonnull routeAction, NSError * _Nullable error) {
+            self.destination = destination;
             XCTAssertFalse(success);
             XCTAssertNotNil(error);
             [expectation fulfill];
@@ -151,7 +155,7 @@
 - (void)testPerformRouteWithSuccessCompletion {
     XCTestExpectation *expectation = [self expectationWithDescription:@"completionHandler"];
     expectation.assertForOverFulfill = YES;
-    {
+    @autoreleasepool {
         [self enterTest];
         self.router = [ZIKRouterToServiceModule(AServiceModuleInput) performWithCompletion:^(BOOL success, id  _Nullable destination, ZIKRouteAction  _Nonnull routeAction, NSError * _Nullable error) {
             XCTAssertTrue(success);
@@ -160,6 +164,7 @@
             [self handle:^{
                 XCTAssert(self.router.state == ZIKRouterStateRouted);
                 [self.router performRouteWithCompletion:^(BOOL success, id  _Nullable destination, ZIKRouteAction  _Nonnull routeAction, NSError * _Nullable error) {
+                    self.destination = destination;
                     XCTAssert(self.router.state == ZIKRouterStateRouted);
                     XCTAssertTrue(success);
                     XCTAssertNil(error);
@@ -178,7 +183,7 @@
 - (void)testPerformRouteWithErrorCompletion {
     XCTestExpectation *expectation = [self expectationWithDescription:@"completionHandler"];
     expectation.assertForOverFulfill = YES;
-    {
+    @autoreleasepool {
         TestConfig.routeShouldFail = NO;
         [self enterTest];
         self.router = [ZIKRouterToServiceModule(AServiceModuleInput) performWithCompletion:^(BOOL success, id  _Nullable destination, ZIKRouteAction  _Nonnull routeAction, NSError * _Nullable error) {
@@ -206,7 +211,7 @@
 
 - (void)testPerformWithSuccess {
     XCTestExpectation *expectation = [self expectationWithDescription:@"successHandler"];
-    {
+    @autoreleasepool {
         [self enterTest];
         self.router = [ZIKRouterToServiceModule(AServiceModuleInput) performWithConfiguring:^(ZIKPerformRouteConfiguration<AServiceModuleInput> * _Nonnull config) {
             config.title = @"test title";
@@ -214,6 +219,7 @@
                 XCTAssert([destination.title isEqualToString:@"test title"]);
             }];
             config.successHandler = ^(id  _Nonnull destination) {
+                self.destination = destination;
                 XCTAssertNotNil(destination);
                 [expectation fulfill];
                 [self handle:^{
@@ -234,7 +240,7 @@
     successHandlerExpectation.expectedFulfillmentCount = 2;
     XCTestExpectation *performerSuccessHandlerExpectation = [self expectationWithDescription:@"performerSuccessHandler once"];
     performerSuccessHandlerExpectation.assertForOverFulfill = YES;
-    {
+    @autoreleasepool {
         [self enterTest];
         self.router = [ZIKRouterToServiceModule(AServiceModuleInput) performWithConfiguring:^(ZIKPerformRouteConfiguration<AServiceModuleInput> * _Nonnull config) {
             config.title = @"test title";
@@ -246,6 +252,7 @@
                 [successHandlerExpectation fulfill];
             };
             config.performerSuccessHandler = ^(id  _Nonnull destination) {
+                self.destination = destination;
                 XCTAssertNotNil(destination);
                 [performerSuccessHandlerExpectation fulfill];
                 
@@ -272,7 +279,7 @@
 - (void)testPerformWithError {
     XCTestExpectation *providerErrorExpectation = [self expectationWithDescription:@"providerErrorHandler"];
     XCTestExpectation *performerErrorExpectation = [self expectationWithDescription:@"performerErrorHandler"];
-    {
+    @autoreleasepool {
         TestConfig.routeShouldFail = YES;
         [self enterTest];
         self.router = [ZIKRouterToServiceModule(AServiceModuleInput) performWithConfiguring:^(ZIKPerformRouteConfiguration<AServiceModuleInput> * _Nonnull config) {
@@ -306,7 +313,7 @@
 
 - (void)testStrictPerformWithPrepareDestination {
     XCTestExpectation *expectation = [self expectationWithDescription:@"prepareDestination"];
-    {
+    @autoreleasepool {
         [self enterTest];
         self.router = [ZIKRouterToServiceModule(AServiceModuleInput)
                        performWithStrictConfiguring:^(ZIKPerformRouteStrictConfiguration *config, ZIKPerformRouteConfiguration<AServiceModuleInput> * _Nonnull module) {
@@ -315,6 +322,7 @@
                                XCTAssert([destination.title isEqualToString:@"test title"]);
                            }];
                            config.successHandler = ^(id  _Nonnull destination) {
+                               self.destination = destination;
                                XCTAssertNotNil(destination);
                                [expectation fulfill];
                                [self handle:^{
@@ -333,7 +341,7 @@
 
 - (void)testStrictPerformWithSuccessCompletionHandler {
     XCTestExpectation *expectation = [self expectationWithDescription:@"completionHandler"];
-    {
+    @autoreleasepool {
         [self enterTest];
         self.router = [ZIKRouterToServiceModule(AServiceModuleInput)
                        performWithStrictConfiguring:^(ZIKPerformRouteStrictConfiguration *config, ZIKPerformRouteConfiguration<AServiceModuleInput> * _Nonnull module) {
@@ -342,6 +350,7 @@
                                XCTAssert([destination.title isEqualToString:@"test title"]);
                            }];
                            config.completionHandler = ^(BOOL success, id  _Nullable destination, ZIKRouteAction  _Nonnull routeAction, NSError * _Nullable error) {
+                               self.destination = destination;
                                XCTAssertTrue(success);
                                XCTAssertNil(error);
                                [expectation fulfill];
@@ -360,7 +369,7 @@
 
 - (void)testStrictPerformWithErrorCompletionHandler {
     XCTestExpectation *expectation = [self expectationWithDescription:@"completionHandler"];
-    {
+    @autoreleasepool {
         TestConfig.routeShouldFail = YES;
         [self enterTest];
         self.router = [ZIKRouterToServiceModule(AServiceModuleInput)
@@ -384,7 +393,7 @@
 
 - (void)testStrictPerformWithSuccess {
     XCTestExpectation *expectation = [self expectationWithDescription:@"successHandler"];
-    {
+    @autoreleasepool {
         [self enterTest];
         self.router = [ZIKRouterToServiceModule(AServiceModuleInput)
                        performWithStrictConfiguring:^(ZIKPerformRouteStrictConfiguration *config, ZIKPerformRouteConfiguration<AServiceModuleInput> * _Nonnull module) {
@@ -393,6 +402,7 @@
                                XCTAssert([destination.title isEqualToString:@"test title"]);
                            }];
                            config.successHandler = ^(id  _Nonnull destination) {
+                               self.destination = destination;
                                XCTAssertNotNil(destination);
                                [expectation fulfill];
                                [self handle:^{
@@ -413,7 +423,7 @@
     successHandlerExpectation.expectedFulfillmentCount = 2;
     XCTestExpectation *performerSuccessHandlerExpectation = [self expectationWithDescription:@"performerSuccessHandler once"];
     performerSuccessHandlerExpectation.assertForOverFulfill = YES;
-    {
+    @autoreleasepool {
         [self enterTest];
         self.router = [ZIKRouterToServiceModule(AServiceModuleInput)
                        performWithStrictConfiguring:^(ZIKPerformRouteStrictConfiguration *config, ZIKPerformRouteConfiguration<AServiceModuleInput> * _Nonnull module) {
@@ -431,6 +441,7 @@
                                
                                [self handle:^{
                                    [self.router performRouteWithSuccessHandler:^(id  _Nonnull destination) {
+                                       self.destination = destination;
                                        XCTAssert(self.router.state == ZIKRouterStateRouted);
                                        XCTAssertNotNil(destination);
                                        [self leaveTest];
@@ -451,7 +462,7 @@
 - (void)testStrictPerformWithError {
     XCTestExpectation *providerErrorExpectation = [self expectationWithDescription:@"providerErrorHandler"];
     XCTestExpectation *performerErrorExpectation = [self expectationWithDescription:@"performerErrorHandler"];
-    {
+    @autoreleasepool {
         TestConfig.routeShouldFail = YES;
         [self enterTest];
         self.router = [ZIKRouterToServiceModule(AServiceModuleInput)

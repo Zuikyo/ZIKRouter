@@ -47,6 +47,7 @@ DeclareRoutableView(BSubview, BSubviewModuleRouter)
     }
     BSubview *destination = [[BSubview alloc] init];
     destination.title = configuration.title;
+    destination.router = self;
     return destination;
 }
 

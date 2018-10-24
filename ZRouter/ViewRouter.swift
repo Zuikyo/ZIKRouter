@@ -303,7 +303,7 @@ public class ViewRouter<Destination, ModuleConfig> {
         return router.configuration
     }
     
-    /// Configuration for removeRoute; return copy of configuration, so modify this won't change the real configuration inside router.
+    /// Configuration for removeRoute; Return copy of configuration, so modify this won't change the real configuration inside router.
     public var removeConfiguration: ViewRemoveConfig? {
         return router.removeConfiguration
     }

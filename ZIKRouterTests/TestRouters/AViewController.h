@@ -15,5 +15,5 @@
 #import "AViewInput.h"
 
 @interface AViewController : UIViewController <AViewInput>
-
+@property (nonatomic, strong) id router;
 @end

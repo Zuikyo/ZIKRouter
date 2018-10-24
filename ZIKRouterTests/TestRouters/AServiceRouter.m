@@ -27,6 +27,7 @@ DeclareRoutableService(AService, AServiceRouter)
         return nil;
     }
     AService *destination = [[AService alloc] init];
+    destination.router = self;
     return destination;
 }
 

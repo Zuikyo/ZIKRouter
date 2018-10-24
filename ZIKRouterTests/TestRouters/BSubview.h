@@ -17,5 +17,5 @@
 @interface BSubview : UIView <BSubviewInput>
 
 @property (nonatomic, copy, nullable) NSString *title;
-
+@property (nonatomic, strong) id router;
 @end

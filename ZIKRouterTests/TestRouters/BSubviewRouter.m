@@ -28,6 +28,7 @@ DeclareRoutableView(BSubview, BSubviewRouter)
     }
     BSubview *destination = [[BSubview alloc] init];
     destination.backgroundColor = [UIColor yellowColor];
+    destination.router = self;
     return destination;
 }
 

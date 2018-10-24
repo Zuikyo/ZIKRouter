@@ -30,7 +30,7 @@
     XCTestExpectation *successHandlerExpectation = [self expectationWithDescription:@"successHandler"];
     XCTestExpectation *performerSuccessHandlerExpectation = [self expectationWithDescription:@"performerSuccessHandler"];
     XCTestExpectation *completionHandlerExpectation = [self expectationWithDescription:@"completionHandler"];
-    {
+    @autoreleasepool {
         [self enterTest];
         AViewController *destination = [[AViewController alloc] init];
         self.router = [ZIKRouterToView(AViewInput) prepareDestination:destination configuring:^(ZIKViewRouteConfiguration * _Nonnull config) {
@@ -59,6 +59,7 @@
             };
         }];
         XCTAssert([destination.title isEqualToString:@"test title"]);
+        self.destination = destination;
     }
     
     [self waitForExpectationsWithTimeout:5 handler:^(NSError * _Nullable error) {
@@ -70,7 +71,7 @@
     XCTestExpectation *errorHandlerExpectation = [self expectationWithDescription:@"errorHandler"];
     XCTestExpectation *performerErrorHandlerExpectation = [self expectationWithDescription:@"performerErrorHandler"];
     XCTestExpectation *completionHandlerExpectation = [self expectationWithDescription:@"completionHandler"];
-    {
+    @autoreleasepool {
         [self enterTest];
         id invalidDestination = [[UIViewController alloc] init];
         self.router = [ZIKRouterToView(AViewInput) prepareDestination:invalidDestination configuring:^(ZIKViewRouteConfiguration * _Nonnull config) {
@@ -99,6 +100,7 @@
                 }];
             };
         }];
+        self.destination = invalidDestination;
     }
     
     [self waitForExpectationsWithTimeout:5 handler:^(NSError * _Nullable error) {
@@ -110,7 +112,7 @@
     XCTestExpectation *successHandlerExpectation = [self expectationWithDescription:@"successHandler"];
     XCTestExpectation *performerSuccessHandlerExpectation = [self expectationWithDescription:@"performerSuccessHandler"];
     XCTestExpectation *completionHandlerExpectation = [self expectationWithDescription:@"completionHandler"];
-    {
+    @autoreleasepool {
         [self enterTest];
         AViewController *destination = [[AViewController alloc] init];
         self.router = [ZIKRouterToView(AViewInput)
@@ -142,6 +144,7 @@
                            };
                        }];
         XCTAssert([destination.title isEqualToString:@"test title"]);
+        self.destination = destination;
     }
     
     [self waitForExpectationsWithTimeout:5 handler:^(NSError * _Nullable error) {
@@ -154,7 +157,7 @@
     XCTestExpectation *performerErrorHandlerExpectation = [self expectationWithDescription:@"performerErrorHandler"];
     XCTestExpectation *completionHandlerExpectation = [self expectationWithDescription:@"completionHandler"];
     
-    {
+    @autoreleasepool {
         [self enterTest];
         id invalidDestination = [[UIViewController alloc] init];
         self.router = [ZIKRouterToView(AViewInput)
@@ -185,6 +188,7 @@
                                }];
                            };
                        }];
+        self.destination = invalidDestination;
     }
     
     [self waitForExpectationsWithTimeout:5 handler:^(NSError * _Nullable error) {

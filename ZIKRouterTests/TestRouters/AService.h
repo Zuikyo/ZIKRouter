@@ -12,5 +12,5 @@
 @interface AService : NSObject <AServiceInput>
 
 @property (nonatomic, copy, nullable) NSString *title;
-
+@property (nonatomic, strong) id router;
 @end

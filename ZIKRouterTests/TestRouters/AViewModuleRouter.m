@@ -47,6 +47,7 @@ DeclareRoutableView(AViewController, AViewModuleRouter)
     }
     AViewController *destination = [[AViewController alloc] init];
     destination.title = configuration.title;
+    destination.router = self;
     return destination;
 }
 

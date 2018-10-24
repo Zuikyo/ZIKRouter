@@ -11,6 +11,7 @@
 
 @interface ZIKRouterTestCase : XCTestCase
 @property (nonatomic, weak, nullable) ZIKRouter *router;
+@property (nonatomic, weak, nullable) id destination;
 
 - (void)enterTest;
 - (void)leaveTest;

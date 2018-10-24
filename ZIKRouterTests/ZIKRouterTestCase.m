@@ -44,6 +44,7 @@
 - (void)tearDown {
     [super tearDown];
     NSAssert(self.router == nil, @"Test router is not released");
+    NSAssert(self.destination == nil, @"Test destination is not released, maybe there is retain cycle");
     TestConfig.routeShouldFail = NO;
 }
 

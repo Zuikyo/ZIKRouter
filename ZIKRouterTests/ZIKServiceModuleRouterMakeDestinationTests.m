@@ -28,22 +28,28 @@
 }
 
 - (void)testMakeDestination {
-    BOOL canMakeDestination = [ZIKRouterToServiceModule(AServiceModuleInput) canMakeDestination];
-    XCTAssertTrue(canMakeDestination);
-    id<AServiceInput> destination = [ZIKRouterToServiceModule(AServiceModuleInput) makeDestination];
-    XCTAssertNotNil(destination);
-    XCTAssertTrue([(id)destination conformsToProtocol:@protocol(AServiceInput)]);
+    @autoreleasepool {
+        BOOL canMakeDestination = [ZIKRouterToServiceModule(AServiceModuleInput) canMakeDestination];
+        XCTAssertTrue(canMakeDestination);
+        id<AServiceInput> destination = [ZIKRouterToServiceModule(AServiceModuleInput) makeDestination];
+        XCTAssertNotNil(destination);
+        XCTAssertTrue([(id)destination conformsToProtocol:@protocol(AServiceInput)]);
+        self.destination = destination;
+    }
 }
 
 - (void)testMakeDestinationWithPreparation {
-    BOOL canMakeDestination = [ZIKRouterToServiceModule(AServiceModuleInput) canMakeDestination];
-    XCTAssertTrue(canMakeDestination);
-    id<AServiceInput> destination = [ZIKRouterToServiceModule(AServiceModuleInput) makeDestinationWithPreparation:^(id<AServiceInput>  _Nonnull destination) {
-        destination.title = @"test title";
-    }];
-    XCTAssertNotNil(destination);
-    XCTAssertTrue([(id)destination conformsToProtocol:@protocol(AServiceInput)]);
-    XCTAssert([destination.title isEqualToString:@"test title"]);
+    @autoreleasepool {
+        BOOL canMakeDestination = [ZIKRouterToServiceModule(AServiceModuleInput) canMakeDestination];
+        XCTAssertTrue(canMakeDestination);
+        id<AServiceInput> destination = [ZIKRouterToServiceModule(AServiceModuleInput) makeDestinationWithPreparation:^(id<AServiceInput>  _Nonnull destination) {
+            destination.title = @"test title";
+        }];
+        XCTAssertNotNil(destination);
+        XCTAssertTrue([(id)destination conformsToProtocol:@protocol(AServiceInput)]);
+        XCTAssert([destination.title isEqualToString:@"test title"]);
+        self.destination = destination;
+    }
 }
 
 - (void)testMakeDestinationWithPrepareDestination {

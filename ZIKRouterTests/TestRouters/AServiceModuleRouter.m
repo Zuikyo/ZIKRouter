@@ -46,6 +46,7 @@ DeclareRoutableService(AService, AServiceModuleRouter)
     }
     AService *destination = [[AService alloc] init];
     destination.title = configuration.title;
+    destination.router = self;
     return destination;
 }
 

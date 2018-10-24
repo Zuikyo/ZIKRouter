@@ -26,22 +26,28 @@
 }
 
 - (void)testMakeDestination {
-    BOOL canMakeDestination = [ZIKRouterToViewModule(AViewModuleInput) canMakeDestination];
-    XCTAssertTrue(canMakeDestination);
-    id<AViewInput> destination = [ZIKRouterToViewModule(AViewModuleInput) makeDestination];
-    XCTAssertNotNil(destination);
-    XCTAssertTrue([(id)destination conformsToProtocol:@protocol(AViewInput)]);
+    @autoreleasepool {
+        BOOL canMakeDestination = [ZIKRouterToViewModule(AViewModuleInput) canMakeDestination];
+        XCTAssertTrue(canMakeDestination);
+        id<AViewInput> destination = [ZIKRouterToViewModule(AViewModuleInput) makeDestination];
+        XCTAssertNotNil(destination);
+        XCTAssertTrue([(id)destination conformsToProtocol:@protocol(AViewInput)]);
+        self.destination = destination;
+    }
 }
 
 - (void)testMakeDestinationWithPreparation {
-    BOOL canMakeDestination = [ZIKRouterToViewModule(AViewModuleInput) canMakeDestination];
-    XCTAssertTrue(canMakeDestination);
-    id<AViewInput> destination = [ZIKRouterToViewModule(AViewModuleInput) makeDestinationWithPreparation:^(id<AViewInput>  _Nonnull destination) {
-        destination.title = @"test title";
-    }];
-    XCTAssertNotNil(destination);
-    XCTAssertTrue([(id)destination conformsToProtocol:@protocol(AViewInput)]);
-    XCTAssert([destination.title isEqualToString:@"test title"]);
+    @autoreleasepool {
+        BOOL canMakeDestination = [ZIKRouterToViewModule(AViewModuleInput) canMakeDestination];
+        XCTAssertTrue(canMakeDestination);
+        id<AViewInput> destination = [ZIKRouterToViewModule(AViewModuleInput) makeDestinationWithPreparation:^(id<AViewInput>  _Nonnull destination) {
+            destination.title = @"test title";
+        }];
+        XCTAssertNotNil(destination);
+        XCTAssertTrue([(id)destination conformsToProtocol:@protocol(AViewInput)]);
+        XCTAssert([destination.title isEqualToString:@"test title"]);
+        self.destination = destination;
+    }
 }
 
 - (void)testMakeDestinationWithPrepareDestination {

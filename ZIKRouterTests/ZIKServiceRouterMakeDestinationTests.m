@@ -26,22 +26,28 @@
 }
 
 - (void)testMakeDestination {
-    BOOL canMakeDestination = [ZIKRouterToService(AServiceInput) canMakeDestination];
-    XCTAssertTrue(canMakeDestination);
-    id<AServiceInput> destination = [ZIKRouterToService(AServiceInput) makeDestination];
-    XCTAssertNotNil(destination);
-    XCTAssertTrue([(id)destination conformsToProtocol:@protocol(AServiceInput)]);
+    @autoreleasepool {
+        BOOL canMakeDestination = [ZIKRouterToService(AServiceInput) canMakeDestination];
+        XCTAssertTrue(canMakeDestination);
+        id<AServiceInput> destination = [ZIKRouterToService(AServiceInput) makeDestination];
+        XCTAssertNotNil(destination);
+        XCTAssertTrue([(id)destination conformsToProtocol:@protocol(AServiceInput)]);
+        self.destination = destination;
+    }
 }
 
 - (void)testMakeDestinationWithPreparation {
-    BOOL canMakeDestination = [ZIKRouterToService(AServiceInput) canMakeDestination];
-    XCTAssertTrue(canMakeDestination);
-    id<AServiceInput> destination = [ZIKRouterToService(AServiceInput) makeDestinationWithPreparation:^(id<AServiceInput>  _Nonnull destination) {
-        destination.title = @"test title";
-    }];
-    XCTAssertNotNil(destination);
-    XCTAssertTrue([(id)destination conformsToProtocol:@protocol(AServiceInput)]);
-    XCTAssert([destination.title isEqualToString:@"test title"]);
+    @autoreleasepool {
+        BOOL canMakeDestination = [ZIKRouterToService(AServiceInput) canMakeDestination];
+        XCTAssertTrue(canMakeDestination);
+        id<AServiceInput> destination = [ZIKRouterToService(AServiceInput) makeDestinationWithPreparation:^(id<AServiceInput>  _Nonnull destination) {
+            destination.title = @"test title";
+        }];
+        XCTAssertNotNil(destination);
+        XCTAssertTrue([(id)destination conformsToProtocol:@protocol(AServiceInput)]);
+        XCTAssert([destination.title isEqualToString:@"test title"]);
+        self.destination = destination;
+    }
 }
 
 - (void)testMakeDestinationWithPrepareDestination {

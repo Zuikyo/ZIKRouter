@@ -26,22 +26,28 @@
 }
 
 - (void)testMakeDestination {
-    BOOL canMakeDestination = [ZIKRouterToViewModule(BSubviewModuleInput) canMakeDestination];
-    XCTAssertTrue(canMakeDestination);
-    id<BSubviewInput> destination = [ZIKRouterToViewModule(BSubviewModuleInput) makeDestination];
-    XCTAssertNotNil(destination);
-    XCTAssertTrue([(id)destination conformsToProtocol:@protocol(BSubviewInput)]);
+    @autoreleasepool {
+        BOOL canMakeDestination = [ZIKRouterToViewModule(BSubviewModuleInput) canMakeDestination];
+        XCTAssertTrue(canMakeDestination);
+        id<BSubviewInput> destination = [ZIKRouterToViewModule(BSubviewModuleInput) makeDestination];
+        XCTAssertNotNil(destination);
+        XCTAssertTrue([(id)destination conformsToProtocol:@protocol(BSubviewInput)]);
+        self.destination = destination;
+    }
 }
 
 - (void)testMakeDestinationWithPreparation {
-    BOOL canMakeDestination = [ZIKRouterToViewModule(BSubviewModuleInput) canMakeDestination];
-    XCTAssertTrue(canMakeDestination);
-    id<BSubviewInput> destination = [ZIKRouterToViewModule(BSubviewModuleInput) makeDestinationWithPreparation:^(id<BSubviewInput>  _Nonnull destination) {
-        destination.title = @"test title";
-    }];
-    XCTAssertNotNil(destination);
-    XCTAssertTrue([(id)destination conformsToProtocol:@protocol(BSubviewInput)]);
-    XCTAssert([destination.title isEqualToString:@"test title"]);
+    @autoreleasepool {
+        BOOL canMakeDestination = [ZIKRouterToViewModule(BSubviewModuleInput) canMakeDestination];
+        XCTAssertTrue(canMakeDestination);
+        id<BSubviewInput> destination = [ZIKRouterToViewModule(BSubviewModuleInput) makeDestinationWithPreparation:^(id<BSubviewInput>  _Nonnull destination) {
+            destination.title = @"test title";
+        }];
+        XCTAssertNotNil(destination);
+        XCTAssertTrue([(id)destination conformsToProtocol:@protocol(BSubviewInput)]);
+        XCTAssert([destination.title isEqualToString:@"test title"]);
+        self.destination = destination;
+    }
 }
 
 - (void)testMakeDestinationWithPrepareDestination {

@@ -26,6 +26,7 @@ DeclareRoutableView(AViewController, TestAViewRouter)
         return nil;
     }
     AViewController *destination = [[AViewController alloc] init];
+    destination.router = self;
     return destination;
 }
 
