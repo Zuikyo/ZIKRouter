@@ -8,6 +8,7 @@
 
 import XCTest
 import ZIKRouter.Private
+import ZRouter
 
 protocol SwiftClassProtocol { }
 protocol SwiftClassSubProtocol: SwiftClassProtocol { }
@@ -73,6 +74,11 @@ protocol UnusedSwiftProtocol { }
 #if DEBUG
 
 class UtilityTests: XCTestCase {
+    
+    override func setUp() {
+        super.setUp()
+        TestRouteRegistry.setUp()
+    }
     
     func testTypeCheckingForSwiftClass() {
         // Swift class
@@ -629,5 +635,48 @@ class UtilityTests: XCTestCase {
             }
         }
     }
+    
+    func testEnumerateSubclasses() {
+        var count = 0
+        ZIKRouter_enumerateClassList { (aClass) in
+            if ZIKRouter_classIsSubclassOfClass(aClass, ZIKRouter<AnyObject, ZIKPerformRouteConfiguration, ZIKRemoveRouteConfiguration>.self) {
+                count = count + 1
+            }
+        }
+        var routerCount = 0
+        enumerateClassesInMainBundleForParentClass(ZIKRouter<AnyObject, ZIKPerformRouteConfiguration, ZIKRemoveRouteConfiguration>.self) { (aClass) in
+            routerCount = routerCount + 1
+        }
+        assert(routerCount == count, "enumerateSubclassesOfClass give wrong number of subclasses")
+    }
+    
+    func testEnumerateAllViewRouters() {
+        var routerCount = 0
+        enumerateClassesInMainBundleForParentClass(ZIKAnyViewRouter.self) { (aClass) in
+            routerCount = routerCount + 1
+        }
+        var enumeratedRouterCount = 0
+        Router.enumerateAllViewRouters { (routerType, route) in
+            if let _ = routerType {
+                enumeratedRouterCount = enumeratedRouterCount + 1
+            }
+        }
+        assert(enumeratedRouterCount > 0 && enumeratedRouterCount <= routerCount, "enumerate all routers not work properly")
+    }
+    
+    func testEnumerateAllServiceRouters() {
+        var routerCount = 0
+        enumerateClassesInMainBundleForParentClass(ZIKAnyServiceRouter.self) { (aClass) in
+            routerCount = routerCount + 1
+        }
+        var enumeratedRouterCount = 0
+        Router.enumerateAllServiceRouters { (routerType, route) in
+            if let _ = routerType {
+                enumeratedRouterCount = enumeratedRouterCount + 1
+            }
+        }
+        assert(enumeratedRouterCount > 0 && enumeratedRouterCount <= routerCount, "enumerate all routers not work properly")
+    }
+    
 }
 #endif

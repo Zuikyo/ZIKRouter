@@ -248,6 +248,23 @@ static NSMutableArray<Class> *_routerClasses;
     return NO;
 }
 
++ (void)enumerateAllViewRouters:(void(NS_NOESCAPE ^)(Class _Nullable routerClass, ZIKViewRoute * _Nullable route))handler {
+    NSMutableSet *allRouters = [NSMutableSet set];
+    NSDictionary *destinationToRoutersMap = (__bridge NSDictionary *)self.destinationToRoutersMap;
+    [destinationToRoutersMap enumerateKeysAndObjectsUsingBlock:^(Class _Nonnull destinationClass, NSSet * _Nonnull routers, BOOL * _Nonnull stop) {
+        [allRouters unionSet:routers];
+    }];
+    if (handler) {
+        [allRouters enumerateObjectsUsingBlock:^(id  _Nonnull route, BOOL * _Nonnull stop) {
+            if ([route class] == route) {
+                handler(route, nil);
+            } else {
+                handler(nil, route);
+            }
+        }];
+    }
+}
+
 #pragma mark Check
 
 #if ZIKROUTER_CHECK

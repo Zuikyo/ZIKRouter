@@ -40,7 +40,7 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic, class, readonly) CFMutableDictionaryRef destinationToExclusiveRouterMap;
 ///key: identifier string, value: router class or ZIKRoute
 @property (nonatomic, class, readonly) CFMutableDictionaryRef identifierToRouterMap;
-
+///key: adapter protocol, value: adaptee protocol
 @property (nonatomic, class, readonly) CFMutableDictionaryRef adapterToAdapteeMap;
 
 #if ZIKROUTER_CHECK

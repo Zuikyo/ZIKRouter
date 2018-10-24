@@ -409,7 +409,10 @@ static BOOL _registrationFinished = NO;
 #endif
     
     CFDictionarySetValue(self.destinationToExclusiveRouterMap, (__bridge const void *)(destinationClass), (__bridge const void *)(routeObject));
-    CFDictionarySetValue(self.destinationToDefaultRouterMap, (__bridge const void *)(destinationClass), (__bridge const void *)(routeObject));
+    CFMutableDictionaryRef destinationToDefaultRouterMap = self.destinationToDefaultRouterMap;
+    if (!CFDictionaryContainsKey(destinationToDefaultRouterMap, (__bridge const void *)(destinationClass))) {
+        CFDictionarySetValue(destinationToDefaultRouterMap, (__bridge const void *)(destinationClass), (__bridge const void *)(routeObject));
+    }
     
     CFMutableDictionaryRef destinationToRoutersMap = self.destinationToRoutersMap;
     CFMutableSetRef routers = (CFMutableSetRef)CFDictionaryGetValue(destinationToRoutersMap, (__bridge const void *)(destinationClass));

@@ -26,4 +26,8 @@
     return [ZIKTimeService sharedInstance];
 }
 
++ (void)applicationDidEnterBackground:(UIApplication *)application {
+    NSLog(@"%@ handle applicationDidEnterBackground event", NSStringFromClass(self));
+}
+
 @end

@@ -11,7 +11,20 @@
 
 #import "ZIKRouteRegistry.h"
 
+NS_ASSUME_NONNULL_BEGIN
+
+@class ZIKServiceRoute;
+
 ///Registry for service routers.
 @interface ZIKServiceRouteRegistry : ZIKRouteRegistry
 
+/**
+ Enumerate all service routers. You can notify custom events to service routers with it.
+
+ @param handler The enumerator gives subclasses of ZIKServiceRouter and ZIKServiceRoute object.
+ */
++ (void)enumerateAllServiceRouters:(void(NS_NOESCAPE ^)(Class _Nullable routerClass, ZIKServiceRoute * _Nullable route))handler;
+
 @end
+
+NS_ASSUME_NONNULL_END

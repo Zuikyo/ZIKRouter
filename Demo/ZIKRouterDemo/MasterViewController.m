@@ -173,6 +173,11 @@ typedef NS_ENUM(NSInteger,ZIKRouterTestType) {
 }
 
 - (void)previewingContext:(id <UIViewControllerPreviewing>)previewingContext commitViewController:(UIViewController *)viewControllerToCommit {
-    [self.navigationController pushViewController:viewControllerToCommit animated:YES];
+    ZIKAnyViewRouterType *routerType = [ZIKViewRouter.routersToClass([viewControllerToCommit class]) firstObject];
+    if (routerType != nil) {
+        [routerType performOnDestination:viewControllerToCommit path:ZIKViewRoutePath.pushFrom(self)];
+    } else {
+        [self.navigationController pushViewController:viewControllerToCommit animated:YES];
+    }
 }
 @end

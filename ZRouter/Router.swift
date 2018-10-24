@@ -440,6 +440,34 @@ public extension Router {
         return routerClass?.makeDestination(configuring: configure)
     }
     
+    // MARK: Utility
+    
+    /// Enumerate all view routers. You can notify custom events to view routers with it.
+    ///
+    /// - Parameter handler: The enumerator gives subclasses of ZIKViewRouter and ZIKViewRoute object.
+    public static func enumerateAllViewRouters(_ handler: (ZIKAnyViewRouter.Type?, ZIKAnyViewRoute?) -> Void) -> Void {
+        ZIKViewRouteRegistry.enumerateAllViewRouters { (routerClass, route) in
+            if let routerType = routerClass as? ZIKAnyViewRouter.Type {
+                handler(routerType, nil)
+            } else {
+                handler(nil, route)
+            }
+        }
+    }
+    
+    /// Enumerate all service routers. You can notify custom events to service routers with it.
+    ///
+    /// - Parameter handler: The enumerator gives subclasses of ZIKServiceRouter and ZIKServiceRoute object.
+    public static func enumerateAllServiceRouters(_ handler: (ZIKAnyServiceRouter.Type?, ZIKAnyServiceRoute?) -> Void) -> Void {
+        ZIKServiceRouteRegistry.enumerateAllServiceRouters { (routerClass, route) in
+            if let routerType = routerClass as? ZIKAnyServiceRouter.Type {
+                handler(routerType, nil)
+            } else {
+                handler(nil, route)
+            }
+        }
+    }
+    
     // MARK: Deprecated
     
     @available(iOS, deprecated: 8.0, message: "Use perform(to:path:configuring:removing:) instead")
