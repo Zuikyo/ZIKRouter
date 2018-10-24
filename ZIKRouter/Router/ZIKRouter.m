@@ -491,8 +491,8 @@ NSErrorDomain const ZIKRouteErrorDomain = @"ZIKRouteErrorDomain";
         if (config.injected) {
             config = config.injected;
         }
-        void(^successHandler)(id destination) = config.successHandler;
-        config.successHandler = ^(id  _Nonnull destination) {
+        void(^successHandler)(id destination) = config.performerSuccessHandler;
+        config.performerSuccessHandler = ^(id  _Nonnull destination) {
             if (successHandler) {
                 successHandler(destination);
             }
@@ -517,8 +517,8 @@ NSErrorDomain const ZIKRouteErrorDomain = @"ZIKRouteErrorDomain";
         if (config.injected) {
             config = config.injected;
         }
-        void(^successHandler)(id destination) = config.successHandler;
-        config.successHandler = ^(id  _Nonnull destination) {
+        void(^successHandler)(id destination) = config.performerSuccessHandler;
+        config.performerSuccessHandler = ^(id  _Nonnull destination) {
             if (successHandler) {
                 successHandler(destination);
             }
