@@ -107,25 +107,28 @@ static BOOL _registrationFinished = NO;
     if (self.registrationFinished) {
         return;
     }
+    
     NSSet *registries = [[self registries] copy];
     for (Class registry in registries) {
         [registry willEnumerateClasses];
     }
-    ZIKRouter_enumerateClassList(^(__unsafe_unretained Class class) {
-        for (Class registry in registries) {
-            [registry handleEnumerateClasses:class];
-        }
-    });
-    for (Class registry in registries) {
-        [registry didFinishEnumerateClasses];
+    
+    if (canEnumerateClassesInImage()) {
+        // Fast enumeration
+        enumerateClassesInMainBundleForParentClass([ZIKRouter class], ^(__unsafe_unretained Class  _Nonnull aClass) {
+            for (Class registry in registries) {
+                [registry handleEnumerateRouterClass:aClass];
+            }
+        });
+    } else {
+        // Slow enumeration
+        ZIKRouter_enumerateClassList(^(__unsafe_unretained Class class) {
+            for (Class registry in registries) {
+                [registry handleEnumerateRouterClass:class];
+            }
+        });
     }
-#if ZIKROUTER_CHECK
-    ZIKRouter_enumerateProtocolList(^(Protocol *protocol) {
-        for (Class registry in registries) {
-            [registry handleEnumerateProtocoles:protocol];
-        }
-    });
-#endif
+
     for (Class registry in registries) {
         [registry didFinishRegistration];
     }
@@ -602,15 +605,7 @@ static BOOL _registrationFinished = NO;
     
 }
 
-+ (void)handleEnumerateClasses:(Class)aClass {
-    
-}
-
-+ (void)didFinishEnumerateClasses {
-    
-}
-
-+ (void)handleEnumerateProtocoles:(Protocol *)aProtocol {
++ (void)handleEnumerateRouterClass:(Class)aClass {
     
 }
 

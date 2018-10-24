@@ -143,21 +143,16 @@ static NSMutableArray<Class> *_routerClasses;
 #endif
 }
 
-+ (void)handleEnumerateClasses:(Class)class {
-#if ZIKROUTER_CHECK
-    if (class_conformsToProtocol(class, @protocol(ZIKRoutableService))) {
-        [_routableDestinations addObject:class];
-    }
-#endif
++ (void)handleEnumerateRouterClass:(Class)class {
     static Class ZIKServiceRouterClass;
     static dispatch_once_t onceToken;
     dispatch_once(&onceToken, ^{
         ZIKServiceRouterClass = [ZIKServiceRouter class];
     });
     if (ZIKRouter_classIsSubclassOfClass(class, ZIKServiceRouterClass)) {
+        [class registerRoutableDestination];
         NSCAssert1(ZIKRouter_classSelfImplementingMethod(class, @selector(registerRoutableDestination), true) || [class isAbstractRouter], @"Router(%@) must override +registerRoutableDestination to register destination.",class);
         NSCAssert1(ZIKRouter_classSelfImplementingMethod(class, @selector(destinationWithConfiguration:), false) || [class isAbstractRouter] || [class isAdapter], @"Router(%@) must override -destinationWithConfiguration: to return destination.",class);
-        [class registerRoutableDestination];
 #if ZIKROUTER_CHECK
         CFMutableSetRef services = (CFMutableSetRef)CFDictionaryGetValue(self._check_routerToDestinationsMap, (__bridge const void *)(class));
         NSSet *serviceSet = (__bridge NSSet *)(services);
@@ -167,28 +162,12 @@ static NSMutableArray<Class> *_routerClasses;
     }
 }
 
-+ (void)didFinishEnumerateClasses {
-#if ZIKROUTER_CHECK
-    [self _checkAllRoutableDestinations];
-#endif
-}
-
-+ (void)handleEnumerateProtocoles:(Protocol *)protocol {
-#if ZIKROUTER_CHECK
-    [self _checkProtocol:protocol];
-#endif
-}
-
 + (void)didFinishRegistration {
 #if ZIKROUTER_CHECK
-    if (self.autoRegister == NO) {
-        [self _searchAllRoutersAndDestinations];
-        [self _checkAllRoutableDestinations];
-        [self _checkAllRouters];
-        [self _checkAllRoutableProtocols];
-        return;
-    }
+    [self _searchAllRoutersAndDestinations];
+    [self _checkAllRoutableDestinations];
     [self _checkAllRouters];
+    [self _checkAllRoutableProtocols];
 #endif
 }
 

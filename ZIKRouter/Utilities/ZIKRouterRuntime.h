@@ -46,29 +46,42 @@ NS_ASSUME_NONNULL_BEGIN
 extern bool ZIKRouter_replaceMethodWithMethod(Class originalClass, SEL originalSelector,
                                               Class swizzledClass, SEL swizzledSelector);
 
-///Same with ZIKRouter_replaceMethodWithMethod, but you can specify class method or instance method.
+/// Same with ZIKRouter_replaceMethodWithMethod, but you can specify class method or instance method.
 extern bool ZIKRouter_replaceMethodWithMethodType(Class originalClass, SEL originalSelector, bool originIsClassMethod,
                                                   Class swizzledClass, SEL swizzledSelector, bool swizzledIsClassMethod);
 
-///Enumerate all classes
+/// Enumerate all classes
 extern void ZIKRouter_enumerateClassList(void(^handler)(Class aClass));
 
-///Enumerate all protocols
+/// Enumerate all protocols
 extern void ZIKRouter_enumerateProtocolList(void(^handler)(Protocol *protocol));
 
-///Check whether a class is a subclass of another class
+/// Check whether a class is a subclass of another class
 extern bool ZIKRouter_classIsSubclassOfClass(Class aClass, Class parentClass);
 
-///Check whether a class is from Apple's system framework, or from your project.
+/// Check whether a class is from Apple's system framework, or from your project.
 extern bool ZIKRouter_classIsCustomClass(Class aClass);
 
-///Check whether a class self implementing a method.
+/// Check whether a class self implementing a method.
 extern bool ZIKRouter_classSelfImplementingMethod(Class aClass, SEL method, bool isClassMethod);
 
-///Check whether an object is an objc protocol.
+/// Check whether an object is an objc protocol.
 extern bool ZIKRouter_isObjcProtocol(id protocol);
 
-///Return objc protocol if object is Protocol.
+/// Return objc protocol if object is Protocol.
 extern Protocol *_Nullable ZIKRouter_objcProtocol(id protocol);
+
+// Test whether can use `enumerateClassesInMainBundleForParentClass`. It should always be true unless layout of OC class and Mach-O is changed.
+extern BOOL canEnumerateClassesInImage(void);
+
+/**
+ Enumerate all subclasses of the parent class in app read from section `__objc_classlist`. It's much faster than `objc_copyClassList` because it won't realize these subclasses.
+ @warning
+ Those classes may not be realized yet. If you use OC runtime functions with the class that will access class_rw_t (such as `class_copyIvarList`), it will crash because class_rw_t is not initialized yet. You can try to trigger `realizeClass()` by method finding (such as `class_getMethodImplementation` or just perform some method).
+
+ @param parentClass Parent class for enumeration
+ @param handler Handler subclasses
+ */
+extern void enumerateClassesInMainBundleForParentClass(Class parentClass, void(^handler)(__unsafe_unretained Class aClass));
 
 NS_ASSUME_NONNULL_END

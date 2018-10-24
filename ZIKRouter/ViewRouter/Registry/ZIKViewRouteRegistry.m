@@ -172,28 +172,16 @@ static NSMutableArray<Class> *_routerClasses;
 #endif
 }
 
-+ (void)handleEnumerateClasses:(Class)class {
++ (void)handleEnumerateRouterClass:(Class)class {
     static Class ZIKViewRouterClass;
-    static Class XXResponderClass;
-    static Class XXViewControllerClass;
     static dispatch_once_t onceToken;
     dispatch_once(&onceToken, ^{
         ZIKViewRouterClass = [ZIKViewRouter class];
-        XXResponderClass = [XXResponder class];
-        XXViewControllerClass = [XXViewController class];
     });
-#if ZIKROUTER_CHECK
-    if (ZIKRouter_classIsSubclassOfClass(class, XXResponderClass)) {
-        if (class_conformsToProtocol(class, @protocol(ZIKRoutableView))) {
-            NSCAssert(ZIKRouter_classIsSubclassOfClass(class, [XXView class]) || class == [XXView class] || ZIKRouter_classIsSubclassOfClass(class, XXViewControllerClass) || class == [XXViewController class], @"ZIKRoutableView only suppourt UIView/NSView and UIViewController/NSViewController");
-            [_routableDestinations addObject:class];
-        }
-    }
-#endif
     if (ZIKRouter_classIsSubclassOfClass(class, ZIKViewRouterClass)) {
+        [class registerRoutableDestination];
         NSCAssert1(ZIKRouter_classSelfImplementingMethod(class, @selector(registerRoutableDestination), true) || [class isAbstractRouter], @"Router(%@) must override +registerRoutableDestination to register destination.",class);
         NSCAssert1(ZIKRouter_classSelfImplementingMethod(class, @selector(destinationWithConfiguration:), false) || [class isAbstractRouter] || [class isAdapter], @"Router(%@) must override -destinationWithConfiguration: to return destination.",class);
-        [class registerRoutableDestination];
 #if ZIKROUTER_CHECK
         CFMutableSetRef views = (CFMutableSetRef)CFDictionaryGetValue(self._check_routerToDestinationsMap, (__bridge const void *)(class));
         NSSet *viewSet = (__bridge NSSet *)(views);
@@ -203,28 +191,12 @@ static NSMutableArray<Class> *_routerClasses;
     }
 }
 
-+ (void)didFinishEnumerateClasses {
-#if ZIKROUTER_CHECK
-    [self _checkAllRoutableDestinations];
-#endif
-}
-
-+ (void)handleEnumerateProtocoles:(Protocol *)protocol {
-#if ZIKROUTER_CHECK
-    [self _checkProtocol:protocol];
-#endif
-}
-
 + (void)didFinishRegistration {
 #if ZIKROUTER_CHECK
-    if (self.autoRegister == NO) {
-        [self _searchAllRoutersAndDestinations];
-        [self _checkAllRoutableDestinations];
-        [self _checkAllRouters];
-        [self _checkAllRoutableProtocols];
-        return;
-    }
+    [self _searchAllRoutersAndDestinations];
+    [self _checkAllRoutableDestinations];
     [self _checkAllRouters];
+    [self _checkAllRoutableProtocols];
 #endif
 }
 

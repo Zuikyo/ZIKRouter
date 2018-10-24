@@ -51,9 +51,7 @@ NS_ASSUME_NONNULL_BEGIN
 #endif
 
 + (void)willEnumerateClasses;
-+ (void)handleEnumerateClasses:(Class)aClass;
-+ (void)didFinishEnumerateClasses;
-+ (void)handleEnumerateProtocoles:(Protocol *)aProtocol;
++ (void)handleEnumerateRouterClass:(Class)aClass;
 + (void)didFinishRegistration;
 
 ///Whether the class can be registered into this registry.

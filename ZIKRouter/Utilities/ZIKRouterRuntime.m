@@ -155,7 +155,7 @@ bool ZIKRouter_classIsSubclassOfClass(Class aClass, Class parentClass) {
     do {
         superClass = class_getSuperclass(superClass);
     } while (superClass != parentClass && superClass);
-    
+
     if (superClass == nil) {
         return false;
     }
@@ -225,4 +225,215 @@ Protocol *_Nullable ZIKRouter_objcProtocol(id protocol) {
         return (Protocol *)protocol;
     }
     return nil;
+}
+
+#import <mach/mach.h>
+
+#if !__LP64__
+
+// class is a Swift class
+#define FAST_IS_SWIFT         (1UL<<0)
+// data pointer
+#define FAST_DATA_MASK        0xfffffffcUL
+
+#elif 1
+// Leaks-compatible version that steals low bits only.
+
+// class is a Swift class
+#define FAST_IS_SWIFT           (1UL<<0)
+// data pointer
+#define FAST_DATA_MASK          0x00007ffffffffff8UL
+
+#else
+// Leaks-incompatible version that steals lots of bits.
+
+// class is a Swift class
+#define FAST_IS_SWIFT           (1UL<<0)
+// data pointer
+#define FAST_DATA_MASK          0x00007ffffffffff8UL
+
+#endif
+
+typedef struct class_ro_t {
+    const uint32_t flags;
+    const uint32_t instanceStart;
+    const uint32_t instanceSize;
+#ifdef __LP64__
+    const uint32_t reserved;
+#endif
+    
+    const uint8_t * ivarLayout;
+    
+    const char * name;
+    const void * baseMethodList;
+    const void * baseProtocols;
+    const void * ivars;
+    
+    const uint8_t * weakIvarLayout;
+    const void * baseProperties;
+} class_ro_t;
+
+typedef struct class_rw_t {
+    const uint32_t flags;
+    const uint32_t version;
+    
+    const class_ro_t *ro;
+    
+    const void *methods;
+    const void *properties;
+    const void *protocols;
+    
+    const Class firstSubclass;
+    const Class nextSiblingClass;
+    
+    const char *demangledName;
+} class_rw_t;
+
+typedef struct objc_cache *Cache;
+
+typedef struct class_t {
+    const struct class_t *isa;
+    const struct class_t *superclass;
+#pragma clang diagnostic push
+#pragma GCC diagnostic ignored "-Wdeprecated-declarations"
+    const Cache cache;
+#pragma clang diagnostic pop
+    const IMP *vtable;
+    const uintptr_t data_NEVER_USE;  // class_rw_t * plus custom rr/alloc flags
+} class_t;
+
+class_rw_t *rw_of_class(class_t *cls) {
+    return (class_rw_t *)(cls->data_NEVER_USE & FAST_DATA_MASK);
+}
+
+class_ro_t *ro_of_class(class_t *cls) {
+    return (class_ro_t *)(cls->data_NEVER_USE & FAST_DATA_MASK);
+}
+
+#import <mach-o/getsect.h>
+#include <mach-o/dyld.h>
+
+#ifndef __LP64__
+typedef struct mach_header mach_header_xx;
+#else
+typedef struct mach_header_64 mach_header_xx;
+#endif
+
+static void enumerateImages(void(^handler)(const mach_header_xx *mh, const char *path)) {
+    if (handler == nil) {
+        return;
+    }
+    for (uint32_t i = 0, count = _dyld_image_count(); i < count; i++) {
+        handler((const mach_header_xx *)_dyld_get_image_header(i), _dyld_get_image_name(i));
+    }
+}
+
+// Check that objc class layout is not changed
+static BOOL canReadSuperclassOfClass(Class aClass) {
+    class_t *cls = (__bridge class_t *)aClass;
+    uintptr_t superClassAddr = (uintptr_t)cls + sizeof(class_t *);
+    uintptr_t superClass;
+    vm_size_t size;
+    kern_return_t result = vm_read_overwrite(mach_task_self(), superClassAddr, sizeof(void*), (vm_address_t)&superClass, &size);
+    if (result != KERN_SUCCESS) {
+        // Can't read the address, objc class layout may be changed
+        return NO;
+    }
+    return YES;
+}
+
+BOOL canEnumerateClassesInImage() {
+    if (canReadSuperclassOfClass([NSObject class]) == NO) {
+        return NO;
+    }
+    NSString *mainBundlePath = [NSBundle mainBundle].executablePath;
+    for (uint32_t i = 0, count = _dyld_image_count(); i < count; i++) {
+        const char *path = _dyld_get_image_name(i);
+        if (strcmp(path, mainBundlePath.UTF8String) == 0) {
+            const mach_header_xx *mh = (const mach_header_xx *)_dyld_get_image_header(i);
+#ifndef __LP64__
+            const struct section *section = getsectbynamefromheader(mh, "__DATA", "__objc_classlist");
+            if (section == NULL) {
+                return NO;
+            }
+            uint32_t size = section->size;
+#else
+            const struct section_64 *section = getsectbynamefromheader_64(mh, "__DATA", "__objc_classlist");
+            if (section == NULL) {
+                return NO;
+            }
+            uint64_t size = section->size;
+#endif
+            if (size > 0) {
+                char *imageBaseAddress = (char *)mh;
+                Class *classReferences = (Class *)(void *)(imageBaseAddress + ((uintptr_t)section->offset&0xffffffff));
+                Class firstClass = classReferences[0];
+                if (canReadSuperclassOfClass(firstClass) == NO) {
+                    return NO;
+                }
+            }
+            break;
+        }
+    }
+    return YES;
+}
+
+static void enumerateClassesInImage(const mach_header_xx *mh, void(^handler)(Class __unsafe_unretained aClass)) {
+    if (handler == nil) {
+        return;
+    }
+#ifndef __LP64__
+    const struct section *section = getsectbynamefromheader(mh, "__DATA", "__objc_classlist");
+    if (section == NULL) {
+        return;
+    }
+    uint32_t size = section->size;
+#else
+    const struct section_64 *section = getsectbynamefromheader_64(mh, "__DATA", "__objc_classlist");
+    if (section == NULL) {
+        return;
+    }
+    uint64_t size = section->size;
+#endif
+    char *imageBaseAddress = (char *)mh;
+    Class *classReferences = (Class *)(void *)(imageBaseAddress + ((uintptr_t)section->offset&0xffffffff));
+    for (unsigned long i = 0; i < size/sizeof(void *); i++) {
+        Class aClass = classReferences[i];
+        if (aClass) {
+            handler(aClass);
+        }
+    }
+}
+
+static bool classIsSubclassOfClass(class_t *cls, class_t *parentClass) {
+    if (cls == NULL || parentClass == NULL) {
+        return false;
+    }
+    const class_t *superclass = cls->superclass;
+    while (superclass) {
+        if (superclass == parentClass) {
+            return true;
+        }
+        superclass = superclass->superclass;
+    }
+    return false;
+}
+
+void enumerateClassesInMainBundleForParentClass(Class parentClass, void(^handler)(__unsafe_unretained Class aClass)) {
+    if (handler == nil) {
+        return;
+    }
+    struct class_t *parent = (__bridge struct class_t *)(parentClass);
+    enumerateImages(^(const mach_header_xx *mh, const char *path) {
+        if (strstr(path, "/System/Library/") != NULL ||
+            strstr(path, "/usr/") != NULL ||
+            strstr(path, ".dylib") != NULL) {
+            return;
+        }
+        enumerateClassesInImage(mh, ^(__unsafe_unretained Class aClass) {
+            if (classIsSubclassOfClass((__bridge class_t *)(aClass), parent)) {
+                handler(aClass);
+            }
+        });
+    });
 }
