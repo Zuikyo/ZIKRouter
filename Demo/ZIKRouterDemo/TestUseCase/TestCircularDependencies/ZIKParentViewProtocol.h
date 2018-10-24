@@ -9,6 +9,7 @@
 #import <UIKit/UIKit.h>
 @import ZIKRouter;
 
+@protocol ZIKChildViewProtocol;
 @protocol ZIKParentViewProtocol <ZIKViewRoutable>
-@property (nonatomic, strong) UIViewController *child;
+@property (nonatomic, strong) id<ZIKChildViewProtocol> child;
 @end

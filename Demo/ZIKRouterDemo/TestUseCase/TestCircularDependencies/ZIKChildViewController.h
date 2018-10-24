@@ -10,5 +10,5 @@
 #import "ZIKChildViewProtocol.h"
 
 @interface ZIKChildViewController : UIViewController <ZIKChildViewProtocol>
-@property (nonatomic, strong) UIViewController *parent;
+@property (nonatomic, strong) id<ZIKParentViewProtocol> parent;
 @end

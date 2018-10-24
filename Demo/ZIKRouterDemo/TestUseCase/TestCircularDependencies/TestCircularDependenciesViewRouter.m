@@ -41,17 +41,9 @@
 - (void)prepareDestination:(TestCircularDependenciesViewController *)destination configuration:(__kindof ZIKViewRouteConfiguration *)configuration {
     //Must check to avoid unnecessary preparation
     if (destination.child == nil) {
-        [ZIKRouterToView(ZIKChildViewProtocol)
-         performPath:ZIKViewRoutePath.makeDestination
-         configuring:^(ZIKViewRouteConfiguration * _Nonnull config) {
-            
+        destination.child = [ZIKRouterToView(ZIKChildViewProtocol) makeDestinationWithPreparation:^(id<ZIKChildViewProtocol>  _Nonnull child) {
             //The child may fetch parent in its router, you must set child's parent to avoid infinite recursion
-            config.prepareDestination = ^(id<ZIKChildViewProtocol> child) {
-                child.parent = destination;
-            };
-            config.successHandler = ^(id  _Nonnull child) {
-                destination.child = child;
-            };
+            child.parent = destination;
         }];
     }
 }

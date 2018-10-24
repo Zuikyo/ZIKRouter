@@ -11,6 +11,6 @@
 
 @interface TestCircularDependenciesViewController : UIViewController <ZIKParentViewProtocol>
 
-@property (nonatomic, strong) UIViewController *child;
+@property (nonatomic, strong) id<ZIKChildViewProtocol> child;
 
 @end

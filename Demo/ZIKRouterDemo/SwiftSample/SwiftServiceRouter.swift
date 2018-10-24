@@ -39,6 +39,10 @@ class SwiftServiceRouter: ZIKServiceRouter<AnyObject, SwiftServiceConfiguration>
     override class func defaultRouteConfiguration() -> SwiftServiceConfiguration {
         return SwiftServiceConfiguration()
     }
+    
+    @objc class func applicationDidEnterBackground(_ application: UIApplication) {
+        print("\(self) handle applicationDidEnterBackground event")
+    }
 }
 
 // MARK: Declare Routable
