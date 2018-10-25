@@ -50,6 +50,10 @@ static NSMutableArray *g_preparingXXViewRouters;
 #endif
 @property (nonatomic, weak, nullable) XXViewController<ZIKViewRouteContainer> *container;
 @property (nonatomic, strong, nullable) ZIKViewRouter *retainedSelf;
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdeprecated"
+@property (nonatomic, strong, nullable) UIPopoverController *popover;
+#pragma clang diagnostic pop
 @end
 
 @implementation ZIKViewRouter
@@ -742,8 +746,8 @@ static NSMutableArray *g_preparingXXViewRouters;
 #pragma clang diagnostic push
 #pragma clang diagnostic ignored "-Wdeprecated"
         UIPopoverController *popover = [[UIPopoverController alloc] initWithContentViewController:wrappedDestination];
+        self.popover = popover;
 #pragma clang diagnostic pop
-        objc_setAssociatedObject(destination, "zikrouter_popover", popover, OBJC_ASSOCIATION_RETAIN_NONATOMIC);
         
         if (popoverConfiguration.delegate) {
             NSAssert([popoverConfiguration.delegate conformsToProtocol:@protocol(UIPopoverControllerDelegate)], @"delegate should conforms to UIPopoverControllerDelegate");
@@ -774,6 +778,7 @@ static NSMutableArray *g_preparingXXViewRouters;
             [ZIKViewRouter AOP_notifyAll_router:self willPerformRouteOnDestination:destination fromSource:source];
             [popover presentPopoverFromRect:popoverConfiguration.sourceRect inView:popoverConfiguration.sourceView permittedArrowDirections:popoverConfiguration.permittedArrowDirections animated:configuration.animated];
         } else {
+            self.popover = nil;
             ZIKRouterState preState = self.preState;
             [self notifyRouteState:preState];
             [self notifyError_invalidConfigurationWithAction:ZIKRouteActionPerformRoute
@@ -1690,16 +1695,16 @@ destinationStateBeforeRoute:(ZIKPresentationState *)destinationStateBeforeRoute
     
 #pragma clang diagnostic push
 #pragma clang diagnostic ignored "-Wdeprecated"
-    UIPopoverController *popover = objc_getAssociatedObject(destination, "zikrouter_popover");
+    UIPopoverController *popover = self.popover;
 #pragma clang diagnostic pop
     if (!popover) {
-        NSAssert(NO, @"Didn't set UIPopoverController to destination in -_performPresentAsPopoverOnDestination:fromSource:popoverConfiguration:");
         [destination dismissViewControllerAnimated:self.original_removeConfiguration.animated completion:^{
             [self endRemoveRouteWithSuccessOnDestination:destination fromSource:source];
         }];
         return;
     }
     [popover dismissPopoverAnimated:self.original_removeConfiguration.animated];
+    self.popover = nil;
     [ZIKViewRouter _completeWithtransitionCoordinator:destination.transitionCoordinator
                                  transitionCompletion:^{
         [self endRemoveRouteWithSuccessOnDestination:destination fromSource:source];
