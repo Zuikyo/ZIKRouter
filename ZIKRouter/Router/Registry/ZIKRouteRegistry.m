@@ -18,12 +18,16 @@
 #else
 #import <AppKit/AppKit.h>
 #endif
+#import <pthread.h>
 #import <objc/runtime.h>
 #import "ZIKRouterRuntime.h"
 #import "ZIKRouter.h"
 #import "ZIKRoute.h"
 #import "ZIKRouterType.h"
 
+static dispatch_queue_t _registeringQueue;
+static pthread_key_t _registeringQueueKey;
+static dispatch_semaphore_t _registeringLock;
 static NSMutableSet<Class> *_registries;
 static BOOL _autoRegister = YES;
 static BOOL _registrationFinished = NO;
@@ -46,6 +50,9 @@ static BOOL _registrationFinished = NO;
 + (void)load {
     static dispatch_once_t onceToken;
     dispatch_once(&onceToken, ^{
+        _registeringQueue = dispatch_queue_create("com.zuik.router.registering", DISPATCH_QUEUE_SERIAL);
+        pthread_key_create(&_registeringQueueKey, (__bridge void *)self);
+        _registeringLock = dispatch_semaphore_create(1);
         ZIKRouter_replaceMethodWithMethod([XXApplication class], @selector(setDelegate:),
                                           self, @selector(ZIKRouteRegistry_hook_setDelegate:));
         ZIKRouter_replaceMethodWithMethodType([XXStoryboard class], @selector(storyboardWithName:bundle:), true, self, @selector(ZIKRouteRegistry_hook_storyboardWithName:bundle:), true);
@@ -107,12 +114,23 @@ static BOOL _registrationFinished = NO;
     if (self.registrationFinished) {
         return;
     }
+    if (_registeringQueue == nil) {
+        NSAssert(NO, @"Registry is not initialized");
+        return;
+    }
+    dispatch_async(_registeringQueue, ^{
+        [self _registerAll];
+    });
+}
+
++ (void)_registerAll {
+    if (self.registrationFinished) {
+        return;
+    }
+    dispatch_semaphore_wait(_registeringLock, DISPATCH_TIME_FOREVER);
+    pthread_setspecific(_registeringQueueKey, (__bridge const void *)self);
     
     NSSet *registries = [[self registries] copy];
-    for (Class registry in registries) {
-        [registry willEnumerateClasses];
-    }
-    
     if (canEnumerateClassesInImage()) {
         // Fast enumeration
         enumerateClassesInMainBundleForParentClass([ZIKRouter class], ^(__unsafe_unretained Class  _Nonnull aClass) {
@@ -129,13 +147,28 @@ static BOOL _registrationFinished = NO;
         });
     }
 
+    self.registrationFinished = YES;
+    pthread_setspecific(_registeringQueueKey, nil);
+    dispatch_semaphore_signal(_registeringLock);
+    
     for (Class registry in registries) {
         [registry didFinishRegistration];
     }
-    self.registrationFinished = YES;
 }
 
 #pragma mark Discover
+
++ (void)waitUntilRegistrationFinished {
+    if (self.registrationFinished) {
+        return;
+    }
+    if (pthread_getspecific(_registeringQueueKey)) {
+        NSAssert(NO, @"Don't wait for registration in +registerRoutableDestination !");
+        return;
+    }
+    dispatch_semaphore_wait(_registeringLock, DISPATCH_TIME_FOREVER);
+    dispatch_semaphore_signal(_registeringLock);
+}
 
 + (Class)routerTypeClass {
     return [ZIKRouterType class];
@@ -161,6 +194,7 @@ static BOOL _registrationFinished = NO;
 
 + (nullable ZIKRouterType *)routerToRegisteredDestinationClass:(Class)destinationClass {
     NSParameterAssert([self isDestinationClassRoutable:destinationClass]);
+    [self waitUntilRegistrationFinished];
     CFDictionaryRef destinationToDefaultRouterMap = self.destinationToDefaultRouterMap;
     while (destinationClass) {
         if (![self isDestinationClassRoutable:destinationClass]) {
@@ -183,6 +217,7 @@ static BOOL _registrationFinished = NO;
         NSAssert1(NO, @"+routerToDestination: destinationProtocol is nil. callStackSymbols: %@",[NSThread callStackSymbols]);
         return nil;
     }
+    [self waitUntilRegistrationFinished];
     id route = CFDictionaryGetValue(self.destinationProtocolToRouterMap, (__bridge const void *)(destinationProtocol));
     if (route == nil) {
         Protocol *adapter = destinationProtocol;
@@ -224,6 +259,7 @@ static BOOL _registrationFinished = NO;
         NSAssert1(NO, @"+routerToModule: module configProtocol is nil. callStackSymbols: %@",[NSThread callStackSymbols]);
         return nil;
     }
+    [self waitUntilRegistrationFinished];
     id route = CFDictionaryGetValue(self.moduleConfigProtocolToRouterMap, (__bridge const void *)(configProtocol));
     if (route == nil) {
         Protocol *adapter = configProtocol;
@@ -262,6 +298,7 @@ static BOOL _registrationFinished = NO;
     if (identifier == nil) {
         return nil;
     }
+    [self waitUntilRegistrationFinished];
     id route = CFDictionaryGetValue(self.identifierToRouterMap, (CFStringRef)identifier);
     return [self _routerTypeForObject:route];
 }
@@ -272,6 +309,7 @@ static BOOL _registrationFinished = NO;
     if (!destinationClass) {
         return;
     }
+    [self waitUntilRegistrationFinished];
     CFDictionaryRef destinationToRoutersMap = self.destinationToRoutersMap;
     while (destinationClass) {
         if (![self isDestinationClassRoutable:destinationClass]) {
@@ -508,12 +546,12 @@ static BOOL _registrationFinished = NO;
         NSAssert(NO, @"Registration is already finished.");
         return;
     }
+    self.registrationFinished = YES;
+    
     NSSet *registries = [[self registries] copy];
     for (Class registry in registries) {
         [registry didFinishRegistration];
     }
-    
-    self.registrationFinished = YES;
 }
 
 #pragma mark Check

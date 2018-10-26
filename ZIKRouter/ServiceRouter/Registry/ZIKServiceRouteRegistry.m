@@ -136,13 +136,6 @@ static NSMutableArray<Class> *_routerClasses;
 #endif
 }
 
-+ (void)willEnumerateClasses {
-#if ZIKROUTER_CHECK
-    _routableDestinations = [NSMutableArray array];
-    _routerClasses = [NSMutableArray array];
-#endif
-}
-
 + (void)handleEnumerateRouterClass:(Class)class {
     static Class ZIKServiceRouterClass;
     static dispatch_once_t onceToken;
@@ -197,6 +190,7 @@ static NSMutableArray<Class> *_routerClasses;
 }
 
 + (void)enumerateAllServiceRouters:(void(NS_NOESCAPE ^)(Class _Nullable routerClass, ZIKServiceRoute * _Nullable route))handler {
+    [self waitUntilRegistrationFinished];
     NSMutableSet *allRouters = [NSMutableSet set];
     NSDictionary *destinationToRoutersMap = (__bridge NSDictionary *)self.destinationToRoutersMap;
     [destinationToRoutersMap enumerateKeysAndObjectsUsingBlock:^(Class _Nonnull destinationClass, NSSet * _Nonnull routers, BOOL * _Nonnull stop) {

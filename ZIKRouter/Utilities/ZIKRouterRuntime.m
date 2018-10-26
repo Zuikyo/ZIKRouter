@@ -129,6 +129,8 @@ void ZIKRouter_enumerateClassList(void(^handler)(Class aClass)) {
             }
 #endif
             handler(aClass);
+        } else {
+            break;
         }
     }
     

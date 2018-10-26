@@ -50,7 +50,6 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic, class, readonly) CFMutableDictionaryRef _check_routerToDestinationProtocolsMap;
 #endif
 
-+ (void)willEnumerateClasses;
 + (void)handleEnumerateRouterClass:(Class)aClass;
 + (void)didFinishRegistration;
 
@@ -60,6 +59,8 @@ NS_ASSUME_NONNULL_BEGIN
 + (BOOL)isDestinationClassRoutable:(Class)aClass;
 
 #pragma mark Discover
+
++ (void)waitUntilRegistrationFinished;
 
 + (nullable ZIKRouterType *)routerToRegisteredDestinationClass:(Class)destinationClass;
 + (nullable ZIKRouterType *)routerToDestination:(Protocol *)destinationProtocol;

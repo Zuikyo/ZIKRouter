@@ -48,13 +48,13 @@ static NSMutableArray *g_preparingXXViewRouters;
 @property (nonatomic, assign) BOOL prepared;
 #if ZIK_HAS_UIKIT
 @property (nonatomic, strong, nullable) ZIKPresentationState *stateBeforeRoute;
-#endif
-@property (nonatomic, weak, nullable) XXViewController<ZIKViewRouteContainer> *container;
-@property (nonatomic, strong, nullable) ZIKViewRouter *retainedSelf;
 #pragma clang diagnostic push
 #pragma clang diagnostic ignored "-Wdeprecated"
 @property (nonatomic, strong, nullable) UIPopoverController *popover;
 #pragma clang diagnostic pop
+#endif
+@property (nonatomic, weak, nullable) XXViewController<ZIKViewRouteContainer> *container;
+@property (nonatomic, strong, nullable) ZIKViewRouter *retainedSelf;
 @end
 
 @implementation ZIKViewRouter
