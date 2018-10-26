@@ -242,7 +242,6 @@ static NSMutableArray<Class> *_routerClasses;
 }
 
 + (void)enumerateAllViewRouters:(void(NS_NOESCAPE ^)(Class _Nullable routerClass, ZIKViewRoute * _Nullable route))handler {
-    [self waitUntilRegistrationFinished];
     NSMutableSet *allRouters = [NSMutableSet set];
     NSDictionary *destinationToRoutersMap = (__bridge NSDictionary *)self.destinationToRoutersMap;
     [destinationToRoutersMap enumerateKeysAndObjectsUsingBlock:^(Class _Nonnull destinationClass, NSSet * _Nonnull routers, BOOL * _Nonnull stop) {

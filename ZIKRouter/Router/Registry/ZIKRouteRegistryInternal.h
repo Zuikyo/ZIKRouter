@@ -60,8 +60,6 @@ NS_ASSUME_NONNULL_BEGIN
 
 #pragma mark Discover
 
-+ (void)waitUntilRegistrationFinished;
-
 + (nullable ZIKRouterType *)routerToRegisteredDestinationClass:(Class)destinationClass;
 + (nullable ZIKRouterType *)routerToDestination:(Protocol *)destinationProtocol;
 + (nullable ZIKRouterType *)routerToModule:(Protocol *)configProtocol;
