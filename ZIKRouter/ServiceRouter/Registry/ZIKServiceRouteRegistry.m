@@ -202,6 +202,10 @@ static NSMutableArray<Class> *_routerClasses;
     [destinationToRoutersMap enumerateKeysAndObjectsUsingBlock:^(Class _Nonnull destinationClass, NSSet * _Nonnull routers, BOOL * _Nonnull stop) {
         [allRouters unionSet:routers];
     }];
+    NSDictionary *destinationToExclusiveRouterMap = (__bridge NSDictionary *)self.destinationToExclusiveRouterMap;
+    [destinationToExclusiveRouterMap enumerateKeysAndObjectsUsingBlock:^(Class _Nonnull destinationClass, id  _Nonnull router, BOOL * _Nonnull stop) {
+        [allRouters addObject:router];
+    }];
     if (handler) {
         [allRouters enumerateObjectsUsingBlock:^(id  _Nonnull route, BOOL * _Nonnull stop) {
             if ([route class] == route) {
