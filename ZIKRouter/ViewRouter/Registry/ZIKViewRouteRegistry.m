@@ -242,17 +242,26 @@ static NSMutableArray<Class> *_routerClasses;
 }
 
 + (void)enumerateAllViewRouters:(void(NS_NOESCAPE ^)(Class _Nullable routerClass, ZIKViewRoute * _Nullable route))handler {
-    NSMutableSet *allRouters = [NSMutableSet set];
-    NSDictionary *destinationToRoutersMap = (__bridge NSDictionary *)self.destinationToRoutersMap;
-    [destinationToRoutersMap enumerateKeysAndObjectsUsingBlock:^(Class _Nonnull destinationClass, NSSet * _Nonnull routers, BOOL * _Nonnull stop) {
-        [allRouters unionSet:routers];
-    }];
-    NSDictionary *destinationToExclusiveRouterMap = (__bridge NSDictionary *)self.destinationToExclusiveRouterMap;
-    [destinationToExclusiveRouterMap enumerateKeysAndObjectsUsingBlock:^(Class _Nonnull destinationClass, id  _Nonnull router, BOOL * _Nonnull stop) {
-        [allRouters addObject:router];
-    }];
+    static NSSet *cachedAllRouters;
+    NSSet *routers;
+    if ([self registrationFinished] && cachedAllRouters && cachedAllRouters.count > 0) {
+        routers = cachedAllRouters;
+    } else {
+        NSMutableSet *allRouters = [NSMutableSet set];
+        NSDictionary *destinationToRoutersMap = (__bridge NSDictionary *)self.destinationToRoutersMap;
+        [destinationToRoutersMap enumerateKeysAndObjectsUsingBlock:^(Class _Nonnull destinationClass, NSSet * _Nonnull routers, BOOL * _Nonnull stop) {
+            [allRouters unionSet:routers];
+        }];
+        NSDictionary *destinationToExclusiveRouterMap = (__bridge NSDictionary *)self.destinationToExclusiveRouterMap;
+        [destinationToExclusiveRouterMap enumerateKeysAndObjectsUsingBlock:^(Class _Nonnull destinationClass, id  _Nonnull router, BOOL * _Nonnull stop) {
+            [allRouters addObject:router];
+        }];
+        cachedAllRouters = allRouters;
+        routers = allRouters;
+    }
+    
     if (handler) {
-        [allRouters enumerateObjectsUsingBlock:^(id  _Nonnull route, BOOL * _Nonnull stop) {
+        [routers enumerateObjectsUsingBlock:^(id  _Nonnull route, BOOL * _Nonnull stop) {
             if ([route class] == route) {
                 handler(route, nil);
             } else {
@@ -290,7 +299,8 @@ static NSMutableArray<Class> *_routerClasses;
 
 + (void)_checkAllRoutableDestinations {
     for (Class destinationClass in _routableDestinations) {
-        NSCAssert1(CFDictionaryGetValue(self.destinationToDefaultRouterMap, (__bridge const void *)(destinationClass)) != NULL, @"Routable view(%@) is not registered with any view router.",destinationClass);
+        NSCAssert1(CFDictionaryGetValue(self.destinationToDefaultRouterMap, (__bridge const void *)(destinationClass)) != NULL ||
+                   CFDictionaryGetValue(self.destinationToExclusiveRouterMap, (__bridge const void *)(destinationClass)) != NULL, @"Routable view(%@) is not registered with any view router.",destinationClass);
     }
 }
 

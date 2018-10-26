@@ -65,7 +65,7 @@ typedef void(^ZIKServiceRouteGlobalErrorHandler)(__kindof ZIKServiceRouter * _Nu
 + (void)registerService:(Class)serviceClass;
 
 /**
- Combine service class with this router class, then no other router can be registered for this service class.
+ Register a service class with this router class, then no other router can be registered for this service class. It has much better performance than `+registerService:`.
  @discussion
  If the service will hold and use its router, and the router has its custom functions for this service, that means the service is coupled with the router. You can use this method to register. If another router class try to register with the service class, there will be an assert failure.
  

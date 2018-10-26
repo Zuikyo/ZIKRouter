@@ -279,7 +279,7 @@ typedef void(^ZIKViewRouteGlobalErrorHandler)(__kindof ZIKViewRouter * _Nullable
 + (void)registerView:(Class)viewClass;
 
 /**
- Register an UIViewController / NSViewController or UIView / NSView class with this router class, then no other router class can be registered for this view class.
+ Register an UIViewController / NSViewController or UIView / NSView class with this router class, then no other router class can be registered for this view class. It has much better performance than `+registerView:`.
  @discussion
  If the view will hold and use its router, or you inject dependencies in the router, that means the view is coupled with the router. Then use this method to register. If another router class try to register with the view class, there will be an assert failure.
  
