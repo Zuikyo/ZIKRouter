@@ -45,6 +45,10 @@ class SwiftSampleViewController: UIViewController, PureSwiftSampleViewInput, Swi
         }
     }
     
+    deinit {
+        print("\(self) deinit")
+    }
+    
     @IBAction func testRouteForView(_ sender: Any) {
         // Not necessary to hold the router, here is just for demonstrating
         infoRouter = Router.perform(

@@ -523,4 +523,49 @@ NSString *codeForRegisteringRouters() {
     return code;
 }
 
+#import "UIViewController+ZIKViewRouter.h"
+
+void checkMemoryLeakAfterRemoved(id destination) {
+    if (!destination) {
+        return;
+    }
+    static NSMutableDictionary<NSString *, NSString *> *_leakedObjects;
+    static NSHashTable *_existingObjects;
+    static dispatch_queue_t memoryLeakCheckQueue;
+    static dispatch_once_t onceToken;
+    dispatch_once(&onceToken, ^{
+        _leakedObjects = [NSMutableDictionary dictionary];
+        _existingObjects = [NSHashTable weakObjectsHashTable];
+        memoryLeakCheckQueue = dispatch_queue_create("com.zuik.router-destination-leak-check-queue", DISPATCH_QUEUE_SERIAL);
+    });
+    __weak id weakObject = destination;
+    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(1 * NSEC_PER_SEC)), memoryLeakCheckQueue, ^{
+        if (_leakedObjects.count > 0) {
+            // Check reclaimed objects since last checking
+            NSMutableSet<NSString *> *reclaimedObjects = [NSMutableSet setWithArray:_leakedObjects.allKeys];
+            [[_existingObjects setRepresentation] enumerateObjectsUsingBlock:^(id  _Nonnull obj, BOOL * _Nonnull stop) {
+                [reclaimedObjects removeObject:[NSString stringWithFormat:@"%p", (void *)obj]];
+            }];
+            if (reclaimedObjects.count > 0) {
+                NSMutableString *reclaimedDescription = [NSMutableString string];
+                [reclaimedObjects enumerateObjectsUsingBlock:^(NSString * _Nonnull address, BOOL * _Nonnull stop) {
+                    NSString *description = _leakedObjects[address];
+                    _leakedObjects[address] = nil;
+                    [reclaimedDescription appendFormat:@"destination(%@):%@\n", address, description];
+                }];
+                NSLog(@"\nZIKRouter:♻️ last leaked objects were dealloced already:\n%@♻️", reclaimedDescription);
+            }
+        }
+        
+        if (weakObject) {
+            if ([weakObject respondsToSelector:@selector(zix_routed)] && [weakObject zix_routed]) {
+                return;
+            }
+            NSLog(@"\nZIKRouter:⚠️ destination is not dealloced after removed, maybe there is memory leak, or it's hold by UIKit system: %@ ⚠️", weakObject);
+            [_existingObjects addObject:weakObject];
+            _leakedObjects[[NSString stringWithFormat:@"%p", (void *)weakObject]] = [weakObject description];
+        }
+    });
+}
+
 #endif

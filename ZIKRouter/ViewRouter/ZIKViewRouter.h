@@ -308,6 +308,17 @@ typedef void(^ZIKViewRouteGlobalErrorHandler)(__kindof ZIKViewRouter * _Nullable
 + (BOOL)isRegistrationFinished;
 @end
 
+@interface ZIKViewRouter (Debug)
+
+/**
+ Check memory leak of destination. Only works in DEBUG mode. Default is YES.
+ @note
+ It will check whether the destination is dealloced after 1 second when it's removed. But the UIKit system may also hold the UIViewController / UIView after it's removed. You can ignore these leaks, because UIKit will recycle them. What you should do is make sure there is no retain cycle.
+ */
+@property (nonatomic, class) BOOL detectMemoryLeak;
+
+@end
+
 ///If an UIViewController / NSViewController or UIView / NSView conforms to ZIKRoutableView, there must be a router for it and its subclass, then we can auto create its router. Don't use it in other place.
 @protocol ZIKRoutableView <NSObject>
 

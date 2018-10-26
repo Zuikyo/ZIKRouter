@@ -49,6 +49,9 @@
         NSLog(@"❌ZIKServiceRouter Error: router's action (%@) catch error! code:%@, description: %@,\nrouter:(%@)", action, @(error.code), error.localizedDescription,router);
     };
     
+    // UISplitViewController's detail view controller will be hold by UIKit after it's removed, that's not memory leak
+    ZIKViewRouter.detectMemoryLeak = YES;
+    
     UISplitViewController *splitViewController = (UISplitViewController *)self.window.rootViewController;
     UINavigationController *navigationController = [splitViewController.viewControllers lastObject];
     navigationController.topViewController.navigationItem.leftBarButtonItem = splitViewController.displayModeButtonItem;

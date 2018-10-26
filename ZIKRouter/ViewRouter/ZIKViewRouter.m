@@ -20,6 +20,7 @@
 #import "ZIKViewRouteError.h"
 #import <objc/runtime.h>
 #import "ZIKRouterRuntime.h"
+#import "ZIKRouterRuntimeDebug.h"
 #import "UIViewController+ZIKViewRouter.h"
 #import "UIView+ZIKViewRouter.h"
 #import "ZIKPresentationState.h"
@@ -1852,6 +1853,11 @@ destinationStateBeforeRoute:(ZIKPresentationState *)destinationStateBeforeRoute
         ZIKViewRouterType *r = (ZIKViewRouterType *)route;
         [r router:router didRemoveRouteOnDestination:destination fromSource:(id)source];
     }];
+#if DEBUG
+    if ([self detectMemoryLeak]) {
+        checkMemoryLeakAfterRemoved(destination);
+    }    
+#endif
 }
 
 + (void)router:(nullable ZIKViewRouter *)router willPerformRouteOnDestination:(id)destination fromSource:(nullable id)source {
@@ -4069,6 +4075,20 @@ Protocol<ZIKViewModuleRoutable> *_Nullable _routableViewModuleProtocolFromObject
         return object;
     }
     return nil;
+}
+
+@end
+
+@implementation ZIKViewRouter (Debug)
+
+static BOOL _detectMemoryLeak = YES;
+
++ (BOOL)detectMemoryLeak {
+    return _detectMemoryLeak;
+}
+
++ (void)setDetectMemoryLeak:(BOOL)detectMemoryLeak {
+    _detectMemoryLeak = detectMemoryLeak;
 }
 
 @end
