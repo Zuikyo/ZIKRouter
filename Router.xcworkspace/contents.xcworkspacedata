@@ -7,4 +7,7 @@
    <FileRef
       location = "group:Demo/ZIKRouterDemo.xcodeproj">
    </FileRef>
+   <FileRef
+      location = "group:Demo/ZIKRouterDemo-macOS/ZIKRouterDemo-macOS.xcodeproj">
+   </FileRef>
 </Workspace>

@@ -629,7 +629,9 @@ fileprivate extension Registry {
                 if let route = viewProtocolContainer[adaptee], let routerType = ZIKAnyViewRouterType.tryMakeType(forRoute: route) {
                     return routerType
                 }
-                if let routableProtocol = _routableViewProtocolFromObject(viewProtocol), let routerType = _ZIKViewRouterToView(routableProtocol) {
+                if let adapteeProtocol = NSProtocolFromString(adaptee.key),
+                   let routableProtocol = _routableViewProtocolFromObject(adapteeProtocol),
+                   let routerType = _ZIKViewRouterToView(routableProtocol) {
                     return routerType
                 }
                 #if DEBUG
@@ -686,7 +688,9 @@ fileprivate extension Registry {
                 if let route = viewModuleProtocolContainer[adaptee], let routerType = ZIKAnyViewRouterType.tryMakeType(forRoute: route) {
                     return routerType
                 }
-                if let routableProtocol = _routableViewModuleProtocolFromObject(configProtocol), let routerType = _ZIKViewRouterToModule(routableProtocol) {
+                if let adapteeProtocol = NSProtocolFromString(adaptee.key),
+                   let routableProtocol = _routableViewModuleProtocolFromObject(adapteeProtocol),
+                   let routerType = _ZIKViewRouterToModule(routableProtocol) {
                     return routerType
                 }
                 #if DEBUG
@@ -742,7 +746,9 @@ fileprivate extension Registry {
                 if let route = serviceProtocolContainer[adaptee], let routerType = ZIKAnyServiceRouterType.tryMakeType(forRoute: route) {
                     return routerType
                 }
-                if let routableProtocol = _routableServiceProtocolFromObject(serviceProtocol), let routerType = _ZIKServiceRouterToService(routableProtocol) {
+                if let adapteeProtocol = NSProtocolFromString(adaptee.key),
+                   let routableProtocol = _routableServiceProtocolFromObject(adapteeProtocol),
+                   let routerType = _ZIKServiceRouterToService(routableProtocol) {
                     return routerType
                 }
                 #if DEBUG
@@ -799,7 +805,9 @@ fileprivate extension Registry {
                 if let route = serviceModuleProtocolContainer[adaptee], let routerType = ZIKAnyServiceRouterType.tryMakeType(forRoute: route) {
                     return routerType
                 }
-                if let routableProtocol = _routableServiceModuleProtocolFromObject(configProtocol), let routerType = _ZIKServiceRouterToModule(routableProtocol) {
+                if let adapteeProtocol = NSProtocolFromString(adaptee.key),
+                   let routableProtocol = _routableServiceModuleProtocolFromObject(adapteeProtocol),
+                   let routerType = _ZIKServiceRouterToModule(routableProtocol) {
                     return routerType
                 }
                 #if DEBUG
@@ -1066,7 +1074,7 @@ private class _ViewRouterValidater: ZIKViewRouteAdapter {
             let badDestinationClass: AnyClass? = ZIKViewRouteRegistry.validateDestinations(forRoute: route, handler: { (destinationClass) -> Bool in
                 return _swift_typeIsTargetType(destinationClass, viewProtocol)
             })
-            assert(badDestinationClass == nil, "Registered view class (\(badDestinationClass!) for router (\(route)) should conform to registered view adapter protocol (\(viewProtocol)).")
+            assert(badDestinationClass == nil, "Registered view class (\(badDestinationClass!)) for router (\(route)) should conform to registered view adapter protocol (\(viewProtocol)).")
         }
         
         // Router's defaultRouteConfiguration should conforms to registered module config protocols
