@@ -125,6 +125,21 @@ public class ViewRouterType<Destination, ModuleConfig> {
         })
     }
     
+    /// Prepare the destination with destination protocol and perform route.
+    ///
+    /// - Parameters:
+    ///   - path: The route path with source and route type.
+    ///   - preparation: Prepare the destination with destination protocol. It's an escaping block, use weakSelf to avoid retain cycle.
+    /// - Returns: The view router for this route.
+    @discardableResult public func perform(
+        path: ViewRoutePath,
+        preparation prepare: @escaping ((Destination) -> Void)
+        ) -> ViewRouter<Destination, ModuleConfig>? {
+        return perform(path: path, configuring: { (config, _) in
+            config.prepareDestination = prepare
+        })
+    }
+    
     // MARK: Perform on Destination
     
     /// Perform route on destination. If you get a prepared destination by ZIKViewRouteTypeMakeDestination, you can use this method to perform route on the destination.
@@ -432,10 +447,13 @@ public enum ViewRoutePath {
     /// Show the destination with `NSWindowController.showWindow(_ sender: Any?)`.
     case show
 #endif
-    /// Add the destination as child view controller to the parent source view controller. In addingChildViewHandler, add destination's view to source's view in addingChildViewHandler, and invoke the completion block when finished.
+    /// Add the destination as child view controller to the parent source view controller. Adding destination's view to source's view in addingChildViewHandler, and invoke the completion block when finished.
+    ///
     /// - addingChildViewHandler: Add destination's view to source's view.
-    ///     - source: Source view.
+    ///     - destination: The destination view controller. If you wrap destination with -containerWrapper, the `destination` in this block is the wrapped ViewController.
     ///     - completion: Invoke the completion block when adding is finished.
+    ///
+    /// - Note: Use weak self in addingChildViewHandler to avoid retain cycle.
     case addAsChildViewController(from: ViewController, addingChildViewHandler: (ViewController, @escaping () -> Void) -> Void)
     /// Add the destination as subview to the superview.
     case addAsSubview(from: View)
@@ -746,6 +764,8 @@ public class ViewRouteStrictConfig<Destination>: PerformRouteStrictConfig<Destin
     /// For ZIKViewRouteTypeShowDetail, if source is in a collapsed UISplitViewController, and master is an UINavigationController, container can't be an UINavigationController or UISplitViewController
     ///
     /// For ZIKViewRouteTypeAddAsChildViewController, will add container as source's child, so you have to add container's view to source's view in addingChildViewHandler, not the destination's view
+    ///
+    /// - Note: Use weak self in containerWrapper to avoid retain cycle.
     public var containerWrapper: ZIKViewRouteContainerWrapper? {
         get { return config.containerWrapper }
         set { config.containerWrapper = newValue }
@@ -767,7 +787,12 @@ public class ViewRouteStrictConfig<Destination>: PerformRouteStrictConfig<Destin
         get { return config.configureSegue }
     }
     
-    /// When use routeType ZIKViewRouteTypeAddAsChildViewController, add the destination's view to source's view in this block. If you wrap destination with -containerWrapper, the `destination` in this block is the wrapped ViewController. You can add with animations, and must call completion when the adding action is finished.
+    /// When use routeType addAsChildViewController, , add the destination as child view controller to the parent source view controller. Adding destination's view to source's view in addingChildViewHandler, and invoke the completion block when finished.
+    ///
+    /// - destination: The destination view controller. If you wrap destination with -containerWrapper, the `destination` in this block is the wrapped ViewController.
+    /// - completion: Invoke the completion block when adding is finished.
+    ///
+    /// - Note: Use weak self in addingChildViewHandler to avoid retain cycle.
     public var addingChildViewHandler: ((ViewController, @escaping () -> Void) -> Void)? {
         get { return config.addingChildViewHandler }
         set { config.addingChildViewHandler = newValue }
@@ -802,7 +827,12 @@ public class ViewRemoveStrictConfig<Destination>: RemoveRouteStrictConfig<Destin
         set { config.animated = newValue }
     }
     
-    /// When use routeType ZIKViewRouteTypeAddAsChildViewController and remove, remove the destination's view from its superview in this block. If you wrap destination with -containerWrapper, the `destination` in this block is the wrapped ViewController. You can remove with animations, and must call completion when the removing action is finished.
+    /// When use routeType ZIKViewRouteTypeAddAsChildViewController and remove, remove the destination's view from its superview in removingChildViewHandler, and invoke the completion block when finished.
+    ///
+    /// - destination: The destination view controller. If you wrap destination with -containerWrapper, the `destination` in this block is the wrapped ViewController.
+    /// - completion: Invoke the completion block when removing is finished.
+    ///
+    /// - Note: Use weak self in removingChildViewHandler to avoid retain cycle.
     public var removingChildViewHandler: ((ViewController, @escaping () -> Void) -> Void)? {
         get { return config.removingChildViewHandler }
         set { config.removingChildViewHandler = newValue }

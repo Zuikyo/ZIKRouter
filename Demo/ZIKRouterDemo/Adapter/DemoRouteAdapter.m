@@ -13,12 +13,14 @@
 @implementation DemoRouteAdapter
 
 + (void)registerRoutableDestination {
-    //Let ZIKCompatibleAlertViewRouter support RequiredCompatibleAlertModuleInput and ZIKLoginModuleRequiredAlertInput
-    //If you can get the router, you can just register
+    // Let ZIKCompatibleAlertViewRouter support RequiredCompatibleAlertModuleInput and ZIKLoginModuleRequiredAlertInput
+    // If you can get the router, you can just register
     [ZIKCompatibleAlertViewRouter registerModuleProtocol:ZIKRoutable(ZIKLoginModuleRequiredAlertInput)];
     
-    //If you don't know the router, you can use adapter
+    // If you don't know the router, you can use adapter
     [self registerModuleAdapter:ZIKRoutable(RequiredCompatibleAlertModuleInput) forAdaptee:ZIKRoutable(ZIKCompatibleAlertModuleInput)];
+    
+    // You can adapt other alert module. In ZIKRouterDemo-macOS, it's `NSAlert` in `AlertViewRouter`. in ZIKRouterDemo, it's ZIKAlertModule
 }
 
 @end

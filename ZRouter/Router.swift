@@ -165,6 +165,22 @@ public extension Router {
         return routerType?.perform(path: path, completion: performerCompletion)
     }
     
+    /// Prepare the destination with destination protocol and perform route.
+    ///
+    /// - Parameters:
+    ///   - routableView: A routable entry carrying a view protocol.
+    ///   - path: The route path with source and route type.
+    ///   - preparation: Prepare the destination with destination protocol. It's an escaping block, use weakSelf to avoid retain cycle.
+    /// - Returns: The view router for this route.
+    @discardableResult public static func perform<Protocol>(
+        to routableView: RoutableView<Protocol>,
+        path: ViewRoutePath,
+        preparation prepare: @escaping ((Protocol) -> Void)
+        ) -> ViewRouter<Protocol, ViewRouteConfig>? {
+        let routerType = Registry.router(to: routableView)
+        return routerType?.perform(path: path, preparation: prepare)
+    }
+    
     /// Perform route with view protocol and success handler and error handler for current performing.
     ///
     /// - Parameters:
@@ -265,6 +281,20 @@ public extension Router {
         ) -> ServiceRouter<Protocol, PerformRouteConfig>? {
         let routerType = Registry.router(to: routableService)
         return routerType?.perform(completion: performerCompletion)
+    }
+    
+    /// Prepare the destination with destination protocol and perform route.
+    ///
+    /// - Parameters:
+    ///   - routableService: A routable entry carrying a service protocol.
+    ///   - preparation: Prepare the destination with destination protocol. It's an escaping block, use weakSelf to avoid retain cycle.
+    /// - Returns: The service router for this route.
+    @discardableResult public static func perform<Protocol>(
+        to routableService: RoutableService<Protocol>,
+        preparation prepare: @escaping ((Protocol) -> Void)
+        ) -> ServiceRouter<Protocol, PerformRouteConfig>? {
+        let routerType = Registry.router(to: routableService)
+        return routerType?.perform(preparation: prepare)
     }
     
     /// Perform route with service protocol and success handler and error handler for current performing.

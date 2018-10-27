@@ -80,6 +80,7 @@ typedef void(^ZIKPerformRouteCompletion)(BOOL success, id _Nullable destination,
 
 /**
  Success handler for router's provider. Each time the router was performed, success handler will be called when the operation succeed.
+ 
  @note
  Use weakSelf in successHandler to avoid retain cycle.
  */
@@ -103,12 +104,15 @@ typedef void(^ZIKPerformRouteCompletion)(BOOL success, id _Nullable destination,
 
 /**
  Add user info.
+ 
  @note
  You should only use user info when handle route action from URL Scheme, because it's not recommanded to passing parameters in dictionary. The compiler can't check parameters' type.
  */
 - (void)addUserInfoForKey:(NSString *)key object:(id)object;
+
 /**
  Add user info.
+ 
  @note
  You should only use user info when handle route action from URL Scheme, because it's not recommanded to passing parameters in dictionary. The compiler can't check parameters' type.
  */
@@ -129,6 +133,7 @@ typedef void(^ZIKRemoveRouteCompletion)(BOOL success, ZIKRouteAction routeAction
 
 /**
  Success handler for router's provider. Each time the router was removed, success handler will be called when the operation succeed.
+ 
  @note
  Use weakSelf in successHandler to avoid retain cycle.
  */
@@ -158,6 +163,7 @@ typedef void(^ZIKRemoveRouteCompletion)(BOOL success, ZIKRouteAction routeAction
 + (instancetype)new NS_UNAVAILABLE;
 /**
  Error handler for router's provider. Each time the router was performed or removed, error handler will be called when the operation fails.
+ 
  @note
  Use weakSelf in errorHandler to avoid retain cycle.
  */
@@ -168,6 +174,7 @@ typedef void(^ZIKRemoveRouteCompletion)(BOOL success, ZIKRouteAction routeAction
 
 /**
  Monitor state.
+ 
  @note
  Use weakSelf in stateNotifier to avoid retain cycle.
  */
@@ -190,6 +197,7 @@ typedef void(^ZIKRemoveRouteCompletion)(BOOL success, ZIKRouteAction routeAction
 
 /**
  Success handler for router's provider. Each time the router was performed, success handler will be called when the operation succeed.
+ 
  @note
  Use weakSelf in successHandler to avoid retain cycle.
  */
@@ -211,12 +219,15 @@ typedef void(^ZIKRemoveRouteCompletion)(BOOL success, ZIKRouteAction routeAction
 
 /**
  Add user info.
+ 
  @note
  You should only use user info when handle route action from URL Scheme, because it's not recommanded to passing parameters in dictionary. The compiler can't check parameters' type.
  */
 - (void)addUserInfoForKey:(NSString *)key object:(id)object;
+
 /**
  Add user info.
+ 
  @note
  You should only use user info when handle route action from URL Scheme, because it's not recommanded to passing parameters in dictionary. The compiler can't check parameters' type.
  */
@@ -239,6 +250,7 @@ typedef void(^ZIKRemoveRouteCompletion)(BOOL success, ZIKRouteAction routeAction
 
 /**
  Success handler for router's provider. Each time the router was removed, success handler will be called when the operation succeed.
+ 
  @note
  Use weakSelf in successHandler to avoid retain cycle.
  */

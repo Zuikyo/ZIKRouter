@@ -98,6 +98,17 @@ public class ServiceRouterType<Destination, ModuleConfig> {
         })
     }
     
+    /// Prepare the destination with destination protocol and perform route.
+    ///
+    /// - Parameters:
+    ///   - preparation: Prepare the destination with destination protocol. It's an escaping block, use weakSelf to avoid retain cycle.
+    /// - Returns: The service router for this route.
+    @discardableResult public func perform(preparation prepare: @escaping ((Destination) -> Void)) -> ServiceRouter<Destination, ModuleConfig>? {
+        return perform(configuring: { (config, _) in
+            config.prepareDestination = prepare
+        })
+    }
+    
     // MARK: Make Destination
     
     /// Whether the destination is instantiated synchronously.
@@ -270,17 +281,21 @@ public class RouteStrictConfig<Config: ZIKRouteStrictConfiguration<AnyObject>> {
     internal init(configuration: Config) {
         self.configuration = configuration
     }
-    ///Error handler for router's provider. Each time the router was performed or removed, error handler will be called when the operation fails. It's an escaping block.
+    /// Error handler for router's provider. Each time the router was performed or removed, error handler will be called when the operation fails. It's an escaping block.
+    ///
+    /// - Note: Use weak self in errorHandler to avoid retain cycle.
     public var errorHandler: ((ZIKRouteAction, Error) -> Void)? {
         get { return configuration.errorHandler }
         set { configuration.errorHandler = newValue }
     }
-    ///Error handler for current performing, will reset to nil after performed.
+    /// Error handler for current performing, will reset to nil after performed.
     public var performerErrorHandler: ((ZIKRouteAction, Error) -> Void)? {
         get { return configuration.performerErrorHandler }
         set { configuration.performerErrorHandler = newValue }
     }
-    ///Monitor state. It's an escaping block.
+    /// Monitor state. It's an escaping block.
+    ///
+    /// - Note: Use weak self in stateNotifier to avoid retain cycle.
     public var stateNotifier: ((ZIKRouterState, ZIKRouterState) -> Void)? {
         get { return configuration.stateNotifier }
         set { configuration.stateNotifier = newValue }
@@ -293,6 +308,8 @@ public class PerformRouteStrictConfig<Destination>: RouteStrictConfig<ZIKPerform
         super.init(configuration: configuration)
     }
     /// Prepare for performRoute, and config other dependency for destination here. Subclass can offer more specific info. It's an escaping block.
+    ///
+    /// - Note: Use weak self in prepareDestination to avoid retain cycle.
     public var prepareDestination: ((Destination) -> Void)? {
         get {
             if let prepare = configuration.prepareDestination {
@@ -318,6 +335,8 @@ public class PerformRouteStrictConfig<Destination>: RouteStrictConfig<ZIKPerform
     }
     
     /// Success handler for router's provider. Each time the router was performed, success handler will be called when the operation succeed. It's an escaping block.
+    ///
+    /// - Note: Use weak self in successHandler to avoid retain cycle.
     public var successHandler: ((Destination) -> Void)? {
         get {
             if let handler = configuration.successHandler {
@@ -368,6 +387,8 @@ public class PerformRouteStrictConfig<Destination>: RouteStrictConfig<ZIKPerform
     }
     
     /// Completion handler for performRoute. It's an escaping block.
+    ///
+    /// - Note: Use weak self in completionHandler to avoid retain cycle.
     public var completionHandler: ((Bool, Destination?, ZIKRouteAction, Error?) -> Void)? {
         get {
             if let handler = configuration.completionHandler {
@@ -421,6 +442,8 @@ public class RemoveRouteStrictConfig<Destination>: RouteStrictConfig<ZIKRemoveRo
     }
     
     /// Prepare for removeRoute. Subclass can offer more specific info. It's an escaping block.
+    ///
+    /// - Note: Use weak self in prepareDestination to avoid retain cycle.
     public var prepareDestination: ((Destination) -> Void)? {
         get {
             if let prepare = configuration.prepareDestination {
@@ -446,6 +469,8 @@ public class RemoveRouteStrictConfig<Destination>: RouteStrictConfig<ZIKRemoveRo
     }
     
     /// Success handler for router's provider. Each time the router was removed, success handler will be called when the operation succeed. It's an escaping block.
+    ///
+    /// - Note: Use weak self in successHandler to avoid retain cycle.
     public var successHandler: (() -> Void)? {
         get { return configuration.successHandler }
         set { configuration.successHandler = newValue }
@@ -458,6 +483,8 @@ public class RemoveRouteStrictConfig<Destination>: RouteStrictConfig<ZIKRemoveRo
     }
     
     /// Completion handler for removeRoute. It's an escaping block.
+    ///
+    /// - Note: Use weak self in completionHandler to avoid retain cycle.
     public var completionHandler: ZIKRemoveRouteCompletion? {
         get { return configuration.completionHandler }
         set { configuration.completionHandler = newValue }

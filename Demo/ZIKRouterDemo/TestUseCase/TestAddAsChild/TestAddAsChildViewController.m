@@ -34,7 +34,6 @@
                                     [weakSelf.view addSubview:destination.view];
                                     destination.view.transform = CGAffineTransformIdentity;
                                 } completion:^(BOOL finished) {
-                                    [destination didMoveToParentViewController:weakSelf];
                                     completion();
                                 }];
                             })

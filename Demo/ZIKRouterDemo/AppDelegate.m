@@ -49,7 +49,7 @@
         NSLog(@"❌ZIKServiceRouter Error: router's action (%@) catch error! code:%@, description: %@,\nrouter:(%@)", action, @(error.code), error.localizedDescription,router);
     };
     
-    // UISplitViewController's detail view controller will be hold by UIKit after it's removed, that's not memory leak
+    // UISplitViewController's detail view controller will be hold by UIKit after it's removed, it's not memory leak
     ZIKViewRouter.detectMemoryLeak = YES;
     
     UISplitViewController *splitViewController = (UISplitViewController *)self.window.rootViewController;
@@ -100,7 +100,14 @@
 
 
 - (void)applicationWillEnterForeground:(UIApplication *)application {
-    // Called as part of the transition from the background to the active state; here you can undo many of the changes made on entering the background.
+    [ZIKServiceRouteRegistry enumerateAllServiceRouters:^(Class  _Nullable __unsafe_unretained routerClass, ZIKServiceRoute * _Nullable route) {
+        if (routerClass == nil) {
+            return;
+        }
+        if ([routerClass respondsToSelector:@selector(applicationWillEnterForeground:)]) {
+            [routerClass applicationWillEnterForeground:application];
+        }
+    }];
 }
 
 

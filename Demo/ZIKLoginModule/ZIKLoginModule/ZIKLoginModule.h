@@ -6,7 +6,6 @@
 //  Copyright © 2018 duoyi. All rights reserved.
 //
 
-#import <UIKit/UIKit.h>
 #import "ZIKLoginViewController.h"
 #import "ZIKLoginViewRouter.h"
 #import "ZIKLoginViewInput.h"

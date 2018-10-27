@@ -1,0 +1,444 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 50;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		F85461C521849A3A00E2311D /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = F85461C421849A3A00E2311D /* AppDelegate.swift */; };
+		F85461C721849A3A00E2311D /* MainViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F85461C621849A3A00E2311D /* MainViewController.swift */; };
+		F85461C921849A3C00E2311D /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = F85461C821849A3C00E2311D /* Assets.xcassets */; };
+		F85461CC21849A3C00E2311D /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = F85461CA21849A3C00E2311D /* Main.storyboard */; };
+		F85461D521849A8F00E2311D /* ZIKRouter.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F85461D421849A8F00E2311D /* ZIKRouter.framework */; };
+		F85461D621849A8F00E2311D /* ZIKRouter.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = F85461D421849A8F00E2311D /* ZIKRouter.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		F85461D921849A9500E2311D /* ZRouter.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F85461D821849A9500E2311D /* ZRouter.framework */; };
+		F85461DA21849A9500E2311D /* ZRouter.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = F85461D821849A9500E2311D /* ZRouter.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		F85461E12184A35300E2311D /* ZIKLoginModule.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F85461E021849B1100E2311D /* ZIKLoginModule.framework */; };
+		F85461E22184A35300E2311D /* ZIKLoginModule.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = F85461E021849B1100E2311D /* ZIKLoginModule.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		F85461E62184A90000E2311D /* DemoRouteApater.swift in Sources */ = {isa = PBXBuildFile; fileRef = F85461E52184A90000E2311D /* DemoRouteApater.swift */; };
+		F85461E92184AE5B00E2311D /* AlertViewModuleInput.swift in Sources */ = {isa = PBXBuildFile; fileRef = F85461E72184AE5B00E2311D /* AlertViewModuleInput.swift */; };
+		F85461EA2184AE5B00E2311D /* AlertViewRouter.swift in Sources */ = {isa = PBXBuildFile; fileRef = F85461E82184AE5B00E2311D /* AlertViewRouter.swift */; };
+		F85461F32184DC3500E2311D /* TestViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F85461F12184DC3500E2311D /* TestViewController.swift */; };
+		F85461F42184DC3500E2311D /* TestViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = F85461F22184DC3500E2311D /* TestViewController.xib */; };
+		F85461F72184DC8D00E2311D /* TestViewInput.swift in Sources */ = {isa = PBXBuildFile; fileRef = F85461F52184DC8D00E2311D /* TestViewInput.swift */; };
+		F85461F82184DC8D00E2311D /* TestViewRouter.swift in Sources */ = {isa = PBXBuildFile; fileRef = F85461F62184DC8D00E2311D /* TestViewRouter.swift */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		F85461DF21849B1100E2311D /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = F85461DB21849B1100E2311D /* ZIKLoginModule.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = F80C703720B7F4D60082DC2C;
+			remoteInfo = ZIKLoginModule;
+		};
+		F85461E32184A35300E2311D /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = F85461DB21849B1100E2311D /* ZIKLoginModule.xcodeproj */;
+			proxyType = 1;
+			remoteGlobalIDString = F80C703620B7F4D60082DC2C;
+			remoteInfo = ZIKLoginModule;
+		};
+/* End PBXContainerItemProxy section */
+
+/* Begin PBXCopyFilesBuildPhase section */
+		F85461D721849A8F00E2311D /* Embed Frameworks */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 10;
+			files = (
+				F85461DA21849A9500E2311D /* ZRouter.framework in Embed Frameworks */,
+				F85461D621849A8F00E2311D /* ZIKRouter.framework in Embed Frameworks */,
+				F85461E22184A35300E2311D /* ZIKLoginModule.framework in Embed Frameworks */,
+			);
+			name = "Embed Frameworks";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXCopyFilesBuildPhase section */
+
+/* Begin PBXFileReference section */
+		F85461C121849A3A00E2311D /* ZIKRouterDemo-macOS.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "ZIKRouterDemo-macOS.app"; sourceTree = BUILT_PRODUCTS_DIR; };
+		F85461C421849A3A00E2311D /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
+		F85461C621849A3A00E2311D /* MainViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainViewController.swift; sourceTree = "<group>"; };
+		F85461C821849A3C00E2311D /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		F85461CB21849A3C00E2311D /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
+		F85461CD21849A3C00E2311D /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		F85461CE21849A3C00E2311D /* ZIKRouterDemo_macOS.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = ZIKRouterDemo_macOS.entitlements; sourceTree = "<group>"; };
+		F85461D421849A8F00E2311D /* ZIKRouter.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = ZIKRouter.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		F85461D821849A9500E2311D /* ZRouter.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = ZRouter.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		F85461DB21849B1100E2311D /* ZIKLoginModule.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = ZIKLoginModule.xcodeproj; path = ../../ZIKLoginModule/ZIKLoginModule.xcodeproj; sourceTree = "<group>"; };
+		F85461E52184A90000E2311D /* DemoRouteApater.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DemoRouteApater.swift; sourceTree = "<group>"; };
+		F85461E72184AE5B00E2311D /* AlertViewModuleInput.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AlertViewModuleInput.swift; sourceTree = "<group>"; };
+		F85461E82184AE5B00E2311D /* AlertViewRouter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AlertViewRouter.swift; sourceTree = "<group>"; };
+		F85461F12184DC3500E2311D /* TestViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TestViewController.swift; sourceTree = "<group>"; };
+		F85461F22184DC3500E2311D /* TestViewController.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = TestViewController.xib; sourceTree = "<group>"; };
+		F85461F52184DC8D00E2311D /* TestViewInput.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TestViewInput.swift; sourceTree = "<group>"; };
+		F85461F62184DC8D00E2311D /* TestViewRouter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TestViewRouter.swift; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		F85461BE21849A3A00E2311D /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				F85461D921849A9500E2311D /* ZRouter.framework in Frameworks */,
+				F85461D521849A8F00E2311D /* ZIKRouter.framework in Frameworks */,
+				F85461E12184A35300E2311D /* ZIKLoginModule.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		F85461B821849A3A00E2311D = {
+			isa = PBXGroup;
+			children = (
+				F85461D821849A9500E2311D /* ZRouter.framework */,
+				F85461D421849A8F00E2311D /* ZIKRouter.framework */,
+				F85461C321849A3A00E2311D /* ZIKRouterDemo-macOS */,
+				F85461C221849A3A00E2311D /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		F85461C221849A3A00E2311D /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				F85461C121849A3A00E2311D /* ZIKRouterDemo-macOS.app */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		F85461C321849A3A00E2311D /* ZIKRouterDemo-macOS */ = {
+			isa = PBXGroup;
+			children = (
+				F85461DB21849B1100E2311D /* ZIKLoginModule.xcodeproj */,
+				F85461C421849A3A00E2311D /* AppDelegate.swift */,
+				F85461C621849A3A00E2311D /* MainViewController.swift */,
+				F85461E52184A90000E2311D /* DemoRouteApater.swift */,
+				F85461E72184AE5B00E2311D /* AlertViewModuleInput.swift */,
+				F85461E82184AE5B00E2311D /* AlertViewRouter.swift */,
+				F85461F52184DC8D00E2311D /* TestViewInput.swift */,
+				F85461F62184DC8D00E2311D /* TestViewRouter.swift */,
+				F85461F12184DC3500E2311D /* TestViewController.swift */,
+				F85461F22184DC3500E2311D /* TestViewController.xib */,
+				F85461C821849A3C00E2311D /* Assets.xcassets */,
+				F85461CA21849A3C00E2311D /* Main.storyboard */,
+				F85461CD21849A3C00E2311D /* Info.plist */,
+				F85461CE21849A3C00E2311D /* ZIKRouterDemo_macOS.entitlements */,
+			);
+			path = "ZIKRouterDemo-macOS";
+			sourceTree = "<group>";
+		};
+		F85461DC21849B1100E2311D /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				F85461E021849B1100E2311D /* ZIKLoginModule.framework */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		F85461C021849A3A00E2311D /* ZIKRouterDemo-macOS */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = F85461D121849A3C00E2311D /* Build configuration list for PBXNativeTarget "ZIKRouterDemo-macOS" */;
+			buildPhases = (
+				F85461BD21849A3A00E2311D /* Sources */,
+				F85461BE21849A3A00E2311D /* Frameworks */,
+				F85461BF21849A3A00E2311D /* Resources */,
+				F85461D721849A8F00E2311D /* Embed Frameworks */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				F85461E42184A35300E2311D /* PBXTargetDependency */,
+			);
+			name = "ZIKRouterDemo-macOS";
+			productName = "ZIKRouterDemo-macOS";
+			productReference = F85461C121849A3A00E2311D /* ZIKRouterDemo-macOS.app */;
+			productType = "com.apple.product-type.application";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		F85461B921849A3A00E2311D /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				LastSwiftUpdateCheck = 1000;
+				LastUpgradeCheck = 1000;
+				ORGANIZATIONNAME = duoyi;
+				TargetAttributes = {
+					F85461C021849A3A00E2311D = {
+						CreatedOnToolsVersion = 10.0;
+					};
+				};
+			};
+			buildConfigurationList = F85461BC21849A3A00E2311D /* Build configuration list for PBXProject "ZIKRouterDemo-macOS" */;
+			compatibilityVersion = "Xcode 9.3";
+			developmentRegion = en;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+				Base,
+			);
+			mainGroup = F85461B821849A3A00E2311D;
+			productRefGroup = F85461C221849A3A00E2311D /* Products */;
+			projectDirPath = "";
+			projectReferences = (
+				{
+					ProductGroup = F85461DC21849B1100E2311D /* Products */;
+					ProjectRef = F85461DB21849B1100E2311D /* ZIKLoginModule.xcodeproj */;
+				},
+			);
+			projectRoot = "";
+			targets = (
+				F85461C021849A3A00E2311D /* ZIKRouterDemo-macOS */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXReferenceProxy section */
+		F85461E021849B1100E2311D /* ZIKLoginModule.framework */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.framework;
+			path = ZIKLoginModule.framework;
+			remoteRef = F85461DF21849B1100E2311D /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+/* End PBXReferenceProxy section */
+
+/* Begin PBXResourcesBuildPhase section */
+		F85461BF21849A3A00E2311D /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				F85461C921849A3C00E2311D /* Assets.xcassets in Resources */,
+				F85461F42184DC3500E2311D /* TestViewController.xib in Resources */,
+				F85461CC21849A3C00E2311D /* Main.storyboard in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		F85461BD21849A3A00E2311D /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				F85461EA2184AE5B00E2311D /* AlertViewRouter.swift in Sources */,
+				F85461F72184DC8D00E2311D /* TestViewInput.swift in Sources */,
+				F85461C721849A3A00E2311D /* MainViewController.swift in Sources */,
+				F85461F82184DC8D00E2311D /* TestViewRouter.swift in Sources */,
+				F85461C521849A3A00E2311D /* AppDelegate.swift in Sources */,
+				F85461E92184AE5B00E2311D /* AlertViewModuleInput.swift in Sources */,
+				F85461F32184DC3500E2311D /* TestViewController.swift in Sources */,
+				F85461E62184A90000E2311D /* DemoRouteApater.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		F85461E42184A35300E2311D /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			name = ZIKLoginModule;
+			targetProxy = F85461E32184A35300E2311D /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
+
+/* Begin PBXVariantGroup section */
+		F85461CA21849A3C00E2311D /* Main.storyboard */ = {
+			isa = PBXVariantGroup;
+			children = (
+				F85461CB21849A3C00E2311D /* Base */,
+			);
+			name = Main.storyboard;
+			sourceTree = "<group>";
+		};
+/* End PBXVariantGroup section */
+
+/* Begin XCBuildConfiguration section */
+		F85461CF21849A3C00E2311D /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				CODE_SIGN_IDENTITY = "Mac Developer";
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				MACOSX_DEPLOYMENT_TARGET = 10.10;
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				MTL_FAST_MATH = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				SDKROOT = macosx;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+			};
+			name = Debug;
+		};
+		F85461D021849A3C00E2311D /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				CODE_SIGN_IDENTITY = "Mac Developer";
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				MACOSX_DEPLOYMENT_TARGET = 10.10;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				MTL_FAST_MATH = YES;
+				SDKROOT = macosx;
+				SWIFT_COMPILATION_MODE = wholemodule;
+				SWIFT_OPTIMIZATION_LEVEL = "-O";
+			};
+			name = Release;
+		};
+		F85461D221849A3C00E2311D /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_ENTITLEMENTS = "ZIKRouterDemo-macOS/ZIKRouterDemo_macOS.entitlements";
+				CODE_SIGN_STYLE = Automatic;
+				COMBINE_HIDPI_IMAGES = YES;
+				DEVELOPMENT_TEAM = "";
+				INFOPLIST_FILE = "ZIKRouterDemo-macOS/Info.plist";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+				);
+				OTHER_LDFLAGS = "-all_load";
+				PRODUCT_BUNDLE_IDENTIFIER = "com.zuik.ZIKRouterDemo-macOS";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_VERSION = 4.2;
+			};
+			name = Debug;
+		};
+		F85461D321849A3C00E2311D /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_ENTITLEMENTS = "ZIKRouterDemo-macOS/ZIKRouterDemo_macOS.entitlements";
+				CODE_SIGN_STYLE = Automatic;
+				COMBINE_HIDPI_IMAGES = YES;
+				DEVELOPMENT_TEAM = "";
+				INFOPLIST_FILE = "ZIKRouterDemo-macOS/Info.plist";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+				);
+				OTHER_LDFLAGS = "-all_load";
+				PRODUCT_BUNDLE_IDENTIFIER = "com.zuik.ZIKRouterDemo-macOS";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_VERSION = 4.2;
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		F85461BC21849A3A00E2311D /* Build configuration list for PBXProject "ZIKRouterDemo-macOS" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				F85461CF21849A3C00E2311D /* Debug */,
+				F85461D021849A3C00E2311D /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		F85461D121849A3C00E2311D /* Build configuration list for PBXNativeTarget "ZIKRouterDemo-macOS" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				F85461D221849A3C00E2311D /* Debug */,
+				F85461D321849A3C00E2311D /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = F85461B921849A3A00E2311D /* Project object */;
+}

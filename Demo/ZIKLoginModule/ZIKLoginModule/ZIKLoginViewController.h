@@ -6,9 +6,15 @@
 //  Copyright © 2018 duoyi. All rights reserved.
 //
 
+#import <ZIKRouter/ZIKPlatformCapabilities.h>
+#import <ZIKRouter/ZIKClassCapabilities.h>
+#if ZIK_HAS_UIKIT
 #import <UIKit/UIKit.h>
+#else
+#import <AppKit/AppKit.h>
+#endif
 #import "ZIKLoginViewInput.h"
 
-@interface ZIKLoginViewController : UIViewController<ZIKLoginViewInput>
+@interface ZIKLoginViewController : XXViewController<ZIKLoginViewInput>
 
 @end

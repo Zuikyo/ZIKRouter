@@ -185,6 +185,7 @@ typedef void(^ZIKViewRouteSegueConfiger)(NS_NOESCAPE ZIKViewRouteSegueConfigure)
 
 /**
  Wrap destination in an UINavigationController, UITabBarController or UISplitViewController, and perform route on the container. Only available for ZIKViewRouteTypePush, ZIKViewRouteTypePresentModally, ZIKViewRouteTypePresentAsPopover, ZIKViewRouteTypeShow, ZIKViewRouteTypeShowDetail, ZIKViewRouteTypeAddAsChildViewController.
+ 
  @discussion
  an UINavigationController or UISplitViewController can't be pushed into another UINavigationController, so:
  
@@ -195,6 +196,9 @@ typedef void(^ZIKViewRouteSegueConfiger)(NS_NOESCAPE ZIKViewRouteSegueConfigure)
  For ZIKViewRouteTypeShowDetail, if source is in a collapsed UISplitViewController, and master is an UINavigationController, container can't be an UINavigationController or UISplitViewController
  
  For ZIKViewRouteTypeAddAsChildViewController, will add container as source's child, so you have to add container's view to source's view in addingChildViewHandler, not the destination's view
+ 
+ @note
+ Use weakSelf in containerWrapper to avoid retain cycle.
  */
 @property (nonatomic, copy, nullable) ZIKViewRouteContainerWrapper containerWrapper;
 
@@ -223,10 +227,10 @@ typedef void(^ZIKViewRouteSegueConfiger)(NS_NOESCAPE ZIKViewRouteSegueConfigure)
  
  For ZIKViewRouteTypeCustom, destination is an UIViewController / NSViewController or UIView / NSView.
  
+ ZIKViewRouter use UIViewController's transitionCoordinator to do completion, so if you override segue's -perform or override -showViewController:sender: and provide custom transition, but didn't use a transitionCoordinator (such as use +[UIView animateWithDuration:animations:completion:] to animate), successHandler when be called immediately, before the animation really completes.
+ 
  @note
  Use weakSelf in successHandler to avoid retain cycle.
- 
- ZIKViewRouter use UIViewController's transitionCoordinator to do completion, so if you override segue's -perform or override -showViewController:sender: and provide custom transition, but didn't use a transitionCoordinator (such as use +[UIView animateWithDuration:animations:completion:] to animate), successHandler when be called immediately, before the animation really completes.
  */
 @property (nonatomic, copy, nullable) void(^successHandler)(id destination);
 
@@ -244,7 +248,12 @@ typedef void(^ZIKViewRouteSegueConfiger)(NS_NOESCAPE ZIKViewRouteSegueConfigure)
 ///config segue for ZIKViewRouteTypePerformSegue
 @property (nonatomic, readonly, copy) ZIKViewRouteSegueConfiger configureSegue;
 
-///When use routeType ZIKViewRouteTypeAddAsChildViewController, add the destination's view to source's view in this block. If you wrap destination with -containerWrapper, the `destination` in this block is the wrapped ViewController. You can add with animations, and must call completion when the adding action is finished.
+/*
+ When use routeType ZIKViewRouteTypeAddAsChildViewController, add the destination as child view controller to the parent source view controller. Adding destination's view to source's view in addingChildViewHandler, and invoke the completion block when finished. If you wrap destination with -containerWrapper, the `destination` in this block is the wrapped ViewController.
+ 
+ @note
+ Use weakSelf in addingChildViewHandler to avoid retain cycle.
+ */
 #if ZIK_HAS_UIKIT
 @property (nonatomic, copy, nullable) void(^addingChildViewHandler)(UIViewController *destination, void(^completion)(void));
 #else
@@ -296,7 +305,12 @@ typedef void(^ZIKViewRouteSegueConfiger)(NS_NOESCAPE ZIKViewRouteSegueConfigure)
 ///For pop/dismiss, default is YES
 @property (nonatomic, assign) BOOL animated;
 
-///When use routeType ZIKViewRouteTypeAddAsChildViewController and remove, remove the destination's view from its superview in this block. If you wrap destination with -containerWrapper, the `destination` in this block is the wrapped ViewController. You can remove with animations, and must call completion when the removing action is finished.
+/*
+ When use routeType ZIKViewRouteTypeAddAsChildViewController and remove, remove the destination's view from its superview in removingChildViewHandler, and invoke the completion block when finished. If you wrap destination with -containerWrapper, the `destination` in this block is the wrapped ViewController.
+ 
+ @note
+ Use weakSelf in removingChildViewHandler to avoid retain cycle.
+*/
 #if ZIK_HAS_UIKIT
 @property (nonatomic, copy, nullable) void(^removingChildViewHandler)(UIViewController *destination, void(^completion)(void));
 #else
@@ -341,7 +355,12 @@ typedef void(^ZIKViewRouteSegueConfiger)(NS_NOESCAPE ZIKViewRouteSegueConfigure)
 /// Show the destination as detail from the source view controller.
 @property (nonatomic, class, readonly) ZIKViewRoutePath *(^showDetailFrom)(UIViewController *source) API_AVAILABLE(ios(8.0)) NS_SWIFT_UNAVAILABLE("Use showDetail(from:) instead");
 
-/// Add the destination as child view controller to the parent source view controller. Adding destination's view to source's view in addingChildViewHandler, and invoke the completion block when finished.
+/*
+ When use routeType ZIKViewRouteTypeAddAsChildViewController, add the destination as child view controller to the parent source view controller. Adding destination's view to source's view in addingChildViewHandler, and invoke the completion block when finished. If you wrap destination with -containerWrapper, the `destination` in this block is the wrapped ViewController.
+ 
+ @note
+ Use weakSelf in addingChildViewHandler to avoid retain cycle.
+*/
 @property (nonatomic, class, readonly) ZIKViewRoutePath *(^addAsChildViewControllerFrom)(UIViewController *source, void(^addingChildViewHandler)(UIViewController *destination, void(^completion)(void))) NS_SWIFT_UNAVAILABLE("Use addAsChildViewController(from:addingChildViewHandler) instead");
 
 /// Add the destination as subview to the superview.
@@ -374,7 +393,12 @@ typedef void(^ZIKViewRouteSegueConfiger)(NS_NOESCAPE ZIKViewRouteSegueConfigure)
 /// Show the destination as detail from the source view controller.
 + (instancetype)showDetailFrom:(UIViewController *)source API_AVAILABLE(ios(8.0)) NS_SWIFT_NAME(showDetail(from:));
 
-/// Add the destination as child view controller to the parent source view controller. Adding destination's view to source's view in addingChildViewHandler, and invoke the completion block when finished.
+/*
+ When use routeType ZIKViewRouteTypeAddAsChildViewController, add the destination as child view controller to the parent source view controller. Adding destination's view to source's view in addingChildViewHandler, and invoke the completion block when finished. If you wrap destination with -containerWrapper, the `destination` in this block is the wrapped ViewController.
+ 
+ @note
+ Use weakSelf in addingChildViewHandler to avoid retain cycle.
+*/
 + (instancetype)addAsChildViewControllerFrom:(UIViewController *)source addingChildViewHandler:(void(^)(UIViewController *destination, void(^completion)(void)))addingChildViewHandler NS_SWIFT_NAME(addAsChildViewController(from:addingChildViewHandler:));
 
 /// Add the destination as subview to the superview.
@@ -411,7 +435,12 @@ typedef void(^ZIKViewRouteSegueConfiger)(NS_NOESCAPE ZIKViewRouteSegueConfigure)
 /// Show the destination with `-[NSWindowController showWindow:sender]`.
 @property (nonatomic, class, readonly) ZIKViewRoutePath *show;
 
-/// Add the destination as child view controller to the parent source view controller. Adding destination's view to source's view in addingChildViewHandler, and invoke the completion block when finished.
+/*
+ When use routeType ZIKViewRouteTypeAddAsChildViewController, add the destination as child view controller to the parent source view controller. Adding destination's view to source's view in addingChildViewHandler, and invoke the completion block when finished. If you wrap destination with -containerWrapper, the `destination` in this block is the wrapped ViewController.
+ 
+ @note
+ Use weakSelf in addingChildViewHandler to avoid retain cycle.
+*/
 @property (nonatomic, class, readonly) ZIKViewRoutePath *(^addAsChildViewControllerFrom)(NSViewController *source, void(^addingChildViewHandler)(NSViewController *destination, void(^completion)(void))) NS_SWIFT_UNAVAILABLE("Use addAsChildViewController(from:addingChildViewHandler) instead");
 
 /// Add the destination as subview to the superview.
@@ -441,7 +470,12 @@ typedef void(^ZIKViewRouteSegueConfiger)(NS_NOESCAPE ZIKViewRouteSegueConfigure)
 /// Perform segue from the source view controller, with the segue identifier
 + (instancetype)performSegueFrom:(NSViewController *)source identifier:(NSString *)identifier sender:(nullable id)sender NS_SWIFT_NAME(performSegue(from:identifier:sender:));
 
-/// Add the destination as child view controller to the parent source view controller. Adding destination's view to source's view in addingChildViewHandler, and invoke the completion block when finished.
+/*
+ When use routeType ZIKViewRouteTypeAddAsChildViewController, add the destination as child view controller to the parent source view controller. Adding destination's view to source's view in addingChildViewHandler, and invoke the completion block when finished. If you wrap destination with -containerWrapper, the `destination` in this block is the wrapped ViewController.
+ 
+ @note
+ Use weakSelf in addingChildViewHandler to avoid retain cycle.
+*/
 + (instancetype)addAsChildViewControllerFrom:(NSViewController *)source addingChildViewHandler:(void(^)(NSViewController *destination, void(^completion)(void)))addingChildViewHandler NS_SWIFT_NAME(addAsChildViewController(from:addingChildViewHandler:));
 
 /// Add the destination as subview to the superview.
@@ -540,6 +574,7 @@ typedef void(^ZIKViewRouteSegueConfiger)(NS_NOESCAPE ZIKViewRouteSegueConfigure)
 
 /**
  Wrap destination in an UINavigationController, UITabBarController or UISplitViewController, and perform route on the container. Only available for ZIKViewRouteTypePush, ZIKViewRouteTypePresentModally, ZIKViewRouteTypePresentAsPopover, ZIKViewRouteTypeShow, ZIKViewRouteTypeShowDetail, ZIKViewRouteTypeAddAsChildViewController.
+ 
  @discussion
  an UINavigationController or UISplitViewController can't be pushed into another UINavigationController, so:
  
@@ -550,6 +585,9 @@ typedef void(^ZIKViewRouteSegueConfiger)(NS_NOESCAPE ZIKViewRouteSegueConfigure)
  For ZIKViewRouteTypeShowDetail, if source is in a collapsed UISplitViewController, and master is an UINavigationController, container can't be an UINavigationController or UISplitViewController
  
  For ZIKViewRouteTypeAddAsChildViewController, will add container as source's child, so you have to add container's view to source's view in addingChildViewHandler, not the destination's view
+ 
+ @note
+ Use weakSelf in containerWrapper to avoid retain cycle.
  */
 @property (nonatomic, copy, nullable) ZIKViewRouteContainerWrapper containerWrapper;
 
@@ -578,10 +616,10 @@ typedef void(^ZIKViewRouteSegueConfiger)(NS_NOESCAPE ZIKViewRouteSegueConfigure)
  
  For ZIKViewRouteTypeCustom, destination is an UIViewController / NSViewController or UIView / NSView.
  
+ ZIKViewRouter use UIViewController's transitionCoordinator to do completion, so if you override segue's -perform or override -showViewController:sender: and provide custom transition, but didn't use a transitionCoordinator (such as use +[UIView animateWithDuration:animations:completion:] to animate), successHandler when be called immediately, before the animation really completes.
+ 
  @note
  Use weakSelf in successHandler to avoid retain cycle.
- 
- ZIKViewRouter use UIViewController's transitionCoordinator to do completion, so if you override segue's -perform or override -showViewController:sender: and provide custom transition, but didn't use a transitionCoordinator (such as use +[UIView animateWithDuration:animations:completion:] to animate), successHandler when be called immediately, before the animation really completes.
  */
 @property (nonatomic, copy, nullable) void(^successHandler)(Destination destination);
 
@@ -594,7 +632,12 @@ typedef void(^ZIKViewRouteSegueConfiger)(NS_NOESCAPE ZIKViewRouteSegueConfigure)
 ///Config segue for ZIKViewRouteTypePerformSegue
 @property (nonatomic, readonly, copy) ZIKViewRouteSegueConfiger configureSegue;
 
-///When use routeType ZIKViewRouteTypeAddAsChildViewController, add the destination's view to source's view in this block. If you wrap destination with -containerWrapper, the `destination` in this block is the wrapped ViewController. You can add with animations, and must call completion when the adding action is finished.
+/*
+ When use routeType ZIKViewRouteTypeAddAsChildViewController, add the destination as child view controller to the parent source view controller. Adding destination's view to source's view in addingChildViewHandler, and invoke the completion block when finished. If you wrap destination with -containerWrapper, the `destination` in this block is the wrapped ViewController.
+
+ @note
+ Use weakSelf in addingChildViewHandler to avoid retain cycle.
+*/
 #if ZIK_HAS_UIKIT
 @property (nonatomic, copy, nullable) void(^addingChildViewHandler)(UIViewController *destination, void(^completion)(void));
 #else
@@ -617,7 +660,12 @@ typedef void(^ZIKViewRouteSegueConfiger)(NS_NOESCAPE ZIKViewRouteSegueConfigure)
 ///For pop/dismiss, default is YES
 @property (nonatomic, assign) BOOL animated;
 
-///When use routeType ZIKViewRouteTypeAddAsChildViewController and remove, remove the destination's view from its superview in this block. If you wrap destination with -containerWrapper, the `destination` in this block is the wrapped ViewController. You can remove with animations, and must call completion when the removing action is finished.
+/*
+ When use routeType ZIKViewRouteTypeAddAsChildViewController and remove, remove the destination's view from its superview in removingChildViewHandler, and invoke the completion block when finished. If you wrap destination with -containerWrapper, the `destination` in this block is the wrapped ViewController.
+
+ @note
+ Use weakSelf in removingChildViewHandler to avoid retain cycle.
+*/
 #if ZIK_HAS_UIKIT
 @property (nonatomic, copy, nullable) void(^removingChildViewHandler)(UIViewController *destination, void(^completion)(void));
 #else
