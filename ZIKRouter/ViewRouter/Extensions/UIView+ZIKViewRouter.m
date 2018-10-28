@@ -44,7 +44,7 @@
 }
 
 - (nullable id)zix_routePerformer {
-    NSAssert(self.nextResponder || [self isKindOfClass:[XXWindow class]], @"View is not in any view hierarchy.");
+    NSAssert(self.nextResponder || [self isKindOfClass:[XXWindow class]] || [self window], @"View is not in any view hierarchy.");
     
     if ([self isKindOfClass:[XXWindow class]]) {
         XXViewController *performer;

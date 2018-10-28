@@ -39,7 +39,7 @@ NSNotificationName kZIKViewRouteRemoveRouteCancelledNotification = @"kZIKViewRou
 
 static ZIKViewRouteGlobalErrorHandler g_globalErrorHandler;
 static dispatch_semaphore_t g_globalErrorSema;
-static NSMutableArray *g_preparingXXViewRouters;
+static NSMutableSet *g_preparingXXViewRouters;
 
 @interface ZIKViewRouter ()
 @property (nonatomic, assign) BOOL routingFromInternal;
@@ -65,7 +65,7 @@ static NSMutableArray *g_preparingXXViewRouters;
 + (void)load {
     [ZIKRouteRegistry addRegistry:[ZIKViewRouteRegistry class]];
     g_globalErrorSema = dispatch_semaphore_create(1);
-    g_preparingXXViewRouters = [NSMutableArray array];
+    g_preparingXXViewRouters = [NSMutableSet set];
     
     Class ZIKViewRouterClass = [ZIKViewRouter class];
     Class XXViewControllerClass = [XXViewController class];
@@ -2433,25 +2433,35 @@ static  ZIKViewRouterType *_Nullable _routerTypeToRegisteredView(Class viewClass
     [self ZIKViewRouter_hook_viewDidLoad];
     
     //Find performer and prepare for destination added to a superview not on screen in -ZIKViewRouter_hook_willMoveToSuperview
-    NSMutableArray *preparingRouters = g_preparingXXViewRouters;
+    NSMutableSet *preparingRouters = g_preparingXXViewRouters;
     
-    NSMutableArray *preparedRouters;
+    __block NSMutableSet *preparedRouters;
     if (preparingRouters.count > 0) {
-        for (ZIKViewRouter *router in preparingRouters) {
+        [preparingRouters enumerateObjectsUsingBlock:^(ZIKViewRouter *router, BOOL * _Nonnull stop) {
             XXView *destination = router.destination;
             NSAssert([destination isKindOfClass:[XXView class]], @"Only UIView destination need fix.");
             id performer = [destination zix_routePerformer];
             if (performer) {
                 [ZIKViewRouter _prepareDestinationFromExternal:destination router:router performer:performer];
                 router.prepared = YES;
+                if ([destination respondsToSelector:@selector(zix_routeTypeFromRouter)]) {
+                    NSNumber *routeTypeFromRouter = destination.zix_routeTypeFromRouter;
+                    [[NSNotificationCenter defaultCenter] postNotificationName:kZIKViewRouteWillPerformRouteNotification object:destination];
+                    if (!routeTypeFromRouter ||
+                        [routeTypeFromRouter integerValue] == ZIKViewRouteTypeMakeDestination) {
+                        XXViewController *vc = (XXViewController *)self;
+                        [ZIKViewRouter AOP_notifyAll_router:router willPerformRouteOnDestination:destination fromSource:vc.view];
+                    }
+                }
+                
                 if (!preparedRouters) {
-                    preparedRouters = [NSMutableArray array];
+                    preparedRouters = [NSMutableSet set];
                 }
                 [preparedRouters addObject:router];
             }
-        }
+        }];
         if (preparedRouters.count > 0) {
-            [preparingRouters removeObjectsInArray:preparedRouters];
+            [preparingRouters minusSet:preparedRouters];
         }
     }
 }
@@ -2579,29 +2589,34 @@ static  ZIKViewRouterType *_Nullable _routerTypeToRegisteredView(Class viewClass
     if ([self conformsToProtocol:@protocol(ZIKRoutableView)]) {
         if (!newSuperview) {
             //Removing from superview
+            NSNumber *routeTypeFromRouter = [destination zix_routeTypeFromRouter];
             ZIKViewRouter *destinationRouter = [destination zix_destinationViewRouter];
-            if (destinationRouter) {
-                //This is routing from router
-                if ([g_preparingXXViewRouters containsObject:destinationRouter]) {
-                    //Didn't find the performer of UIView until it's removing from superview, maybe its superview was never added to any view controller
-                    [g_preparingXXViewRouters removeObject:destinationRouter];
-                    NSString *description = [NSString stringWithFormat:@"Didn't fine the performer of UIView until it's removing from superview, maybe its superview was never added to any view controller. Can't find which custom UIView or UIViewController added destination:(%@) as subview, so we can't notify the performer to config the destination. You may add destination to an UIWindow in code directly, and the UIWindow is not a custom class. Please change your code and add subview by a custom view router with ZIKViewRouteTypeAddAsSubview. Destination superview: (%@).",destination, newSuperview];
-                    [destinationRouter endPerformRouteWithError:[ZIKViewRouter errorWithCode:ZIKViewRouteErrorInvalidPerformer localizedDescription:description]];
-                }
-                //Destination don't need prepare, but its superview never be added to a view controller, so destination is never on a window
-                if (destinationRouter.state == ZIKRouterStateRouting &&
-                    ![destination zix_firstAvailableViewController]) {
-                    //end perform
-                    [ZIKViewRouter AOP_notifyAll_router:destinationRouter willPerformRouteOnDestination:destination fromSource:destination.superview];
-                    [destinationRouter endPerformRouteWithSuccess];
+            BOOL isPerformingSuccess = YES;
+            if (!routeTypeFromRouter && destinationRouter) {
+                //Destination's superview never be added to a view controller, so destination is never on a window
+                if (destinationRouter.state == ZIKRouterStateRouting) {
+                    if (destinationRouter.prepared == NO) {
+                        isPerformingSuccess = NO;
+                        [destinationRouter prepareDestinationForPerforming];
+                        destinationRouter.prepared = YES;
+                        //Didn't find the performer of UIView until it's removing from superview, maybe its superview was never added to any view controller
+                        NSString *description = [NSString stringWithFormat:@"Didn't fine the performer of UIView until it's removing from superview, maybe its superview was never added to any view controller. Can't find which custom UIView or UIViewController added destination:(%@) as subview, so we can't notify the performer to config the destination. You may add destination to an UIWindow in code directly, and the UIWindow is not a custom class. Please change your code and add subview by a custom view router with ZIKViewRouteTypeAddAsSubview. Destination superview: (%@).",destination, newSuperview];
+                        [destinationRouter endPerformRouteWithError:[ZIKViewRouter errorWithCode:ZIKViewRouteErrorInvalidPerformer localizedDescription:description]];
+                        [g_preparingXXViewRouters removeObject:destinationRouter];
+                    } else {
+                        //end perform
+                        [ZIKViewRouter AOP_notifyAll_router:destinationRouter willPerformRouteOnDestination:destination fromSource:destination.superview];
+                        [destinationRouter endPerformRouteWithSuccess];
+                    }
                 }
                 [destination setZix_destinationViewRouter:nil];
             }
-            [[NSNotificationCenter defaultCenter] postNotificationName:kZIKViewRouteWillRemoveRouteNotification object:destination];
-            NSNumber *routeTypeFromRouter = [destination zix_routeTypeFromRouter];
-            if (!routeTypeFromRouter ||
-                [routeTypeFromRouter integerValue] == ZIKViewRouteTypeMakeDestination) {
-                [ZIKViewRouter AOP_notifyAll_router:nil willRemoveRouteOnDestination:destination fromSource:destination.superview];
+            if (isPerformingSuccess) {
+                [[NSNotificationCenter defaultCenter] postNotificationName:kZIKViewRouteWillRemoveRouteNotification object:destination];
+                if (!routeTypeFromRouter ||
+                    [routeTypeFromRouter integerValue] == ZIKViewRouteTypeMakeDestination) {
+                    [ZIKViewRouter AOP_notifyAll_router:destinationRouter willRemoveRouteOnDestination:destination fromSource:destination.superview];
+                }
             }
         } else if (!destination.zix_routed) {
             //Adding to a superview
@@ -2609,52 +2624,47 @@ static  ZIKViewRouterType *_Nullable _routerTypeToRegisteredView(Class viewClass
             NSNumber *routeTypeFromRouter = [destination zix_routeTypeFromRouter];
             if (!routeTypeFromRouter) {
                 //Not routing from router
-                ZIKViewRouterType *route = _routerTypeToRegisteredView([destination class]);
-                if (route) {
+                BOOL shouldNotifyWillPerform = NO;
+                ZIKViewRouter *destinationRouter = [destination zix_destinationViewRouter];
+                if (!destinationRouter) {
+                    shouldNotifyWillPerform = YES;
+                    ZIKViewRouterType *route = _routerTypeToRegisteredView([destination class]);
                     NSAssert([route _validateSupportedRouteTypesForXXView], @"Router for UIView only suppourts ZIKViewRouteTypeAddAsSubview, ZIKViewRouteTypeMakeDestination and ZIKViewRouteTypeCustom, override +supportedRouteTypes in your router.");
-                    ZIKViewRouter *destinationRouter = [route routerFromView:destination source:newSuperview];
+                    destinationRouter = [route routerFromView:destination source:newSuperview];
                     destinationRouter.routingFromInternal = YES;
                     [destinationRouter notifyRouteState:ZIKRouterStateRouting];
                     [destination setZix_destinationViewRouter:destinationRouter];
-                    
-                    id performer = nil;
-                    BOOL needPrepare = NO;
+                }
+                if (destinationRouter.prepared == NO) {
+                    shouldNotifyWillPerform = YES;
                     if (![destinationRouter destinationFromExternalPrepared:destination]) {
-                        needPrepare = YES;
+                        id performer;
                         if (destination.nextResponder) {
                             performer = [destination zix_routePerformer];
                         } else if (newSuperview.nextResponder) {
                             performer = [newSuperview zix_routePerformer];
                         }
-                        //Adding to a superview on screen.
-                        if (!performer && (newSuperview.window || [newSuperview isKindOfClass:[XXWindow class]])) {
-                            NSString *description = [NSString stringWithFormat:@"Adding to a superview on screen. Can't find which custom UIView or UIViewController added destination:(%@) as subview, so we can't notify the performer to config the destination. You may add destination to an UIWindow in code directly. Please fix your code and add subview by a custom view router with ZIKViewRouteTypeAddAsSubview. Destination superview: (%@).",destination, newSuperview];
-                            [ZIKViewRouter notifyError_invalidPerformerWithAction:ZIKRouteActionPerformRoute errorDescription:description];
-                        }
-                    }
-                    if (needPrepare) {
+                        
                         if (performer) {
                             [ZIKViewRouter _prepareDestinationFromExternal:destination router:destinationRouter performer:performer];
                             destinationRouter.prepared = YES;
                         } else {
-                            if (!newSuperview.window && ![newSuperview isKindOfClass:[XXWindow class]]) {
-                                //Adding to a superview not on screen, can't search performer before -viewDidLoad. willMoveToSuperview: is called before willMoveToWindow:. Find performer and prepare in -ZIKViewRouter_hook_viewDidLoad, do willPerformRoute AOP in -ZIKViewRouter_hook_willMoveToWindow:
-                                if (destinationRouter) {
-                                    [g_preparingXXViewRouters addObject:destinationRouter];
-                                }
+                            shouldNotifyWillPerform = NO;
+                            //Adding to a superview on screen.
+                            if (newSuperview.window || [newSuperview isKindOfClass:[XXWindow class]]) {
+                                NSString *description = [NSString stringWithFormat:@"Adding to a superview on screen. Can't find which custom UIView or UIViewController added destination:(%@) as subview, so we can't notify the performer to config the destination. You may add destination to an UIWindow in code directly. Please fix your code and add subview by a custom view router with ZIKViewRouteTypeAddAsSubview. Destination superview: (%@).",destination, newSuperview];
+                                [ZIKViewRouter notifyError_invalidPerformerWithAction:ZIKRouteActionPerformRoute errorDescription:description];
                             }
-                            NSAssert1(!newSuperview.window && ![newSuperview isKindOfClass:[XXWindow class]], @"When new superview is already on screen, performer should not be nil.You may add destination to a system UIViewController in code directly. Please fix your code and add subview by a custom view router with ZIKViewRouteTypeAddAsSubview. Destination superview: (%@).",newSuperview);
                         }
                     } else {
-                        [destinationRouter prepareDestination:destination configuration:destinationRouter.original_configuration];
-                        [destinationRouter didFinishPrepareDestination:destination configuration:destinationRouter.original_configuration];
+                        [destinationRouter prepareDestinationForPerforming];
                         destinationRouter.prepared = YES;
                     }
-                    router = destinationRouter;
                 }
+                router = destinationRouter;
                 
                 //Adding to a superview on screen.
-                if (newSuperview.window || [newSuperview isKindOfClass:[XXWindow class]]) {
+                if (shouldNotifyWillPerform) {
                     [[NSNotificationCenter defaultCenter] postNotificationName:kZIKViewRouteWillPerformRouteNotification object:destination];
                     NSNumber *routeTypeFromRouter = [destination zix_routeTypeFromRouter];
                     if (!routeTypeFromRouter ||
@@ -2666,7 +2676,6 @@ static  ZIKViewRouterType *_Nullable _routerTypeToRegisteredView(Class viewClass
         }
     }
     if (!newSuperview) {
-//        NSAssert(destination.zix_routed == YES, @"zix_routed should be YES before remove");
         [destination setZix_routed:NO];
     }
     [self ZIKViewRouter_hook_willMoveToSuperview:newSuperview];
@@ -2707,23 +2716,16 @@ static  ZIKViewRouterType *_Nullable _routerTypeToRegisteredView(Class viewClass
             ZIKViewRouter *router;
             XXView *source;
             NSNumber *routeTypeFromRouter = [destination zix_routeTypeFromRouter];
-            BOOL searchPerformerInDidMoveToWindow = NO;
+            BOOL shouldNotifyWillPerform = NO;
             if (!routeTypeFromRouter) {
+                // Not performed from router
                 ZIKViewRouter *destinationRouter = [destination zix_destinationViewRouter];
-                NSString *failedToPrepareDescription;
-                if (destinationRouter) {
-                    if ([g_preparingXXViewRouters containsObject:destinationRouter]) {
-                        //Didn't fine the performer of UIView route  before it's displayed on screen. But maybe can find in -didMoveToWindow.
-                        [g_preparingXXViewRouters removeObject:destinationRouter];
-                        failedToPrepareDescription = [NSString stringWithFormat:@"Didn't fine the performer of UIView route before it's displayed on screen. Can't find which custom UIView or UIViewController added destination:(%@) as subview, so we can't notify the performer to config the destination. You may add destination to an UIWindow in code directly, and the UIWindow is not a custom class. Please change your code and add subview by a custom view router with ZIKViewRouteTypeAddAsSubview. Destination superview: %@.",destination, destination.superview];
-                    }
-                }
-                
                 //Was added to a superview when superview was not on screen, and it's displayed now.
                 if (destination.superview) {
                     source = destination.superview;
                     
                     if (!destinationRouter) {
+                        shouldNotifyWillPerform = YES;
                         ZIKViewRouterType *route = _routerTypeToRegisteredView([destination class]);
                         if (route) {
                             NSAssert([route _validateSupportedRouteTypesForXXView], @"Router for UIView only suppourts ZIKViewRouteTypeAddAsSubview, ZIKViewRouteTypeMakeDestination and ZIKViewRouteTypeCustom, override +supportedRouteTypes in your router.");
@@ -2734,54 +2736,36 @@ static  ZIKViewRouterType *_Nullable _routerTypeToRegisteredView(Class viewClass
                         }
                     }
                     
-                    if (!destinationRouter.prepared) {
-                        id performer = nil;
-                        BOOL needPrepare = NO;
-                        BOOL onScreen = NO;
+                    if (destinationRouter && destinationRouter.prepared == NO) {
+                        shouldNotifyWillPerform = YES;
                         if (![destinationRouter destinationFromExternalPrepared:destination]) {
-                            needPrepare = YES;
-                            onScreen = ([destination zix_firstAvailableViewController] != nil);
-                            
+                            BOOL onScreen = ([destination zix_firstAvailableViewController] != nil);
                             if (onScreen) {
-                                performer = [destination zix_routePerformer];
-                            }
-                            
-                            if (onScreen) {
-                                if (!performer) {
-                                    NSString *description;
-                                    if (failedToPrepareDescription) {
-                                        description = failedToPrepareDescription;
-                                    } else {
-                                        description = [NSString stringWithFormat:@"Can't find which custom UIView or UIViewController added destination:(%@) as subview, so we can't notify the performer to config the destination. You may add destination to an UIWindow in code directly, and the UIWindow is not a custom class. Please change your code and add subview by a custom view router with ZIKViewRouteTypeAddAsSubview. Destination superview: %@.",destination, destination.superview];
-                                    }
-                                    [ZIKViewRouter notifyError_invalidPerformerWithAction:ZIKRouteActionPerformRoute errorDescription:description];
+                                id performer = [destination zix_routePerformer];
+                                if (performer) {
+                                    NSAssert(ZIKRouter_classIsCustomClass(performer), @"performer should be a subclass of UIViewController in your project.");
+                                    [ZIKViewRouter _prepareDestinationFromExternal:destination router:destinationRouter performer:performer];
+                                    destinationRouter.prepared = YES;
+                                    [g_preparingXXViewRouters removeObject:destinationRouter];
+                                } else {
+                                    shouldNotifyWillPerform = NO;
                                 }
-                                NSAssert(ZIKRouter_classIsCustomClass(performer), @"performer should be a subclass of UIViewController in your project.");
-                            }
-                        }
-                        if (onScreen) {
-                            if (needPrepare && performer) {
-                                [ZIKViewRouter _prepareDestinationFromExternal:destination router:destinationRouter performer:performer];
-                                destinationRouter.prepared = YES;
                             } else {
-                                [destinationRouter prepareDestination:destination configuration:destinationRouter.original_configuration];
-                                [destinationRouter didFinishPrepareDestination:destination configuration:destinationRouter.original_configuration];
-                                destinationRouter.prepared = YES;
+                                shouldNotifyWillPerform = NO;
                             }
                         } else {
-                            searchPerformerInDidMoveToWindow = YES;
-                            if (destinationRouter) {
-                                [g_preparingXXViewRouters addObject:destinationRouter];
-                            }
+                            [destinationRouter prepareDestinationForPerforming];
+                            destinationRouter.prepared = YES;
+                            shouldNotifyWillPerform = YES;
+                            [g_preparingXXViewRouters removeObject:destinationRouter];
                         }
                     }
-                    
                     router = destinationRouter;
                 }
             }
             
             //Was added to a superview when superview was not on screen, and it's displayed now.
-            if (!routed && destination.superview && !searchPerformerInDidMoveToWindow) {
+            if (!routed && source && shouldNotifyWillPerform) {
                 [[NSNotificationCenter defaultCenter] postNotificationName:kZIKViewRouteWillPerformRouteNotification object:destination];
                 if (!routeTypeFromRouter ||
                     [routeTypeFromRouter integerValue] == ZIKViewRouteTypeMakeDestination) {
@@ -2804,16 +2788,17 @@ static  ZIKViewRouterType *_Nullable _routerTypeToRegisteredView(Class viewClass
             ZIKViewRouter *router;
             NSNumber *routeTypeFromRouter = [destination zix_routeTypeFromRouter];
             if (!routeTypeFromRouter) {
+                BOOL shouldNotifyWillPerform = NO;
+                id source = destination.superview;
+                if (source == nil) {
+                    source = destination.window;
+                }
+                if (source == nil) {
+                    source = destination.nextResponder;
+                }
                 ZIKViewRouter *destinationRouter = destination.zix_destinationViewRouter;
-#if ZIK_HAS_UIKIT
-                NSAssert(destinationRouter, @"destinationRouter should be set in -ZIKViewRouter_hook_willMoveToSuperview:");
-#else
-                // In AppKit, directly add NSView to NSWindow, didn't call -willMoveToWindow:
                 if (!destinationRouter) {
-                    id source = destination.superview;
-                    if (source == nil) {
-                        source = destination.window;
-                    }
+                    shouldNotifyWillPerform = YES;
                     if (source) {
                         ZIKViewRouterType *route = _routerTypeToRegisteredView([destination class]);
                         if (route) {
@@ -2823,76 +2808,51 @@ static  ZIKViewRouterType *_Nullable _routerTypeToRegisteredView(Class viewClass
                             [destinationRouter notifyRouteState:ZIKRouterStateRouting];
                             [destination setZix_destinationViewRouter:destinationRouter];
                         }
-                        
-                        if (!destinationRouter.prepared) {
-                            id performer = nil;
-                            BOOL needPrepare = NO;
-                            BOOL onScreen = NO;
-                            if (![destinationRouter destinationFromExternalPrepared:destination]) {
-                                needPrepare = YES;
-                                onScreen = ([destination zix_firstAvailableViewController] != nil);
-                                
-                                if (onScreen) {
-                                    performer = [destination zix_routePerformer];
-                                }
-                                
-                                if (onScreen) {
-                                    if (!performer) {
-                                        NSString *description = [NSString stringWithFormat:@"Can't find which custom UIView or UIViewController added destination:(%@) as subview, so we can't notify the performer to config the destination. You may add destination to an UIWindow in code directly, and the UIWindow is not a custom class. Please change your code and add subview by a custom view router with ZIKViewRouteTypeAddAsSubview. Destination superview: %@.",destination, destination.superview];
-                                        [ZIKViewRouter notifyError_invalidPerformerWithAction:ZIKRouteActionPerformRoute errorDescription:description];
-                                    }
-                                    NSAssert(ZIKRouter_classIsCustomClass(performer), @"performer should be a subclass of UIViewController in your project.");
-                                }
-                            }
-                            if (onScreen) {
-                                if (needPrepare && performer) {
-                                    [ZIKViewRouter _prepareDestinationFromExternal:destination router:destinationRouter performer:performer];
-                                    destinationRouter.prepared = YES;
-                                } else {
-                                    [destinationRouter prepareDestination:destination configuration:destinationRouter.original_configuration];
-                                    [destinationRouter didFinishPrepareDestination:destination configuration:destinationRouter.original_configuration];
-                                    destinationRouter.prepared = YES;
-                                }
-                            } else {
-                                // Can't find view controller to prepare
-                            }
-                        }
                     }
-                    
+                }
+                router = destinationRouter;
+                NSAssert(destinationRouter, @"Auto created router should not be nil");
+                //Find performer and prepare for destination added to a superview not on screen in -ZIKViewRouter_hook_willMoveToSuperview
+                if (destinationRouter && destinationRouter.prepared == NO) {
+                    shouldNotifyWillPerform = YES;
+                    if (![destinationRouter destinationFromExternalPrepared:destination]) {
+                        BOOL onScreen = ([destination zix_firstAvailableViewController] != nil);
+                        if (onScreen) {
+                            id performer = [destination zix_routePerformer];
+                            if (performer) {
+                                NSAssert(ZIKRouter_classIsCustomClass(performer), @"performer should be a subclass of UIViewController in your project.");
+                                [ZIKViewRouter _prepareDestinationFromExternal:destination router:destinationRouter performer:performer];
+                                destinationRouter.prepared = YES;
+                            } else {
+                                NSString *description = [NSString stringWithFormat:@"Can't find which custom UIView or UIViewController added destination:(%@) as subview, so we can't notify the performer to config the destination. You may add destination to an UIWindow in code directly, and the UIWindow is not a custom class. Please change your code and add subview by a custom view router with ZIKViewRouteTypeAddAsSubview. Destination superview: %@.",destination, destination.superview];
+                                [ZIKViewRouter notifyError_invalidPerformerWithAction:ZIKRouteActionPerformRoute errorDescription:description];
+                            }
+                        } else {
+                            // Can't find view controller to prepare
+                            [destinationRouter prepareDestinationForPerforming];
+                            destinationRouter.prepared = YES;
+                        }
+                    } else {
+                        [destinationRouter prepareDestinationForPerforming];
+                        destinationRouter.prepared = YES;
+                    }
+                    [g_preparingXXViewRouters removeObject:destinationRouter];
+                }
+                
+                if (shouldNotifyWillPerform) {
                     [[NSNotificationCenter defaultCenter] postNotificationName:kZIKViewRouteWillPerformRouteNotification object:destination];
                     if (!routeTypeFromRouter ||
                         [routeTypeFromRouter integerValue] == ZIKViewRouteTypeMakeDestination) {
                         [ZIKViewRouter AOP_notifyAll_router:router willPerformRouteOnDestination:destination fromSource:source];
                     }
                 }
-#endif
-                router = destinationRouter;
-                
-                //Find performer and prepare for destination added to a superview not on screen in -ZIKViewRouter_hook_willMoveToSuperview
-                if (g_preparingXXViewRouters.count > 0) {
-                    if ([g_preparingXXViewRouters containsObject:destinationRouter]) {
-                        [g_preparingXXViewRouters removeObject:destinationRouter];
-                        id performer = [destination zix_routePerformer];
-                        if (performer) {
-                            [ZIKViewRouter _prepareDestinationFromExternal:destination router:destinationRouter performer:performer];
-                            router.prepared = YES;
-                            
-                        } else {
-                            NSString *description = [NSString stringWithFormat:@"Didn't find performer when UIView is already on screen. Can't find which custom UIView or UIViewController added destination:(%@) as subview, so we can't notify the performer to config the destination. You may add destination to an UIWindow in code directly, and the UIWindow is not a custom class. Please change your code and add subview by a custom view router with ZIKViewRouteTypeAddAsSubview. Destination superview: %@.",destination, destination.superview];
-                            [ZIKViewRouter notifyError_invalidPerformerWithAction:ZIKRouteActionPerformRoute errorDescription:description];
-                        }
-                        [[NSNotificationCenter defaultCenter] postNotificationName:kZIKViewRouteWillPerformRouteNotification object:destination];
-                        if (!routeTypeFromRouter ||
-                            [routeTypeFromRouter integerValue] == ZIKViewRouteTypeMakeDestination) {
-                            [ZIKViewRouter AOP_notifyAll_router:router willPerformRouteOnDestination:destination fromSource:superview];
-                        }
-                    }
-                }
                 //end perform
+                // TODO: memory leak: some private view won't call didMoveToWindow
                 [destinationRouter notifyRouteState:ZIKRouterStateRouted];
                 [destination setZix_destinationViewRouter:nil];
             }
             
+            //TODO: move
             [[NSNotificationCenter defaultCenter] postNotificationName:kZIKViewRouteDidPerformRouteNotification object:destination];
             if (!routeTypeFromRouter ||
                 [routeTypeFromRouter integerValue] == ZIKViewRouteTypeMakeDestination) {
