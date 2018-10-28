@@ -63,9 +63,14 @@ class MainViewController: NSViewController {
     }
     
     func testPresentModally() {
-        Router.perform(to: RoutableView<TestViewInput>(), path: .presentModally(from: self), preparation: { (destination) in
-            destination.message = "testPresentModally"
-        })
+        Router.perform(to: RoutableView<TestViewInput>(), path: .presentModally(from: self), configuring: { (config,_) in
+            config.prepareDestination = { destination in
+                destination.message = "testPresentModally"
+            }
+            config.successHandler = { d in
+                
+            }
+            })
     }
     
     func testPresentAsPopover(_ sender: NSButton) {
@@ -116,11 +121,13 @@ class MainViewController: NSViewController {
     }
     
     func testAddAsSubview() {
-        
+        Router.perform(to: RoutableView<TestSubviewInput>(), path: .addAsSubview(from: self.view), preparation: { destination in
+            destination.frame = NSMakeRect(100, 50, 100, 100)
+        })
     }
     
     func testCustom() {
-        Router.perform(to: RoutableViewModule<AlertViewModuleInput>(), path: .defaultPath(from: self), configuring: ({ (config, prepareModule) in
+        Router.perform(to: RoutableViewModule<AlertViewModuleInput>(), path: .defaultPath(from: self), configuring: { (config, prepareModule) in
             prepareModule({ module in
                 module.title = "testCustom"
                 module.message = "This is a NSAlert from view router"
@@ -134,7 +141,7 @@ class MainViewController: NSViewController {
                     print("Cancel button is tapped")
                 })
             })
-        }))
+        })
     }
     
     func testMakeDestination() {

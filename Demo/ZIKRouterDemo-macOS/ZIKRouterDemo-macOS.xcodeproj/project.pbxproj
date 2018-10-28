@@ -7,6 +7,9 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		F81E5FA021858DC6000C8592 /* TestSubview.swift in Sources */ = {isa = PBXBuildFile; fileRef = F81E5F9F21858DC6000C8592 /* TestSubview.swift */; };
+		F81E5FA321858DF0000C8592 /* TestSubviewInput.swift in Sources */ = {isa = PBXBuildFile; fileRef = F81E5FA121858DF0000C8592 /* TestSubviewInput.swift */; };
+		F81E5FA421858DF0000C8592 /* TestSubviewRouter.swift in Sources */ = {isa = PBXBuildFile; fileRef = F81E5FA221858DF0000C8592 /* TestSubviewRouter.swift */; };
 		F85461C521849A3A00E2311D /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = F85461C421849A3A00E2311D /* AppDelegate.swift */; };
 		F85461C721849A3A00E2311D /* MainViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F85461C621849A3A00E2311D /* MainViewController.swift */; };
 		F85461C921849A3C00E2311D /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = F85461C821849A3C00E2311D /* Assets.xcassets */; };
@@ -60,6 +63,9 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		F81E5F9F21858DC6000C8592 /* TestSubview.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TestSubview.swift; sourceTree = "<group>"; };
+		F81E5FA121858DF0000C8592 /* TestSubviewInput.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TestSubviewInput.swift; sourceTree = "<group>"; };
+		F81E5FA221858DF0000C8592 /* TestSubviewRouter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TestSubviewRouter.swift; sourceTree = "<group>"; };
 		F85461C121849A3A00E2311D /* ZIKRouterDemo-macOS.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "ZIKRouterDemo-macOS.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		F85461C421849A3A00E2311D /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		F85461C621849A3A00E2311D /* MainViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainViewController.swift; sourceTree = "<group>"; };
@@ -124,6 +130,9 @@
 				F85461F62184DC8D00E2311D /* TestViewRouter.swift */,
 				F85461F12184DC3500E2311D /* TestViewController.swift */,
 				F85461F22184DC3500E2311D /* TestViewController.xib */,
+				F81E5FA121858DF0000C8592 /* TestSubviewInput.swift */,
+				F81E5F9F21858DC6000C8592 /* TestSubview.swift */,
+				F81E5FA221858DF0000C8592 /* TestSubviewRouter.swift */,
 				F85461C821849A3C00E2311D /* Assets.xcassets */,
 				F85461CA21849A3C00E2311D /* Main.storyboard */,
 				F85461CD21849A3C00E2311D /* Info.plist */,
@@ -235,7 +244,10 @@
 				F85461F82184DC8D00E2311D /* TestViewRouter.swift in Sources */,
 				F85461C521849A3A00E2311D /* AppDelegate.swift in Sources */,
 				F85461E92184AE5B00E2311D /* AlertViewModuleInput.swift in Sources */,
+				F81E5FA421858DF0000C8592 /* TestSubviewRouter.swift in Sources */,
+				F81E5FA021858DC6000C8592 /* TestSubview.swift in Sources */,
 				F85461F32184DC3500E2311D /* TestViewController.swift in Sources */,
+				F81E5FA321858DF0000C8592 /* TestSubviewInput.swift in Sources */,
 				F85461E62184A90000E2311D /* DemoRouteApater.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

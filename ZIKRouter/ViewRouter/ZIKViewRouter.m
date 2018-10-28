@@ -1043,6 +1043,15 @@ static NSMutableArray *g_preparingXXViewRouters;
     [source addSubview:destination];
     
     self.realRouteType = ZIKViewRouteRealTypeAddAsSubview;
+    
+    // UIKit will call -willMoveToSuperview:, -didMoveToSuperview, -willMoveToWindow:, -didMoveToWindow asynchronously.
+    // AppKit will call them synchronously in -addSubview:
+#if !ZIK_HAS_UIKIT
+    if (destination.zix_routed) {
+        [destination setZix_routeTypeFromRouter:nil];
+    }
+#endif
+    
     [self endPerformRouteWithSuccess];
 }
 
@@ -1766,6 +1775,14 @@ destinationStateBeforeRoute:(ZIKPresentationState *)destinationStateBeforeRoute
     [self beginRemoveRouteFromSource:source];
     
     [destination removeFromSuperview];
+    
+    // UIKit will call -willMoveToSuperview:, -didMoveToSuperview, -willMoveToWindow:, -didMoveToWindow asynchronously.
+    // AppKit will call them synchronously in -removeFromSuperview
+#if !ZIK_HAS_UIKIT
+    if (destination.zix_routed == NO) {
+        [destination setZix_routeTypeFromRouter:nil];
+    }
+#endif
     
     [self endRemoveRouteWithSuccessOnDestination:destination fromSource:source];
 }
@@ -2666,9 +2683,11 @@ static  ZIKViewRouterType *_Nullable _routerTypeToRegisteredView(Class viewClass
                 [routeTypeFromRouter integerValue] == ZIKViewRouteTypeMakeDestination) {
                 [ZIKViewRouter AOP_notifyAll_router:nil didRemoveRouteOnDestination:destination fromSource:nil];//Can't get source, source may already be dealloced here or is in dealloc
             }
+#if ZIK_HAS_UIKIT
             if (routeTypeFromRouter) {
                 [destination setZix_routeTypeFromRouter:nil];
             }
+#endif
         }
     }
     
@@ -2818,9 +2837,11 @@ static  ZIKViewRouterType *_Nullable _routerTypeToRegisteredView(Class viewClass
                 [routeTypeFromRouter integerValue] == ZIKViewRouteTypeMakeDestination) {
                 [ZIKViewRouter AOP_notifyAll_router:router didPerformRouteOnDestination:destination fromSource:superview];
             }
+#if ZIK_HAS_UIKIT
             if (routeTypeFromRouter) {
                 [destination setZix_routeTypeFromRouter:nil];
             }
+#endif
             if (router) {
                 router.routingFromInternal = NO;
                 [router notifyPerformRouteSuccessWithDestination:destination];

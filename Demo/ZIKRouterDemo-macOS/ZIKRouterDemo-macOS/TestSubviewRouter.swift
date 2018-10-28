@@ -1,5 +1,5 @@
 //
-//  TestViewRouter.swift
+//  TestSubviewRouter.swift
 //  ZIKRouterDemo-macOS
 //
 //  Created by zuik on 2018/10/28.
@@ -9,23 +9,28 @@
 import ZRouter
 import ZIKRouter.Internal
 
-class TestViewRouter: ZIKViewRouter<TestViewController, ViewRouteConfig> {
+class TestSubviewRouter: ZIKViewRouter<TestSubview, ViewRouteConfig> {
     
     override class func registerRoutableDestination() {
-        registerExclusiveView(TestViewController.self)
-        register(RoutableView<TestViewInput>())
+        registerExclusiveView(TestSubview.self)
+        register(RoutableView<TestSubviewInput>())
     }
     
-    override func destination(with configuration: ViewRouteConfig) -> TestViewController? {
-        let destination: TestViewController? = TestViewController()
+    override func destination(with configuration: ViewRouteConfig) -> TestSubview? {
+        let destination: TestSubview? = TestSubview()
         return destination
     }
     
-    override func prepareDestination(_ destination: TestViewController, configuration: ViewRouteConfig) {
+    override func prepareDestination(_ destination: TestSubview, configuration: ViewRouteConfig) {
         destination.router = self
     }
     
-    override class func router(_ router: ZIKViewRouter<AnyObject, ZIKViewRouteConfiguration>?, willPerformRouteOnDestination destination: TestViewController, fromSource source: Any?) {
+    // If the destiantion is UIView, override and return route types for UIView
+    override class func supportedRouteTypes() -> ZIKViewRouteTypeMask {
+        return .viewDefault
+    }
+    
+    override class func router(_ router: ZIKViewRouter<AnyObject, ZIKViewRouteConfiguration>?, willPerformRouteOnDestination destination: TestSubview, fromSource source: Any?) {
         
         print("""
             ----------------------\nrouter: (\(router ?? "nil" as Any)),
@@ -37,7 +42,7 @@ class TestViewRouter: ZIKViewRouter<TestViewController, ViewRouteConfig> {
         )
     }
     
-    override class func router(_ router: ZIKViewRouter<AnyObject, ZIKViewRouteConfiguration>?, didPerformRouteOnDestination destination: TestViewController, fromSource source: Any?) {
+    override class func router(_ router: ZIKViewRouter<AnyObject, ZIKViewRouteConfiguration>?, didPerformRouteOnDestination destination: TestSubview, fromSource source: Any?) {
         print("""
             ----------------------\nrouter: (\(router ?? "nil" as Any)),
             ✅ did
@@ -48,7 +53,7 @@ class TestViewRouter: ZIKViewRouter<TestViewController, ViewRouteConfig> {
         )
     }
     
-    override class func router(_ router: ZIKViewRouter<AnyObject, ZIKViewRouteConfiguration>?, willRemoveRouteOnDestination destination: TestViewController, fromSource source: Any?) {
+    override class func router(_ router: ZIKViewRouter<AnyObject, ZIKViewRouteConfiguration>?, willRemoveRouteOnDestination destination: TestSubview, fromSource source: Any?) {
         print("""
             ----------------------\nrouter: (\(router ?? "nil" as Any)),
             ⬅️ will
@@ -59,7 +64,7 @@ class TestViewRouter: ZIKViewRouter<TestViewController, ViewRouteConfig> {
         )
     }
     
-    override class func router(_ router: ZIKViewRouter<AnyObject, ZIKViewRouteConfiguration>?, didRemoveRouteOnDestination destination: TestViewController, fromSource source: Any?) {
+    override class func router(_ router: ZIKViewRouter<AnyObject, ZIKViewRouteConfiguration>?, didRemoveRouteOnDestination destination: TestSubview, fromSource source: Any?) {
         print("""
             ----------------------\nrouter: (\(router ?? "nil" as Any)),
             ❎ did
@@ -71,10 +76,10 @@ class TestViewRouter: ZIKViewRouter<TestViewController, ViewRouteConfig> {
     }
 }
 
-extension TestViewController: ZIKRoutableView {
+extension TestSubview: ZIKRoutableView {
     
 }
 
-extension RoutableView where Protocol == TestViewInput {
-    init() { self.init(declaredTypeName: "TestViewInput") }
+extension RoutableView where Protocol == TestSubviewInput {
+    init() { self.init(declaredTypeName: "NSView & SubviewInput") }
 }
