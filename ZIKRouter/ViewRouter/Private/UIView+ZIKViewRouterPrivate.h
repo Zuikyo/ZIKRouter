@@ -24,6 +24,7 @@ NS_ASSUME_NONNULL_BEGIN
 @interface NSView ()
 #endif
 - (void)setZix_routed:(BOOL)routed;
+- (void)setZix_removing:(BOOL)removing;
 @end
 
 @class ZIKViewRouter;

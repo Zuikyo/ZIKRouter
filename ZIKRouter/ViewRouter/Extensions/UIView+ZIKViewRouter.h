@@ -35,7 +35,10 @@ NS_ASSUME_NONNULL_BEGIN
  */
 @property (nonatomic, readonly) BOOL zix_routed;
 
-///Get the ViewController containing the view. Only available in and after -willMoveToWindow:.
+/// Whether the UIView/NSView is removing. YES in -willMoveToSuperview:nil and didMoveToWindow nil.
+@property (nonatomic, readonly) BOOL zix_removing;
+
+/// Get the ViewController containing the view. Only available in and after -willMoveToWindow:.
 #if ZIK_HAS_UIKIT
 - (nullable UIViewController *)zix_firstAvailableUIViewController API_DEPRECATED_WITH_REPLACEMENT("zix_firstAvailableViewController", ios(7.0, 7.0));
 - (nullable UIViewController *)zix_firstAvailableViewController;
