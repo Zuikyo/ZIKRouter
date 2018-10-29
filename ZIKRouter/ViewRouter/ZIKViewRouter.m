@@ -865,7 +865,7 @@ static NSMutableSet *g_finishingXXViewRouters;
         return;
     }
     
-    id<NSViewControllerPresentationAnimator> animator = self.original_configuration;
+    id<NSViewControllerPresentationAnimator> animator = self.original_configuration.animator;
     if (animator == nil) {
         [self _performPresentModallyOnDestination:destination fromSource:source];
         return;
@@ -1531,10 +1531,7 @@ destinationStateBeforeRoute:(ZIKPresentationState *)destinationStateBeforeRoute
     }
     ZIKViewRouteConfiguration *configuration = self.original_configuration;
     if (configuration.routeType == ZIKViewRouteTypeCustom) {
-        [self removeCustomRouteOnDestination:destination
-                                  fromSource:self.original_configuration.source
-                         removeConfiguration:self.original_removeConfiguration
-                               configuration:configuration];
+        [self _removeCustomOnDestination:destination fromSource:configuration.source];
         return;
     }
     ZIKViewRouteRealType realRouteType = self.realRouteType;
@@ -1686,6 +1683,7 @@ destinationStateBeforeRoute:(ZIKPresentationState *)destinationStateBeforeRoute
 
 #if !ZIK_HAS_UIKIT
 - (void)_closeWindowOnDestination:(XXViewController *)destination {
+    [destination setZix_routeTypeFromRouter:@(ZIKViewRouteTypeShow)];
     [self beginRemoveRouteFromSource:nil];
     [destination.view.window close];
     [ZIKViewRouter _completeWithMacTransitionCompletion:^{
@@ -1790,6 +1788,14 @@ destinationStateBeforeRoute:(ZIKPresentationState *)destinationStateBeforeRoute
 #endif
     
     [self endRemoveRouteWithSuccessOnDestination:destination fromSource:source];
+}
+
+- (void)_removeCustomOnDestination:(id)destination fromSource:(nullable id)source {
+    [destination setZix_routeTypeFromRouter:@(ZIKViewRouteTypeCustom)];
+    [self removeCustomRouteOnDestination:destination
+                              fromSource:source
+                     removeConfiguration:self.original_removeConfiguration
+                           configuration:self.original_configuration];
 }
 
 - (void)removeCustomRouteOnDestination:(id)destination fromSource:(nullable id)source removeConfiguration:(ZIKViewRemoveConfiguration *)removeConfiguration configuration:(ZIKViewRouteConfiguration *)configuration {

@@ -92,11 +92,15 @@ class MainViewController: NSViewController {
     }
     
     func testPresentWithAnimator() {
-        
+        Router.perform(to: RoutableView<TestViewInput>(), path: ViewRoutePath.present(from: self, animator: TestAnimator()), preparation: { (destination) in
+            destination.message = "testPresentWithAnimator"
+        })
     }
     
     func testPerformSegue() {
-        
+        Router.perform(to: RoutableView<TestViewInput>(), path: ViewRoutePath.performSegue(from: self, identifier: "TestViewRouter", sender: nil), preparation: { (destination) in
+            destination.message = "testPerformSegue"
+        })
     }
     
     func testShow() {
@@ -127,6 +131,12 @@ class MainViewController: NSViewController {
     }
     
     func testCustom() {
+        Router.perform(to: RoutableView<TestViewInput>(), path: .custom(from: self), preparation: { destination in
+            destination.message = "testCustom"
+        })
+    }
+    
+    func testPerformAlert() {
         Router.perform(to: RoutableViewModule<AlertViewModuleInput>(), path: .defaultPath(from: self), configuring: { (config, prepareModule) in
             prepareModule({ module in
                 module.title = "testCustom"
@@ -159,3 +169,13 @@ class MainViewController: NSViewController {
     }
 }
 
+
+class TestAnimator: NSObject, NSViewControllerPresentationAnimator {
+    func animatePresentation(of viewController: NSViewController, from fromViewController: NSViewController) {
+        fromViewController.view.addSubview(viewController.view)
+    }
+    
+    func animateDismissal(of viewController: NSViewController, from fromViewController: NSViewController) {
+        viewController.view.removeFromSuperview()
+    }
+}

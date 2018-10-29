@@ -777,10 +777,55 @@
                             <constraint firstItem="DLA-WQ-eui" firstAttribute="top" secondItem="m2S-Jp-Qdl" secondAttribute="top" constant="29" id="cpo-No-ghO"/>
                         </constraints>
                     </view>
+                    <connections>
+                        <segue destination="Zjw-V1-tZf" kind="show" identifier="TestViewRouter" id="xuV-g3-uYw"/>
+                    </connections>
                 </viewController>
                 <customObject id="rPt-NT-nkU" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>
             </objects>
             <point key="canvasLocation" x="75" y="714"/>
+        </scene>
+        <!--Test View Controller-->
+        <scene sceneID="O2G-h7-33L">
+            <objects>
+                <viewController id="Zjw-V1-tZf" customClass="TestViewController" customModule="ZIKRouterDemo_macOS" customModuleProvider="target" sceneMemberID="viewController">
+                    <view key="view" id="Z0o-yx-HVq">
+                        <rect key="frame" x="0.0" y="0.0" width="450" height="300"/>
+                        <autoresizingMask key="autoresizingMask"/>
+                        <subviews>
+                            <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="Xoa-Mq-KKD">
+                                <rect key="frame" x="170" y="132" width="111" height="32"/>
+                                <buttonCell key="cell" type="push" title="remove self" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="IwN-tD-6DO">
+                                    <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
+                                    <font key="font" metaFont="system"/>
+                                </buttonCell>
+                                <connections>
+                                    <action selector="removeSelf:" target="Zjw-V1-tZf" id="per-Tb-Bzc"/>
+                                </connections>
+                            </button>
+                            <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="xeg-kM-7Kg">
+                                <rect key="frame" x="136" y="212" width="178" height="17"/>
+                                <textFieldCell key="cell" lineBreakMode="clipping" alignment="center" title="This is a test view controller" id="wPt-O6-KmP">
+                                    <font key="font" usesAppearanceFont="YES"/>
+                                    <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
+                                    <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
+                                </textFieldCell>
+                            </textField>
+                        </subviews>
+                        <constraints>
+                            <constraint firstItem="xeg-kM-7Kg" firstAttribute="top" secondItem="Z0o-yx-HVq" secondAttribute="top" constant="71" id="DFd-Ih-O5t"/>
+                            <constraint firstItem="xeg-kM-7Kg" firstAttribute="centerX" secondItem="Z0o-yx-HVq" secondAttribute="centerX" id="QHg-3P-FiT"/>
+                            <constraint firstItem="Xoa-Mq-KKD" firstAttribute="top" secondItem="xeg-kM-7Kg" secondAttribute="bottom" constant="52" id="WB6-Qv-vNZ"/>
+                            <constraint firstItem="xeg-kM-7Kg" firstAttribute="centerX" secondItem="Xoa-Mq-KKD" secondAttribute="centerX" id="gSc-aZ-jkI"/>
+                        </constraints>
+                    </view>
+                    <connections>
+                        <outlet property="messageLabel" destination="xeg-kM-7Kg" id="pZG-le-hiC"/>
+                    </connections>
+                </viewController>
+                <customObject id="Oco-gk-xk1" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="659" y="714"/>
         </scene>
     </scenes>
 </document>

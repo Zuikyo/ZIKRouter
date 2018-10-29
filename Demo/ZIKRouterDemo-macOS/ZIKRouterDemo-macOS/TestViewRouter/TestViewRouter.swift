@@ -25,6 +25,38 @@ class TestViewRouter: ZIKViewRouter<TestViewController, ViewRouteConfig> {
         destination.router = self
     }
     
+    override class func supportedRouteTypes() -> ZIKViewRouteTypeMask {
+        return [.viewControllerDefault, .custom]
+    }
+    
+    override func canPerformCustomRoute() -> Bool {
+        return true
+    }
+    
+    override func performCustomRoute(onDestination destination: TestViewController, fromSource source: Any?, configuration: ViewRouteConfig) {
+        beginPerformRoute()
+        let window = NSWindow(contentViewController: destination)
+        NSWindowController(window: window).showWindow(nil)
+        let context = NSAnimationContext.current
+        context.completionHandler = {
+            self.endPerformRouteWithSuccess()
+        }
+    }
+    
+    override func canRemoveCustomRoute() -> Bool {
+        return true
+    }
+    
+    override func removeCustomRoute(onDestination destination: TestViewController, fromSource source: Any?, removeConfiguration: ZIKViewRemoveConfiguration, configuration: ViewRouteConfig) {
+        beginRemoveRoute(fromSource: source)
+        
+        destination.view.window?.close()
+        let context = NSAnimationContext.current
+        context.completionHandler = {
+            self.endRemoveRouteWithSuccess(onDestination: destination, fromSource: source)
+        }
+    }
+    
     @objc class func applicationDidHide(_ notification: Notification) {
         print("\(self) handle applicationDidHide")
     }

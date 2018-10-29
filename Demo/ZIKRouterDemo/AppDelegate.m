@@ -50,7 +50,7 @@
     };
     
     // UISplitViewController's detail view controller will be hold by UIKit after it's removed, it's not memory leak
-    ZIKViewRouter.detectMemoryLeak = YES;
+    ZIKViewRouter.detectMemoryLeakDelay = 1;
     
     UISplitViewController *splitViewController = (UISplitViewController *)self.window.rootViewController;
     UINavigationController *navigationController = [splitViewController.viewControllers lastObject];

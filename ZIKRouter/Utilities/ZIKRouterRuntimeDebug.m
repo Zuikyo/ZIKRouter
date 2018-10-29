@@ -523,6 +523,7 @@ NSString *codeForRegisteringRouters() {
     return code;
 }
 
+#import "ZIKClassCapabilities.h"
 #import "UIViewController+ZIKViewRouter.h"
 
 void checkMemoryLeakAfter(id object, NSTimeInterval delayInSeconds) {
@@ -566,16 +567,16 @@ void checkMemoryLeakAfter(id object, NSTimeInterval delayInSeconds) {
             }
             [_existingObjects addObject:weakObject];
             _leakedObjects[[NSString stringWithFormat:@"%p", (void *)weakObject]] = [weakObject description];
-            if ([weakObject isKindOfClass:[UIViewController class]]) {
-                UIViewController *parent = [weakObject parentViewController];
+            if ([weakObject isKindOfClass:[XXViewController class]]) {
+                XXViewController *parent = [weakObject parentViewController];
                 if (parent) {
                     NSLog(@"\n\nZIKRouter memory leak checker:⚠️ destination is not dealloced after removed, make sure there is no retain cycle:\n%@\nIts parentViewController: %@\nThe UIKit system may hold the object, if the view is still in view hierarchy, you can ignore this.\n\n", weakObject, parent);
                 } else {
                     NSLog(@"\n\nZIKRouter memory leak checker:⚠️ destination is not dealloced after removed, make sure there is no retain cycle:\n%@\nThe UIKit system may hold the object, if the view is still in view hierarchy, you can ignore this.\n\n", weakObject);
                 }
                 return;
-            } else if ([weakObject isKindOfClass:[UIView class]]) {
-                UIView *superview = [weakObject superview];
+            } else if ([weakObject isKindOfClass:[XXView class]]) {
+                XXView *superview = [weakObject superview];
                 if (superview) {
                     NSLog(@"\n\nZIKRouter memory leak checker:⚠️ destination is not dealloced after removed, make sure there is no retain cycle:\n%@\nIts superview: %@\nThe UIKit system may hold the object, if the view is still in view hierarchy, you can ignore this.\n\n", weakObject, superview);
                 } else {
