@@ -10,7 +10,6 @@
 #import "DetailViewController.h"
 #import "AppRouteRegistry.h"
 @import ZIKRouter;
-@import ZIKRouter.Internal;
 
 @interface AppDelegate () <UISplitViewControllerDelegate>
 
@@ -86,12 +85,13 @@
 
 
 - (void)applicationDidEnterBackground:(UIApplication *)application {
-    
     // Notify custom event to router
-    [ZIKServiceRouteRegistry enumerateAllServiceRouters:^(Class  _Nullable __unsafe_unretained routerClass, ZIKServiceRoute * _Nullable route) {
-        if (routerClass == nil) {
-            return;
+    [ZIKAnyViewRouter enumerateAllViewRouters:^(Class  _Nonnull __unsafe_unretained routerClass) {
+        if ([routerClass respondsToSelector:@selector(applicationDidEnterBackground:)]) {
+            [routerClass applicationDidEnterBackground:application];
         }
+    }];
+    [ZIKAnyServiceRouter enumerateAllServiceRouters:^(Class  _Nonnull __unsafe_unretained routerClass) {
         if ([routerClass respondsToSelector:@selector(applicationDidEnterBackground:)]) {
             [routerClass applicationDidEnterBackground:application];
         }
@@ -100,10 +100,13 @@
 
 
 - (void)applicationWillEnterForeground:(UIApplication *)application {
-    [ZIKServiceRouteRegistry enumerateAllServiceRouters:^(Class  _Nullable __unsafe_unretained routerClass, ZIKServiceRoute * _Nullable route) {
-        if (routerClass == nil) {
-            return;
+    // Notify custom event to router
+    [ZIKAnyViewRouter enumerateAllViewRouters:^(Class  _Nonnull __unsafe_unretained routerClass) {
+        if ([routerClass respondsToSelector:@selector(applicationWillEnterForeground:)]) {
+            [routerClass applicationWillEnterForeground:application];
         }
+    }];
+    [ZIKAnyServiceRouter enumerateAllServiceRouters:^(Class  _Nonnull __unsafe_unretained routerClass) {
         if ([routerClass respondsToSelector:@selector(applicationWillEnterForeground:)]) {
             [routerClass applicationWillEnterForeground:application];
         }

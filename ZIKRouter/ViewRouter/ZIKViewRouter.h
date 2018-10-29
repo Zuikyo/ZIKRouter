@@ -308,6 +308,16 @@ typedef void(^ZIKViewRouteGlobalErrorHandler)(__kindof ZIKViewRouter * _Nullable
 + (BOOL)isRegistrationFinished;
 @end
 
+@interface ZIKViewRouter (Utility)
+
+/**
+ Enumerate all view routers. You can notify custom events to view routers with it.
+ 
+ @param handler The enumerator gives subclasses of ZIKViewRouter.
+ */
++ (void)enumerateAllViewRouters:(void(NS_NOESCAPE ^)(Class routerClass))handler;
+@end
+
 @interface ZIKViewRouter (Debug)
 
 /**

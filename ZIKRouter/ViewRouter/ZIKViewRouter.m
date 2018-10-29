@@ -4277,6 +4277,21 @@ Protocol<ZIKViewModuleRoutable> *_Nullable _routableViewModuleProtocolFromObject
 
 @end
 
+@implementation ZIKViewRouter (Utility)
+
++ (void)enumerateAllViewRouters:(void(NS_NOESCAPE ^)(Class routerClass))handler {
+    if (handler == nil) {
+        return;
+    }
+    [ZIKViewRouteRegistry enumerateAllViewRouters:^(Class  _Nullable __unsafe_unretained routerClass, ZIKViewRoute * _Nullable route) {
+        if (routerClass) {
+            handler(routerClass);
+        }
+    }];
+}
+
+@end
+
 @implementation ZIKViewRouter (Debug)
 
 static NSTimeInterval _detectMemoryLeakDelay = 2;

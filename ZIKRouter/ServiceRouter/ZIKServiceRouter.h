@@ -97,6 +97,17 @@ typedef void(^ZIKServiceRouteGlobalErrorHandler)(__kindof ZIKServiceRouter * _Nu
 
 @end
 
+@interface ZIKServiceRouter (Utility)
+
+/**
+ Enumerate all service routers. You can notify custom events to service routers with it.
+ 
+ @param handler The enumerator gives subclasses of ZIKServiceRouter.
+ */
++ (void)enumerateAllServiceRouters:(void(NS_NOESCAPE ^)(Class routerClass))handler;
+
+@end
+
 ///If a class conforms to ZIKRoutableService, there must be a router for it and its subclass. Don't use it in other place.
 @protocol ZIKRoutableService
 

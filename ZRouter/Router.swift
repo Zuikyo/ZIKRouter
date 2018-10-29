@@ -474,26 +474,22 @@ public extension Router {
     
     /// Enumerate all view routers. You can notify custom events to view routers with it.
     ///
-    /// - Parameter handler: The enumerator gives subclasses of ZIKViewRouter and ZIKViewRoute object.
-    public static func enumerateAllViewRouters(_ handler: (ZIKAnyViewRouter.Type?, ZIKAnyViewRoute?) -> Void) -> Void {
-        ZIKViewRouteRegistry.enumerateAllViewRouters { (routerClass, route) in
+    /// - Parameter handler: The enumerator gives subclasses of ZIKViewRouter.
+    public static func enumerateAllViewRouters(_ handler: (ZIKAnyViewRouter.Type) -> Void) -> Void {
+        ZIKAnyViewRouter.enumerateAllViewRouters { (routerClass) in
             if let routerType = routerClass as? ZIKAnyViewRouter.Type {
-                handler(routerType, nil)
-            } else {
-                handler(nil, route)
+                handler(routerType)
             }
         }
     }
     
     /// Enumerate all service routers. You can notify custom events to service routers with it.
     ///
-    /// - Parameter handler: The enumerator gives subclasses of ZIKServiceRouter and ZIKServiceRoute object.
-    public static func enumerateAllServiceRouters(_ handler: (ZIKAnyServiceRouter.Type?, ZIKAnyServiceRoute?) -> Void) -> Void {
-        ZIKServiceRouteRegistry.enumerateAllServiceRouters { (routerClass, route) in
+    /// - Parameter handler: The enumerator gives subclasses of ZIKServiceRouter.
+    public static func enumerateAllServiceRouters(_ handler: (ZIKAnyServiceRouter.Type) -> Void) -> Void {
+        ZIKAnyServiceRouter.enumerateAllServiceRouters { (routerClass) in
             if let routerType = routerClass as? ZIKAnyServiceRouter.Type {
-                handler(routerType, nil)
-            } else {
-                handler(nil, route)
+                handler(routerType)
             }
         }
     }

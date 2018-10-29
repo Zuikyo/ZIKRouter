@@ -18,18 +18,12 @@ class AppDelegate: NSObject, NSApplicationDelegate {
 
     func applicationDidHide(_ notification: Notification) {
         // Notify custom event
-        Router.enumerateAllViewRouters { (routerType, route) in
-            guard let routerType = routerType else {
-                return
-            }
+        Router.enumerateAllViewRouters { (routerType) in
             if routerType.responds(to: #selector(applicationDidHide(_:))) {
                 routerType.perform(#selector(applicationDidHide(_:)), with: notification)
             }
         }
-        Router.enumerateAllServiceRouters { (routerType, route) in
-            guard let routerType = routerType else {
-                return
-            }
+        Router.enumerateAllServiceRouters { (routerType) in
             if routerType.responds(to: #selector(applicationDidHide(_:))) {
                 routerType.perform(#selector(applicationDidHide(_:)), with: notification)
             }

@@ -197,3 +197,18 @@ Protocol<ZIKServiceModuleRoutable> *_Nullable _routableServiceModuleProtocolFrom
 }
 
 @end
+
+@implementation ZIKServiceRouter (Utility)
+
++ (void)enumerateAllServiceRouters:(void(NS_NOESCAPE ^)(Class routerClass))handler {
+    if (handler == nil) {
+        return;
+    }
+    [ZIKServiceRouteRegistry enumerateAllServiceRouters:^(Class  _Nullable __unsafe_unretained routerClass, ZIKServiceRoute * _Nullable route) {
+        if (routerClass) {
+            handler(routerClass);
+        }
+    }];
+}
+
+@end
