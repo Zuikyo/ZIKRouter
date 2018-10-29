@@ -311,11 +311,21 @@ typedef void(^ZIKViewRouteGlobalErrorHandler)(__kindof ZIKViewRouter * _Nullable
 @interface ZIKViewRouter (Debug)
 
 /**
- Check memory leak of destination. Only works in DEBUG mode. Default is YES.
+ Check whether the destination is dealloced after delay second when it's removed. Only works in DEBUG mode. Default is 2 second. You can set a negative number to disable it. Memory leak information will be print to console. It will also check whether leaked objects are reclaimed.
  @note
- It will check whether the destination is dealloced after 1 second when it's removed. But the UIKit system may also hold the UIViewController / UIView after it's removed. You can ignore these leaks, because UIKit will recycle them. What you should do is make sure there is no retain cycle.
+ Destination may not be dealloced for these situations:
+ 
+ 1. ✅ The UIKit system hold the UIViewController / UIView after it's removed, such as UISplitViewController holds its detail view controller. They are not memory leaks, you don't need to worry them.
+ 
+ 2. ✅ Destination is a singleton.
+ 
+ 3. ⚠️ Destiantion is hold by some object. In generally, they will be released later. If not, there may be memory leak.
+ 
+ 4. ❗️ Destination has retain cycle. For example, the performer hold the router, and those blocks in configuration of router contains strong reference to the performer. Such as prepareDestination, successHandler, errorHandler, completionHandler. You should use weak self in these blocks.
+ 
+ Use `Debug Memory Graph` tool in Xcode to check the leak.
  */
-@property (nonatomic, class) BOOL detectMemoryLeak;
+@property (nonatomic, class) NSTimeInterval detectMemoryLeakDelay;
 
 @end
 

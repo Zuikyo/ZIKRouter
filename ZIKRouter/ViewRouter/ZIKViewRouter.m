@@ -1876,8 +1876,8 @@ destinationStateBeforeRoute:(ZIKPresentationState *)destinationStateBeforeRoute
         [r router:router didRemoveRouteOnDestination:destination fromSource:(id)source];
     }];
 #if DEBUG
-    if ([self detectMemoryLeak]) {
-        checkMemoryLeakAfterRemoved(destination);
+    if ([self detectMemoryLeakDelay] > 0) {
+        checkMemoryLeakAfter(destination, [self detectMemoryLeakDelay]);
     }    
 #endif
 }
@@ -4273,14 +4273,14 @@ Protocol<ZIKViewModuleRoutable> *_Nullable _routableViewModuleProtocolFromObject
 
 @implementation ZIKViewRouter (Debug)
 
-static BOOL _detectMemoryLeak = YES;
+static NSTimeInterval _detectMemoryLeakDelay = 2;
 
-+ (BOOL)detectMemoryLeak {
-    return _detectMemoryLeak;
++ (NSTimeInterval)detectMemoryLeakDelay {
+    return _detectMemoryLeakDelay;
 }
 
-+ (void)setDetectMemoryLeak:(BOOL)detectMemoryLeak {
-    _detectMemoryLeak = detectMemoryLeak;
++ (void)setDetectMemoryLeakDelay:(NSTimeInterval)detectMemoryLeakDelay {
+    _detectMemoryLeakDelay = detectMemoryLeakDelay;
 }
 
 @end

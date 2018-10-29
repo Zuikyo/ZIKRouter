@@ -525,8 +525,11 @@ NSString *codeForRegisteringRouters() {
 
 #import "UIViewController+ZIKViewRouter.h"
 
-void checkMemoryLeakAfterRemoved(id destination) {
-    if (!destination) {
+void checkMemoryLeakAfter(id object, NSTimeInterval delayInSeconds) {
+    if (!object) {
+        return;
+    }
+    if (delayInSeconds <= 0) {
         return;
     }
     static NSMutableDictionary<NSString *, NSString *> *_leakedObjects;
@@ -536,10 +539,10 @@ void checkMemoryLeakAfterRemoved(id destination) {
     dispatch_once(&onceToken, ^{
         _leakedObjects = [NSMutableDictionary dictionary];
         _existingObjects = [NSHashTable weakObjectsHashTable];
-        memoryLeakCheckQueue = dispatch_queue_create("com.zuik.router-destination-leak-check-queue", DISPATCH_QUEUE_SERIAL);
+        memoryLeakCheckQueue = dispatch_queue_create("com.zuik.router.object_leak_check_queue", DISPATCH_QUEUE_SERIAL);
     });
-    __weak id weakObject = destination;
-    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(1 * NSEC_PER_SEC)), memoryLeakCheckQueue, ^{
+    __weak id weakObject = object;
+    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(delayInSeconds * NSEC_PER_SEC)), memoryLeakCheckQueue, ^{
         if (_leakedObjects.count > 0) {
             // Check reclaimed objects since last checking
             NSMutableSet<NSString *> *reclaimedObjects = [NSMutableSet setWithArray:_leakedObjects.allKeys];
@@ -553,7 +556,7 @@ void checkMemoryLeakAfterRemoved(id destination) {
                     _leakedObjects[address] = nil;
                     [reclaimedDescription appendFormat:@"destination(%@):%@\n", address, description];
                 }];
-                NSLog(@"\nZIKRouter:♻️ last leaked objects were dealloced already:\n%@♻️", reclaimedDescription);
+                NSLog(@"\n\nZIKRouter memory leak checker:♻️ last leaked objects were dealloced already:\n%@\n\n", reclaimedDescription);
             }
         }
         
@@ -561,9 +564,26 @@ void checkMemoryLeakAfterRemoved(id destination) {
             if ([weakObject respondsToSelector:@selector(zix_routed)] && [weakObject zix_routed]) {
                 return;
             }
-            NSLog(@"\nZIKRouter:⚠️ destination is not dealloced after removed, maybe there is memory leak, or it's hold by UIKit system: %@ ⚠️", weakObject);
             [_existingObjects addObject:weakObject];
             _leakedObjects[[NSString stringWithFormat:@"%p", (void *)weakObject]] = [weakObject description];
+            if ([weakObject isKindOfClass:[UIViewController class]]) {
+                UIViewController *parent = [weakObject parentViewController];
+                if (parent) {
+                    NSLog(@"\n\nZIKRouter memory leak checker:⚠️ destination is not dealloced after removed, make sure there is no retain cycle:\n%@\nIts parentViewController: %@\nThe UIKit system may hold the object, if the view is still in view hierarchy, you can ignore this.\n\n", weakObject, parent);
+                } else {
+                    NSLog(@"\n\nZIKRouter memory leak checker:⚠️ destination is not dealloced after removed, make sure there is no retain cycle:\n%@\nThe UIKit system may hold the object, if the view is still in view hierarchy, you can ignore this.\n\n", weakObject);
+                }
+                return;
+            } else if ([weakObject isKindOfClass:[UIView class]]) {
+                UIView *superview = [weakObject superview];
+                if (superview) {
+                    NSLog(@"\n\nZIKRouter memory leak checker:⚠️ destination is not dealloced after removed, make sure there is no retain cycle:\n%@\nIts superview: %@\nThe UIKit system may hold the object, if the view is still in view hierarchy, you can ignore this.\n\n", weakObject, superview);
+                } else {
+                    NSLog(@"\n\nZIKRouter memory leak checker:⚠️ destination is not dealloced after removed, make sure there is no retain cycle:\n%@\nThe UIKit system may hold the object, if the view is still in view hierarchy, you can ignore this.\n\n", weakObject);
+                }
+                return;
+            }
+            NSLog(@"\n\nZIKRouter memory leak checker:⚠️ destination is not dealloced after removed, make sure there is no retain cycle:\n%@\n\n", weakObject);
         }
     });
 }

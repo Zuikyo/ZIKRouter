@@ -47,8 +47,8 @@ extern NSString *codeForImportingRouters(void);
 /// Generate code for manually registering routers.
 extern NSString *codeForRegisteringRouters(void);
 
-/// Check whether the destination is dealloced after 1 second when it's removed.
-void checkMemoryLeakAfterRemoved(id destination);
+/// Check whether the object is dealloced after delay second.
+void checkMemoryLeakAfter(id object, NSTimeInterval delayInSeconds);
 #endif
 
 NS_ASSUME_NONNULL_END
