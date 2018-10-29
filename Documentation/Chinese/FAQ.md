@@ -28,6 +28,10 @@ ZIKRouter 所使用的 protocol 都经过路由声明，而且允许你使用多
 
 等声明代码，即可找到所有的路由声明。也可以通过 runtime 方法，动态打印出所有声明的路由。
 
+如果你使用的是 swift，则 Xcode 会自动列出所有已声明的路由：
+
+![Xcode Auto Completion](../Resources/route-auto-completion.png)
+
 当使用 protocol 进行路由时，会进行编译检查，所以不用担心使用了错误的 protocol。
 
 ### 什么是 required protocol 和 provided protocol？

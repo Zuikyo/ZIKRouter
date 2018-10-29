@@ -28,6 +28,10 @@ Protocols are all declared in headers. You can search these declaration code:
 
 You can also get all protocols by runtime methods.
 
+If you are using swift, Xcode will auto list all routable protocol:
+
+![Xcode Auto Completion](../Resources/route-auto-completion.png)
+
 There're compile-time check when routing with protocols, so you won't use any undeclared protocols.
 
 ### What's required protocol and provided protocol？

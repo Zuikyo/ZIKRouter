@@ -364,7 +364,7 @@ If the module want to handle event, just implements class method in router:
 class EditorViewRouter: ZIKViewRouter<EditorViewController, ViewRouteConfig> {
     ...
     @objc class func applicationDidEnterBackground(_ notification: Notification) {
-        // Send custom event
+        // Handle custom event
     }
 ```
 <details><summary>Objective-C Sample</summary>
@@ -373,7 +373,7 @@ class EditorViewRouter: ZIKViewRouter<EditorViewController, ViewRouteConfig> {
 @implementation EditorViewRouter
 ...
 - (void)applicationDidEnterBackground:(UIApplication *)application {
-	// Send custom event
+	// Handle custom event
 }
 
 @end

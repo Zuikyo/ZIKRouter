@@ -48,6 +48,8 @@ Service router 用于模块寻找，通过 protocol 寻找对应的模块，并�
 - [x] **Support storyboard. UIViewController / NSViewController and UIView / NSView from a segue can auto create it's registered router**
 - [x] Error checking for view transition
 - [x] AOP for view transition
+- [x] Detect memory leaks
+- [x] Send custom events to router
 - [x] Auto register all routers, or manually register each router
 - [x] Add route with router subclasses, or with blocks
 
