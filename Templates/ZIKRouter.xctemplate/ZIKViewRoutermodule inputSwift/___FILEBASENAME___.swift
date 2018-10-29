@@ -39,7 +39,7 @@ class ___VARIABLE_productName___: ZIKViewRouter<___VARIABLE_destinationClass___,
     }
     
     /*
-    // If the destiantion is UIView, override and return route types for UIView
+    // If the destiantion is UIView / NSView, override and return route types for UIView / NSView
     override class func supportedRouteTypes() -> ZIKViewRouteTypeMask {
         return .viewDefault
     }

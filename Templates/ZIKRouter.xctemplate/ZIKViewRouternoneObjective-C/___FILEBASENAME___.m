@@ -36,7 +36,7 @@ DeclareRoutableView(___VARIABLE_destinationClass___, ___VARIABLE_productName___)
 }
 
 /*
- // If the destiantion is UIView, override and return route types for UIView
+ // If the destiantion is UIView / NSView, override and return route types for UIView / NSView
  + (ZIKViewRouteTypeMask)supportedRouteTypes {
  return ZIKViewRouteTypeMaskViewDefault;
  }

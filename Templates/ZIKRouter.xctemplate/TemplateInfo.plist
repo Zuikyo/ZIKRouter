@@ -7,7 +7,7 @@
 	<key>Kind</key>
 	<string>Xcode.IDEFoundation.TextSubstitutionFileTemplateKind</string>
 	<key>Identifier</key>
-	<string>com.zuik.zikrouter</string>
+	<string>com.zuik.router</string>
 	<key>Template Author</key>
 	<string>zuik</string>
 	<key>Ancestors</key>
@@ -146,7 +146,9 @@
 	</array>
 	<key>Platforms</key>
 	<array>
+		<string>com.apple.platform.macosx</string>
 		<string>com.apple.platform.iphoneos</string>
+		<string>com.apple.platform.appletvos</string>
 	</array>
 </dict>
 </plist>
