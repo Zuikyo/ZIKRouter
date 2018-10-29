@@ -43,4 +43,18 @@ override class func router(_ router: ZIKAnyViewRouter?, didRemoveRouteOnDestinat
 
 具体的回调时机，见对应方法的注释。
 
+## 内存泄露检测
+
+有了 AOP，就能快速做出一些简单工具，例如在移除路由时进行内存泄露检测。因为界面在移除之后就应该及时释放了。
+
+ZIKRouter 中已经添加了这一功能，通过`detectMemoryLeakDelay`接口设置检测时间。例如在 2 秒之后未释放，则视为内存泄露：
+
+```
+ZIKRouter memory leak checker:⚠️ destination is not dealloced after removed, make sure there is no retain cycle:
+<DetailViewController: 0x7f9512e09900>
+Its parentViewController: <UINavigationController: 0x7f9513847a00>
+The UIKit system may hold the object, if the view is still in view hierarchy, you can ignore this.
+```
+这只是非常简单的检测方式。UIKit 可能会在界面移除之后仍然持有界面。你需要检查的是释放存在循环引用。
+
 #### 下一节：[依赖注入](DependencyInjection.md)

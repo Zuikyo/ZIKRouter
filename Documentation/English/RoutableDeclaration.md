@@ -77,6 +77,10 @@ If you pass a wrong protocol, such as `RoutableView<UnroutableProtocol>()`, ther
 
 The `init(declaredProtocol: Protocol.Type)` is only to silence the warning of `initializer for struct 'xxx' must use "self.init(...)" or "self = ..." because it is not in module xxx`. See [restrict-cross-module-struct-initializers](https://github.com/apple/swift-evolution/blob/master/proposals/0189-restrict-cross-module-struct-initializers.md). You should only use it in extension. If you use wrong type with these initializer, there will be assert failure when registration is finished.
 
+Now, Xcode will auto list all declared protocols when routing:
+
+![Xcode Auto Completion](../Resources/route-auto-completion.png)
+
 ### Composed Protocol
 
 You can declared with a composed protocol:

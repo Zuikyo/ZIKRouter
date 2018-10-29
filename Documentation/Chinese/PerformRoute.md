@@ -320,5 +320,67 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
 你可以用其他 URL router 库处理 url，只需要从 url 中获取到 identifier，就能执行界面跳转。
 
+## 自定义事件
+
+如果想让模块处理自定义事件，可以遍历所有的 router 类发送事件：
+
+```swift
+func applicationDidEnterBackground(_ notification: Notification) {
+        // 发送自定义事件
+        Router.enumerateAllViewRouters { (routerType) in
+            if routerType.responds(to: #selector(applicationDidEnterBackground(_:))) {
+                routerType.perform(#selector(applicationDidEnterBackground(_:)), with: notification)
+            }
+        }
+        Router.enumerateAllServiceRouters { (routerType) in
+            if routerType.responds(to: #selector(applicationDidEnterBackground(_:))) {
+                routerType.perform(#selector(applicationDidEnterBackground(_:)), with: notification)
+            }
+        }
+    }
+```
+<details><summary>Objective-C Sample</summary>
+
+```objectivec
+- (void)applicationDidEnterBackground:(UIApplication *)application {
+    // 发送自定义事件
+    [ZIKAnyViewRouter enumerateAllViewRouters:^(Class  _Nonnull __unsafe_unretained routerClass) {
+        if ([routerClass respondsToSelector:@selector(applicationDidEnterBackground:)]) {
+            [routerClass applicationDidEnterBackground:application];
+        }
+    }];
+    [ZIKAnyServiceRouter enumerateAllServiceRouters:^(Class  _Nonnull __unsafe_unretained routerClass) {
+        if ([routerClass respondsToSelector:@selector(applicationDidEnterBackground:)]) {
+            [routerClass applicationDidEnterBackground:application];
+        }
+    }];
+}
+```
+
+</details>
+
+如果模块需要处理自定义事件，只需要在 router 中实现即可：
+
+```swift
+class EditorViewRouter: ZIKViewRouter<EditorViewController, ViewRouteConfig> {
+    ...
+    @objc class func applicationDidEnterBackground(_ notification: Notification) {
+        // 处理自定义事件
+    }
+```
+<details><summary>Objective-C Sample</summary>
+
+```objectivec
+@implementation EditorViewRouter
+...
+- (void)applicationDidEnterBackground:(UIApplication *)application {
+	// 处理自定义事件
+}
+
+@end
+```
+
+</details>
+
 ---
 #### 下一节：[移除路由](RemoveRoute.md)

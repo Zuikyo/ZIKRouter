@@ -319,5 +319,67 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
 You can use other URL router framework to handle the url, the URL router needs to set and get the identifier for router.
 
+## Custom Event
+
+If you want to send custom event to module, you can enumerate all router classes and perform event:
+
+```swift
+func applicationDidEnterBackground(_ notification: Notification) {
+        // Send custom event
+        Router.enumerateAllViewRouters { (routerType) in
+            if routerType.responds(to: #selector(applicationDidEnterBackground(_:))) {
+                routerType.perform(#selector(applicationDidEnterBackground(_:)), with: notification)
+            }
+        }
+        Router.enumerateAllServiceRouters { (routerType) in
+            if routerType.responds(to: #selector(applicationDidEnterBackground(_:))) {
+                routerType.perform(#selector(applicationDidEnterBackground(_:)), with: notification)
+            }
+        }
+    }
+```
+<details><summary>Objective-C Sample</summary>
+
+```objectivec
+- (void)applicationDidEnterBackground:(UIApplication *)application {
+    // Send custom event
+    [ZIKAnyViewRouter enumerateAllViewRouters:^(Class  _Nonnull __unsafe_unretained routerClass) {
+        if ([routerClass respondsToSelector:@selector(applicationDidEnterBackground:)]) {
+            [routerClass applicationDidEnterBackground:application];
+        }
+    }];
+    [ZIKAnyServiceRouter enumerateAllServiceRouters:^(Class  _Nonnull __unsafe_unretained routerClass) {
+        if ([routerClass respondsToSelector:@selector(applicationDidEnterBackground:)]) {
+            [routerClass applicationDidEnterBackground:application];
+        }
+    }];
+}
+```
+
+</details>
+
+If the module want to handle event, just implements class method in router:
+
+```swift
+class EditorViewRouter: ZIKViewRouter<EditorViewController, ViewRouteConfig> {
+    ...
+    @objc class func applicationDidEnterBackground(_ notification: Notification) {
+        // Send custom event
+    }
+```
+<details><summary>Objective-C Sample</summary>
+
+```objectivec
+@implementation EditorViewRouter
+...
+- (void)applicationDidEnterBackground:(UIApplication *)application {
+	// Send custom event
+}
+
+@end
+```
+
+</details>
+
 ---
 #### Next section: [Remove Route](RemoveRoute.md)

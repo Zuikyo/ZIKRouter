@@ -131,8 +131,8 @@ We can't check type of parameters when passing in a dictionary, so it's not reco
 
 When app is launched, ZIKRouter will enumerate all classes and call router's `registerRoutableDestination` method.
 
-Enumerating all classes will cost 10 - 20 ms. If you want to avoid the enumerating, or there're too much modules to register, you can try manually registration. But most of the time, the performance of auto registration is good enough.
-
+Enumerating all classes is optimized very fast, you don't need to worry about the performance. If your modules are more than 2000, you can try manually registration. The performance of auto registration is almost the same.
+The difference is you can register part of modules in groups, but not register all modules at same time.
 ## Manually Registration
 
 Manually registration means calling each router's `registerRoutableDestination` manually.
@@ -197,7 +197,7 @@ Here is the test of auto registration and manually registration:
 
 * Test the time of 500, 1000, 2000, 5000 view controllers when auto registration and manually registration
 * Register with `+registerExclusiveView:`and`+registerViewProtocol:`
-* `ZIKRouter: register with blocks` means registering with `ZIKViewRoute`. It uses much less classes than using router subclasses, so it's a bit quicker
+* `ZIKRouter: register with blocks` means registering with `ZIKViewRoute`. It uses much less classes than using router subclasses, so it's a bit quicker, but it will cost more memorys.
 * `ZIKRouter: register with subclass` means registering with router subclasses
 * `ZRouter: register with string` means declaring and registering routable pure swift protocols with `init(declaredTypeName:)`. The performance of ZRouter is slightly worse than ZIKRouter, bacause ZRouter needs to support both objc protocols and pure swift protocols.
 
@@ -219,7 +219,7 @@ Here is the test of auto registration and manually registration:
 
 There is no performance problem in 64 bit devices. In 32 bit devices like iPhone 5, most time is costed in objc method invocations. The time is almost the same even we replace registration methods with empty methods that do nothing.
 
-If your project needs to support 32 bit device, and your modules are more than 1000, you can use manually registration. But you will not use manually registration in most of the time, because even in Wechat app, there are only about 600 hundred view controllers.
+If your project needs to support 32 bit device, and your modules are more than 1000, you can use manually registration. But you will not use manually registration in most of the time, because even in Wechat app, there are only about 700 hundred view controllers.
 
 ### Performance with other frameworks
 

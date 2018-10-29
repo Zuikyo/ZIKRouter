@@ -39,6 +39,8 @@ class EditorViewRouter: ZIKAnyViewRouter {
 ```
 当 router 里管理的 destination 是公有的时候，使用普通注册，例如 UIKit 里的公有类、第三方模块中未提供 router 的类。当 destination 是你自己拥有的，则使用独占式注册，限制路由的使用。
 
+独占式注册的性能更好，因为无需处理多个 router 的情况。建议优先使用独占式注册。
+
 ## protocol 注册
 
 你可以在注册 destination 的同时，注册 destination 的 protocol。之后就能用 protocol 来获取 router 类，无需引入 router 子类。如果没有注册 protocol，那么在使用时就只能明确地使用 router 的具体子类。
@@ -130,11 +132,11 @@ Router.to(viewIdentifier: "viewController-editor")?
 
 App 启动时会遍历所有的类，自动执行所有 router 的`registerRoutableDestination`方法。
 
-遍历所有类的耗时大约为 10 - 20 ms，如果想避免这部分耗时，或者需要注册的模块数量过多，可以尝试手动注册。不过，大部分情况下，你都不需要用到手动注册，因为自动注册的性能已经很好了。
+遍历所有 router 类的操作经过了深度优化，你不必担心性能问题。可以参考下面的性能测试，当你的模块超过了 2000 个，你可以尝试使用分阶段的手动注册。大部分情况下，你都不需要用到手动注册，因为自动注册的性能和手动注册几乎是一样的，区别只是在于手动注册可以分阶段进行，而不必一次性注册全部的模块。
 
 ## 手动注册
 
-手动注册指的是逐一调用 router 的`registerRoutableDestination`方法。由于省去了遍历所有类的过程，因此性能会稍有提升。
+手动注册指的是逐一调用 router 的`registerRoutableDestination`方法。你可以将一部分尚未用到的 router 延后注册。
 
 ### 1. 关闭自动注册
 
@@ -196,7 +198,7 @@ NSString *registeringCode = codeForRegisteringRouters();
 
 * 分别测试 500、1000、2000、5000 个 view controller ，在自动注册和手动注册时的耗时
 * 用`+registerExclusiveView:`和`+registerViewProtocol:`注册
-* `ZIKRouter: register with blocks`指的是用轻量级的 ZIKViewRoute 进行注册，由于类的数量比使用 router 子类时少，因此性能稍好
+* `ZIKRouter: register with blocks`指的是用轻量级的 ZIKViewRoute 进行注册，由于类的数量比使用 router 子类时少，因此性能稍好，缺点是内存占用会变大
 * `ZIKRouter: register with subclass`指的是用 router 子类进行注册
 * `ZRouter: register with string`指的是用`init(declaredTypeName:)`声明并注册纯 swift 的 protocol；由于 ZRouter 需要支持 objc protocol 和纯 swift protocol，因此性能会比 ZIKRouter 稍微降低
 
@@ -218,7 +220,7 @@ NSString *registeringCode = codeForRegisteringRouters();
 
 在 64 位机型上完全没有性能问题，在 32 位老机型上耗时会比较多，而大部分耗时都是在 objc 的方法调用上，经测试，即便把注册方法都替换为空方法，耗时也是差不多的。
 
-如果你的项目需要支持 32 位机型，而且需要注册的模块超过了 1000 个，可以关闭自动注册，使用分阶段的手动注册。不过这种情况应该很少，因为即便是庞大如微信，其 view controller 的数量也只有 6 百多个。
+如果你的项目需要支持 32 位机型，而且需要注册的模块超过了 1000 个，可以关闭自动注册，使用分阶段的手动注册。不过这种情况应该很少，因为即便是庞大如微信，其 view controller 的数量也只有 7 百多个。
 
 ### 和其他 router 库的性能比较
 

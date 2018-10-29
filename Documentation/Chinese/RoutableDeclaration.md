@@ -79,6 +79,10 @@ class TestViewController: UIViewController {
 
 初始化方法 `init(declaredProtocol: Protocol.Type)` 只是用来消除 swift 的编译检查 `initializer for struct 'xxx' must use "self.init(...)" or "self = ..." because it is not in module xxx`. 参考 [restrict-cross-module-struct-initializers](https://github.com/apple/swift-evolution/blob/master/proposals/0189-restrict-cross-module-struct-initializers.md)。不要在除了 extension 之外的地方使用此初始化方法。如果你错误地在其他地方使用了这些初始化方法，在启动时会给出断言错误。
 
+声明了之后，在使用时 Xcode 会自动列出所有可用的路由：
+
+![Xcode Auto Completion](../Resources/route-auto-completion.png)
+
 ### 多 Protocol 组合
 
 可以用组合而成的 protocol 声明：
