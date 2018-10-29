@@ -656,10 +656,8 @@ class UtilityTests: XCTestCase {
             routerCount = routerCount + 1
         }
         var enumeratedRouterCount = 0
-        Router.enumerateAllViewRouters { (routerType, route) in
-            if let _ = routerType {
-                enumeratedRouterCount = enumeratedRouterCount + 1
-            }
+        Router.enumerateAllViewRouters { (routerType) in
+            enumeratedRouterCount = enumeratedRouterCount + 1
         }
         assert(enumeratedRouterCount > 0 && enumeratedRouterCount <= routerCount, "enumerate all routers not work properly")
     }
@@ -670,10 +668,8 @@ class UtilityTests: XCTestCase {
             routerCount = routerCount + 1
         }
         var enumeratedRouterCount = 0
-        Router.enumerateAllServiceRouters { (routerType, route) in
-            if let _ = routerType {
-                enumeratedRouterCount = enumeratedRouterCount + 1
-            }
+        Router.enumerateAllServiceRouters { (routerType) in
+            enumeratedRouterCount = enumeratedRouterCount + 1
         }
         assert(enumeratedRouterCount > 0 && enumeratedRouterCount <= routerCount, "enumerate all routers not work properly")
     }
