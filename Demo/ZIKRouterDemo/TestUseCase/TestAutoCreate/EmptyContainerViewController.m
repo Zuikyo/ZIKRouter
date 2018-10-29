@@ -74,7 +74,7 @@
 - (IBAction)addSubviewManually:(id)sender {
     UIButton *button = sender;
     ZIKSimpleLabel *destination = [[ZIKSimpleLabel alloc] init];
-//    destination.text = @"Label added manually";
+    destination.text = @"Label added manually";
     destination.frame = CGRectMake(button.frame.origin.x, button.frame.origin.y - 100, 200, 50);
     [self.view addSubview:destination];
 }
@@ -100,7 +100,7 @@
 - (IBAction)addSubviewManually2:(id)sender {
     UIButton *button = sender;
     ZIKSimpleLabel *destination = [[ZIKSimpleLabel alloc] init];
-//        destination.text = @"Label added manually";
+    destination.text = @"Label added manually 2";
     destination.frame = CGRectMake(button.frame.origin.x, button.frame.origin.y - 100, 200, 50);
     UIView *superview = [UIView new];
     [superview addSubview:destination];
@@ -108,12 +108,12 @@
 }
 
 /**
- Add to a superviw, but the superview was never added to any view controller. This should get an assert failure when subview need prepare.
+ Add to a superviw, but the superview was never added to any view controller. This should get an error when subview need prepare.
  Invoking order in subview when subview needs prepare:
  1.willMoveToSuperview:newSuperview
  2.didMoveToSuperview
  3.willMoveToSuperview:nil
-    4.when detected that last preparing is not finished, assert fail, get a invalid performer error
+    4.when detected that last preparing is not finished, get invalid performer error
  5.didMoveToSuperview
  
  Invoking order in subview when subview doesn't need prepare:
@@ -137,11 +137,11 @@
 }
 
 /**
- Add to an UIWindow.  This should get an assert failure when subview need prepare.
+ Add to an UIWindow.  This should get an error when subview need prepare.
  Invoking order in subview when subview needs prepare:
  1.willMoveToWindow:newWindow
  2.willMoveToSuperview:newSuperview
-    3.when detected that newSuperview is already on screen, but can't find the performer, assert fail, get a invalid performer error
+    3.when detected that newSuperview is already on screen, but can't find the performer, get invalid performer error
  4.didMoveToWindow
  5.didMoveToSuperview
  
