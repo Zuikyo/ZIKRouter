@@ -1,5 +1,5 @@
 //
-//  TestSubviewRouter.swift
+//  TestViewRouter.swift
 //  ZIKRouterDemo-macOS
 //
 //  Created by zuik on 2018/10/28.
@@ -9,28 +9,27 @@
 import ZRouter
 import ZIKRouter.Internal
 
-class TestSubviewRouter: ZIKViewRouter<TestSubview, ViewRouteConfig> {
+class TestViewRouter: ZIKViewRouter<TestViewController, ViewRouteConfig> {
     
     override class func registerRoutableDestination() {
-        registerExclusiveView(TestSubview.self)
-        register(RoutableView<TestSubviewInput>())
+        registerExclusiveView(TestViewController.self)
+        register(RoutableView<TestViewInput>())
     }
     
-    override func destination(with configuration: ViewRouteConfig) -> TestSubview? {
-        let destination: TestSubview? = TestSubview()
+    override func destination(with configuration: ViewRouteConfig) -> TestViewController? {
+        let destination: TestViewController? = TestViewController()
         return destination
     }
     
-    override func prepareDestination(_ destination: TestSubview, configuration: ViewRouteConfig) {
+    override func prepareDestination(_ destination: TestViewController, configuration: ViewRouteConfig) {
         destination.router = self
     }
     
-    // If the destiantion is UIView, override and return route types for UIView
-    override class func supportedRouteTypes() -> ZIKViewRouteTypeMask {
-        return .viewDefault
+    @objc class func applicationDidHide(_ notification: Notification) {
+        print("\(self) handle applicationDidHide")
     }
     
-    override class func router(_ router: ZIKViewRouter<AnyObject, ZIKViewRouteConfiguration>?, willPerformRouteOnDestination destination: TestSubview, fromSource source: Any?) {
+    override class func router(_ router: ZIKViewRouter<AnyObject, ZIKViewRouteConfiguration>?, willPerformRouteOnDestination destination: TestViewController, fromSource source: Any?) {
         
         print("""
             ----------------------\nrouter: (\(router ?? "nil" as Any)),
@@ -42,7 +41,7 @@ class TestSubviewRouter: ZIKViewRouter<TestSubview, ViewRouteConfig> {
         )
     }
     
-    override class func router(_ router: ZIKViewRouter<AnyObject, ZIKViewRouteConfiguration>?, didPerformRouteOnDestination destination: TestSubview, fromSource source: Any?) {
+    override class func router(_ router: ZIKViewRouter<AnyObject, ZIKViewRouteConfiguration>?, didPerformRouteOnDestination destination: TestViewController, fromSource source: Any?) {
         print("""
             ----------------------\nrouter: (\(router ?? "nil" as Any)),
             ✅ did
@@ -53,7 +52,7 @@ class TestSubviewRouter: ZIKViewRouter<TestSubview, ViewRouteConfig> {
         )
     }
     
-    override class func router(_ router: ZIKViewRouter<AnyObject, ZIKViewRouteConfiguration>?, willRemoveRouteOnDestination destination: TestSubview, fromSource source: Any?) {
+    override class func router(_ router: ZIKViewRouter<AnyObject, ZIKViewRouteConfiguration>?, willRemoveRouteOnDestination destination: TestViewController, fromSource source: Any?) {
         print("""
             ----------------------\nrouter: (\(router ?? "nil" as Any)),
             ⬅️ will
@@ -64,7 +63,7 @@ class TestSubviewRouter: ZIKViewRouter<TestSubview, ViewRouteConfig> {
         )
     }
     
-    override class func router(_ router: ZIKViewRouter<AnyObject, ZIKViewRouteConfiguration>?, didRemoveRouteOnDestination destination: TestSubview, fromSource source: Any?) {
+    override class func router(_ router: ZIKViewRouter<AnyObject, ZIKViewRouteConfiguration>?, didRemoveRouteOnDestination destination: TestViewController, fromSource source: Any?) {
         print("""
             ----------------------\nrouter: (\(router ?? "nil" as Any)),
             ❎ did
@@ -76,10 +75,10 @@ class TestSubviewRouter: ZIKViewRouter<TestSubview, ViewRouteConfig> {
     }
 }
 
-extension TestSubview: ZIKRoutableView {
+extension TestViewController: ZIKRoutableView {
     
 }
 
-extension RoutableView where Protocol == TestSubviewInput {
-    init() { self.init(declaredTypeName: "NSView & SubviewInput") }
+extension RoutableView where Protocol == TestViewInput {
+    init() { self.init(declaredTypeName: "TestViewInput") }
 }

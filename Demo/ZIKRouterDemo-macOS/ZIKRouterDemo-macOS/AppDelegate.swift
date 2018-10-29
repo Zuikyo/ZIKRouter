@@ -7,6 +7,7 @@
 //
 
 import Cocoa
+import ZRouter
 
 @NSApplicationMain
 class AppDelegate: NSObject, NSApplicationDelegate {
@@ -15,6 +16,26 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         
     }
 
+    func applicationDidHide(_ notification: Notification) {
+        // Notify custom event
+        Router.enumerateAllViewRouters { (routerType, route) in
+            guard let routerType = routerType else {
+                return
+            }
+            if routerType.responds(to: #selector(applicationDidHide(_:))) {
+                routerType.perform(#selector(applicationDidHide(_:)), with: notification)
+            }
+        }
+        Router.enumerateAllServiceRouters { (routerType, route) in
+            guard let routerType = routerType else {
+                return
+            }
+            if routerType.responds(to: #selector(applicationDidHide(_:))) {
+                routerType.perform(#selector(applicationDidHide(_:)), with: notification)
+            }
+        }
+    }
+    
     func applicationWillTerminate(_ aNotification: Notification) {
         // Insert code here to tear down your application
     }

@@ -124,15 +124,9 @@
 				F85461C421849A3A00E2311D /* AppDelegate.swift */,
 				F85461C621849A3A00E2311D /* MainViewController.swift */,
 				F85461E52184A90000E2311D /* DemoRouteApater.swift */,
-				F85461E72184AE5B00E2311D /* AlertViewModuleInput.swift */,
-				F85461E82184AE5B00E2311D /* AlertViewRouter.swift */,
-				F85461F52184DC8D00E2311D /* TestViewInput.swift */,
-				F85461F62184DC8D00E2311D /* TestViewRouter.swift */,
-				F85461F12184DC3500E2311D /* TestViewController.swift */,
-				F85461F22184DC3500E2311D /* TestViewController.xib */,
-				F81E5FA121858DF0000C8592 /* TestSubviewInput.swift */,
-				F81E5F9F21858DC6000C8592 /* TestSubview.swift */,
-				F81E5FA221858DF0000C8592 /* TestSubviewRouter.swift */,
+				F8AD43962187075500AD7A58 /* AlertModule */,
+				F8AD43952187073F00AD7A58 /* TestViewRouter */,
+				F8AD43942187071D00AD7A58 /* TestSubviewRouter */,
 				F85461C821849A3C00E2311D /* Assets.xcassets */,
 				F85461CA21849A3C00E2311D /* Main.storyboard */,
 				F85461CD21849A3C00E2311D /* Info.plist */,
@@ -147,6 +141,36 @@
 				F85461E021849B1100E2311D /* ZIKLoginModule.framework */,
 			);
 			name = Products;
+			sourceTree = "<group>";
+		};
+		F8AD43942187071D00AD7A58 /* TestSubviewRouter */ = {
+			isa = PBXGroup;
+			children = (
+				F81E5FA121858DF0000C8592 /* TestSubviewInput.swift */,
+				F81E5F9F21858DC6000C8592 /* TestSubview.swift */,
+				F81E5FA221858DF0000C8592 /* TestSubviewRouter.swift */,
+			);
+			path = TestSubviewRouter;
+			sourceTree = "<group>";
+		};
+		F8AD43952187073F00AD7A58 /* TestViewRouter */ = {
+			isa = PBXGroup;
+			children = (
+				F85461F52184DC8D00E2311D /* TestViewInput.swift */,
+				F85461F62184DC8D00E2311D /* TestViewRouter.swift */,
+				F85461F12184DC3500E2311D /* TestViewController.swift */,
+				F85461F22184DC3500E2311D /* TestViewController.xib */,
+			);
+			path = TestViewRouter;
+			sourceTree = "<group>";
+		};
+		F8AD43962187075500AD7A58 /* AlertModule */ = {
+			isa = PBXGroup;
+			children = (
+				F85461E72184AE5B00E2311D /* AlertViewModuleInput.swift */,
+				F85461E82184AE5B00E2311D /* AlertViewRouter.swift */,
+			);
+			path = AlertModule;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
