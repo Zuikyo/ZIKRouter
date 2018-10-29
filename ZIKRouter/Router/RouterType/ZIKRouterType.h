@@ -16,7 +16,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 @class ZIKRoute;
 
-///Proxy to use ZIKRouter class type or ZIKRoute with compile time checking. These instance methods are actually class methods in ZIKRouter class.
+/// Proxy to use ZIKRouter class type or ZIKRoute with compile time checking. These instance methods are actually class methods in ZIKRouter class.
 @interface ZIKRouterType<__covariant Destination, __covariant RouteConfig: ZIKPerformRouteConfiguration *, __covariant RemoveConfig: ZIKRemoveRouteConfiguration *> : NSObject
 @property (nonatomic, strong, readonly, nullable) Class routerClass;
 @property (nonatomic, strong, readonly, nullable) ZIKRoute *route;
@@ -30,19 +30,19 @@ NS_ASSUME_NONNULL_BEGIN
 
 #pragma mark Factory
 
-///Whether the destination is instantiated synchronously.
+/// Whether the destination is instantiated synchronously.
 - (BOOL)canMakeDestinationSynchronously;
 
-///The router may can't make destination synchronously, or it's not for providing a destination but only for performing some actions.
+/// The router may can't make destination synchronously, or it's not for providing a destination but only for performing some actions.
 - (BOOL)canMakeDestination;
 
-///Synchronously get destination.
+/// Synchronously get destination.
 - (nullable Destination)makeDestination;
 
-///Synchronously get destination, and prepare the destination with destination protocol.
+/// Synchronously get destination, and prepare the destination with destination protocol.
 - (nullable Destination)makeDestinationWithPreparation:(void(^ _Nullable)(Destination destination))prepare;
 
-///Synchronously get destination, and prepare the destination.
+/// Synchronously get destination, and prepare the destination.
 - (nullable Destination)makeDestinationWithConfiguring:(void(NS_NOESCAPE ^ _Nullable)(RouteConfig config))configBuilder;
 
 /**

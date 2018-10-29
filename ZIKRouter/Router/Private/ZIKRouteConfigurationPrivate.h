@@ -16,12 +16,12 @@ NS_ASSUME_NONNULL_BEGIN
 @class ZIKRoute;
 @interface ZIKPerformRouteConfiguration()
 @property (nonatomic, strong, nullable) ZIKRoute *route;
-///Let ZIKRoute inject the defaultRouteConfiguration to the router.
+/// Let ZIKRoute inject the defaultRouteConfiguration to the router.
 @property (nonatomic, strong, nullable) ZIKPerformRouteConfiguration *injected;
 @end
 
 @interface ZIKRemoveRouteConfiguration()
-///Let ZIKRoute inject the defaultRemoveConfiguration to the router.
+/// Let ZIKRoute inject the defaultRemoveConfiguration to the router.
 @property (nonatomic, strong, nullable) ZIKRemoveRouteConfiguration *injected;
 @end
 

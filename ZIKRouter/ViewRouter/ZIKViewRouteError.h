@@ -13,15 +13,15 @@
 
 extern NSErrorDomain const ZIKViewRouteErrorDomain;
 
-///Errors for callback in ZIKRouteErrorHandler and ZIKViewRouteGlobalErrorHandler
+/// Errors for callback in ZIKRouteErrorHandler and ZIKViewRouteGlobalErrorHandler
 #ifdef NS_ERROR_ENUM
 typedef NS_ERROR_ENUM(ZIKViewRouteErrorDomain, ZIKViewRouteError) {
 #else
 typedef NS_ENUM(NSInteger, ZIKViewRouteError) {
 #endif
-    ///Bad implementation in code. When adding an UIView or UIViewController conforms to ZIKRoutableView in xib or storyboard, and it needs preparing, you have to implement -prepareDestinationFromExternal:configuration: in the view controller which added it.
+    /// Bad implementation in code. When adding an UIView or UIViewController conforms to ZIKRoutableView in xib or storyboard, and it needs preparing, you have to implement -prepareDestinationFromExternal:configuration: in the view controller which added it.
     ZIKViewRouteErrorInvalidPerformer     = 10,
-    ///This router doesn't support the route type you assigned.
+    /// This router doesn't support the route type you assigned.
     ZIKViewRouteErrorUnsupportType        = 11,
     /**
      Unbalanced calls to begin/end appearance transitions for destination. This error occurs when you try and display a view controller before the current view controller is finished displaying. This may cause the UIViewController skips or messes up the order calling -viewWillAppear:, -viewDidAppear:, -viewWillDisAppear: and -viewDidDisappear:, and messes up the route state.
@@ -39,9 +39,9 @@ typedef NS_ENUM(NSInteger, ZIKViewRouteError) {
      5. Attempt to present destination on source whose view is not in the window hierarchy or not added to any superview.
      */
     ZIKViewRouteErrorInvalidSource        = 13,
-    ///See containerWrapper
+    /// See containerWrapper
     ZIKViewRouteErrorInvalidContainer     = 14,
-    ///An unwind segue was aborted because -[destinationViewController canPerformUnwindSegueAction:fromViewController:withSender:] return NO or can't perform segue.
+    /// An unwind segue was aborted because -[destinationViewController canPerformUnwindSegueAction:fromViewController:withSender:] return NO or can't perform segue.
     ZIKViewRouteErrorSegueNotPerformed    = 15
     
     /**

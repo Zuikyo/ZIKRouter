@@ -11,7 +11,7 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-///Provided interface of the real module
+/// Provided interface of the real module
 @protocol ZIKCompatibleAlertModuleInput <ZIKViewModuleRoutable>
 @property(nonatomic,copy) NSString *title;
 @property(nullable,nonatomic,copy) NSString *message;

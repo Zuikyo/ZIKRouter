@@ -18,7 +18,7 @@
 
 typedef const void *ZIKImageRef;
 
-///Get beginning address of a loaded image.
+/// Get beginning address of a loaded image.
 extern ZIKImageRef ZIKGetImageByName(const char *file);
 
 /**
@@ -43,10 +43,10 @@ extern void *ZIKFindSymbol(ZIKImageRef image, const char *name);
  */
 extern void *ZIKFindSymbol(ZIKImageRef image, bool(^matchingBlock)(const char *));
 
-///Get symbol of a address.
+/// Get symbol of a address.
 extern const char *ZIKSymbolNameForAddress(void *address);
 
-///Get image file path of a address.
+/// Get image file path of a address.
 extern const char *ZIKImagePathForAddress(void *address);
 
 #endif

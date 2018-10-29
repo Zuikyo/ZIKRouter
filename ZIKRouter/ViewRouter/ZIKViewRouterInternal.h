@@ -17,14 +17,14 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-///Internal methods for subclass to override. Use these methods when implementing your custom route.
+/// Internal methods for subclass to override. Use these methods when implementing your custom route.
 @interface ZIKViewRouter<__covariant Destination: id, __covariant RouteConfig: ZIKViewRouteConfiguration *> ()
 @property (nonatomic, readonly, copy) RouteConfig original_configuration;
 @property (nonatomic, readonly, copy) ZIKViewRemoveConfiguration *original_removeConfiguration;
 
 #pragma mark Required Override
 
-///Register the destination class with those +registerXXX: methods. ZIKViewRouter will call this method before app did finish launching. If a router was not registered with any view class, there'll be an assert failure.
+/// Register the destination class with those +registerXXX: methods. ZIKViewRouter will call this method before app did finish launching. If a router was not registered with any view class, there'll be an assert failure.
 + (void)registerRoutableDestination;
 
 /**
@@ -44,10 +44,10 @@ NS_ASSUME_NONNULL_BEGIN
 
 #pragma mark Optional Override
 
-///Invoked after all registrations are finished when ZIKROUTER_CHECK is enabled, when ZIKROUTER_CHECK is disabled, this won't be invoked. You can override and do some debug checking.
+/// Invoked after all registrations are finished when ZIKROUTER_CHECK is enabled, when ZIKROUTER_CHECK is disabled, this won't be invoked. You can override and do some debug checking.
 + (void)_didFinishRegistration;
 
-///Supported route types of this router. Default is ZIKViewRouteTypeMaskViewControllerDefault for UIViewController type destination, if your destination is an UIView, override this and return ZIKViewRouteTypeMaskViewDefault. Router subclass can also limit the route type.
+/// Supported route types of this router. Default is ZIKViewRouteTypeMaskViewControllerDefault for UIViewController type destination, if your destination is an UIView, override this and return ZIKViewRouteTypeMaskViewDefault. Router subclass can also limit the route type.
 + (ZIKViewRouteTypeMask)supportedRouteTypes;
 
 /**
@@ -102,74 +102,74 @@ NS_ASSUME_NONNULL_BEGIN
 
 #pragma mark Custom Route Required Override
 
-///Custom route for ZIKViewRouteTypeCustom. The router must override +supportedRouteTypes to add ZIKViewRouteTypeMaskCustom.
+/// Custom route for ZIKViewRouteTypeCustom. The router must override +supportedRouteTypes to add ZIKViewRouteTypeMaskCustom.
 
-///Whether the router can perform custom route now. Default is NO.
+/// Whether the router can perform custom route now. Default is NO.
 - (BOOL)canPerformCustomRoute;
-///Whether the router can remove custom route now. Default is NO. Check the states of destination and source, return NO if they can't be removed.
+/// Whether the router can remove custom route now. Default is NO. Check the states of destination and source, return NO if they can't be removed.
 - (BOOL)canRemoveCustomRoute;
 
-///Perform your custom route. You must maintain the router's state with methods in ZIKViewRouterInternal.h.
+/// Perform your custom route. You must maintain the router's state with methods in ZIKViewRouterInternal.h.
 - (void)performCustomRouteOnDestination:(Destination)destination fromSource:(nullable id)source configuration:(RouteConfig)configuration;
 
 #pragma mark Custom Route Optional Override
 
-///Remove your custom route. You must maintain the router's state with methods in ZIKViewRouterInternal.h.
+/// Remove your custom route. You must maintain the router's state with methods in ZIKViewRouterInternal.h.
 - (void)removeCustomRouteOnDestination:(Destination)destination fromSource:(nullable id)source removeConfiguration:(ZIKViewRemoveConfiguration *)removeConfiguration configuration:(RouteConfig)configuration;
 
-///Validate the configuration for your custom route. If return NO, current perform action will be failed.
+/// Validate the configuration for your custom route. If return NO, current perform action will be failed.
 + (BOOL)validateCustomRouteConfiguration:(RouteConfig)configuration removeConfiguration:(ZIKViewRemoveConfiguration *)removeConfiguration;
 
 #pragma mark Custom Route Checking
 
-///Check view controller state in -canPerformCustomRoute, -canRemoveCustomRoute or -performCustomRouteOnDestination:fromSource:configuration:.
+/// Check view controller state in -canPerformCustomRoute, -canRemoveCustomRoute or -performCustomRouteOnDestination:fromSource:configuration:.
 
-///Whether the source can perform present now.
+/// Whether the source can perform present now.
 - (BOOL)_canPerformPresent;
 #if ZIK_HAS_UIKIT
-///Whether the source can perform push now.
+/// Whether the source can perform push now.
 - (BOOL)_canPerformPush;
-///Whether the destination is not in navigation stack of the source. If the destination is already pushed, it can't be pushed again.
+/// Whether the destination is not in navigation stack of the source. If the destination is already pushed, it can't be pushed again.
 + (BOOL)_validateDestination:(UIViewController *)destination notInNavigationStackOfSource:(UIViewController *)source;
 
-///Whether the destination can pop.
+/// Whether the destination can pop.
 - (BOOL)_canPop;
 #endif
-///Whether the destination can dismiss.
+/// Whether the destination can dismiss.
 - (BOOL)_canDismiss;
-///Whether the destination can remove from parant.
+/// Whether the destination can remove from parant.
 - (BOOL)_canRemoveFromParentViewController;
-///Whether the destination can remove from superview.
+/// Whether the destination can remove from superview.
 - (BOOL)_canRemoveFromSuperview;
 
 #pragma mark Custom Route State Control
 
-///when you implement custom route or remove route by overriding -performRouteOnDestination:configuration: or -removeDestination:removeConfiguration:, maintain the route state with these methods, and state control methods in ZIKRouterInternal.h.
+/// when you implement custom route or remove route by overriding -performRouteOnDestination:configuration: or -removeDestination:removeConfiguration:, maintain the route state with these methods, and state control methods in ZIKRouterInternal.h.
 
-///Call it when route will perform custom route.
+/// Call it when route will perform custom route.
 - (void)beginPerformRoute;
 
-///If your custom route type is performing a segue, use this to perform the segue, don't need to use -beginPerformRoute and -endPerformRouteWithSuccess. `source` is the view controller to perform the segue.
+/// If your custom route type is performing a segue, use this to perform the segue, don't need to use -beginPerformRoute and -endPerformRouteWithSuccess. `source` is the view controller to perform the segue.
 #if ZIK_HAS_UIKIT
 - (void)_performSegueWithIdentifier:(NSString *)identifier fromSource:(UIViewController *)source sender:(nullable id)sender;
 #else
 - (void)_performSegueWithIdentifier:(NSString *)identifier fromSource:(NSViewController *)source sender:(nullable id)sender;
 #endif
 
-///Call it when route will begin custom remove.
+/// Call it when route will begin custom remove.
 - (void)beginRemoveRouteFromSource:(nullable id)source;
-///Call it when route is successfully removed.
+/// Call it when route is successfully removed.
 - (void)endRemoveRouteWithSuccessOnDestination:(Destination)destination fromSource:(nullable id)source;
-///Call it when route remove failed.
+/// Call it when route remove failed.
 - (void)endRemoveRouteWithError:(NSError *)error;
 
 - (void)endRemoveRouteWithSuccess NS_UNAVAILABLE
 ;
 #pragma mark Error Handle
 
-///error from ZIKViewRouteErrorDomain.
+/// error from ZIKViewRouteErrorDomain.
 + (NSError *)viewRouteErrorWithCode:(ZIKViewRouteError)code localizedDescription:(NSString *)description;
-///error from ZIKViewRouteErrorDomain.
+/// error from ZIKViewRouteErrorDomain.
 + (NSError *)viewRouteErrorWithCode:(ZIKViewRouteError)code localizedDescriptionFormat:(NSString *)format ,...;
 
 + (void)notifyGlobalErrorWithRouter:(nullable __kindof ZIKViewRouter *)router action:(ZIKRouteAction)action error:(NSError *)error;

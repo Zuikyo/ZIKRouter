@@ -17,7 +17,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 @interface ZIKRouteRegistry ()
 
-///Add registry subclass.
+/// Add registry subclass.
 + (void)addRegistry:(Class)registryClass;
 
 #pragma mark Override
@@ -28,32 +28,32 @@ NS_ASSUME_NONNULL_BEGIN
 
 @property (nonatomic, class, readonly) NSLock *lock;
 
-///key: destination protocol, value: router class or ZIKRoute
+/// key: destination protocol, value: router class or ZIKRoute
 @property (nonatomic, class, readonly) CFMutableDictionaryRef destinationProtocolToRouterMap;
-///key: module config protocol, value: router class or ZIKRoute
+/// key: module config protocol, value: router class or ZIKRoute
 @property (nonatomic, class, readonly) CFMutableDictionaryRef moduleConfigProtocolToRouterMap;
-///key: destination class, value: router class or ZIKRoute set
+/// key: destination class, value: router class or ZIKRoute set
 @property (nonatomic, class, readonly) CFMutableDictionaryRef destinationToRoutersMap;
-///key: destination class, value: default router class or ZIKRoute
+/// key: destination class, value: default router class or ZIKRoute
 @property (nonatomic, class, readonly) CFMutableDictionaryRef destinationToDefaultRouterMap;
-///key: destination class, value: the exclusive router class or ZIKRoute
+/// key: destination class, value: the exclusive router class or ZIKRoute
 @property (nonatomic, class, readonly) CFMutableDictionaryRef destinationToExclusiveRouterMap;
-///key: identifier string, value: router class or ZIKRoute
+/// key: identifier string, value: router class or ZIKRoute
 @property (nonatomic, class, readonly) CFMutableDictionaryRef identifierToRouterMap;
-///key: adapter protocol, value: adaptee protocol
+/// key: adapter protocol, value: adaptee protocol
 @property (nonatomic, class, readonly) CFMutableDictionaryRef adapterToAdapteeMap;
 
 #if ZIKROUTER_CHECK
-///key: router class or ZIKRoute, value: destination class set
+/// key: router class or ZIKRoute, value: destination class set
 @property (nonatomic, class, readonly) CFMutableDictionaryRef _check_routerToDestinationsMap;
-///key: router class or ZIKRoute, value: destination protocol set
+/// key: router class or ZIKRoute, value: destination protocol set
 @property (nonatomic, class, readonly) CFMutableDictionaryRef _check_routerToDestinationProtocolsMap;
 #endif
 
 + (void)handleEnumerateRouterClass:(Class)aClass;
 + (void)didFinishRegistration;
 
-///Whether the class can be registered into this registry.
+/// Whether the class can be registered into this registry.
 + (BOOL)isRegisterableRouterClass:(Class)aClass;
 
 + (BOOL)isDestinationClassRoutable:(Class)aClass;

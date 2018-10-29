@@ -22,11 +22,11 @@ NS_ASSUME_NONNULL_BEGIN
  */
 @interface ZIKViewRouter<__covariant Destination, __covariant RouteConfig: ZIKViewRouteConfiguration *> : ZIKRouter<Destination, RouteConfig, ZIKViewRemoveConfiguration *>
 
-///If this router's view is an UIViewController / NSViewController routed from storyboard, or an UIView / NSView added as subview from xib or code, a router will be auto created to prepare the view, and the router's autoCreated is YES; But when an UIViewController / NSViewController is routed from code manually, router won't be auto created because we can't find the performer to prepare the destination.
+/// If this router's view is an UIViewController / NSViewController routed from storyboard, or an UIView / NSView added as subview from xib or code, a router will be auto created to prepare the view, and the router's autoCreated is YES; But when an UIViewController / NSViewController is routed from code manually, router won't be auto created because we can't find the performer to prepare the destination.
 @property (nonatomic, readonly, assign) BOOL autoCreated;
-///Whether current routing action is from router, or from external
+/// Whether current routing action is from router, or from external
 @property (nonatomic, readonly, assign) BOOL routingFromInternal;
-///Real route type performed for those adaptative types in ZIKViewRouteType
+/// Real route type performed for those adaptative types in ZIKViewRouteType
 @property (nonatomic, readonly, assign) ZIKViewRouteRealType realRouteType;
 
 @end
@@ -48,7 +48,7 @@ NS_ASSUME_NONNULL_BEGIN
  */
 - (BOOL)canPerform;
 
-///Check whether the router support a route type.
+/// Check whether the router support a route type.
 + (BOOL)supportRouteType:(ZIKViewRouteType)type;
 
 #pragma mark Perform
@@ -74,15 +74,15 @@ NS_ASSUME_NONNULL_BEGIN
                          configuring:(void(NS_NOESCAPE ^)(RouteConfig config))configBuilder
                             removing:(void(NS_NOESCAPE ^ _Nullable)(ZIKViewRemoveConfiguration *config))removeConfigBuilder;
 
-///If this destination doesn't need any variable to initialize, just pass source and perform route.
+/// If this destination doesn't need any variable to initialize, just pass source and perform route.
 + (nullable instancetype)performPath:(ZIKViewRoutePath *)path;
 
-///If this destination doesn't need any variable to initialize, just pass source and perform route. The successHandler and errorHandler are for current performing.
+/// If this destination doesn't need any variable to initialize, just pass source and perform route. The successHandler and errorHandler are for current performing.
 + (nullable instancetype)performPath:(ZIKViewRoutePath *)path
                       successHandler:(void(^ _Nullable)(Destination destination))performerSuccessHandler
                         errorHandler:(void(^ _Nullable)(ZIKRouteAction routeAction, NSError *error))performerErrorHandler;
 
-///If this destination doesn't need any variable to initialize, just pass source and perform route. The escaping completion is for current performing.
+/// If this destination doesn't need any variable to initialize, just pass source and perform route. The escaping completion is for current performing.
 + (nullable instancetype)performPath:(ZIKViewRoutePath *)path
                           completion:(void(^)(BOOL success, Destination _Nullable destination, ZIKRouteAction routeAction, NSError *_Nullable error))performerCompletion;
 
@@ -245,7 +245,7 @@ NS_ASSUME_NONNULL_BEGIN
  */
 - (BOOL)canRemove;
 
-///Remove a routed destination. Auto choose proper remove action in pop/dismiss/removeFromParentViewController/removeFromSuperview/custom. If -canRemove return NO, this will fail, use -removeRouteWithSuccessHandler:errorHandler: to get error info. Main thread only.
+/// Remove a routed destination. Auto choose proper remove action in pop/dismiss/removeFromParentViewController/removeFromSuperview/custom. If -canRemove return NO, this will fail, use -removeRouteWithSuccessHandler:errorHandler: to get error info. Main thread only.
 - (void)removeRoute;
 
 @end
@@ -301,10 +301,10 @@ typedef void(^ZIKViewRouteGlobalErrorHandler)(__kindof ZIKViewRouter * _Nullable
  */
 + (void)registerModuleProtocol:(Protocol<ZIKViewModuleRoutable> *)configProtocol;
 
-///Register a unique identifier for this router class.
+/// Register a unique identifier for this router class.
 + (void)registerIdentifier:(NSString *)identifier;
 
-///Is registration all finished. Can't register any router after registration is finished.
+/// Is registration all finished. Can't register any router after registration is finished.
 + (BOOL)isRegistrationFinished;
 @end
 
@@ -339,12 +339,12 @@ typedef void(^ZIKViewRouteGlobalErrorHandler)(__kindof ZIKViewRouter * _Nullable
 
 @end
 
-///If an UIViewController / NSViewController or UIView / NSView conforms to ZIKRoutableView, there must be a router for it and its subclass, then we can auto create its router. Don't use it in other place.
+/// If an UIViewController / NSViewController or UIView / NSView conforms to ZIKRoutableView, there must be a router for it and its subclass, then we can auto create its router. Don't use it in other place.
 @protocol ZIKRoutableView <NSObject>
 
 @end
 
-///Convenient macro to let UIViewController / NSViewController or UIView / NSView conform to ZIKRoutableView, and declare that it's routable.
+/// Convenient macro to let UIViewController / NSViewController or UIView / NSView conform to ZIKRoutableView, and declare that it's routable.
 #define DeclareRoutableView(RoutableView, ExtensionName)    \
 @interface RoutableView (ExtensionName) <ZIKRoutableView>    \
 @end    \

@@ -29,7 +29,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 + (BOOL)allowLeaveTestViewFailing;
 
-///If the router complete synchronously, self.router is not set when completion handler is called, then access self.router in handler block will fail. Use this to access self.router in block.
+/// If the router complete synchronously, self.router is not set when completion handler is called, then access self.router in handler block will fail. Use this to access self.router in block.
 - (void)handle:(void(^)(void))block;
 
 #pragma mark Private

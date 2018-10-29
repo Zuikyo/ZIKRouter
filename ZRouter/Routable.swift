@@ -184,7 +184,7 @@ public struct RoutableServiceModule<Protocol> {
     }
 }
 
-///All protocols inheriting from ZIKViewRoutable are routable as view protocol. You may find out the compiler also allows using class type that conforming to ZIKViewRoutable as `Protocol`. ZRouter can detect them and give assert failure.
+/// All protocols inheriting from ZIKViewRoutable are routable as view protocol. You may find out the compiler also allows using class type that conforming to ZIKViewRoutable as `Protocol`. ZRouter can detect them and give assert failure.
 public extension RoutableView where Protocol: ZIKViewRoutable {
     init() {
         if let objcProtocol = ZIKRouter_objcProtocol(Protocol.self) {
@@ -196,7 +196,7 @@ public extension RoutableView where Protocol: ZIKViewRoutable {
     }
 }
 
-///All protocols inheriting from ZIKViewModuleRoutable are routable as view module protocol. You may find out the compiler also allows using class type that conforming to ZIKViewModuleRoutable as `Protocol`. ZRouter can detect them and give assert failure.
+/// All protocols inheriting from ZIKViewModuleRoutable are routable as view module protocol. You may find out the compiler also allows using class type that conforming to ZIKViewModuleRoutable as `Protocol`. ZRouter can detect them and give assert failure.
 public extension RoutableViewModule where Protocol: ZIKViewModuleRoutable {
     init() {
         if let objcProtocol = ZIKRouter_objcProtocol(Protocol.self) {
@@ -208,7 +208,7 @@ public extension RoutableViewModule where Protocol: ZIKViewModuleRoutable {
     }
 }
 
-///All protocols inheriting from ZIKServiceRoutable are routable as service protocol. You may find out the compiler also allows using class type that conforming to ZIKServiceRoutable as `Protocol`. ZRouter can detect them and give assert failure.
+/// All protocols inheriting from ZIKServiceRoutable are routable as service protocol. You may find out the compiler also allows using class type that conforming to ZIKServiceRoutable as `Protocol`. ZRouter can detect them and give assert failure.
 public extension RoutableService where Protocol: ZIKServiceRoutable {
     init() {
         if let objcProtocol = ZIKRouter_objcProtocol(Protocol.self) {
@@ -220,7 +220,7 @@ public extension RoutableService where Protocol: ZIKServiceRoutable {
     }
 }
 
-///All protocols inheriting from ZIKViewRoutable are routable as service module protocol. You may find out the compiler also allows using class type that conforming to ZIKServiceModuleRoutable as `Protocol`. ZRouter can detect them and give assert failure.
+/// All protocols inheriting from ZIKViewRoutable are routable as service module protocol. You may find out the compiler also allows using class type that conforming to ZIKServiceModuleRoutable as `Protocol`. ZRouter can detect them and give assert failure.
 public extension RoutableServiceModule where Protocol: ZIKServiceModuleRoutable {
     init() {
         if let objcProtocol = ZIKRouter_objcProtocol(Protocol.self) {

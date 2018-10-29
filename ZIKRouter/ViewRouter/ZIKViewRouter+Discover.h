@@ -14,11 +14,11 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-///Get view router in a type safe way. There will be compile error if the view protocol is not ZIKViewRoutable.
+/// Get view router in a type safe way. There will be compile error if the view protocol is not ZIKViewRoutable.
 #define ZIKRouterToView(ViewProtocol) [ZIKViewRouter<id<ViewProtocol>,ZIKViewRouteConfiguration *> toView](ZIKRoutable(ViewProtocol))
 
 #define ZIKRouterToViewModule(ModuleProtocol) [ZIKViewRouter<id,ZIKViewRouteConfiguration<ModuleProtocol> *> toModule](ZIKRoutable(ModuleProtocol))
-///Get view router in a type safe way. There will be compile error if the module protocol is not ZIKViewModuleRoutable.
+/// Get view router in a type safe way. There will be compile error if the module protocol is not ZIKViewModuleRoutable.
 
 @interface ZIKViewRouter<__covariant Destination: id, __covariant RouteConfig: ZIKViewRouteConfiguration *> (Discover)
 
@@ -132,7 +132,7 @@ NS_ASSUME_NONNULL_BEGIN
  */
 @property (nonatomic, class, readonly) NSArray<ZIKAnyViewRouterType *> * (^routersToClass)(Class destinationClass);
 
-///Find view router registered with the unique identifier.
+/// Find view router registered with the unique identifier.
 @property (nonatomic, class, readonly) ZIKAnyViewRouterType * _Nullable (^toIdentifier)(NSString *identifier);
 
 @end

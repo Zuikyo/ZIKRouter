@@ -15,7 +15,7 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-///Detail route type for view controller actually performed. Not for all situations but it's enough to know whether a view controller can do a unwind action(pop/dismiss/removeFromParent). Only the first 4 type can do unwind. You can use other types for debugging purpose.
+/// Detail route type for view controller actually performed. Not for all situations but it's enough to know whether a view controller can do a unwind action(pop/dismiss/removeFromParent). Only the first 4 type can do unwind. You can use other types for debugging purpose.
 typedef NS_ENUM(NSInteger,ZIKViewRouteDetailType) {
     ZIKViewRouteDetailTypePush,
     ZIKViewRouteDetailTypePresentModally,
@@ -39,9 +39,9 @@ typedef NS_ENUM(NSInteger,ZIKViewRouteDetailType) {
     ZIKViewRouteDetailTypeCustom
 };
 
-///State that describes the presentation of a view controller. It's for analyzing the view controller's real route style. Store address pointer by number.
+/// State that describes the presentation of a view controller. It's for analyzing the view controller's real route style. Store address pointer by number.
 @interface ZIKPresentationState : NSObject
-///the view controller's address.
+/// the view controller's address.
 @property (nonatomic, readonly, strong, nullable) NSNumber *viewController;
 @property (nonatomic, readonly, strong, nullable) NSNumber *presentingViewController;
 @property (nonatomic, readonly, assign) BOOL isModalPresentationPopover;

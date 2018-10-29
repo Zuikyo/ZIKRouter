@@ -24,12 +24,12 @@ public typealias View = NSView
 extension ViewController: NamespaceWrappable { }
 public extension TypeWrapperProtocol where WrappedType: ViewController {
     
-    ///See zix_routed
+    /// See zix_routed
     public var routed: Bool {
         return wrappedValue.zix_routed
     }
     
-    ///See zix_removing
+    /// See zix_removing
     public var removing: Bool {
         return wrappedValue.zix_removing
     }
@@ -38,7 +38,7 @@ public extension TypeWrapperProtocol where WrappedType: ViewController {
 extension View: NamespaceWrappable { }
 public extension TypeWrapperProtocol where WrappedType: View {
     
-    ///See zix_routed
+    /// See zix_routed
     public var routed: Bool {
         return wrappedValue.zix_routed
     }

@@ -33,10 +33,10 @@ NS_ASSUME_NONNULL_BEGIN
 #else
 @interface NSView (ZIKViewRouterPrivate)
 #endif
-///Temporary bind auto created router to an UIView when it's not addSubView: by router. Reset to nil when finish routing.
+/// Temporary bind auto created router to an UIView when it's not addSubView: by router. Reset to nil when finish routing.
 - (__kindof ZIKViewRouter *)zix_destinationViewRouter;
 - (void)setZix_destinationViewRouter:(nullable ZIKViewRouter *)viewRouter;
-///Route type when view is routed from a router, will reset to nil when finish routing.
+/// Route type when view is routed from a router, will reset to nil when finish routing.
 - (nullable NSNumber *)zix_routeTypeFromRouter;
 - (void)setZix_routeTypeFromRouter:(nullable NSNumber *)routeType;
 @end

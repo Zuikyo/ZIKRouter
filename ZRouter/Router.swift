@@ -12,7 +12,7 @@
 import ZIKRouter.Internal
 import ZIKRouter.Private
 
-///Router with type safe convenient methods for ZIKRouter.
+/// Router with type safe convenient methods for ZIKRouter.
 public class Router {
     
     // MARK: Routable Discover

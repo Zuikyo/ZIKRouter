@@ -8,14 +8,14 @@
 
 #import <Foundation/Foundation.h>
 
-///Auto register or manually register
+/// Auto register or manually register
 #define AUTO_REGISTER_ROUTERS 1
 #define TEST_BLOCK_ROUTES 0
 
-///Manually register routers.
+/// Manually register routers.
 @interface AppRouteRegistry : NSObject
 
-///You have to register routers before any module reqiures them. Those modules are running before registration is finished, such as routable initial view controller from storyboard, and any routers used in this initial view controller.
+/// You have to register routers before any module reqiures them. Those modules are running before registration is finished, such as routable initial view controller from storyboard, and any routers used in this initial view controller.
 + (void)registerForModulesBeforeRegistrationFinished;
 
 + (void)manuallyRegisterEachRouter;

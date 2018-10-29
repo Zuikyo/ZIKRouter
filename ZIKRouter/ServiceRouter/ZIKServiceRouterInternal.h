@@ -14,23 +14,23 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-///Internal methods for subclass.
+/// Internal methods for subclass.
 @interface ZIKServiceRouter<__covariant Destination: id, __covariant RouteConfig: ZIKPerformRouteConfiguration *> ()
 
 #pragma mark Required Override
 
-///Register the destination class with those +registerXXX: methods. ZIKServiceRouter will call this method before app did finish launch. If a router was not registered with any service class, there'll be an assert failure.
+/// Register the destination class with those +registerXXX: methods. ZIKServiceRouter will call this method before app did finish launch. If a router was not registered with any service class, there'll be an assert failure.
 + (void)registerRoutableDestination;
 
 #pragma mark Optional Override
 
-///Invoked after all registrations are finished when ZIKROUTER_CHECK is enabled, when ZIKROUTER_CHECK is disabled, this won't be invoked. You can override and do some debug checking.
+/// Invoked after all registrations are finished when ZIKROUTER_CHECK is enabled, when ZIKROUTER_CHECK is disabled, this won't be invoked. You can override and do some debug checking.
 + (void)_didFinishRegistration;
 
-///Prepare the destination after -prepareDestination is invoked.
+/// Prepare the destination after -prepareDestination is invoked.
 - (void)prepareDestination:(Destination)destination configuration:(RouteConfig)configuration;
 
-///Check whether destination is prepared correctly.
+/// Check whether destination is prepared correctly.
 - (void)didFinishPrepareDestination:(Destination)destination configuration:(RouteConfig)configuration;
 
 #pragma mark Notify Error

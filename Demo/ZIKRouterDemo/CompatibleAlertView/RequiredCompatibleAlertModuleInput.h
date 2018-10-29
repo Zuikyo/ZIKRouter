@@ -11,7 +11,7 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-///Required interface used in caller
+/// Required interface used in caller
 @protocol RequiredCompatibleAlertModuleInput <ZIKViewModuleRoutable>
 @property(nonatomic,copy) NSString *title;
 @property(nullable,nonatomic,copy) NSString *message;

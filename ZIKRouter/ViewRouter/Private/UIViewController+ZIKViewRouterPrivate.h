@@ -33,13 +33,13 @@ NS_ASSUME_NONNULL_BEGIN
 #else
 @interface NSViewController (ZIKViewRouterPrivate)
 #endif
-///Route type when view is routed from a router. Reset to nil when view is removed.
+/// Route type when view is routed from a router. Reset to nil when view is removed.
 - (nullable NSNumber *)zix_routeTypeFromRouter;
 - (void)setZix_routeTypeFromRouter:(nullable NSNumber *)routeType;
-///Temporary bind auto created routers to a segue destination for routable views in destination. Reset to nil when segue is performed.
+/// Temporary bind auto created routers to a segue destination for routable views in destination. Reset to nil when segue is performed.
 - (nullable NSArray<ZIKViewRouter *> *)zix_destinationViewRouters;
 - (void)setZix_destinationViewRouters:(nullable NSArray<ZIKViewRouter *> *)viewRouters;
-///Temporary bind a router to a ViewController when performing segue from the router. Reset to nil when segue is performed.
+/// Temporary bind a router to a ViewController when performing segue from the router. Reset to nil when segue is performed.
 - (nullable __kindof ZIKViewRouter *)zix_sourceViewRouter;
 - (void)setZix_sourceViewRouter:(nullable __kindof ZIKViewRouter *)viewRouter;
 - (nullable Class)zix_currentClassCallingPrepareForSegue;
@@ -56,10 +56,10 @@ NS_ASSUME_NONNULL_BEGIN
 
 #if !ZIK_HAS_UIKIT
 @interface NSWindowController (ZIKViewRouterPrivate)
-///Temporary bind auto created routers to a segue destination for routable views in destination. Reset to nil when segue is performed.
+/// Temporary bind auto created routers to a segue destination for routable views in destination. Reset to nil when segue is performed.
 - (nullable NSArray<ZIKViewRouter *> *)zix_destinationViewRouters;
 - (void)setZix_destinationViewRouters:(nullable NSArray<ZIKViewRouter *> *)viewRouters;
-///Temporary bind a router to a ViewController when performing segue from the router. Reset to nil when segue is performed.
+/// Temporary bind a router to a ViewController when performing segue from the router. Reset to nil when segue is performed.
 - (nullable __kindof ZIKViewRouter *)zix_sourceViewRouter;
 - (void)setZix_sourceViewRouter:(nullable __kindof ZIKViewRouter *)viewRouter;
 - (nullable Class)zix_currentClassCallingPrepareForSegue;

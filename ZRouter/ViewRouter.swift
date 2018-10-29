@@ -367,7 +367,7 @@ public class ViewRouter<Destination, ModuleConfig> {
     
     // MARK: Remove
     
-    ///Whether the router should be removed before another performing, when the router is performed already and the destination still exists.
+    /// Whether the router should be removed before another performing, when the router is performed already and the destination still exists.
     public var shouldRemoveBeforePerform: Bool {
         return router.shouldRemoveBeforePerform()
     }

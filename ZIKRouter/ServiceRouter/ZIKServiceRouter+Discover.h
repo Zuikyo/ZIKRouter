@@ -14,10 +14,10 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-///Get service router in a type safe way. There will be compile error if the service protocol is not ZIKServiceRoutable.
+/// Get service router in a type safe way. There will be compile error if the service protocol is not ZIKServiceRoutable.
 #define ZIKRouterToService(ServiceProtocol) [ZIKServiceRouter<id<ServiceProtocol>,ZIKPerformRouteConfiguration *> toService](ZIKRoutable(ServiceProtocol))
 
-///Get service router in a type safe way. There will be compile error if the module protocol is not ZIKServiceModuleRoutable.
+/// Get service router in a type safe way. There will be compile error if the module protocol is not ZIKServiceModuleRoutable.
 #define ZIKRouterToServiceModule(ModuleProtocol) [ZIKServiceRouter<id,ZIKPerformRouteConfiguration<ModuleProtocol> *> toModule](ZIKRoutable(ModuleProtocol))
 
 @interface ZIKServiceRouter<__covariant Destination: id, __covariant RouteConfig: ZIKPerformRouteConfiguration *> (Discover)
@@ -49,7 +49,7 @@ NS_ASSUME_NONNULL_BEGIN
  */
 @property (nonatomic, class, readonly) NSArray<ZIKAnyServiceRouterType *> * (^routersToClass)(Class destinationClass);
 
-///Find service router registered with the unique identifier.
+/// Find service router registered with the unique identifier.
 @property (nonatomic, class, readonly) ZIKAnyServiceRouterType * _Nullable (^toIdentifier)(NSString *identifier);
 
 @end

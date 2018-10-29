@@ -22,7 +22,7 @@ public extension ViewRouteConfig {
 
 // MARK: View Router Extension
 
-///Add Swift methods for ZIKViewRouter. Unavailable for any other classes.
+/// Add Swift methods for ZIKViewRouter. Unavailable for any other classes.
 public protocol ViewRouterExtension: class {
     static func register<Protocol>(_ routableView: RoutableView<Protocol>)
     static func register<Protocol>(_ routableViewModule: RoutableViewModule<Protocol>)
@@ -50,7 +50,7 @@ extension ZIKViewRouter: ViewRouterExtension {
 
 // MARK: Service Router Extension
 
-///Add Swift methods for ZIKServiceRouter. Unavailable for any other classes.
+/// Add Swift methods for ZIKServiceRouter. Unavailable for any other classes.
 public protocol ServiceRouterExtension: class {
     static func register<Protocol>(_ routableService: RoutableService<Protocol>)
     static func register<Protocol>(_ routableServiceModule: RoutableServiceModule<Protocol>)
@@ -118,7 +118,7 @@ public extension ZIKServiceRouteAdapter {
 
 // MARK: View Route Extension
 
-///Add Swift methods for ZIKViewRoute. Unavailable for any other classes.
+/// Add Swift methods for ZIKViewRoute. Unavailable for any other classes.
 public protocol ViewRouteExtension: class {
     #if swift(>=4.1)
     func register<Protocol>(_ routableView: RoutableView<Protocol>) -> Self
@@ -170,7 +170,7 @@ extension ZIKViewRoute: ViewRouteExtension {
 
 // MARK: Service Route Extension
 
-///Add Swift methods for ZIKServiceRoute. Unavailable for any other classes.
+/// Add Swift methods for ZIKServiceRoute. Unavailable for any other classes.
 public protocol ServiceRouteExtension: class {
     #if swift(>=4.1)
     func register<Protocol>(_ routableService: RoutableService<Protocol>) -> Self

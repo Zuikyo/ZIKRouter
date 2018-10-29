@@ -23,7 +23,7 @@ extension Protocol {
     }
 }
 
-///Key of registered protocol.
+/// Key of registered protocol.
 internal struct _RouteKey: Hashable {
     #if DEBUG
     /// Routable type
@@ -102,7 +102,7 @@ internal struct _RouteKey: Hashable {
     }
 }
 
-///Registry for registering pure Swift protocol and discovering ZIKRouter subclass.
+/// Registry for registering pure Swift protocol and discovering ZIKRouter subclass.
 internal class Registry {
     /// value: subclass of ZIKViewRouter or ZIKViewRoute
     fileprivate static var viewProtocolContainer = [_RouteKey: Any]()
@@ -887,7 +887,7 @@ internal func imagePathOfAddress(_ address: UnsafePointer<Int8>) -> String {
     return imagePath
 }
 
-///Make sure all registered view classes conform to their registered view protocols.
+/// Make sure all registered view classes conform to their registered view protocols.
 private class _ViewRouterValidater: ZIKViewRouteAdapter {
     override class func isAbstractRouter() -> Bool {
         return true
@@ -1110,7 +1110,7 @@ private class _ViewRouterValidater: ZIKViewRouteAdapter {
     }
 }
 
-///Make sure all registered service classes conform to their registered service protocols.
+/// Make sure all registered service classes conform to their registered service protocols.
 private class _ServiceRouterValidater: ZIKServiceRouteAdapter {
     override class func isAbstractRouter() -> Bool {
         return true

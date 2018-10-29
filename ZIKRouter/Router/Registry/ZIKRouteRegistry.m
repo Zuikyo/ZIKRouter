@@ -33,7 +33,7 @@ static BOOL _registrationFinished = NO;
 @property (nonatomic, class) BOOL registrationFinished;
 @end
 
-///Implementation is in ZRouter
+/// Implementation is in ZRouter
 @interface ZIKRouteRegistry(SwiftAdapter)
 + (id)_swiftRouteForDestinationAdapter:(Protocol *)destinationProtocol;
 + (id)_swiftRouteForModuleAdapter:(Protocol *)moduleProtocol;

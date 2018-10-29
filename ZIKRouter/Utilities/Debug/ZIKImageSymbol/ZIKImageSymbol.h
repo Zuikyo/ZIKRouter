@@ -19,10 +19,10 @@ NS_ASSUME_NONNULL_BEGIN
 
 typedef const void *ZIKImageRef;
 
-///Get beginning address of a loaded image.
+/// Get beginning address of a loaded image.
 + (ZIKImageRef)imageByName:(const char *)file;
 
-///Enumerate loaded images. In handler, return NO to stop.
+/// Enumerate loaded images. In handler, return NO to stop.
 + (void)enumerateImages:(BOOL(^)(ZIKImageRef image, NSString *path))handler;
 
 /**
@@ -47,10 +47,10 @@ typedef const void *ZIKImageRef;
  */
 + (void *)findSymbolInImage:(_Nullable ZIKImageRef)image matching:(BOOL(^)(const char *symbolName))matchingBlock;
 
-///Get symbol of a address.
+/// Get symbol of a address.
 + (nullable NSString *)symbolNameForAddress:(void *)address;
 
-///Get image file path of a address.
+/// Get image file path of a address.
 + (nullable NSString *)imagePathForAddress:(void *)address;
 @end
 

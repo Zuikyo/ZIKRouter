@@ -48,7 +48,7 @@ static NSMutableSet *g_finishingXXViewRouters;
 @interface ZIKViewRouter ()
 @property (nonatomic, assign) BOOL routingFromInternal;
 @property (nonatomic, assign) ZIKViewRouteRealType realRouteType;
-///Destination prepared. Only for UIView destination
+/// Destination prepared. Only for UIView destination
 @property (nonatomic, assign) BOOL prepared;
 #if ZIK_HAS_UIKIT
 @property (nonatomic, strong, nullable) ZIKPresentationState *stateBeforeRoute;
@@ -579,7 +579,7 @@ static NSMutableSet *g_finishingXXViewRouters;
             break;
             
         case ZIKViewRouteTypeMakeDestination:
-            [self _performGetDestination:destination fromSource:source];
+            [self _performMakeDestination:destination fromSource:source];
             break;
     }
 }
@@ -1012,7 +1012,7 @@ static NSMutableSet *g_finishingXXViewRouters;
     NSParameterAssert([source isKindOfClass:[XXViewController class]]);
     XXViewController *wrappedDestination = [self _wrappedDestination:destination];
 //    [self beginPerformRoute];
-    ///Call AOP in -viewWillAppear: and -viewDidAppear:
+    /// Call AOP in -viewWillAppear: and -viewDidAppear:
     self.routingFromInternal = YES;
     [self prepareDestinationForPerforming];
     [destination setZix_routeTypeFromRouter:@(ZIKViewRouteTypeAddAsChildViewController)];
@@ -1066,7 +1066,7 @@ static NSMutableSet *g_finishingXXViewRouters;
     [self performCustomRouteOnDestination:destination fromSource:source configuration:self.original_configuration];
 }
 
-- (void)_performGetDestination:(id)destination fromSource:(nullable id)source {
+- (void)_performMakeDestination:(id)destination fromSource:(nullable id)source {
     [destination setZix_routeTypeFromRouter:@(ZIKViewRouteTypeMakeDestination)];
     self.routingFromInternal = YES;
     [self prepareDestinationForPerforming];
@@ -1925,7 +1925,7 @@ destinationStateBeforeRoute:(ZIKPresentationState *)destinationStateBeforeRoute
  ZIKViewRouter hooks these methods for AOP and storyboard. In -willMoveToSuperview, -willMoveToWindow:, -prepareForSegue:sender:, it detects if the view is registered with a router, and auto create a router if it's not routed from its router.
  */
 
-///Update state when route action is not performed from router
+/// Update state when route action is not performed from router
 - (void)_handleWillPerformRouteNotification:(NSNotification *)note {
     id destination = note.object;
     if (!self.destination || self.destination != destination) {
@@ -2544,7 +2544,7 @@ static  ZIKViewRouterType *_Nullable _routerTypeToRegisteredView(Class viewClass
     }
 }
 
-///Add subview by code or storyboard will auto create a corresponding router. We assume its superview's view controller is the performer. If your custom class view uses a routable view as its part, the custom view should use a router to add and prepare the routable view, then the routable view doesn't need to search performer.
+/// Add subview by code or storyboard will auto create a corresponding router. We assume its superview's view controller is the performer. If your custom class view uses a routable view as its part, the custom view should use a router to add and prepare the routable view, then the routable view doesn't need to search performer.
 
 /**
  When a routable view is added from storyboard or xib
@@ -3020,7 +3020,7 @@ static  ZIKViewRouterType *_Nullable _routerTypeToRegisteredView(Class viewClass
     }
 }
 
-///Auto prepare storyboard's routable initial view controller or it's routable child view controllers
+/// Auto prepare storyboard's routable initial view controller or it's routable child view controllers
 #if ZIK_HAS_UIKIT
 - (nullable __kindof UIViewController *)ZIKViewRouter_hook_instantiateInitialViewController
 #else
@@ -3343,7 +3343,7 @@ static  ZIKViewRouterType *_Nullable _routerTypeToRegisteredView(Class viewClass
     }
 }
 
-///Search child view controllers conforming to ZIKRoutableView in vc
+/// Search child view controllers conforming to ZIKRoutableView in vc
 + (nullable NSArray<XXViewController *> *)routableViewsInParentViewController:(XXViewController *)vc {
     NSMutableArray *routableViews;
     NSArray<__kindof XXViewController *> *childViewControllers = vc.childViewControllers;

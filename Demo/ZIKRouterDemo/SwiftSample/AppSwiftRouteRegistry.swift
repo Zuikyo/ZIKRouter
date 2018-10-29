@@ -10,7 +10,7 @@ import Foundation
 import ZRouter
 import ZIKRouter
 
-///Manually register swift routers
+/// Manually register swift routers
 @objc class AppSwiftRouteRegistry: NSObject {
     @objc class func manuallyRegisterEachRouter() {
         SwiftSampleViewRouter.registerRoutableDestination()
