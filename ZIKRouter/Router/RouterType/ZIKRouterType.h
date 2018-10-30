@@ -39,7 +39,7 @@ NS_ASSUME_NONNULL_BEGIN
 /// Synchronously get destination.
 - (nullable Destination)makeDestination;
 
-/// Synchronously get destination, and prepare the destination with destination protocol.
+/// Synchronously get destination, and prepare the destination with destination protocol. The block is an escaping block, use weak self in it.
 - (nullable Destination)makeDestinationWithPreparation:(void(^ _Nullable)(Destination destination))prepare;
 
 /// Synchronously get destination, and prepare the destination.

@@ -137,6 +137,25 @@
     }];
 }
 
+- (void)testPerformWithPreparation {
+    XCTestExpectation *expectation = [self expectationWithDescription:@"preparation"];
+    @autoreleasepool {
+        [self enterTest];
+        self.router = [ZIKRouterToService(AServiceInput) performWithPreparation:^(id<AServiceInput>  _Nonnull destination) {
+            XCTAssert(destination);
+            [expectation fulfill];
+            [self handle:^{
+                XCTAssert(self.router.state == ZIKRouterStateRouted);
+                [self leaveTest];
+            }];
+        }];
+    }
+    
+    [self waitForExpectationsWithTimeout:5 handler:^(NSError * _Nullable error) {
+        !error? : NSLog(@"%@", error);
+    }];
+}
+
 - (void)testPerformRouteWithSuccessCompletion {
     XCTestExpectation *expectation = [self expectationWithDescription:@"completionHandler"];
     expectation.assertForOverFulfill = YES;

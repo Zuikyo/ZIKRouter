@@ -184,6 +184,29 @@ class ViewRouterPerformTests: ZIKViewRouterTestCase {
         waitForExpectations(timeout: 5, handler: { if let error = $0 {print(error)}})
     }
     
+    func testPerformWithPreparation() {
+        let preparation = self.expectation(description: "preparation")
+        let successHandler = self.expectation(description: "successHandler")
+        enterTest { (source) in
+            self.testRouter = Router.perform(
+                to: RoutableView<AViewInput>(),
+                path: self.path(from: source),
+                preparation: { destination in
+                    XCTAssertNotNil(destination)
+                    preparation.fulfill()
+                    
+            })
+            self.testRouter?.router.original_configuration.successHandler = { destination in
+                successHandler.fulfill()
+                self.handle({
+                    XCTAssert(self.router?.state == .routed)
+                    self.leaveTest()
+                })
+            }
+        }
+        waitForExpectations(timeout: 5, handler: { if let error = $0 {print(error)}})
+    }
+    
     func testPerformRouteWithSuccessCompletion() {
         let expectation = self.expectation(description: "completionHandler")
         expectation.assertForOverFulfill = true

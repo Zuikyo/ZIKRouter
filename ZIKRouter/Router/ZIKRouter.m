@@ -282,6 +282,12 @@ NSErrorDomain const ZIKRouteErrorDomain = @"ZIKRouteErrorDomain";
     }];
 }
 
++ (nullable instancetype)performWithPreparation:(void(^)(id destination))prepare {
+    return [self performWithConfiguring:^(ZIKPerformRouteConfiguration * _Nonnull config) {
+        config.prepareDestination = prepare;
+    }];
+}
+
 + (instancetype)performWithConfiguring:(void(NS_NOESCAPE ^)(ZIKPerformRouteConfiguration *configuration))configBuilder {
     return [self performWithConfiguring:configBuilder removing:nil];
 }

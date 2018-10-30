@@ -126,6 +126,18 @@ class ServiceRouterPerformTests: XCTestCase {
         waitForExpectations(timeout: 5, handler: { if let error = $0 {print(error)}})
     }
     
+    func testPerformWithPreparation() {
+        let expectation = self.expectation(description: "preparation")
+        enterTest()
+        self.router = Router.perform(to: RoutableService<AServiceInput>(), preparation: { (destination) in
+            expectation.fulfill()
+            self.handle({
+                self.leaveTest()
+            })
+        })
+        waitForExpectations(timeout: 5, handler: { if let error = $0 {print(error)}})
+    }
+    
     func testPerformWithSuccessHandler() {
         let expectation = self.expectation(description: "successHandler")
         enterTest()

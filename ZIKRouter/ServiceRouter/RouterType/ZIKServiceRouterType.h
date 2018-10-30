@@ -27,6 +27,9 @@ NS_ASSUME_NONNULL_BEGIN
 /// If this route action doesn't need any arguments, perform directly with completion for current performing.
 - (nullable ZIKServiceRouter<Destination, RouteConfig> *)performWithCompletion:(void(^)(BOOL success, Destination _Nullable destination, ZIKRouteAction routeAction, NSError *_Nullable error))performerCompletion;
 
+/// If this route action doesn't need any arguments, perform directly with preparation. The block is an escaping block, use weak self in it.
+- (nullable ZIKServiceRouter<Destination, RouteConfig> *)performWithPreparation:(void(^)(Destination destination))prepare;
+
 /// Set dependencies required by destination and perform route.
 - (nullable ZIKServiceRouter<Destination, RouteConfig> *)performWithConfiguring:(void(NS_NOESCAPE ^)(RouteConfig config))configBuilder;
 /// Set dependencies required by destination and perform route, and you can remove the route with remove configuration later.

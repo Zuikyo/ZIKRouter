@@ -3937,6 +3937,12 @@ static  ZIKViewRouterType *_Nullable _routerTypeToRegisteredView(Class viewClass
     }];
 }
 
++ (nullable instancetype)performPath:(ZIKViewRoutePath *)path preparation:(void(^)(id destination))prepare {
+    return [self performPath:path configuring:^(ZIKViewRouteConfiguration * _Nonnull config) {
+        config.prepareDestination = prepare;
+    }];
+}
+
 + (nullable instancetype)performPath:(ZIKViewRoutePath *)path
                          configuring:(void(NS_NOESCAPE ^)(ZIKViewRouteConfiguration *config))configBuilder
                             removing:(void(NS_NOESCAPE ^ _Nullable)(ZIKViewRemoveConfiguration *config))removeConfigBuilder {

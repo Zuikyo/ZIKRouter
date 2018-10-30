@@ -67,6 +67,7 @@ NS_ASSUME_NONNULL_BEGIN
                         errorHandler:(void(^ _Nullable)(ZIKRouteAction routeAction, NSError *error))performerErrorHandler NS_UNAVAILABLE;
 + (nullable instancetype)performPath:(ZIKViewRoutePath *)path
                           completion:(void(^)(BOOL success, id _Nullable destination, ZIKRouteAction routeAction, NSError *_Nullable error))performerCompletion NS_UNAVAILABLE;
++ (nullable instancetype)performPath:(ZIKViewRoutePath *)path preparation:(void(^)(id destination))prepare NS_UNAVAILABLE;
 + (nullable instancetype)performPath:(ZIKViewRoutePath *)path
                    strictConfiguring:(void(NS_NOESCAPE ^)(ZIKViewRouteStrictConfiguration *config, ZIKViewRouteConfiguration *module))configBuilder NS_UNAVAILABLE;
 + (nullable instancetype)performPath:(ZIKViewRoutePath *)path

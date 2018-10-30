@@ -86,6 +86,9 @@ NS_ASSUME_NONNULL_BEGIN
 + (nullable instancetype)performPath:(ZIKViewRoutePath *)path
                           completion:(void(^)(BOOL success, Destination _Nullable destination, ZIKRouteAction routeAction, NSError *_Nullable error))performerCompletion;
 
+/// If this destination doesn't need any variable to initialize, just pass source and perform route. The blcok is an escaping block, use weak self in it.
++ (nullable instancetype)performPath:(ZIKViewRoutePath *)path preparation:(void(^)(Destination destination))prepare;
+
 /**
  Perform route from source view to destination view, and prepare destination in a type safe way inferred by generic parameters.
  
@@ -368,6 +371,7 @@ typedef ZIKViewRouter<id, ZIKViewRouteConfig *> ZIKAnyViewRouter;
 + (nullable instancetype)performWithSuccessHandler:(void(^ _Nullable)(Destination destination))performerSuccessHandler
                                       errorHandler:(void(^ _Nullable)(ZIKRouteAction routeAction, NSError *error))performerErrorHandler NS_UNAVAILABLE;
 + (nullable instancetype)performWithCompletion:(void(^)(BOOL success, Destination _Nullable destination, ZIKRouteAction routeAction, NSError *_Nullable error))performerCompletion NS_UNAVAILABLE;
++ (nullable instancetype)performWithPreparation:(void(^)(Destination destination))prepare NS_UNAVAILABLE;
 + (nullable instancetype)performWithConfiguring:(void(NS_NOESCAPE ^)(RouteConfig config))configBuilder
                                        removing:(void(NS_NOESCAPE ^ _Nullable)(ZIKViewRemoveConfiguration *config))removeConfigBuilder NS_UNAVAILABLE;
 + (nullable instancetype)performWithConfiguring:(void(NS_NOESCAPE ^)(RouteConfig config))configBuilder NS_UNAVAILABLE;

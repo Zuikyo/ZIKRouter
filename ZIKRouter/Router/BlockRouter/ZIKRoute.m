@@ -317,6 +317,12 @@ _injectedStrictRemoveConfigBuilder:
     }];
 }
 
+- (id)performWithPreparation:(void(^)(id destination))prepare {
+    return [self performWithConfiguring:^(ZIKPerformRouteConfiguration * _Nonnull config) {
+        config.prepareDestination = prepare;
+    }];
+}
+
 - (id)performWithConfiguring:(void(^)(ZIKPerformRouteConfiguration *configuration))configBuilder {
     return [self performWithConfiguring:configBuilder removing:nil];
 }

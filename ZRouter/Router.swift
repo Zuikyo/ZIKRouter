@@ -251,6 +251,24 @@ public extension Router {
         return routerType?.perform(path: path, completion: performerCompletion)
     }
     
+    /// Prepare the destination module with module protocol and perform route.
+    ///
+    /// - Parameters:
+    ///   - routableViewModule: A routable entry carrying a view module config protocol.
+    ///   - path: The route path with source and route type.
+    ///   - preparation: Prepare the module with protocol.
+    /// - Returns: The view router for this route.
+    @discardableResult public static func perform<Protocol>(
+        to routableViewModule: RoutableViewModule<Protocol>,
+        path: ViewRoutePath,
+        preparation prepare: @escaping ((Protocol) -> Void)
+        ) -> ViewRouter<Any, Protocol>? {
+        let routerType = Registry.router(to: routableViewModule)
+        return routerType?.perform(path: path, configuring: { (_, prepareModule) in
+            prepareModule(prepare)
+        })
+    }
+    
     /// Perform route with service protocol and prepare the destination with the protocol.
     ///
     /// - Parameters:
@@ -344,6 +362,22 @@ public extension Router {
         ) -> ServiceRouter<Any, Protocol>? {
         let routerType = Registry.router(to: routableServiceModule)
         return routerType?.perform(completion: performerCompletion)
+    }
+    
+    /// Prepare the destination module with module protocol and perform route.
+    ///
+    /// - Parameters:
+    ///   - routableServiceModule: A routable entry carrying a module config protocol.
+    ///   - preparation: Prepare the module with protocol.
+    /// - Returns: The service router for this route.
+    @discardableResult public static func perform<Protocol>(
+        to routableServiceModule: RoutableServiceModule<Protocol>,
+        preparation prepare: @escaping ((Protocol) -> Void)
+        ) -> ServiceRouter<Any, Protocol>? {
+        let routerType = Registry.router(to: routableServiceModule)
+        return routerType?.perform(configuring: { (_, prepareModule) in
+            prepareModule(prepare)
+        })
     }
 }
 

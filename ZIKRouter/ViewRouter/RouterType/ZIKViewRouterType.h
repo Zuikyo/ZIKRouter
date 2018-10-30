@@ -58,6 +58,8 @@ NS_ASSUME_NONNULL_BEGIN
 - (nullable ZIKViewRouter<Destination, RouteConfig> *)performPath:(ZIKViewRoutePath *)path
                                                        completion:(void(^)(BOOL success, Destination _Nullable destination, ZIKRouteAction routeAction, NSError *_Nullable error))performerCompletion;
 
+/// If this destination doesn't need any variable to initialize, just pass source and perform route. The blcok is an escaping block, use weak self in it.
+- (nullable ZIKViewRouter<Destination, RouteConfig> *)performPath:(ZIKViewRoutePath *)path preparation:(void(^)(Destination destination))prepare;
 
 /**
  Perform route from source view to destination view, and prepare destination in a type safe way inferred by generic parameters.

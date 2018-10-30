@@ -209,6 +209,12 @@ _injectedStrictRemoveConfigBuilder:
     }];
 }
 
+- (id)performPath:(ZIKViewRoutePath *)path preparation:(void(^)(id destination))prepare {
+    return [self performPath:path configuring:^(ZIKViewRouteConfiguration * _Nonnull config) {
+        config.prepareDestination = prepare;
+    }];
+}
+
 - (id)performPath:(ZIKViewRoutePath *)path
       configuring:(void(NS_NOESCAPE ^)(ZIKViewRouteConfiguration *config))configBuilder
          removing:(void(NS_NOESCAPE ^ _Nullable)(ZIKViewRemoveConfiguration *config))removeConfigBuilder {

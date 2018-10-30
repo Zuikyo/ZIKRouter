@@ -8,6 +8,7 @@
 
 #import "ZIKViewRouterTestCase.h"
 @import ZIKRouter;
+@import ZIKRouter.Internal;
 #import "AViewInput.h"
 
 @interface ZIKViewRouterPerformTests : ZIKViewRouterTestCase
@@ -137,6 +138,30 @@
                     [self leaveTest];
                 }];
             }];
+        }];
+    }
+    
+    [self waitForExpectationsWithTimeout:5 handler:^(NSError * _Nullable error) {
+        !error? : NSLog(@"%@", error);
+    }];
+}
+
+- (void)testPerformWithPreparation {
+    XCTestExpectation *preparation = [self expectationWithDescription:@"preparation"];
+    XCTestExpectation *successHandler = [self expectationWithDescription:@"successHandler"];
+    {
+        [self enterTest:^(UIViewController *source) {
+            self.router = [ZIKRouterToView(AViewInput) performPath:[self pathFromSource:source] preparation:^(id<AViewInput>  _Nonnull destination) {
+                XCTAssertNotNil(destination);
+                [preparation fulfill];
+            }];
+            self.router.original_configuration.successHandler = ^(id  _Nonnull destination) {
+                [successHandler fulfill];
+                [self handle:^{
+                    XCTAssert(self.router.state == ZIKRouterStateRouted);
+                    [self leaveTest];
+                }];
+            };
         }];
     }
     

@@ -125,6 +125,18 @@ class ViewModuleRouterPerformTests: XCTestCase {
         waitForExpectations(timeout: 5, handler: { if let error = $0 {print(error)}})
     }
     
+    func testPerformWithPreparation() {
+        let expectation = self.expectation(description: "preparation")
+        enterTest()
+        self.router = Router.perform(to: RoutableViewModule<AViewModuleInput>(), path: .makeDestination, preparation: { (module) in
+            expectation.fulfill()
+            self.handle({
+                self.leaveTest()
+            })
+        })
+        waitForExpectations(timeout: 5, handler: { if let error = $0 {print(error)}})
+    }
+    
     func testPerformRouteWithSuccessCompletion() {
         let expectation = self.expectation(description: "completionHandler")
         enterTest()
