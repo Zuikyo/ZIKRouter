@@ -119,15 +119,6 @@ static NSMutableArray<Class> *_routerClasses;
     return [router class];
 }
 
-+ (NSLock *)lock {
-    static NSLock *_lock;
-    static dispatch_once_t onceToken;
-    dispatch_once(&onceToken, ^{
-        _lock = [[NSLock alloc] init];
-    });
-    return _lock;
-}
-
 + (CFMutableDictionaryRef)destinationProtocolToRouterMap {
     return _destinationProtocolToRouterMap;
 }

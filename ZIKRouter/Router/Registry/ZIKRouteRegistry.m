@@ -311,11 +311,6 @@ static __attribute__((always_inline)) void _registerDestinationClassWithRoute(Cl
     NSCAssert3(![registry destinationToExclusiveRouterMap] ||
                ([registry destinationToExclusiveRouterMap] && !CFDictionaryGetValue([registry destinationToExclusiveRouterMap], (__bridge const void *)(destinationClass))), @"There is a registered exclusive router (%@), can't register this router (%@) for this destinationClass (%@).",CFDictionaryGetValue([registry destinationToExclusiveRouterMap], (__bridge const void *)(destinationClass)), routeObject, destinationClass);
     
-#if ZIKROUTER_CHECK
-    BOOL lockResult = [[registry lock] tryLock];
-    NSCAssert(lockResult == YES, @"Don't register router in multi threads. It's not thread safe.");
-#endif
-    
     CFMutableDictionaryRef destinationToDefaultRouterMap = [registry destinationToDefaultRouterMap];
     if (!CFDictionaryContainsKey(destinationToDefaultRouterMap, (__bridge const void *)(destinationClass))) {
         CFDictionarySetValue(destinationToDefaultRouterMap, (__bridge const void *)(destinationClass), (__bridge const void *)(routeObject));
@@ -335,10 +330,6 @@ static __attribute__((always_inline)) void _registerDestinationClassWithRoute(Cl
         CFDictionarySetValue([registry _check_routerToDestinationsMap], (__bridge const void *)(routeObject), destinations);
     }
     CFSetAddValue(destinations, (__bridge const void *)(destinationClass));
-    
-    if (lockResult) {
-        [[registry lock] unlock];
-    }
 #endif
 }
 
@@ -355,11 +346,6 @@ static __attribute__((always_inline)) void _registerExclusiveDestinationClassWit
                                    ))
               , @"destinationClass already registered with another router, check and remove them. You shall only use the exclusive router for this destinationClass.");
     
-#if ZIKROUTER_CHECK
-    BOOL lockResult = [[registry lock] tryLock];
-    NSCAssert(lockResult == YES, @"Don't register router in multi threads. It's not thread safe.");
-#endif
-    
     CFDictionarySetValue([registry destinationToExclusiveRouterMap], (__bridge const void *)(destinationClass), (__bridge const void *)(routeObject));
     
 #if ZIKROUTER_CHECK
@@ -369,10 +355,6 @@ static __attribute__((always_inline)) void _registerExclusiveDestinationClassWit
         CFDictionarySetValue([registry _check_routerToDestinationsMap], (__bridge const void *)(routeObject), destinations);
     }
     CFSetAddValue(destinations, (__bridge const void *)(destinationClass));
-    
-    if (lockResult) {
-        [[registry lock] unlock];
-    }
 #endif
 }
 
@@ -382,11 +364,6 @@ static __attribute__((always_inline)) void _registerDestinationProtocolWithRoute
                (Class)CFDictionaryGetValue([registry destinationProtocolToRouterMap], (__bridge const void *)(destinationProtocol)) == routeObject
                , @"Destination protocol (%@) already registered with another router (%@), can't register with this router (%@). Same destination protocol should only be used by one routeObject.",NSStringFromProtocol(destinationProtocol),CFDictionaryGetValue([registry destinationProtocolToRouterMap], (__bridge const void *)(destinationProtocol)),routeObject);
     
-#if ZIKROUTER_CHECK
-    BOOL lockResult = [[registry lock] tryLock];
-    NSCAssert(lockResult == YES, @"Don't register router in multi threads. It's not thread safe.");
-#endif
-    
     CFDictionarySetValue([registry destinationProtocolToRouterMap], (__bridge const void *)(destinationProtocol), (__bridge const void *)(routeObject));
 #if ZIKROUTER_CHECK
     CFMutableSetRef destinationProtocols = (CFMutableSetRef)CFDictionaryGetValue([registry _check_routerToDestinationProtocolsMap], (__bridge const void *)(routeObject));
@@ -395,10 +372,6 @@ static __attribute__((always_inline)) void _registerDestinationProtocolWithRoute
         CFDictionarySetValue([registry _check_routerToDestinationProtocolsMap], (__bridge const void *)(routeObject), destinationProtocols);
     }
     CFSetAddValue(destinationProtocols, (__bridge const void *)(destinationProtocol));
-    
-    if (lockResult) {
-        [[registry lock] unlock];
-    }
 #endif
 }
 
@@ -409,18 +382,7 @@ static __attribute__((always_inline)) void _registerModuleProtocolWithRoute(Prot
                (Class)CFDictionaryGetValue([registry moduleConfigProtocolToRouterMap], (__bridge const void *)(configProtocol)) == routeObject
                , @"Module config protocol (%@) already registered with another router (%@), can't register with this router (%@). Same configProtocol should only be used by one routeObject.",NSStringFromProtocol(configProtocol),CFDictionaryGetValue([registry moduleConfigProtocolToRouterMap], (__bridge const void *)(configProtocol)),routeObject);
     
-#if ZIKROUTER_CHECK
-    BOOL lockResult = [[registry lock] tryLock];
-    NSCAssert(lockResult == YES, @"Don't register router in multi threads. It's not thread safe.");
-#endif
-    
     CFDictionarySetValue([registry moduleConfigProtocolToRouterMap], (__bridge const void *)(configProtocol), (__bridge const void *)(routeObject));
-    
-#if ZIKROUTER_CHECK
-    if (lockResult) {
-        [[registry lock] unlock];
-    }
-#endif
 }
 
 static __attribute__((always_inline)) void _registerIdentifierWithRoute(NSString *identifier, id routeObject, Class registry) {
@@ -433,18 +395,7 @@ static __attribute__((always_inline)) void _registerIdentifierWithRoute(NSString
                (Class)CFDictionaryGetValue([registry identifierToRouterMap], (CFStringRef)identifier) == routeObject
                , @"Identifier (%@) already registered with another router (%@), can't register with this router (%@).",identifier,CFDictionaryGetValue([registry identifierToRouterMap], (CFStringRef)identifier),routeObject);
     
-#if ZIKROUTER_CHECK
-    BOOL lockResult = [[registry lock] tryLock];
-    NSCAssert(lockResult == YES, @"Don't register router in multi threads. It's not thread safe.");
-#endif
-    
     CFDictionarySetValue([registry identifierToRouterMap], (CFStringRef)identifier, (__bridge const void *)(routeObject));
-    
-#if ZIKROUTER_CHECK
-    if (lockResult) {
-        [[registry lock] unlock];
-    }
-#endif
 }
 
 + (void)registerDestination:(Class)destinationClass router:(Class)routerClass {
@@ -567,11 +518,6 @@ static __attribute__((always_inline)) void _registerIdentifierWithRoute(NSString
 }
 
 #pragma mark Override
-
-+ (NSLock *)lock {
-    NSAssert(NO, @"%@ must override %@",self,NSStringFromSelector(_cmd));
-    return nil;
-}
 
 + (CFMutableDictionaryRef)destinationProtocolToRouterMap {
     NSAssert(NO, @"%@ must override %@",self,NSStringFromSelector(_cmd));

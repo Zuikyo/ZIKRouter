@@ -26,8 +26,6 @@ NS_ASSUME_NONNULL_BEGIN
 
 + (nullable id)routeKeyForRouter:(ZIKRouter *)router;
 
-@property (nonatomic, class, readonly) NSLock *lock;
-
 /// key: destination protocol, value: router class or ZIKRoute
 @property (nonatomic, class, readonly) CFMutableDictionaryRef destinationProtocolToRouterMap;
 /// key: module config protocol, value: router class or ZIKRoute
