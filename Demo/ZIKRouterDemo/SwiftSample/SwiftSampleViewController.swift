@@ -111,29 +111,25 @@ class SwiftSampleViewController: UIViewController, PureSwiftSampleViewInput, Swi
         
         switchableRouter = Router.to(switchableView)?
             .perform(path: .push(from: self),
-                     configuring: { config,_  in
-                        config.prepareDestination = { [weak self] dest in
-                            switch dest {
-                            case let dest as UIViewController & ZIKInfoViewProtocol:
-                                dest.delegate = self
-                                dest.title = "switchable routed"
-                            case let dest as UIViewController & SwiftSampleViewInput:
-                                dest.title = "switchable routed"
-                                break
-                            default:
-                                break
-                            }
+                     preparation: { [weak self] (destination) in
+                        switch destination {
+                        case let destination as UIViewController & ZIKInfoViewProtocol:
+                            destination.delegate = self
+                            destination.title = "switchable routed"
+                        case let destination as UIViewController & SwiftSampleViewInput:
+                            destination.title = "switchable routed"
+                            break
+                        default:
+                            break
                         }
             })
     }
     
     @IBAction func testAdapterWithComposedType(_ sender: UIButton) {
-        adapterRouter = Router.perform(to: RoutableView<RequiredInfoViewInput>(), path: .presentModally(from: self), configuring: { (config, _) in
-            config.prepareDestination = { [weak self] destination in
-                destination.delegate = self
-                destination.name = "zuik"
-                destination.age = 18
-            }
+        adapterRouter = Router.perform(to: RoutableView<RequiredInfoViewInput>(), path: .presentModally(from: self), preparation: { [weak self] (destination) in
+            destination.delegate = self
+            destination.name = "zuik"
+            destination.age = 18
         })
     }
     

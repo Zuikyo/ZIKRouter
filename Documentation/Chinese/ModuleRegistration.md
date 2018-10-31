@@ -202,6 +202,8 @@ NSString *registeringCode = codeForRegisteringRouters();
 * `ZIKRouter: register with subclass`指的是用 router 子类进行注册
 * `ZRouter: register with string`指的是用`init(declaredTypeName:)`声明并注册纯 swift 的 protocol；由于 ZRouter 需要支持 objc protocol 和纯 swift protocol，因此性能会比 ZIKRouter 稍微降低
 
+**Update:**这是优化前的测试结果，现在自动注册已经和手动注册的性能几乎一致了，之后有时间会更新图表。
+
 <p align="center">
   <img src="../Resources/Auto-register-manually-register-500.png" width="70%">
 </p>

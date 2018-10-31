@@ -85,13 +85,13 @@ Service router 用于模块寻找，通过 protocol 寻找对应的模块，并�
 可以用 Cocoapods 安装 ZIKRouter：
 
 ```
-pod 'ZIKRouter', '>= 1.0.5'
+pod 'ZIKRouter', '>= 1.0.6'
 ```
 
 如果是 Swift 项目，则使用 ZRouter：
 
 ```
-pod 'ZRouter', '>= 1.0.5'
+pod 'ZRouter', '>= 1.0.6'
 ```
 
 ### Carthage
@@ -99,7 +99,7 @@ pod 'ZRouter', '>= 1.0.5'
 添加到 Cartfile 文件：
 
 ```
-github "Zuikyo/ZIKRouter" >= 1.0.5
+github "Zuikyo/ZIKRouter" >= 1.0.6
 ```
 
 编译 framework：

@@ -2,7 +2,10 @@
 
 ## 基本架构
 
-![基本架构](../Resources/ArchitecturePreview.png)
+<p align="center">
+  <img src="../Resources/ArchitecturePreview.png" width="100%">
+  数据流向图
+</p>
 
 ## 设计思路
 
@@ -86,3 +89,13 @@ ZIKRouter 避免使用 runtime 获取和调用模块，因此可以适配 OC 和
 ## 架构图
 
 ![详细架构](../Resources/Architecture.png)
+
+## 博客详解
+
+更详细的讲解，可以阅读这三篇博客：
+
+[iOS VIPER架构实践(一)：从MVC到MVVM到VIPER](https://zuikyo.github.io/2017/07/21/iOS%20VIPER架构实践(一)：从MVC到MVVM到VIPER/)
+
+[iOS VIPER架构实践(二)：VIPER详解与实现](https://zuikyo.github.io/2017/08/11/iOS%20VIPER架构实践(二)：VIPER详解与实现/)
+
+[iOS VIPER架构实践(三)：面向接口的路由设计](https://zuikyo.github.io/2017/09/27/iOS%20VIPER架构实践(三)：基于接口的路由设计/)
