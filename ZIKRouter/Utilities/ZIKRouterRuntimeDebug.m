@@ -308,6 +308,11 @@ bool _swift_typeIsTargetType(id sourceType, id targetType) {
 
 #pragma clang diagnostic pop
 
+bool hasDynamicLibrary(NSString *libName) {
+    const void *image = [ZIKImageSymbol imageByName:libName.UTF8String];
+    return image != NULL;
+}
+
 void _enumerateSymbolName(bool(^handler)(const char *name, NSString *(^demangledAsSwift)(const char *mangledName, bool simplified))) {
     if (handler == nil) {
         return;
