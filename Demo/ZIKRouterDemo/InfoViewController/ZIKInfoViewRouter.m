@@ -30,7 +30,7 @@
     return destination;
 }
 
-+ (BOOL)destinationPrepared:(UIViewController<ZIKInfoViewProtocol> *)destination {
+- (BOOL)destinationFromExternalPrepared:(UIViewController<ZIKInfoViewProtocol> *)destination {
     NSParameterAssert([destination isKindOfClass:[ZIKInfoViewController class]]);
     if (destination.name.length > 0 && destination.age > 0) {
         return YES;

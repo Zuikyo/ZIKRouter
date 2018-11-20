@@ -27,7 +27,7 @@
     return destination;
 }
 
-+ (BOOL)destinationPrepared:(ZIKSimpleLabel *)destination {
+- (BOOL)destinationFromExternalPrepared:(ZIKSimpleLabel *)destination {
     if (destination.text.length == 0) {
         return NO;
     }

@@ -30,7 +30,7 @@
     return destination;
 }
 
-+ (BOOL)destinationPrepared:(ZIKChildViewController *)destination {
+- (BOOL)destinationFromExternalPrepared:(ZIKChildViewController *)destination {
     if (destination.parent != nil) {
         return YES;
     }

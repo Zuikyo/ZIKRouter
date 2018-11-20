@@ -31,7 +31,7 @@
     return destination;
 }
 
-+ (BOOL)destinationPrepared:(TestCircularDependenciesViewController *)destination {
+- (BOOL)destinationFromExternalPrepared:(TestCircularDependenciesViewController *)destination {
     if (destination.child != nil) {
         return YES;
     }

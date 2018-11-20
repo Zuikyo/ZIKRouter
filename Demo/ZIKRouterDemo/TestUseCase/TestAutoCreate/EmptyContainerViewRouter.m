@@ -27,10 +27,6 @@
     return destination;
 }
 
-+ (BOOL)destinationPrepared:(id)destination {
-    return YES;
-}
-
 - (void)prepareDestination:(id)destination configuration:(__kindof ZIKViewRouteConfiguration *)configuration {
     
 }
