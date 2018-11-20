@@ -4127,6 +4127,7 @@ static  ZIKViewRouterType *_Nullable _routerTypeToRegisteredView(Class viewClass
         }
         configuration.routeType = ZIKViewRouteTypeMakeDestination;
     } removing:(void(^)(ZIKRemoveRouteConfiguration *))removeConfigBuilder];
+    [router notifyRouteState:ZIKRouterStateRouting];
     [router attachDestination:destination];
     [router prepareDestinationForPerforming];
     
@@ -4134,7 +4135,9 @@ static  ZIKViewRouterType *_Nullable _routerTypeToRegisteredView(Class viewClass
     if (routeType == nil) {
         [(id)destination setZix_routeTypeFromRouter:@(ZIKViewRouteTypeMakeDestination)];
     }
-    [router performRoute];
+    [router notifyPerformRouteSuccessWithDestination:destination];
+    [router notifyRouteState:ZIKRouterStateRouted];
+    
     return router;
 }
 
