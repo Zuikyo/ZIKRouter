@@ -222,6 +222,27 @@ bool ZIKRouter_isObjcProtocol(id protocol) {
     return [protocol isKindOfClass:ProtocolClass];
 }
 
+bool ZIKRouter_protocolConformsToProtocol(Protocol *protocol, Protocol *parentProtocol) {
+    unsigned int count;
+    Protocol * __unsafe_unretained _Nonnull *list = protocol_copyProtocolList(protocol, &count);
+    if (list == NULL) {
+        return NO;
+    }
+    BOOL result = NO;
+    for (int i = 0; i < count; i++) {
+        Protocol *parent = list[i];
+        if (parent == parentProtocol) {
+            result = YES;
+            break;
+        } else if (ZIKRouter_protocolConformsToProtocol(parent, parentProtocol)) {
+            result = YES;
+            break;
+        }
+    }
+    free(list);
+    return result;
+}
+
 Protocol *_Nullable ZIKRouter_objcProtocol(id protocol) {
     if (ZIKRouter_isObjcProtocol(protocol)) {
         return (Protocol *)protocol;

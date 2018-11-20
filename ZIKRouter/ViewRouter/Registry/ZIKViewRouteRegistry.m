@@ -328,7 +328,7 @@ static NSMutableArray<Class> *_routerClasses;
 }
 
 + (void)_checkProtocol:(Protocol *)protocol {
-    if (protocol_conformsToProtocol(protocol, @protocol(ZIKViewRoutable)) &&
+    if (ZIKRouter_protocolConformsToProtocol(protocol, @protocol(ZIKViewRoutable)) &&
         protocol != @protocol(ZIKViewRoutable)) {
         ZIKRouterType *routerType = [self routerToDestination:protocol];
         NSCAssert1(routerType, @"Declared view protocol(%@) is not registered with any router class!",NSStringFromProtocol(protocol));
@@ -342,7 +342,7 @@ static NSMutableArray<Class> *_routerClasses;
         for (Class viewClass in views) {
             NSCAssert3([viewClass conformsToProtocol:protocol], @"Router(%@)'s viewClass(%@) should conform to registered protocol(%@)",router, viewClass, NSStringFromProtocol(protocol));
         }
-    } else if (protocol_conformsToProtocol(protocol, @protocol(ZIKViewModuleRoutable)) &&
+    } else if (ZIKRouter_protocolConformsToProtocol(protocol, @protocol(ZIKViewModuleRoutable)) &&
                protocol != @protocol(ZIKViewModuleRoutable)) {
         ZIKRouterType *routerType = [self routerToModule:protocol];
         NSCAssert1(routerType, @"Declared routable config protocol(%@) is not registered with any router class!",NSStringFromProtocol(protocol));
