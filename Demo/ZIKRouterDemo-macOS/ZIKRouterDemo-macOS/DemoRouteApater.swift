@@ -14,10 +14,10 @@ import ZIKLoginModule
 
 class DemoRouteApater: ZIKViewRouteAdapter {
     override class func registerRoutableDestination() {
-        // Adapt login view and alert required by login view
+        // Adapt login view required in this app
         self.register(adapter: RoutableView<RequiredLoginViewInput>(), forAdaptee: RoutableView<ZIKLoginViewInput>())
         
-        // You can adapt other alert module. In ZIKRouterDemo-macOS, it's `NSAlert` in `AlertViewRouter`. in ZIKRouterDemo, it's ZIKAlertModule
+        // Adapt alert module required in login module. In ZIKRouterDemo-macOS, it's `NSAlert` in `AlertViewRouter`. in ZIKRouterDemo, it's ZIKAlertModule
         self.register(adapter: RoutableViewModule<ZIKLoginModuleRequiredAlertInput>(), forAdaptee: RoutableViewModule<AlertViewModuleInput>())
     }
 }

@@ -51,10 +51,16 @@
     // UISplitViewController's detail view controller will be hold by UIKit after it's removed, it's not memory leak
     ZIKViewRouter.detectMemoryLeakDelay = 1;
     
+    
     UISplitViewController *splitViewController = (UISplitViewController *)self.window.rootViewController;
-    UINavigationController *navigationController = [splitViewController.viewControllers lastObject];
-    navigationController.topViewController.navigationItem.leftBarButtonItem = splitViewController.displayModeButtonItem;
     splitViewController.delegate = self;
+    UINavigationController *detailViewController = [splitViewController.viewControllers lastObject];
+    if (UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPhone) {
+        [detailViewController.view removeFromSuperview];
+        [detailViewController removeFromParentViewController];
+    } else {
+        detailViewController.topViewController.navigationItem.leftBarButtonItem = splitViewController.displayModeButtonItem;
+    }
     
     return YES;
 }
@@ -71,7 +77,7 @@
         return NO;
     }
     UISplitViewController *splitViewController = (UISplitViewController *)self.window.rootViewController;
-    UINavigationController *navigationController = [splitViewController.viewControllers lastObject];
+    UINavigationController *navigationController = [splitViewController.viewControllers firstObject];
     
     NSDictionary *params = @{ @"url": url,
                               @"options" : options

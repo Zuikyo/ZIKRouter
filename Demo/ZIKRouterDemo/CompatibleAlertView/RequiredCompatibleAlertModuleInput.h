@@ -11,7 +11,7 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-/// Required interface used in caller
+/// Alert module required in this app. The host app is responsible for adapting the real alert module with this protocol. See DemoRouteAdapter.
 @protocol RequiredCompatibleAlertModuleInput <ZIKViewModuleRoutable>
 @property(nonatomic,copy) NSString *title;
 @property(nullable,nonatomic,copy) NSString *message;

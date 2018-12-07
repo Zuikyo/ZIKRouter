@@ -15,6 +15,7 @@
 #endif
 #import "ZIKLoginViewInput.h"
 
+// A login view controller that requires an alert module as dependency. Can be used in both iOS and macOS.
 @interface ZIKLoginViewController : XXViewController<ZIKLoginViewInput>
 
 @end

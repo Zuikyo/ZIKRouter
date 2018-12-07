@@ -9,12 +9,26 @@
 #import "MasterViewRouter.h"
 #import "MasterViewController.h"
 @import ZIKRouter.Internal;
+#import "AppRouteRegistry.h"
 
 DeclareRoutableView(MasterViewController, MasterViewRouter)
 
 @implementation MasterViewRouter
 
 + (void)registerRoutableDestination {
+    
+#if TEST_BLOCK_ROUTES
+    [ZIKDestinationViewRoute(MasterViewController *)
+     makeRouteWithDestination:[MasterViewController class]
+     makeDestination:^MasterViewController * _Nullable(ZIKViewRouteConfig * _Nonnull config, __kindof ZIKRouter<MasterViewController *,ZIKViewRouteConfig *,ZIKViewRemoveConfiguration *> * _Nonnull router) {
+        UIStoryboard *sb = [UIStoryboard storyboardWithName:@"Main" bundle:nil];
+        MasterViewController *destination = [sb instantiateViewControllerWithIdentifier:@"master"];
+        return destination;
+    }].prepareDestination(^(MasterViewController * _Nonnull destination, ZIKViewRouteConfig * _Nonnull config, ZIKViewRouter * _Nonnull router) {
+        destination.tableView.backgroundColor = [UIColor redColor];
+    });
+#endif
+    
     [self registerView:[MasterViewController class]];
 }
 
