@@ -84,13 +84,13 @@ View router 将 UIKit / AppKit 中的所有界面跳转方式封装成一个统�
 可以用 Cocoapods 安装 ZIKRouter：
 
 ```
-pod 'ZIKRouter', '>= 1.0.6'
+pod 'ZIKRouter', '>= 1.0.7'
 ```
 
 如果是 Swift 项目，则使用 ZRouter：
 
 ```
-pod 'ZRouter', '>= 1.0.6'
+pod 'ZRouter', '>= 1.0.7'
 ```
 
 ### Carthage
@@ -98,7 +98,7 @@ pod 'ZRouter', '>= 1.0.6'
 添加到 Cartfile 文件：
 
 ```
-github "Zuikyo/ZIKRouter" >= 1.0.6
+github "Zuikyo/ZIKRouter" >= 1.0.7
 ```
 
 编译 framework：
