@@ -12,11 +12,11 @@
 ![Carthage compatible](https://img.shields.io/badge/Carthage-compatible-4BC51D.svg?style=flat)
 ![license](https://img.shields.io/github/license/mashape/apistatus.svg)
 
-一个用于模块间路由，基于接口进行模块发现和依赖注入的解耦工具，能够同时实现高度解耦和类型安全。
+一个用于模块间解耦和通信，基于接口进行模块管理和依赖注入的组件化路由工具。
 
-View router 将 UIKit / AppKit 中的所有界面跳转方式封装成一个统一的方法。
+通过 protocol 寻找对应的模块，并用 protocol 进行依赖注入和模块通信。
 
-Service router 用于模块寻找，通过 protocol 寻找对应的模块，并用 protocol 进行依赖注入和模块调用。
+View router 将 UIKit / AppKit 中的所有界面跳转方式封装成一个统一的方法。Service router 用于支持任意自定义模块。
 
 `ZRouter`为 Swift 提供更加 Swifty、更加安全的路由方式。
 
@@ -26,15 +26,14 @@ Service router 用于模块寻找，通过 protocol 寻找对应的模块，并�
 
 - [x] 支持 Swift 和 Objective-C，以及两者混编
 - [x] 支持 iOS、macOS、tvOS
-- [x] 支持界面路由和任意模块的路由
+- [x] 支持界面路由和任意 OC 模块、swift 模块的路由
 - [x] 支持对模块进行静态依赖注入和动态依赖注入
 - [x] **用 protocol 动态获取模块**
-- [x] **用 protocol 向模块传递参数，基于接口进行类型安全的模块调用和参数传递**
-- [x] **可以用 identifier 获取模块，和其他 URL router 兼容**
-- [x] **明确声明可用于路由的 protocol，进行编译时检查和运行时检查，避免了动态特性带来的过于自由的安全问题**
-- [x] **在模块和模块使用者中用不同的 protocol 指向同一个模块，因此路由时不必和某个固定的 protocol 耦合，也无需在一个公共库中集中管理所有的 protocol**
+- [x] **用 protocol 向模块传递参数，基于接口进行类型安全的调用和参数传递**
+- [x] **可以用字符串获取模块，和其他 URL router 框架兼容**
+- [x] **明确声明可用于路由的 protocol，进行编译时检查和运行时检查，防止使用不存在的模块**
+- [x] **使用 required protocol 和 provided protocol 指向同一个模块，因此路由时不必和某个固定的 protocol 耦合，也无需在一个公共库中集中管理所有的 protocol**
 - [x] 用 adapter 对两个模块进行解耦和接口兼容
-- [x] 使用泛型表明指定功能的 router
 - [x] 封装 UIKit 和 AppKit 里的所有界面跳转方式（push、present modally、present as popover、present as sheet、segue、show、showDetail、addChildViewController、addSubview）以及自定义的展示方式，统一成一个方法
 - [x] 用一个方法执行界面回退和模块销毁，不必区分使用pop、dismiss、removeFromParentViewController、removeFromSuperview
 - [x] **支持 storyboard，可以对从 segue 中跳转的界面自动执行依赖注入**

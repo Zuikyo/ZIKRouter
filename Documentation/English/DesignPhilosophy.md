@@ -8,8 +8,8 @@
 
 ZIKRouter uses protocol to manage modules. The advantages of interface oriented programming:
 
-* Strict type safety with compile time check
-* Reduce refactoring costs with compile time check
+* Strict type safety with compile time checking
+* Reduce refactoring costs with compile time checking
 * Make sure the module implements its protocol
 * Declare module's dependencies with protocol
 * Avoid using non-existent module with parameter checking when routing
@@ -17,7 +17,7 @@ ZIKRouter uses protocol to manage modules. The advantages of interface oriented 
 
 ## Why ZIKRouter？
 
-Comparing to other module manage or router frameworks, what's the advantages of ZIKRouter?
+Comparing to other module manager or router frameworks, what's the advantages of ZIKRouter?
 
 ### URL Router
 
@@ -26,12 +26,12 @@ ZIKRouter manages modules with protocol, but most of router frameworks use URL m
 Advantages of URL router:
 
 * Highly dynamic
-* East to manage route rules in multi platforms
+* East to manage same route rules in multi platforms
 * East to use URL Scheme
 
 Disadvantages of URL router:
 
-* Type of parameters is limited when routing, and there is no compile time check
+* Type of parameters is limited when routing, and there is no compile time checking
 * Only for view module, not for any service module
 * Can't use designated initializer to provide required parameters
 * Need to add new initializer in the view controller to support its url
@@ -43,7 +43,7 @@ Disadvantages of URL router:
 
 #### Improvement
 
-All disadvantages of URL router can be resolved if we use protocol to manage modules. We can pass parameters with protocols and check type of parameters with the compile. And with routable declaration and compile-time check, ZIKRouter can make sure the module exists when you use it. You don't need to modify the module when adding route for it.
+All disadvantages of URL router can be resolved if we use protocol to manage modules. We can pass parameters with protocols and check type of parameters with the compile. And with routable declaration and compile-time checking, ZIKRouter can make sure the module exists when you use it. And you don't need to modify the module when adding route for it.
 
 ZIKRouter also allows you to get router with string identifier. So it's easy to use ZIKRouter with other URL router frameworks.
 
@@ -55,7 +55,7 @@ The general implementation is adding new interfaces with categories in the modul
 
 Advantages:
 
-* Compile time check for category methods
+* Compile time checking with category methods
 * The implementation is lightweight
 
 Disadvantages:

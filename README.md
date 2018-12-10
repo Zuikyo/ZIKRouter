@@ -20,11 +20,11 @@ The service router can discover and prepare corresponding module with its protoc
 
 ---
 
-一个用于模块间路由，基于接口进行模块发现和依赖注入的解耦工具。
+一个用于模块间解耦和通信，基于接口进行模块管理和依赖注入的组件化路由工具。
 
-View router 将 UIKit 中的所有界面跳转方式封装成一个统一的方法。
+通过 protocol 寻找对应的模块，并用 protocol 进行依赖注入和模块通信。
 
-Service router 用于模块寻找，通过 protocol 寻找对应的模块，并用 protocol 进行依赖注入和模块调用。可和其他 URL router 兼容。
+View router 将 UIKit / AppKit 中的所有界面跳转方式封装成一个统一的方法。Service router 用于支持任意自定义模块。
 
 ### [中文文档](Documentation/Chinese/README.md)
 
@@ -34,15 +34,14 @@ Service router 用于模块寻找，通过 protocol 寻找对应的模块，并�
 
 - [x] Support Swift and Objective-C
 - [x] Support iOS, macOS and tvOS
-- [x] Routing for UIViewController / NSViewController, UIView / NSView and any classes
+- [x] Routing for UIViewController / NSViewController, UIView / NSView and any OC class and swift class
 - [x] Dependency injection
 - [x] **Locate module with its protocol**
-- [x] **Locate module with identifier, compatible with other URL router**
+- [x] **Locate module with identifier, compatible with other URL router framework**
 - [x] **Prepare the module with its protocol when performing route, rather than passing a parameter dictionary**
 - [x] **Declare routable protocol. There're compile-time checking and runtime checking to make reliable routing**
-- [x] **Use different require protocol and provided protocol inside module and module's user to make thorough decouple**
+- [x] **Use different required protocol and provided protocol inside module and module's user to make thorough decouple**
 - [x] **Decouple modules and add compatible interfaces with adapter**
-- [x] Declare a specific router with generic parameters
 - [x] Encapsulate navigation methods in UIKit and AppKit (push, present modally, present as popover present as sheet, segue, show, showDetail, addChildViewController, addSubview) and custom transitions into one method
 - [x] Remove an UIViewController/UIView or unload a module through one method, without using pop、dismiss、removeFromParentViewController、removeFromSuperview in different situation. Router can choose the proper method
 - [x] **Support storyboard. UIViewController / NSViewController and UIView / NSView from a segue can auto create it's registered router**
