@@ -27,7 +27,7 @@ NS_ASSUME_NONNULL_BEGIN
  @param targetType The target type to check, can be swift protocol, objc protocol, swift class, objc class, swift struct, swift enum, swift function, swift tuple.
  @return True if the sourceType is the targetType.
  */
-extern bool _swift_typeIsTargetType(id sourceType, id targetType);
+FOUNDATION_EXTERN bool _swift_typeIsTargetType(id sourceType, id targetType);
 
 /**
  Enumerate symbols in images from app's bundle. Only available in DEBUG mode.
@@ -38,18 +38,18 @@ extern bool _swift_typeIsTargetType(id sourceType, id targetType);
  
  @param handler  Handler for each mangled symbol name, return false to stop. `demangledAsSwift` is for demangling a mangled swift symbol, when `simplified` is true, the demangled symbol will strip module name, extension name and `where` clauses in the swift symbol.
  */
-extern void _enumerateSymbolName(bool(^handler)(const char *name, NSString *(^demangledAsSwift)(const char *mangledName, bool simplified)));
+FOUNDATION_EXTERN void _enumerateSymbolName(bool(^handler)(const char *name, NSString *(^demangledAsSwift)(const char *mangledName, bool simplified)));
 
-bool hasDynamicLibrary(NSString *libName);
+FOUNDATION_EXTERN bool hasDynamicLibrary(NSString *libName);
 
 /// Generate code for importing routers when manually registering routers.
-extern NSString *codeForImportingRouters(void);
+FOUNDATION_EXTERN NSString *codeForImportingRouters(void);
 
 /// Generate code for manually registering routers.
-extern NSString *codeForRegisteringRouters(void);
+FOUNDATION_EXTERN NSString *codeForRegisteringRouters(void);
 
 /// Check whether the object is dealloced after delay second.
-void checkMemoryLeakAfter(id object, NSTimeInterval delayInSeconds);
+FOUNDATION_EXTERN void checkMemoryLeakAfter(id object, NSTimeInterval delayInSeconds);
 #endif
 
 NS_ASSUME_NONNULL_END

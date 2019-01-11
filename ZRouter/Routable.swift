@@ -236,7 +236,7 @@ public extension RoutableServiceModule where Protocol: ZIKServiceModuleRoutable 
 
 // MARK: Invalid Check
 
-/// These symbols should never be linked in your code, if linked, that means you are using some undeclared type as generic parameter of RoutableView / RoutableViewModule / RoutableService / RoutableServiceModule.
+/// When using ZRouter as dynamic framework, these symbols should never be linked in your code, if linked, that means you are using some undeclared type as generic parameter of RoutableView / RoutableViewModule / RoutableService / RoutableServiceModule.
 
 /* Invalid usage of RoutableView. Don't use an UIViewController as generic parameter of RoutableView:
  ```
