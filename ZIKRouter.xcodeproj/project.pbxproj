@@ -7,16 +7,28 @@
 	objects = {
 
 /* Begin PBXAggregateTarget section */
-		F8D11F4A1F2268CA0035240D /* aggregateBuild */ = {
+		F848616121F806DE00FE56BF /* aggregateLib */ = {
 			isa = PBXAggregateTarget;
-			buildConfigurationList = F8D11F4B1F2268CA0035240D /* Build configuration list for PBXAggregateTarget "aggregateBuild" */;
+			buildConfigurationList = F848616221F806DE00FE56BF /* Build configuration list for PBXAggregateTarget "aggregateLib" */;
+			buildPhases = (
+				F848616721F806E800FE56BF /* ShellScript */,
+			);
+			dependencies = (
+				F848616621F806E500FE56BF /* PBXTargetDependency */,
+			);
+			name = aggregateLib;
+			productName = aggregateLib;
+		};
+		F8D11F4A1F2268CA0035240D /* aggregateFramework */ = {
+			isa = PBXAggregateTarget;
+			buildConfigurationList = F8D11F4B1F2268CA0035240D /* Build configuration list for PBXAggregateTarget "aggregateFramework" */;
 			buildPhases = (
 				F8D11F501F2268F80035240D /* ShellScript */,
 			);
 			dependencies = (
 				F8D11F4F1F2268D30035240D /* PBXTargetDependency */,
 			);
-			name = aggregateBuild;
+			name = aggregateFramework;
 			productName = multiBuild;
 		};
 /* End PBXAggregateTarget section */
@@ -202,6 +214,13 @@
 			proxyType = 1;
 			remoteGlobalIDString = F85F4CFE1F223EB0003106C3;
 			remoteInfo = ZIKRouter;
+		};
+		F848616521F806E500FE56BF /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = F85F4CF61F223EB0003106C3 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = F85F4D261F2240D2003106C3;
+			remoteInfo = libZIKRouter;
 		};
 		F8D11F4E1F2268D30035240D /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
@@ -882,6 +901,11 @@
 						CreatedOnToolsVersion = 9.3;
 						ProvisioningStyle = Automatic;
 					};
+					F848616121F806DE00FE56BF = {
+						CreatedOnToolsVersion = 10.1;
+						DevelopmentTeam = 8FE9268LAG;
+						ProvisioningStyle = Automatic;
+					};
 					F85F4CFE1F223EB0003106C3 = {
 						CreatedOnToolsVersion = 8.3.2;
 						ProvisioningStyle = Automatic;
@@ -912,7 +936,8 @@
 			targets = (
 				F85F4CFE1F223EB0003106C3 /* ZIKRouter */,
 				F85F4D261F2240D2003106C3 /* libZIKRouter */,
-				F8D11F4A1F2268CA0035240D /* aggregateBuild */,
+				F8D11F4A1F2268CA0035240D /* aggregateFramework */,
+				F848616121F806DE00FE56BF /* aggregateLib */,
 				F81A33A5208726B5001D176A /* ZIKRouterTests */,
 			);
 		};
@@ -936,6 +961,23 @@
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXShellScriptBuildPhase section */
+		F848616721F806E800FE56BF /* ShellScript */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+			);
+			outputFileListPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "# Sets the target folders and the final framework product.\nFMK_NAME=${PROJECT_NAME}\n\n# Install dir will be the final output to the framework.\n# The following line create it in the root folder of the current project.\nINSTALL_DIR=${SRCROOT}/Products/\n\n# Working dir will be deleted after the framework creation.\nWRK_DIR=build\nDEVICE_DIR=${WRK_DIR}/Release-iphoneos/\nSIMULATOR_DIR=${WRK_DIR}/Release-iphonesimulator/\n\n# -configuration ${CONFIGURATION}\n# Clean and Building both architectures.\nxcodebuild -project \"${PROJECT_NAME}.xcodeproj\" -configuration \"Release\" -target \"lib${FMK_NAME}\" -sdk iphoneos -arch armv7 -arch armv7s -arch arm64 build\nxcodebuild -project \"${PROJECT_NAME}.xcodeproj\" -configuration \"Release\" -target \"lib${FMK_NAME}\" -sdk iphonesimulator -arch i386 -arch x86_64 build\n\n# Cleaning the oldest.\nif [ -d \"${INSTALL_DIR}\" ]\nthen\nrm -rf \"${INSTALL_DIR}\"\nfi\n\nmkdir -p \"${INSTALL_DIR}\"\n\ncp -R \"${DEVICE_DIR}/\" \"${INSTALL_DIR}/\"\n\n# Uses the Lipo Tool to merge both binary files (i386 + armv6/armv7) into one Universal final product.\nlipo -create \"${DEVICE_DIR}/lib${FMK_NAME}.a\" \"${SIMULATOR_DIR}/lib${FMK_NAME}.a\" -output \"${INSTALL_DIR}/lib${FMK_NAME}.a\"\n\nrm -r \"${WRK_DIR}\"\n\nopen \"${SRCROOT}/Products/\"\n";
+		};
 		F8D11F501F2268F80035240D /* ShellScript */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
@@ -1067,6 +1109,11 @@
 			target = F85F4CFE1F223EB0003106C3 /* ZIKRouter */;
 			targetProxy = F81A33AC208726B6001D176A /* PBXContainerItemProxy */;
 		};
+		F848616621F806E500FE56BF /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = F85F4D261F2240D2003106C3 /* libZIKRouter */;
+			targetProxy = F848616521F806E500FE56BF /* PBXContainerItemProxy */;
+		};
 		F8D11F4F1F2268D30035240D /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			target = F85F4CFE1F223EB0003106C3 /* ZIKRouter */;
@@ -1114,6 +1161,24 @@
 				PRODUCT_BUNDLE_IDENTIFIER = com.zuik.ZIKRouterTests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				TARGETED_DEVICE_FAMILY = "1,2,3";
+			};
+			name = Release;
+		};
+		F848616321F806DE00FE56BF /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_TEAM = 8FE9268LAG;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Debug;
+		};
+		F848616421F806DE00FE56BF /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_TEAM = 8FE9268LAG;
+				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
 			name = Release;
 		};
@@ -1349,6 +1414,15 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
+		F848616221F806DE00FE56BF /* Build configuration list for PBXAggregateTarget "aggregateLib" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				F848616321F806DE00FE56BF /* Debug */,
+				F848616421F806DE00FE56BF /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
 		F85F4CF91F223EB0003106C3 /* Build configuration list for PBXProject "ZIKRouter" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
@@ -1376,7 +1450,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		F8D11F4B1F2268CA0035240D /* Build configuration list for PBXAggregateTarget "aggregateBuild" */ = {
+		F8D11F4B1F2268CA0035240D /* Build configuration list for PBXAggregateTarget "aggregateFramework" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				F8D11F4C1F2268CA0035240D /* Debug */,
