@@ -25,7 +25,7 @@ class EasyAlertViewRouter: ZIKAnyViewRouter {
 }
 ```
 
-The propose of registering destination class, is for error checking, and supporting storyboard. When a segue is performed, we need to search the UIViewController's router to config it.
+The purpose of registering destination class is for error checking, and supporting storyboard. When a segue is performed, we need to search the UIViewController's router to config it.
 
 ## Exclusiveness
 
@@ -105,7 +105,7 @@ class EditorViewRouter: ZIKViewRouter<EditorViewController, EditorModuleConfigur
 
 ## Register Identifier
 
-You can register a unique identifier for the router:
+You can register an unique identifier for the router:
 
 ```swift
 class EditorViewRouter: ZIKAnyViewRouter {

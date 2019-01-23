@@ -121,7 +121,7 @@ class EditorViewRouter: ZIKAnyViewRouter {
 ```swift
 var userInfo: [String : Any] = ... // 用字典传递参数
 Router.to(viewIdentifier: "viewController-editor")?
-	.perform(path: .push(from: self), configuring: { (config, _, _) in
+	.perform(path: .push(from: self), configuring: { (config, _) in
     	config.addUserInfo(userInfo)
 	})
 ```
@@ -253,7 +253,7 @@ NSString *registeringCode = codeForRegisteringRouters();
 
 * 性能最好的是`routable-ios`和`JLRoutes`，其次就是 ZIKRouter 和 ZRouter
 * MGJRouter 和 HHRouter 在注册时会对字符串进行一些处理，导致性能略微下降
-* 在 Swift 环境下的`ZRouter: register with type`和 Swinject 的耗时大大超出了其他方式，原因是使用了`String(describing:)`将 swift type 转为字符串，但是`String(describing:)`的性能很差
+* 在 Swift 环境下的`ZRouter: register with type`和 Swinject 的耗时大大超出了其他方式，原因是使用了`String(describing:)`将 swift type 转为字符串，但是`String(describing:)`在某个类型上首次调用时的性能很差
 * 使用`Zrouter: register with string`可以轻易地大幅提升`ZRouter`的性能，原因就是避免了使用`String(describing:)`
 
 经过上面的性能测试，我的结论是，无需考虑注册时的性能问题。

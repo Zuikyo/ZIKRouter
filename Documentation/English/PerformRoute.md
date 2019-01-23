@@ -324,16 +324,16 @@ You can use other URL router framework to handle the url, the URL router needs t
 If you want to send custom event to module, you can enumerate all router classes and perform event:
 
 ```swift
-func applicationDidEnterBackground(_ notification: Notification) {
+func applicationDidEnterBackground(_ application: UIApplication) {
         // Send custom event
         Router.enumerateAllViewRouters { (routerType) in
             if routerType.responds(to: #selector(applicationDidEnterBackground(_:))) {
-                routerType.perform(#selector(applicationDidEnterBackground(_:)), with: notification)
+                routerType.perform(#selector(applicationDidEnterBackground(_:)), with: application)
             }
         }
         Router.enumerateAllServiceRouters { (routerType) in
             if routerType.responds(to: #selector(applicationDidEnterBackground(_:))) {
-                routerType.perform(#selector(applicationDidEnterBackground(_:)), with: notification)
+                routerType.perform(#selector(applicationDidEnterBackground(_:)), with: application)
             }
         }
     }
@@ -363,7 +363,7 @@ If the module want to handle event, just implements class method in router:
 ```swift
 class EditorViewRouter: ZIKViewRouter<EditorViewController, ViewRouteConfig> {
     ...
-    @objc class func applicationDidEnterBackground(_ notification: Notification) {
+    @objc class func applicationDidEnterBackground(_ application: UIApplication) {
         // Handle custom event
     }
 ```

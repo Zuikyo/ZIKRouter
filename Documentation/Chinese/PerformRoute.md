@@ -325,16 +325,16 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 如果想让模块处理自定义事件，可以遍历所有的 router 类发送事件：
 
 ```swift
-func applicationDidEnterBackground(_ notification: Notification) {
+func applicationDidEnterBackground(_ application: UIApplication) {
         // 发送自定义事件
         Router.enumerateAllViewRouters { (routerType) in
             if routerType.responds(to: #selector(applicationDidEnterBackground(_:))) {
-                routerType.perform(#selector(applicationDidEnterBackground(_:)), with: notification)
+                routerType.perform(#selector(applicationDidEnterBackground(_:)), with: application)
             }
         }
         Router.enumerateAllServiceRouters { (routerType) in
             if routerType.responds(to: #selector(applicationDidEnterBackground(_:))) {
-                routerType.perform(#selector(applicationDidEnterBackground(_:)), with: notification)
+                routerType.perform(#selector(applicationDidEnterBackground(_:)), with: application)
             }
         }
     }
@@ -364,7 +364,7 @@ func applicationDidEnterBackground(_ notification: Notification) {
 ```swift
 class EditorViewRouter: ZIKViewRouter<EditorViewController, ViewRouteConfig> {
     ...
-    @objc class func applicationDidEnterBackground(_ notification: Notification) {
+    @objc class func applicationDidEnterBackground(_ application: UIApplication) {
         // 处理自定义事件
     }
 ```
