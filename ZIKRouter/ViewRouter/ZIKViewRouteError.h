@@ -11,7 +11,7 @@
 
 #import <Foundation/Foundation.h>
 
-extern NSErrorDomain const ZIKViewRouteErrorDomain;
+FOUNDATION_EXTERN NSErrorDomain const ZIKViewRouteErrorDomain;
 
 /// Errors for callback in ZIKRouteErrorHandler and ZIKViewRouteGlobalErrorHandler
 #ifdef NS_ERROR_ENUM

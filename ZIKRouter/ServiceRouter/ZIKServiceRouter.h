@@ -61,9 +61,9 @@ NS_ASSUME_NONNULL_BEGIN
 @end
 
 /// Find router with service protocol. See ZIKRouteErrorInvalidProtocol.
-extern ZIKRouteAction const ZIKRouteActionToService;
+FOUNDATION_EXTERN ZIKRouteAction const ZIKRouteActionToService;
 /// Find router with service module protocol. See ZIKRouteErrorInvalidProtocol.
-extern ZIKRouteAction const ZIKRouteActionToServiceModule;
+FOUNDATION_EXTERN ZIKRouteAction const ZIKRouteActionToServiceModule;
 
 /**
  Error handler for all service routers, for debug and log.

@@ -233,14 +233,14 @@ NS_ASSUME_NONNULL_BEGIN
 
 @end
 
-extern ZIKAnyViewRouterType *_Nullable _ZIKViewRouterToView(Protocol *viewProtocol);
+FOUNDATION_EXTERN ZIKAnyViewRouterType *_Nullable _ZIKViewRouterToView(Protocol *viewProtocol);
 
-extern ZIKAnyViewRouterType *_Nullable _ZIKViewRouterToModule(Protocol *configProtocol);
+FOUNDATION_EXTERN ZIKAnyViewRouterType *_Nullable _ZIKViewRouterToModule(Protocol *configProtocol);
 
-extern ZIKAnyViewRouterType *_Nullable _ZIKViewRouterToIdentifier(NSString *identifier);
+FOUNDATION_EXTERN ZIKAnyViewRouterType *_Nullable _ZIKViewRouterToIdentifier(NSString *identifier);
 
-extern Protocol<ZIKViewRoutable> *_Nullable _routableViewProtocolFromObject(id object);
+FOUNDATION_EXTERN Protocol<ZIKViewRoutable> *_Nullable _routableViewProtocolFromObject(id object);
 
-extern Protocol<ZIKViewModuleRoutable> *_Nullable _routableViewModuleProtocolFromObject(id object);
+FOUNDATION_EXTERN Protocol<ZIKViewModuleRoutable> *_Nullable _routableViewModuleProtocolFromObject(id object);
 
 NS_ASSUME_NONNULL_END

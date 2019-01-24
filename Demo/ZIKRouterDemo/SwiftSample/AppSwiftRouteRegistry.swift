@@ -66,9 +66,9 @@ class EasyRouteRegistry: ZIKViewRouteAdapter {
             return destination
         }
         
-        ZIKAnyServiceRouter.register(RoutableService<EasyServiceInput>(), forMakingService: EasyService2.self)
-        ZIKAnyServiceRouter.register(RoutableService<EasyServiceInput2>(), forMakingService: EasyService.self) { (config, router) -> EasyServiceInput2? in
-            return EasyService(name: "default")
+        ZIKAnyServiceRouter.register(RoutableService<EasyServiceInput>(), forMakingService: EasyService.self)
+        ZIKAnyServiceRouter.register(RoutableService<EasyServiceInput2>(), forMakingService: EasyService2.self) { (config, router) -> EasyServiceInput2? in
+            return EasyService2(name: "default")
         }
     }
 }
@@ -94,16 +94,15 @@ extension RoutableService where Protocol == EasyServiceInput2 {
     init() { self.init(declaredProtocol: Protocol.self) }
 }
 
-class EasyService: NSObject, ZIKRoutableService, EasyServiceInput, EasyServiceInput2 {
+class EasyService: NSObject, ZIKRoutableService, EasyServiceInput {
+    
+}
+
+class EasyService2: NSObject, ZIKRoutableService, EasyServiceInput, EasyServiceInput2 {
     let name: String
     init(name: String) {
         self.name = name
     }
 }
 
-class EasyService2: NSObject, ZIKRoutableService, EasyServiceInput {
-    let name: String
-    init(name: String) {
-        self.name = name
-    }
-}
+

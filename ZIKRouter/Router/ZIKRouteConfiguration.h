@@ -31,13 +31,13 @@ typedef NS_ENUM(NSInteger, ZIKRouterState) {
 typedef NSString *ZIKRouteAction NS_EXTENSIBLE_STRING_ENUM;
 
 /// Initialize router with configuration. See ZIKRouteErrorInvalidConfiguration, ZIKViewRouteErrorUnsupportType, ZIKViewRouteErrorInvalidSource, ZIKViewRouteErrorInvalidContainer.
-extern ZIKRouteAction const ZIKRouteActionInit;
+FOUNDATION_EXTERN ZIKRouteAction const ZIKRouteActionInit;
 
 /// Perform route. See ZIKRouteErrorActionFailed, ZIKRouteErrorOverRoute, ZIKViewRouteErrorUnbalancedTransition, ZIKViewRouteErrorSegueNotPerformed, ZIKRouteErrorInfiniteRecursion, ZIKRouteErrorInfiniteRecursion, ZIKRouteErrorDestinationUnavailable.
-extern ZIKRouteAction const ZIKRouteActionPerformRoute;
+FOUNDATION_EXTERN ZIKRouteAction const ZIKRouteActionPerformRoute;
 
 /// Remove route. See ZIKRouteErrorActionFailed.
-extern ZIKRouteAction const ZIKRouteActionRemoveRoute;
+FOUNDATION_EXTERN ZIKRouteAction const ZIKRouteActionRemoveRoute;
 
 typedef void(^ZIKRouteErrorHandler)(ZIKRouteAction routeAction, NSError *error);
 typedef void(^ZIKRouteStateNotifier)(ZIKRouterState oldState, ZIKRouterState newState);

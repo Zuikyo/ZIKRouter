@@ -164,7 +164,7 @@ typedef ZIKRemoveRouteConfiguration ZIKRemoveRouteConfig;
 
 #pragma mark Error
 
-extern NSErrorDomain const ZIKRouteErrorDomain;
+FOUNDATION_EXTERN NSErrorDomain const ZIKRouteErrorDomain;
 
 /// Error code for ZIKRouter.
 #ifdef NS_ERROR_ENUM

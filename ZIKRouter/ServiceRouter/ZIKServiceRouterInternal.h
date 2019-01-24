@@ -39,14 +39,14 @@ NS_ASSUME_NONNULL_BEGIN
 
 @end
 
-extern ZIKServiceRouterType *_Nullable _ZIKServiceRouterToService(Protocol *serviceProtocol);
+FOUNDATION_EXTERN ZIKServiceRouterType *_Nullable _ZIKServiceRouterToService(Protocol *serviceProtocol);
 
-extern ZIKServiceRouterType *_Nullable _ZIKServiceRouterToModule(Protocol *configProtocol);
+FOUNDATION_EXTERN ZIKServiceRouterType *_Nullable _ZIKServiceRouterToModule(Protocol *configProtocol);
 
-extern ZIKAnyServiceRouterType *_Nullable _ZIKServiceRouterToIdentifier(NSString *identifier);
+FOUNDATION_EXTERN ZIKAnyServiceRouterType *_Nullable _ZIKServiceRouterToIdentifier(NSString *identifier);
 
-extern Protocol<ZIKServiceRoutable> *_Nullable _routableServiceProtocolFromObject(id object);
+FOUNDATION_EXTERN Protocol<ZIKServiceRoutable> *_Nullable _routableServiceProtocolFromObject(id object);
 
-extern Protocol<ZIKServiceModuleRoutable> *_Nullable _routableServiceModuleProtocolFromObject(id object);
+FOUNDATION_EXTERN Protocol<ZIKServiceModuleRoutable> *_Nullable _routableServiceModuleProtocolFromObject(id object);
 
 NS_ASSUME_NONNULL_END

@@ -169,12 +169,12 @@ class SwiftSampleViewController: UIViewController, PureSwiftSampleViewInput, Swi
     
     @IBAction func testEasyServiceRoute1(_ sender: Any) {
         let service = Router.makeDestination(to: RoutableService<EasyServiceInput>())
-        print("easy service: \(service)")
+        print("easy service: \(String(describing: service))")
     }
     
     @IBAction func testEasyServiceRoute2(_ sender: Any) {
         let service = Router.makeDestination(to: RoutableService<EasyServiceInput2>())
-        print("easy service: \(service)")
+        print("easy service: \(String(describing: service))")
     }
     
     @IBAction func testInjectedRouter(_ sender: Any) {
