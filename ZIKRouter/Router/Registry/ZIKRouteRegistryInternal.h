@@ -13,7 +13,7 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-@class ZIKRouter, ZIKRouterType;
+@class ZIKRouter, ZIKRoute, ZIKRouterType;
 
 @interface ZIKRouteRegistry ()
 
@@ -22,10 +22,16 @@ NS_ASSUME_NONNULL_BEGIN
 
 #pragma mark Override
 
++ (ZIKRoute *)easyRouteForDestinationClass:(Class)destinationClass;
+
 + (Class)routerTypeClass;
 
 + (nullable id)routeKeyForRouter:(ZIKRouter *)router;
 
+/// key: destination protocol, value: destination class
+@property (nonatomic, class, readonly) CFMutableDictionaryRef destinationProtocolToDestinationMap;
+/// destination classes which registered with `registerDestinationProtocol:destination:`
+@property (nonatomic, class, readonly) CFMutableSetRef easyDestinationClasses;
 /// key: destination protocol, value: router class or ZIKRoute
 @property (nonatomic, class, readonly) CFMutableDictionaryRef destinationProtocolToRouterMap;
 /// key: module config protocol, value: router class or ZIKRoute
@@ -71,6 +77,7 @@ NS_ASSUME_NONNULL_BEGIN
 + (void)registerExclusiveDestination:(Class)destinationClass router:(Class)routerClass;
 + (void)registerDestinationProtocol:(Protocol *)destinationProtocol router:(Class)routerClass;
 + (void)registerModuleProtocol:(Protocol *)configProtocol router:(Class)routerClass;
++ (void)registerDestinationProtocol:(Protocol *)destinationProtocol destination:(Class)destinationClass;
 + (void)registerIdentifier:(NSString *)identifier router:(Class)routerClass;
 
 + (void)registerDestination:(Class)destinationClass route:(ZIKRoute *)route;

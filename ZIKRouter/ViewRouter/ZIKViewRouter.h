@@ -19,6 +19,44 @@ NS_ASSUME_NONNULL_BEGIN
 /**
  Abstract superclass for view router.
  Subclass it and override those methods in `ZIKRouterInternal` and `ZIKViewRouterInternal` to make router of your view.
+ 
+ @code
+ @import ZIKRouter;
+ @interface LoginViewRouter: ZIKViewRouter
+ @end
+ 
+ @import ZIKRouter.Internal;
+ DeclareRoutableView(LoginViewController, LoginViewRouter)
+ @implementation LoginViewRouter
+ 
+ + (void)registerRoutableDestination {
+    [self registerView:[LoginViewController class]];
+    [self registerViewProtocol:ZIKRoutable(LoginViewInput)];
+    [self registerIdentifier:@"app://urlscheme/aview"];
+ }
+ 
+ - (id<LoginViewInput>)destinationWithConfiguration:(ZIKViewRouteConfiguration *)configuration {
+    LoginViewController *destination = [[LoginViewController alloc] init];
+    return destination;
+ }
+ 
+ @end
+ @endcode
+ 
+ @code
+ // If you don't want to use a router subclass, just register class and protocol with ZIKViewRouter
+ [ZIKViewRouter registerViewProtocol:ZIKRoutable(LoginViewInput) forMakingView:[LoginViewController class]];
+ @endcode
+ 
+ Then you can use the module:
+ @code
+ // Show the view controller
+ [ZIKRouterToView(LoginViewInput)
+    performPath:ZIKViewRoutePath.pushFrom(self)
+    preparation:^(id<LoginViewInput> destination) {
+        // Prepare the view controller
+ }];
+ @endcode
  */
 @interface ZIKViewRouter<__covariant Destination, __covariant RouteConfig: ZIKViewRouteConfiguration *> : ZIKRouter<Destination, RouteConfig, ZIKViewRemoveConfiguration *>
 
@@ -48,7 +86,7 @@ NS_ASSUME_NONNULL_BEGIN
  */
 - (BOOL)canPerform;
 
-/// Check whether the router support a route type.
+/// Check whether the router supports a route type.
 + (BOOL)supportRouteType:(ZIKViewRouteType)type;
 
 #pragma mark Perform
@@ -309,6 +347,46 @@ typedef void(^ZIKViewRouteGlobalErrorHandler)(__kindof ZIKViewRouter * _Nullable
 
 /// Is registration all finished. Can't register any router after registration is finished.
 + (BOOL)isRegistrationFinished;
+
+@end
+
+@interface ZIKViewRouter<__covariant Destination: id, __covariant RouteConfig: ZIKViewRouteConfiguration *> (RegisterMaking)
+
+/**
+ Register view class with protocol without using any router subclass. The view will be created with `[[viewClass alloc] init]` when used. Use this if your view is very easy and don't need a router subclass.
+ 
+ @code
+ // Just registering with ZIKViewRouter
+ [ZIKViewRouter registerViewProtocol:ZIKRoutable(ViewProtocol) forMakingView:[ViewController class]];
+ @endcode
+ 
+ For swift class, you can use `registerViewProtocol:forMakingView:making:` instead.
+ 
+ @param viewProtocol The protocol conformed by view. Should inherit from ZIKViewRoutable. Use macro `ZIKRoutable` to wrap the parameter.
+ @param viewClass The view class.
+ */
++ (void)registerViewProtocol:(Protocol<ZIKViewRoutable> *)viewProtocol forMakingView:(Class)viewClass;
+
+/**
+ Register view class with protocol without using any router subclass. The view will be created with the `making` block when used. Use this if your view is very easy and don't need a router subclass.
+ 
+ @code
+ // Just registering with ZIKViewRouter
+ [ZIKViewRouter
+    registerViewProtocol:ZIKRoutable(ViewProtocol)
+    forMakingView:[ViewController class]
+    making:^id _Nullable(ZIKViewRouteConfiguration *config, __kindof ZIKViewRouter *router) {
+        return [[ViewController alloc] init];
+ }];
+ @endcode
+ 
+ @param viewProtocol The protocol conformed by view. Should inherit from ZIKViewRoutable. Use macro `ZIKRoutable` to wrap the parameter.
+ @param viewClass The view class.
+ @param makeDestination Block creating the view.
+ */
++ (void)registerViewProtocol:(Protocol<ZIKViewRoutable> *)viewProtocol
+               forMakingView:(Class)viewClass
+                      making:(_Nullable Destination(^)(RouteConfig config, __kindof ZIKViewRouter<Destination, RouteConfig> *router))makeDestination;
 @end
 
 @interface ZIKViewRouter (Utility)

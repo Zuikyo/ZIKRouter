@@ -45,6 +45,13 @@
     return self;
 }
 
+- (instancetype)initWithMakeDestination:(id  _Nullable (^)(ZIKPerformRouteConfiguration * _Nonnull, __kindof ZIKRouter<id, ZIKPerformRouteConfiguration *, ZIKRemoveRouteConfiguration *> * _Nonnull))makeDestination {
+    if (self = [super init]) {
+        self.makeDestinationBlock = makeDestination;
+    }
+    return self;
+}
+
 - (NSString *)name {
     if (_name == nil) {
         return [NSString stringWithFormat:@"Anonymous route for destination: %@", NSStringFromClass(self.destinationClass)];

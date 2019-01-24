@@ -17,6 +17,7 @@
 #import "ZIKViewRouteRegistry.h"
 #import "ZIKRouteRegistryInternal.h"
 #import "ZIKViewRouteRegistryPrivate.h"
+#import "ZIKViewRoute.h"
 #import "ZIKViewRouteError.h"
 #import <objc/runtime.h>
 #import "ZIKRouterRuntime.h"
@@ -4205,6 +4206,23 @@ static  ZIKViewRouterType *_Nullable _routerTypeToRegisteredView(Class viewClass
 + (void)registerIdentifier:(NSString *)identifier {
     NSAssert(!ZIKViewRouteRegistry.registrationFinished, @"Only register in +registerRoutableDestination.");
     [ZIKViewRouteRegistry registerIdentifier:identifier router:self];
+}
+
+@end
+
+@implementation ZIKViewRouter (RegisterMaking)
+
++ (void)registerViewProtocol:(Protocol<ZIKViewRoutable> *)viewProtocol forMakingView:(Class)viewClass {
+    NSAssert(!ZIKViewRouteRegistry.registrationFinished, @"Only register in +registerRoutableDestination.");
+    [ZIKViewRouteRegistry registerDestinationProtocol:viewProtocol destination:viewClass];
+}
+
++ (void)registerViewProtocol:(Protocol<ZIKViewRoutable> *)viewProtocol forMakingView:(Class)viewClass making:(id  _Nullable (^)(ZIKViewRouteConfiguration * _Nonnull, __kindof ZIKViewRouter<id, ZIKViewRouteConfiguration *> * _Nonnull))makeDestination {
+    NSParameterAssert([viewClass conformsToProtocol:viewProtocol]);
+    NSAssert(!ZIKViewRouteRegistry.registrationFinished, @"Only register in +registerRoutableDestination.");
+    [ZIKViewRoute
+     makeRouteWithDestination:viewClass makeDestination:(id  _Nullable (^)(ZIKPerformRouteConfiguration * _Nonnull, __kindof ZIKViewRouter<id, ZIKViewRouteConfiguration *> * _Nonnull))makeDestination]
+    .registerDestinationProtocol(viewProtocol);
 }
 
 @end

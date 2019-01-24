@@ -132,6 +132,12 @@ static BOOL _registrationFinished = NO;
 
 #pragma mark Discover
 
++ (ZIKRoute *)easyRouteForDestinationClass:(Class)destinationClass {
+    return [[ZIKRoute alloc] initWithDestination:destinationClass makeDestination:^id _Nullable(ZIKPerformRouteConfiguration * _Nonnull config, __kindof ZIKRouter * _Nonnull router) {
+        return [[destinationClass alloc] init];
+    }];
+}
+
 + (Class)routerTypeClass {
     return [ZIKRouterType class];
 }
@@ -169,6 +175,11 @@ static BOOL _registrationFinished = NO;
                 CFDictionarySetValue(destinationToDefaultRouterMap, (__bridge const void *)(destinationClass), (__bridge const void *)(route));
             }
         }
+        if (route == nil) {
+            if (CFSetContainsValue(self.easyDestinationClasses, (__bridge const void *)(destinationClass))) {
+                route = [self easyRouteForDestinationClass:destinationClass];
+            }
+        }
         if (route) {
             return [self _routerTypeForObject:route];
         } else {
@@ -186,6 +197,12 @@ static BOOL _registrationFinished = NO;
         return nil;
     }
     id route = CFDictionaryGetValue(self.destinationProtocolToRouterMap, (__bridge const void *)(destinationProtocol));
+    if (route == nil) {
+        Class destinationClass = CFDictionaryGetValue(self.destinationProtocolToDestinationMap, (__bridge const void *)(destinationProtocol));
+        if (destinationClass) {
+            route = [self easyRouteForDestinationClass:destinationClass];
+        }
+    }
     if (route == nil) {
         Protocol *adapter = destinationProtocol;
         Protocol *adaptee = nil;
@@ -398,6 +415,12 @@ static __attribute__((always_inline)) void _registerIdentifierWithRoute(NSString
     CFDictionarySetValue([registry identifierToRouterMap], (CFStringRef)identifier, (__bridge const void *)(routeObject));
 }
 
++ (void)registerDestinationProtocol:(Protocol *)destinationProtocol destination:(Class)destinationClass {
+    NSParameterAssert([destinationClass conformsToProtocol:destinationProtocol]);
+    CFDictionarySetValue(self.destinationProtocolToDestinationMap, (__bridge const void *)destinationProtocol, (__bridge const void *)destinationClass);
+    CFSetAddValue(self.easyDestinationClasses, (__bridge const void *)destinationClass);
+}
+
 + (void)registerDestination:(Class)destinationClass router:(Class)routerClass {
     NSParameterAssert([routerClass isSubclassOfClass:[ZIKRouter class]]);
     _registerDestinationClassWithRoute(destinationClass, routerClass, self);
@@ -518,6 +541,16 @@ static __attribute__((always_inline)) void _registerIdentifierWithRoute(NSString
 }
 
 #pragma mark Override
+
++ (CFMutableDictionaryRef)destinationProtocolToDestinationMap {
+    NSAssert(NO, @"%@ must override %@",self,NSStringFromSelector(_cmd));
+    return nil;
+}
+
++ (CFMutableSetRef)easyDestinationClasses {
+    NSAssert(NO, @"%@ must override %@",self,NSStringFromSelector(_cmd));
+    return nil;
+}
 
 + (CFMutableDictionaryRef)destinationProtocolToRouterMap {
     NSAssert(NO, @"%@ must override %@",self,NSStringFromSelector(_cmd));

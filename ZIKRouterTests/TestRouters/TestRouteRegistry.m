@@ -25,6 +25,9 @@
 #import "BSubview.h"
 #import "BSubviewModuleInput.h"
 #import "BSubviewModuleRouter.h"
+
+#import "TestEasyRegistry.h"
+
 @import ZIKRouter.Internal;
 
 @implementation TestRouteRegistry
@@ -37,6 +40,7 @@
     [self registerViewModuleRouter];
     [self registerSubViewRouter];
     [self registerSubviewModuleRouter];
+    [TestEasyRegistry registerRoutableDestination];
     [ZIKRouteRegistry notifyRegistrationFinished];
 }
 

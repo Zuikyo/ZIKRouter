@@ -15,12 +15,56 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
+/**
+ Abstract superclass of service router for discovering service and injecting dependencies with registered protocol. Subclass it and override those methods in `ZIKRouterInternal` and `ZIKServiceRouterInternal` to make router of your service.
+ 
+ @code
+ // Make router subclass for your module
+ @import ZIKRouter;
+ @interface LoginServiceRouter: ZIKServiceRouter
+ @end
+ 
+ @import ZIKRouter.Internal;
+ DeclareRoutableService(LoginService, LoginServiceRouter)
+ @implementation LoginServiceRouter
+ 
+ + (void)registerRoutableDestination {
+    [self registerService:[LoginService class]];
+    [self registerServiceProtocol:ZIKRoutable(LoginServiceInput)];
+ }
+ 
+ - (id<LoginServiceInput>)destinationWithConfiguration:(ZIKPerformRouteConfiguration *)configuration {
+    LoginService *destination = [[LoginService alloc] init];
+    return destination;
+ }
+ 
+ @end
+ @endcode
+ 
+ @code
+ // If you don't want to use a router subclass, just register class and protocol with ZIKServiceRouter
+ [ZIKServiceRouter registerServiceProtocol:ZIKRoutable(LoginServiceInput) forMakingService:[LoginService class]];
+ @endcode
+ 
+ Then you can use the module:
+ @code
+ // Use the service
+ id<LoginServiceInput> loginService;
+ loginService = [ZIKRouterToService(LoginServiceInput)
+                    makeDestinationWithPreparation:^(id<LoginServiceInput> destination) {
+                      // Prepare service
+                }];
+ @endcode
+ */
+@interface ZIKServiceRouter<__covariant Destination, __covariant RouteConfig: ZIKPerformRouteConfiguration *> : ZIKRouter<Destination, RouteConfig, ZIKRemoveRouteConfiguration *>
+
+@end
+
 /// Find router with service protocol. See ZIKRouteErrorInvalidProtocol.
 extern ZIKRouteAction const ZIKRouteActionToService;
 /// Find router with service module protocol. See ZIKRouteErrorInvalidProtocol.
 extern ZIKRouteAction const ZIKRouteActionToServiceModule;
 
-@class ZIKServiceRouter;
 /**
  Error handler for all service routers, for debug and log.
  @discussion
@@ -31,21 +75,6 @@ extern ZIKRouteAction const ZIKRouteActionToServiceModule;
  @param error Error in ZIKRouteErrorDomain or domain from subclass router, see ZIKServiceRouteError for detail
  */
 typedef void(^ZIKServiceRouteGlobalErrorHandler)(__kindof ZIKServiceRouter * _Nullable router, ZIKRouteAction routeAction, NSError *error);
-
-/**
- Abstract superclass of service router for discovering service and injecting dependencies with registered protocol. Subclass it and override those methods in `ZIKRouterInternal` and `ZIKServiceRouterInternal` to make router of your service.
- 
- @code
- id<LoginServiceInput> loginService;
- loginService = [ZIKRouterToService(LoginServiceInput)
-                    makeDestinationWithPreparation:^(id<LoginServiceInput> destination) {
-                      //Prepare service
-                }];
- @endcode
- */
-@interface ZIKServiceRouter<__covariant Destination, __covariant RouteConfig: ZIKPerformRouteConfiguration *> : ZIKRouter<Destination, RouteConfig, ZIKRemoveRouteConfiguration *>
-
-@end
 
 @interface ZIKServiceRouter (ErrorHandle)
 
@@ -94,6 +123,46 @@ typedef void(^ZIKServiceRouteGlobalErrorHandler)(__kindof ZIKServiceRouter * _Nu
 
 /// Is registration all finished. Can't register any router after registration is finished.
 + (BOOL)isRegistrationFinished;
+
+@end
+
+@interface ZIKServiceRouter<__covariant Destination, __covariant RouteConfig: ZIKPerformRouteConfiguration *> (RegisterMaking)
+
+/**
+ Register service class with protocol without using any router subclass. The service will be created with `[[serviceClass alloc] init]` when used. Use this if your service is very easy and don't need a router subclass.
+ 
+ @code
+ // Just registering with ZIKServiceRouter
+ [ZIKServiceRouter registerServiceProtocol:ZIKRoutable(ServiceProtocol) forMakingService:[Service class]];
+ @endcode
+ 
+ For swift class, you can use `registerServiceProtocol:forMakingService:making:` instead.
+
+ @param serviceProtocol The protocol conformed by service. Should inherit from ZIKServiceRoutable. Use macro `ZIKRoutable` to wrap the parameter.
+ @param serviceClass The service class.
+ */
++ (void)registerServiceProtocol:(Protocol<ZIKServiceRoutable> *)serviceProtocol forMakingService:(Class)serviceClass;
+
+/**
+ Register service class with protocol without using any router subclass. The service will be created with the `making` block when used. Use this if your service is very easy and don't need a router subclass.
+
+ @code
+ // Just registering with ZIKServiceRouter
+ [ZIKServiceRouter
+    registerServiceProtocol:ZIKRoutable(ServiceProtocol)
+    forMakingService:[EasyService class]
+    making:^id _Nullable(ZIKPerformRouteConfiguration *config, __kindof ZIKServiceRouter *router) {
+        return [[EasyService alloc] init];
+ }];
+ @endcode
+ 
+ @param serviceProtocol The protocol conformed by service. Should inherit from ZIKServiceRoutable. Use macro `ZIKRoutable` to wrap the parameter.
+ @param serviceClass The service class.
+ @param makeDestination Block creating the service.
+ */
++ (void)registerServiceProtocol:(Protocol<ZIKServiceRoutable> *)serviceProtocol
+               forMakingService:(Class)serviceClass
+                         making:(_Nullable Destination(^)(RouteConfig config, __kindof ZIKServiceRouter<Destination, RouteConfig> *router))makeDestination;
 
 @end
 

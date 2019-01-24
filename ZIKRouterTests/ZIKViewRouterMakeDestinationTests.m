@@ -8,6 +8,7 @@
 
 #import "ZIKRouterTestCase.h"
 #import "AViewInput.h"
+#import "EasyAViewInput.h"
 
 @interface ZIKViewRouterMakeDestinationTests : ZIKRouterTestCase
 
@@ -34,6 +35,15 @@
         XCTAssertTrue([(id)destination conformsToProtocol:@protocol(AViewInput)]);
         self.destination = destination;
     }
+    
+    @autoreleasepool {
+        BOOL canMakeDestination = [ZIKRouterToView(EasyAViewInput) canMakeDestination];
+        XCTAssertTrue(canMakeDestination);
+        id<EasyAViewInput> destination = [ZIKRouterToView(EasyAViewInput) makeDestination];
+        XCTAssertNotNil(destination);
+        XCTAssertTrue([(id)destination conformsToProtocol:@protocol(EasyAViewInput)]);
+        self.destination = destination;
+    }
 }
 
 - (void)testMakeDestinationWithPreparation {
@@ -45,6 +55,18 @@
         }];
         XCTAssertNotNil(destination);
         XCTAssertTrue([(id)destination conformsToProtocol:@protocol(AViewInput)]);
+        XCTAssert([destination.title isEqualToString:@"test title"]);
+        self.destination = destination;
+    }
+    
+    @autoreleasepool {
+        BOOL canMakeDestination = [ZIKRouterToView(EasyAViewInput) canMakeDestination];
+        XCTAssertTrue(canMakeDestination);
+        id<EasyAViewInput> destination = [ZIKRouterToView(EasyAViewInput) makeDestinationWithPreparation:^(id<EasyAViewInput>  _Nonnull destination) {
+            destination.title = @"test title";
+        }];
+        XCTAssertNotNil(destination);
+        XCTAssertTrue([(id)destination conformsToProtocol:@protocol(EasyAViewInput)]);
         XCTAssert([destination.title isEqualToString:@"test title"]);
         self.destination = destination;
     }

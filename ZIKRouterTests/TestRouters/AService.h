@@ -8,8 +8,9 @@
 
 #import <Foundation/Foundation.h>
 #import "AServiceInput.h"
+#import "EasyServiceInput.h"
 
-@interface AService : NSObject <AServiceInput>
+@interface AService : NSObject <AServiceInput, EasyServiceInput>
 
 @property (nonatomic, copy, nullable) NSString *title;
 @property (nonatomic, strong) id router;

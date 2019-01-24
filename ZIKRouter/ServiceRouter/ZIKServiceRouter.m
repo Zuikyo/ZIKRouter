@@ -14,6 +14,7 @@
 #import "ZIKServiceRouterInternal.h"
 #import "ZIKServiceRouteRegistry.h"
 #import "ZIKRouteRegistryInternal.h"
+#import "ZIKServiceRoute.h"
 #import <objc/runtime.h>
 #import "ZIKRouterRuntime.h"
 
@@ -160,6 +161,23 @@ static dispatch_semaphore_t g_globalErrorSema;
 + (void)registerIdentifier:(NSString *)identifier {
     NSAssert(!ZIKServiceRouteRegistry.registrationFinished, @"Only register in +registerRoutableDestination.");
     [ZIKServiceRouteRegistry registerIdentifier:identifier router:self];
+}
+
+@end
+
+@implementation ZIKServiceRouter (RegisterMaking)
+
++ (void)registerServiceProtocol:(Protocol<ZIKServiceRoutable> *)serviceProtocol forMakingService:(Class)serviceClass {
+    NSAssert(!ZIKServiceRouteRegistry.registrationFinished, @"Only register in +registerRoutableDestination.");
+    [ZIKServiceRouteRegistry registerDestinationProtocol:serviceProtocol destination:serviceClass];
+}
+
++ (void)registerServiceProtocol:(Protocol<ZIKServiceRoutable> *)serviceProtocol forMakingService:(Class)serviceClass making:(id  _Nullable (^)(ZIKPerformRouteConfiguration * _Nonnull, __kindof ZIKServiceRouter<id, ZIKPerformRouteConfiguration *> * _Nonnull))makeDestination {
+    NSParameterAssert([serviceClass conformsToProtocol:serviceProtocol]);
+    NSAssert(!ZIKServiceRouteRegistry.registrationFinished, @"Only register in +registerRoutableDestination.");
+    [ZIKServiceRoute
+     makeRouteWithDestination:serviceClass makeDestination:makeDestination]
+    .registerDestinationProtocol(serviceProtocol);
 }
 
 @end

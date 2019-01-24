@@ -13,7 +13,8 @@
 #import <AppKit/AppKit.h>
 #endif
 #import "AViewInput.h"
+#import "EasyAViewInput.h"
 
-@interface AViewController : UIViewController <AViewInput>
+@interface AViewController : UIViewController <AViewInput, EasyAViewInput>
 @property (nonatomic, strong) id router;
 @end
