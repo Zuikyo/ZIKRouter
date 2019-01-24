@@ -387,6 +387,43 @@ typedef void(^ZIKViewRouteGlobalErrorHandler)(__kindof ZIKViewRouter * _Nullable
 + (void)registerViewProtocol:(Protocol<ZIKViewRoutable> *)viewProtocol
                forMakingView:(Class)viewClass
                       making:(_Nullable Destination(^)(RouteConfig config, __kindof ZIKViewRouter<Destination, RouteConfig> *router))makeDestination;
+
+/**
+ Register view class with identifier without using any router subclass. The view will be created with `[[viewClass alloc] init]` when used. Use this if your view is very easy and don't need a router subclass.
+ 
+ @code
+ // Just registering with ZIKViewRouter
+ [ZIKViewRouter registerIdentifier:@"app://view" forMakingView:[ViewController class]];
+ @endcode
+ 
+ For swift class, you can use `registerIdentifier:forMakingView:making:` instead.
+ 
+ @param identifier The unique identifier for this class.
+ @param viewClass The view class.
+ */
++ (void)registerIdentifier:(NSString *)identifier forMakingView:(Class)viewClass;
+
+/**
+ Register view class with identifier without using any router subclass. The view will be created with the `making` block when used. Use this if your view is very easy and don't need a router subclass.
+ 
+ @code
+ // Just registering with ZIKViewRouter
+ [ZIKViewRouter
+     registerIdentifier:@"app://view"
+     forMakingView:[ViewController class]
+     making:^id _Nullable(ZIKViewRouteConfiguration *config, __kindof ZIKViewRouter *router) {
+        return [[ViewController alloc] init];
+     }];
+ @endcode
+ 
+ @param identifier The unique identifier for this class.
+ @param viewClass The view class.
+ @param makeDestination Block creating the view.
+ */
++ (void)registerIdentifier:(NSString *)identifier
+             forMakingView:(Class)viewClass
+                    making:(_Nullable Destination(^)(RouteConfig config, __kindof ZIKViewRouter<Destination, RouteConfig> *router))makeDestination;
+
 @end
 
 @interface ZIKViewRouter (Utility)

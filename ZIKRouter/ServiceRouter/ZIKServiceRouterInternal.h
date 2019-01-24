@@ -43,6 +43,8 @@ extern ZIKServiceRouterType *_Nullable _ZIKServiceRouterToService(Protocol *serv
 
 extern ZIKServiceRouterType *_Nullable _ZIKServiceRouterToModule(Protocol *configProtocol);
 
+extern ZIKAnyServiceRouterType *_Nullable _ZIKServiceRouterToIdentifier(NSString *identifier);
+
 extern Protocol<ZIKServiceRoutable> *_Nullable _routableServiceProtocolFromObject(id object);
 
 extern Protocol<ZIKServiceModuleRoutable> *_Nullable _routableServiceModuleProtocolFromObject(id object);

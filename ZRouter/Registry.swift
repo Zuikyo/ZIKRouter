@@ -376,6 +376,32 @@ internal class Registry {
         serviceModuleAdapterContainer[adapterKey] = _RouteKey(routable: adaptee)
     }
     
+    fileprivate static let makingIdentifierPrefix = "_SwiftMaking_"
+    
+    internal static func register<Protocol>(_ routableView: RoutableView<Protocol>, forMaking destinationClass: AnyClass) {
+        let destinationProtocol = Protocol.self
+        assert(_swift_typeIsTargetType(destinationClass, destinationProtocol), "Destination (\(destinationClass)) should conforms to protocol (\(destinationProtocol))")
+        assert(ZIKAnyViewRouter.isRegistrationFinished() == false, "Can't register after app did finish launch. Only register in registerRoutableDestination().")
+        // `UIViewController & ObjcProtocol` type is also a Protocol in objc, but we want to keep it in swift container
+        if let routableProtocol = _routableViewProtocolFromObject(destinationProtocol), routableView.typeName == routableProtocol.name {
+            ZIKAnyViewRouter.registerViewProtocol(routableProtocol, forMakingView: destinationClass)
+            return
+        }
+        ZIKAnyViewRouter.registerIdentifier(makingIdentifierPrefix + routableView.typeName, forMakingView: destinationClass)
+    }
+    
+    internal static func register<Protocol>(_ routableService: RoutableService<Protocol>, forMaking destinationClass: AnyClass) {
+        let destinationProtocol = Protocol.self
+        assert(_swift_typeIsTargetType(destinationClass, destinationProtocol), "Destination (\(destinationClass)) should conforms to protocol (\(destinationProtocol))")
+        assert(ZIKAnyServiceRouter.isRegistrationFinished() == false, "Can't register after app did finish launch. Only register in registerRoutableDestination().")
+        // `UIViewController & ObjcProtocol` type is also a Protocol in objc, but we want to keep it in swift container
+        if let routableProtocol = _routableServiceProtocolFromObject(destinationProtocol), routableService.typeName == routableProtocol.name {
+            ZIKAnyServiceRouter.registerServiceProtocol(routableProtocol, forMakingService: destinationClass)
+            return
+        }
+        ZIKAnyServiceRouter.registerIdentifier(makingIdentifierPrefix + routableService.typeName, forMakingService: destinationClass)
+    }
+    
     // MARK: Validate
     
     #if DEBUG
@@ -618,6 +644,9 @@ fileprivate extension Registry {
         if let route = viewProtocolContainer[_RouteKey(type: viewProtocol, name: name)], let routerType = ZIKAnyViewRouterType.tryMakeType(forRoute: route) {
             return routerType
         }
+        if let routerType = _ZIKViewRouterToIdentifier(makingIdentifierPrefix + name) {
+            return routerType
+        }
         #if DEBUG
         var traversedProtocols: [_RouteKey] = []
         #endif
@@ -632,6 +661,9 @@ fileprivate extension Registry {
                 if let adapteeProtocol = NSProtocolFromString(adaptee.key),
                    let routableProtocol = _routableViewProtocolFromObject(adapteeProtocol),
                    let routerType = _ZIKViewRouterToView(routableProtocol) {
+                    return routerType
+                }
+                if let routerType = _ZIKViewRouterToIdentifier(makingIdentifierPrefix + adaptee.key) {
                     return routerType
                 }
                 #if DEBUG
@@ -735,6 +767,9 @@ fileprivate extension Registry {
         if let route = serviceProtocolContainer[_RouteKey(type: serviceProtocol, name: name)], let routerType = ZIKAnyServiceRouterType.tryMakeType(forRoute: route) {
             return routerType
         }
+        if let routerType = _ZIKServiceRouterToIdentifier(makingIdentifierPrefix + name) {
+            return routerType
+        }
         #if DEBUG
         var traversedProtocols: [_RouteKey] = []
         #endif
@@ -749,6 +784,9 @@ fileprivate extension Registry {
                 if let adapteeProtocol = NSProtocolFromString(adaptee.key),
                    let routableProtocol = _routableServiceProtocolFromObject(adapteeProtocol),
                    let routerType = _ZIKServiceRouterToService(routableProtocol) {
+                    return routerType
+                }
+                if let routerType = _ZIKServiceRouterToIdentifier(makingIdentifierPrefix + adaptee.key) {
                     return routerType
                 }
                 #if DEBUG
@@ -1016,7 +1054,8 @@ private class _ViewRouterValidater: ZIKViewRouteAdapter {
         
         for declaredProtocol in declaredDestinationProtocols {
             assert(Registry.viewProtocolContainer.keys.contains(_RouteKey(key: declaredProtocol)) ||
-                Registry.viewAdapterContainer.keys.contains(_RouteKey(key: declaredProtocol)), "Declared view protocol (\(declaredProtocol)) is not registered with any router.")
+                Registry.viewAdapterContainer.keys.contains(_RouteKey(key: declaredProtocol)) ||
+                _ZIKViewRouterToIdentifier(Registry.makingIdentifierPrefix + declaredProtocol) != nil, "Declared view protocol (\(declaredProtocol)) is not registered with any router.")
         }
         for declaredProtocol in declaredModuleProtocols {
             assert(Registry.viewModuleProtocolContainer.keys.contains(_RouteKey(key: declaredProtocol)) ||
@@ -1219,7 +1258,8 @@ private class _ServiceRouterValidater: ZIKServiceRouteAdapter {
         
         for declaredProtocol in declaredDestinationProtocols {
             assert(Registry.serviceProtocolContainer.keys.contains(_RouteKey(key: declaredProtocol)) ||
-                Registry.serviceAdapterContainer.keys.contains(_RouteKey(key: declaredProtocol)), "Declared service protocol (\(declaredProtocol)) is not registered with any router.")
+                Registry.serviceAdapterContainer.keys.contains(_RouteKey(key: declaredProtocol)) ||
+                _ZIKServiceRouterToIdentifier(Registry.makingIdentifierPrefix + declaredProtocol) != nil, "Declared service protocol (\(declaredProtocol)) is not registered with any router.")
         }
         for declaredProtocol in declaredModuleProtocols {
             assert(Registry.serviceModuleProtocolContainer.keys.contains(_RouteKey(key: declaredProtocol)) ||

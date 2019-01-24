@@ -164,6 +164,42 @@ typedef void(^ZIKServiceRouteGlobalErrorHandler)(__kindof ZIKServiceRouter * _Nu
                forMakingService:(Class)serviceClass
                          making:(_Nullable Destination(^)(RouteConfig config, __kindof ZIKServiceRouter<Destination, RouteConfig> *router))makeDestination;
 
+/**
+ Register service class with identifier without using any router subclass. The service will be created with `[[serviceClass alloc] init]` when used. Use this if your service is very easy and don't need a router subclass.
+ 
+ @code
+ // Just registering with ZIKServiceRouter
+ [ZIKServiceRouter registerIdentifier:@"app://service" forMakingService:[Service class]];
+ @endcode
+ 
+ For swift class, you can use `registerIdentifier:forMakingService:making:` instead.
+ 
+ @param identifier The unique identifier for this class.
+ @param serviceClass The service class.
+ */
++ (void)registerIdentifier:(NSString *)identifier forMakingService:(Class)serviceClass;
+
+/**
+ Register service class with identifier without using any router subclass. The service will be created with the `making` block when used. Use this if your service is very easy and don't need a router subclass.
+ 
+ @code
+ // Just registering with ZIKViewRouter
+ [ZIKServiceRouter
+     registerIdentifier:@"app://service"
+     forMakingService:[Service class]
+     making:^id _Nullable(ZIKViewRouteConfiguration *config, __kindof ZIKServiceRouter *router) {
+        return [[Service alloc] init];
+ }];
+ @endcode
+ 
+ @param identifier The unique identifier for this class.
+ @param serviceClass The service class.
+ @param makeDestination Block creating the service.
+ */
++ (void)registerIdentifier:(NSString *)identifier
+          forMakingService:(Class)serviceClass
+                    making:(_Nullable Destination(^)(RouteConfig config, __kindof ZIKServiceRouter<Destination, RouteConfig> *router))makeDestination;
+
 @end
 
 @interface ZIKServiceRouter (Utility)

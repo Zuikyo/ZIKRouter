@@ -169,7 +169,7 @@ static dispatch_semaphore_t g_globalErrorSema;
 
 + (void)registerServiceProtocol:(Protocol<ZIKServiceRoutable> *)serviceProtocol forMakingService:(Class)serviceClass {
     NSAssert(!ZIKServiceRouteRegistry.registrationFinished, @"Only register in +registerRoutableDestination.");
-    [ZIKServiceRouteRegistry registerDestinationProtocol:serviceProtocol destination:serviceClass];
+    [ZIKServiceRouteRegistry registerDestinationProtocol:serviceProtocol forMakingDestination:serviceClass];
 }
 
 + (void)registerServiceProtocol:(Protocol<ZIKServiceRoutable> *)serviceProtocol forMakingService:(Class)serviceClass making:(id  _Nullable (^)(ZIKPerformRouteConfiguration * _Nonnull, __kindof ZIKServiceRouter<id, ZIKPerformRouteConfiguration *> * _Nonnull))makeDestination {
@@ -178,6 +178,19 @@ static dispatch_semaphore_t g_globalErrorSema;
     [ZIKServiceRoute
      makeRouteWithDestination:serviceClass makeDestination:makeDestination]
     .registerDestinationProtocol(serviceProtocol);
+}
+
++ (void)registerIdentifier:(NSString *)identifier forMakingService:(Class)serviceClass {
+    NSAssert(!ZIKServiceRouteRegistry.registrationFinished, @"Only register in +registerRoutableDestination.");
+    [ZIKServiceRouteRegistry registerIdentifier:identifier forMakingDestination:serviceClass];
+}
+
++ (void)registerIdentifier:(NSString *)identifier forMakingService:(Class)serviceClass making:(id  _Nullable (^)(ZIKPerformRouteConfiguration * _Nonnull, __kindof ZIKServiceRouter<id, ZIKPerformRouteConfiguration *> * _Nonnull))makeDestination {
+    NSAssert(!ZIKServiceRouteRegistry.registrationFinished, @"Only register in +registerRoutableDestination.");
+    NSAssert(!ZIKServiceRouteRegistry.registrationFinished, @"Only register in +registerRoutableDestination.");
+    [ZIKServiceRoute
+     makeRouteWithDestination:serviceClass makeDestination:makeDestination]
+    .registerIdentifier(identifier);
 }
 
 @end

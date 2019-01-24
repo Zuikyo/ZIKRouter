@@ -34,6 +34,7 @@ static CFMutableDictionaryRef _destinationToDefaultRouterMap;
 static CFMutableDictionaryRef _destinationToExclusiveRouterMap;
 static CFMutableDictionaryRef _identifierToRouterMap;
 static CFMutableDictionaryRef _adapterToAdapteeMap;
+static CFMutableDictionaryRef _identifierToDestinationMap;
 #if ZIKROUTER_CHECK
 static CFMutableDictionaryRef _check_routerToDestinationsMap;
 static CFMutableDictionaryRef _check_routerToDestinationProtocolsMap;
@@ -127,6 +128,13 @@ static NSMutableArray<Class> *_routerClasses;
         _adapterToAdapteeMap = CFDictionaryCreateMutable(kCFAllocatorDefault, 0, &kCFTypeDictionaryKeyCallBacks, NULL);
     });
     return _adapterToAdapteeMap;
+}
++ (CFMutableDictionaryRef)identifierToDestinationMap {
+    static dispatch_once_t onceToken;
+    dispatch_once(&onceToken, ^{
+        _identifierToDestinationMap = CFDictionaryCreateMutable(kCFAllocatorDefault, 0, &kCFTypeDictionaryKeyCallBacks, NULL);
+    });
+    return _identifierToDestinationMap;
 }
 + (CFMutableDictionaryRef)_check_routerToDestinationsMap {
 #if ZIKROUTER_CHECK

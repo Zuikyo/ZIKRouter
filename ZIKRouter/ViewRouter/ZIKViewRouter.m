@@ -4214,15 +4214,35 @@ static  ZIKViewRouterType *_Nullable _routerTypeToRegisteredView(Class viewClass
 
 + (void)registerViewProtocol:(Protocol<ZIKViewRoutable> *)viewProtocol forMakingView:(Class)viewClass {
     NSAssert(!ZIKViewRouteRegistry.registrationFinished, @"Only register in +registerRoutableDestination.");
-    [ZIKViewRouteRegistry registerDestinationProtocol:viewProtocol destination:viewClass];
+    [ZIKViewRouteRegistry registerDestinationProtocol:viewProtocol forMakingDestination:viewClass];
 }
 
 + (void)registerViewProtocol:(Protocol<ZIKViewRoutable> *)viewProtocol forMakingView:(Class)viewClass making:(id  _Nullable (^)(ZIKViewRouteConfiguration * _Nonnull, __kindof ZIKViewRouter<id, ZIKViewRouteConfiguration *> * _Nonnull))makeDestination {
     NSParameterAssert([viewClass conformsToProtocol:viewProtocol]);
     NSAssert(!ZIKViewRouteRegistry.registrationFinished, @"Only register in +registerRoutableDestination.");
-    [ZIKViewRoute
-     makeRouteWithDestination:viewClass makeDestination:(id  _Nullable (^)(ZIKPerformRouteConfiguration * _Nonnull, __kindof ZIKViewRouter<id, ZIKViewRouteConfiguration *> * _Nonnull))makeDestination]
-    .registerDestinationProtocol(viewProtocol);
+    ZIKViewRoute *route = [ZIKViewRoute makeRouteWithDestination:viewClass makeDestination:(id  _Nullable (^)(ZIKPerformRouteConfiguration * _Nonnull, __kindof ZIKViewRouter<id, ZIKViewRouteConfiguration *> * _Nonnull))makeDestination];
+    if ([viewClass isKindOfClass:[XXView class]]) {
+        route.makeSupportedRouteTypes(^ZIKBlockViewRouteTypeMask{
+            return ZIKBlockViewRouteTypeMaskViewDefault;
+        });
+    }
+    route.registerDestinationProtocol(viewProtocol);
+}
+
++ (void)registerIdentifier:(NSString *)identifier forMakingView:(Class)viewClass {
+    NSAssert(!ZIKViewRouteRegistry.registrationFinished, @"Only register in +registerRoutableDestination.");
+    [ZIKViewRouteRegistry registerIdentifier:identifier forMakingDestination:viewClass];
+}
+
++ (void)registerIdentifier:(NSString *)identifier forMakingView:(Class)viewClass making:(id  _Nullable (^)(ZIKViewRouteConfiguration * _Nonnull, __kindof ZIKViewRouter<id, ZIKViewRouteConfiguration *> * _Nonnull))makeDestination {
+    NSAssert(!ZIKViewRouteRegistry.registrationFinished, @"Only register in +registerRoutableDestination.");
+    ZIKViewRoute *route = [ZIKViewRoute makeRouteWithDestination:viewClass makeDestination:(id  _Nullable (^)(ZIKPerformRouteConfiguration * _Nonnull, __kindof ZIKViewRouter<id, ZIKViewRouteConfiguration *> * _Nonnull))makeDestination];
+    if ([viewClass isKindOfClass:[XXView class]]) {
+        route.makeSupportedRouteTypes(^ZIKBlockViewRouteTypeMask{
+            return ZIKBlockViewRouteTypeMaskViewDefault;
+        });
+    }
+    route.registerIdentifier(identifier);
 }
 
 @end

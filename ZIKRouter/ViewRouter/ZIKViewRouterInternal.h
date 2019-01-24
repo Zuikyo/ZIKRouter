@@ -237,6 +237,8 @@ extern ZIKAnyViewRouterType *_Nullable _ZIKViewRouterToView(Protocol *viewProtoc
 
 extern ZIKAnyViewRouterType *_Nullable _ZIKViewRouterToModule(Protocol *configProtocol);
 
+extern ZIKAnyViewRouterType *_Nullable _ZIKViewRouterToIdentifier(NSString *identifier);
+
 extern Protocol<ZIKViewRoutable> *_Nullable _routableViewProtocolFromObject(id object);
 
 extern Protocol<ZIKViewModuleRoutable> *_Nullable _routableViewModuleProtocolFromObject(id object);

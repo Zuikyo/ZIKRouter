@@ -67,13 +67,6 @@ ZIKAnyViewRouterType *_Nullable _ZIKViewRouterToIdentifier(NSString *identifier)
     if ([route isKindOfClass:[ZIKViewRouterType class]]) {
         return (ZIKViewRouterType *)route;
     }
-    [ZIKViewRouter notifyError_invalidProtocolWithAction:ZIKRouteActionToView
-                                        errorDescription:@"Didn't find view router for identifier: %@, this identifier was not registered.",identifier];
-    if (ZIKRouteRegistry.registrationFinished) {
-        NSCAssert1(NO, @"Didn't find view router for identifier: %@, this identifier was not registered.",identifier);
-    } else {
-        NSCAssert1(NO, @"❌❌❌❌warning: failed to get router for view identifier (%@), because manually registration is not finished yet! If there're modules running before registration is finished, and modules require some routers before you register them, then you should register those required routers earlier.",identifier);
-    }
     return nil;
 }
 
@@ -107,7 +100,18 @@ ZIKAnyViewRouterType *_Nullable _ZIKViewRouterToIdentifier(NSString *identifier)
 
 + (ZIKAnyViewRouterType *(^)(NSString *))toIdentifier {
     return ^(NSString *identifier) {
-        return _ZIKViewRouterToIdentifier(identifier);
+        ZIKAnyViewRouterType *routerType = _ZIKViewRouterToIdentifier(identifier);
+        if (routerType) {
+            return routerType;
+        }
+        [ZIKViewRouter notifyError_invalidProtocolWithAction:ZIKRouteActionToView
+                                            errorDescription:@"Didn't find view router for identifier: %@, this identifier was not registered.",identifier];
+        if (ZIKRouteRegistry.registrationFinished) {
+            NSCAssert1(NO, @"Didn't find view router for identifier: %@, this identifier was not registered.",identifier);
+        } else {
+            NSCAssert1(NO, @"❌❌❌❌warning: failed to get router for view identifier (%@), because manually registration is not finished yet! If there're modules running before registration is finished, and modules require some routers before you register them, then you should register those required routers earlier.",identifier);
+        }
+        return routerType;
     };
 }
 

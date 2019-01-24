@@ -227,6 +227,12 @@ static BOOL _registrationFinished = NO;
             }
 #endif
             route = CFDictionaryGetValue(self.destinationProtocolToRouterMap, (__bridge const void *)(adaptee));
+            if (route == nil) {
+                Class destinationClass = CFDictionaryGetValue(self.destinationProtocolToDestinationMap, (__bridge const void *)(adaptee));
+                if (destinationClass) {
+                    route = [self easyRouteForDestinationClass:destinationClass];
+                }
+            }
             adapter = adaptee;
         } while (route == nil);
     }
@@ -282,6 +288,12 @@ static BOOL _registrationFinished = NO;
         return nil;
     }
     id route = CFDictionaryGetValue(self.identifierToRouterMap, (CFStringRef)identifier);
+    if (route == nil) {
+        Class destinationClass = CFDictionaryGetValue(self.identifierToDestinationMap, (CFStringRef)identifier);
+        if (destinationClass) {
+            route = [self easyRouteForDestinationClass:destinationClass];
+        }
+    }
     return [self _routerTypeForObject:route];
 }
 
@@ -415,9 +427,18 @@ static __attribute__((always_inline)) void _registerIdentifierWithRoute(NSString
     CFDictionarySetValue([registry identifierToRouterMap], (CFStringRef)identifier, (__bridge const void *)(routeObject));
 }
 
-+ (void)registerDestinationProtocol:(Protocol *)destinationProtocol destination:(Class)destinationClass {
++ (void)registerDestinationProtocol:(Protocol *)destinationProtocol forMakingDestination:(Class)destinationClass {
+    NSParameterAssert([destinationClass isKindOfClass:[NSObject class]]);
     NSParameterAssert([destinationClass conformsToProtocol:destinationProtocol]);
+    NSAssert3(!CFDictionaryGetValue(self.destinationProtocolToDestinationMap, (__bridge const void *)destinationProtocol), @"Protocol (%@) already registered with another destination (%@), can't be registered with destination (%@).", NSStringFromProtocol(destinationProtocol), NSStringFromClass((Class)CFDictionaryGetValue(self.destinationProtocolToDestinationMap, (__bridge const void *)destinationProtocol)), NSStringFromClass(destinationClass));
     CFDictionarySetValue(self.destinationProtocolToDestinationMap, (__bridge const void *)destinationProtocol, (__bridge const void *)destinationClass);
+    CFSetAddValue(self.easyDestinationClasses, (__bridge const void *)destinationClass);
+}
+
++ (void)registerIdentifier:(NSString *)identifier forMakingDestination:(Class)destinationClass {
+    NSParameterAssert([destinationClass isKindOfClass:[NSObject class]]);
+    NSAssert3(!CFDictionaryGetValue(self.identifierToDestinationMap, (CFStringRef)identifier), @"Identifier (%@) already registered with another destination (%@), can't be registered with destination (%@).", identifier, NSStringFromClass((Class)CFDictionaryGetValue(self.identifierToDestinationMap, (CFStringRef)identifier)), NSStringFromClass(destinationClass));
+    CFDictionarySetValue(self.identifierToDestinationMap, (CFStringRef)identifier, (__bridge const void *)destinationClass);
     CFSetAddValue(self.easyDestinationClasses, (__bridge const void *)destinationClass);
 }
 
@@ -577,6 +598,10 @@ static __attribute__((always_inline)) void _registerIdentifierWithRoute(NSString
     return nil;
 }
 + (CFMutableDictionaryRef)adapterToAdapteeMap {
+    NSAssert(NO, @"%@ must override %@",self,NSStringFromSelector(_cmd));
+    return nil;
+}
++ (CFMutableDictionaryRef)identifierToDestinationMap {
     NSAssert(NO, @"%@ must override %@",self,NSStringFromSelector(_cmd));
     return nil;
 }

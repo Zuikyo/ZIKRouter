@@ -26,6 +26,8 @@ public extension ViewRouteConfig {
 public protocol ViewRouterExtension: class {
     static func register<Protocol>(_ routableView: RoutableView<Protocol>)
     static func register<Protocol>(_ routableViewModule: RoutableViewModule<Protocol>)
+    static func register<Protocol>(_ routableView: RoutableView<Protocol>, forMakingView viewClass: AnyClass)
+    static func register<Protocol>(_ routableView: RoutableView<Protocol>, forMakingView viewClass: AnyClass, making: @escaping (ViewRouteConfig, ZIKAnyViewRouter) -> Protocol?)
 }
 
 public extension ViewRouterExtension {
@@ -42,6 +44,31 @@ public extension ViewRouterExtension {
     static func register<Protocol>(_ routableViewModule: RoutableViewModule<Protocol>) {
         Registry.register(routableViewModule, forRouter: self)
     }
+    
+    /// Register view class with protocol without using any router subclass. The view will be created with `[[viewClass alloc] init]` when used. Use this if your view is very easy and don't need a router subclass.
+    ///
+    /// - Parameters:
+    ///   - routableView: A routabe entry carrying a protocol conformed by the destination.
+    ///   - viewClass: The view class.
+    static func register<Protocol>(_ routableView: RoutableView<Protocol>, forMakingView viewClass: AnyClass) {
+        Registry.register(routableView, forMaking: viewClass)
+    }
+    
+    /// Register view class with protocol without using any router subclass. The view will be created with the `making` block when used. Use this if your view is very easy and don't need a router subclass.
+    ///
+    /// - Parameters:
+    ///   - routableView: A routabe entry carrying a protocol conformed by the destination.
+    ///   - viewClass: The view class.
+    ///   - making: Block creating the view.
+    static func register<Protocol>(_ routableView: RoutableView<Protocol>, forMakingView viewClass: AnyClass, making: @escaping (ViewRouteConfig, ZIKAnyViewRouter) -> Protocol?) {
+        assert(_swift_typeIsTargetType(viewClass, Protocol.self), "When registering, destination (\(viewClass)) should conforms to protocol (\(Protocol.self))")
+        _ = ZIKAnyViewRoute.make(withDestination: viewClass) { (config, router) -> AnyObject? in
+            if let router = router as? ZIKAnyViewRouter, let destination = making(config, router) {
+                return destination as AnyObject
+            }
+            return nil
+        }.register(routableView)
+    }
 }
 
 extension ZIKViewRouter: ViewRouterExtension {
@@ -54,6 +81,8 @@ extension ZIKViewRouter: ViewRouterExtension {
 public protocol ServiceRouterExtension: class {
     static func register<Protocol>(_ routableService: RoutableService<Protocol>)
     static func register<Protocol>(_ routableServiceModule: RoutableServiceModule<Protocol>)
+    static func register<Protocol>(_ routableService: RoutableService<Protocol>, forMakingService serviceClass: AnyClass)
+    static func register<Protocol>(_ routableService: RoutableService<Protocol>, forMakingService serviceClass: AnyClass, making: @escaping (PerformRouteConfig, ZIKAnyServiceRouter) -> Protocol?)
 }
 
 public extension ServiceRouterExtension {
@@ -69,6 +98,34 @@ public extension ServiceRouterExtension {
     /// - Parameter routableServiceModule: A routabe entry carrying a module config protocol conformed by the custom configuration of the router.
     static func register<Protocol>(_ routableServiceModule: RoutableServiceModule<Protocol>) {
         Registry.register(routableServiceModule, forRouter: self)
+    }
+    
+    /// Register service class with protocol without using any router subclass. The service will be created with `[[serviceClass alloc] init]` when used. Use this if your service is very easy and don't need a router subclass.
+    ///
+    /// - Note:
+    /// You should not use this method if the class is pure swift class, or it has designated initializer.
+    ///
+    /// - Parameters:
+    ///   - routableService: A routabe entry carrying a protocol conformed by the destination.
+    ///   - serviceClass: The service class. Should be subclass of NSObject.
+    static func register<Protocol>(_ routableService: RoutableService<Protocol>, forMakingService serviceClass: AnyClass) {
+        Registry.register(routableService, forMaking: serviceClass)
+    }
+    
+    /// Register service class with protocol without using any router subclass. The service will be created with the `making` block when used. Use this if your service is very easy and don't need a router subclass.
+    ///
+    /// - Parameters:
+    ///   - routableService: A routabe entry carrying a protocol conformed by the destination.
+    ///   - serviceClass: The service class.
+    ///   - making: Block creating the service.
+    static func register<Protocol>(_ routableService: RoutableService<Protocol>, forMakingService serviceClass: AnyClass, making: @escaping (PerformRouteConfig, ZIKAnyServiceRouter) -> Protocol?) {
+        assert(_swift_typeIsTargetType(serviceClass, Protocol.self), "When registering, destination (\(serviceClass)) should conforms to protocol (\(Protocol.self))")
+        _ = ZIKAnyServiceRoute.make(withDestination: serviceClass) { (config, router) -> AnyObject? in
+            if let router = router as? ZIKAnyServiceRouter, let destination = making(config, router) {
+                return destination as AnyObject
+            }
+            return nil
+        }.register(routableService)
     }
 }
 
@@ -132,6 +189,7 @@ public protocol ViewRouteExtension: class {
 public extension ViewRouteExtension {
     
     #if swift(>=4.1)
+    
     /// Register pure Swift protocol or objc protocol for your view with this ZIKViewRoute.
     ///
     /// - Parameter routableView: A routabe entry carrying a protocol conformed by the destination of the router.
@@ -149,7 +207,9 @@ public extension ViewRouteExtension {
         Registry.register(routableViewModule, forRoute: self)
         return self
     }
+    
     #else
+    
     func register<Protocol>(_ routableView: RoutableView<Protocol>) {
         Registry.register(routableView, forRoute: self)
     }
@@ -161,6 +221,7 @@ public extension ViewRouteExtension {
     func register<Protocol>(_ routableViewModule: RoutableViewModule<Protocol>) {
         Registry.register(routableViewModule, forRoute: self)
     }
+    
     #endif
 }
 
@@ -184,6 +245,7 @@ public protocol ServiceRouteExtension: class {
 public extension ServiceRouteExtension {
     
     #if swift(>=4.1)
+    
     /// Register pure Swift protocol or objc protocol for your service with this ZIKServiceRoute.
     ///
     /// - Parameter routableService: A routabe entry carrying a protocol conformed by the destination of the router. Can be pure Swift protocol or objc protocol.
@@ -201,7 +263,9 @@ public extension ServiceRouteExtension {
         Registry.register(routableServiceModule, forRoute: self)
         return self
     }
+    
     #else
+    
     /// Register pure Swift protocol or objc protocol for your service with this ZIKServiceRoute.
     ///
     /// - Parameter routableService: A routabe entry carrying a protocol conformed by the destination of the router. Can be pure Swift protocol or objc protocol.
@@ -215,6 +279,7 @@ public extension ServiceRouteExtension {
     func register<Protocol>(_ routableServiceModule: RoutableServiceModule<Protocol>) {
         Registry.register(routableServiceModule, forRoute: self)
     }
+    
     #endif
 }
 
