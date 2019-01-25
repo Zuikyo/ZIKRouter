@@ -20,6 +20,16 @@ NS_ASSUME_NONNULL_BEGIN
  Abstract superclass for view router.
  Subclass it and override those methods in `ZIKRouterInternal` and `ZIKViewRouterInternal` to make router of your view.
  
+ How to create router for LoginViewController:
+ 
+ 1. Declare a routable protocol for LoginViewController:
+ @code
+ // LoginViewInput inherits from ZIKViewRoutable, and conformed by LoginViewController
+ @protocol LoginViewInput <ZIKViewRoutable>
+ @end
+ @endcode
+ 
+ 2. Create router subclass for LoginViewController:
  @code
  @import ZIKRouter;
  @interface LoginViewRouter: ZIKViewRouter
@@ -48,7 +58,7 @@ NS_ASSUME_NONNULL_BEGIN
  [ZIKViewRouter registerViewProtocol:ZIKRoutable(LoginViewInput) forMakingView:[LoginViewController class]];
  @endcode
  
- Then you can use the module:
+ Then you can show the login view module:
  @code
  // Show the view controller
  [ZIKRouterToView(LoginViewInput)
@@ -56,6 +66,11 @@ NS_ASSUME_NONNULL_BEGIN
     preparation:^(id<LoginViewInput> destination) {
         // Prepare the view controller
  }];
+ @endcode
+ 
+ or just get the instance:
+ @code
+ id<LoginViewInput> destination = [ZIKRouterToView(LoginViewInput) makeDestination];
  @endcode
  */
 @interface ZIKViewRouter<__covariant Destination, __covariant RouteConfig: ZIKViewRouteConfiguration *> : ZIKRouter<Destination, RouteConfig, ZIKViewRemoveConfiguration *>
@@ -336,7 +351,7 @@ typedef void(^ZIKViewRouteGlobalErrorHandler)(__kindof ZIKViewRouter * _Nullable
 + (void)registerViewProtocol:(Protocol<ZIKViewRoutable> *)viewProtocol;
 
 /**
- Register a module config protocol conformed by the router's default route configuration, then use ZIKRouterToModule() to get the router class. In Swift, use `register(RoutableViewModule<ModuleProtocol>())` in ZRouter instead.
+ Register a module config protocol conformed by the router's default route configuration, then use ZIKRouterToViewModule() to get the router class. In Swift, use `register(RoutableViewModule<ModuleProtocol>())` in ZRouter instead.
  
  @param configProtocol The protocol conformed by default route configuration of this router class. Should inherit from ZIKViewModuleRoutable. Use macro `ZIKRoutable` to wrap the parameter.
  */
@@ -360,6 +375,8 @@ typedef void(^ZIKViewRouteGlobalErrorHandler)(__kindof ZIKViewRouter * _Nullable
  [ZIKViewRouter registerViewProtocol:ZIKRoutable(ViewProtocol) forMakingView:[ViewController class]];
  @endcode
  
+ @warning
+ You can't register a pure swift class or swift class which has custom designated initializer, `[[viewClass alloc] init]` will crash.
  For swift class, you can use `registerViewProtocol:forMakingView:making:` instead.
  
  @param viewProtocol The protocol conformed by view. Should inherit from ZIKViewRoutable. Use macro `ZIKRoutable` to wrap the parameter.

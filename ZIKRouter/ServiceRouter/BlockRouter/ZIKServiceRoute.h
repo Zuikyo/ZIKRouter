@@ -29,7 +29,7 @@ NS_ASSUME_NONNULL_BEGIN
 /// Register a service protocol that all services registered with the router conforming to, then use ZIKRouterToService() to get the router class. In Swift, use `register(RoutableService<ServiceProtocol>())` in ZRouter instead. See +registerServiceProtocol:.
 @property (nonatomic, readonly) ZIKServiceRoute<Destination, RouteConfig> *(^registerDestinationProtocol)(Protocol<ZIKServiceRoutable> *destinationProtocol);
 
-/// Register a module config protocol the router's default configuration conforms, then use ZIKRouterToModule() to get the router class. In Swift, use `register(RoutableServiceModule<ModuleProtocol>())` in ZRouter instead. See +registerModuleProtocol:.
+/// Register a module config protocol the router's default configuration conforms, then use ZIKRouterToServiceModule() to get the router class. In Swift, use `register(RoutableServiceModule<ModuleProtocol>())` in ZRouter instead. See +registerModuleProtocol:.
 @property (nonatomic, readonly) ZIKServiceRoute<Destination, RouteConfig> *(^registerModuleProtocol)(Protocol<ZIKServiceModuleRoutable> *moduleConfigProtocol);
 
 /// Register a unique identifier for this route.

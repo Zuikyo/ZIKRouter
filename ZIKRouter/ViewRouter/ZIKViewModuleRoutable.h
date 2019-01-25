@@ -13,9 +13,94 @@
 
 /**
  Protocols inheriting from ZIKViewModuleRoutable can be used to fetch view router with ZIKRouterToViewModule(), and the router's configuration certainly conforms to the protocol. See +[ZIKViewRouter toModule].
- @discussion
- Why do you need a module config protocol? When a view module is not only a single UIViewController, but also with other services and models, then you can't prepare the module's services or passing any models through a simple view protocol. Because the UIViewController should not access to other services or models in the module. Now with ZIKViewModuleRoutable, you can configure the router's default configuration, then configure the module's services and models with the configuration in the router.
  
+ @discussion
+ ZIKViewModuleRoutable is for:
+ 
+ 1. Passing those parameters not belonging to the destination, but belonging to other components in the module. Such as models which doesn't belonging to view controller.
+ 
+ 2. Passing those required parameters when creating destination with custom initializer.
+ 
+ How to create router for LoginViewController with custom configuration:
+ 
+ 1. Declare a routable module protocol for those parameters for LoginViewController:
+ @code
+ // LoginViewModuleInput inherits from ZIKViewModuleRoutable
+ @protocol LoginViewModuleInput <ZIKViewModuleRoutable>
+ - (void)constructWithAccount:(NSString *)account;
+ // Return the destination
+ @property (nonatomic, copy, nullable) void(^makingLoginDestinationHandler)(id<LoginViewInput> destination);
+ @end
+ @endcode
+ 
+ 2. Create router subclass for LoginViewController:
+ @code
+ @import ZIKRouter;
+ @interface LoginViewRouter: ZIKViewRouter
+ @end
+ 
+ @import ZIKRouter.Internal;
+ 
+ // Custom configuration conforming to LoginViewModuleInput
+ // If you don't wan't to use subclass, you can use category to let ZIKViewRouteConfiguration conform to LoginViewModuleInput
+ @interface LoginViewModuleConfiguration: ZIKViewRouteConfiguration <LoginViewModuleInput>
+ @property (nonatomic, copy, nullable) NSString *account;
+ @property (nonatomic, copy, nullable) void(^makingLoginDestinationHandler)(id<LoginViewInput> destination);
+ @end
+ 
+ @implementation LoginViewModuleConfiguration
+ - (void)constructWithAccount:(NSString *)account {
+    self.account = account;
+ }
+ @end
+ 
+ DeclareRoutableView(LoginViewController, LoginViewRouter)
+ @implementation LoginViewRouter
+ 
+ + (void)registerRoutableDestination {
+    [self registerView:[LoginViewController class]];
+    [self registerModuleProtocol:ZIKRoutable(LoginViewModuleInput)];
+ }
+ 
+ // Use custom configuration for this router
+ + (ZIKViewRouteConfiguration *)defaultConfiguration {
+    return [[LoginViewModuleConfiguration alloc] init];
+ }
+ 
+ - (id<LoginViewInput>)destinationWithConfiguration:(LoginViewModuleConfiguration *)configuration {
+    if (configuration.account == nil) {
+        return nil;
+    }
+    // LoginViewController requires account parameter when initializing.
+    LoginViewController *destination = [[LoginViewController alloc] initWithAccount:configuration.account];
+    return destination;
+ }
+ 
+ - (void)didFinishPrepareDestination:(id<LoginViewInput>)destination configuration:(LoginViewModuleConfiguration *)configuration {
+    // Give the destination to the caller
+    if (configuration.makingLoginDestinationHandler) {
+        configuration.makingLoginDestinationHandler(destination);
+        configuration.makingLoginDestinationHandler = nil;
+    }
+ }
+ 
+ @end
+ @endcode
+ 
+ Then you can show the login view module:
+ @code
+ // Show the view controller
+ [ZIKRouterToViewModule(LoginViewModuleInput)
+    performPath:ZIKViewRoutePath.pushFrom(self)
+    configuring:^(ZIKViewRouteConfiguration<LoginViewModuleInput> *config) {
+        [config constructWithAccount:@"account"];
+        config.makingLoginDestinationHandler = ^(id<LoginViewInput> destination) {
+            // Did get the destination
+        };
+ }];
+ @endcode
+ 
+ @note
  It's safe to use objc protocols inheriting from ZIKViewModuleRoutable with ZIKRouterToViewModule() and won't get nil. When ZIKROUTER_CHECK is enabled, ZIKViewRouter will validate all ZIKViewModuleRoutable protocols when registration is finished, then we can make sure all routable module protocols have been registered with a router.
  */
 @protocol ZIKViewModuleRoutable

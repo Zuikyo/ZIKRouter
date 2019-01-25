@@ -35,7 +35,7 @@ typedef NS_OPTIONS(NSInteger, ZIKBlockViewRouteTypeMask) {
 /// Register a view protocol that all views registered with the router conforming to, then use ZIKRouterToView() to get the router class. In Swift, use `register(RoutableView<ViewProtocol>())` in ZRouter instead. See +registerViewProtocol:.
 @property (nonatomic, readonly) ZIKViewRoute<Destination, RouteConfig> *(^registerDestinationProtocol)(Protocol<ZIKViewRoutable> *destinationProtocol);
 
-/// Register a module config protocol conformed by the router's default route configuration, then use ZIKRouterToModule() to get the router class. In Swift, use `register(RoutableViewModule<ModuleProtocol>())` in ZRouter instead. See +registerModuleProtocol:.
+/// Register a module config protocol conformed by the router's default route configuration, then use ZIKRouterToViewModule() to get the router class. In Swift, use `register(RoutableViewModule<ModuleProtocol>())` in ZRouter instead. See +registerModuleProtocol:.
 @property (nonatomic, readonly) ZIKViewRoute<Destination, RouteConfig> *(^registerModuleProtocol)(Protocol<ZIKViewModuleRoutable> *moduleConfigProtocol);
 
 /// Register a identifier with this route.

@@ -18,6 +18,16 @@ NS_ASSUME_NONNULL_BEGIN
 /**
  Abstract superclass of service router for discovering service and injecting dependencies with registered protocol. Subclass it and override those methods in `ZIKRouterInternal` and `ZIKServiceRouterInternal` to make router of your service.
  
+ How to create router for LoginService:
+ 
+ 1. Declare a routable protocol for LoginService:
+ @code
+ // LoginServiceInput inherits from ZIKServiceRoutable, and conformed by LoginService
+ @protocol LoginServiceInput <ZIKServiceRoutable>
+ @end
+ @endcode
+ 
+ 2. Create router subclass for LoginService:
  @code
  // Make router subclass for your module
  @import ZIKRouter;
@@ -110,7 +120,7 @@ typedef void(^ZIKServiceRouteGlobalErrorHandler)(__kindof ZIKServiceRouter * _Nu
 + (void)registerServiceProtocol:(Protocol<ZIKServiceRoutable> *)serviceProtocol;
 
 /**
- Register a module config protocol the router's default configuration conforms, then use ZIKRouterToModule() to get the router class. In Swift, use `register(RoutableServiceModule<ModuleProtocol>())` in ZRouter instead.
+ Register a module config protocol the router's default configuration conforms, then use ZIKRouterToServiceModule() to get the router class. In Swift, use `register(RoutableServiceModule<ModuleProtocol>())` in ZRouter instead.
  
  When the service module is not only a single service class, but also other internal services, and you can't prepare the module with a simple service protocol, then you need a module config protocol, and let router prepare the module inside..
  
@@ -136,6 +146,8 @@ typedef void(^ZIKServiceRouteGlobalErrorHandler)(__kindof ZIKServiceRouter * _Nu
  [ZIKServiceRouter registerServiceProtocol:ZIKRoutable(ServiceProtocol) forMakingService:[Service class]];
  @endcode
  
+ @warning
+ You can't register a pure swift class or swift class which has custom designated initializer, `[[serviceClass alloc] init]` will crash.
  For swift class, you can use `registerServiceProtocol:forMakingService:making:` instead.
 
  @param serviceProtocol The protocol conformed by service. Should inherit from ZIKServiceRoutable. Use macro `ZIKRoutable` to wrap the parameter.
