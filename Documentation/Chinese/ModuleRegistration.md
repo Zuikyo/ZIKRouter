@@ -53,23 +53,35 @@ class EditorViewRouter: ZIKAnyViewRouter {
 
 ### module protocol
 
-如果 destination 是属于一个复杂模块，有多个组件类，而这些组件类的配置无法全部在一个 destination 类上进行，则应该使用 module config protocol，让 router 在内部初始化各个组件。例如需要向一个 VIPER 模块传递 model 对象，此时 destination 类是 VIPER 中的 View，而 View 在设计上不能接触到 model。此时就可以用 module config protocol 配置 router 的configuration，再在 router 内部用 configuration 去配置模块内的各个部分。
+如果 destination 类需要用自定义初始化方法创建，或者 destination 是属于一个复杂模块，有多个组件类，而这些组件类的配置无法全部在一个 destination 类上进行，则应该使用 module config protocol，让调用者把参数保存在 configuration 上，再让 router 在内部初始化各个组件。
+
+例如需要向一个模块传递 model 对象，此时 destination 作为 View，在设计上不能接触到 model。此时就可以用 module config protocol 配置 router 的 configuration，再在 router 内部用 configuration 去配置模块内的各个部分。
+
+Router 实现代码：
 
 ```swift
 ///模块配置协议
-protocol EditorModuleConfig {
+protocol EditorModuleInput {
+    //传给 view 的参数
+    var viewData: Any?
+    //其他数据
     var noteModel: Note?
+    //同时声明 destination 的接口；把 destination 传递给外部
+    var makingDestinationHandler: ((EditorViewInput) -> Void)?
 }
-///用自定义的 ZIKRouteConfiguration 子类保存模块配置
-class EditorModuleConfiguration: ZIKViewRouteConfiguration, EditorModuleConfig {
-    var noteModel: Note?
+///用自定义的 ZIKViewRouteConfiguration 子类保存模块配置
+///如果不想用子类，也可以用 category 对 ZIKViewRouteConfiguration 进行扩展，让其实现 EditorModuleInput
+class EditorModuleConfiguration: ZIKViewRouteConfiguration, EditorModuleInput {
+    var viewData: Any?
+    var noteModel: Note?    
+    var makingDestinationHandler: ((EditorViewInput) -> Void)?
 }
 
 class EditorViewRouter: ZIKViewRouter<EditorViewController, EditorModuleConfiguration> {
     //注册当前 Router 所管理的 view 和 protocol
     override class func registerRoutableDestination() {
         registerView(EditorViewController.self)
-        register(RoutableViewModule<EditorModuleConfig>())
+        register(RoutableViewModule<EditorModuleInput>())
     }
     //使用自定义模块配置
     override defaultConfiguration() -> EditorModuleConfiguration {
@@ -78,8 +90,8 @@ class EditorViewRouter: ZIKViewRouter<EditorViewController, EditorModuleConfigur
     
     //返回需要获取的目的模块
     override func destination(with configuration: EditorModuleConfiguration) -> EditorViewController? {
-        let sb = UIStoryboard.init(name: "Main", bundle: nil)
-        let destination = sb.instantiateViewController(withIdentifier: "EditorViewController") as! EditorViewController
+        //外部传入参数，用于调用 destination 的自定义初始化方法
+        let destination = EditorViewController(data: configuration.viewData)
         return destination
     }
     
@@ -100,9 +112,133 @@ class EditorViewRouter: ZIKViewRouter<EditorViewController, EditorModuleConfigur
         presenter.view = view
         view.presenter = presenter
     }
+    
+    override func didFinishPrepareDestination(_ destination: EditorViewController, configuration: EditorModuleConfiguration) {
+        //把 destination 传递给使用者
+        if let makingDestinationHandler = configuration.makingDestinationHandler {
+        		makingDestinationHandler(destination)
+        		configuration.makingDestinationHandler = nil
+        }
+    }
 }
 
 ```
+
+<details><summary>Objective-C Sample</summary>
+
+```objective-c
+@protocol EditorModuleInput <ZIKViewRoutable>
+///传递给 view 的参数
+@property (nonatomic, copy, nullable) id viewData;
+///其他数据
+@property (nonatomic, copy, nullable) Note *noteModel;
+///同时声明 destination 的接口；把 destination 传递给外部
+@property (nonatomic, copy, nullable) void(^makingLoginDestinationHandler)(id<EditorViewInput> destination);
+@end
+
+```
+
+```objective-c
+EditorViewRouter.h
+
+@interface EditorViewRouter: ZIKViewRouter
+@end
+```
+
+```objective-c
+//EditorViewRouter.m
+ 
+ //创建 configuration 的子类，遵守 EditorModuleInput
+ //如果你不想创建子类，可以用 category 扩展让ZIKViewRouteConfiguration 遵守 EditorModuleInput
+ @interface EditorModuleConfiguration: ZIKViewRouteConfiguration <EditorModuleInput>
+ @property (nonatomic, copy, nullable) id viewData;
+ @property (nonatomic, copy, nullable) Note *noteModel;
+ @property (nonatomic, copy, nullable) void(^makingLoginDestinationHandler)(id<EditorViewInput> destination);
+ @end
+ 
+ @implementation EditorModuleConfiguration
+ @end
+ 
+ DeclareRoutableView(LoginViewController, LoginViewRouter)
+ @implementation EditorViewRouter
+ 
+ + (void)registerRoutableDestination {
+    [self registerView:[EditorViewController class]];
+    [self registerModuleProtocol:ZIKRoutable(EditorModuleInput)];
+ }
+ 
+ // Use custom configuration for this router
+ + (ZIKViewRouteConfiguration *)defaultConfiguration {
+    return [[EditorModuleConfiguration alloc] init];
+ }
+ 
+ - (id<EditorViewInput>)destinationWithConfiguration:(EditorModuleConfiguration *)configuration {
+    //外部传入参数，用于调用 destination 的自定义初始化方法
+    EditorViewController *destination = [[EditorViewController alloc] initWithData:configuration.viewData];
+    return destination;
+ }
+ 
+ - (void)prepareDestination:(LoginViewController *)destination configuration:(EditorModuleConfiguration *)configuration {
+    //配置 VIPER 模块
+    LoginViewController *view = destination;
+    if (view.presenter != nil) {
+    	return;
+    }
+    EditorPresenter *presenter = [[EditorPresenter alloc] init];
+    EditorInteractor *interactor = [[EditorInteractor alloc] init];
+        
+    // 把 model 传递给 interactor
+    interactor.note = configuration.noteModel;
+        
+    presenter.interactor = interactor;
+    presenter.view = view;
+    view.presenter = presenter;
+}
+ 
+ - (void)didFinishPrepareDestination:(id<EditorViewInput>)destination configuration:(EditorModuleConfiguration *)configuration {
+    //把 destination 传递给外部
+    if (configuration.makingDestinationHandler) {
+        configuration.makingDestinationHandler(destination);
+        configuration.makingDestinationHandler = nil;
+    }
+ }
+ 
+ @end
+```
+
+</details>
+
+接着就可以用`EditorModuleInput`获取模块：
+
+```swift
+Router.perform(
+       to: RoutableViewModule<EditorModuleInput>(),
+       path: .push(from: self),
+       preparation: { module in
+            module.viewData = viewData
+            module.noteModel = noteModel
+            module.makingDestinationHandler = { destination in
+                //获取到 destination (EditorViewInput)
+            }
+        })
+
+```
+
+<details><summary>Objective-C Sample</summary>
+
+```objective-c
+[ZIKRouterToViewModule(EditorModuleInput)
+    performPath:ZIKViewRoutePath.pushFrom(self)
+    configuring:^(ZIKViewRouteConfiguration<EditorModuleInput> *config) {
+        config.viewData = viewData;
+        config.noteModel = noteModel;
+        config.makingDestinationHandler = ^(id<EditorViewInput> destination) {
+            //获取到 destination
+        };
+}];
+```
+
+</details>
 
 ## 字符串 Identifier 注册
 

@@ -6,9 +6,8 @@
 
 ![](https://img.shields.io/cocoapods/p/ZIKRouter.svg?style=flat)
 ![](https://img.shields.io/badge/language-objectivec-blue.svg)
-![ZIKRouter](https://img.shields.io/cocoapods/v/ZIKRouter.svg?style=flat)
 ![](https://img.shields.io/badge/language-swift-orange.svg)
-![ZRouter](https://img.shields.io/cocoapods/v/ZRouter.svg?style=flat)
+![ZIKRouter](https://img.shields.io/cocoapods/v/ZIKRouter.svg?style=flat)
 ![Carthage compatible](https://img.shields.io/badge/Carthage-compatible-4BC51D.svg?style=flat)
 ![license](https://img.shields.io/github/license/mashape/apistatus.svg)
 
@@ -42,15 +41,14 @@ View router 将 UIKit / AppKit 中的所有界面跳转方式封装成一个统�
 - [x] **Declare routable protocol. There're compile-time checking and runtime checking to make reliable routing**
 - [x] **Use different required protocol and provided protocol inside module and module's user to make thorough decouple**
 - [x] **Decouple modules and add compatible interfaces with adapter**
+- [x] **Support storyboard. UIViewController / NSViewController and UIView / NSView from a segue can auto create it's registered router**
 - [x] Encapsulate navigation methods in UIKit and AppKit (push, present modally, present as popover present as sheet, segue, show, showDetail, addChildViewController, addSubview) and custom transitions into one method
 - [x] Remove an UIViewController/UIView or unload a module through one method, without using pop、dismiss、removeFromParentViewController、removeFromSuperview in different situation. Router can choose the proper method
-- [x] **Support storyboard. UIViewController / NSViewController and UIView / NSView from a segue can auto create it's registered router**
 - [x] Error checking for view transition
 - [x] AOP for view transition
 - [x] Detect memory leaks
 - [x] Send custom events to router
-- [x] Auto register all routers, or manually register each router
-- [x] Add route with router subclasses, or with blocks
+- [x] Auto register all routers
 
 ## Table of Contents
 
@@ -162,9 +160,14 @@ class NoteEditorViewController: UIViewController, NoteEditorInput {
 
 </details>
 
+
 There're 2 steps to create route for your module.
 
 ### 1. Create Router
+
+To make your class become modular, you need to create router for your module. You don't need to modify the module's code. That will reduce the cost for refactoring existing modules.
+
+#### 1.1 Router Subclass
 
 Create router subclass for your module:
 
@@ -182,6 +185,7 @@ class NoteEditorViewRouter: ZIKViewRouter<NoteEditorViewController, ViewRouteCon
     
     // Return the destination module
     override func destination(with configuration: ViewRouteConfig) -> NoteEditorViewController? {
+        // In configuration, you can get parameters from the caller for creating the instance
         let destination: NoteEditorViewController? = ... /// instantiate your view controller
         return destination
     }
@@ -215,7 +219,8 @@ class NoteEditorViewRouter: ZIKViewRouter<NoteEditorViewController, ViewRouteCon
 
 // Return the destination module
 - (NoteEditorViewController *)destinationWithConfiguration:(ZIKViewRouteConfiguration *)configuration {
-    NoteEditorViewController *destination = ... /// instantiate your view controller
+	// In configuration, you can get parameters from the caller for creating the instance 
+    NoteEditorViewController *destination = ... // instantiate your view controller
     return destination;
 }
 
@@ -230,6 +235,47 @@ class NoteEditorViewRouter: ZIKViewRouter<NoteEditorViewController, ViewRouteCon
 
 Read the documentation for more details and more methods to override.
 
+#### 1.2 Simple Router
+
+If your module is very simple and don't need a router subclass, you can just register the class in a simpler way:
+
+```swift
+ZIKAnyViewRouter.register(RoutableView<NoteEditorInput>(), forMakingView: NoteEditorViewController.self)
+```
+
+<details><summary>Objective-C Sample</summary>
+
+```objectivec
+[ZIKViewRouter registerViewProtocol:ZIKRoutable(NoteEditorInput) forMakingView:[NoteEditorViewController class]];
+```
+
+</details>
+
+or with custom creating block:
+
+```swift
+ZIKAnyViewRouter.register(RoutableView<NoteEditorInput>(), 
+                 forMakingView: NoteEditorViewController.self) { (config, router) -> NoteEditorInput? in
+                     NoteEditorViewController *destination = ... // instantiate your view controller
+                     return destination;
+        }
+
+```
+
+<details><summary>Objective-C Sample</summary>
+
+```objectivec
+[ZIKViewRouter
+    registerViewProtocol:ZIKRoutable(NoteEditorInput)
+    forMakingView:[NoteEditorViewController class]
+    making:^id _Nullable(ZIKViewRouteConfiguration *config, ZIKViewRouter *router) {
+        NoteEditorViewController *destination = ... // instantiate your view controller
+        return destination;
+ }];
+```
+
+</details>
+
 ### 2. Declare Routable Type
 
 The declaration is for checking routes at compile time, and supporting storyboard.
@@ -242,7 +288,6 @@ extension NoteEditorViewController: ZIKRoutableView {
 
 // Declare NoteEditorInput is routable
 // This means you can use NoteEditorInput to fetch router
-// If you use an undeclared protocol, there will be compile time error
 extension RoutableView where Protocol == NoteEditorInput {
     init() { self.init(declaredProtocol: Protocol.self) }
 }
@@ -266,6 +311,8 @@ DeclareRoutableView(NoteEditorViewController, NoteEditorViewRouter)
 
 </details>
 
+If you use an undeclared protocol for routing, there will be compile time error.
+
 Now you can get and show `NoteEditorViewController` with router.
 
 ### View Router
@@ -277,7 +324,7 @@ Transition to editor view directly:
 ```swift
 class TestViewController: UIViewController {
 
-    //Transition to editor view directly
+    // Transition to editor view directly
     func showEditorDirectly() {
         Router.perform(to: RoutableView<NoteEditorInput>(), path: .push(from: self))
     }
@@ -290,7 +337,7 @@ class TestViewController: UIViewController {
 @implementation TestViewController
 
 - (void)showEditorDirectly {
-    //Transition to editor view directly
+    // Transition to editor view directly
     [ZIKRouterToView(NoteEditorInput) performPath:ZIKViewRoutePath.pushFrom(self)];
 }
 
@@ -324,25 +371,25 @@ Transition to editor view, and prepare it before transition:
 ```swift
 class TestViewController: UIViewController {
 
-    //Transition to editor view, and prepare the destination with NoteEditorInput
+    // Transition to editor view, and prepare the destination with NoteEditorInput
     func showEditor() {
         Router.perform(
             to: RoutableView<NoteEditorInput>(),
             path: .push(from: self),
             configuring: { (config, _) in
-                //Route config
-                config.successHandler = { destination in
-                    //Transition succeed
-                }
-                config.errorHandler = { (action, error) in
-                    //Transition failed
-                }
-                //Prepare the destination before transition
+                // Route config
+                // Prepare the destination before transition
                 config.prepareDestination = { [weak self] destination in
                     //destination is inferred as NoteEditorInput
                     destination.delegate = self
                     destination.constructForCreatingNewNote()
                 }
+                config.successHandler = { destination in
+                    // Transition succeed
+                }
+                config.errorHandler = { (action, error) in
+                    // Transition failed
+                }                
         })
     }
 }
@@ -354,21 +401,21 @@ class TestViewController: UIViewController {
 @implementation TestViewController
 
 - (void)showEditor {
-    //Transition to editor view, and prepare the destination with NoteEditorInput
+    // Transition to editor view, and prepare the destination with NoteEditorInput
     [ZIKRouterToView(NoteEditorInput)
 	     performPath:ZIKViewRoutePath.pushFrom(self)
 	     configuring:^(ZIKViewRouteConfig *config) {
-	         //Route config
-	         //Prepare the destination before transition
+	         // Route config
+	         // Prepare the destination before transition
 	         config.prepareDestination = ^(id<NoteEditorInput> destination) {
 	             destination.delegate = self;
 	             [destination constructForCreatingNewNote];
 	         };
 	         config.successHandler = ^(id<NoteEditorInput> destination) {
-	             //Transition is completed
+	             // Transition is completed
 	         };
 	         config.errorHandler = ^(ZIKRouteAction routeAction, NSError * error) {
-	             //Transition failed
+	             // Transition failed
 	         };
 	     }];
 }
@@ -380,6 +427,22 @@ class TestViewController: UIViewController {
 
 For more detail, read [Perform Route](Documentation/English/PerformRoute.md).
 
+#### Make Destination
+
+If you don't wan't to show a view, but only need to get instance of the module, you can use `makeDestination`:
+
+```swift
+// destination is inferred as NoteEditorInput
+let destination = Router.makeDestination(to: RoutableView<NoteEditorInput>())
+```
+
+<details><summary>Objective-C Sample</summary>
+
+```objectivec
+id<NoteEditorInput> destination = [ZIKRouterToView(NoteEditorInput) makeDestination];
+```
+</details>
+
 #### Remove
 
 You can remove the view by `removeRoute`, without using pop / dismiss / removeFromParentViewController / removeFromSuperview:
@@ -389,7 +452,7 @@ class TestViewController: UIViewController {
     var router: DestinationViewRouter<NoteEditorInput>?
     
     func showEditor() {
-        //Hold the router
+        // Hold the router
         router = Router.perform(to: RoutableView<NoteEditorInput>(), path: .push(from: self))
     }
     
@@ -421,7 +484,7 @@ class TestViewController: UIViewController {
         router.removeRoute(configuring: { (config) in
 	            config.animated = true
 	            config.prepareDestination = { destination in
-	                //Use destination before remove it
+	                // Use destination before remove it
 	            }
             })
         router = nil
@@ -438,7 +501,7 @@ class TestViewController: UIViewController {
 @implementation TestViewController
 
 - (void)showEditorDirectly {
-    //Hold the router
+    // Hold the router
     self.router = [ZIKRouterToView(NoteEditorInput) performPath:ZIKViewRoutePath.pushFrom(self)];
 }
 
@@ -470,7 +533,7 @@ class TestViewController: UIViewController {
     [self.router removeRouteWithConfiguring:^(ZIKViewRemoveConfiguration *config) {
         config.animated = YES;
         config.prepareDestination = ^(UIViewController<NoteEditorInput> *destination) {
-            //Use destination before remove it
+            // Use destination before remove it
         };
     }];
     self.router = nil;
@@ -490,7 +553,7 @@ You can use another protocol to get router, as long as the protocol provides the
 Required protocol used by the user:
 
 ```swift
-///Required protocol to use editor module
+/// Required protocol to use editor module
 protocol RequiredNoteEditorInput: class {
     weak var delegate: EditorDelegate? { get set }
     func constructForCreatingNewNote()
@@ -500,7 +563,7 @@ protocol RequiredNoteEditorInput: class {
 <details><summary>Objective-C Sample</summary>
   
 ```objectivec
-///Required protocol to use editor module
+/// Required protocol to use editor module
 @protocol RequiredNoteEditorInput <ZIKViewRoutable>
 @property (nonatomic, weak) id<EditorDelegate> delegate;
 - (void)constructForCreatingNewNote;
@@ -628,25 +691,12 @@ public func application(_ app: UIApplication, open url: URL, options: [UIApplica
 ```
 </details>
 
-### Make Destination & Service Router
+### Service Router
 
-If you don't wan't to show a view, but only need to get instance of the module, you can use `makeDestination`:
-
-```swift
-let destination = Router.makeDestination(to: RoutableView<NoteEditorInput>())
-```
-
-<details><summary>Objective-C Sample</summary>
-
-```objectivec
-id<NoteEditorInput> destination = [ZIKRouterToView(NoteEditorInput) makeDestination];
-```
-</details>
-
-And you can also get any custom modules:
+Instead of view, you can also get any service modules:
 
 ```swift
-///time service's interface
+/// time service's interface
 protocol TimeServiceInput {
     func currentTimeString() -> String
 }
@@ -656,11 +706,11 @@ class TestViewController: UIViewController {
     @IBOutlet weak var timeLabel: UILabel!
     
     func callTimeService() {
-        //Get the service for TimeServiceInput
+        // Get the service for TimeServiceInput
         let timeService = Router.makeDestination(
             to: RoutableService<TimeServiceInput>(),
             preparation: { destination in
-            //prepare the service if needed
+            // prepare the service if needed
         })
         //Use the service
         timeLabel.text = timeService.currentTimeString()
@@ -671,7 +721,7 @@ class TestViewController: UIViewController {
 <details><summary>Objective-C Sample</summary>
 
 ```objectivec
-///time service's interface
+/// time service's interface
 @protocol TimeServiceInput <ZIKServiceRoutable>
 - (NSString *)currentTimeString;
 @end
@@ -685,7 +735,7 @@ class TestViewController: UIViewController {
 @implementation TestViewController
 
 - (void)callTimeService {
-   //Get the service for TimeServiceInput
+   // Get the service for TimeServiceInput
    id<TimeServiceInput> timeService = [ZIKRouterToService(TimeServiceInput) makeDestination];
    self.timeLabel.text = [timeService currentTimeString];    
 }

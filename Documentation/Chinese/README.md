@@ -33,10 +33,10 @@ View router 将 UIKit / AppKit 中的所有界面跳转方式封装成一个统�
 - [x] **可以用字符串获取模块，和其他 URL router 框架兼容**
 - [x] **明确声明可用于路由的 protocol，进行编译时检查和运行时检查，防止使用不存在的模块**
 - [x] **使用 required protocol 和 provided protocol 指向同一个模块，因此路由时不必和某个固定的 protocol 耦合，也无需在一个公共库中集中管理所有的 protocol**
+- [x] **支持 storyboard，可以对从 segue 中跳转的界面自动执行依赖注入**
 - [x] 用 adapter 对两个模块进行解耦和接口兼容
 - [x] 封装 UIKit 和 AppKit 里的所有界面跳转方式（push、present modally、present as popover、present as sheet、segue、show、showDetail、addChildViewController、addSubview）以及自定义的展示方式，统一成一个方法
 - [x] 用一个方法执行界面回退和模块销毁，不必区分使用pop、dismiss、removeFromParentViewController、removeFromSuperview
-- [x] **支持 storyboard，可以对从 segue 中跳转的界面自动执行依赖注入**
 - [x] 完备的错误检查，可以检测界面跳转时的大部分问题
 - [x] 支持界面跳转过程中的 AOP 回调
 - [x] 检测界面跳转和移除时的内存泄露
@@ -46,9 +46,9 @@ View router 将 UIKit / AppKit 中的所有界面跳转方式封装成一个统�
 
 ## 目录
 
-### 设计思想
+### 设计思路
 
-[设计思想](DesignPhilosophy.md)
+[设计思路](DesignPhilosophy.md)
 
 ### Basics
 
@@ -157,6 +157,10 @@ class NoteEditorViewController: UIViewController, NoteEditorInput {
 
 ### 1. 创建 Router
 
+将一个类模块化时，你需要为模块创建对应的 router。整个过程无需对模块本身做出任何修改，因此能够最大程度地减少模块化改造的成本。
+
+#### 1.1 Router 子类
+
 为你的模块创建 router 子类：
 
 ```swift
@@ -206,12 +210,13 @@ class NoteEditorViewRouter: ZIKViewRouter<NoteEditorViewController, ViewRouteCon
 
 // 创建模块
 - (NoteEditorViewController *)destinationWithConfiguration:(ZIKViewRouteConfiguration *)configuration {
-    NoteEditorViewController *destination = ... ///实例化 view controller
+	// 可以从configuration 中获取外部传入的参数，用于创建实例
+    NoteEditorViewController *destination = ... // 实例化 view controller
     return destination;
 }
 
 - (void)prepareDestination:(NoteEditorViewController *)destination configuration:(ZIKViewRouteConfiguration *)configuration {
-    //为 destination 注入依赖
+    // 为 destination 注入依赖
 }
 
 @end
@@ -220,6 +225,48 @@ class NoteEditorViewRouter: ZIKViewRouter<NoteEditorViewController, ViewRouteCon
 </details>
 
 关于更多可用于 override 的方法，请参考详细文档。
+
+#### 1.2 快捷注册
+
+如果你的类很简单，并不需要用到 router 子类，直接注册类即可：
+
+```swift
+ZIKAnyViewRouter.register(RoutableView<NoteEditorInput>(), forMakingView: NoteEditorViewController.self)
+```
+
+<details><summary>Objective-C Sample</summary>
+
+```objectivec
+[ZIKViewRouter registerViewProtocol:ZIKRoutable(NoteEditorInput) forMakingView:[NoteEditorViewController class]];
+```
+
+</details>
+
+或者用 block 自定义创建对象的方式：
+
+```swift
+ZIKAnyViewRouter.register(RoutableView<NoteEditorInput>(), 
+                 forMakingView: NoteEditorViewController.self) { (config, router) -> NoteEditorInput? in
+                     NoteEditorViewController *destination = ... // 实例化 view controller
+                     return destination;
+        }
+
+```
+
+<details><summary>Objective-C Sample</summary>
+
+```objectivec
+[ZIKViewRouter
+    registerViewProtocol:ZIKRoutable(NoteEditorInput)
+    forMakingView:[NoteEditorViewController class]
+    making:^id _Nullable(ZIKViewRouteConfiguration *config, ZIKViewRouter *router) {
+        NoteEditorViewController *destination = ... // 实例化 view controller
+        return destination;
+ }];
+```
+
+</details>
+
 
 ### 2. 声明 Routable 类型
 
@@ -248,7 +295,6 @@ DeclareRoutableView(NoteEditorViewController, NoteEditorViewRouter)
 
 ///当 protocol 继承自 ZIKViewRoutable, 就是 routable 的
 //这份声明意味着我们可以用 NoteEditorInput 来获取路由
-//如果获取路由时，protocol 未经过声明，将会产生编译错误
 @protocol NoteEditorInput <ZIKViewRoutable>
 @property (nonatomic, weak) id<EditorDelegate> delegate;
 - (void)constructForCreatingNewNote;
@@ -256,6 +302,8 @@ DeclareRoutableView(NoteEditorViewController, NoteEditorViewRouter)
 ```
 
 </details>
+
+如果获取路由时，protocol 未经过声明，将会产生编译错误。
 
 现在你可以用所声明的 protocol 进行路由操作了。
 
@@ -322,18 +370,18 @@ class TestViewController: UIViewController {
             path: .push(from: self),
             configuring: { (config, _) in
                 //路由相关的设置
-                config.successHandler = { destination in
-                    //跳转成功
-                }
-                config.errorHandler = { (action, error) in
-                    //跳转失败
-                }
                 //跳转前配置界面
                 config.prepareDestination = { [weak self] destination in
                     //destination 自动推断为 NoteEditorInput
                     destination.delegate = self
                     destination.constructForCreatingNewNote()
                 }
+                config.successHandler = { destination in
+                    //跳转成功
+                }
+                config.errorHandler = { (action, error) in
+                    //跳转失败
+                }                
         })
     }
 }
@@ -370,6 +418,22 @@ class TestViewController: UIViewController {
 </details>
 
 更详细的内容，可以参考[执行路由](PerformRoute.md)。
+
+#### Make Destination
+
+如果不想执行界面跳转，只是想获取模块，执行自定义操作，可以使用`makeDestination`：
+
+```swift
+//destination 自动推断为 NoteEditorInput
+let destination = Router.makeDestination(to: RoutableView<NoteEditorInput>())
+```
+
+<details><summary>Objective-C Sample</summary>
+
+```objectivec
+id<NoteEditorInput> destination = [ZIKRouterToView(NoteEditorInput) makeDestination];
+```
+</details>
 
 #### Remove
 
@@ -524,7 +588,7 @@ class TestViewController: UIViewController {
 ```
 </details>
 
-使用 required protocol 和 provided protocol，就可以让模块间完美解耦，并进行接口适配，同时还能用 required protocol 声明模块所需的依赖。不再需要用一个公共库来集中存放所有的 protocol 了。
+使用 required protocol 和 provided protocol，就可以让模块间完美解耦，并进行接口适配，同时还能用 required protocol 声明模块所需的依赖。不再需要用一个公共库来集中存放所有的 protocol，即便模块间有互相依赖，也可以各自单独进行编译。
 
 使用 required protocol 需要将 required protocol 和 provided protocol 进行对接。更详细的内容，可以参考[模块化和解耦](ModuleAdapter.md)。
 
@@ -619,20 +683,7 @@ public func application(_ app: UIApplication, open url: URL, options: [UIApplica
 ```
 </details>
 
-### Make Destination & Service Router
-
-如果不想执行界面跳转，只是想获取模块，执行自定义操作，可以使用`makeDestination`：
-
-```swift
-let destination = Router.makeDestination(to: RoutableView<NoteEditorInput>())
-```
-
-<details><summary>Objective-C Sample</summary>
-
-```objectivec
-id<NoteEditorInput> destination = [ZIKRouterToView(NoteEditorInput) makeDestination];
-```
-</details>
+### Service Router
 
 除了界面模块，也可以用 service router 获取普通模块:
 
@@ -648,11 +699,7 @@ class TestViewController: UIViewController {
     
     func callTimeService() {
         //获取 TimeServiceInput 模块
-        let timeService = Router.makeDestination(
-        	to: RoutableService<TimeServiceInput>(), 
-        	preparation: { destination in
-            //配置模块
-        })
+        let timeService = Router.makeDestination(to: RoutableService<TimeServiceInput>())
         //使用service
         timeLabel.text = timeService.currentTimeString()
     }

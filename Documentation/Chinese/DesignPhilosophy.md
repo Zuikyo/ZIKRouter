@@ -80,7 +80,7 @@ ZIKRouter 避免使用 runtime 获取和调用模块，因此可以适配 OC 和
 
 #### ZIKRouter 的改进
 
-这种方式和 ZIKRouter 的思路类似，但是不支持纯 Swift 类型，也不支持更详细的配置。 ZIKRouter 进行了进一步的改进，并不是直接对 protocol 和 class 进行匹配，而是将 protocol 和 router 子类进行匹配，在 router 子类中再提供创建模块的实例的方式。
+这种方式和 ZIKRouter 的思路类似，但是不支持纯 Swift 类型，不支持使用自定义初始化方法以及详细的依赖注入。 ZIKRouter 进行了进一步的改进，并不是直接对 protocol 和 class 进行匹配，而是将 protocol 和 router 子类进行匹配，在 router 子类中再提供创建模块的实例的方式。
 
 加了一层 router 中间层之后，就可以让多个 protocol 和同一个模块进行匹配，也可以让模块进行接口适配，也能在 router 子类中进行更详细的依赖注入和自定义操作。
 

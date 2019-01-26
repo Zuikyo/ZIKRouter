@@ -1,6 +1,6 @@
 # 创建路由
 
-ZIKRouter 的设计使用了抽象工厂模式，你需要为模块（产品）创建对应的 router 子类（工厂子类），然后在子类中实现 router 的接口即可，而无需对模块本身做出修改。
+将一个类模块化时，你需要为模块创建对应的 router 子类，然后在子类中实现 router 的接口即可。整个过程无需对模块本身做出任何修改，因此能够最大程度地减少模块化改造的成本。
 
 例如，要为`EditorViewController`创建路由。
 
@@ -170,9 +170,48 @@ class EditorViewRouter: ZIKViewRouter<EditorViewController, ZIKViewRouteConfigur
 
 在继承时可以指定泛型参数，参考[Type Checking](TypeChecking.md#泛型)。
 
-## 通过 Block 创建
+## 非 router 子类
 
-如果不想使用 router 子类来添加路由，也可以用轻量化的 block 来注册：
+如果你的类很简单，并不需要用到 router 子类，直接注册类即可：
+
+```swift
+ZIKAnyViewRouter.register(RoutableView<NoteEditorInput>(), forMakingView: EditorViewController.self)
+```
+
+<details><summary>Objective-C Sample</summary>
+
+```objectivec
+[ZIKViewRouter registerViewProtocol:ZIKRoutable(NoteEditorInput) forMakingView:[EditorViewController class]];
+```
+
+</details>
+
+或者用 block 自定义创建对象的方式：
+
+```swift
+ZIKAnyViewRouter.register(RoutableView<NoteEditorInput>(), 
+                 forMakingView: EditorViewController.self) { (config, router) -> NoteEditorInput? in
+                     EditorViewController *destination = ... // 实例化 view controller
+                     return destination;
+        }
+
+```
+
+<details><summary>Objective-C Sample</summary>
+
+```objectivec
+[ZIKViewRouter
+    registerViewProtocol:ZIKRoutable(NoteEditorInput)
+    forMakingView:[EditorViewController class]
+    making:^id _Nullable(ZIKViewRouteConfiguration *config, ZIKViewRouter *router) {
+        EditorViewController *destination = ... // 实例化 view controller
+        return destination;
+ }];
+```
+
+</details>
+
+或者使用其他更复杂的 block 创建：
 
 ```swift
 ZIKViewRoute<EditorViewController, ViewRouteConfig>

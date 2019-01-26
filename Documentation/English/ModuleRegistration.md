@@ -57,34 +57,44 @@ If your module contains multi components, and those components' dependencies can
 
 For example, when you pass a model to a VIPER module, the destination is the view in VIPER, and the view is not responsible for accepting any models.
 
+Sample router code:
+
 ```swift
-///Module config protocol for editor module
-protocol EditorModuleConfig {
+/// Module config protocol for editor module
+protocol EditorModuleInput {
+    // Give parameter to the view
+    var viewData: Any?
+    // Give parameter not belonging to the view
     var noteModel: Note?
+    // Declare destination's interface; Give destination to the caller
+    var makingDestinationHandler: ((EditorViewInput) -> Void)?
 }
-///Use subclass of ZIKRouteConfiguration to save the custom config
-class EditorModuleConfiguration: ZIKViewRouteConfiguration, EditorModuleConfig {
+/// Use subclass of ZIKViewRouteConfiguration to save the custom config
+/// If you don't want to create subclass, you can make extension of ZIKViewRouteConfiguration to let it conform to EditorModuleInput
+class EditorModuleConfiguration: ZIKViewRouteConfiguration, EditorModuleInput {
+    var viewData: Any?
     var noteModel: Note?
+    var makingDestinationHandler: ((EditorViewInput) -> Void)?
 }
 
 class EditorViewRouter: ZIKViewRouter<EditorViewController, EditorModuleConfiguration> {
     override class func registerRoutableDestination() {
         registerView(EditorViewController.self)
-        register(RoutableViewModule<EditorModuleConfig>())
+        register(RoutableViewModule<EditorModuleInput>())
     }
-    //Use custom configuration
+    // Use custom configuration
     override defaultConfiguration() -> EditorModuleConfiguration {
         return EditorModuleConfiguration()
     }
     
     override func destination(with configuration: EditorModuleConfiguration) -> EditorViewController? {
-        let sb = UIStoryboard.init(name: "Main", bundle: nil)
-        let destination = sb.instantiateViewController(withIdentifier: "EditorViewController") as! EditorViewController
+        // Get parameter from the caller and call custom initializer of the destination
+        let destination = EditorViewController(data: configuration.viewData)
         return destination
     }
     
     override func prepareDestination(_ destination: EditorViewController, configuration: EditorModuleConfiguration) {
-        //Config VIPER module
+        // Config VIPER module
         let view = destination
         guard view.presenter == nil else {
             return
@@ -92,16 +102,142 @@ class EditorViewRouter: ZIKViewRouter<EditorViewController, EditorModuleConfigur
         let presenter = EditorPresenter()
         let interactor = EditorInteractor()
         
-        //Give model to interactor
+        // Give model to interactor
         interactor.note = configuration.noteModel
         
         presenter.interactor = interactor
         presenter.view = view
         view.presenter = presenter
     }
+    
+    override func didFinishPrepareDestination(_ destination: EditorViewController, configuration: EditorModuleConfiguration) {
+        // Give destination to the caller
+        if let makingDestinationHandler = configuration.makingDestinationHandler {
+        		makingDestinationHandler(destination)
+        		configuration.makingDestinationHandler = nil
+        }
+    }
 }
 
 ```
+
+<details><summary>Objective-C Sample</summary>
+
+```objective-c
+// EditorModuleInput.h
+
+@protocol EditorModuleInput <ZIKViewRoutable>
+/// Give parameter to the view
+@property (nonatomic, copy, nullable) id viewData;
+/// Give parameter not belonging to the view
+@property (nonatomic, copy, nullable) Note *noteModel;
+/// Declare destination's interface; Give destination to the caller
+@property (nonatomic, copy, nullable) void(^makingLoginDestinationHandler)(id<EditorViewInput> destination);
+@end
+
+```
+
+```objective-c
+// EditorViewRouter.h
+
+@interface EditorViewRouter: ZIKViewRouter
+@end
+```
+
+```objective-c
+// EditorViewRouter.m
+ 
+ // Custom configuration conforming to EditorModuleInput
+ // If you don't wan't to use subclass, you can use category to let ZIKViewRouteConfiguration conform to EditorModuleInput
+ @interface EditorModuleConfiguration: ZIKViewRouteConfiguration <EditorModuleInput>
+ @property (nonatomic, copy, nullable) id viewData;
+ @property (nonatomic, copy, nullable) Note *noteModel;
+ @property (nonatomic, copy, nullable) void(^makingLoginDestinationHandler)(id<EditorViewInput> destination);
+ @end
+ 
+ @implementation EditorModuleConfiguration
+ @end
+ 
+ DeclareRoutableView(LoginViewController, LoginViewRouter)
+ @implementation EditorViewRouter
+ 
+ + (void)registerRoutableDestination {
+    [self registerView:[EditorViewController class]];
+    [self registerModuleProtocol:ZIKRoutable(EditorModuleInput)];
+ }
+ 
+ // Use custom configuration for this router
+ + (ZIKViewRouteConfiguration *)defaultConfiguration {
+    return [[EditorModuleConfiguration alloc] init];
+ }
+ 
+ - (LoginViewController *)destinationWithConfiguration:(EditorModuleConfiguration *)configuration {
+    // Get parameter from the caller and call custom initializer of the destination
+    EditorViewController *destination = [[EditorViewController alloc] initWithData:configuration.viewData];
+    return destination;
+ }
+ 
+ - (void)prepareDestination:(LoginViewController *)destination configuration:(EditorModuleConfiguration *)configuration {
+    // Config VIPER module
+    LoginViewController *view = destination;
+    if (view.presenter != nil) {
+    	return;
+    }
+    EditorPresenter *presenter = [[EditorPresenter alloc] init];
+    EditorInteractor *interactor = [[EditorInteractor alloc] init];
+        
+    // Give model to interactor
+    interactor.note = configuration.noteModel;
+        
+    presenter.interactor = interactor;
+    presenter.view = view;
+    view.presenter = presenter;
+}
+ 
+ - (void)didFinishPrepareDestination:(LoginViewController *)destination configuration:(EditorModuleConfiguration *)configuration {
+    // Give the destination to the caller
+    if (configuration.makingDestinationHandler) {
+        configuration.makingDestinationHandler(destination);
+        configuration.makingDestinationHandler = nil;
+    }
+ }
+ 
+ @end
+```
+
+</details>
+
+Then you can use `EditorModuleInput` to get the editor module:
+
+```swift
+Router.perform(
+       to: RoutableViewModule<EditorModuleInput>(),
+       path: .push(from: self),
+       preparation: { module in
+            module.viewData = viewData
+            module.noteModel = noteModel
+            module.makingDestinationHandler = { destination in
+                // Did get destination (EditorViewInput)
+            }
+        })
+
+```
+
+<details><summary>Objective-C Sample</summary>
+
+```objective-c
+[ZIKRouterToViewModule(EditorModuleInput)
+    performPath:ZIKViewRoutePath.pushFrom(self)
+    configuring:^(ZIKViewRouteConfiguration<EditorModuleInput> *config) {
+        config.viewData = viewData;
+        config.noteModel = noteModel;
+        config.makingDestinationHandler = ^(id<EditorViewInput> destination) {
+            // Did get destination
+        };
+}];
+```
+
+</details>
 
 ## Register Identifier
 

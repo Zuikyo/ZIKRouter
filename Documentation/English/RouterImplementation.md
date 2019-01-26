@@ -1,6 +1,6 @@
 # Router Implementation
 
-ZIKRouter is an abstract factory design. You need to create router subclass (factory subclass) for your module (product), then implement router's interface. You don't need to modify the module's code.
+To make your class become modular, you need to create router for your module. You don't need to modify the module's code. That will reduce the cost for refactoring existing modules.
 
 Here is an example for creating router for `EditorViewController`.
 
@@ -18,7 +18,7 @@ class EditorViewController: UIViewController, NoteEditorInput {
 ```
 ## Router Subclass
 
-Create a `ZIKViewRouter` subclass for `EditorViewController`:
+Create a `ZIKViewRouter` subclass for `EditorViewController` and override router's interface:
 
 ```swift
 //EditorViewRouter.swift
@@ -48,8 +48,9 @@ class EditorViewRouter: ZIKViewRouter<EditorViewController, ZIKViewRouteConfigur
     
     //Return the destination module
     override func destination(with configuration: ZIKViewRouteConfiguration) -> EditorViewController? {
-        let sb = UIStoryboard.init(name: "Main", bundle: nil)
-        let destination = sb.instantiateViewController(withIdentifier: "EditorViewController") as! EditorViewController
+        // In configuration, you can get parameters from the caller for creating the instance
+        let data = // Get data from configuration
+        let destination = EditorViewController(data: data)
         return destination
     }
     
@@ -132,8 +133,9 @@ Create a `ZIKViewRouter` subclass for `EditorViewController`:
 
 //Return the destination module
 - (nullable EditorViewController *)destinationWithConfiguration:(ZIKViewRouteConfiguration *)configuration {
-    UIStoryboard *sb = [UIStoryboard storyboardWithName:@"Main" bundle:nil];
-    EditorViewController *destination = [sb instantiateViewControllerWithIdentifier:@"EditorViewController"];
+    // In configuration, you can get parameters from the caller for creating the instance
+    id data = // Get data from configuration    
+    EditorViewController *destination = [[EditorViewController alloc] initWithData:data];
     return destination;
 }
 
@@ -175,9 +177,48 @@ Create a `ZIKViewRouter` subclass for `EditorViewController`:
 
 The router subclass can set generic parameters when inheriting from ZIKViewRouter. See [Type Checking](TypeChecking.md).
 
-## Route with Blocks
+## Simple Router
 
-If you don't want to create a complex router subclass for a simple module, you can use block to register the module:
+If your module is very simple and don't need a router subclass, you can just register the class in a simpler way:
+
+```swift
+ZIKAnyViewRouter.register(RoutableView<NoteEditorInput>(), forMakingView: EditorViewController.self)
+```
+
+<details><summary>Objective-C Sample</summary>
+
+```objectivec
+[ZIKViewRouter registerViewProtocol:ZIKRoutable(NoteEditorInput) forMakingView:[EditorViewController class]];
+```
+
+</details>
+
+or with custom creating block:
+
+```swift
+ZIKAnyViewRouter.register(RoutableView<NoteEditorInput>(), 
+                 forMakingView: EditorViewController.self) { (config, router) -> NoteEditorInput? in
+                     EditorViewController *destination = ... // instantiate your view controller
+                     return destination;
+        }
+
+```
+
+<details><summary>Objective-C Sample</summary>
+
+```objectivec
+[ZIKViewRouter
+    registerViewProtocol:ZIKRoutable(NoteEditorInput)
+    forMakingView:[EditorViewController class]
+    making:^id _Nullable(ZIKViewRouteConfiguration *config, ZIKViewRouter *router) {
+        EditorViewController *destination = ... // instantiate your view controller
+        return destination;
+ }];
+```
+
+</details>
+
+or with much more complex blocks:
 
 ```swift
 ZIKViewRoute<EditorViewController, ViewRouteConfig>
