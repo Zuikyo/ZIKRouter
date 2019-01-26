@@ -113,8 +113,8 @@ class EditorViewRouter: ZIKViewRouter<EditorViewController, EditorModuleConfigur
     override func didFinishPrepareDestination(_ destination: EditorViewController, configuration: EditorModuleConfiguration) {
         // Give destination to the caller
         if let makingDestinationHandler = configuration.makingDestinationHandler {
-        		makingDestinationHandler(destination)
-        		configuration.makingDestinationHandler = nil
+            makingDestinationHandler(destination)
+            configuration.makingDestinationHandler = nil
         }
     }
 }

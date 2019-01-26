@@ -64,7 +64,7 @@ Router 实现代码：
 protocol EditorModuleInput {
     //传给 view 的参数
     var viewData: Any?
-    //其他数据
+    //其他不属于 view 的参数
     var noteModel: Note?
     //同时声明 destination 的接口；把 destination 传递给外部
     var makingDestinationHandler: ((EditorViewInput) -> Void)?
@@ -116,8 +116,8 @@ class EditorViewRouter: ZIKViewRouter<EditorViewController, EditorModuleConfigur
     override func didFinishPrepareDestination(_ destination: EditorViewController, configuration: EditorModuleConfiguration) {
         //把 destination 传递给使用者
         if let makingDestinationHandler = configuration.makingDestinationHandler {
-        		makingDestinationHandler(destination)
-        		configuration.makingDestinationHandler = nil
+            makingDestinationHandler(destination)
+            configuration.makingDestinationHandler = nil
         }
     }
 }
@@ -130,7 +130,7 @@ class EditorViewRouter: ZIKViewRouter<EditorViewController, EditorModuleConfigur
 @protocol EditorModuleInput <ZIKViewRoutable>
 ///传递给 view 的参数
 @property (nonatomic, copy, nullable) id viewData;
-///其他数据
+///其他不属于 view 的参数
 @property (nonatomic, copy, nullable) Note *noteModel;
 ///同时声明 destination 的接口；把 destination 传递给外部
 @property (nonatomic, copy, nullable) void(^makingLoginDestinationHandler)(id<EditorViewInput> destination);

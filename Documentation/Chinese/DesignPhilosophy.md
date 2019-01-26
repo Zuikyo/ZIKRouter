@@ -9,14 +9,15 @@
 
 ## 设计思路
 
-ZIKRouter 使用接口管理和使用模块。使用接口的优点：
+ZIKRouter 使用接口管理和使用模块。设计特色：
 
-* 依赖编译检查，实现严格的类型安全
-* 利用编译检查，减少重构时的成本
+* 无需修改模块的代码即可让模块路由化，最大程度地减少模块化的成本
+
+* 依赖编译检查，实现严格的类型安全，减少重构时的成本
+* 进行路由检查，编译时即可避免使用不存在的路由模块
 * 通过接口检查，保证模块正确实现所提供的接口
 * 通过接口明确声明模块所需的依赖，允许外部进行依赖注入
-* 保持动态特性的同时，进行路由检查，避免使用不存在的路由模块
-* 利用接口，区分 required protocol 和 provided protocol，进行明确的模块适配，实现彻底解耦
+* 利用接口，区分 required protocol 和 provided protocol，进行明确的模块适配，实现彻底解耦，即便模块间有互相依赖，也可以做到单独编译
 
 ## 路由工具对比
 
@@ -42,7 +43,14 @@ URL router 的缺点：
 * 无法明确声明模块提供的接口，只能依赖于接口文档，重构时无法确保修改正确
 * 依赖于字符串硬编码，难以管理
 * 无法保证所使用的模块一定存在
-* 无法区分required protocol 和 provided protocol，因此无法彻底解耦
+* 解耦能力有限，url 的注册、实现、使用必须用相同的字符规则，一旦任何一方做出修改都会导致其他方的代码失效（无法区分 required protocol 和 provided protocol，因此无法彻底解耦）
+
+#### 代表框架
+
+* [routable-ios](https://github.com/clayallsopp/routable-ios)
+* [JLRoutes](https://github.com/joeldev/JLRoutes)
+* [MGJRouter](https://github.com/meili/MGJRouter)
+* [HHRouter](https://github.com/lightory/HHRouter)
 
 #### ZIKRouter 的改进
 
@@ -67,8 +75,12 @@ URL router 的缺点：
 * 无法保证所使用的模块一定存在
 * 无法区分 required protocol 和 provided protocol，因此无法彻底解耦
 * 过于依赖 runtime 特性，无法应用到纯 swift 上
-* 使用 runtime 相关的接口调用任意类的任意方法，有被苹果审核拒绝的风险。参考：[Are performSelector and respondsToSelector banned by App Store?
-](https://stackoverflow.com/questions/42662028/are-performselector-and-respondstoselector-banned-by-app-store)
+* 使用 runtime 相关的接口调用任意类的任意方法，有被苹果审核拒绝的风险，需要注意不被。参考：[Are performSelector and respondsToSelector banned by App Store?
+  ](https://stackoverflow.com/questions/42662028/are-performselector-and-respondstoselector-banned-by-app-store)
+
+#### 代表框架
+
+[CTMediator](https://github.com/casatwy/CTMediator)
 
 #### ZIKRouter 的改进
 
@@ -77,6 +89,10 @@ ZIKRouter 避免使用 runtime 获取和调用模块，因此可以适配 OC 和
 ### 基于 protocol 匹配的模块管理工具
 
 有一些模块管理工具也实现了基于接口的管理方式。实现思路是将 protocol 和对应的类进行字典匹配，之后就可以用 protocol 获取 class，再动态创建实例。
+
+#### 代表框架
+
+[BeeHive](https://github.com/alibaba/BeeHive)
 
 #### ZIKRouter 的改进
 

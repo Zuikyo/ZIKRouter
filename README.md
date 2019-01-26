@@ -34,9 +34,9 @@ View router 将 UIKit / AppKit 中的所有界面跳转方式封装成一个统�
 - [x] Support Swift and Objective-C
 - [x] Support iOS, macOS and tvOS
 - [x] Routing for UIViewController / NSViewController, UIView / NSView and any OC class and swift class
-- [x] Dependency injection
+- [x] Dependency injection, including dynamic injection and static injection
 - [x] **Locate module with its protocol**
-- [x] **Locate module with identifier, compatible with other URL router framework**
+- [x] **Locate module with identifier, compatible with other URL router frameworks**
 - [x] **Prepare the module with its protocol when performing route, rather than passing a parameter dictionary**
 - [x] **Declare routable protocol. There're compile-time checking and runtime checking to make reliable routing**
 - [x] **Use different required protocol and provided protocol inside module and module's user to make thorough decouple**
@@ -141,7 +141,7 @@ class NoteEditorViewController: UIViewController, NoteEditorInput {
 ```
 
 <details><summary>Objective-C Sample</summary>
-  
+
 ```objectivec
 ///editor view's interface
 @protocol NoteEditorInput <ZIKViewRoutable>
@@ -561,7 +561,7 @@ protocol RequiredNoteEditorInput: class {
 ```
 
 <details><summary>Objective-C Sample</summary>
-  
+
 ```objectivec
 /// Required protocol to use editor module
 @protocol RequiredNoteEditorInput <ZIKViewRoutable>

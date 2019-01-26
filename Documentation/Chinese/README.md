@@ -26,7 +26,7 @@ View router 将 UIKit / AppKit 中的所有界面跳转方式封装成一个统�
 
 - [x] 支持 Swift 和 Objective-C，以及两者混编
 - [x] 支持 iOS、macOS、tvOS
-- [x] 支持界面路由和任意 OC 模块、swift 模块的路由
+- [x] 支持界面路由和任意 OC 模块、swift 模块的路由，无需修改模块代码即可让其支持路由
 - [x] 支持对模块进行静态依赖注入和动态依赖注入
 - [x] **用 protocol 动态获取模块**
 - [x] **用 protocol 向模块传递参数，基于接口进行类型安全的调用和参数传递**
@@ -134,7 +134,7 @@ class NoteEditorViewController: UIViewController, NoteEditorInput {
 ```
 
 <details><summary>Objective-C Sample</summary>
-  
+
 ```objectivec
 ///Editor 模块的接口和依赖
 @protocol NoteEditorInput <ZIKViewRoutable>
@@ -553,7 +553,7 @@ protocol RequiredNoteEditorInput: class {
 ```
 
 <details><summary>Objective-C Sample</summary>
-  
+
 ```objectivec
 ///使用者需要用到的 editor 模块的接口
 @protocol RequiredNoteEditorInput <ZIKViewRoutable>

@@ -193,7 +193,11 @@ ZIKAnyViewRouter.register(RoutableView<NoteEditorInput>(), forMakingView: Editor
 
 </details>
 
-or with custom creating block:
+The destination will be created by`[[RegisteredClass alloc] init]`.
+
+**Note: You should not use this method if the class is pure swift class, or it has custom designated initializer.  It will crash because the class couldn't create instance with `[[RegisteredClass alloc] init]`.**
+
+Or you can register class with custom creating block:
 
 ```swift
 ZIKAnyViewRouter.register(RoutableView<NoteEditorInput>(), 

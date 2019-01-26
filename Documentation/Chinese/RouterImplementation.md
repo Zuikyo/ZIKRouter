@@ -186,6 +186,10 @@ ZIKAnyViewRouter.register(RoutableView<NoteEditorInput>(), forMakingView: Editor
 
 </details>
 
+在使用时会直接用`[[RegisteredClass alloc] init]`创建对象。
+
+**注意：如果你注册的是 Swift 类，而且有自定义 init 方法，则不能直接注册类，否则在使用时会 crash，因为此时不能直接用 OC runtime 创建对象**。
+
 或者用 block 自定义创建对象的方式：
 
 ```swift
