@@ -162,7 +162,7 @@ typedef void(^ZIKViewRouteSegueConfigure)(ZIKViewRouteSegueConfiguration *segueC
 typedef void(^ZIKViewRoutePopoverConfiger)(NS_NOESCAPE ZIKViewRoutePopoverConfigure);
 typedef void(^ZIKViewRouteSegueConfiger)(NS_NOESCAPE ZIKViewRouteSegueConfigure);
 
-/// Configuration for view module. You can use a subclass to add complex dependencies for destination. The subclass must conform to NSCopying, because the configuration needs to be copied when routing.
+/// Configuration for view module. You can use a subclass or use category to add complex dependencies for destination module.
 @interface ZIKViewRouteConfiguration : ZIKPerformRouteConfiguration <NSCopying>
 
 /// Set source and route type in a type safe way. You can extend your custom transition type in ZIKViewRoutePath, and use custom default configuration in router, override -configurePath: and set custom parameters to configuration.

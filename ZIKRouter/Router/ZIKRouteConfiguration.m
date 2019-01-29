@@ -20,14 +20,6 @@
 
 @implementation ZIKRouteConfiguration
 
-- (instancetype)init {
-    if (self = [super init]) {
-        NSAssert1(ZIKRouter_classSelfImplementingMethod([self class], @selector(copyWithZone:), false), @"configuration (%@) must override -copyWithZone:, because it will be deep copied when router is initialized. You can use -setPropertiesFromConfiguration: to quickly set properties to copy object in Objective-C.",[self class]);
-        
-    }
-    return self;
-}
-
 - (id)copyWithZone:(nullable NSZone *)zone {
     ZIKRouteConfiguration *config = [[self class] new];
     config.errorHandler = self.errorHandler;
@@ -112,6 +104,13 @@
         _userInfo = [NSMutableDictionary dictionary];
     }
     [_userInfo addEntriesFromDictionary:userInfo];
+}
+
+- (void)removeUserInfo {
+    if (_userInfo) {
+        [_userInfo removeAllObjects];
+    }
+    
 }
 
 - (id)copyWithZone:(nullable NSZone *)zone {

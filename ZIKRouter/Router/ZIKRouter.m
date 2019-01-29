@@ -109,6 +109,8 @@ NSErrorDomain const ZIKRouteErrorDomain = @"ZIKRouteErrorDomain";
     }
     if (state == ZIKRouterStateRouting || state == ZIKRouterStateRemoving) {
         [[self class] increaseRecursiveDepth];
+    } else if (state == ZIKRouterStateRemoved) {
+        [_configuration removeUserInfo];
     }
     
     [self willChangeValueForKey:@"preState"];
@@ -887,7 +889,7 @@ NSErrorDomain const ZIKRouteErrorDomain = @"ZIKRouteErrorDomain";
 #pragma mark Getter/Setter
 
 - (ZIKPerformRouteConfiguration *)configuration {
-    return [_configuration copy];
+    return _configuration;
 }
 
 - (ZIKPerformRouteConfiguration *)original_configuration {
@@ -895,7 +897,7 @@ NSErrorDomain const ZIKRouteErrorDomain = @"ZIKRouteErrorDomain";
 }
 
 - (ZIKRemoveRouteConfiguration *)removeConfiguration {
-    return [_removeConfiguration copy];
+    return _removeConfiguration;
 }
 
 - (ZIKRemoveRouteConfiguration *)original_removeConfiguration {

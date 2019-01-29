@@ -42,7 +42,7 @@ FOUNDATION_EXTERN ZIKRouteAction const ZIKRouteActionRemoveRoute;
 typedef void(^ZIKRouteErrorHandler)(ZIKRouteAction routeAction, NSError *error);
 typedef void(^ZIKRouteStateNotifier)(ZIKRouterState oldState, ZIKRouterState newState);
 
-/// Configuration for destination module. You can use a subclass to add complex dependencies for destination. The subclass must conform to NSCopying, because the configuration will be copied.
+/// Configuration for destination module. You can use a subclass or use category to add complex parameters for destination module.
 @interface ZIKRouteConfiguration : NSObject <NSCopying>
 
 /**
