@@ -25,30 +25,45 @@ Pod::Spec.new do |s|
 
   s.preserve_path = 'ZIKRouter/Framework/module.modulemap'
   s.module_map = 'ZIKRouter/Framework/module.modulemap'
-  s.source_files = "ZIKRouter/Router/*.{h,m,mm,cpp}",
-                   "ZIKRouter/Router/**/*.{h,m,mm,cpp}",
-                   "ZIKRouter/ServiceRouter/*.{h,m,mm,cpp}",
-                   "ZIKRouter/ServiceRouter/**/*.{h,m,mm,cpp}",
-                   "ZIKRouter/ViewRouter/*.{h,m,mm,cpp}",
-                   "ZIKRouter/ViewRouter/**/*.{h,m,mm,cpp}",
-                   "ZIKRouter/ViewRouter/**/**/*.{h,m,mm,cpp}",
-                   "ZIKRouter/Utilities/*.{h,m,mm,cpp}",
-                   "ZIKRouter/Utilities/**/*.{h,m,mm,cpp}",
-                   "ZIKRouter/Utilities/**/**/*.{h,m,mm,cpp}",
-                   "ZIKRouter/Framework/*.h"
-  s.public_header_files = "ZIKRouter/*.h",
-                          "ZIKRouter/Router/*.h",
-                          "ZIKRouter/Router/**/*.h",
-                          "ZIKRouter/ServiceRouter/*.h",
-                          "ZIKRouter/ServiceRouter/**/*.h",
-                          "ZIKRouter/ViewRouter/*.h",
-                          "ZIKRouter/ViewRouter/**/*.h",
-                          "ZIKRouter/Utilities/*.h",
-                          "ZIKRouter/Framework/*.h"
-  s.private_header_files = "ZIKRouter/Router/Private/*.h",
-                           "ZIKRouter/ServiceRouter/BlockRouter/ZIKBlockServiceRouter.h",
-                           "ZIKRouter/ViewRouter/Private/*.h",
-                           "ZIKRouter/ViewRouter/BlockRouter/ZIKBlockViewRouter.h"
-                           "ZIKRouter/Utilities/Debug/*.h"
+
+  s.default_subspecs = 'ServiceRouter','ViewRouter'
+
+  s.subspec 'ServiceRouter' do |serviceRouter|
+    serviceRouter.source_files = "ZIKRouter/Router/*.{h,m,mm,cpp}",
+                                 "ZIKRouter/Router/**/*.{h,m,mm,cpp}",
+                                 "ZIKRouter/ServiceRouter/*.{h,m,mm,cpp}",
+                                 "ZIKRouter/ServiceRouter/**/*.{h,m,mm,cpp}",
+                                 "ZIKRouter/Utilities/*.{h,m,mm,cpp}",
+                                 "ZIKRouter/Utilities/**/*.{h,m,mm,cpp}",
+                                 "ZIKRouter/Utilities/**/**/*.{h,m,mm,cpp}",
+                                 "ZIKRouter/Framework/*.h",
+                                 "ZIKRouter/ViewRouter/BlockRouter/ZIKViewRoute.h",
+                                 "ZIKRouter/ViewRouter/ZIKViewRouterInternal.h",
+                                 "ZIKRouter/ViewRouter/Registry/ZIKViewRouteRegistry.h"
+    serviceRouter.public_header_files = "ZIKRouter/*.h",
+                                        "ZIKRouter/Router/*.h",
+                                        "ZIKRouter/Router/**/*.h",
+                                        "ZIKRouter/ServiceRouter/*.h",
+                                        "ZIKRouter/ServiceRouter/**/*.h",
+                                        "ZIKRouter/Utilities/*.h",
+                                        "ZIKRouter/Framework/*.h",
+                                        "ZIKRouter/ViewRouter/BlockRouter/ZIKViewRoute.h",
+                                        "ZIKRouter/ViewRouter/ZIKViewRouterInternal.h",
+                                        "ZIKRouter/ViewRouter/Registry/ZIKViewRouteRegistry.h"
+    serviceRouter.private_header_files = "ZIKRouter/Router/Private/*.h",
+                                         "ZIKRouter/ServiceRouter/BlockRouter/ZIKBlockServiceRouter.h"
+                                         "ZIKRouter/Utilities/Debug/*.h"
+  end
+
+  s.subspec 'ViewRouter' do |viewRouter|
+    viewRouter.dependency 'ZIKRouter/ServiceRouter'
+    viewRouter.source_files = "ZIKRouter/ViewRouter/*.{h,m,mm,cpp}",
+                              "ZIKRouter/ViewRouter/**/*.{h,m,mm,cpp}",
+                              "ZIKRouter/ViewRouter/**/**/*.{h,m,mm,cpp}"
+    viewRouter.public_header_files = "ZIKRouter/ViewRouter/*.h",
+                                     "ZIKRouter/ViewRouter/**/*.h"
+    viewRouter.private_header_files = "ZIKRouter/ViewRouter/Private/*.h",
+                                      "ZIKRouter/ViewRouter/BlockRouter/ZIKBlockViewRouter.h"
+  end
 
 end

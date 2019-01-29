@@ -9,6 +9,8 @@
 //  LICENSE file in the root directory of this source tree.
 //
 
+#if __has_include("ZIKViewRouter.h")
+
 #import "ZIKRoute.h"
 #import "ZIKViewRouter.h"
 
@@ -78,3 +80,5 @@ typedef ZIKViewRoute<id, ZIKViewRouteConfiguration *> ZIKAnyViewRoute;
 #define ZIKModuleViewRoute(ModuleConfigProtocol) ZIKViewRoute<id, ZIKViewRouteConfig<ModuleConfigProtocol> *>
 
 NS_ASSUME_NONNULL_END
+
+#endif

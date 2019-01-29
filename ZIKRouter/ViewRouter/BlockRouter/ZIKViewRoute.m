@@ -9,6 +9,8 @@
 //  LICENSE file in the root directory of this source tree.
 //
 
+#if __has_include("ZIKViewRouter.h")
+
 #import "ZIKViewRoute.h"
 #import "ZIKRoutePrivate.h"
 #import "ZIKViewRouteRegistry.h"
@@ -451,3 +453,5 @@ strictConfiguring:(void (^)(ZIKPerformRouteStrictConfiguration<id> * _Nonnull, Z
 }
 
 @end
+
+#endif

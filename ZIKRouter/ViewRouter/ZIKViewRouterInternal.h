@@ -9,6 +9,8 @@
 //  LICENSE file in the root directory of this source tree.
 //
 
+#if __has_include("ZIKViewRouter.h")
+
 #import "ZIKViewRouter.h"
 #import "ZIKRouterInternal.h"
 #import "ZIKViewRouteError.h"
@@ -244,3 +246,5 @@ FOUNDATION_EXTERN Protocol<ZIKViewRoutable> *_Nullable _routableViewProtocolFrom
 FOUNDATION_EXTERN Protocol<ZIKViewModuleRoutable> *_Nullable _routableViewModuleProtocolFromObject(id object);
 
 NS_ASSUME_NONNULL_END
+
+#endif

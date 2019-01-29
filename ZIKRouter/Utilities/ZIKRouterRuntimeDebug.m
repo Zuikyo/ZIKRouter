@@ -356,7 +356,9 @@ void _enumerateSymbolName(bool(^handler)(const char *name, NSString *(^demangled
 
 #import "ZIKRouterInternal.h"
 #import "ZIKRouteRegistryInternal.h"
+#if __has_include("ZIKViewRouter.h")
 #import "ZIKViewRouteRegistry.h"
+#endif
 #import "ZIKServiceRouteRegistry.h"
 
 NSString *codeForImportingRouters() {
@@ -367,6 +369,7 @@ NSString *codeForImportingRouters() {
     NSMutableArray<Class> *objcServiceAdapters = [NSMutableArray array];
     
     ZIKRouter_enumerateClassList(^(__unsafe_unretained Class class) {
+#if __has_include("ZIKViewRouter.h")
         if ([ZIKViewRouteRegistry isRegisterableRouterClass:class]) {
             if ([NSStringFromClass(class) zix_containsString:@"."]) {
                 return;
@@ -376,7 +379,9 @@ NSString *codeForImportingRouters() {
             } else {
                 [objcViewRouters addObject:class];
             }
-        } else if ([ZIKServiceRouteRegistry isRegisterableRouterClass:class]) {
+        } else
+#endif
+        if ([ZIKServiceRouteRegistry isRegisterableRouterClass:class]) {
             if ([NSStringFromClass(class) zix_containsString:@"."]) {
                 return;
             }
@@ -444,6 +449,7 @@ NSString *codeForRegisteringRouters() {
     NSMutableArray<Class> *swiftServiceAdapters = [NSMutableArray array];
     
     ZIKRouter_enumerateClassList(^(__unsafe_unretained Class class) {
+#if __has_include("ZIKViewRouter.h")
         if ([ZIKViewRouteRegistry isRegisterableRouterClass:class]) {
             if ([class isAdapter]) {
                 if ([NSStringFromClass(class) zix_containsString:@"."]) {
@@ -458,7 +464,9 @@ NSString *codeForRegisteringRouters() {
                     [objcViewRouters addObject:class];
                 }
             }
-        } else if ([ZIKServiceRouteRegistry isRegisterableRouterClass:class]) {
+        } else
+#endif
+        if ([ZIKServiceRouteRegistry isRegisterableRouterClass:class]) {
             if ([class isAdapter]) {
                 if ([NSStringFromClass(class) zix_containsString:@"."]) {
                     [swiftServiceAdapters addObject:class];
@@ -529,7 +537,9 @@ NSString *codeForRegisteringRouters() {
 }
 
 #import "ZIKClassCapabilities.h"
+#if __has_include("ZIKViewRouter.h")
 #import "UIViewController+ZIKViewRouter.h"
+#endif
 
 void checkMemoryLeakAfter(id object, NSTimeInterval delayInSeconds) {
     if (!object) {
@@ -567,9 +577,11 @@ void checkMemoryLeakAfter(id object, NSTimeInterval delayInSeconds) {
         }
         
         if (weakObject) {
+#if __has_include("ZIKViewRouter.h")
             if ([weakObject respondsToSelector:@selector(zix_routed)] && [weakObject zix_routed]) {
                 return;
             }
+#endif
             [_existingObjects addObject:weakObject];
             _leakedObjects[[NSString stringWithFormat:@"%p", (void *)weakObject]] = [weakObject description];
             if ([weakObject isKindOfClass:[XXViewController class]]) {

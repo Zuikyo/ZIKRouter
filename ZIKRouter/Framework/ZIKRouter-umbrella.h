@@ -23,6 +23,7 @@
 #import "ZIKServiceRoutable.h"
 #import "ZIKServiceModuleRoutable.h"
 
+#if __has_include("ZIKViewRouter.h")
 #import "ZIKViewRouter.h"
 #import "ZIKViewRouter+Discover.h"
 #import "ZIKViewRouteConfiguration.h"
@@ -34,6 +35,7 @@
 #import "ZIKPresentationState.h"
 #import "UIView+ZIKViewRouter.h"
 #import "UIViewController+ZIKViewRouter.h"
+#endif
 
 //! Project version number for ZIKRouter.
 FOUNDATION_EXPORT double ZIKRouterVersionNumber;

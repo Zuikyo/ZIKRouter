@@ -9,6 +9,8 @@
 //  LICENSE file in the root directory of this source tree.
 //
 
+#if __has_include("ZIKViewRouter.h")
+
 #import "ZIKViewRouteRegistry.h"
 #import "ZIKRouterInternal.h"
 #import "ZIKRouteRegistryInternal.h"
@@ -445,3 +447,5 @@ static NSMutableArray<Class> *_routerClasses;
 #endif
 
 @end
+
+#endif
