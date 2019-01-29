@@ -1,6 +1,6 @@
 # Module Adapter
 
-If you don't want to depend same protocol in module and module's user, use adapter to make totally decouple.
+If you don't want to depend same protocol in module and module's user, use adapter to make totally decouple. Then even modules depends on each other, they can build independently.
 
 ## `Provided protocol` and `Required protocol`
 
@@ -218,4 +218,12 @@ class ModuleAReqiredEditorViewRouter: ZIKViewRouter {
 
 For simple objc classes, you can use NSProxy to create a proxy. For those complex classes such as UIViewController in UIKit, you can subclass the UIViewController, and override methods to adapt interface.
 
-You don't have to always separate `requiredProtocol` and `providedProtocol`. It's ok to use the same protocol in module and its user. Change it only when you need it.
+## Do not abuse
+
+You don't have to always separate `required protocol` and `provided protocol`. It's OK to use the same protocol in module and its user. Or you can just make a copy and change the protocol name, letting `required protocol` to be subset of `provided protocol`. You only need to do adapting when changing to another provided module.
+
+But adapting with category, extension, proxy and subclass will write much more code, you should not abuse the adapting.
+
+If functional module depends on each other, it's recomended to directly use the class, or expose dependencies in it's interface, letting the user to inject them.
+
+Only do adapting when your module really allow multi modules to provide the required protocol. Such as login view module allows different service module in different app.

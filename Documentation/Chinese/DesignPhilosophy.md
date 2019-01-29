@@ -90,6 +90,17 @@ ZIKRouter 避免使用 runtime 获取和调用模块，因此可以适配 OC 和
 
 有一些模块管理工具也实现了基于接口的管理方式。实现思路是将 protocol 和对应的类进行字典匹配，之后就可以用 protocol 获取 class，再动态创建实例。
 
+优点：
+
+- 利用接口调用，实现了参数传递时的类型安全
+
+缺点：
+
+- 由框架来创建所有对象，创建方式有限
+- 用 OC runtime 创建对象，不支持 Swift
+- 只做了 protocol 和 class 的匹配，不支持更复杂的创建方式和依赖注入
+- 无法保证所使用的 protocol 一定存在对应的模块
+
 #### 代表框架
 
 [BeeHive](https://github.com/alibaba/BeeHive)

@@ -34,6 +34,70 @@ If you are using swift, Xcode will auto list all routable protocol:
 
 There're compile-time check when routing with protocols, so you won't use any undeclared protocols.
 
+### How to use the destination after performing route?
+
+The router only keep week reference to the destination after performing route. You need to hold the destination if you want to use it later.
+
+```swift
+class TestViewController: UIViewController {
+	var mySubview: MySubviewInput?
+	
+	func addMySubview() {
+        Router.perform(
+        to: RoutableView<MySubviewInput>(),
+        path: .addAsSubview(from: self.view),
+        configuring: { (config, _) in
+            config.successHandler = { destination in
+                self.mySubview = destination
+            }
+    	 })
+	}
+}
+```
+
+<details><summary>Objective-C Sample</summary>
+
+```objectivec
+@interface TestViewController: UIViewController
+@property (nonatomic, strong) UIView<MySubviewInput> *mySubview;
+@end
+@implementation TestViewController
+
+- (void)addMySubview {
+    [ZIKRouterToView(MySubviewInput) performPath:ZIKViewRoutePath.addAsSubviewFrom(self.view) configuring:^(ZIKViewRouteConfiguration *config) {
+        config.successHandler = ^(id<MySubviewInput> destination) {
+            self.mySubview = destination;
+        };
+    }];
+}
+
+@end
+```
+
+</details>
+
+### What's the different between`ZIKViewRoutable`and`ZIKViewModuleRoutable`?
+
+The same is between`ZIKServiceRoutable`and`ZIKServiceModuleRoutable`.
+
+### Destination protocol
+
+`ZIKViewRoutable`is the parent protocol of destination protocol. If your module is simple and all dependencies can be set on destination, you only need to use protocol conformed by destination.
+
+### Module protocol
+
+`ZIKViewModuleRoutable`is the parent protocol of module protocol. It's for declaring parameters used by the module.
+
+When you need a module protocol ?
+
+When the destination class uses custom initializer to create instance. router needs to get required parameter from the caller. 
+
+Or when your module contains multi components, and you need to pass parameters to those components. And those parameters are not belong to destination. you need a module config protocol to store them in configuration, and configure components' dependencies inside the router.
+
+For example, when you pass a model to a VIPER module, the destination is the view in VIPER, and the view is not responsible for accepting any models.
+
+You can see sample code in: [Register protocol](./ModuleRegistration.md#Register protocol).
+
 ### What's required protocol and provided protocol？
 
 `required protocol` is the protocol used by the module's user. `provided protocol` is the real protocol provided by the module. One `provided protocol` can has multi `required protocol`.
@@ -46,9 +110,15 @@ There're compile-time check when routing with protocols, so you won't use any un
 
 ### Can required protocol and provided protocol provide different interface?
 
-Methods in required protocol and provided protocol can be different, as long as they provide same function. You can adapt required protocol and provided protocol with category, extension, proxy and subclass.
+Methods in required protocol and provided protocol can be different, as long as they provide same function. You can adapt required protocol and provided protocol with category, extension, proxy and subclass. You can see sample code in: [Module Adapter](./ModuleAdapter.md).
 
-In most case, the required protocol is same as the provided protocol, but just change a name.
+In most case, the required protocol is same as the provided protocol, but just change a name. You don't have to always separate `required protocol` and `provided protocol`. It's OK to use the same protocol in module and its user. Or you can just make a copy and change the protocol name, letting `required protocol` to be subset of `provided protocol`. You only need to do adapting when changing to another provided module.
+
+But adapting with category, extension, proxy and subclass will write much more code, you should not abuse the adapting.
+
+If functional module depends on each other, it's recomended to directly use the class, or expose dependencies in it's interface, letting the user to inject them.
+
+Only do adapting when your module really allow multi modules to provide the required protocol. Such as login view module allows different service module in different app.
 
 ### What's adapter?
 
@@ -81,48 +151,6 @@ extension RoutableView where Protocol == ViewControllerInput {
 When fetching router with `ViewControllerInput`, you can get a `UIViewController` conforming to `ControllerInput`.
 
 But we can't declare this in Objective-C.
-
-### How to use the destination after performing route?
-
-The router only keep week reference to the destination after performing route. You need to hold the destination if you want to use it later.
-
-```swift
-class TestViewController: UIViewController {
-	var mySubview: MySubviewInput?
-	
-	func addMySubview() {
-        Router.perform(
-        to: RoutableView<MySubviewInput>(),
-        path: .addAsSubview(from: self.view),
-        configuring: { (config, _) in
-            config.successHandler = { destination in
-                self.mySubview = destination
-            }
-    	 })
-	}
-}
-```
-
-<details><summary>Objective-C Sample</summary>
-  
-```objectivec
-@interface TestViewController: UIViewController
-@property (nonatomic, strong) UIView<MySubviewInput> *mySubview;
-@end
-@implementation TestViewController
-
-- (void)addMySubview {
-    [ZIKRouterToView(MySubviewInput) performPath:ZIKViewRoutePath.addAsSubviewFrom(self.view) configuring:^(ZIKViewRouteConfiguration *config) {
-        config.successHandler = ^(id<MySubviewInput> destination) {
-            self.mySubview = destination;
-        };
-    }];
-}
-
-@end
-```
-
-</details>
 
 ### How to handle route error?
 

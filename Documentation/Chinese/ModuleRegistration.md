@@ -41,7 +41,7 @@ class EditorViewRouter: ZIKAnyViewRouter {
 
 独占式注册的性能更好，因为无需处理多个 router 的情况。建议优先使用独占式注册。
 
-## protocol 注册
+## 注册 protocol
 
 你可以在注册 destination 的同时，注册 destination 的 protocol。之后就能用 protocol 来获取 router 类，无需引入 router 子类。如果没有注册 protocol，那么在使用时就只能明确地使用 router 的具体子类。
 
@@ -53,9 +53,11 @@ class EditorViewRouter: ZIKAnyViewRouter {
 
 ### module protocol
 
-如果 destination 类需要用自定义初始化方法创建，或者 destination 是属于一个复杂模块，有多个组件类，而这些组件类的配置无法全部在一个 destination 类上进行，则应该使用 module config protocol，让调用者把参数保存在 configuration 上，再让 router 在内部初始化各个组件。
+Module protocol 是用来声明模块需要用到的参数的。
 
-例如需要向一个模块传递 model 对象，此时 destination 作为 View，在设计上不能接触到 model。此时就可以用 module config protocol 配置 router 的 configuration，再在 router 内部用 configuration 去配置模块内的各个部分。
+如果 destination 类需要用自定义初始化方法创建，则需要传入创建所需要的参数。或者 destination 是属于一个复杂模块，有多个组件类，需要传入这些类用到的参数。这些组件类的配置无法全部在一个 destination 类上进行，应该使用 module config protocol，让调用者把参数保存在 configuration 上，再让 router 在内部初始化各个组件。
+
+例如需要向一个模块传递 model 对象，此时 destination 作为 view，在设计上不能接触到 model。此时就可以用 configuration 保存参数，再在 router 内部用 configuration 去配置模块内的各个部分。
 
 Router 实现代码：
 
@@ -139,14 +141,14 @@ class EditorViewRouter: ZIKViewRouter<EditorViewController, EditorModuleConfigur
 ```
 
 ```objective-c
-EditorViewRouter.h
+// EditorViewRouter.h
 
 @interface EditorViewRouter: ZIKViewRouter
 @end
 ```
 
 ```objective-c
-//EditorViewRouter.m
+// EditorViewRouter.m
  
  //创建 configuration 的子类，遵守 EditorModuleInput
  //如果你不想创建子类，可以用 category 扩展让ZIKViewRouteConfiguration 遵守 EditorModuleInput

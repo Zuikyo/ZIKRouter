@@ -376,7 +376,7 @@ internal class Registry {
         serviceModuleAdapterContainer[adapterKey] = _RouteKey(routable: adaptee)
     }
     
-    fileprivate static let makingIdentifierPrefix = "_SwiftMaking_"
+    fileprivate static let makingIdentifierPrefix = "~SwiftMaking~"
     
     internal static func register<Protocol>(_ routableView: RoutableView<Protocol>, forMaking destinationClass: AnyClass) {
         let destinationProtocol = Protocol.self

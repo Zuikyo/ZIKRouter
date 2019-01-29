@@ -1,6 +1,6 @@
 # 模块适配器
 
-如果你不想让模块的调用者和模块都使用同一个 protocol，可以用模块适配彻底把两个模块解耦。
+如果你不想让模块的调用者和模块都使用同一个 protocol，可以用模块适配彻底把两个模块解耦。此时即便模块间有相互依赖的情况，也可以让每个模块各自单独编译。
 
 ## `Provided protocol`和`Required protocol`
 
@@ -53,7 +53,7 @@ Router.perform(
 ```
 </details>
 
-`ZIKViewAdapter`和`ZIKServiceAdapter`专门负责为其他router添加protocol。
+`ZIKViewAdapter`和`ZIKServiceAdapter`专门负责为其他 router 添加 protocol。
 
 在 App Context 中让登陆模块支持`ModuleARequiredLoginViewInput`：
 
@@ -216,6 +216,10 @@ class ModuleAReqiredEditorViewRouter: ZIKViewRouter {
 
 对于普通类，proxy 可以用 NSProxy 来实现。对于 UIKit 中的那些复杂的 UI 类，可以用子类，然后在子类中重写方法，进行模块适配。
 
-一般来说，并不需要立即把所有的 protocol 都分离为`requiredProtocol`和`providedProtocol`。调用模块和目的模块可以暂时共用 protocol，或者只是简单地改个名字，在第一次需要替换模块的时候再对 protocol 进行分离。
+## 不要过度滥用
 
-通过`requiredProtocol`和`providedProtocol`，就可以实现模块间的完全解耦。
+一般来说，并不需要立即把所有的 protocol 都分离为`required protocol`和`provided protocol`。调用模块和目的模块可以暂时共用 protocol，或者只是简单地改个名字，让`required protocol`作为`provided protocol`的子集，在第一次需要替换模块的时候再用 category、extension、proxy、subclass 等技术进行接口适配。
+
+接口适配也不能滥用，因为成本比较高。如果是功能模块间的互相依赖，建议直接引用类，或者在模块的接口上把依赖交给外部来设置。只有在你的业务模块的确允许使用者使用不同的依赖模块时，才进行多个接口间的适配。例如登录界面模块允许不同的 app 使用不同的登陆 service 模块。
+
+通过`required protocol`和`provided protocol`，就可以实现模块间的完全解耦。

@@ -53,7 +53,13 @@ If your module is simple and all dependencies can be set on destination, you onl
 
 ### Module protocol
 
-If your module contains multi components, and those components' dependencies can't be passed through destination, you need a module config protocol, and configure components' dependencies inside router.
+Module protocol is for declaring parameters used by the module.
+
+When you need a module protocol ?
+
+When the destination class uses custom initializer to create instance. router needs to get required parameter from the caller. 
+
+Or when your module contains multi components, and you need to pass parameters to those components. And those parameters are not belong to destination. you need a module config protocol to store them in configuration, and configure components' dependencies inside the router.
 
 For example, when you pass a model to a VIPER module, the destination is the view in VIPER, and the view is not responsible for accepting any models.
 
