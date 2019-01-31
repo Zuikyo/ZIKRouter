@@ -245,6 +245,12 @@ FOUNDATION_EXTERN Protocol<ZIKViewRoutable> *_Nullable _routableViewProtocolFrom
 
 FOUNDATION_EXTERN Protocol<ZIKViewModuleRoutable> *_Nullable _routableViewModuleProtocolFromObject(id object);
 
+typedef id  _Nullable (^ZIKViewFactoryBlock)(ZIKViewRouteConfiguration * _Nonnull);
+
+FOUNDATION_EXTERN void _registerViewProtocolWithSwiftFactory(Protocol<ZIKViewRoutable> *viewProtocol, Class viewClass, ZIKViewFactoryBlock function);
+
+FOUNDATION_EXTERN void _registerViewIdentifierWithSwiftFactory(NSString *identifier, Class viewClass, ZIKViewFactoryBlock function);
+
 NS_ASSUME_NONNULL_END
 
 #endif

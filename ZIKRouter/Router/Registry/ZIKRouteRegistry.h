@@ -13,8 +13,6 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-@class ZIKRoute, ZIKRouteConfiguration;
-
 /// Abstract registry for router classes and protocols. In consideration of performance, methods in registry are not thread safe.
 @interface ZIKRouteRegistry : NSObject
 /// Whether auto register all routers when app launches. Default is YES. You can set this to NO before UIApplicationMain, and manually register your routers with +registerAll or call +registerRoutableDestination for each router.

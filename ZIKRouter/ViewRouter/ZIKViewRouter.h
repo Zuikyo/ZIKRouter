@@ -385,6 +385,15 @@ typedef void(^ZIKViewRouteGlobalErrorHandler)(__kindof ZIKViewRouter * _Nullable
 + (void)registerViewProtocol:(Protocol<ZIKViewRoutable> *)viewProtocol forMakingView:(Class)viewClass;
 
 /**
+ Register view class with protocol without using any router subclass. The view will be created with the factory function when used. Use this if your view is very easy and don't need a router subclass.
+
+ @param viewProtocol The protocol conformed by view. Should inherit from ZIKViewRoutable. Use macro `ZIKRoutable` to wrap the parameter.
+ @param viewClass The view class.
+ @param function Function to create destination.
+ */
++ (void)registerViewProtocol:(Protocol<ZIKViewRoutable> *)viewProtocol forMakingView:(Class)viewClass factory:(_Nullable Destination(*_Nonnull)(RouteConfig))function;
+
+/**
  Register view class with protocol without using any router subclass. The view will be created with the `making` block when used. Use this if your view is very easy and don't need a router subclass.
  
  @code
@@ -403,7 +412,7 @@ typedef void(^ZIKViewRouteGlobalErrorHandler)(__kindof ZIKViewRouter * _Nullable
  */
 + (void)registerViewProtocol:(Protocol<ZIKViewRoutable> *)viewProtocol
                forMakingView:(Class)viewClass
-                      making:(_Nullable Destination(^)(RouteConfig config, __kindof ZIKViewRouter<Destination, RouteConfig> *router))makeDestination;
+                      making:(_Nullable Destination(^)(RouteConfig config))makeDestination;
 
 /**
  Register view class with identifier without using any router subclass. The view will be created with `[[viewClass alloc] init]` when used. Use this if your view is very easy and don't need a router subclass.
@@ -419,6 +428,15 @@ typedef void(^ZIKViewRouteGlobalErrorHandler)(__kindof ZIKViewRouter * _Nullable
  @param viewClass The view class.
  */
 + (void)registerIdentifier:(NSString *)identifier forMakingView:(Class)viewClass;
+
+/**
+ Register view class with identifier without using any router subclass. The view will be created with the factory function when used. Use this if your view is very easy and don't need a router subclass.
+
+ @param identifier The unique identifier for this class.
+ @param viewClass The view class.
+ @param function Function to create destination.
+ */
++ (void)registerIdentifier:(NSString *)identifier forMakingView:(Class)viewClass factory:(_Nullable Destination(*_Nonnull)(RouteConfig))function;
 
 /**
  Register view class with identifier without using any router subclass. The view will be created with the `making` block when used. Use this if your view is very easy and don't need a router subclass.
@@ -439,7 +457,7 @@ typedef void(^ZIKViewRouteGlobalErrorHandler)(__kindof ZIKViewRouter * _Nullable
  */
 + (void)registerIdentifier:(NSString *)identifier
              forMakingView:(Class)viewClass
-                    making:(_Nullable Destination(^)(RouteConfig config, __kindof ZIKViewRouter<Destination, RouteConfig> *router))makeDestination;
+                    making:(_Nullable Destination(^)(RouteConfig config))makeDestination;
 
 @end
 

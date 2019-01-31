@@ -17,10 +17,10 @@ public typealias PerformRouteConfig = ZIKPerformRouteConfiguration
 public typealias RemoveRouteConfig = ZIKRemoveRouteConfiguration
 
 public typealias AnyServiceRouter = ServiceRouter<Any, PerformRouteConfig>
-public typealias ZIKAnyServiceRouter = ZIKServiceRouter<AnyObject, PerformRouteConfig>
-public typealias DestinationServiceRouter<Destination> = ServiceRouter<Destination, PerformRouteConfig>
-public typealias ModuleServiceRouter<ModuleConfig> = ServiceRouter<Any, ModuleConfig>
-
-public typealias ZIKAnyServiceRouterType = ZIKServiceRouterType<AnyObject, PerformRouteConfig>
-
 public typealias ZIKAnyServiceRoute = ZIKServiceRoute<AnyObject, PerformRouteConfig>
+public typealias ZIKAnyServiceRouter = ZIKServiceRouter<AnyObject, PerformRouteConfig>
+public typealias ZIKAnyServiceRouterType = ZIKServiceRouterType<AnyObject, PerformRouteConfig>
+public typealias ModuleServiceRouter<ModuleConfig> = ServiceRouter<Any, ModuleConfig>
+public typealias ZIKModuleServiceRouter<ModuleConfig: PerformRouteConfig> = ZIKServiceRouter<AnyObject, ModuleConfig>
+public typealias DestinationServiceRouter<Destination> = ServiceRouter<Destination, PerformRouteConfig>
+public typealias ZIKDestinationServiceRouter<Destination: AnyObject> = ZIKServiceRouter<Destination, PerformRouteConfig>

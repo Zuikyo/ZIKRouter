@@ -78,7 +78,7 @@ extension RoutableView where Protocol == EasyViewInput {
     init() { self.init(declaredProtocol: Protocol.self) }
 }
 
-protocol EasyViewInput2 { }
+protocol EasyViewInput2: ZIKViewRoutable { }
 extension RoutableView where Protocol == EasyViewInput2 {
     init() { self.init(declaredProtocol: Protocol.self) }
 }

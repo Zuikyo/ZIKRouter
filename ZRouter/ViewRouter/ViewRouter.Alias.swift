@@ -19,10 +19,10 @@ public typealias ViewRouteSegueConfig = ZIKViewRouteSegueConfiguration
 public typealias ViewRoutePopoverConfig = ZIKViewRoutePopoverConfiguration
 
 public typealias AnyViewRouter = ViewRouter<Any, ViewRouteConfig>
-public typealias ZIKAnyViewRouter = ZIKViewRouter<AnyObject, ViewRouteConfig>
-public typealias DestinationViewRouter<Destination> = ViewRouter<Destination, ViewRouteConfig>
-public typealias ModuleViewRouter<ModuleConfig> = ViewRouter<Any, ModuleConfig>
-
-public typealias ZIKAnyViewRouterType = ZIKViewRouterType<AnyObject, ViewRouteConfig>
-
 public typealias ZIKAnyViewRoute = ZIKViewRoute<AnyObject, ViewRouteConfig>
+public typealias ZIKAnyViewRouter = ZIKViewRouter<AnyObject, ViewRouteConfig>
+public typealias ZIKAnyViewRouterType = ZIKViewRouterType<AnyObject, ViewRouteConfig>
+public typealias ModuleViewRouter<ModuleConfig> = ViewRouter<Any, ModuleConfig>
+public typealias ZIKModuleViewRouter<ModuleConfig: ViewRouteConfig> = ZIKViewRouter<AnyObject, ModuleConfig>
+public typealias DestinationViewRouter<Destination> = ViewRouter<Destination, ViewRouteConfig>
+public typealias ZIKDestinationViewRouter<Destination: AnyObject> = ZIKViewRouter<Destination, ViewRouteConfig>

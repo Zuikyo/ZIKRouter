@@ -27,7 +27,7 @@ public protocol ViewRouterExtension: class {
     static func register<Protocol>(_ routableView: RoutableView<Protocol>)
     static func register<Protocol>(_ routableViewModule: RoutableViewModule<Protocol>)
     static func register<Protocol>(_ routableView: RoutableView<Protocol>, forMakingView viewClass: AnyClass)
-    static func register<Protocol>(_ routableView: RoutableView<Protocol>, forMakingView viewClass: AnyClass, making: @escaping (ViewRouteConfig, ZIKAnyViewRouter) -> Protocol?)
+    static func register<Protocol>(_ routableView: RoutableView<Protocol>, forMakingView viewClass: AnyClass, making factory: @escaping (ViewRouteConfig) -> Protocol?)
 }
 
 public extension ViewRouterExtension {
@@ -60,14 +60,8 @@ public extension ViewRouterExtension {
     ///   - routableView: A routabe entry carrying a protocol conformed by the destination.
     ///   - viewClass: The view class.
     ///   - making: Block creating the view.
-    static func register<Protocol>(_ routableView: RoutableView<Protocol>, forMakingView viewClass: AnyClass, making: @escaping (ViewRouteConfig, ZIKAnyViewRouter) -> Protocol?) {
-        assert(_swift_typeIsTargetType(viewClass, Protocol.self), "When registering, destination (\(viewClass)) should conforms to protocol (\(Protocol.self))")
-        _ = ZIKAnyViewRoute.make(withDestination: viewClass) { (config, router) -> AnyObject? in
-            if let router = router as? ZIKAnyViewRouter, let destination = making(config, router) {
-                return destination as AnyObject
-            }
-            return nil
-        }.register(routableView)
+    static func register<Protocol>(_ routableView: RoutableView<Protocol>, forMakingView viewClass: AnyClass, making factory: @escaping (ViewRouteConfig) -> Protocol?) {
+        Registry.register(routableView, forMaking: viewClass, making: factory)
     }
 }
 

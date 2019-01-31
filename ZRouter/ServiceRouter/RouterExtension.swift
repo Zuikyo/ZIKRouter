@@ -18,7 +18,7 @@ public protocol ServiceRouterExtension: class {
     static func register<Protocol>(_ routableService: RoutableService<Protocol>)
     static func register<Protocol>(_ routableServiceModule: RoutableServiceModule<Protocol>)
     static func register<Protocol>(_ routableService: RoutableService<Protocol>, forMakingService serviceClass: AnyClass)
-    static func register<Protocol>(_ routableService: RoutableService<Protocol>, forMakingService serviceClass: AnyClass, making: @escaping (PerformRouteConfig, ZIKAnyServiceRouter) -> Protocol?)
+    static func register<Protocol>(_ routableService: RoutableService<Protocol>, forMakingService serviceClass: AnyClass, making factory: @escaping (PerformRouteConfig) -> Protocol?)
 }
 
 public extension ServiceRouterExtension {
@@ -54,14 +54,9 @@ public extension ServiceRouterExtension {
     ///   - routableService: A routabe entry carrying a protocol conformed by the destination.
     ///   - serviceClass: The service class.
     ///   - making: Block creating the service.
-    static func register<Protocol>(_ routableService: RoutableService<Protocol>, forMakingService serviceClass: AnyClass, making: @escaping (PerformRouteConfig, ZIKAnyServiceRouter) -> Protocol?) {
+    static func register<Protocol>(_ routableService: RoutableService<Protocol>, forMakingService serviceClass: AnyClass, making factory: @escaping (PerformRouteConfig) -> Protocol?) {
         assert(_swift_typeIsTargetType(serviceClass, Protocol.self), "When registering, destination (\(serviceClass)) should conforms to protocol (\(Protocol.self))")
-        _ = ZIKAnyServiceRoute.make(withDestination: serviceClass) { (config, router) -> AnyObject? in
-            if let router = router as? ZIKAnyServiceRouter, let destination = making(config, router) {
-                return destination as AnyObject
-            }
-            return nil
-        }.register(routableService)
+        Registry.register(routableService, forMakingService: serviceClass, making: factory)
     }
 }
 

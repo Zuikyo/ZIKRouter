@@ -28,7 +28,7 @@
 #import "ZIKViewRouterType.h"
 
 static CFMutableDictionaryRef _destinationProtocolToDestinationMap;
-static CFMutableSetRef        _easyDestinationClasses;
+static CFMutableSetRef        _runtimeFactoryDestinationClasses;
 static CFMutableDictionaryRef _destinationProtocolToRouterMap;
 static CFMutableDictionaryRef _moduleConfigProtocolToRouterMap;
 static CFMutableDictionaryRef _destinationToRoutersMap;
@@ -37,6 +37,9 @@ static CFMutableDictionaryRef _destinationToExclusiveRouterMap;
 static CFMutableDictionaryRef _identifierToRouterMap;
 static CFMutableDictionaryRef _adapterToAdapteeMap;
 static CFMutableDictionaryRef _identifierToDestinationMap;
+static CFMutableDictionaryRef _destinationProtocolToFactoryMap;
+static CFMutableDictionaryRef _identifierToFactoryMap;
+static CFMutableDictionaryRef _destinationToFactoriesMap;
 #if ZIKROUTER_CHECK
 static CFMutableDictionaryRef _check_routerToDestinationsMap;
 static CFMutableDictionaryRef _check_routerToDestinationProtocolsMap;
@@ -47,7 +50,7 @@ static NSMutableArray<Class> *_routerClasses;
 
 + (void)load {
     _destinationProtocolToDestinationMap = CFDictionaryCreateMutable(kCFAllocatorDefault, 0, NULL, NULL);
-    _easyDestinationClasses = CFSetCreateMutable(kCFAllocatorDefault, 0, NULL);
+    _runtimeFactoryDestinationClasses = CFSetCreateMutable(kCFAllocatorDefault, 0, NULL);
     _destinationProtocolToRouterMap = CFDictionaryCreateMutable(kCFAllocatorDefault, 0, NULL, NULL);
     _moduleConfigProtocolToRouterMap = CFDictionaryCreateMutable(kCFAllocatorDefault, 0, NULL, NULL);
     _destinationToRoutersMap = CFDictionaryCreateMutable(kCFAllocatorDefault, 0, NULL, &kCFTypeDictionaryValueCallBacks);
@@ -56,6 +59,9 @@ static NSMutableArray<Class> *_routerClasses;
     _identifierToRouterMap = CFDictionaryCreateMutable(kCFAllocatorDefault, 0, &kCFTypeDictionaryKeyCallBacks, NULL);
     _adapterToAdapteeMap = CFDictionaryCreateMutable(kCFAllocatorDefault, 0, NULL, NULL);
     _identifierToDestinationMap = CFDictionaryCreateMutable(kCFAllocatorDefault, 0, &kCFTypeDictionaryKeyCallBacks, NULL);
+    _destinationProtocolToFactoryMap = CFDictionaryCreateMutable(kCFAllocatorDefault, 0, NULL, NULL);
+    _identifierToFactoryMap = CFDictionaryCreateMutable(kCFAllocatorDefault, 0, &kCFTypeDictionaryKeyCallBacks, NULL);
+    _destinationToFactoriesMap = CFDictionaryCreateMutable(kCFAllocatorDefault, 0, NULL, &kCFTypeDictionaryValueCallBacks);
 #if ZIKROUTER_CHECK
     _check_routerToDestinationsMap = CFDictionaryCreateMutable(kCFAllocatorDefault, 0, NULL, &kCFTypeDictionaryValueCallBacks);
     _check_routerToDestinationProtocolsMap = CFDictionaryCreateMutable(kCFAllocatorDefault, 0, NULL, &kCFTypeDictionaryValueCallBacks);
@@ -113,16 +119,13 @@ static NSMutableArray<Class> *_routerClasses;
 #pragma clang diagnostic pop
 }
 
-+ (ZIKRoute *)easyRouteForDestinationClass:(Class)destinationClass {
-    ZIKViewRoute *route = [[ZIKViewRoute alloc] initWithMakeDestination:^id _Nullable(ZIKPerformRouteConfiguration * _Nonnull config, __kindof ZIKRouter * _Nonnull router) {
-        return [[destinationClass alloc] init];
-    }];    
-    if ([destinationClass isKindOfClass:[XXView class]]) {
-        route.makeSupportedRouteTypes(^ZIKBlockViewRouteTypeMask{
-            return ZIKBlockViewRouteTypeMaskViewDefault;
-        });
-    }
-    return route;
++ (ZIKRoute *)easyRouteForFactory:(id(^)(ZIKPerformRouteConfiguration * _Nonnull config, __kindof ZIKRouter * _Nonnull router))factory {
+    return [[ZIKViewRoute alloc] initWithMakeDestination:^id _Nullable(ZIKPerformRouteConfiguration * _Nonnull config, __kindof ZIKRouter * _Nonnull router) {
+        if (!factory) {
+            return nil;
+        }
+        return factory(config, router);
+    }];
 }
 
 + (Class)routerTypeClass {
@@ -142,11 +145,9 @@ static NSMutableArray<Class> *_routerClasses;
 + (CFMutableDictionaryRef)destinationProtocolToDestinationMap {
     return _destinationProtocolToDestinationMap;
 }
-
-+ (CFMutableSetRef)easyDestinationClasses {
-    return _easyDestinationClasses;
++ (CFMutableSetRef)runtimeFactoryDestinationClasses {
+    return _runtimeFactoryDestinationClasses;
 }
-
 + (CFMutableDictionaryRef)destinationProtocolToRouterMap {
     return _destinationProtocolToRouterMap;
 }
@@ -170,6 +171,15 @@ static NSMutableArray<Class> *_routerClasses;
 }
 + (CFMutableDictionaryRef)identifierToDestinationMap {
     return _identifierToDestinationMap;
+}
++ (CFMutableDictionaryRef)destinationProtocolToFactoryMap {
+    return _destinationProtocolToFactoryMap;
+}
++ (CFMutableDictionaryRef)identifierToFactoryMap {
+    return _identifierToFactoryMap;
+}
++ (CFMutableDictionaryRef)destinationToFactoriesMap {
+    return _destinationToFactoriesMap;
 }
 + (CFMutableDictionaryRef)_check_routerToDestinationsMap {
 #if ZIKROUTER_CHECK
@@ -322,7 +332,7 @@ static NSMutableArray<Class> *_routerClasses;
     for (Class destinationClass in _routableDestinations) {
         NSCAssert1(CFDictionaryGetValue(self.destinationToDefaultRouterMap, (__bridge const void *)(destinationClass)) != NULL ||
                    CFDictionaryGetValue(self.destinationToExclusiveRouterMap, (__bridge const void *)(destinationClass)) != NULL ||
-                   CFSetContainsValue(self.easyDestinationClasses, (__bridge const void *)(destinationClass)), @"Routable view(%@) is not registered with any view router.",destinationClass);
+                   [self easyRouteForDestinationClass:destinationClass], @"Routable view(%@) is not registered with any view router.",destinationClass);
     }
 }
 
@@ -369,7 +379,7 @@ static NSMutableArray<Class> *_routerClasses;
         }
         CFSetRef viewsRef = CFDictionaryGetValue(self._check_routerToDestinationsMap, (__bridge const void *)(router));
         NSSet *views = (__bridge NSSet *)(viewsRef);
-        NSCAssert1(views.count > 0 || CFDictionaryGetValue(self.destinationProtocolToDestinationMap, (__bridge const void *)(protocol)), @"Router(%@) didn't registered with any viewClass", router);
+        NSCAssert1(views.count > 0 || CFDictionaryGetValue(self.destinationProtocolToDestinationMap, (__bridge const void *)(protocol)) || CFDictionaryGetValue(self.destinationProtocolToFactoryMap, (__bridge const void *)(protocol)), @"Router(%@) didn't registered with any viewClass", router);
         for (Class viewClass in views) {
             NSCAssert3([viewClass conformsToProtocol:protocol], @"Router(%@)'s viewClass(%@) should conform to registered protocol(%@)",router, viewClass, NSStringFromProtocol(protocol));
         }

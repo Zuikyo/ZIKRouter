@@ -245,7 +245,21 @@ internal class Registry {
             ZIKAnyServiceRouter.registerServiceProtocol(routableProtocol, forMakingService: destinationClass)
             return
         }
+        assert(_ZIKServiceRouterToIdentifier(makingIdentifierPrefix + routableService.typeName) == nil, "Protocol (\(routableService.typeName)) already registered with router (\(_ZIKServiceRouterToIdentifier(makingIdentifierPrefix + routableService.typeName)!.routeObject)), can't register for making destination (\(destinationClass))");
         ZIKAnyServiceRouter.registerIdentifier(makingIdentifierPrefix + routableService.typeName, forMakingService: destinationClass)
+    }
+    
+    static func register<Protocol>(_ routableService: RoutableService<Protocol>, forMakingService destinationClass: AnyClass, making factory: @escaping (PerformRouteConfig) -> Protocol?) {
+        let destinationProtocol = Protocol.self
+        assert(_swift_typeIsTargetType(destinationClass, destinationProtocol), "Destination (\(destinationClass)) should conforms to protocol (\(destinationProtocol))")
+        assert(ZIKAnyServiceRouter.isRegistrationFinished() == false, "Can't register after app did finish launch. Only register in registerRoutableDestination().")
+        // `UIViewController & ObjcProtocol` type is also a Protocol in objc, but we want to keep it in swift container
+        if let routableProtocol = _routableServiceProtocolFromObject(destinationProtocol), routableService.typeName == routableProtocol.name {
+            _registerServiceProtocolWithSwiftFactory(routableProtocol, destinationClass, factory)
+            return
+        }
+        assert(_ZIKServiceRouterToIdentifier(makingIdentifierPrefix + routableService.typeName) == nil, "Protocol (\(routableService.typeName)) already registered with router (\(_ZIKServiceRouterToIdentifier(makingIdentifierPrefix + routableService.typeName)!.routeObject)), can't register for making destination (\(destinationClass)) with factory (\(factory))");
+        _registerServiceIdentifierWithSwiftFactory(makingIdentifierPrefix + routableService.typeName, destinationClass, factory)
     }
     
     // MARK: Validate

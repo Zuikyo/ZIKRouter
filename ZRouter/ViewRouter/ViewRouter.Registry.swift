@@ -173,7 +173,21 @@ extension Registry {
             ZIKAnyViewRouter.registerViewProtocol(routableProtocol, forMakingView: destinationClass)
             return
         }
+        assert(_ZIKViewRouterToIdentifier(makingIdentifierPrefix + routableView.typeName) == nil, "Protocol (\(routableView.typeName)) already registered with router (\(_ZIKViewRouterToIdentifier(makingIdentifierPrefix + routableView.typeName)!.routeObject)), can't register for making destination (\(destinationClass))");
         ZIKAnyViewRouter.registerIdentifier(makingIdentifierPrefix + routableView.typeName, forMakingView: destinationClass)
+    }
+    
+    internal static func register<Protocol>(_ routableView: RoutableView<Protocol>, forMaking destinationClass: AnyClass, making factory: @escaping (ViewRouteConfig) -> Protocol?) {
+        let destinationProtocol = Protocol.self
+        assert(_swift_typeIsTargetType(destinationClass, destinationProtocol), "Destination (\(destinationClass)) should conforms to protocol (\(destinationProtocol))")
+        assert(ZIKAnyViewRouter.isRegistrationFinished() == false, "Can't register after app did finish launch. Only register in registerRoutableDestination().")
+        // `UIViewController & ObjcProtocol` type is also a Protocol in objc, but we want to keep it in swift container
+        if let routableProtocol = _routableViewProtocolFromObject(destinationProtocol), routableView.typeName == routableProtocol.name {
+            _registerViewProtocolWithSwiftFactory(routableProtocol, destinationClass, factory)
+            return
+        }
+        assert(_ZIKViewRouterToIdentifier(makingIdentifierPrefix + routableView.typeName) == nil, "Protocol (\(routableView.typeName)) already registered with router (\(_ZIKViewRouterToIdentifier(makingIdentifierPrefix + routableView.typeName)!.routeObject)), can't register for making destination (\(destinationClass)) with factory (\(factory))");
+        _registerViewIdentifierWithSwiftFactory(makingIdentifierPrefix + routableView.typeName, destinationClass, factory)
     }
     
     // MARK: Validate

@@ -4217,16 +4217,15 @@ static  ZIKViewRouterType *_Nullable _routerTypeToRegisteredView(Class viewClass
     [ZIKViewRouteRegistry registerDestinationProtocol:viewProtocol forMakingDestination:viewClass];
 }
 
-+ (void)registerViewProtocol:(Protocol<ZIKViewRoutable> *)viewProtocol forMakingView:(Class)viewClass making:(id  _Nullable (^)(ZIKViewRouteConfiguration * _Nonnull, __kindof ZIKViewRouter<id, ZIKViewRouteConfiguration *> * _Nonnull))makeDestination {
++ (void)registerViewProtocol:(Protocol<ZIKViewRoutable> *)viewProtocol forMakingView:(Class)viewClass factory:(id(*)(ZIKViewRouteConfiguration *))function {
+    NSAssert(!ZIKViewRouteRegistry.registrationFinished, @"Only register in +registerRoutableDestination.");
+    [ZIKViewRouteRegistry registerDestinationProtocol:viewProtocol forMakingDestination:viewClass factoryFunction:function];
+}
+
++ (void)registerViewProtocol:(Protocol<ZIKViewRoutable> *)viewProtocol forMakingView:(Class)viewClass making:(id  _Nullable (^)(ZIKViewRouteConfiguration * _Nonnull))makeDestination {
     NSParameterAssert([viewClass conformsToProtocol:viewProtocol]);
     NSAssert(!ZIKViewRouteRegistry.registrationFinished, @"Only register in +registerRoutableDestination.");
-    ZIKViewRoute *route = [ZIKViewRoute makeRouteWithDestination:viewClass makeDestination:(id  _Nullable (^)(ZIKPerformRouteConfiguration * _Nonnull, __kindof ZIKViewRouter<id, ZIKViewRouteConfiguration *> * _Nonnull))makeDestination];
-    if ([viewClass isKindOfClass:[XXView class]]) {
-        route.makeSupportedRouteTypes(^ZIKBlockViewRouteTypeMask{
-            return ZIKBlockViewRouteTypeMaskViewDefault;
-        });
-    }
-    route.registerDestinationProtocol(viewProtocol);
+    [ZIKViewRouteRegistry registerDestinationProtocol:viewProtocol forMakingDestination:viewClass factoryBlock:(id)makeDestination];
 }
 
 + (void)registerIdentifier:(NSString *)identifier forMakingView:(Class)viewClass {
@@ -4234,18 +4233,27 @@ static  ZIKViewRouterType *_Nullable _routerTypeToRegisteredView(Class viewClass
     [ZIKViewRouteRegistry registerIdentifier:identifier forMakingDestination:viewClass];
 }
 
-+ (void)registerIdentifier:(NSString *)identifier forMakingView:(Class)viewClass making:(id  _Nullable (^)(ZIKViewRouteConfiguration * _Nonnull, __kindof ZIKViewRouter<id, ZIKViewRouteConfiguration *> * _Nonnull))makeDestination {
++ (void)registerIdentifier:(NSString *)identifier forMakingView:(Class)viewClass factory:(id(*_Nonnull)(ZIKViewRouteConfiguration *))function {
     NSAssert(!ZIKViewRouteRegistry.registrationFinished, @"Only register in +registerRoutableDestination.");
-    ZIKViewRoute *route = [ZIKViewRoute makeRouteWithDestination:viewClass makeDestination:(id  _Nullable (^)(ZIKPerformRouteConfiguration * _Nonnull, __kindof ZIKViewRouter<id, ZIKViewRouteConfiguration *> * _Nonnull))makeDestination];
-    if ([viewClass isKindOfClass:[XXView class]]) {
-        route.makeSupportedRouteTypes(^ZIKBlockViewRouteTypeMask{
-            return ZIKBlockViewRouteTypeMaskViewDefault;
-        });
-    }
-    route.registerIdentifier(identifier);
+    [ZIKViewRouteRegistry registerIdentifier:identifier forMakingDestination:viewClass factoryFunction:function];
+}
+
++ (void)registerIdentifier:(NSString *)identifier forMakingView:(Class)viewClass making:(id  _Nullable (^)(ZIKViewRouteConfiguration * _Nonnull))makeDestination {
+    NSAssert(!ZIKViewRouteRegistry.registrationFinished, @"Only register in +registerRoutableDestination.");
+    [ZIKViewRouteRegistry registerIdentifier:identifier forMakingDestination:viewClass factoryBlock:(id)makeDestination];
 }
 
 @end
+
+void _registerViewProtocolWithSwiftFactory(Protocol<ZIKViewRoutable> *viewProtocol, Class viewClass, ZIKViewFactoryBlock block) {
+    NSCAssert(!ZIKViewRouteRegistry.registrationFinished, @"Only register in +registerRoutableDestination.");
+    [ZIKViewRouteRegistry registerDestinationProtocol:viewProtocol forMakingDestination:viewClass factoryBlock:(id)block];
+}
+
+void _registerViewIdentifierWithSwiftFactory(NSString *identifier, Class viewClass, ZIKViewFactoryBlock block) {
+    NSCAssert(!ZIKViewRouteRegistry.registrationFinished, @"Only register in +registerRoutableDestination.");
+    [ZIKViewRouteRegistry registerIdentifier:identifier forMakingDestination:viewClass factoryBlock:(id)block];
+}
 
 @implementation ZIKViewRouter (Private)
 

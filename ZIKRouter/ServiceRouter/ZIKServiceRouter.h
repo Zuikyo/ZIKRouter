@@ -156,6 +156,15 @@ typedef void(^ZIKServiceRouteGlobalErrorHandler)(__kindof ZIKServiceRouter * _Nu
 + (void)registerServiceProtocol:(Protocol<ZIKServiceRoutable> *)serviceProtocol forMakingService:(Class)serviceClass;
 
 /**
+ Register service class with protocol without using any router subclass. The service will be created with the factory function when used. Use this if your service is very easy and don't need a router subclass.
+ 
+ @param serviceProtocol The protocol conformed by service. Should inherit from ZIKServiceRoutable. Use macro `ZIKRoutable` to wrap the parameter.
+ @param serviceClass The service class.
+ @param function Function to create destination.
+ */
++ (void)registerServiceProtocol:(Protocol<ZIKServiceRoutable> *)serviceProtocol forMakingService:(Class)serviceClass factory:(_Nullable Destination(*_Nonnull)(RouteConfig))function;
+
+/**
  Register service class with protocol without using any router subclass. The service will be created with the `making` block when used. Use this if your service is very easy and don't need a router subclass.
 
  @code
@@ -174,7 +183,7 @@ typedef void(^ZIKServiceRouteGlobalErrorHandler)(__kindof ZIKServiceRouter * _Nu
  */
 + (void)registerServiceProtocol:(Protocol<ZIKServiceRoutable> *)serviceProtocol
                forMakingService:(Class)serviceClass
-                         making:(_Nullable Destination(^)(RouteConfig config, __kindof ZIKServiceRouter<Destination, RouteConfig> *router))makeDestination;
+                         making:(_Nullable Destination(^)(RouteConfig config))makeDestination;
 
 /**
  Register service class with identifier without using any router subclass. The service will be created with `[[serviceClass alloc] init]` when used. Use this if your service is very easy and don't need a router subclass.
@@ -190,6 +199,15 @@ typedef void(^ZIKServiceRouteGlobalErrorHandler)(__kindof ZIKServiceRouter * _Nu
  @param serviceClass The service class.
  */
 + (void)registerIdentifier:(NSString *)identifier forMakingService:(Class)serviceClass;
+
+/**
+ Register service class with identifier without using any router subclass. The view will be created with the factory function when used. Use this if your service is very easy and don't need a router subclass.
+ 
+ @param identifier The unique identifier for this class.
+ @param serviceClass The service class.
+ @param function Function to create destination.
+ */
++ (void)registerIdentifier:(NSString *)identifier forMakingService:(Class)serviceClass factory:(_Nullable Destination(*_Nonnull)(RouteConfig))function;
 
 /**
  Register service class with identifier without using any router subclass. The service will be created with the `making` block when used. Use this if your service is very easy and don't need a router subclass.
@@ -210,7 +228,7 @@ typedef void(^ZIKServiceRouteGlobalErrorHandler)(__kindof ZIKServiceRouter * _Nu
  */
 + (void)registerIdentifier:(NSString *)identifier
           forMakingService:(Class)serviceClass
-                    making:(_Nullable Destination(^)(RouteConfig config, __kindof ZIKServiceRouter<Destination, RouteConfig> *router))makeDestination;
+                    making:(_Nullable Destination(^)(RouteConfig config))makeDestination;
 
 @end
 
