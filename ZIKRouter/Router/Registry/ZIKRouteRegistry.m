@@ -133,7 +133,7 @@ static BOOL _registrationFinished = NO;
 #pragma mark Discover
 
 + (ZIKRoute *)easyRouteForDestinationClass:(Class)destinationClass {
-    return [[ZIKRoute alloc] initWithDestination:destinationClass makeDestination:^id _Nullable(ZIKPerformRouteConfiguration * _Nonnull config, __kindof ZIKRouter * _Nonnull router) {
+    return [[ZIKRoute alloc] initWithMakeDestination:^id _Nullable(ZIKPerformRouteConfiguration * _Nonnull config, __kindof ZIKRouter * _Nonnull router) {
         return [[destinationClass alloc] init];
     }];
 }

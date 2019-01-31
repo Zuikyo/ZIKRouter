@@ -17,10 +17,18 @@ Pod::Spec.new do |s|
 
   s.source       = { :git => "https://github.com/Zuikyo/ZIKRouter.git", :tag => "swift-#{s.version}" }
 
-  s.source_files  = "ZRouter/*.swift"
-
   s.requires_arc = true
+  s.default_subspecs = 'ServiceRouter','ViewRouter'
 
-  s.dependency "ZIKRouter", '>= 1.0.7'
+  s.subspec 'ServiceRouter' do |serviceRouter|
+    serviceRouter.dependency 'ZIKRouter/ServiceRouter', '>= 1.0.7'
+    serviceRouter.source_files = "ZRouter/*.swift",
+                                 "ZRouter/ServiceRouter/*.swift"
+  end
+
+  s.subspec 'ViewRouter' do |viewRouter|
+    viewRouter.dependency 'ZIKRouter/ViewRouter', '>= 1.0.7'
+    viewRouter.source_files = "ZRouter/ViewRouter/*.swift"
+  end
 
 end
