@@ -16,25 +16,11 @@ public typealias RouteConfig = ZIKRouteConfiguration
 public typealias PerformRouteConfig = ZIKPerformRouteConfiguration
 public typealias RemoveRouteConfig = ZIKRemoveRouteConfiguration
 
-public typealias ViewRouteType = ZIKViewRouteType
-public typealias ViewRouteError = ZIKViewRouteError
-public typealias ViewRouteConfig = ZIKViewRouteConfiguration
-public typealias ViewRemoveConfig = ZIKViewRemoveConfiguration
-public typealias ViewRouteSegueConfig = ZIKViewRouteSegueConfiguration
-public typealias ViewRoutePopoverConfig = ZIKViewRoutePopoverConfiguration
-
-public typealias AnyViewRouter = ViewRouter<Any, ViewRouteConfig>
-public typealias ZIKAnyViewRouter = ZIKViewRouter<AnyObject, ViewRouteConfig>
-public typealias DestinationViewRouter<Destination> = ViewRouter<Destination, ViewRouteConfig>
-public typealias ModuleViewRouter<ModuleConfig> = ViewRouter<Any, ModuleConfig>
-
 public typealias AnyServiceRouter = ServiceRouter<Any, PerformRouteConfig>
 public typealias ZIKAnyServiceRouter = ZIKServiceRouter<AnyObject, PerformRouteConfig>
 public typealias DestinationServiceRouter<Destination> = ServiceRouter<Destination, PerformRouteConfig>
 public typealias ModuleServiceRouter<ModuleConfig> = ServiceRouter<Any, ModuleConfig>
 
-public typealias ZIKAnyViewRouterType = ZIKViewRouterType<AnyObject, ViewRouteConfig>
 public typealias ZIKAnyServiceRouterType = ZIKServiceRouterType<AnyObject, PerformRouteConfig>
 
-public typealias ZIKAnyViewRoute = ZIKViewRoute<AnyObject, ViewRouteConfig>
 public typealias ZIKAnyServiceRoute = ZIKServiceRoute<AnyObject, PerformRouteConfig>

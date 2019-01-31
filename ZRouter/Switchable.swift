@@ -9,24 +9,6 @@
 //  LICENSE file in the root directory of this source tree.
 //
 
-public struct SwitchableView {
-    public let routableProtocol: Any.Type
-    public let typeName: String
-    public init<Protocol>(_ routableEntry: RoutableView<Protocol>) {
-        routableProtocol = Protocol.self
-        typeName = routableEntry.typeName
-    }
-}
-
-public struct SwitchableViewModule {
-    public let routableProtocol: Any.Type
-    public let typeName: String
-    public init<Protocol>(_ routableEntry: RoutableViewModule<Protocol>) {
-        routableProtocol = Protocol.self
-        typeName = routableEntry.typeName
-    }
-}
-
 public struct SwitchableService {
     public let routableProtocol: Any.Type
     public let typeName: String
