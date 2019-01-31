@@ -9,14 +9,7 @@
 /* Begin PBXBuildFile section */
 		F80C6F7620B5B01F0082DC2C /* ObjcViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = F80C6F7520B5B01F0082DC2C /* ObjcViewController.m */; };
 		F80C6F7C20B5B0320082DC2C /* ObjcService.m in Sources */ = {isa = PBXBuildFile; fileRef = F80C6F7B20B5B0320082DC2C /* ObjcService.m */; };
-		F82035CE1FC51F03009DB80B /* ViewRouter.swift in Sources */ = {isa = PBXBuildFile; fileRef = F82035CD1FC51F03009DB80B /* ViewRouter.swift */; };
-		F82035D21FC66537009DB80B /* ServiceRouter.swift in Sources */ = {isa = PBXBuildFile; fileRef = F82035D11FC66537009DB80B /* ServiceRouter.swift */; };
-		F85C58342012505A0096821B /* RouterExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = F85C58332012505A0096821B /* RouterExtension.swift */; };
 		F872F4E61FAF5BB200297A1D /* ZRouter.h in Headers */ = {isa = PBXBuildFile; fileRef = F872F4E41FAF5BB200297A1D /* ZRouter.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		F872F4F61FAF5BD600297A1D /* ViewExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = F872F4EE1FAF5BD500297A1D /* ViewExtension.swift */; };
-		F872F4F81FAF5BD600297A1D /* Alias.swift in Sources */ = {isa = PBXBuildFile; fileRef = F872F4F01FAF5BD500297A1D /* Alias.swift */; };
-		F872F4F91FAF5BD600297A1D /* Registry.swift in Sources */ = {isa = PBXBuildFile; fileRef = F872F4F11FAF5BD500297A1D /* Registry.swift */; };
-		F872F4FB1FAF5BD600297A1D /* Namespace.swift in Sources */ = {isa = PBXBuildFile; fileRef = F872F4F31FAF5BD500297A1D /* Namespace.swift */; };
 		F87E85A520945FBE00E5A306 /* ServiceModuleRouterPerformTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F87E85A420945FBE00E5A306 /* ServiceModuleRouterPerformTests.swift */; };
 		F87E85A7209460D700E5A306 /* ServiceRouterMakeDestinationTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F87E85A6209460D700E5A306 /* ServiceRouterMakeDestinationTests.swift */; };
 		F87E85A9209470ED00E5A306 /* ServiceModuleRouterMakeDestinationTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F87E85A8209470ED00E5A306 /* ServiceModuleRouterMakeDestinationTests.swift */; };
@@ -32,15 +25,28 @@
 		F87E85BF20947B5300E5A306 /* SubViewRouterMakeDestinationTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F87E85BA20947B5300E5A306 /* SubViewRouterMakeDestinationTests.swift */; };
 		F87E85C020947B5300E5A306 /* SubViewRouterPerformTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F87E85BB20947B5300E5A306 /* SubViewRouterPerformTests.swift */; };
 		F87E85C120947B5300E5A306 /* SubViewRouterPrepareDestinationTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F87E85BC20947B5300E5A306 /* SubViewRouterPrepareDestinationTests.swift */; };
+		F8A1A53B2202A17E0088C353 /* ViewRouter.Alias.swift in Sources */ = {isa = PBXBuildFile; fileRef = F8A1A52A2202A17E0088C353 /* ViewRouter.Alias.swift */; };
+		F8A1A53C2202A17E0088C353 /* ViewRouter.Switchable.swift in Sources */ = {isa = PBXBuildFile; fileRef = F8A1A52B2202A17E0088C353 /* ViewRouter.Switchable.swift */; };
+		F8A1A53D2202A17E0088C353 /* ViewRouter.Routable.swift in Sources */ = {isa = PBXBuildFile; fileRef = F8A1A52C2202A17E0088C353 /* ViewRouter.Routable.swift */; };
+		F8A1A53E2202A17E0088C353 /* ViewRouter.Registry.swift in Sources */ = {isa = PBXBuildFile; fileRef = F8A1A52D2202A17E0088C353 /* ViewRouter.Registry.swift */; };
+		F8A1A5412202A17E0088C353 /* ViewRouter.Router.swift in Sources */ = {isa = PBXBuildFile; fileRef = F8A1A5302202A17E0088C353 /* ViewRouter.Router.swift */; };
+		F8A1A5422202A17E0088C353 /* ViewRouter.RouterExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = F8A1A5312202A17E0088C353 /* ViewRouter.RouterExtension.swift */; };
+		F8A1A5442202A17E0088C353 /* Alias.swift in Sources */ = {isa = PBXBuildFile; fileRef = F8A1A5342202A17E0088C353 /* Alias.swift */; };
+		F8A1A5452202A17E0088C353 /* Switchable.swift in Sources */ = {isa = PBXBuildFile; fileRef = F8A1A5352202A17E0088C353 /* Switchable.swift */; };
+		F8A1A5462202A17E0088C353 /* Routable.swift in Sources */ = {isa = PBXBuildFile; fileRef = F8A1A5362202A17E0088C353 /* Routable.swift */; };
+		F8A1A5472202A17E0088C353 /* Registry.swift in Sources */ = {isa = PBXBuildFile; fileRef = F8A1A5372202A17E0088C353 /* Registry.swift */; };
+		F8A1A5482202A17E0088C353 /* Router.swift in Sources */ = {isa = PBXBuildFile; fileRef = F8A1A5382202A17E0088C353 /* Router.swift */; };
+		F8A1A5492202A17E0088C353 /* ServiceRouter.swift in Sources */ = {isa = PBXBuildFile; fileRef = F8A1A5392202A17E0088C353 /* ServiceRouter.swift */; };
+		F8A1A54A2202A17E0088C353 /* RouterExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = F8A1A53A2202A17E0088C353 /* RouterExtension.swift */; };
+		F8A1A54E2202C3BF0088C353 /* ViewExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = F8A1A54C2202C3BF0088C353 /* ViewExtension.swift */; };
+		F8A1A54F2202C3BF0088C353 /* ViewRouter.swift in Sources */ = {isa = PBXBuildFile; fileRef = F8A1A54D2202C3BF0088C353 /* ViewRouter.swift */; };
+		F8A1A5512202C3C60088C353 /* Namespace.swift in Sources */ = {isa = PBXBuildFile; fileRef = F8A1A5502202C3C60088C353 /* Namespace.swift */; };
 		F8A5ED072093A7C000773853 /* ServiceRouterPerformTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F8A5ED062093A7C000773853 /* ServiceRouterPerformTests.swift */; };
 		F8A5ED092093A7C000773853 /* ZRouter.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F872F4E11FAF5BB200297A1D /* ZRouter.framework */; };
 		F8A5ED152093A80E00773853 /* AService.swift in Sources */ = {isa = PBXBuildFile; fileRef = F8A5ED142093A80E00773853 /* AService.swift */; };
 		F8A5ED172093B05100773853 /* TestRouteRegistry.swift in Sources */ = {isa = PBXBuildFile; fileRef = F8A5ED162093B05100773853 /* TestRouteRegistry.swift */; };
 		F8A5ED1920940D7A00773853 /* TestConfig.swift in Sources */ = {isa = PBXBuildFile; fileRef = F8A5ED1820940D7A00773853 /* TestConfig.swift */; };
 		F8B5753220A5832800FC05B5 /* UtilityTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F8B5753120A5832800FC05B5 /* UtilityTests.swift */; };
-		F8C0D1161FB034B5003D3B3B /* Router.swift in Sources */ = {isa = PBXBuildFile; fileRef = F8C0D1151FB034B5003D3B3B /* Router.swift */; };
-		F8C0D11E1FB04E06003D3B3B /* Routable.swift in Sources */ = {isa = PBXBuildFile; fileRef = F8C0D11D1FB04E06003D3B3B /* Routable.swift */; };
-		F8EF733C1FB4C4550040008C /* Switchable.swift in Sources */ = {isa = PBXBuildFile; fileRef = F8EF733B1FB4C4550040008C /* Switchable.swift */; };
 		F8F6B1C620A8C65A00110B03 /* ViewRouterComposedTypeTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F8F6B1C520A8C65A00110B03 /* ViewRouterComposedTypeTests.swift */; };
 /* End PBXBuildFile section */
 
@@ -88,16 +94,9 @@
 		F80C6F7520B5B01F0082DC2C /* ObjcViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ObjcViewController.m; sourceTree = "<group>"; };
 		F80C6F7A20B5B0320082DC2C /* ObjcService.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ObjcService.h; sourceTree = "<group>"; };
 		F80C6F7B20B5B0320082DC2C /* ObjcService.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ObjcService.m; sourceTree = "<group>"; };
-		F82035CD1FC51F03009DB80B /* ViewRouter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewRouter.swift; sourceTree = "<group>"; };
-		F82035D11FC66537009DB80B /* ServiceRouter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ServiceRouter.swift; sourceTree = "<group>"; };
-		F85C58332012505A0096821B /* RouterExtension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RouterExtension.swift; sourceTree = "<group>"; };
 		F872F4E11FAF5BB200297A1D /* ZRouter.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = ZRouter.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		F872F4E41FAF5BB200297A1D /* ZRouter.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ZRouter.h; sourceTree = "<group>"; };
 		F872F4E51FAF5BB200297A1D /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		F872F4EE1FAF5BD500297A1D /* ViewExtension.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ViewExtension.swift; sourceTree = "<group>"; };
-		F872F4F01FAF5BD500297A1D /* Alias.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Alias.swift; sourceTree = "<group>"; };
-		F872F4F11FAF5BD500297A1D /* Registry.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Registry.swift; sourceTree = "<group>"; };
-		F872F4F31FAF5BD500297A1D /* Namespace.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Namespace.swift; sourceTree = "<group>"; };
 		F872F4FC1FAF5C6E00297A1D /* ZIKRouter.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; path = ZIKRouter.xcodeproj; sourceTree = "<group>"; };
 		F87E85A420945FBE00E5A306 /* ServiceModuleRouterPerformTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ServiceModuleRouterPerformTests.swift; sourceTree = "<group>"; };
 		F87E85A6209460D700E5A306 /* ServiceRouterMakeDestinationTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ServiceRouterMakeDestinationTests.swift; sourceTree = "<group>"; };
@@ -114,6 +113,22 @@
 		F87E85BA20947B5300E5A306 /* SubViewRouterMakeDestinationTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SubViewRouterMakeDestinationTests.swift; sourceTree = "<group>"; };
 		F87E85BB20947B5300E5A306 /* SubViewRouterPerformTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SubViewRouterPerformTests.swift; sourceTree = "<group>"; };
 		F87E85BC20947B5300E5A306 /* SubViewRouterPrepareDestinationTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SubViewRouterPrepareDestinationTests.swift; sourceTree = "<group>"; };
+		F8A1A52A2202A17E0088C353 /* ViewRouter.Alias.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ViewRouter.Alias.swift; sourceTree = "<group>"; };
+		F8A1A52B2202A17E0088C353 /* ViewRouter.Switchable.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ViewRouter.Switchable.swift; sourceTree = "<group>"; };
+		F8A1A52C2202A17E0088C353 /* ViewRouter.Routable.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ViewRouter.Routable.swift; sourceTree = "<group>"; };
+		F8A1A52D2202A17E0088C353 /* ViewRouter.Registry.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ViewRouter.Registry.swift; sourceTree = "<group>"; };
+		F8A1A5302202A17E0088C353 /* ViewRouter.Router.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ViewRouter.Router.swift; sourceTree = "<group>"; };
+		F8A1A5312202A17E0088C353 /* ViewRouter.RouterExtension.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ViewRouter.RouterExtension.swift; sourceTree = "<group>"; };
+		F8A1A5342202A17E0088C353 /* Alias.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Alias.swift; sourceTree = "<group>"; };
+		F8A1A5352202A17E0088C353 /* Switchable.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Switchable.swift; sourceTree = "<group>"; };
+		F8A1A5362202A17E0088C353 /* Routable.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Routable.swift; sourceTree = "<group>"; };
+		F8A1A5372202A17E0088C353 /* Registry.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Registry.swift; sourceTree = "<group>"; };
+		F8A1A5382202A17E0088C353 /* Router.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Router.swift; sourceTree = "<group>"; };
+		F8A1A5392202A17E0088C353 /* ServiceRouter.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ServiceRouter.swift; sourceTree = "<group>"; };
+		F8A1A53A2202A17E0088C353 /* RouterExtension.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RouterExtension.swift; sourceTree = "<group>"; };
+		F8A1A54C2202C3BF0088C353 /* ViewExtension.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ViewExtension.swift; sourceTree = "<group>"; };
+		F8A1A54D2202C3BF0088C353 /* ViewRouter.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ViewRouter.swift; sourceTree = "<group>"; };
+		F8A1A5502202C3C60088C353 /* Namespace.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Namespace.swift; sourceTree = "<group>"; };
 		F8A5ED042093A7C000773853 /* ZRouterTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = ZRouterTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		F8A5ED062093A7C000773853 /* ServiceRouterPerformTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ServiceRouterPerformTests.swift; sourceTree = "<group>"; };
 		F8A5ED082093A7C000773853 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
@@ -121,9 +136,6 @@
 		F8A5ED162093B05100773853 /* TestRouteRegistry.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TestRouteRegistry.swift; sourceTree = "<group>"; };
 		F8A5ED1820940D7A00773853 /* TestConfig.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TestConfig.swift; sourceTree = "<group>"; };
 		F8B5753120A5832800FC05B5 /* UtilityTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UtilityTests.swift; sourceTree = "<group>"; };
-		F8C0D1151FB034B5003D3B3B /* Router.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Router.swift; sourceTree = "<group>"; };
-		F8C0D11D1FB04E06003D3B3B /* Routable.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Routable.swift; sourceTree = "<group>"; };
-		F8EF733B1FB4C4550040008C /* Switchable.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Switchable.swift; sourceTree = "<group>"; };
 		F8F6B1C520A8C65A00110B03 /* ViewRouterComposedTypeTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewRouterComposedTypeTests.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -168,16 +180,9 @@
 		F872F4E31FAF5BB200297A1D /* ZRouter */ = {
 			isa = PBXGroup;
 			children = (
-				F872F4F01FAF5BD500297A1D /* Alias.swift */,
-				F872F4F11FAF5BD500297A1D /* Registry.swift */,
-				F8C0D1151FB034B5003D3B3B /* Router.swift */,
-				F82035CD1FC51F03009DB80B /* ViewRouter.swift */,
-				F82035D11FC66537009DB80B /* ServiceRouter.swift */,
-				F8C0D11D1FB04E06003D3B3B /* Routable.swift */,
-				F8EF733B1FB4C4550040008C /* Switchable.swift */,
-				F85C58332012505A0096821B /* RouterExtension.swift */,
-				F872F4EE1FAF5BD500297A1D /* ViewExtension.swift */,
-				F872F4F31FAF5BD500297A1D /* Namespace.swift */,
+				F8A1A5502202C3C60088C353 /* Namespace.swift */,
+				F8A1A5332202A17E0088C353 /* ServiceRouter */,
+				F8A1A5292202A17E0088C353 /* ViewRouter */,
 				F872F4E41FAF5BB200297A1D /* ZRouter.h */,
 				F872F4E51FAF5BB200297A1D /* Info.plist */,
 			);
@@ -192,6 +197,35 @@
 				F8A5ED122093A7C000773853 /* ZIKRouterTests.xctest */,
 			);
 			name = Products;
+			sourceTree = "<group>";
+		};
+		F8A1A5292202A17E0088C353 /* ViewRouter */ = {
+			isa = PBXGroup;
+			children = (
+				F8A1A54D2202C3BF0088C353 /* ViewRouter.swift */,
+				F8A1A54C2202C3BF0088C353 /* ViewExtension.swift */,
+				F8A1A52A2202A17E0088C353 /* ViewRouter.Alias.swift */,
+				F8A1A5302202A17E0088C353 /* ViewRouter.Router.swift */,
+				F8A1A52D2202A17E0088C353 /* ViewRouter.Registry.swift */,
+				F8A1A52C2202A17E0088C353 /* ViewRouter.Routable.swift */,
+				F8A1A52B2202A17E0088C353 /* ViewRouter.Switchable.swift */,
+				F8A1A5312202A17E0088C353 /* ViewRouter.RouterExtension.swift */,
+			);
+			path = ViewRouter;
+			sourceTree = "<group>";
+		};
+		F8A1A5332202A17E0088C353 /* ServiceRouter */ = {
+			isa = PBXGroup;
+			children = (
+				F8A1A5392202A17E0088C353 /* ServiceRouter.swift */,
+				F8A1A5342202A17E0088C353 /* Alias.swift */,
+				F8A1A5382202A17E0088C353 /* Router.swift */,
+				F8A1A5372202A17E0088C353 /* Registry.swift */,
+				F8A1A5362202A17E0088C353 /* Routable.swift */,
+				F8A1A5352202A17E0088C353 /* Switchable.swift */,
+				F8A1A53A2202A17E0088C353 /* RouterExtension.swift */,
+			);
+			path = ServiceRouter;
 			sourceTree = "<group>";
 		};
 		F8A5ED052093A7C000773853 /* ZRouterTests */ = {
@@ -371,16 +405,22 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				F872F4F61FAF5BD600297A1D /* ViewExtension.swift in Sources */,
-				F82035D21FC66537009DB80B /* ServiceRouter.swift in Sources */,
-				F85C58342012505A0096821B /* RouterExtension.swift in Sources */,
-				F8C0D1161FB034B5003D3B3B /* Router.swift in Sources */,
-				F872F4F91FAF5BD600297A1D /* Registry.swift in Sources */,
-				F872F4F81FAF5BD600297A1D /* Alias.swift in Sources */,
-				F872F4FB1FAF5BD600297A1D /* Namespace.swift in Sources */,
-				F8EF733C1FB4C4550040008C /* Switchable.swift in Sources */,
-				F8C0D11E1FB04E06003D3B3B /* Routable.swift in Sources */,
-				F82035CE1FC51F03009DB80B /* ViewRouter.swift in Sources */,
+				F8A1A54F2202C3BF0088C353 /* ViewRouter.swift in Sources */,
+				F8A1A5492202A17E0088C353 /* ServiceRouter.swift in Sources */,
+				F8A1A53B2202A17E0088C353 /* ViewRouter.Alias.swift in Sources */,
+				F8A1A53D2202A17E0088C353 /* ViewRouter.Routable.swift in Sources */,
+				F8A1A5442202A17E0088C353 /* Alias.swift in Sources */,
+				F8A1A5412202A17E0088C353 /* ViewRouter.Router.swift in Sources */,
+				F8A1A53E2202A17E0088C353 /* ViewRouter.Registry.swift in Sources */,
+				F8A1A5512202C3C60088C353 /* Namespace.swift in Sources */,
+				F8A1A5462202A17E0088C353 /* Routable.swift in Sources */,
+				F8A1A5452202A17E0088C353 /* Switchable.swift in Sources */,
+				F8A1A5482202A17E0088C353 /* Router.swift in Sources */,
+				F8A1A5422202A17E0088C353 /* ViewRouter.RouterExtension.swift in Sources */,
+				F8A1A54E2202C3BF0088C353 /* ViewExtension.swift in Sources */,
+				F8A1A53C2202A17E0088C353 /* ViewRouter.Switchable.swift in Sources */,
+				F8A1A54A2202A17E0088C353 /* RouterExtension.swift in Sources */,
+				F8A1A5472202A17E0088C353 /* Registry.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
