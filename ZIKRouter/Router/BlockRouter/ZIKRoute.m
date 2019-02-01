@@ -186,6 +186,19 @@
     return [[[self routerClass] alloc] init];
 }
 
+#define INJECT_CONFIG_BUILDER configBuilder = ^(ZIKPerformRouteConfiguration *configuration) {\
+    configuration.route = self;\
+    ZIKPerformRouteConfiguration *injected = [self defaultRouteConfigurationFromBlock];\
+    if (injected) {\
+        configuration.injected = injected;\
+        configuration = injected;\
+    }\
+    if (configBuilder) {\
+        configBuilder(configuration);\
+    }\
+};\
+
+// create new block in method and capture builder makes builder become escaping block, Xcode Address Sanitizer will throw error. So use macro instead of method.
 - (void(^)(ZIKPerformRouteConfiguration *config))_injectedConfigBuilder:(void(^)(ZIKPerformRouteConfiguration *config))builder {
     return ^(ZIKPerformRouteConfiguration *configuration) {
         configuration.route = self;
@@ -200,6 +213,17 @@
     };
 }
 
+#define INJECT_REMOVE_BUILDER removeConfigBuilder = ^(ZIKRemoveRouteConfiguration *configuration) {\
+    ZIKRemoveRouteConfiguration *injected = [self defaultRemoveRouteConfigurationFromBlock];\
+    if (injected) {\
+        configuration.injected = injected;\
+        configuration = injected;\
+    }\
+    if (removeConfigBuilder) {\
+        removeConfigBuilder(configuration);\
+    }\
+};\
+
 - (void(^)(ZIKRemoveRouteConfiguration *config))_injectedRemoveConfigBuilder:(void(^)(ZIKRemoveRouteConfiguration *config))builder {
     return ^(ZIKRemoveRouteConfiguration *configuration) {
         ZIKRemoveRouteConfiguration *injected = [self defaultRemoveRouteConfigurationFromBlock];
@@ -212,6 +236,19 @@
         }
     };
 }
+
+#define INJECT_STRICT_CONFIG_BUILDER configBuilder = ^(ZIKPerformRouteStrictConfiguration<id> *strictConfig, ZIKPerformRouteConfiguration *configuration) {\
+    configuration.route = self;\
+    ZIKPerformRouteConfiguration *injected = [self defaultRouteConfigurationFromBlock];\
+    if (injected) {\
+        configuration.injected = injected;\
+        configuration = injected;\
+        strictConfig.configuration = injected;\
+    }\
+    if (configBuilder) {\
+        configBuilder(strictConfig, configuration);\
+    }\
+};\
 
 - (void (^)(ZIKPerformRouteStrictConfiguration<id> * _Nonnull, ZIKPerformRouteConfiguration * _Nonnull))
 _injectedStrictConfigBuilder:
@@ -230,6 +267,18 @@ _injectedStrictConfigBuilder:
         }
     };
 }
+
+#define INJECT_STRICT_REMOVE_BUILDER removeConfigBuilder = ^(ZIKRemoveRouteStrictConfiguration<id> *strictConfig) {\
+    ZIKRemoveRouteConfiguration *injected = [self defaultRemoveRouteConfigurationFromBlock];\
+    if (injected) {\
+        ZIKRemoveRouteConfiguration *configuration = strictConfig.configuration;\
+        configuration.injected = injected;\
+        strictConfig.configuration = injected;\
+    }\
+    if (removeConfigBuilder) {\
+        removeConfigBuilder(strictConfig);\
+    }\
+};\
 
 - (void (^)(ZIKRemoveRouteStrictConfiguration<id> * _Nonnull))
 _injectedStrictRemoveConfigBuilder:
@@ -259,15 +308,15 @@ _injectedStrictRemoveConfigBuilder:
 }
 
 - (id)initWithConfiguring:(void(^)(ZIKPerformRouteConfiguration *configuration))configBuilder removing:(void(^ _Nullable)(ZIKRemoveRouteConfiguration *configuration))removeConfigBuilder {
-    configBuilder = [self _injectedConfigBuilder:configBuilder];
-    removeConfigBuilder = [self _injectedRemoveConfigBuilder:removeConfigBuilder];
+    INJECT_CONFIG_BUILDER;
+    INJECT_REMOVE_BUILDER;
     return [[[self routerClass] alloc] initWithConfiguring:configBuilder removing:removeConfigBuilder];
 }
 
 - (id)initWithStrictConfiguring:(void (^)(ZIKPerformRouteStrictConfiguration<id> * _Nonnull, ZIKPerformRouteConfiguration * _Nonnull))configBuilder
                  strictRemoving:(void (^ _Nullable)(ZIKRemoveRouteStrictConfiguration<id> * _Nonnull))removeConfigBuilder {
-    configBuilder = [self _injectedStrictConfigBuilder:configBuilder];
-    removeConfigBuilder = [self _injectedStrictRemoveConfigBuilder:removeConfigBuilder];
+    INJECT_STRICT_CONFIG_BUILDER;
+    INJECT_STRICT_REMOVE_BUILDER;
     return [[[self routerClass] alloc] initWithStrictConfiguring:configBuilder strictRemoving:removeConfigBuilder];
 }
 
@@ -335,8 +384,8 @@ _injectedStrictRemoveConfigBuilder:
 }
 
 - (id)performWithConfiguring:(void(^)(ZIKPerformRouteConfiguration *configuration))configBuilder removing:(void(^)(ZIKRemoveRouteConfiguration *configuration))removeConfigBuilder {
-    configBuilder = [self _injectedConfigBuilder:configBuilder];
-    removeConfigBuilder = [self _injectedRemoveConfigBuilder:removeConfigBuilder];
+    INJECT_CONFIG_BUILDER;
+    INJECT_REMOVE_BUILDER;
     return [[self routerClass] performWithConfiguring:configBuilder removing:removeConfigBuilder];
 }
 
@@ -346,8 +395,8 @@ _injectedStrictRemoveConfigBuilder:
 
 - (id)performWithStrictConfiguring:(void (^)(ZIKPerformRouteStrictConfiguration<id> * _Nonnull, ZIKPerformRouteConfiguration * _Nonnull))configBuilder
                     strictRemoving:(void (^)(ZIKRemoveRouteStrictConfiguration<id> * _Nonnull))removeConfigBuilder {
-    configBuilder = [self _injectedStrictConfigBuilder:configBuilder];
-    removeConfigBuilder = [self _injectedStrictRemoveConfigBuilder:removeConfigBuilder];
+    INJECT_STRICT_CONFIG_BUILDER;
+    INJECT_STRICT_REMOVE_BUILDER;
     return [[self routerClass] performWithStrictConfiguring:configBuilder strictRemoving:removeConfigBuilder];
 }
 
@@ -360,12 +409,12 @@ _injectedStrictRemoveConfigBuilder:
 }
 
 - (id)makeDestinationWithConfiguring:(void(^ _Nullable)(ZIKPerformRouteConfiguration *config))configBuilder {
-    configBuilder = [self _injectedConfigBuilder:configBuilder];
+    INJECT_CONFIG_BUILDER;
     return [[self routerClass] makeDestinationWithConfiguring:configBuilder];
 }
 
 - (id)makeDestinationWithStrictConfiguring:(void (^)(ZIKPerformRouteStrictConfiguration<id> * _Nonnull, ZIKPerformRouteConfiguration * _Nonnull))configBuilder {
-    configBuilder = [self _injectedStrictConfigBuilder:configBuilder];
+    INJECT_STRICT_CONFIG_BUILDER;
     return [[self routerClass] makeDestinationWithStrictConfiguring:configBuilder];
 }
 
