@@ -38,4 +38,9 @@ DeclareRoutableView(UIViewController, URLRouteHandler)
         destination.title = title;
     }
 }
+
++ (BOOL)shouldDetectMemoryLeak {
+    return NO;
+}
+
 @end

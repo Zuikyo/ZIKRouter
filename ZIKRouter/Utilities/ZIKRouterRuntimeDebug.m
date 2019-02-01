@@ -541,11 +541,11 @@ NSString *codeForRegisteringRouters() {
 #import "UIViewController+ZIKViewRouter.h"
 #endif
 
-void checkMemoryLeakAfter(id object, NSTimeInterval delayInSeconds) {
+void checkMemoryLeak(id object, NSTimeInterval delaySecond, void(^handler)(id leakedObject)) {
     if (!object) {
         return;
     }
-    if (delayInSeconds <= 0) {
+    if (delaySecond <= 0) {
         return;
     }
     static NSMutableDictionary<NSString *, NSString *> *_leakedObjects;
@@ -557,8 +557,11 @@ void checkMemoryLeakAfter(id object, NSTimeInterval delayInSeconds) {
         _existingObjects = [NSHashTable weakObjectsHashTable];
         memoryLeakCheckQueue = dispatch_queue_create("com.zuik.router.object_leak_check_queue", DISPATCH_QUEUE_SERIAL);
     });
+    if ([[object class] respondsToSelector:@selector(sharedInstance)]) {
+        return;
+    }
     __weak id weakObject = object;
-    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(delayInSeconds * NSEC_PER_SEC)), memoryLeakCheckQueue, ^{
+    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(delaySecond * NSEC_PER_SEC)), memoryLeakCheckQueue, ^{
         if (_leakedObjects.count > 0) {
             // Check reclaimed objects since last checking
             NSMutableSet<NSString *> *reclaimedObjects = [NSMutableSet setWithArray:_leakedObjects.allKeys];
@@ -584,6 +587,10 @@ void checkMemoryLeakAfter(id object, NSTimeInterval delayInSeconds) {
 #endif
             [_existingObjects addObject:weakObject];
             _leakedObjects[[NSString stringWithFormat:@"%p", (void *)weakObject]] = [weakObject description];
+            if (handler) {
+                handler(weakObject);
+                return;
+            }
             if ([weakObject isKindOfClass:[XXViewController class]]) {
                 XXViewController *parent = [weakObject parentViewController];
                 if (parent) {

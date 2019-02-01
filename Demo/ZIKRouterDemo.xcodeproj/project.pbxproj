@@ -775,7 +775,6 @@
 		F8DFBD6A201A12BD0069841B /* TestUseCase */ = {
 			isa = PBXGroup;
 			children = (
-				F830EFF522045F6300859618 /* TestEasyFactory */,
 				F82ECAB51F17DC51007168AA /* TestPush */,
 				F82ECAB01F17DC51007168AA /* TestPresentModally */,
 				F82ECAAB1F17DC51007168AA /* TestPresentAsPopover */,
@@ -790,6 +789,7 @@
 				F87317D61F924AEC00A5F5D4 /* TestCircularDependencies */,
 				F88DD3011FBB2E2700715097 /* TestClassHierarchy */,
 				F83315221F6FBE7900891004 /* TestServiceRouter */,
+				F830EFF522045F6300859618 /* TestEasyFactory */,
 				F8728AB7209A391400A39975 /* URLRouter */,
 			);
 			path = TestUseCase;

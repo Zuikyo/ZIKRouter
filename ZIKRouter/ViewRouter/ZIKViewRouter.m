@@ -1878,13 +1878,23 @@ destinationStateBeforeRoute:(ZIKPresentationState *)destinationStateBeforeRoute
 
 + (void)AOP_notifyAll_router:(nullable ZIKViewRouter *)router didRemoveRouteOnDestination:(id)destination fromSource:(nullable id)source {
     NSParameterAssert([destination conformsToProtocol:@protocol(ZIKRoutableView)]);
+#if DEBUG
+    __block BOOL shouldDetectMemoryLeak = NO;
+#endif
     [ZIKViewRouteRegistry enumerateRoutersForDestinationClass:[destination class] handler:^(ZIKRouterType * _Nonnull route) {
         ZIKViewRouterType *r = (ZIKViewRouterType *)route;
         [r router:router didRemoveRouteOnDestination:destination fromSource:(id)source];
+#if DEBUG
+        if (r.routerClass && [r.routerClass shouldDetectMemoryLeak]) {
+            if (!shouldDetectMemoryLeak) {
+                shouldDetectMemoryLeak = YES;
+            }
+        }
+#endif
     }];
 #if DEBUG
-    if ([self detectMemoryLeakDelay] > 0) {
-        checkMemoryLeakAfter(destination, [self detectMemoryLeakDelay]);
+    if (shouldDetectMemoryLeak) {
+        checkMemoryLeak(destination, [self detectMemoryLeakDelay], [self didDetectLeakingHandler]);
     }    
 #endif
 }
@@ -4351,12 +4361,26 @@ Protocol<ZIKViewModuleRoutable> *_Nullable _routableViewModuleProtocolFromObject
 
 static NSTimeInterval _detectMemoryLeakDelay = 2;
 
++ (BOOL)shouldDetectMemoryLeak {
+    return _detectMemoryLeakDelay > 0;
+}
+
 + (NSTimeInterval)detectMemoryLeakDelay {
     return _detectMemoryLeakDelay;
 }
 
 + (void)setDetectMemoryLeakDelay:(NSTimeInterval)detectMemoryLeakDelay {
     _detectMemoryLeakDelay = detectMemoryLeakDelay;
+}
+
+static void(^_didDetectLeakingHandler)(id);
+
++ (void(^)(id))didDetectLeakingHandler {
+    return _didDetectLeakingHandler;
+}
+
++ (void)setDidDetectLeakingHandler:(void(^)(id))handler {
+    _didDetectLeakingHandler = handler;
 }
 
 @end

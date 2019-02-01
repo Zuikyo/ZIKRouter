@@ -49,7 +49,7 @@ FOUNDATION_EXTERN NSString *codeForImportingRouters(void);
 FOUNDATION_EXTERN NSString *codeForRegisteringRouters(void);
 
 /// Check whether the object is dealloced after delay second.
-FOUNDATION_EXTERN void checkMemoryLeakAfter(id object, NSTimeInterval delayInSeconds);
+FOUNDATION_EXTERN void checkMemoryLeak(id object, NSTimeInterval delaySecond, void(^_Nullable handler)(id leakedObject));
 #endif
 
 NS_ASSUME_NONNULL_END
