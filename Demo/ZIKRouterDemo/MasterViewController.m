@@ -74,6 +74,7 @@ typedef NS_ENUM(NSInteger,ZIKRouterTestType) {
                        @"Test Subclass Hierarchy",
                        @"Test ServiceRouter",
                        @"Swift Sample",
+                       @"Test Easy Factory",
                        @"URL Router",
                        @"Test Modularization"
                        ];
@@ -93,6 +94,7 @@ typedef NS_ENUM(NSInteger,ZIKRouterTestType) {
                            [TestClassHierarchyViewRouter class],
                            [TestServiceRouterViewRouter class],
                            ZIKViewRouter.toView(ZIKRoutable(SwiftSampleViewInput)),
+                           ZIKViewRouter.toIdentifier(@"testEasyFactory"),
                            [TestURLRouterViewRouter class],
                            [ZIKLoginViewRouter class]
                            ];

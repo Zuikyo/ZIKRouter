@@ -21,3 +21,8 @@
 @property (nonatomic, assign) NSInteger age;
 @property (nonatomic, weak) id<ZIKInfoViewDelegate> delegate;
 @end
+
+@protocol EasyInfoViewProtocol1 <ZIKInfoViewProtocol, ZIKViewRoutable>
+@end
+@protocol EasyInfoViewProtocol2 <ZIKInfoViewProtocol, ZIKViewRoutable>
+@end

@@ -53,12 +53,19 @@ extension RoutableView where Protocol == RequiredInfoViewInput {
 }
 
 
+func makeSampleViewController(config:ViewRouteConfig) -> SwiftSampleViewController? {
+    let sb = UIStoryboard.init(name: "Main", bundle: nil)
+    let destination = sb.instantiateViewController(withIdentifier: "SwiftSampleViewController") as! SwiftSampleViewController
+    destination.title = "Swift Sample from easy register"
+    destination.injectedAlertRouter = Router.to(RoutableViewModule<RequiredCompatibleAlertModuleInput>())
+    return destination
+}
 
 
 class EasyRouteRegistry: ZIKViewRouteAdapter {
     override class func registerRoutableDestination() {
         ZIKAnyViewRouter.register(RoutableView<EasyViewInput>(), forMakingView: SwiftSampleViewController.self)
-        ZIKAnyViewRouter.register(RoutableView<EasyViewInput2>(), forMakingView: SwiftSampleViewController.self) { (config, router) -> EasyViewInput2? in
+        ZIKDestinationViewRouter<SwiftSampleViewController>.register(RoutableView<EasyViewInput2>(), forMakingView: SwiftSampleViewController.self) { (config) -> EasyViewInput2? in
             let sb = UIStoryboard.init(name: "Main", bundle: nil)
             let destination = sb.instantiateViewController(withIdentifier: "SwiftSampleViewController") as! SwiftSampleViewController
             destination.title = "Swift Sample from easy register"
@@ -67,7 +74,7 @@ class EasyRouteRegistry: ZIKViewRouteAdapter {
         }
         
         ZIKAnyServiceRouter.register(RoutableService<EasyServiceInput>(), forMakingService: EasyService.self)
-        ZIKAnyServiceRouter.register(RoutableService<EasyServiceInput2>(), forMakingService: EasyService2.self) { (config, router) -> EasyServiceInput2? in
+        ZIKDestinationServiceRouter<EasyService2>.register(RoutableService<EasyServiceInput2>(), forMakingService: EasyService2.self) { (config) -> EasyService2? in
             return EasyService2(name: "default")
         }
     }

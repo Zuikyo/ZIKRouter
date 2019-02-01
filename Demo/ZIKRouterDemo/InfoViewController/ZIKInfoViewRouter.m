@@ -9,6 +9,13 @@
 #import "ZIKInfoViewRouter.h"
 #import "ZIKInfoViewController.h"
 
+id<EasyInfoViewProtocol1> makeDestiantionForInfoViewProtocol(ZIKViewRouteConfiguration *configuration) {
+    UIStoryboard *sb = [UIStoryboard storyboardWithName:@"Main" bundle:nil];
+    ZIKInfoViewController *destination = [sb instantiateViewControllerWithIdentifier:@"info"];
+    destination.title = @"info";
+    return destination;
+}
+
 @interface ZIKInfoViewController (ZIKInfoViewRouter) <ZIKRoutableView>
 @end
 @implementation ZIKInfoViewController (ZIKInfoViewRouter)
@@ -20,13 +27,28 @@
     [self registerView:[ZIKInfoViewController class]];
     [self registerViewProtocol:ZIKRoutable(ZIKInfoViewProtocol)];
     [self registerIdentifier:@"info"];
+    
+    // Test easy factory
+    [ZIKDestinationViewRouter(id<EasyInfoViewProtocol1>)
+     registerViewProtocol:ZIKRoutable(EasyInfoViewProtocol1)
+     forMakingView:[ZIKInfoViewController class]
+     factory:makeDestiantionForInfoViewProtocol];
+    
+    [ZIKDestinationViewRouter(id<EasyInfoViewProtocol2>)
+     registerViewProtocol:ZIKRoutable(EasyInfoViewProtocol2)
+     forMakingView:[ZIKInfoViewController class]
+     making:^id<EasyInfoViewProtocol2> _Nullable(ZIKViewRouteConfig * _Nonnull config) {
+        UIStoryboard *sb = [UIStoryboard storyboardWithName:@"Main" bundle:nil];
+        ZIKInfoViewController *destination = [sb instantiateViewControllerWithIdentifier:@"info"];
+        destination.title = @"info";
+        return destination;
+    }];
 }
 
 - (id<ZIKInfoViewProtocol>)destinationWithConfiguration:(ZIKViewRouteConfiguration *)configuration {
     UIStoryboard *sb = [UIStoryboard storyboardWithName:@"Main" bundle:nil];
     ZIKInfoViewController *destination = [sb instantiateViewControllerWithIdentifier:@"info"];
     destination.title = @"info";
-    NSAssert([destination conformsToProtocol:@protocol(ZIKInfoViewProtocol)], nil);
     return destination;
 }
 

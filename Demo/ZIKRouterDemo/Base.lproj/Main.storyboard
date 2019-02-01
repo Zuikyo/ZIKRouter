@@ -674,6 +674,58 @@
             </objects>
             <point key="canvasLocation" x="1677.5999999999999" y="1741.9790104947529"/>
         </scene>
+        <!--Test Easy Factory View Controller-->
+        <scene sceneID="3jd-qV-sHV">
+            <objects>
+                <viewController storyboardIdentifier="TestEasyFactoryViewController" id="8cs-ai-1ff" customClass="TestEasyFactoryViewController" customModule="ZIKRouterDemo" customModuleProvider="target" sceneMemberID="viewController">
+                    <layoutGuides>
+                        <viewControllerLayoutGuide type="top" id="IK5-bx-Z94"/>
+                        <viewControllerLayoutGuide type="bottom" id="YXo-a7-Lvl"/>
+                    </layoutGuides>
+                    <view key="view" contentMode="scaleToFill" id="WvH-dz-Ghi">
+                        <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <subviews>
+                            <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="uTE-gs-Fdp">
+                                <rect key="frame" x="119" y="102" width="138" height="30"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <state key="normal" title="test easy info view 1"/>
+                                <connections>
+                                    <action selector="testEasyView1:" destination="8cs-ai-1ff" eventType="touchUpInside" id="m9J-8U-OGK"/>
+                                </connections>
+                            </button>
+                            <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="3Io-m0-XCh">
+                                <rect key="frame" x="117" y="176" width="140" height="30"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <state key="normal" title="test easy info view 2"/>
+                                <connections>
+                                    <action selector="testEasyView2:" destination="8cs-ai-1ff" eventType="touchUpInside" id="Vgb-EF-fru"/>
+                                </connections>
+                            </button>
+                            <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Peg-hJ-vhZ">
+                                <rect key="frame" x="124" y="268" width="126" height="30"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <state key="normal" title="test easy service 1"/>
+                                <connections>
+                                    <action selector="testEasyService1:" destination="8cs-ai-1ff" eventType="touchUpInside" id="nf9-QJ-sA5"/>
+                                </connections>
+                            </button>
+                            <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="IOX-MR-Km3">
+                                <rect key="frame" x="123" y="356" width="128" height="30"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <state key="normal" title="test easy service 2"/>
+                                <connections>
+                                    <action selector="testEasyService2:" destination="8cs-ai-1ff" eventType="touchUpInside" id="Kui-hZ-1gJ"/>
+                                </connections>
+                            </button>
+                        </subviews>
+                        <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                    </view>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="Wfe-jx-fGd" userLabel="First Responder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="1679" y="2491"/>
+        </scene>
         <!--Swift Sample View Controller-->
         <scene sceneID="zx0-s0-dLc">
             <objects>

@@ -9,7 +9,7 @@
 #import <UIKit/UIKit.h>
 #import "ZIKInfoViewProtocol.h"
 
-@interface ZIKInfoViewController : UIViewController <ZIKInfoViewProtocol>
+@interface ZIKInfoViewController : UIViewController <ZIKInfoViewProtocol, EasyInfoViewProtocol1, EasyInfoViewProtocol2>
 @property (nonatomic, copy) NSString *name;
 @property (nonatomic, assign) NSInteger age;
 @property (nonatomic, weak) id<ZIKInfoViewDelegate> delegate;
