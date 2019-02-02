@@ -276,6 +276,34 @@ ZIKAnyViewRouter.register(RoutableView<NoteEditorInput>(),
 
 </details>
 
+or with custom factory function:
+
+```swift
+function makeEditorViewController(config: ViewRouteConfig) -> NoteEditorInput? {
+    NoteEditorViewController *destination = ... // instantiate your view controller
+    return destination;
+}
+
+ZIKAnyViewRouter.register(RoutableView<NoteEditorInput>(), 
+                 forMakingView: NoteEditorViewController.self, making: makeEditorViewController)
+```
+
+<details><summary>Objective-C Sample</summary>
+
+```objectivec
+id<NoteEditorInput> makeEditorViewController(ZIKViewRouteConfiguration *config) {
+    NoteEditorViewController *destination = ... // instantiate your view controller
+    return destination;
+}
+
+[ZIKViewRouter
+    registerViewProtocol:ZIKRoutable(NoteEditorInput)
+    forMakingView:[NoteEditorViewController class]
+    factory:makeEditorViewController];
+```
+
+</details>
+
 ### 2. Declare Routable Type
 
 The declaration is for checking routes at compile time, and supporting storyboard.

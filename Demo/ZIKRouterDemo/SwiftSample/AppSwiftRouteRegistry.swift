@@ -64,7 +64,7 @@ func makeSampleViewController(config:ViewRouteConfig) -> SwiftSampleViewControll
 
 class EasyRouteRegistry: ZIKViewRouteAdapter {
     override class func registerRoutableDestination() {
-        ZIKAnyViewRouter.register(RoutableView<EasyViewInput>(), forMakingView: SwiftSampleViewController.self)
+        ZIKAnyViewRouter.register(RoutableView<EasyViewInput>(), forMakingView: SwiftSampleViewController.self, making: makeSampleViewController)
         ZIKDestinationViewRouter<SwiftSampleViewController>.register(RoutableView<EasyViewInput2>(), forMakingView: SwiftSampleViewController.self) { (config) -> EasyViewInput2? in
             let sb = UIStoryboard.init(name: "Main", bundle: nil)
             let destination = sb.instantiateViewController(withIdentifier: "SwiftSampleViewController") as! SwiftSampleViewController

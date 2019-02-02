@@ -267,6 +267,34 @@ ZIKAnyViewRouter.register(RoutableView<NoteEditorInput>(),
 
 </details>
 
+或者指定用 C 函数创建对象：
+
+```swift
+function makeEditorViewController(config: ViewRouteConfig) -> NoteEditorInput? {
+    NoteEditorViewController *destination = ... // 实例化 view controller
+    return destination;
+}
+
+ZIKAnyViewRouter.register(RoutableView<NoteEditorInput>(), 
+                 forMakingView: NoteEditorViewController.self, making: makeEditorViewController)
+```
+
+<details><summary>Objective-C Sample</summary>
+
+```objectivec
+id<NoteEditorInput> makeEditorViewController(ZIKViewRouteConfiguration *config) {
+    NoteEditorViewController *destination = ... // 实例化 view controller
+    return destination;
+}
+
+[ZIKViewRouter
+    registerViewProtocol:ZIKRoutable(NoteEditorInput)
+    forMakingView:[NoteEditorViewController class]
+    factory:makeEditorViewController];
+```
+
+</details>
+
 
 ### 2. 声明 Routable 类型
 

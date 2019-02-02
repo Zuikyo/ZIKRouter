@@ -34,6 +34,7 @@
                                @"testCircularDependencies",
                                @"testClassHierarchy",
                                @"testServiceRouter",
+                               @"testEasyFactory",
                                @"swiftSample",
                                @"testURLRouter"
                                ];

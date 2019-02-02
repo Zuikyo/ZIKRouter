@@ -73,13 +73,19 @@ ZIKRouter fetch modules with protocol matching instead of runtime discovering wi
 
 ### Module Manager with Type Matching
 
-Some module manager matchs module with its class or protocol.
+Some module manager matchs module with its class or protocol, then create the object with`[[class alloc] init]`.
 
 #### Improvement
 
 It's similar to ZIKRouter, but it doesn't support pure Swift type, and it can't apply additional configuration to the module. ZIKRouter doesn't match protocol or class with the module directly, it matchs protocol with its router subclass, and let the router subclass to instantiate the module object.
 
-Adding a router layer can let the module be matched with multi protocols. And in the router subclass, you can also inject dependencies, adapt different protocols and do additional actions.
+After adding a router layer, we get a much powerful decoupling tool:
+
+- a moudle can be matched with multi protocols
+- the user can adapt other protocols  and add those protocols to the router. This can resovle the build problem when module depends to other modules
+-  in the router subclass, we can inject dependencies  and do much more custom actions
+- we can use much more methods to create module instance, such as custom designated initializer and factory method. We can directly use the current code when refactoring to moduling code
+- return different type of object for different condition. Such as differnt UI object in different iOS system version
 
 And ZIKRouter makes limitation when passing protocol to fetch module. Only those protocols declared as routable can be used. Then you won't use a non-existent module.
 
