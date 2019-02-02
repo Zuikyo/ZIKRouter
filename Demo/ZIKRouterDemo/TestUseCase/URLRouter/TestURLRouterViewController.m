@@ -29,7 +29,7 @@
                                @"testAddAsChild",
                                @"testAddAsSubview",
                                @"testCustom",
-                               @"testGetDestination",
+                               @"testMakeDestination",
                                @"testAutoCreate",
                                @"testCircularDependencies",
                                @"testClassHierarchy",

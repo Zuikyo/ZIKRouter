@@ -182,7 +182,7 @@ NS_ASSUME_NONNULL_BEGIN
  AOP support.
  Route with ZIKViewRouteTypeAddAsChildViewController and ZIKViewRouteTypeMakeDestination won't get AOP notification, because they are not complete route for displaying the destination, the destination will get AOP notification when it's really displayed.
  
- Router will be nil when route is from external or AddAsChildViewController/GetDestination route type.
+ Router will be nil when route is from external or AddAsChildViewController/MakeDestination route type.
  
  Source may be nil when remove route, because source may already be deallced.
  */

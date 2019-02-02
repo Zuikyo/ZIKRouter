@@ -53,7 +53,12 @@
     UISplitViewController *splitViewController = (UISplitViewController *)self.window.rootViewController;
     splitViewController.delegate = self;
     UINavigationController *detailViewController = [splitViewController.viewControllers lastObject];
-    detailViewController.topViewController.navigationItem.leftBarButtonItem = splitViewController.displayModeButtonItem;
+    if (UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPhone) {
+        [detailViewController.view removeFromSuperview];
+        [detailViewController removeFromParentViewController];
+    } else {
+        detailViewController.topViewController.navigationItem.leftBarButtonItem = splitViewController.displayModeButtonItem;
+    }
     
     return YES;
 }

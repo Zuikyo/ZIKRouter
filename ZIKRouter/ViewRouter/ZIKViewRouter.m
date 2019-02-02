@@ -3824,7 +3824,7 @@ static  ZIKViewRouterType *_Nullable _routerTypeToRegisteredView(Class viewClass
             description = @"Custom";
             break;
         case ZIKViewRouteTypeMakeDestination:
-            description = @"GetDestination";
+            description = @"MakeDestination";
             break;
     }
     return description;

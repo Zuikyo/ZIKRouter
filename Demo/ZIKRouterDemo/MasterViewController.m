@@ -17,7 +17,7 @@
 #import "TestAddAsChildViewRouter.h"
 #import "TestAddAsSubviewViewRouter.h"
 #import "TestCustomViewRouter.h"
-#import "TestGetDestinationViewRouter.h"
+#import "TestMakeDestinationViewRouter.h"
 #import "TestAutoCreateViewRouter.h"
 #import "TestCircularDependenciesViewRouter.h"
 #import "TestClassHierarchyViewRouter.h"
@@ -36,7 +36,7 @@ typedef NS_ENUM(NSInteger,ZIKRouterTestType) {
     ZIKRouterTestTypeAddAsChildViewController,
     ZIKRouterTestTypeAddAsSubview,
     ZIKRouterTestTypeCustom,
-    ZIKRouterTestTypeGetDestination,
+    ZIKRouterTestTypeMakeDestination,
     ZIKRouterTestTypeAutoCreate,
     ZIKRouterTestTypeCircularDependencies,
     ZIKRouterTestTypeSubclassHierarchy,
@@ -68,7 +68,7 @@ typedef NS_ENUM(NSInteger,ZIKRouterTestType) {
                        @"Test AddAsChildViewController",
                        @"Test AddAsSubview",
                        @"Test Custom",
-                       @"Test GetDestination",
+                       @"Test MakeDestination",
                        @"Test AutoCreate",
                        @"Test Circular Dependencies",
                        @"Test Subclass Hierarchy",
@@ -88,7 +88,7 @@ typedef NS_ENUM(NSInteger,ZIKRouterTestType) {
                            [TestAddAsChildViewRouter class],
                            [TestAddAsSubviewViewRouter class],
                            [TestCustomViewRouter class],
-                           [TestGetDestinationViewRouter class],
+                           [TestMakeDestinationViewRouter class],
                            [TestAutoCreateViewRouter class],
                            [TestCircularDependenciesViewRouter class],
                            [TestClassHierarchyViewRouter class],

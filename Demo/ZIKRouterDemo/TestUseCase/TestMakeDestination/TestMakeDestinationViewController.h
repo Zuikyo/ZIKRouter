@@ -1,5 +1,5 @@
 //
-//  TestGetDestinationViewController.h
+//  TestMakeDestinationViewController.h
 //  ZIKRouterDemo
 //
 //  Created by zuik on 2017/7/5.
@@ -8,6 +8,6 @@
 
 #import <UIKit/UIKit.h>
 
-@interface TestGetDestinationViewController : UIViewController
+@interface TestMakeDestinationViewController : UIViewController
 
 @end

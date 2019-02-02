@@ -103,8 +103,8 @@
 		F8BC9A0D207E386B00971352 /* SourceViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = F8BC9A0C207E386B00971352 /* SourceViewController.m */; };
 		F8BC9A10207E387A00971352 /* SourceViewRouter.m in Sources */ = {isa = PBXBuildFile; fileRef = F8BC9A0F207E387A00971352 /* SourceViewRouter.m */; };
 		F8BCCB981F208D2B0051716B /* MasterViewRouter.m in Sources */ = {isa = PBXBuildFile; fileRef = F8BCCB971F208D2B0051716B /* MasterViewRouter.m */; };
-		F8C021BD22056653004FDB27 /* TestGetDestinationViewRouter.m in Sources */ = {isa = PBXBuildFile; fileRef = F8C021B922056652004FDB27 /* TestGetDestinationViewRouter.m */; };
-		F8C021BE22056653004FDB27 /* TestGetDestinationViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = F8C021BA22056652004FDB27 /* TestGetDestinationViewController.m */; };
+		F8C021C322056748004FDB27 /* TestMakeDestinationViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = F8C021C022056748004FDB27 /* TestMakeDestinationViewController.m */; };
+		F8C021C422056748004FDB27 /* TestMakeDestinationViewRouter.m in Sources */ = {isa = PBXBuildFile; fileRef = F8C021C122056748004FDB27 /* TestMakeDestinationViewRouter.m */; };
 		F8C7F7F22019F95100B48365 /* ZIKRouter.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F8C7F7F12019F95100B48365 /* ZIKRouter.framework */; };
 		F8C7F7F32019F95100B48365 /* ZIKRouter.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = F8C7F7F12019F95100B48365 /* ZIKRouter.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		F8C7F7F52019F95800B48365 /* ZRouter.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F8C7F7F42019F95800B48365 /* ZRouter.framework */; };
@@ -337,10 +337,10 @@
 		F8BC9A0F207E387A00971352 /* SourceViewRouter.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = SourceViewRouter.m; sourceTree = "<group>"; };
 		F8BCCB961F208D2B0051716B /* MasterViewRouter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; lineEnding = 0; path = MasterViewRouter.h; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objcpp; };
 		F8BCCB971F208D2B0051716B /* MasterViewRouter.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MasterViewRouter.m; sourceTree = "<group>"; };
-		F8C021B922056652004FDB27 /* TestGetDestinationViewRouter.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TestGetDestinationViewRouter.m; sourceTree = "<group>"; };
-		F8C021BA22056652004FDB27 /* TestGetDestinationViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TestGetDestinationViewController.m; sourceTree = "<group>"; };
-		F8C021BB22056652004FDB27 /* TestGetDestinationViewRouter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TestGetDestinationViewRouter.h; sourceTree = "<group>"; };
-		F8C021BC22056652004FDB27 /* TestGetDestinationViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TestGetDestinationViewController.h; sourceTree = "<group>"; };
+		F8C021BF22056747004FDB27 /* TestMakeDestinationViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TestMakeDestinationViewController.h; sourceTree = "<group>"; };
+		F8C021C022056748004FDB27 /* TestMakeDestinationViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TestMakeDestinationViewController.m; sourceTree = "<group>"; };
+		F8C021C122056748004FDB27 /* TestMakeDestinationViewRouter.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TestMakeDestinationViewRouter.m; sourceTree = "<group>"; };
+		F8C021C222056748004FDB27 /* TestMakeDestinationViewRouter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TestMakeDestinationViewRouter.h; sourceTree = "<group>"; };
 		F8C7F7F12019F95100B48365 /* ZIKRouter.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = ZIKRouter.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		F8C7F7F42019F95800B48365 /* ZRouter.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = ZRouter.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		F8DFBD5C2019FE210069841B /* DemoRouteAdapter.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = DemoRouteAdapter.h; sourceTree = "<group>"; };
@@ -755,10 +755,10 @@
 		F8C021B822056652004FDB27 /* TestMakeDestination */ = {
 			isa = PBXGroup;
 			children = (
-				F8C021BC22056652004FDB27 /* TestGetDestinationViewController.h */,
-				F8C021BA22056652004FDB27 /* TestGetDestinationViewController.m */,
-				F8C021BB22056652004FDB27 /* TestGetDestinationViewRouter.h */,
-				F8C021B922056652004FDB27 /* TestGetDestinationViewRouter.m */,
+				F8C021BF22056747004FDB27 /* TestMakeDestinationViewController.h */,
+				F8C021C022056748004FDB27 /* TestMakeDestinationViewController.m */,
+				F8C021C222056748004FDB27 /* TestMakeDestinationViewRouter.h */,
+				F8C021C122056748004FDB27 /* TestMakeDestinationViewRouter.m */,
 			);
 			path = TestMakeDestination;
 			sourceTree = "<group>";
@@ -934,18 +934,17 @@
 				F8F6B1C420A8C36000110B03 /* URLRouteHandler.m in Sources */,
 				F82ECADA1F17DC51007168AA /* TestPushViewRouter.m in Sources */,
 				F82ECAD01F17DC51007168AA /* TestShowViewController.m in Sources */,
-				F8C021BD22056653004FDB27 /* TestGetDestinationViewRouter.m in Sources */,
 				F82ECAC41F17DC51007168AA /* TestAutoCreateViewController.m in Sources */,
 				F82ECAC51F17DC51007168AA /* TestAutoCreateViewRouter.m in Sources */,
 				F83D25D12077D79C00639E22 /* AppSwiftRouteRegistry.swift in Sources */,
 				F82ECAC01F17DC51007168AA /* ZIKInfoViewController.m in Sources */,
-				F8C021BE22056653004FDB27 /* TestGetDestinationViewController.m in Sources */,
 				F82ECAC21F17DC51007168AA /* EmptyContainerViewController.m in Sources */,
 				F84239CF1F0CDE78000FEE5F /* AppDelegate.m in Sources */,
 				F85283B21F8CF43F0093C812 /* UnroutableViewController.m in Sources */,
 				F830EFF722045FAF00859618 /* TestEasyFactoryViewController.swift in Sources */,
 				F8728ABD209A3AB400A39975 /* TestURLRouterViewRouter.m in Sources */,
 				F88DD30F1FBB303B00715097 /* SubclassViewRouter.m in Sources */,
+				F8C021C422056748004FDB27 /* TestMakeDestinationViewRouter.m in Sources */,
 				F88DD3061FBB2ED400715097 /* TestClassHierarchyViewController.m in Sources */,
 				F84239D21F0CDE78000FEE5F /* MasterViewController.m in Sources */,
 				F87317DF1F924EFC00A5F5D4 /* ZIKChildViewRouter.m in Sources */,
@@ -982,6 +981,7 @@
 				F82ECACE1F17DC51007168AA /* TestShowDetailViewController.m in Sources */,
 				F82ECABF1F17DC51007168AA /* ZIKSimpleLabelRouter.m in Sources */,
 				F87317E21F924F0C00A5F5D4 /* ZIKChildViewController.m in Sources */,
+				F8C021C322056748004FDB27 /* TestMakeDestinationViewController.m in Sources */,
 				F8DFBD5E2019FE210069841B /* DemoRouteAdapter.m in Sources */,
 				F82ECAD51F17DC51007168AA /* TestPresentAsPopoverViewController.m in Sources */,
 				F833152D1F6FBE7900891004 /* TestServiceRouterViewController.m in Sources */,

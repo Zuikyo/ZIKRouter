@@ -1,20 +1,20 @@
 //
-//  TestGetDestinationViewController.m
+//  TestMakeDestinationViewController.m
 //  ZIKRouterDemo
 //
 //  Created by zuik on 2017/7/5.
 //  Copyright © 2017 zuik. All rights reserved.
 //
 
-#import "TestGetDestinationViewController.h"
+#import "TestMakeDestinationViewController.h"
 @import ZIKRouter;
 #import "ZIKInfoViewProtocol.h"
 
-@interface TestGetDestinationViewController () <ZIKInfoViewDelegate>
+@interface TestMakeDestinationViewController () <ZIKInfoViewDelegate>
 @property (nonatomic, strong) ZIKViewRouter *router;
 @end
 
-@implementation TestGetDestinationViewController
+@implementation TestMakeDestinationViewController
 
 - (void)viewDidLoad {
     [super viewDidLoad];

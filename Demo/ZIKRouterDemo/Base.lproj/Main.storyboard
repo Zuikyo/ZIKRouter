@@ -463,10 +463,10 @@
             </objects>
             <point key="canvasLocation" x="1678" y="1075"/>
         </scene>
-        <!--Test Get Destination View Controller-->
+        <!--Test Make Destination View Controller-->
         <scene sceneID="hBj-OX-Kwc">
             <objects>
-                <viewController storyboardIdentifier="testGetDestination" id="BQs-gf-e55" customClass="TestGetDestinationViewController" sceneMemberID="viewController">
+                <viewController storyboardIdentifier="testMakeDestination" id="BQs-gf-e55" customClass="TestMakeDestinationViewController" sceneMemberID="viewController">
                     <layoutGuides>
                         <viewControllerLayoutGuide type="top" id="M5d-8g-EDh"/>
                         <viewControllerLayoutGuide type="bottom" id="UMw-Ge-oiZ"/>

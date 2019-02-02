@@ -22,7 +22,7 @@
 #import "TestCircularDependenciesViewRouter.h"
 #import "EmptyContainerViewRouter.h"
 #import "MasterViewRouter.h"
-#import "TestGetDestinationViewRouter.h"
+#import "TestMakeDestinationViewRouter.h"
 #import "TestAddAsSubviewViewRouter.h"
 #import "TestPresentModallyViewRouter.h"
 #import "TestShowDetailViewRouter.h"
@@ -86,7 +86,7 @@
     [TestCircularDependenciesViewRouter registerRoutableDestination];
     [EmptyContainerViewRouter registerRoutableDestination];
 //    [MasterViewRouter registerRoutableDestination];
-    [TestGetDestinationViewRouter registerRoutableDestination];
+    [TestMakeDestinationViewRouter registerRoutableDestination];
     [TestAddAsSubviewViewRouter registerRoutableDestination];
     [TestPresentModallyViewRouter registerRoutableDestination];
     [TestShowDetailViewRouter registerRoutableDestination];
