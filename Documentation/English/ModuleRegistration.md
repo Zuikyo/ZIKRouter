@@ -73,14 +73,14 @@ protocol EditorModuleInput {
     // Give parameter not belonging to the view
     var noteModel: Note?
     // Declare destination's interface; Give destination to the caller
-    var makingDestinationHandler: ((EditorViewInput) -> Void)?
+    var didMakeDestination: ((EditorViewInput) -> Void)?
 }
 /// Use subclass of ZIKViewRouteConfiguration to save the custom config
 /// If you don't want to create subclass, you can make extension of ZIKViewRouteConfiguration to let it conform to EditorModuleInput
 class EditorModuleConfiguration: ZIKViewRouteConfiguration, EditorModuleInput {
     var viewData: Any?
     var noteModel: Note?
-    var makingDestinationHandler: ((EditorViewInput) -> Void)?
+    var didMakeDestination: ((EditorViewInput) -> Void)?
 }
 
 class EditorViewRouter: ZIKViewRouter<EditorViewController, EditorModuleConfiguration> {
@@ -118,9 +118,9 @@ class EditorViewRouter: ZIKViewRouter<EditorViewController, EditorModuleConfigur
     
     override func didFinishPrepareDestination(_ destination: EditorViewController, configuration: EditorModuleConfiguration) {
         // Give destination to the caller
-        if let makingDestinationHandler = configuration.makingDestinationHandler {
-            makingDestinationHandler(destination)
-            configuration.makingDestinationHandler = nil
+        if let didMakeDestination = configuration.didMakeDestination {
+            didMakeDestination(destination)
+            configuration.didMakeDestination = nil
         }
     }
 }
@@ -202,9 +202,9 @@ class EditorViewRouter: ZIKViewRouter<EditorViewController, EditorModuleConfigur
  
  - (void)didFinishPrepareDestination:(LoginViewController *)destination configuration:(EditorModuleConfiguration *)configuration {
     // Give the destination to the caller
-    if (configuration.makingDestinationHandler) {
-        configuration.makingDestinationHandler(destination);
-        configuration.makingDestinationHandler = nil;
+    if (configuration.didMakeDestination) {
+        configuration.didMakeDestination(destination);
+        configuration.didMakeDestination = nil;
     }
  }
  
@@ -222,7 +222,7 @@ Router.perform(
        preparation: { module in
             module.viewData = viewData
             module.noteModel = noteModel
-            module.makingDestinationHandler = { destination in
+            module.didMakeDestination = { destination in
                 // Did get destination (EditorViewInput)
             }
         })
@@ -237,7 +237,7 @@ Router.perform(
     configuring:^(ZIKViewRouteConfiguration<EditorModuleInput> *config) {
         config.viewData = viewData;
         config.noteModel = noteModel;
-        config.makingDestinationHandler = ^(id<EditorViewInput> destination) {
+        config.didMakeDestination = ^(id<EditorViewInput> destination) {
             // Did get destination
         };
 }];

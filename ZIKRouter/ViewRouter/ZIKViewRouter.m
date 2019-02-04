@@ -1885,7 +1885,7 @@ destinationStateBeforeRoute:(ZIKPresentationState *)destinationStateBeforeRoute
         ZIKViewRouterType *r = (ZIKViewRouterType *)route;
         [r router:router didRemoveRouteOnDestination:destination fromSource:(id)source];
 #if DEBUG
-        if (r.routerClass && [r.routerClass shouldDetectMemoryLeak]) {
+        if (!r.routerClass || [r.routerClass shouldDetectMemoryLeak]) {
             if (!shouldDetectMemoryLeak) {
                 shouldDetectMemoryLeak = YES;
             }

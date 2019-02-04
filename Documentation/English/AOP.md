@@ -54,7 +54,7 @@ ZIKRouter memory leak checker:⚠️ destination is not dealloced after removed,
 Its parentViewController: <UINavigationController: 0x7f9513847a00>
 The UIKit system may hold the object, if the view is still in view hierarchy, you can ignore this.
 ```
-This is a very simple implementation. You should make sure there is no retain cycle.
+This is a very simple implementation. You should make sure there is no retain cycle with tools like `FBRetainCycleDetector`.
 
 ---
 #### Next section: [Dependency Injection](DependencyInjection.md)

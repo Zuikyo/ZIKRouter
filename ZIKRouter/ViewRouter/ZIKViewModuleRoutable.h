@@ -17,9 +17,9 @@
  @discussion
  ZIKViewModuleRoutable is for:
  
- 1. Passing those parameters not belonging to the destination, but belonging to other components in the module. Such as models which doesn't belonging to view controller.
+ 1. Passing those required parameters when creating destination with custom initializer.
  
- 2. Passing those required parameters when creating destination with custom initializer.
+ 2. Passing those parameters not belonging to the destination, but belonging to other components in the module. Such as models which doesn't belonging to view controller.
  
  How to create router for LoginViewController with custom configuration:
  
@@ -29,7 +29,7 @@
  @protocol LoginViewModuleInput <ZIKViewModuleRoutable>
  - (void)constructWithAccount:(NSString *)account;
  // Return the destination
- @property (nonatomic, copy, nullable) void(^makingLoginDestinationHandler)(id<LoginViewInput> destination);
+ @property (nonatomic, copy, nullable) void(^didMakeDestination)(id<LoginViewInput> destination);
  @end
  @endcode
  
@@ -45,7 +45,7 @@
  // If you don't wan't to use subclass, you can use category to let ZIKViewRouteConfiguration conform to LoginViewModuleInput
  @interface LoginViewModuleConfiguration: ZIKViewRouteConfiguration <LoginViewModuleInput>
  @property (nonatomic, copy, nullable) NSString *account;
- @property (nonatomic, copy, nullable) void(^makingLoginDestinationHandler)(id<LoginViewInput> destination);
+ @property (nonatomic, copy, nullable) void(^didMakeDestination)(id<LoginViewInput> destination);
  @end
  
  @implementation LoginViewModuleConfiguration
@@ -78,9 +78,9 @@
  
  - (void)didFinishPrepareDestination:(id<LoginViewInput>)destination configuration:(LoginViewModuleConfiguration *)configuration {
     // Give the destination to the caller
-    if (configuration.makingLoginDestinationHandler) {
-        configuration.makingLoginDestinationHandler(destination);
-        configuration.makingLoginDestinationHandler = nil;
+    if (configuration.didMakeDestination) {
+        configuration.didMakeDestination(destination);
+        configuration.didMakeDestination = nil;
     }
  }
  
@@ -94,7 +94,7 @@
     performPath:ZIKViewRoutePath.pushFrom(self)
     configuring:^(ZIKViewRouteConfiguration<LoginViewModuleInput> *config) {
         [config constructWithAccount:@"account"];
-        config.makingLoginDestinationHandler = ^(id<LoginViewInput> destination) {
+        config.didMakeDestination = ^(id<LoginViewInput> destination) {
             // Did get the destination
         };
  }];

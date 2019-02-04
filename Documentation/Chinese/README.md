@@ -28,10 +28,9 @@ View router 将 UIKit / AppKit 中的所有界面跳转方式封装成一个统�
 - [x] 支持 iOS、macOS、tvOS
 - [x] 支持界面路由和任意 OC 模块、swift 模块的路由，无需修改模块代码即可让其支持路由
 - [x] 支持对模块进行静态依赖注入和动态依赖注入
-- [x] **用 protocol 动态获取模块**
-- [x] **用 protocol 向模块传递参数，基于接口进行类型安全的调用和参数传递**
+- [x] **明确声明可用于路由的 protocol，进行编译时检查，防止使用不存在的模块**
+- [x] **用 protocol 动态获取模块，同时用 protocol 向模块传递参数，基于接口进行类型安全的调用和参数传递**
 - [x] **可以用字符串获取模块，和其他 URL router 框架兼容**
-- [x] **明确声明可用于路由的 protocol，进行编译时检查和运行时检查，防止使用不存在的模块**
 - [x] **使用 required protocol 和 provided protocol 指向同一个模块，因此路由时不必和某个固定的 protocol 耦合，也无需在一个公共库中集中管理所有的 protocol**
 - [x] **支持 storyboard，可以对从 segue 中跳转的界面自动执行依赖注入**
 - [x] 用 adapter 对两个模块进行解耦和接口兼容
@@ -41,8 +40,8 @@ View router 将 UIKit / AppKit 中的所有界面跳转方式封装成一个统�
 - [x] 支持界面跳转过程中的 AOP 回调
 - [x] 检测界面跳转和移除时的内存泄露
 - [x] 发送自定义事件给 router 处理
-- [x] 两种注册方式：自动注册和手动注册
-- [x] 用 router 子类添加模块，也可以用 block 添加 router
+- [x] 高性能的自动注册方式，也支持手动注册
+- [x] 支持多种路由实现方式： 强大的 router 子类、简单的工厂 block 和 C 函数
 
 ## 目录
 

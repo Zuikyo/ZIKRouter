@@ -17,9 +17,9 @@
  @discussion
  ZIKServiceModuleRoutable is for:
  
- 1. Passing those parameters not belonging to the destination, but belonging to other components in the module.
+ 1. Passing those required parameters when creating destination with custom initializer.
  
- 2. Passing those required parameters when creating destination with custom initializer.
+ 2. Passing those parameters not belonging to the destination, but belonging to other components in the module.
  
  How to create router for LoginService with custom configuration:
  
@@ -29,7 +29,7 @@
  @protocol LoginServiceModuleInput <ZIKServiceModuleRoutable>
  - (void)constructWithAccount:(NSString *)account;
  // Return the destination
- @property (nonatomic, copy, nullable) void(^makingLoginServiceHandler)(id<LoginServiceInput> destination);
+ @property (nonatomic, copy, nullable) void(^didMakeDestination)(id<LoginServiceInput> destination);
  @end
  @endcode
  
@@ -45,7 +45,7 @@
  // If you don't wan't to use subclass, you can use category to let ZIKPerformRouteConfiguration conform to LoginServiceModuleInput
  @interface LoginServiceModuleConfiguration: ZIKPerformRouteConfiguration <LoginServiceModuleInput>
  @property (nonatomic, copy, nullable) NSString *account;
- @property (nonatomic, copy, nullable) void(^makingLoginDestinationHandler)(id<LoginServiceInput> destination);
+ @property (nonatomic, copy, nullable) void(^didMakeDestination)(id<LoginServiceInput> destination);
  @end
  
  @implementation LoginServiceModuleConfiguration
@@ -78,9 +78,9 @@
  
  - (void)didFinishPrepareDestination:(id<LoginServiceInput>)destination configuration:(LoginServiceModuleConfiguration *)configuration {
     // Give the destination to the caller
-    if (configuration.makingLoginDestinationHandler) {
-        configuration.makingLoginDestinationHandler(destination);
-        configuration.makingLoginDestinationHandler = nil;
+    if (configuration.didMakeDestination) {
+        configuration.didMakeDestination(destination);
+        configuration.didMakeDestination = nil;
     }
  }
  
@@ -92,7 +92,7 @@
  [ZIKRouterToServiceModule(LoginServiceModuleInput)
     makeDestinationWithConfiguring:^(ZIKPerformRouteConfiguration<LoginServiceModuleInput> *config) {
         [config constructWithAccount:@"account"];
-        config.makingLoginServiceHandler = ^(id<LoginServiceInput> destination) {
+        config.didMakeDestination = ^(id<LoginServiceInput> destination) {
             // Did get the destination
         };
  }];

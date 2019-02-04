@@ -313,12 +313,17 @@ public class ViewRouter<Destination, ModuleConfig> {
         return router.state
     }
     
-    /// Configuration for performRoute; Return copy of configuration, so modify this won't change the real configuration inside router.
+    /// Configuration for performRoute.
     public var configuration: ViewRouteConfig {
         return router.configuration
     }
     
-    /// Configuration for removeRoute; Return copy of configuration, so modify this won't change the real configuration inside router.
+    /// Configuration for module protocol.
+    public var config: ModuleConfig {
+        return router.configuration as! ModuleConfig
+    }
+    
+    /// Configuration for removeRoute.
     public var removeConfiguration: ViewRemoveConfig? {
         return router.removeConfiguration
     }

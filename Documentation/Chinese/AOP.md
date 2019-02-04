@@ -55,6 +55,6 @@ ZIKRouter memory leak checker:⚠️ destination is not dealloced after removed,
 Its parentViewController: <UINavigationController: 0x7f9513847a00>
 The UIKit system may hold the object, if the view is still in view hierarchy, you can ignore this.
 ```
-这只是非常简单的检测方式。UIKit 可能会在界面移除之后仍然持有界面。你需要检查的是释放存在循环引用。
+这只是非常简单的检测方式。UIKit 可能会在界面移除之后仍然持有界面，你需要检查的是是否有循环引用。例如在检测到之后，使用` FBRetainCycleDetector`来判断是否真的有循环引用存在。
 
 #### 下一节：[依赖注入](DependencyInjection.md)

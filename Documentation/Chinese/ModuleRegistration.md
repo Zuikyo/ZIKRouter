@@ -69,14 +69,14 @@ protocol EditorModuleInput {
     //其他不属于 view 的参数
     var noteModel: Note?
     //同时声明 destination 的接口；把 destination 传递给外部
-    var makingDestinationHandler: ((EditorViewInput) -> Void)?
+    var didMakeDestination: ((EditorViewInput) -> Void)?
 }
 ///用自定义的 ZIKViewRouteConfiguration 子类保存模块配置
 ///如果不想用子类，也可以用 category 对 ZIKViewRouteConfiguration 进行扩展，让其实现 EditorModuleInput
 class EditorModuleConfiguration: ZIKViewRouteConfiguration, EditorModuleInput {
     var viewData: Any?
     var noteModel: Note?    
-    var makingDestinationHandler: ((EditorViewInput) -> Void)?
+    var didMakeDestination: ((EditorViewInput) -> Void)?
 }
 
 class EditorViewRouter: ZIKViewRouter<EditorViewController, EditorModuleConfiguration> {
@@ -117,9 +117,9 @@ class EditorViewRouter: ZIKViewRouter<EditorViewController, EditorModuleConfigur
     
     override func didFinishPrepareDestination(_ destination: EditorViewController, configuration: EditorModuleConfiguration) {
         //把 destination 传递给使用者
-        if let makingDestinationHandler = configuration.makingDestinationHandler {
-            makingDestinationHandler(destination)
-            configuration.makingDestinationHandler = nil
+        if let didMakeDestination = configuration.didMakeDestination {
+            didMakeDestination(destination)
+            configuration.didMakeDestination = nil
         }
     }
 }
@@ -199,9 +199,9 @@ class EditorViewRouter: ZIKViewRouter<EditorViewController, EditorModuleConfigur
  
  - (void)didFinishPrepareDestination:(id<EditorViewInput>)destination configuration:(EditorModuleConfiguration *)configuration {
     //把 destination 传递给外部
-    if (configuration.makingDestinationHandler) {
-        configuration.makingDestinationHandler(destination);
-        configuration.makingDestinationHandler = nil;
+    if (configuration.didMakeDestination) {
+        configuration.didMakeDestination(destination);
+        configuration.didMakeDestination = nil;
     }
  }
  
@@ -219,7 +219,7 @@ Router.perform(
        preparation: { module in
             module.viewData = viewData
             module.noteModel = noteModel
-            module.makingDestinationHandler = { destination in
+            module.didMakeDestination = { destination in
                 //获取到 destination (EditorViewInput)
             }
         })
@@ -234,7 +234,7 @@ Router.perform(
     configuring:^(ZIKViewRouteConfiguration<EditorModuleInput> *config) {
         config.viewData = viewData;
         config.noteModel = noteModel;
-        config.makingDestinationHandler = ^(id<EditorViewInput> destination) {
+        config.didMakeDestination = ^(id<EditorViewInput> destination) {
             //获取到 destination
         };
 }];
