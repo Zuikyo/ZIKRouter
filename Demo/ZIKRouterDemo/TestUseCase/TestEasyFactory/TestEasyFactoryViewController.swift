@@ -9,7 +9,13 @@
 import UIKit
 import ZRouter
 
-class TestEasyFactoryViewController: UIViewController {
+class TestEasyFactoryViewController: UIViewController, ZIKInfoViewDelegate {
+    
+    var anyViewRouter: ZIKAnyViewRouter?
+    
+    func handleRemoveInfoViewController(_ infoViewController: UIViewController) {
+        anyViewRouter?.removeRoute()
+    }
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -29,6 +35,14 @@ class TestEasyFactoryViewController: UIViewController {
             destination.age = 18
         }
     }
+    @IBAction func testEasyViewModule(_ sender: Any) {
+        anyViewRouter = Router.perform(to: RoutableViewModule<EasyInfoViewModuleProtocol>(), path: .show(from: self)) { (config) in
+            config.constructDestination("zuik", 18, self)
+            config.didMakeDestination = { destination in
+                // get ZIKInfoViewProtocol
+            }
+        }?.router
+    }    
     @IBAction func testEasyService1(_ sender: Any) {
         let service = Router.makeDestination(to: RoutableService<EasyTimeServiceInput1>())
         Router.perform(to: RoutableViewModule<RequiredCompatibleAlertModuleInput>(), path: .defaultPath(from: self)) { (module) in

@@ -19,6 +19,7 @@ public protocol ServiceRouterExtension: class {
     static func register<Protocol>(_ routableServiceModule: RoutableServiceModule<Protocol>)
     static func register<Protocol>(_ routableService: RoutableService<Protocol>, forMakingService serviceClass: AnyClass)
     static func register<Protocol>(_ routableService: RoutableService<Protocol>, forMakingService serviceClass: AnyClass, making factory: @escaping (PerformRouteConfig) -> Protocol?)
+    static func register<Protocol>(_ routableServiceModule: RoutableServiceModule<Protocol>, forMakingService serviceClass: AnyClass, making factory: @escaping () -> Protocol)
 }
 
 public extension ServiceRouterExtension {
@@ -45,7 +46,7 @@ public extension ServiceRouterExtension {
     ///   - routableService: A routabe entry carrying a protocol conformed by the destination.
     ///   - serviceClass: The service class. Should be subclass of NSObject.
     static func register<Protocol>(_ routableService: RoutableService<Protocol>, forMakingService serviceClass: AnyClass) {
-        Registry.register(routableService, forMaking: serviceClass)
+        Registry.register(routableService, forMakingService: serviceClass)
     }
     
     /// Register service class with protocol without using any router subclass. The service will be created with the `making` block when used. Use this if your service is very easy and don't need a router subclass.
@@ -57,6 +58,69 @@ public extension ServiceRouterExtension {
     static func register<Protocol>(_ routableService: RoutableService<Protocol>, forMakingService serviceClass: AnyClass, making factory: @escaping (PerformRouteConfig) -> Protocol?) {
         assert(_swift_typeIsTargetType(serviceClass, Protocol.self), "When registering, destination (\(serviceClass)) should conforms to protocol (\(Protocol.self))")
         Registry.register(routableService, forMakingService: serviceClass, making: factory)
+    }
+    
+    /**
+     Register service class with module config protocol without using any router subclass. The service will be created with the `makeDestination` block in the configuration. Use this if your service is very easy and don't need a router subclass.
+     
+     If a module need a few required parameters when creating destination, you can declare constructDestination in module config protocol:
+     ```
+     protocol LoginServiceModuleInput {
+        // Pass required parameter for initializing destination.
+        var constructDestination: (String) -> Void { get }
+        // Designate destination is LoginServiceInput.
+        var didMakeDestination: ((LoginServiceInput) -> Void)? { get set }
+     }
+     
+     // Declare routable protocol
+     extension RoutableServiceModule where Protocol == LoginServiceModuleInput {
+     init() { self.init(declaredProtocol: Protocol.self) }
+     }
+     ```
+     Then register module with module config factory block:
+     ```
+     // Register in some +registerRoutableDestination
+     ZIKAnyServiceRouter.register(RoutableServiceModule<LoginServiceModuleInput>(), forMakingService: LoginService.self) { () -> LoginServiceModuleInput in
+         // Swift generic class is not in __objc_classlist section of Mach-O file, so it won't affect the objc launching time
+         class LoginServiceConfiguration<T>: ZIKServiceMakeableConfiguration<LoginService>, LoginServiceModuleInput {
+             var didMakeDestination: ((LoginServiceInput) -> Void)?
+     
+             // User is responsible for calling constructDestination and giving parameters
+             var constructDestination: (String) -> Void {
+                 return { account in
+                     // Capture parameters in makeDestination, so we don't need configuration subclass to hold the parameters
+                     // MakeDestination will be used for creating destination instance
+                     self.makeDestination = { [unowned self] () in
+                         let destination = LoginService(account: account)
+                         self.didMakeDestination?(destination)
+                         self.didMakeDestination = nil
+                         return destination
+                     }
+                }
+            }
+         }
+         return LoginServiceConfiguration<Any>()
+     }
+     ```
+     You can use this module with LoginServiceModuleInput:
+     ```
+     Router.makeDestination(to: RoutableServiceModule<LoginServiceModuleInput>()) { (config) in
+         var config = config
+         // Give parameters for making destination
+         config.constructDestination("account")
+         config.didMakeDestination = { destiantion in
+            // Did get LoginServiceInput
+         }
+     }
+     ```
+     
+      - Parameters:
+        - routableServiceModule: A routabe entry carrying a module config protocol conformed by the custom configuration of the router.
+        - serviceClass: The service class.
+        - making: Block creating the configuration. The configuration must be a ZIKPerformRouteConfiguration conforming to ZIKConfigurationMakeable with makeDestination or constructDestiantion property.
+     */
+    static func register<Protocol>(_ routableServiceModule: RoutableServiceModule<Protocol>, forMakingService serviceClass: AnyClass, making factory: @escaping () -> Protocol) {
+        Registry.register(routableServiceModule, forMakingService: serviceClass, making: factory)
     }
 }
 

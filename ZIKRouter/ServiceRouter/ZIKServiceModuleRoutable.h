@@ -27,7 +27,7 @@
  @code
  // LoginServiceModuleInput inherits from ZIKServiceModuleRoutable
  @protocol LoginServiceModuleInput <ZIKServiceModuleRoutable>
- - (void)constructWithAccount:(NSString *)account;
+ - (void)constructDestination:(NSString *)account;
  // Return the destination
  @property (nonatomic, copy, nullable) void(^didMakeDestination)(id<LoginServiceInput> destination);
  @end
@@ -41,15 +41,18 @@
  
  @import ZIKRouter.Internal;
  
- // Custom configuration conforming to LoginServiceModuleInput
- // If you don't wan't to use subclass, you can use category to let ZIKPerformRouteConfiguration conform to LoginServiceModuleInput
+ // There're 2 ways to use a custom configuration:
+ // 1. Override +defaultConfiguration and use ZIKServiceMakeableConfiguration (preferred way for simple parameters)
+ // 2. Create subclass (or add category) of ZIKPerformRouteConfiguration (powerful way for complicated parameters)
+  
+ // Configuration subclass conforming to LoginServiceModuleInput
  @interface LoginServiceModuleConfiguration: ZIKPerformRouteConfiguration <LoginServiceModuleInput>
  @property (nonatomic, copy, nullable) NSString *account;
  @property (nonatomic, copy, nullable) void(^didMakeDestination)(id<LoginServiceInput> destination);
  @end
  
  @implementation LoginServiceModuleConfiguration
- - (void)constructWithAccount:(NSString *)account {
+ - (void)constructDestination:(NSString *)account {
     self.account = account;
  }
  @end
@@ -91,7 +94,7 @@
  @code
  [ZIKRouterToServiceModule(LoginServiceModuleInput)
     makeDestinationWithConfiguring:^(ZIKPerformRouteConfiguration<LoginServiceModuleInput> *config) {
-        [config constructWithAccount:@"account"];
+        [config constructDestination:@"account"];
         config.didMakeDestination = ^(id<LoginServiceInput> destination) {
             // Did get the destination
         };

@@ -139,7 +139,7 @@ typedef void(^ZIKServiceRouteGlobalErrorHandler)(__kindof ZIKServiceRouter * _Nu
 @interface ZIKServiceRouter<__covariant Destination, __covariant RouteConfig: ZIKPerformRouteConfiguration *> (RegisterMaking)
 
 /**
- Register service class with protocol without using any router subclass. The service will be created with `[[serviceClass alloc] init]` when used. Use this if your service is very easy and don't need a router subclass.
+ Register protocol with service class, without using any router subclass. The service will be created with `[[serviceClass alloc] init]` when used. Use this if your service is very easy and don't need a router subclass.
  
  @code
  // Just registering with ZIKServiceRouter
@@ -156,7 +156,7 @@ typedef void(^ZIKServiceRouteGlobalErrorHandler)(__kindof ZIKServiceRouter * _Nu
 + (void)registerServiceProtocol:(Protocol<ZIKServiceRoutable> *)serviceProtocol forMakingService:(Class)serviceClass;
 
 /**
- Register service class with protocol without using any router subclass. The service will be created with the factory function when used. Use this if your service is very easy and don't need a router subclass.
+ Register protocol with service class and factory function, without using any router subclass. The service will be created with the factory function when used. Use this if your service is very easy and don't need a router subclass.
  
  @param serviceProtocol The protocol conformed by service. Should inherit from ZIKServiceRoutable. Use macro `ZIKRoutable` to wrap the parameter.
  @param serviceClass The service class.
@@ -165,7 +165,7 @@ typedef void(^ZIKServiceRouteGlobalErrorHandler)(__kindof ZIKServiceRouter * _Nu
 + (void)registerServiceProtocol:(Protocol<ZIKServiceRoutable> *)serviceProtocol forMakingService:(Class)serviceClass factory:(_Nullable Destination(*_Nonnull)(RouteConfig))function;
 
 /**
- Register service class with protocol without using any router subclass. The service will be created with the `making` block when used. Use this if your service is very easy and don't need a router subclass.
+ Register protocol with service class and factory block, without using any router subclass. The service will be created with the `making` block when used. Use this if your service is very easy and don't need a router subclass.
 
  @code
  // Just registering with ZIKServiceRouter
@@ -186,7 +186,138 @@ typedef void(^ZIKServiceRouteGlobalErrorHandler)(__kindof ZIKServiceRouter * _Nu
                          making:(_Nullable Destination(^)(RouteConfig config))makeDestination;
 
 /**
- Register service class with identifier without using any router subclass. The service will be created with `[[serviceClass alloc] init]` when used. Use this if your service is very easy and don't need a router subclass.
+ Register module config protocol with service class and config factory function, without using any router subclass or configuration subclass. The service will be created with the `makeDestination` block in the configuration. Use this if your service is very easy and don't need a router subclass or configuration subclass.
+ 
+ If a module need a few required parameters when creating destination, you can declare constructDestination in module config protocol:
+ @code
+ @protocol LoginServiceModuleInput <ZIKServiceModuleRoutable>
+ /// Pass required parameter for initializing destination.
+ @property (nonatomic, copy, readonly) void(^constructDestination)(NSString *account);
+ /// Designate destination type.
+ @property (nonatomic, copy, nullable) void(^didMakeDestination)(id<LoginServiceInput> destination);
+ @end
+ @endcode
+ 
+ Then register module with module config factory block:
+ @code
+ // Let ZIKServiceMakeableConfiguration conform to LoginServiceModuleInput
+ DeclareRoutableServiceModuleProtocol(LoginServiceModuleInput)
+ 
+ // C function that creating the configuration
+ ZIKPerformRouteConfiguration<ZIKConfigurationMakeable> makeLoginServiceModuleConfiguration(void) {
+     ZIKServiceMakeableConfiguration *config = [ZIKServiceMakeableConfiguration new];
+     __weak typeof(config) weakConfig = config;
+ 
+     // User is responsible for calling constructDestination and giving parameters
+     config.constructDestination = ^(NSString *account) {
+         // Capture parameters in makeDestination, so we don't need configuration subclass to hold the parameters
+         // MakeDestination will be used for creating destination instance
+         weakConfig.makeDestination = ^LoginService * _Nullable{
+             // Use custom initializer
+             LoginService *destination = [LoginService alloc] initWithAccount:account];
+             if (weakConfig.didMakeDestination) {
+                weakConfig.didMakeDestination(destination);
+                weakConfig.didMakeDestination = nil;
+             }
+             return destination;
+         };
+     };
+     return config;
+ }
+ 
+ // Register the function with LoginServiceModuleInput in some +registerRoutableDestination
+ [ZIKModuleServiceRouter(LoginServiceModuleInput)
+    registerModuleProtocol:ZIKRoutable(LoginServiceModuleInput)
+    forMakingService:[LoginService class]
+    factory:makeLoginServiceModuleConfiguration];
+ @endcode
+ 
+ You can use this module with LoginServiceModuleInput:
+ @code
+ [ZIKRouterToServiceModule(LoginServiceModuleInput)
+    performWithConfiguring:^(ZIKPerformRouteConfiguration<LoginServiceModuleInput> *config) {
+         // Give parameters for making destination
+         config.constructDestination(@"account");
+         config.didMakeDestination = ^(id<LoginServiceInput> destination) {
+            // Did get the destination
+         };
+ }];
+ @endcode
+ 
+ @param configProtocol The protocol conformed by configuration. Should inherit from ZIKServiceModuleRoutable. Use macro `ZIKRoutable` to wrap the parameter.
+ @param serviceClass The service class.
+ @param function Function creating the configuration. The configuration should has makeDestination block.
+ */
++ (void)registerModuleProtocol:(Protocol<ZIKServiceModuleRoutable> *)configProtocol
+              forMakingService:(Class)serviceClass
+                       factory:(ZIKPerformRouteConfiguration<ZIKConfigurationMakeable> * _Nonnull (*_Nonnull)(void))function;
+
+/**
+ Register module config protocol with service class and config factory block, without using any router subclass or configuration subclass. The service will be created with the `makeDestination` block in the configuration. Use this if your service is very easy and don't need a router subclass or configuration subclass.
+ 
+ If a module need a few required parameters when creating destination, you can declare constructDestination in module config protocol:
+ @code
+ @protocol LoginServiceModuleInput <ZIKServiceModuleRoutable>
+ /// Pass required parameter for initializing destination.
+ @property (nonatomic, copy, readonly) void(^constructDestination)(NSString *account);
+ /// Designate destination type.
+ @property (nonatomic, copy, nullable) void(^didMakeDestination)(id<LoginServiceInput> destination);
+ @end
+ @endcode
+ 
+ Then register module with module config factory block:
+ @code
+ // Let ZIKServiceMakeableConfiguration conform to LoginServiceModuleInput
+ DeclareRoutableServiceModuleProtocol(LoginServiceModuleInput)
+ 
+ // Register in some +registerRoutableDestination
+ [ZIKModuleServiceRouter(LoginServiceModuleInput)
+    registerModuleProtocol:ZIKRoutable(LoginServiceModuleInput)
+    forMakingService:[LoginService class]
+    making:^ZIKPerformRouteConfiguration<ZIKConfigurationMakeable> * _Nonnull{
+        ZIKServiceMakeableConfiguration *config = [ZIKServiceMakeableConfiguration new];
+        __weak typeof(config) weakConfig = config;
+ 
+        // User is responsible for calling constructDestination and giving parameters
+        config.constructDestination = ^(NSString *account) {
+            // Capture parameters in makeDestination, so we don't need configuration subclass to hold the parameters
+            // MakeDestination will be used for creating destination instance
+            weakConfig.makeDestination = ^LoginService * _Nullable{
+                // Use custom initializer
+                LoginService *destination = [LoginService alloc] initWithAccount:account];
+                if (weakConfig.didMakeDestination) {
+                    weakConfig.didMakeDestination(destination);
+                    weakConfig.didMakeDestination = nil;
+                }
+                return destination;
+            };
+        };
+        return config;
+ }];
+ @endcode
+ 
+ You can use this module with LoginServiceModuleInput:
+ @code
+ [ZIKRouterToServiceModule(LoginServiceModuleInput)
+     performWithConfiguring:^(ZIKPerformRouteConfiguration<LoginServiceModuleInput> *config) {
+        // Give parameters for making destination
+        config.constructDestination(@"account");
+        config.didMakeDestination = ^(id<LoginServiceInput> destination) {
+            // Did get the destination
+        };
+ }];
+ @endcode
+ 
+ @param configProtocol The protocol conformed by configuration. Should inherit from ZIKServiceModuleRoutable. Use macro `ZIKRoutable` to wrap the parameter.
+ @param serviceClass The service class.
+ @param makeConfiguration Block creating the service configuration.
+ */
++ (void)registerModuleProtocol:(Protocol<ZIKServiceModuleRoutable> *)configProtocol
+              forMakingService:(Class)serviceClass
+                        making:(ZIKPerformRouteConfiguration<ZIKConfigurationMakeable> *(^)(void))makeConfiguration;
+
+/**
+ Register identifier with service class, without using any router subclass. The service will be created with `[[serviceClass alloc] init]` when used. Use this if your service is very easy and don't need a router subclass.
  
  @code
  // Just registering with ZIKServiceRouter
@@ -201,7 +332,7 @@ typedef void(^ZIKServiceRouteGlobalErrorHandler)(__kindof ZIKServiceRouter * _Nu
 + (void)registerIdentifier:(NSString *)identifier forMakingService:(Class)serviceClass;
 
 /**
- Register service class with identifier without using any router subclass. The view will be created with the factory function when used. Use this if your service is very easy and don't need a router subclass.
+ Register identifier with service class, without using any router subclass. The service will be created with the factory function when used. Use this if your service is very easy and don't need a router subclass.
  
  @param identifier The unique identifier for this class.
  @param serviceClass The service class.
@@ -210,14 +341,14 @@ typedef void(^ZIKServiceRouteGlobalErrorHandler)(__kindof ZIKServiceRouter * _Nu
 + (void)registerIdentifier:(NSString *)identifier forMakingService:(Class)serviceClass factory:(_Nullable Destination(*_Nonnull)(RouteConfig))function;
 
 /**
- Register service class with identifier without using any router subclass. The service will be created with the `making` block when used. Use this if your service is very easy and don't need a router subclass.
+ Register identifier with service class, without using any router subclass. The service will be created with the `making` block when used. Use this if your service is very easy and don't need a router subclass.
  
  @code
- // Just registering with ZIKViewRouter
+ // Just registering with ZIKServiceRouter
  [ZIKServiceRouter
      registerIdentifier:@"app://service"
      forMakingService:[Service class]
-     making:^id _Nullable(ZIKViewRouteConfiguration *config, __kindof ZIKServiceRouter *router) {
+     making:^id _Nullable(ZIKPerformRouteConfiguration *config, __kindof ZIKServiceRouter *router) {
         return [[Service alloc] init];
  }];
  @endcode
@@ -230,7 +361,36 @@ typedef void(^ZIKServiceRouteGlobalErrorHandler)(__kindof ZIKServiceRouter * _Nu
           forMakingService:(Class)serviceClass
                     making:(_Nullable Destination(^)(RouteConfig config))makeDestination;
 
+/**
+ Register identifier with service class and config factory function, without using any router subclass or configuration subclass. The service will be created with the `makeDestination` block in the configuration. Use this if your service is very easy and don't need a router subclass or configuration subclass.
+ 
+ See registerModuleProtocol:forMakingService:factory:
+ 
+ @param identifier The unique identifier for this class.
+ @param serviceClass The service class.
+ @param function Function creating the configuration.
+ */
++ (void)registerIdentifier:(NSString *)identifier
+          forMakingService:(Class)serviceClass
+      configurationFactory:(ZIKPerformRouteConfiguration<ZIKConfigurationMakeable> * _Nonnull (*_Nonnull)(void))function;
+
+/**
+ Register identifier with service class and config factory block, without using any router subclass or configuration subclass. The service will be created with the `makeDestination` block in the configuration. Use this if your service is very easy and don't need a router subclass or configuration subclass.
+ 
+ See registerModuleProtocol:forMakingService:making:
+ 
+ @param identifier The unique identifier for this class.
+ @param serviceClass The service class.
+ @param makeConfiguration Block creating the configuration.
+ */
++ (void)registerIdentifier:(NSString *)identifier
+          forMakingService:(Class)serviceClass
+       configurationMaking:(ZIKPerformRouteConfiguration<ZIKConfigurationMakeable> *(^)(void))makeConfiguration;
+
 @end
+
+/// Add module config protocol that only has constructDestination and didMakeDestination to ZIKServiceMakeableConfiguration.
+#define DeclareRoutableServiceModuleProtocol(PROTOCOL) DeclareMakeableConfig(ZIKServiceMakeableConfiguration, PROTOCOL)
 
 @interface ZIKServiceRouter (Utility)
 

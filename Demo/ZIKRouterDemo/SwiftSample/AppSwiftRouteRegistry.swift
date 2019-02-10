@@ -73,11 +73,45 @@ class EasyRouteRegistry: ZIKViewRouteAdapter {
             return destination
         }
         
+        ZIKAnyViewRouter.register(RoutableViewModule<EasyViewModuleInput>(), forMakingView: SwiftSampleViewController.self) { () -> EasyViewModuleInput in
+            let config = ViewMakeableConfiguration<EasyViewInput, (String, Int)->Void>({_,_ in })
+            config.constructDestination = { [unowned config] (title, num) in
+                config.makeDestination = {
+                    let sb = UIStoryboard.init(name: "Main", bundle: nil)
+                    let destination = sb.instantiateViewController(withIdentifier: "SwiftSampleViewController") as! SwiftSampleViewController
+                    destination.title = "Swift Sample from easy register"
+                    destination.injectedAlertRouter = Router.to(RoutableViewModule<RequiredCompatibleAlertModuleInput>())
+                    return destination
+                }
+            }
+            return config
+        }
+        
         ZIKAnyServiceRouter.register(RoutableService<EasyServiceInput>(), forMakingService: EasyService.self)
         ZIKDestinationServiceRouter<EasyService2>.register(RoutableService<EasyServiceInput2>(), forMakingService: EasyService2.self) { (config) -> EasyService2? in
             return EasyService2(name: "default")
         }
+        
+        ZIKAnyServiceRouter.register(RoutableServiceModule<EasyServiceModuleInput>(), forMakingService: EasyService2.self) { () -> EasyServiceModuleInput in
+            // Swift generic class is not in __objc_classlist section of Mach-O file, so it won't affect the objc launching time
+            class EasyService2Configuration<T>: ZIKServiceMakeableConfiguration<EasyService2>, EasyServiceModuleInput {
+                var didMakeDestination: ((EasyServiceInput) -> Void)?
+                
+                var constructDestination: (String) -> Void {
+                    return { name in
+                        self.makeDestination = { [unowned self] () in
+                            let destination = EasyService2(name: name)
+                            self.didMakeDestination?(destination)
+                            self.didMakeDestination = nil
+                            return destination
+                        }
+                    }
+                }
+            }
+            return EasyService2Configuration<Any>()
+        }
     }
+    
 }
 
 protocol EasyViewInput { }
@@ -85,11 +119,24 @@ extension RoutableView where Protocol == EasyViewInput {
     init() { self.init(declaredProtocol: Protocol.self) }
 }
 
-protocol EasyViewInput2: ZIKViewRoutable { }
+protocol EasyViewInput2 { }
 extension RoutableView where Protocol == EasyViewInput2 {
     init() { self.init(declaredProtocol: Protocol.self) }
 }
 extension SwiftSampleViewController: EasyViewInput, EasyViewInput2 { }
+
+protocol EasyViewModuleInput {
+    var constructDestination: (String, Int) -> Void { get }
+    var didMakeDestination:((EasyViewInput) -> Void)? { get set }
+    
+}
+extension RoutableViewModule where Protocol == EasyViewModuleInput {
+    init() { self.init(declaredProtocol: Protocol.self) }
+}
+extension ViewMakeableConfiguration: EasyViewModuleInput where Destination == EasyViewInput, Constructor == (String, Int) -> Void {
+    
+}
+
 
 protocol EasyServiceInput { }
 extension RoutableService where Protocol == EasyServiceInput {
@@ -98,6 +145,15 @@ extension RoutableService where Protocol == EasyServiceInput {
 
 protocol EasyServiceInput2 { }
 extension RoutableService where Protocol == EasyServiceInput2 {
+    init() { self.init(declaredProtocol: Protocol.self) }
+}
+
+protocol EasyServiceModuleInput {
+    var constructDestination: (String) -> Void { get }
+    var didMakeDestination:((EasyServiceInput) -> Void)? { get set }
+    
+}
+extension RoutableServiceModule where Protocol == EasyServiceModuleInput {
     init() { self.init(declaredProtocol: Protocol.self) }
 }
 
@@ -111,5 +167,3 @@ class EasyService2: NSObject, ZIKRoutableService, EasyServiceInput, EasyServiceI
         self.name = name
     }
 }
-
-

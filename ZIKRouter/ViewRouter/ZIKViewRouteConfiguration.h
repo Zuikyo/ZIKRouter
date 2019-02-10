@@ -268,6 +268,98 @@ typedef void(^ZIKViewRouteSegueConfiger)(NS_NOESCAPE ZIKViewRouteSegueConfigure)
 
 @end
 
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wstrict-prototypes"
+
+/**
+ Configuration that can make destination without using configuration subclass. It's for simple module config protocol that passing a few parameters for initializing module.
+ 
+ If a module need a few required parameters when creating destination, you can declare in module config protocol:
+ @code
+ @protocol LoginViewModuleInput <ZIKViewModuleRoutable>
+ /// Pass required parameter for initializing destination.
+ @property (nonatomic, copy, readonly) void(^constructDestination)(NSString *account);
+ /// Designate destination type.
+ @property (nonatomic, copy, nullable) void(^didMakeDestination)(id<LoginViewInput> destination);
+ @end
+ @endcode
+ 
+ Then register module with module config factory block:
+ @code
+ // Let ZIKViewMakeableConfiguration conform to LoginViewModuleInput
+ DeclareRoutableViewModuleProtocol(LoginViewModuleInput)
+ 
+ // Register in some +registerRoutableDestination
+ [ZIKModuleViewRouter(LoginViewModuleInput)
+    registerModuleProtocol:ZIKRoutable(LoginViewModuleInput)
+    forMakingView:[LoginViewController class]
+    making:^ZIKViewRouteConfiguration<ZIKConfigurationMakeable> * _Nonnull{
+        ZIKViewMakeableConfiguration *config = [ZIKViewMakeableConfiguration new];
+        __weak typeof(config) weakConfig = config;
+ 
+        // User is responsible for calling constructDestination and giving parameters
+        config.constructDestination = ^(NSString *account) {
+            // Capture parameters in makeDestination, so we don't need configuration subclass to hold the parameters
+            // MakeDestination will be used for creating destination instance
+            weakConfig.makeDestination = ^LoginViewController * _Nullable{
+                // Use custom initializer
+                LoginViewController *destination = [LoginViewController alloc] initWithAccount:account];
+                if (weakConfig.didMakeDestination) {
+                    weakConfig.didMakeDestination(destination);
+                    weakConfig.didMakeDestination = nil;
+                }
+                return destination;
+            };
+        };
+        return config;
+ }];
+ @endcode
+ 
+ You can use this module with LoginViewModuleInput:
+ @code
+ [ZIKRouterToViewModule(LoginViewModuleInput)
+    performPath:ZIKViewRoutePath.showFrom(self)
+    configuring:^(ZIKViewRouteConfiguration<LoginViewModuleInput> *config) {
+        // Give parameters for making destination
+        config.constructDestination(@"account");
+        config.didMakeDestination = ^(id<LoginViewInput> destination) {
+            // Did get the destination
+        };
+ }];
+ @endcode
+ */
+@interface ZIKViewMakeableConfiguration<__covariant Destination>: ZIKViewRouteConfiguration<ZIKConfigurationMakeable>
+
+/**
+ Make destination with block.
+ @discussion
+ Set this in constructDestination block. It's for passing parameters with constructDestination easily, so we don't need configuration subclass to hold parameters.
+ @note
+ When using configuration with `registerModuleProtocol:forMakingView:making:`, makeDestination is auto used for making destination.
+ 
+ When using a router subclass with makeable configuration, the router subclass is responsible for check and use makeDestination in `-destinationWithConfiguration:`.
+ */
+@property (nonatomic, copy, nullable) Destination _Nullable(^makeDestination)();
+
+/**
+ Give the destination with specfic type to the caller.
+ 
+ @note
+ When using configuration with `registerModuleProtocol:forMakingView:making:`, didMakeDestination is auto called after making destination.
+ 
+ When using a router subclass with makeable configuration, the router subclass is responsible for check and call didMakeDestination after creating and preparing destination.
+ */
+@property (nonatomic, copy, nullable) void(^didMakeDestination)(Destination destination) NS_REFINED_FOR_SWIFT;
+
+@end
+
+@interface ZIKSwiftViewMakeableConfiguration : ZIKViewRouteConfiguration
+@property (nonatomic, copy, nullable) id _Nullable(^makeDestination)() NS_REFINED_FOR_SWIFT;
+@property (nonatomic, copy, nullable) void(^didMakeDestination)(id destination) NS_REFINED_FOR_SWIFT;
+@end
+
+#pragma clang diagnostic pop
+
 @interface ZIKViewRoutePopoverConfiguration : ZIKRouteConfiguration <NSCopying>
 
 #if ZIK_HAS_UIKIT

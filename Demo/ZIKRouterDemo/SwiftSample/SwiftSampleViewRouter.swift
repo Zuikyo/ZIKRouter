@@ -15,14 +15,27 @@ protocol SwiftSampleViewConfig {
 }
 
 //Custom configuration of this router.
-class SwiftSampleViewConfiguration: ZIKViewRouteConfiguration, SwiftSampleViewConfig {
+class SwiftSampleViewConfiguration: ZIKViewMakeableConfiguration<SwiftSampleViewController>, SwiftSampleViewConfig {
+    
     override func copy(with zone: NSZone? = nil) -> Any {
         return super.copy(with: zone)
     }
+    var constructDestinationWithTitle: ((_ title: String) -> Void) {
+        return { title in
+            self.makeDestination = {
+                let title = title
+                let sb = UIStoryboard.init(name: "Main", bundle: nil)
+                let destination = sb.instantiateViewController(withIdentifier: "SwiftSampleViewController") as! SwiftSampleViewController
+                destination.title = title
+                return destination
+            }
+        }
+    }
+//    var makeDestination: (() -> SwiftSampleViewController?)?
 }
 
 //Router for SwiftSampleViewController.
-class SwiftSampleViewRouter: ZIKViewRouter<SwiftSampleViewController, SwiftSampleViewConfiguration> {
+class SwiftSampleViewRouter: ZIKViewRouter<SwiftSampleViewController, ZIKViewMakeableConfiguration<SwiftSampleViewController>> {
     
     override class func registerRoutableDestination() {
         registerView(SwiftSampleViewController.self)
@@ -32,11 +45,14 @@ class SwiftSampleViewRouter: ZIKViewRouter<SwiftSampleViewController, SwiftSampl
         registerIdentifier("swiftSample")
     }
     
-    override class func defaultRouteConfiguration() -> SwiftSampleViewConfiguration {
+    override class func defaultRouteConfiguration() -> ZIKViewMakeableConfiguration<SwiftSampleViewController> {
         return SwiftSampleViewConfiguration()
     }
     
-    override func destination(with configuration: SwiftSampleViewConfiguration) -> SwiftSampleViewController? {
+    override func destination(with configuration: ZIKViewMakeableConfiguration<SwiftSampleViewController>) -> SwiftSampleViewController? {
+        if let make = configuration.makeDestination {
+            return make()
+        }
         let sb = UIStoryboard.init(name: "Main", bundle: nil)
         let destination = sb.instantiateViewController(withIdentifier: "SwiftSampleViewController") as! SwiftSampleViewController
         destination.title = "Swift Sample"

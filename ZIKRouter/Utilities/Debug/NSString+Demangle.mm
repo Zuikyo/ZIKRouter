@@ -15,6 +15,7 @@
 
 #include <string>
 #import "ZIKFindSymbol.h"
+#import "ZIKRouterRuntimeDebug.h"
 
 struct DemangleOptions {
     bool SynthesizeSugarOnTypes = false;
@@ -78,8 +79,8 @@ static std::string _demangleSymbolAsString(const char *mangledName, size_t mangl
     if (demangleSymbolAsString) {
         return demangleSymbolAsString(mangledName, mangledNameLength, options);
     }
-    NSCAssert(demangleSymbolAsString != NULL, @"Can't find demangleSymbolAsString in libswiftCore.dylib.");
-    return nullptr;
+    NSCAssert(demangleSymbolAsString != NULL || !hasDynamicLibrary(@"libswiftCore.dylib"), @"Can't find demangleSymbolAsString in libswiftCore.dylib.");
+    return mangledName;
 };
 
 @implementation NSString (Demangle)

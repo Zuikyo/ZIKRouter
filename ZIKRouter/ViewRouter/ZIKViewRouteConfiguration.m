@@ -362,8 +362,8 @@ ZIKRouteAction const ZIKRouteActionPerformOnDestination = @"ZIKRouteActionPerfor
     config.animator = self.animator;
 #endif
     config.addingChildViewHandler = self.addingChildViewHandler;
-    config.popoverConfiguration = [self.popoverConfiguration copy];
-    config.segueConfiguration = [self.segueConfiguration copy];
+    config.popoverConfiguration = self.popoverConfiguration;
+    config.segueConfiguration = self.segueConfiguration;
     config.handleExternalRoute = self.handleExternalRoute;
     return config;
 }
@@ -379,6 +379,26 @@ ZIKRouteAction const ZIKRouteActionPerformOnDestination = @"ZIKRouteActionPerfor
     return description;
 }
 
+@end
+
+@implementation ZIKViewMakeableConfiguration
+- (id)copyWithZone:(nullable NSZone *)zone {
+    ZIKViewMakeableConfiguration *config = [super copyWithZone:zone];
+    config.makeDestination = self.makeDestination;
+    config.didMakeDestination = self.didMakeDestination;
+    return config;
+}
+@end
+
+@interface ZIKSwiftViewMakeableConfiguration ()<ZIKConfigurationMakeable>
+@end
+@implementation ZIKSwiftViewMakeableConfiguration
+- (id)copyWithZone:(nullable NSZone *)zone {
+    ZIKSwiftViewMakeableConfiguration *config = [super copyWithZone:zone];
+    config.makeDestination = self.makeDestination;
+    config.didMakeDestination = self.didMakeDestination;
+    return config;
+}
 @end
 
 @implementation ZIKViewRoutePopoverConfiguration

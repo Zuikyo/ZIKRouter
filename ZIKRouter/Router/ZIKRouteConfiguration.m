@@ -13,6 +13,7 @@
 #import "ZIKRouteConfigurationPrivate.h"
 #import <objc/runtime.h>
 #import "ZIKRouterRuntime.h"
+#import "ZIKRouterInternal.h"
 
 @interface ZIKRouteConfiguration ()
 
@@ -67,9 +68,17 @@
 
 @interface ZIKPerformRouteConfiguration()
 @property (nonatomic, strong) NSMutableDictionary<NSString *, id> *userInfo;
+@property (nonatomic, copy) ZIKConstructBlock constructDestination;
 @end
 
 @implementation ZIKPerformRouteConfiguration
+
+- (ZIKConstructBlock)constructDestination {
+    if (!_constructDestination) {
+        _constructDestination = ^{ };
+    }
+    return _constructDestination;
+}
 
 - (void)setRouteCompletion:(void (^)(id _Nonnull))routeCompletion {
     self.successHandler = routeCompletion;
@@ -115,6 +124,7 @@
 
 - (id)copyWithZone:(nullable NSZone *)zone {
     ZIKPerformRouteConfiguration *config = [super copyWithZone:zone];
+    config.constructDestination = self.constructDestination;
     config.prepareDestination = self.prepareDestination;
     config.successHandler = self.successHandler;
     config.completionHandler = self.completionHandler;
@@ -126,6 +136,26 @@
     return config;
 }
 
+@end
+
+@implementation ZIKServiceMakeableConfiguration
+- (id)copyWithZone:(nullable NSZone *)zone {
+    ZIKServiceMakeableConfiguration *config = [super copyWithZone:zone];
+    config.makeDestination = self.makeDestination;
+    config.didMakeDestination = self.didMakeDestination;
+    return config;
+}
+@end
+
+@interface ZIKSwiftServiceMakeableConfiguration ()<ZIKConfigurationMakeable>
+@end
+@implementation ZIKSwiftServiceMakeableConfiguration
+- (id)copyWithZone:(nullable NSZone *)zone {
+    ZIKSwiftServiceMakeableConfiguration *config = [super copyWithZone:zone];
+    config.makeDestination = self.makeDestination;
+    config.didMakeDestination = self.didMakeDestination;
+    return config;
+}
 @end
 
 @implementation ZIKRemoveRouteConfiguration

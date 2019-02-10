@@ -40,8 +40,8 @@ NSErrorDomain const ZIKRouteErrorDomain = @"ZIKRouteErrorDomain";
     
     if (self = [super init]) {
         _state = ZIKRouterStateUnrouted;
-        _configuration = [configuration copy];
-        _removeConfiguration = [removeConfiguration copy];
+        _configuration = configuration;
+        _removeConfiguration = removeConfiguration;
         _stateSema = dispatch_semaphore_create(1);
     }
     return self;
@@ -404,7 +404,7 @@ NSErrorDomain const ZIKRouteErrorDomain = @"ZIKRouteErrorDomain";
         NSError *error = [ZIKRouter errorWithCode:ZIKRouteErrorActionFailed localizedDescriptionFormat:@"State should be ZIKRouterStateRouted when removeRoute, current state:%ld, configuration:%@",self.state,self.original_configuration];
         [[self class] notifyGlobalErrorWithRouter:self action:action error:error];
         if (removeConfigBuilder) {
-            ZIKRemoveRouteConfiguration *configuration = [self.original_removeConfiguration copy];
+            ZIKRemoveRouteConfiguration *configuration = self.original_removeConfiguration;
             removeConfigBuilder(configuration);
             if (configuration.errorHandler) {
                 configuration.errorHandler(action, error);
@@ -426,7 +426,7 @@ NSErrorDomain const ZIKRouteErrorDomain = @"ZIKRouteErrorDomain";
                                 errorDescription:description];
         if (removeConfigBuilder) {
             NSError *error = [ZIKRouter errorWithCode:ZIKRouteErrorActionFailed localizedDescription:description];
-            ZIKRemoveRouteConfiguration *configuration = [self.original_removeConfiguration copy];
+            ZIKRemoveRouteConfiguration *configuration = self.original_removeConfiguration;
             removeConfigBuilder(configuration);
             if (configuration.errorHandler) {
                 configuration.errorHandler(action, error);

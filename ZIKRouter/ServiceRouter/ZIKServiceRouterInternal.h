@@ -50,8 +50,13 @@ FOUNDATION_EXTERN Protocol<ZIKServiceRoutable> *_Nullable _routableServiceProtoc
 FOUNDATION_EXTERN Protocol<ZIKServiceModuleRoutable> *_Nullable _routableServiceModuleProtocolFromObject(id object);
 
 typedef id  _Nullable (^ZIKServiceFactoryBlock)(ZIKPerformRouteConfiguration * _Nonnull);
+
 FOUNDATION_EXTERN void _registerServiceProtocolWithSwiftFactory(Protocol<ZIKServiceRoutable> *serviceProtocol, Class serviceClass, ZIKServiceFactoryBlock block);
 
+FOUNDATION_EXTERN void _registerServiceModuleProtocolWithSwiftFactory(Protocol<ZIKServiceModuleRoutable> *serviceProtocol, Class serviceClass, id(^block)(void));
+
 FOUNDATION_EXTERN void _registerServiceIdentifierWithSwiftFactory(NSString *identifier, Class serviceClass, ZIKServiceFactoryBlock block);
+
+FOUNDATION_EXTERN void _registerServiceModuleIdentifierWithSwiftFactory(NSString *identifier, Class serviceClass, id(^block)(void));
 
 NS_ASSUME_NONNULL_END

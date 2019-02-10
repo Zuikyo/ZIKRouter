@@ -278,6 +278,100 @@ public class ServiceRouter<Destination, ModuleConfig> {
     }
 }
 
+// MARK: Makeable Config
+
+/**
+ Convenient configuration for using custom configuration without configuration subclass. The service will be created with the `makeDestination` block in the configuration.
+ 
+ If a module need a few required parameters when creating destination, you can declare constructDestination in module config protocol:
+ 
+ ```
+ protocol LoginServiceModuleInput {
+    // Pass required parameter for initializing destination.
+    var constructDestination: (_ account: String) -> Void { get }
+    // Designate destination is LoginServiceInput.
+    var didMakeDestination:((LoginServiceInput) -> Void)? { get set }
+ }
+ extension RoutableServiceModule where Protocol == LoginServiceModuleInput {
+    init() { self.init(declaredProtocol: Protocol.self) }
+ }
+ 
+ // Let ServiceMakeableConfiguration conform to LoginServiceModuleInput
+ extension ServiceMakeableConfiguration: LoginServiceModuleInput where Destination == LoginServiceInput, Constructor == (String) -> Void {
+ }
+ ```
+ Register in some registerRoutableDestination:
+ ```
+ ZIKAnyServiceRouter.register(RoutableServiceModule<LoginServiceModuleInput>(), forMakingService: LoginService.self) { () -> LoginServiceModuleInput in
+     let config = ServiceMakeableConfiguration<LoginServiceInput, (String) -> Void>({_,_ in })
+ 
+     // User is responsible for calling constructDestination and giving parameters
+     config.constructDestination = { [unowned config] (account) in
+         // Capture parameters in makeDestination, so we don't need configuration subclass to hold the parameters
+         // MakeDestination will be used for creating destination instance
+         config.makeDestination = {
+             let destination = LoginService(account: account)
+             return destination
+         }
+     }
+     return config
+ }
+ ```
+ You can use this module with LoginServiceModuleInput:
+ ```
+ Router.makeDestination(to: RoutableServiceModule<LoginServiceModuleInput>()) { (config) in
+     var config = config
+     config.constructDestination("account")
+     config.didMakeDestination = { destination in
+        // Did get LoginServiceInput
+     }
+ }
+ ```
+ */
+public class ServiceMakeableConfiguration<Destination, Constructor>: ZIKSwiftServiceMakeableConfiguration {
+    
+    /// Let the caller pass parameters to the module, and let makeDestination capture parameters directly. Then we don't need configuration subclass to hold parameters.
+    /// Genetic Constructor is a function type: ServiceMakeableConfiguration<LoginServiceInput, (String) -> Void>
+    public var constructDestination: Constructor
+    
+    /// Make destination with block.
+    ///
+    /// Set this in constructDestination block. It's for passing parameters with constructDestination easily, so we don't need configuration subclass to hold parameters.
+    ///
+    /// When using configuration with `register<Protocol>(_ routableServiceModule: RoutableServiceModule<Protocol>, forMakingService serviceClass: AnyClass, making factory: @escaping () -> Protocol)`, makeDestination is auto used for making destination.
+    ///
+    /// When using a router subclass with makeable configuration, the router subclass is responsible for check and use makeDestination in `-destinationWithConfiguration:`.
+    public var makeDestination: (() -> Destination?)? {
+        didSet {
+            self.__makeDestination = { [unowned self] () -> Any? in
+                if let destination = self.makeDestination?() {
+                    return destination
+                }
+                return nil
+            }
+        }
+    }
+    
+    /// Give the destination with specfic type to the caller.
+    ///
+    /// When using configuration with `register<Protocol>(_ routableServiceModule: RoutableServiceModule<Protocol>, forMakingService serviceClass: AnyClass, making factory: @escaping () -> Protocol)`, didMakeDestination is auto called after making destination.
+    ///
+    /// When using a router subclass with makeable configuration, the router subclass is responsible for check and call didMakeDestination after creating and preparing destination.
+    public var didMakeDestination: ((Destination) -> Void)? {
+        didSet {
+            self.__didMakeDestination = { [unowned self] (d: Any) -> Void in
+                if let destination = d as? Destination {
+                    self.didMakeDestination?(destination)
+                }
+            }
+        }
+    }
+    
+    public init(_ constructor: Constructor) {
+        constructDestination = constructor
+    }
+}
+
 // MARK: Strict Config
 
 /// Proxy of ZIKRouteConfiguration to handle configuration in a type safe way.

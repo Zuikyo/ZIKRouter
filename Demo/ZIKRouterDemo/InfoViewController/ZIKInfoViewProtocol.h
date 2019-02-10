@@ -8,6 +8,9 @@
 
 #import <Foundation/Foundation.h>
 #import <ZIKRouter/ZIKViewRoutable.h>
+#import <ZIKRouter/ZIKViewModuleRoutable.h>
+
+NS_ASSUME_NONNULL_BEGIN
 
 @class UIViewController;
 @protocol ZIKInfoViewDelegate <NSObject>
@@ -26,3 +29,9 @@
 @end
 @protocol EasyInfoViewProtocol2 <ZIKInfoViewProtocol, ZIKViewRoutable>
 @end
+@protocol EasyInfoViewModuleProtocol <ZIKViewModuleRoutable>
+@property (nonatomic, copy, readonly) void(^constructDestination)(NSString *name, NSInteger age, __weak _Nullable id<ZIKInfoViewDelegate> delegate);
+@property (nonatomic, copy, nullable) void(^didMakeDestination)(id<ZIKInfoViewProtocol> destination);
+@end
+
+NS_ASSUME_NONNULL_END

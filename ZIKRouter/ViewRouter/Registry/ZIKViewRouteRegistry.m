@@ -27,8 +27,6 @@
 #import "ZIKViewRoutePrivate.h"
 #import "ZIKViewRouterType.h"
 
-static CFMutableDictionaryRef _destinationProtocolToDestinationMap;
-static CFMutableSetRef        _runtimeFactoryDestinationClasses;
 static CFMutableDictionaryRef _destinationProtocolToRouterMap;
 static CFMutableDictionaryRef _moduleConfigProtocolToRouterMap;
 static CFMutableDictionaryRef _destinationToRoutersMap;
@@ -36,10 +34,16 @@ static CFMutableDictionaryRef _destinationToDefaultRouterMap;
 static CFMutableDictionaryRef _destinationToExclusiveRouterMap;
 static CFMutableDictionaryRef _identifierToRouterMap;
 static CFMutableDictionaryRef _adapterToAdapteeMap;
+static CFMutableDictionaryRef _destinationProtocolToDestinationMap;
+static CFMutableDictionaryRef _moduleConfigProtocolToDestinationMap;
+static CFMutableSetRef        _runtimeFactoryDestinationClasses;
 static CFMutableDictionaryRef _identifierToDestinationMap;
 static CFMutableDictionaryRef _destinationProtocolToFactoryMap;
 static CFMutableDictionaryRef _identifierToFactoryMap;
-static CFMutableDictionaryRef _destinationToFactoriesMap;
+static CFMutableDictionaryRef _destinationToDefaultFactoryMap;
+static CFMutableDictionaryRef _moduleConfigProtocolToFactoryMap;
+static CFMutableDictionaryRef _identifierToConfigFactoryMap;
+static CFMutableDictionaryRef _destinationToDefaultConfigFactoryMap;
 #if ZIKROUTER_CHECK
 static CFMutableDictionaryRef _check_routerToDestinationsMap;
 static CFMutableDictionaryRef _check_routerToDestinationProtocolsMap;
@@ -50,6 +54,7 @@ static NSMutableArray<Class> *_routerClasses;
 
 + (void)load {
     _destinationProtocolToDestinationMap = CFDictionaryCreateMutable(kCFAllocatorDefault, 0, NULL, NULL);
+    _moduleConfigProtocolToDestinationMap = CFDictionaryCreateMutable(kCFAllocatorDefault, 0, NULL, NULL);
     _runtimeFactoryDestinationClasses = CFSetCreateMutable(kCFAllocatorDefault, 0, NULL);
     _destinationProtocolToRouterMap = CFDictionaryCreateMutable(kCFAllocatorDefault, 0, NULL, NULL);
     _moduleConfigProtocolToRouterMap = CFDictionaryCreateMutable(kCFAllocatorDefault, 0, NULL, NULL);
@@ -61,7 +66,10 @@ static NSMutableArray<Class> *_routerClasses;
     _identifierToDestinationMap = CFDictionaryCreateMutable(kCFAllocatorDefault, 0, &kCFTypeDictionaryKeyCallBacks, NULL);
     _destinationProtocolToFactoryMap = CFDictionaryCreateMutable(kCFAllocatorDefault, 0, NULL, NULL);
     _identifierToFactoryMap = CFDictionaryCreateMutable(kCFAllocatorDefault, 0, &kCFTypeDictionaryKeyCallBacks, NULL);
-    _destinationToFactoriesMap = CFDictionaryCreateMutable(kCFAllocatorDefault, 0, NULL, &kCFTypeDictionaryValueCallBacks);
+    _destinationToDefaultFactoryMap = CFDictionaryCreateMutable(kCFAllocatorDefault, 0, NULL, NULL);
+    _moduleConfigProtocolToFactoryMap = CFDictionaryCreateMutable(kCFAllocatorDefault, 0, NULL, NULL);
+    _identifierToConfigFactoryMap = CFDictionaryCreateMutable(kCFAllocatorDefault, 0, &kCFTypeDictionaryKeyCallBacks, NULL);
+    _destinationToDefaultConfigFactoryMap = CFDictionaryCreateMutable(kCFAllocatorDefault, 0, NULL, NULL);
 #if ZIKROUTER_CHECK
     _check_routerToDestinationsMap = CFDictionaryCreateMutable(kCFAllocatorDefault, 0, NULL, &kCFTypeDictionaryValueCallBacks);
     _check_routerToDestinationProtocolsMap = CFDictionaryCreateMutable(kCFAllocatorDefault, 0, NULL, &kCFTypeDictionaryValueCallBacks);
@@ -119,13 +127,37 @@ static NSMutableArray<Class> *_routerClasses;
 #pragma clang diagnostic pop
 }
 
-+ (ZIKRoute *)easyRouteForFactory:(id(^)(ZIKPerformRouteConfiguration * _Nonnull config, __kindof ZIKRouter * _Nonnull router))factory {
-    return [[ZIKViewRoute alloc] initWithMakeDestination:^id _Nullable(ZIKPerformRouteConfiguration * _Nonnull config, __kindof ZIKRouter * _Nonnull router) {
++ (ZIKRoute *)easyRouteForDestinationClass:(Class)destinationClass factory:(id(^)(ZIKPerformRouteConfiguration * _Nonnull config, __kindof ZIKRouter * _Nonnull router))factory {
+    ZIKViewRoute *route = [[ZIKViewRoute alloc] initWithMakeDestination:^id _Nullable(ZIKPerformRouteConfiguration * _Nonnull config, __kindof ZIKRouter * _Nonnull router) {
         if (!factory) {
             return nil;
         }
         return factory(config, router);
     }];
+    if ([destinationClass isKindOfClass:[XXView class]]) {
+        route.makeSupportedRouteTypes(^ZIKBlockViewRouteTypeMask{
+            return ZIKBlockViewRouteTypeMaskViewDefault;
+        });
+    }
+    return route;
+}
+
++ (ZIKRoute *)easyRouteForDestinationClass:(Class)destinationClass configFactory:(ZIKPerformRouteConfiguration<ZIKConfigurationMakeable> *(^)(void))factory {
+    return [[ZIKViewRoute alloc] initWithMakeDestination:^id _Nullable(ZIKPerformRouteConfiguration<ZIKConfigurationMakeable> * _Nonnull config, __kindof ZIKRouter * _Nonnull router) {
+        if ([config conformsToProtocol:@protocol(ZIKConfigurationMakeable)]) {
+            if ([config respondsToSelector:@selector(makeDestination)] && config.makeDestination) {
+                id destination = config.makeDestination();
+                if (destination && [config respondsToSelector:@selector(didMakeDestination)] && config.didMakeDestination) {
+                    config.didMakeDestination(destination);
+                    config.didMakeDestination = nil;
+                }
+                return destination;
+            }
+        }
+        return nil;
+    }].makeDefaultConfiguration(^ZIKViewRouteConfiguration * _Nonnull{
+        return (ZIKViewRouteConfiguration *)factory();
+    });
 }
 
 + (Class)routerTypeClass {
@@ -144,6 +176,9 @@ static NSMutableArray<Class> *_routerClasses;
 
 + (CFMutableDictionaryRef)destinationProtocolToDestinationMap {
     return _destinationProtocolToDestinationMap;
+}
++ (CFMutableDictionaryRef)moduleConfigProtocolToDestinationMap {
+    return _moduleConfigProtocolToDestinationMap;
 }
 + (CFMutableSetRef)runtimeFactoryDestinationClasses {
     return _runtimeFactoryDestinationClasses;
@@ -178,8 +213,17 @@ static NSMutableArray<Class> *_routerClasses;
 + (CFMutableDictionaryRef)identifierToFactoryMap {
     return _identifierToFactoryMap;
 }
-+ (CFMutableDictionaryRef)destinationToFactoriesMap {
-    return _destinationToFactoriesMap;
++ (CFMutableDictionaryRef)destinationToDefaultFactoryMap {
+    return _destinationToDefaultFactoryMap;
+}
++ (CFMutableDictionaryRef)moduleConfigProtocolToFactoryMap {
+    return _moduleConfigProtocolToFactoryMap;
+}
++ (CFMutableDictionaryRef)identifierToConfigFactoryMap {
+    return _identifierToConfigFactoryMap;
+}
++ (CFMutableDictionaryRef)destinationToDefaultConfigFactoryMap {
+    return _destinationToDefaultConfigFactoryMap;
 }
 + (CFMutableDictionaryRef)_check_routerToDestinationsMap {
 #if ZIKROUTER_CHECK
@@ -392,6 +436,11 @@ static NSMutableArray<Class> *_routerClasses;
     }
 }
 #endif
+
++ (void)validateMakeableConfiguration:(ZIKPerformRouteConfiguration<ZIKConfigurationMakeable> *)config {
+    [super validateMakeableConfiguration:config];
+    NSAssert1([config isKindOfClass:[ZIKViewRouteConfiguration class]], @"Registered module config factory for view router should return a ZIKViewRouteConfiguration type: (%@).", config);
+}
 
 #pragma mark Check Override
 

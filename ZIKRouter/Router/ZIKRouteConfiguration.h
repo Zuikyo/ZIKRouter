@@ -120,6 +120,106 @@ typedef void(^ZIKPerformRouteCompletion)(BOOL success, id _Nullable destination,
 
 @end
 
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wstrict-prototypes"
+
+/// For configuration that can make destination by its own.
+@protocol ZIKConfigurationMakeable
+/// Make destination with block.
+@property (nonatomic, copy, readonly, nullable) id _Nullable(^makeDestination)();
+/// Give the destination to the caller.
+@property (nonatomic, copy, nullable) void(^didMakeDestination)(id destination) NS_REFINED_FOR_SWIFT;
+@end
+
+/**
+ Configuration that can make destination without using configuration subclass. It's for simple module config protocol that passing a few parameters for initializing module.
+ 
+ If a module need a few required parameters when creating destination, you can declare in module config protocol:
+ @code
+ @protocol LoginServiceModuleInput <ZIKServiceModuleRoutable>
+ /// Pass required parameter for initializing destination.
+ @property (nonatomic, copy, readonly) void(^constructDestination)(NSString *account);
+ /// Designate destination type.
+ @property (nonatomic, copy, nullable) void(^didMakeDestination)(id<LoginServiceInput> destination);
+ @end
+ @endcode
+ 
+ Then register module with module config factory block:
+ @code
+ // Let ZIKServiceMakeableConfiguration conform to LoginServiceModuleInput
+ DeclareRoutableServiceModuleProtocol(LoginServiceModuleInput)
+ 
+ // Register in some +registerRoutableDestination
+ [ZIKModuleServiceRouter(LoginServiceModuleInput)
+    registerModuleProtocol:ZIKRoutable(LoginServiceModuleInput)
+    forMakingService:[LoginService class]
+    making:^ZIKPerformRouteConfiguration<ZIKConfigurationMakeable> * _Nonnull{
+         ZIKServiceMakeableConfiguration *config = [ZIKServiceMakeableConfiguration new];
+         __weak typeof(config) weakConfig = config;
+ 
+         // User is responsible for calling constructDestination and giving parameters
+         config.constructDestination = ^(NSString *account) {
+             // Capture parameters in makeDestination, so we don't need configuration subclass to hold the parameters
+             // MakeDestination will be used for creating destination instance
+             weakConfig.makeDestination = ^LoginService * _Nullable{
+                // Use custom initializer
+                LoginService *destination = [LoginService alloc] initWithAccount:account];
+                if (weakConfig.didMakeDestination) {
+                    weakConfig.didMakeDestination(destination);
+                    weakConfig.didMakeDestination = nil;
+                }
+                return destination;
+             };
+         };
+         return config;
+ }];
+ @endcode
+ 
+ You can use this module with LoginServiceModuleInput:
+ @code
+ [ZIKRouterToServiceModule(LoginServiceModuleInput)
+    performPath:ZIKServiceRoutePath.showFrom(self)
+    configuring:^(ZIKPerformRouteConfiguration<LoginServiceModuleInput> *config) {
+        // Give parameters for making destination
+        config.constructDestination(@"account");
+        config.didMakeDestination = ^(id<LoginServiceInput> destination) {
+            // Did get the destination
+        };
+ }];
+ @endcode
+ */
+@interface ZIKServiceMakeableConfiguration<__covariant Destination>: ZIKPerformRouteConfiguration<ZIKConfigurationMakeable>
+
+/**
+ Make destination with block.
+ @discussion
+ Set this in constructDestination block. It's for passing parameters with constructDestination easily, so we don't need configuration subclass to hold parameters.
+ @note
+ When using configuration with `registerModuleProtocol:forMakingService:making:`, makeDestination is auto used for making destination.
+ 
+ When using a router subclass with makeable configuration, the router subclass is responsible for check and use makeDestination in `-destinationWithConfiguration:`.
+ */
+@property (nonatomic, copy, nullable) Destination _Nullable(^makeDestination)();
+
+/**
+ Give the destination with specfic type to the caller.
+ 
+ @note
+ When using configuration with `registerModuleProtocol:forMakingService:making:`, didMakeDestination is auto called after making destination.
+ 
+ When using a router subclass with makeable configuration, the router subclass is responsible for check and call didMakeDestination after creating and preparing destination.
+ */
+@property (nonatomic, copy, nullable) void(^didMakeDestination)(Destination destination) NS_REFINED_FOR_SWIFT;
+
+@end
+
+@interface ZIKSwiftServiceMakeableConfiguration : ZIKPerformRouteConfiguration
+@property (nonatomic, copy, nullable) id _Nullable(^makeDestination)() NS_REFINED_FOR_SWIFT;
+@property (nonatomic, copy, nullable) void(^didMakeDestination)(id destination) NS_REFINED_FOR_SWIFT;
+@end
+
+#pragma clang diagnostic pop
+
 typedef void(^ZIKRemoveRouteCompletion)(BOOL success, ZIKRouteAction routeAction, NSError *_Nullable error);
 @interface ZIKRemoveRouteConfiguration : ZIKRouteConfiguration <NSCopying>
 

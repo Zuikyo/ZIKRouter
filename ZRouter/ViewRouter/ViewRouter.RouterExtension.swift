@@ -28,6 +28,7 @@ public protocol ViewRouterExtension: class {
     static func register<Protocol>(_ routableViewModule: RoutableViewModule<Protocol>)
     static func register<Protocol>(_ routableView: RoutableView<Protocol>, forMakingView viewClass: AnyClass)
     static func register<Protocol>(_ routableView: RoutableView<Protocol>, forMakingView viewClass: AnyClass, making factory: @escaping (ViewRouteConfig) -> Protocol?)
+    static func register<Protocol>(_ routableViewModule: RoutableViewModule<Protocol>, forMakingView viewClass: AnyClass, making factory: @escaping () -> Protocol)
 }
 
 public extension ViewRouterExtension {
@@ -51,7 +52,7 @@ public extension ViewRouterExtension {
     ///   - routableView: A routabe entry carrying a protocol conformed by the destination.
     ///   - viewClass: The view class.
     static func register<Protocol>(_ routableView: RoutableView<Protocol>, forMakingView viewClass: AnyClass) {
-        Registry.register(routableView, forMaking: viewClass)
+        Registry.register(routableView, forMakingView: viewClass)
     }
     
     /// Register view class with protocol without using any router subclass. The view will be created with the `making` block when used. Use this if your view is very easy and don't need a router subclass.
@@ -61,7 +62,70 @@ public extension ViewRouterExtension {
     ///   - viewClass: The view class.
     ///   - making: Block creating the view.
     static func register<Protocol>(_ routableView: RoutableView<Protocol>, forMakingView viewClass: AnyClass, making factory: @escaping (ViewRouteConfig) -> Protocol?) {
-        Registry.register(routableView, forMaking: viewClass, making: factory)
+        Registry.register(routableView, forMakingView: viewClass, making: factory)
+    }
+    
+    /**
+     Register view class with module config protocol without using any router subclass. The view will be created with the `makeDestination` block in the configuration. Use this if your view is very easy and don't need a router subclass.
+     
+     If a module need a few required parameters when creating destination, you can declare constructDestination in module config protocol:
+     ```
+     protocol LoginViewModuleInput {
+        // Pass required parameter for initializing destination.
+        var constructDestination: (String) -> Void { get }
+        // Designate destination is LoginViewInput.
+        var didMakeDestination: ((LoginViewInput) -> Void)? { get set }
+     }
+     
+     // Declare routable protocol
+     extension RoutableViewModule where Protocol == LoginViewModuleInput {
+        init() { self.init(declaredProtocol: Protocol.self) }
+     }
+     ```
+     Then register module with module config factory block:
+     ```
+     // Register in some +registerRoutableDestination
+     ZIKAnyViewRouter.register(RoutableViewModule<LoginViewModuleInput>(), forMakingView: LoginViewController.self) { () -> LoginViewModuleInput in
+     // Swift generic class is not in __objc_classlist section of Mach-O file, so it won't affect the objc launching time
+         class LoginViewConfiguration<T>: ZIKViewMakeableConfiguration<LoginView>, LoginViewModuleInput {
+             var didMakeDestination: ((LoginViewInput) -> Void)?
+     
+             // User is responsible for calling constructDestination and giving parameters
+             var constructDestination: (String) -> Void {
+                 return { account in
+                     // Capture parameters in makeDestination, so we don't need configuration subclass to hold the parameters
+                     // MakeDestination will be used for creating destination instance
+                     self.makeDestination = { [unowned self] () in
+                         let destination = LoginViewController(account: account)
+                         self.didMakeDestination?(destination)
+                         self.didMakeDestination = nil
+                         return destination
+                     }
+                 }
+             }
+         }
+         return LoginViewConfiguration<Any>()
+     }
+     ```
+     You can use this module with LoginViewModuleInput:
+     ```
+     Router.makeDestination(to: RoutableViewModule<LoginViewModuleInput>()) { (config) in
+         var config = config
+         // Give parameters for making destination
+         config.constructDestination("account")
+         config.didMakeDestination = { destiantion in
+            // Did get LoginViewInput
+         }
+     }
+     ```
+     
+     - Parameters:
+     - routableViewModule: A routabe entry carrying a module config protocol conformed by the custom configuration of the router.
+     - viewClass: The view class.
+     - making: Block creating the configuration. The configuration  must be a ZIKViewRouteConfiguration conforming to ZIKConfigurationMakeable with makeDestination or constructDestiantion property.
+     */
+    static func register<Protocol>(_ routableViewModule: RoutableViewModule<Protocol>, forMakingView viewClass: AnyClass, making factory: @escaping () -> Protocol) {
+        Registry.register(routableViewModule, forMakingView: viewClass, making: factory)
     }
 }
 

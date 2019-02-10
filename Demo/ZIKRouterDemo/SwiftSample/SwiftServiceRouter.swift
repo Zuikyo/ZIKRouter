@@ -16,14 +16,14 @@ protocol SwiftServiceConfig {
 }
 
 //Custom configuration of this router.
-class SwiftServiceConfiguration: ZIKPerformRouteConfiguration, SwiftServiceConfig {
+class SwiftServiceConfiguration: ZIKServiceMakeableConfiguration<SwiftService>, SwiftServiceConfig {
     override func copy(with zone: NSZone? = nil) -> Any {
         return super.copy(with: zone)
     }
 }
 
 //Router for SwiftService. Generic of ZIKRouter can't be pure swift type, so we use `AnyObject` here.
-class SwiftServiceRouter: ZIKServiceRouter<AnyObject, SwiftServiceConfiguration> {
+class SwiftServiceRouter: ZIKServiceRouter<AnyObject, ZIKServiceMakeableConfiguration<SwiftService>> {
     override class func registerRoutableDestination() {
         registerService(SwiftService.self)
         if TEST_BLOCK_ROUTES == 0 {
@@ -32,11 +32,11 @@ class SwiftServiceRouter: ZIKServiceRouter<AnyObject, SwiftServiceConfiguration>
         }
     }
     
-    override func destination(with configuration: SwiftServiceConfiguration) -> AnyObject? {
+    override func destination(with configuration: ZIKServiceMakeableConfiguration<SwiftService>) -> AnyObject? {
         return SwiftService()
     }
     
-    override class func defaultRouteConfiguration() -> SwiftServiceConfiguration {
+    override class func defaultRouteConfiguration() -> ZIKServiceMakeableConfiguration<SwiftService> {
         return SwiftServiceConfiguration()
     }
     

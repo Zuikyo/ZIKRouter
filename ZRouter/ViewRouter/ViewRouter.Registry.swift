@@ -164,7 +164,7 @@ extension Registry {
         viewModuleAdapterContainer[adapterKey] = _RouteKey(routable: adaptee)
     }
     
-    internal static func register<Protocol>(_ routableView: RoutableView<Protocol>, forMaking destinationClass: AnyClass) {
+    internal static func register<Protocol>(_ routableView: RoutableView<Protocol>, forMakingView destinationClass: AnyClass) {
         let destinationProtocol = Protocol.self
         assert(_swift_typeIsTargetType(destinationClass, destinationProtocol), "Destination (\(destinationClass)) should conforms to protocol (\(destinationProtocol))")
         assert(ZIKAnyViewRouter.isRegistrationFinished() == false, "Can't register after app did finish launch. Only register in registerRoutableDestination().")
@@ -173,11 +173,11 @@ extension Registry {
             ZIKAnyViewRouter.registerViewProtocol(routableProtocol, forMakingView: destinationClass)
             return
         }
-        assert(_ZIKViewRouterToIdentifier(makingIdentifierPrefix + routableView.typeName) == nil, "Protocol (\(routableView.typeName)) already registered with router (\(_ZIKViewRouterToIdentifier(makingIdentifierPrefix + routableView.typeName)!.routeObject)), can't register for making destination (\(destinationClass))");
-        ZIKAnyViewRouter.registerIdentifier(makingIdentifierPrefix + routableView.typeName, forMakingView: destinationClass)
+        assert(_ZIKViewRouterToIdentifier(makingDestinationIdentifierPrefix + routableView.typeName) == nil, "Protocol (\(routableView.typeName)) already registered with router (\(_ZIKViewRouterToIdentifier(makingDestinationIdentifierPrefix + routableView.typeName)!.routeObject)), can't register for making destination (\(destinationClass))");
+        ZIKAnyViewRouter.registerIdentifier(makingDestinationIdentifierPrefix + routableView.typeName, forMakingView: destinationClass)
     }
     
-    internal static func register<Protocol>(_ routableView: RoutableView<Protocol>, forMaking destinationClass: AnyClass, making factory: @escaping (ViewRouteConfig) -> Protocol?) {
+    internal static func register<Protocol>(_ routableView: RoutableView<Protocol>, forMakingView destinationClass: AnyClass, making factory: @escaping (ViewRouteConfig) -> Protocol?) {
         let destinationProtocol = Protocol.self
         assert(_swift_typeIsTargetType(destinationClass, destinationProtocol), "Destination (\(destinationClass)) should conforms to protocol (\(destinationProtocol))")
         assert(ZIKAnyViewRouter.isRegistrationFinished() == false, "Can't register after app did finish launch. Only register in registerRoutableDestination().")
@@ -186,8 +186,20 @@ extension Registry {
             _registerViewProtocolWithSwiftFactory(routableProtocol, destinationClass, factory)
             return
         }
-        assert(_ZIKViewRouterToIdentifier(makingIdentifierPrefix + routableView.typeName) == nil, "Protocol (\(routableView.typeName)) already registered with router (\(_ZIKViewRouterToIdentifier(makingIdentifierPrefix + routableView.typeName)!.routeObject)), can't register for making destination (\(destinationClass)) with factory (\(factory))");
-        _registerViewIdentifierWithSwiftFactory(makingIdentifierPrefix + routableView.typeName, destinationClass, factory)
+        assert(_ZIKViewRouterToIdentifier(makingDestinationIdentifierPrefix + routableView.typeName) == nil, "Protocol (\(routableView.typeName)) already registered with router (\(_ZIKViewRouterToIdentifier(makingDestinationIdentifierPrefix + routableView.typeName)!.routeObject)), can't register for making destination (\(destinationClass)) with factory (\(factory))");
+        _registerViewIdentifierWithSwiftFactory(makingDestinationIdentifierPrefix + routableView.typeName, destinationClass, factory)
+    }
+    
+    static func register<Protocol>(_ routableViewModule: RoutableViewModule<Protocol>, forMakingView destinationClass: AnyClass, making factory: @escaping () -> Protocol) {
+        let destinationProtocol = Protocol.self
+        assert(ZIKAnyViewRouter.isRegistrationFinished() == false, "Can't register after app did finish launch. Only register in registerRoutableDestination().")
+        // `UIViewController & ObjcProtocol` type is also a Protocol in objc, but we want to keep it in swift container
+        if let routableProtocol = _routableViewModuleProtocolFromObject(destinationProtocol), routableViewModule.typeName == routableProtocol.name {
+            _registerViewModuleProtocolWithSwiftFactory(routableProtocol, destinationClass, factory)
+            return
+        }
+        assert(_ZIKViewRouterToIdentifier(makingModuleIdentifierPrefix + routableViewModule.typeName) == nil, "Protocol (\(routableViewModule.typeName)) already registered with router (\(_ZIKViewRouterToIdentifier(makingModuleIdentifierPrefix + routableViewModule.typeName)!.routeObject)), can't register for making destination (\(destinationClass)) with factory (\(factory))");
+        _registerViewModuleIdentifierWithSwiftFactory(makingModuleIdentifierPrefix + routableViewModule.typeName, destinationClass, factory)
     }
     
     // MARK: Validate
@@ -335,7 +347,7 @@ fileprivate extension Registry {
         if let route = viewProtocolContainer[_RouteKey(type: viewProtocol, name: name)], let routerType = ZIKAnyViewRouterType.tryMakeType(forRoute: route) {
             return routerType
         }
-        if let routerType = _ZIKViewRouterToIdentifier(makingIdentifierPrefix + name) {
+        if let routerType = _ZIKViewRouterToIdentifier(makingDestinationIdentifierPrefix + name) {
             return routerType
         }
         #if DEBUG
@@ -354,7 +366,7 @@ fileprivate extension Registry {
                    let routerType = _ZIKViewRouterToView(routableProtocol) {
                     return routerType
                 }
-                if let routerType = _ZIKViewRouterToIdentifier(makingIdentifierPrefix + adaptee.key) {
+                if let routerType = _ZIKViewRouterToIdentifier(makingDestinationIdentifierPrefix + adaptee.key) {
                     return routerType
                 }
                 #if DEBUG
@@ -400,6 +412,9 @@ fileprivate extension Registry {
         if let route = viewModuleProtocolContainer[_RouteKey(type: configProtocol, name: name)], let routerType = ZIKAnyViewRouterType.tryMakeType(forRoute: route) {
             return routerType
         }
+        if let routerType = _ZIKViewRouterToIdentifier(makingModuleIdentifierPrefix + name) {
+            return routerType
+        }
         #if DEBUG
         var traversedProtocols: [_RouteKey] = []
         #endif
@@ -414,6 +429,9 @@ fileprivate extension Registry {
                 if let adapteeProtocol = NSProtocolFromString(adaptee.key),
                    let routableProtocol = _routableViewModuleProtocolFromObject(adapteeProtocol),
                    let routerType = _ZIKViewRouterToModule(routableProtocol) {
+                    return routerType
+                }
+                if let routerType = _ZIKViewRouterToIdentifier(makingModuleIdentifierPrefix + adaptee.key) {
                     return routerType
                 }
                 #if DEBUG
@@ -589,11 +607,12 @@ private class _ViewRouterValidater: ZIKViewRouteAdapter {
         for declaredProtocol in declaredDestinationProtocols {
             assert(Registry.viewProtocolContainer.keys.contains(_RouteKey(key: declaredProtocol)) ||
                 Registry.viewAdapterContainer.keys.contains(_RouteKey(key: declaredProtocol)) ||
-                _ZIKViewRouterToIdentifier(Registry.makingIdentifierPrefix + declaredProtocol) != nil, "Declared view protocol (\(declaredProtocol)) is not registered with any router.")
+                _ZIKViewRouterToIdentifier(Registry.makingDestinationIdentifierPrefix + declaredProtocol) != nil, "Declared view protocol (\(declaredProtocol)) is not registered with any router.")
         }
         for declaredProtocol in declaredModuleProtocols {
             assert(Registry.viewModuleProtocolContainer.keys.contains(_RouteKey(key: declaredProtocol)) ||
-                Registry.viewModuleAdapterContainer.keys.contains(_RouteKey(key: declaredProtocol)), "Declared view protocol (\(declaredProtocol)) is not registered with any router.")
+                Registry.viewModuleAdapterContainer.keys.contains(_RouteKey(key: declaredProtocol)) ||
+                _ZIKViewRouterToIdentifier(Registry.makingModuleIdentifierPrefix + declaredProtocol) != nil, "Declared view protocol (\(declaredProtocol)) is not registered with any router.")
         }
         
         for (routingType, simplifiedName) in viewRoutingTypes {

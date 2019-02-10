@@ -695,7 +695,7 @@
                                 </connections>
                             </button>
                             <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="3Io-m0-XCh">
-                                <rect key="frame" x="117" y="176" width="140" height="30"/>
+                                <rect key="frame" x="118" y="163" width="140" height="30"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                 <state key="normal" title="test easy info view 2"/>
                                 <connections>
@@ -703,7 +703,7 @@
                                 </connections>
                             </button>
                             <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Peg-hJ-vhZ">
-                                <rect key="frame" x="124" y="268" width="126" height="30"/>
+                                <rect key="frame" x="125" y="293" width="126" height="30"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                 <state key="normal" title="test easy service 1"/>
                                 <connections>
@@ -716,6 +716,14 @@
                                 <state key="normal" title="test easy service 2"/>
                                 <connections>
                                     <action selector="testEasyService2:" destination="8cs-ai-1ff" eventType="touchUpInside" id="Kui-hZ-1gJ"/>
+                                </connections>
+                            </button>
+                            <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="YCA-k2-axt">
+                                <rect key="frame" x="96" y="227" width="182" height="30"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <state key="normal" title="test easy info view module"/>
+                                <connections>
+                                    <action selector="testEasyViewModule:" destination="8cs-ai-1ff" eventType="touchUpInside" id="GnV-Ul-b8t"/>
                                 </connections>
                             </button>
                         </subviews>

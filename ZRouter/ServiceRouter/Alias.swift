@@ -15,6 +15,7 @@ public typealias RouterState = ZIKRouterState
 public typealias RouteConfig = ZIKRouteConfiguration
 public typealias PerformRouteConfig = ZIKPerformRouteConfiguration
 public typealias RemoveRouteConfig = ZIKRemoveRouteConfiguration
+public typealias ServiceMakeableConfig = ZIKServiceMakeableConfiguration
 
 public typealias AnyServiceRouter = ServiceRouter<Any, PerformRouteConfig>
 public typealias ZIKAnyServiceRoute = ZIKServiceRoute<AnyObject, PerformRouteConfig>

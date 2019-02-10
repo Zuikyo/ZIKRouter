@@ -63,7 +63,7 @@ class SwiftSampleViewController: UIViewController, PureSwiftSampleViewInput, Swi
         })
     }
     
-    func handleRemoveInfoViewController(_ infoViewController: UIViewController!) {
+    func handleRemoveInfoViewController(_ infoViewController: UIViewController) {
         guard let router = anyRouter, router.canRemove() else {
             return
         }
@@ -134,17 +134,14 @@ class SwiftSampleViewController: UIViewController, PureSwiftSampleViewInput, Swi
     }
     
     @IBAction func testEasyViewRoute1(_ sender: Any) {
-        let router = Router.perform(
-            to: RoutableView<EasyViewInput>(),
-            path: .presentModally(from: self),
-            configuring: { (config, _) in
-                config.prepareDestination = { destination in
-                    
-                }
-                config.successHandler = { destination in
-                    
-                }
-        })
+        let router = Router.perform(to: RoutableViewModule<EasyViewModuleInput>(), path: .presentModally(from: self)) { (config) in
+            var config = config
+            config.constructDestination("zuik", 12)
+            config.didMakeDestination = { destination in
+                print("did make destination: \(destination)")
+            }
+        }
+        
         DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
             router?.removeRoute()
         }
@@ -175,6 +172,14 @@ class SwiftSampleViewController: UIViewController, PureSwiftSampleViewInput, Swi
     @IBAction func testEasyServiceRoute2(_ sender: Any) {
         let service = Router.makeDestination(to: RoutableService<EasyServiceInput2>())
         print("easy service: \(String(describing: service))")
+        let service2 = Router.makeDestination(to: RoutableServiceModule<EasyServiceModuleInput>()) { (module) in
+            var module = module
+            module.constructDestination("123")            
+            module.didMakeDestination = { destiantion in
+                print("easy service2: \(String(describing: destiantion))")
+            }
+        }
+        print("easy service2: \(String(describing: service2))")
     }
     
     @IBAction func testInjectedRouter(_ sender: Any) {

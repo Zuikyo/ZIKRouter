@@ -20,7 +20,7 @@
 NS_ASSUME_NONNULL_BEGIN
 
 /// Internal methods for subclass to override. Use these methods when implementing your custom route.
-@interface ZIKViewRouter<__covariant Destination: id, __covariant RouteConfig: ZIKViewRouteConfiguration *> ()
+@interface ZIKViewRouter<__covariant Destination, __covariant RouteConfig: ZIKViewRouteConfiguration *> ()
 @property (nonatomic, readonly, copy) RouteConfig original_configuration;
 @property (nonatomic, readonly, copy) ZIKViewRemoveConfiguration *original_removeConfiguration;
 
@@ -249,7 +249,11 @@ typedef id  _Nullable (^ZIKViewFactoryBlock)(ZIKViewRouteConfiguration * _Nonnul
 
 FOUNDATION_EXTERN void _registerViewProtocolWithSwiftFactory(Protocol<ZIKViewRoutable> *viewProtocol, Class viewClass, ZIKViewFactoryBlock function);
 
+FOUNDATION_EXTERN void _registerViewModuleProtocolWithSwiftFactory(Protocol<ZIKViewModuleRoutable> *moduleProtocol, Class viewClass, id(^block)(void));
+
 FOUNDATION_EXTERN void _registerViewIdentifierWithSwiftFactory(NSString *identifier, Class viewClass, ZIKViewFactoryBlock function);
+
+FOUNDATION_EXTERN void _registerViewModuleIdentifierWithSwiftFactory(NSString *identifier, Class viewClass, id(^block)(void));
 
 NS_ASSUME_NONNULL_END
 

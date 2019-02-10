@@ -8,6 +8,7 @@
 
 #import "ZIKInfoViewRouter.h"
 #import "ZIKInfoViewController.h"
+@import ZIKRouter.Internal;
 
 id<EasyInfoViewProtocol1> makeDestiantionForInfoViewProtocol(ZIKViewRouteConfiguration *configuration) {
     UIStoryboard *sb = [UIStoryboard storyboardWithName:@"Main" bundle:nil];
@@ -15,6 +16,9 @@ id<EasyInfoViewProtocol1> makeDestiantionForInfoViewProtocol(ZIKViewRouteConfigu
     destination.title = @"info";
     return destination;
 }
+
+// Let ZIKViewMakeableConfiguration conform to EasyInfoViewModuleProtocol
+DeclareRoutableViewModuleProtocol(EasyInfoViewModuleProtocol)
 
 @interface ZIKInfoViewController (ZIKInfoViewRouter) <ZIKRoutableView>
 @end
@@ -42,6 +46,36 @@ id<EasyInfoViewProtocol1> makeDestiantionForInfoViewProtocol(ZIKViewRouteConfigu
         ZIKInfoViewController *destination = [sb instantiateViewControllerWithIdentifier:@"info"];
         destination.title = @"info";
         return destination;
+    }];
+    
+    // Test module config factory
+    [ZIKModuleViewRouter(EasyInfoViewModuleProtocol)
+     registerModuleProtocol:ZIKRoutable(EasyInfoViewModuleProtocol)
+     forMakingView:[ZIKInfoViewController class]
+     making:^ZIKViewRouteConfiguration<ZIKConfigurationMakeable> * _Nonnull{
+         ZIKViewMakeableConfiguration *config = [ZIKViewMakeableConfiguration new];
+         __weak typeof(config) weakConfig = config;
+         
+         // User is responsible for calling constructDestination and giving parameters
+         config.constructDestination = ^(NSString *title, NSInteger age, __weak _Nullable id<ZIKInfoViewDelegate> delegate) {
+             // Capture parameters in makeDestination, so we don't need configuration subclass to hold the parameters
+             // MakeDestination will be used for creating destination instance
+             // didMakeDestination will be auto called after creating destination
+             weakConfig.makeDestination = ^ZIKInfoViewController * _Nullable{
+                 UIStoryboard *sb = [UIStoryboard storyboardWithName:@"Main" bundle:nil];
+                 ZIKInfoViewController *destination = [sb instantiateViewControllerWithIdentifier:@"info"];
+                 destination.title = @"info";
+                 destination.name = title;
+                 destination.age = age;
+                 destination.delegate = delegate;
+                 if (weakConfig.didMakeDestination) {
+                     weakConfig.didMakeDestination(destination);
+                     weakConfig.didMakeDestination = nil;
+                 }
+                 return destination;
+             };
+         };
+         return config;
     }];
 }
 

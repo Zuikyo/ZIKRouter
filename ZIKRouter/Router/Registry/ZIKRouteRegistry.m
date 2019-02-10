@@ -24,6 +24,7 @@
 #import "ZIKRoute.h"
 #import "ZIKRouterType.h"
 #import "ZIKImageSymbol.h"
+#import "NSString+Demangle.h"
 
 static NSMutableSet<Class> *_registries;
 static BOOL _autoRegister = YES;
@@ -135,7 +136,7 @@ static CFMutableSetRef _factoryBlocks;
 
 #pragma mark Discover
 
-+ (ZIKRoute *)easyRouteForFactory:(id(^)(ZIKPerformRouteConfiguration * _Nonnull config, __kindof ZIKRouter * _Nonnull router))factory {
++ (ZIKRoute *)easyRouteForDestinationClass:(Class)destinationClass factory:(id(^)(ZIKPerformRouteConfiguration * _Nonnull config, __kindof ZIKRouter * _Nonnull router))factory {
     return [[ZIKRoute alloc] initWithMakeDestination:^id _Nullable(ZIKPerformRouteConfiguration * _Nonnull config, __kindof ZIKRouter * _Nonnull router) {
         if (!factory) {
             return nil;
@@ -144,26 +145,53 @@ static CFMutableSetRef _factoryBlocks;
     }];
 }
 
++ (ZIKRoute *)easyRouteForDestinationClass:(Class)destinationClass configFactory:(ZIKPerformRouteConfiguration<ZIKConfigurationMakeable> *(^)(void))factory {
+    return [[ZIKRoute alloc] initWithMakeDestination:^id _Nullable(ZIKPerformRouteConfiguration<ZIKConfigurationMakeable> * _Nonnull config, __kindof ZIKRouter * _Nonnull router) {
+        if ([config conformsToProtocol:@protocol(ZIKConfigurationMakeable)]) {
+            if ([config respondsToSelector:@selector(makeDestination)] && config.makeDestination) {
+                id destination = config.makeDestination();
+                if (destination && [config respondsToSelector:@selector(didMakeDestination)] && config.didMakeDestination) {
+                    config.didMakeDestination(destination);
+                    config.didMakeDestination = nil;
+                }
+                return destination;
+            }
+        }
+        return nil;
+    }].makeDefaultConfiguration(^ZIKPerformRouteConfiguration * _Nonnull{
+        return factory();
+    });
+}
+
 + (ZIKRoute *)easyRouteForDestinationClass:(Class)destinationClass {
-    if (CFSetContainsValue(self.runtimeFactoryDestinationClasses, (__bridge const void *)(destinationClass))) {
-        return [self easyRouteForFactory:^id(ZIKPerformRouteConfiguration * _Nonnull config, __kindof ZIKRouter * _Nonnull router) {
-            return [[destinationClass alloc] init];
+    const void *f = CFDictionaryGetValue(self.destinationToDefaultConfigFactoryMap, (__bridge const void *)(destinationClass));
+    if (f) {
+        ZIKPerformRouteConfiguration<ZIKConfigurationMakeable> *(*factory)(void) = f;
+        if (CFSetContainsValue(_factoryBlocks, factory)) {
+            ZIKPerformRouteConfiguration<ZIKConfigurationMakeable> *(^block)(void) = CFDictionaryGetValue(self.destinationToDefaultConfigFactoryMap, (__bridge const void *)(destinationClass));
+            return [self easyRouteForDestinationClass:destinationClass configFactory:block];
+        }
+        return [self easyRouteForDestinationClass:destinationClass configFactory:^ZIKPerformRouteConfiguration *{
+            return factory();
         }];
     }
-    CFArrayRef factories = (CFArrayRef)CFDictionaryGetValue(self.destinationToFactoriesMap, (__bridge const void *)(destinationClass));
-    if (!factories || [(__bridge NSArray *)factories count] == 0) {
-        return nil;
-    }
-    id _Nullable(*factory)(ZIKPerformRouteConfiguration * _Nonnull) = CFArrayGetValueAtIndex(factories, 0);
-    if (factory) {
+    
+    f = CFDictionaryGetValue(self.destinationToDefaultFactoryMap, (__bridge const void *)(destinationClass));
+    if (f) {
+        id _Nullable(*factory)(ZIKPerformRouteConfiguration * _Nonnull) = f;
         if (CFSetContainsValue(_factoryBlocks, factory)) {
-            id _Nullable(^block)(ZIKPerformRouteConfiguration * _Nonnull) = CFArrayGetValueAtIndex(factories, 0);
-            return [self easyRouteForFactory:^id(ZIKPerformRouteConfiguration * _Nonnull config, __kindof ZIKRouter * _Nonnull router) {
+            id _Nullable(^block)(ZIKPerformRouteConfiguration * _Nonnull) = CFDictionaryGetValue(self.destinationToDefaultFactoryMap, (__bridge const void *)(destinationClass));
+            return [self easyRouteForDestinationClass:destinationClass factory:^id(ZIKPerformRouteConfiguration * _Nonnull config, __kindof ZIKRouter * _Nonnull router) {
                 return block(config);
             }];
         }
-        return [self easyRouteForFactory:^id(ZIKPerformRouteConfiguration * _Nonnull config, __kindof ZIKRouter * _Nonnull router) {
+        return [self easyRouteForDestinationClass:destinationClass factory:^id(ZIKPerformRouteConfiguration * _Nonnull config, __kindof ZIKRouter * _Nonnull router) {
             return factory(config);
+        }];
+    }
+    if (CFSetContainsValue(self.runtimeFactoryDestinationClasses, (__bridge const void *)(destinationClass))) {
+        return [self easyRouteForDestinationClass:destinationClass factory:^id(ZIKPerformRouteConfiguration * _Nonnull config, __kindof ZIKRouter * _Nonnull router) {
+            return [[destinationClass alloc] init];
         }];
     }
     return nil;
@@ -171,20 +199,38 @@ static CFMutableSetRef _factoryBlocks;
 
 + (ZIKRoute *)easyRouteForDestinationProtocol:(Protocol *)destinationProtocol {
     Class destinationClass = CFDictionaryGetValue(self.destinationProtocolToDestinationMap, (__bridge const void *)(destinationProtocol));
-    if (destinationClass) {
-        return [self easyRouteForDestinationClass:destinationClass];
+    if (!destinationClass) {
+        return nil;
     }
     
     id _Nullable(*factory)(ZIKPerformRouteConfiguration * _Nonnull) = CFDictionaryGetValue(self.destinationProtocolToFactoryMap, (__bridge const void *)(destinationProtocol));
     if (factory) {
         if (CFSetContainsValue(_factoryBlocks, factory)) {
             id _Nullable(^block)(ZIKPerformRouteConfiguration * _Nonnull) = CFDictionaryGetValue(self.destinationProtocolToFactoryMap, (__bridge const void *)(destinationProtocol));
-            return [self easyRouteForFactory:^id(ZIKPerformRouteConfiguration * _Nonnull config, __kindof ZIKRouter * _Nonnull router) {
+            return [self easyRouteForDestinationClass:destinationClass factory:^id(ZIKPerformRouteConfiguration * _Nonnull config, __kindof ZIKRouter * _Nonnull router) {
                 return block(config);
             }];
         }
-        return [self easyRouteForFactory:^id(ZIKPerformRouteConfiguration * _Nonnull config, __kindof ZIKRouter * _Nonnull router) {
+        return [self easyRouteForDestinationClass:destinationClass factory:^id(ZIKPerformRouteConfiguration * _Nonnull config, __kindof ZIKRouter * _Nonnull router) {
             return factory(config);
+        }];
+    }
+    return nil;
+}
+
++ (ZIKRoute *)easyRouteForModuleProtocol:(Protocol *)configProtocol {
+    Class destinationClass = CFDictionaryGetValue(self.moduleConfigProtocolToDestinationMap, (__bridge const void *)(configProtocol));
+    if (!destinationClass) {
+        return nil;
+    }
+    ZIKPerformRouteConfiguration<ZIKConfigurationMakeable> *(*factory)(void) = CFDictionaryGetValue(self.moduleConfigProtocolToFactoryMap, (__bridge const void *)(configProtocol));
+    if (factory) {
+        if (CFSetContainsValue(_factoryBlocks, factory)) {
+            ZIKPerformRouteConfiguration<ZIKConfigurationMakeable> *(^block)(void) = CFDictionaryGetValue(self.moduleConfigProtocolToFactoryMap, (__bridge const void *)(configProtocol));
+            return [self easyRouteForDestinationClass:destinationClass configFactory:block];
+        }
+        return [self easyRouteForDestinationClass:destinationClass configFactory:^ZIKPerformRouteConfiguration *{
+            return factory();
         }];
     }
     return nil;
@@ -192,30 +238,38 @@ static CFMutableSetRef _factoryBlocks;
 
 + (ZIKRoute *)easyRouteForIdentifier:(NSString *)identifier {
     Class destinationClass = CFDictionaryGetValue(self.identifierToDestinationMap, (__bridge CFStringRef)(identifier));
-    if (destinationClass) {
-        return [self easyRouteForDestinationClass:destinationClass];
+    if (!destinationClass) {
+        return nil;
+    }
+    const void *f = CFDictionaryGetValue(self.identifierToConfigFactoryMap, (__bridge CFStringRef)(identifier));
+    if (f) {
+        ZIKPerformRouteConfiguration<ZIKConfigurationMakeable> *(*factory)(void) = f;
+        if (CFSetContainsValue(_factoryBlocks, factory)) {
+            ZIKPerformRouteConfiguration<ZIKConfigurationMakeable> *(^block)(void) = CFDictionaryGetValue(self.identifierToConfigFactoryMap, (__bridge CFStringRef)(identifier));
+            return [self easyRouteForDestinationClass:destinationClass configFactory:block];
+        }
+        return [self easyRouteForDestinationClass:destinationClass configFactory:^ZIKPerformRouteConfiguration *{
+            return factory();
+        }];
     }
     
-    id _Nullable(*factory)(ZIKPerformRouteConfiguration * _Nonnull) = CFDictionaryGetValue(self.identifierToFactoryMap, (__bridge CFStringRef)(identifier));
-    if (factory) {
+    f = CFDictionaryGetValue(self.identifierToFactoryMap, (__bridge CFStringRef)(identifier));
+    if (f) {
+        id _Nullable(*factory)(ZIKPerformRouteConfiguration * _Nonnull) = f;
         if (CFSetContainsValue(_factoryBlocks, factory)) {
             id _Nullable(^block)(ZIKPerformRouteConfiguration * _Nonnull) = CFDictionaryGetValue(self.identifierToFactoryMap, (__bridge CFStringRef)(identifier));
-            return [self easyRouteForFactory:^id(ZIKPerformRouteConfiguration * _Nonnull config, __kindof ZIKRouter * _Nonnull router) {
+            return [self easyRouteForDestinationClass:destinationClass factory:^id(ZIKPerformRouteConfiguration * _Nonnull config, __kindof ZIKRouter * _Nonnull router) {
                 return block(config);
             }];
         }
-        return [self easyRouteForFactory:^id(ZIKPerformRouteConfiguration * _Nonnull config, __kindof ZIKRouter * _Nonnull router) {
+        return [self easyRouteForDestinationClass:destinationClass factory:^id(ZIKPerformRouteConfiguration * _Nonnull config, __kindof ZIKRouter * _Nonnull router) {
             return factory(config);
         }];
     }
-    return nil;
-}
-
-+ (ZIKRoute *)easyRouteForDestinationProtocol:(Protocol *)destinationProtocol orIdentifier:(NSString *)identifier {
-    if (destinationProtocol) {
-        return [self easyRouteForDestinationProtocol:destinationProtocol];
-    } else if (identifier) {
-        return [self easyRouteForIdentifier:identifier];
+    if (CFSetContainsValue(self.runtimeFactoryDestinationClasses, (__bridge const void *)(destinationClass))) {
+        return [self easyRouteForDestinationClass:destinationClass factory:^id(ZIKPerformRouteConfiguration * _Nonnull config, __kindof ZIKRouter * _Nonnull router) {
+            return [[destinationClass alloc] init];
+        }];
     }
     return nil;
 }
@@ -325,6 +379,9 @@ static CFMutableSetRef _factoryBlocks;
     }
     id route = CFDictionaryGetValue(self.moduleConfigProtocolToRouterMap, (__bridge const void *)(configProtocol));
     if (route == nil) {
+        route = [self easyRouteForModuleProtocol:configProtocol];
+    }
+    if (route == nil) {
         Protocol *adapter = configProtocol;
         Protocol *adaptee = nil;
 #if ZIKROUTER_CHECK
@@ -348,6 +405,9 @@ static CFMutableSetRef _factoryBlocks;
             }
 #endif
             route = CFDictionaryGetValue(self.moduleConfigProtocolToRouterMap, (__bridge const void *)(adaptee));
+            if (route == nil) {
+                route = [self easyRouteForModuleProtocol:adaptee];
+            }
             adapter = adaptee;
         } while (route == nil);
     }
@@ -446,9 +506,9 @@ static __attribute__((always_inline)) void _registerExclusiveDestinationClassWit
                                    ))
               , @"destinationClass (%@) already registered with another router (%@), check and remove them. You shall only use this exclusive router (%@) for this destinationClass.", NSStringFromClass(destinationClass), [(__bridge NSSet *)CFDictionaryGetValue([registry destinationToRoutersMap], (__bridge const void *)(destinationClass)) anyObject], routeObject);
     NSCAssert2(!CFSetContainsValue([registry runtimeFactoryDestinationClasses], (__bridge const void *)(destinationClass)), @"destinationClass (%@) already registered with `registerXXX:forMakingXXX:`, check and remove them. You shall only use this exclusive router (%@) for this destinationClass.", NSStringFromClass(destinationClass), routeObject);
-    NSCAssert2(!CFDictionaryGetValue([registry destinationToFactoriesMap], (__bridge const void *)(destinationClass)), @"destinationClass (%@) already registered with `registerXXX:forMakingXXX:making:` or `registerXXX:forMakingXXX:factory:`, check and remove them. You shall only use this exclusive router (%@) for this destinationClass.", NSStringFromClass(destinationClass), routeObject);
+    NSCAssert2(!CFDictionaryGetValue([registry destinationToDefaultFactoryMap], (__bridge const void *)(destinationClass)), @"destinationClass (%@) already registered with `registerXXX:forMakingXXX:making:` or `registerXXX:forMakingXXX:factory:`, check and remove them. You shall only use this exclusive router (%@) for this destinationClass.", NSStringFromClass(destinationClass), routeObject);
     
-    CFDictionarySetValue([registry destinationToExclusiveRouterMap], (__bridge const void *)(destinationClass), (__bridge const void *)(routeObject));
+    CFDictionaryAddValue([registry destinationToExclusiveRouterMap], (__bridge const void *)(destinationClass), (__bridge const void *)(routeObject));
     
 #if ZIKROUTER_CHECK
     CFMutableSetRef destinations = (CFMutableSetRef)CFDictionaryGetValue([registry _check_routerToDestinationsMap], (__bridge const void *)(routeObject));
@@ -466,7 +526,7 @@ static __attribute__((always_inline)) void _registerDestinationProtocolWithRoute
                (Class)CFDictionaryGetValue([registry destinationProtocolToRouterMap], (__bridge const void *)(destinationProtocol)) == routeObject
                , @"Destination protocol (%@) already registered with another router (%@), can't register with this router (%@). Same destination protocol should only be used by one routeObject.",NSStringFromProtocol(destinationProtocol),CFDictionaryGetValue([registry destinationProtocolToRouterMap], (__bridge const void *)(destinationProtocol)),routeObject);
     
-    CFDictionarySetValue([registry destinationProtocolToRouterMap], (__bridge const void *)(destinationProtocol), (__bridge const void *)(routeObject));
+    CFDictionaryAddValue([registry destinationProtocolToRouterMap], (__bridge const void *)(destinationProtocol), (__bridge const void *)(routeObject));
 #if ZIKROUTER_CHECK
     CFMutableSetRef destinationProtocols = (CFMutableSetRef)CFDictionaryGetValue([registry _check_routerToDestinationProtocolsMap], (__bridge const void *)(routeObject));
     if (destinationProtocols == NULL) {
@@ -484,7 +544,7 @@ static __attribute__((always_inline)) void _registerModuleProtocolWithRoute(Prot
                (Class)CFDictionaryGetValue([registry moduleConfigProtocolToRouterMap], (__bridge const void *)(configProtocol)) == routeObject
                , @"Module config protocol (%@) already registered with another router (%@), can't register with this router (%@). Same configProtocol should only be used by one routeObject.",NSStringFromProtocol(configProtocol),CFDictionaryGetValue([registry moduleConfigProtocolToRouterMap], (__bridge const void *)(configProtocol)),routeObject);
     
-    CFDictionarySetValue([registry moduleConfigProtocolToRouterMap], (__bridge const void *)(configProtocol), (__bridge const void *)(routeObject));
+    CFDictionaryAddValue([registry moduleConfigProtocolToRouterMap], (__bridge const void *)(configProtocol), (__bridge const void *)(routeObject));
 }
 
 static __attribute__((always_inline)) void _registerIdentifierWithRoute(NSString *identifier, id routeObject, Class registry) {
@@ -495,9 +555,13 @@ static __attribute__((always_inline)) void _registerIdentifierWithRoute(NSString
     }
     NSCAssert3(!CFDictionaryGetValue([registry identifierToRouterMap], (CFStringRef)identifier) ||
                (Class)CFDictionaryGetValue([registry identifierToRouterMap], (CFStringRef)identifier) == routeObject
-               , @"Identifier (%@) already registered with another router (%@), can't register with this router (%@).",identifier,CFDictionaryGetValue([registry identifierToRouterMap], (CFStringRef)identifier),routeObject);
+               , @"Identifier (%@) already registered with another router (%@), can't register with this router (%@).",identifier, CFDictionaryGetValue([registry identifierToRouterMap], (CFStringRef)identifier), routeObject);
+    NSCAssert3(!CFDictionaryGetValue([registry identifierToRouterMap], (CFStringRef)identifier)
+              , @"Identifier (%@) already registered with another router (%@), can't register with this router (%@).",identifier, CFDictionaryGetValue([registry identifierToRouterMap], (CFStringRef)identifier), routeObject);
+    NSCAssert4(!CFDictionaryGetValue([registry identifierToFactoryMap], (CFStringRef)identifier), @"Identifier (%@) already registered with a factory or block (%p) for destination (%@), can't register with this router (%@).", identifier, CFDictionaryGetValue([registry identifierToFactoryMap], (CFStringRef)identifier), NSStringFromClass(CFDictionaryGetValue([registry identifierToDestinationMap], (CFStringRef)identifier)), routeObject);
+    NSCAssert4(!CFDictionaryGetValue([registry identifierToConfigFactoryMap], (CFStringRef)identifier), @"Identifier (%@) already registered with a config factory or block (%p) for destination (%@), can't register with this router (%@).", identifier, CFDictionaryGetValue([registry identifierToConfigFactoryMap], (CFStringRef)identifier), NSStringFromClass(CFDictionaryGetValue([registry identifierToDestinationMap], (CFStringRef)identifier)), routeObject);
     
-    CFDictionarySetValue([registry identifierToRouterMap], (CFStringRef)identifier, (__bridge const void *)(routeObject));
+    CFDictionaryAddValue([registry identifierToRouterMap], (CFStringRef)identifier, (__bridge const void *)(routeObject));
 }
 
 + (void)registerDestinationProtocol:(Protocol *)destinationProtocol forMakingDestination:(Class)destinationClass {
@@ -508,7 +572,7 @@ static __attribute__((always_inline)) void _registerIdentifierWithRoute(NSString
     NSAssert3(!CFDictionaryGetValue(self.destinationProtocolToFactoryMap, (__bridge const void *)destinationProtocol), @"Protocol (%@) already registered with a factory or block (%p), can't be registered with destination (%@).", NSStringFromProtocol(destinationProtocol), CFDictionaryGetValue(self.destinationProtocolToFactoryMap, (__bridge const void *)destinationProtocol), NSStringFromClass(destinationClass));
     NSAssert3(!self.destinationToExclusiveRouterMap ||
               (self.destinationToExclusiveRouterMap && !CFDictionaryGetValue(self.destinationToExclusiveRouterMap, (__bridge const void *)(destinationClass))), @"There is a registered exclusive router (%@), can't register destination protocol (%@) for this destinationClass (%@).",CFDictionaryGetValue(self.destinationToExclusiveRouterMap, (__bridge const void *)(destinationClass)), NSStringFromProtocol(destinationProtocol), destinationClass);
-    CFDictionarySetValue(self.destinationProtocolToDestinationMap, (__bridge const void *)destinationProtocol, (__bridge const void *)destinationClass);
+    CFDictionaryAddValue(self.destinationProtocolToDestinationMap, (__bridge const void *)destinationProtocol, (__bridge const void *)destinationClass);
     CFSetAddValue(self.runtimeFactoryDestinationClasses, (__bridge const void *)destinationClass);
 }
 
@@ -518,15 +582,16 @@ static __attribute__((always_inline)) void _registerIdentifierWithRoute(NSString
     NSAssert([self isDestinationClassRoutable:destinationClass], @"destination class (%@) should conforms to ZIKRoutableView or ZIKRoutableService.", NSStringFromClass(destinationClass));
     NSAssert3(!CFDictionaryGetValue(self.identifierToRouterMap, (CFStringRef)identifier)
               , @"Identifier (%@) already registered with another router (%@), can't register with destination class (%@).",identifier, CFDictionaryGetValue(self.identifierToRouterMap, (CFStringRef)identifier), NSStringFromClass(destinationClass));
-    NSAssert3(!CFDictionaryGetValue(self.identifierToDestinationMap, (CFStringRef)identifier), @"Identifier (%@) already registered with another destination (%@), can't be registered with destination (%@).", identifier, NSStringFromClass((Class)CFDictionaryGetValue(self.identifierToDestinationMap, (CFStringRef)identifier)), NSStringFromClass(destinationClass));
-    NSAssert3(!CFDictionaryGetValue(self.identifierToFactoryMap, (CFStringRef)identifier), @"Identifier (%@) already registered with a factory or block (%p), can't be registered with destination (%@).", identifier, CFDictionaryGetValue(self.identifierToFactoryMap, (CFStringRef)identifier), NSStringFromClass(destinationClass));
+    NSAssert4(!CFDictionaryGetValue(self.identifierToFactoryMap, (CFStringRef)identifier), @"Identifier (%@) already registered with a factory or block (%p) for destination (%@), can't be registered with destination (%@).", identifier, CFDictionaryGetValue(self.identifierToFactoryMap, (CFStringRef)identifier), NSStringFromClass(CFDictionaryGetValue(self.identifierToDestinationMap, (CFStringRef)identifier)), NSStringFromClass(destinationClass));
+    NSAssert4(!CFDictionaryGetValue(self.identifierToConfigFactoryMap, (CFStringRef)identifier), @"Identifier (%@) already registered with a config factory or block (%p) for destination (%@), can't be registered with destination (%@).", identifier, CFDictionaryGetValue(self.identifierToConfigFactoryMap, (CFStringRef)identifier), NSStringFromClass(CFDictionaryGetValue(self.identifierToDestinationMap, (CFStringRef)identifier)), NSStringFromClass(destinationClass));
     NSAssert3(!self.destinationToExclusiveRouterMap ||
               (self.destinationToExclusiveRouterMap && !CFDictionaryGetValue(self.destinationToExclusiveRouterMap, (__bridge const void *)(destinationClass))), @"There is a registered exclusive router (%@), can't register identifier (%@) for this destinationClass (%@).",CFDictionaryGetValue(self.destinationToExclusiveRouterMap, (__bridge const void *)(destinationClass)), identifier, destinationClass);
-    CFDictionarySetValue(self.identifierToDestinationMap, (CFStringRef)identifier, (__bridge const void *)destinationClass);
+    CFDictionaryAddValue(self.identifierToDestinationMap, (CFStringRef)identifier, (__bridge const void *)destinationClass);
     CFSetAddValue(self.runtimeFactoryDestinationClasses, (__bridge const void *)destinationClass);
 }
 
 + (void)registerDestinationProtocol:(Protocol *)destinationProtocol forMakingDestination:(Class)destinationClass factoryBlock:(id _Nullable(^ _Nonnull)(ZIKPerformRouteConfiguration * _Nonnull))block {
+    NSCParameterAssert(block);
     NSAssert([destinationClass conformsToProtocol:destinationProtocol], @"destination class (%@) should conforms to registering protocol (%@)", NSStringFromClass(destinationClass), NSStringFromProtocol(destinationProtocol));
     NSAssert([self isDestinationClassRoutable:destinationClass], @"destination class (%@) should conforms to ZIKRoutableView or ZIKRoutableService.", NSStringFromClass(destinationClass));
     NSAssert3(!CFDictionaryGetValue(self.destinationProtocolToDestinationMap, (__bridge const void *)destinationProtocol), @"Protocol (%@) already registered with another destination (%@), can't be registered with destination (%@).", NSStringFromProtocol(destinationProtocol), NSStringFromClass((Class)CFDictionaryGetValue(self.destinationProtocolToDestinationMap, (__bridge const void *)destinationProtocol)), NSStringFromClass(destinationClass));
@@ -534,13 +599,26 @@ static __attribute__((always_inline)) void _registerIdentifierWithRoute(NSString
     NSAssert3(!self.destinationToExclusiveRouterMap ||
               (self.destinationToExclusiveRouterMap && !CFDictionaryGetValue(self.destinationToExclusiveRouterMap, (__bridge const void *)(destinationClass))), @"There is a registered exclusive router (%@), can't register destination protocol (%@) for this destinationClass (%@).",CFDictionaryGetValue(self.destinationToExclusiveRouterMap, (__bridge const void *)(destinationClass)), NSStringFromProtocol(destinationProtocol), destinationClass);
     CFSetAddValue(_factoryBlocks, CFBridgingRetain(block));
-    CFDictionarySetValue(self.destinationProtocolToFactoryMap, (__bridge const void *)destinationProtocol, (void *)block);
-    CFMutableArrayRef factories = (CFMutableArrayRef)CFDictionaryGetValue(self.destinationToFactoriesMap, (__bridge const void *)destinationClass);
-    if (!factories) {
-        factories = CFArrayCreateMutable(kCFAllocatorDefault, 0, NULL);
-        CFDictionaryAddValue(self.destinationToFactoriesMap, (__bridge const void *)destinationClass, factories);
-    }
-    CFArrayAppendValue(factories, (void *)block);
+    CFDictionaryAddValue(self.destinationProtocolToFactoryMap, (__bridge const void *)destinationProtocol, (void *)block);
+    CFDictionaryAddValue(self.destinationToDefaultFactoryMap, (__bridge const void *)destinationClass, (void *)block);
+    CFDictionaryAddValue(self.destinationProtocolToDestinationMap, (__bridge const void *)destinationProtocol, (__bridge const void *)destinationClass);
+}
+
++ (void)registerModuleProtocol:(Protocol *)configProtocol forMakingDestination:(Class)destinationClass factoryBlock:(ZIKPerformRouteConfiguration<ZIKConfigurationMakeable> *(^ _Nonnull)(void))block {
+    NSCParameterAssert(block);
+#if DEBUG
+    ZIKPerformRouteConfiguration<ZIKConfigurationMakeable> *config = block();
+    NSAssert([config conformsToProtocol:configProtocol], @"configuration class (%@) should conforms to registering protocol (%@)", NSStringFromClass([config class]), NSStringFromProtocol(configProtocol));
+    [self validateMakeableConfiguration:config];
+#endif
+    NSAssert([self isDestinationClassRoutable:destinationClass], @"destination class (%@) should conforms to ZIKRoutableView or ZIKRoutableService.", NSStringFromClass(destinationClass));
+    NSAssert3(!CFDictionaryGetValue(self.destinationToDefaultConfigFactoryMap, (__bridge const void *)configProtocol), @"Protocol (%@) already registered with a factory or block (%p), can't be registered with destination (%@).", NSStringFromProtocol(configProtocol), CFDictionaryGetValue(self.destinationToDefaultConfigFactoryMap, (__bridge const void *)configProtocol), NSStringFromClass(destinationClass));
+    NSAssert3(!self.destinationToExclusiveRouterMap ||
+              (self.destinationToExclusiveRouterMap && !CFDictionaryGetValue(self.destinationToExclusiveRouterMap, (__bridge const void *)(destinationClass))), @"There is a registered exclusive router (%@), can't register module config protocol (%@) for this destinationClass (%@).",CFDictionaryGetValue(self.destinationToExclusiveRouterMap, (__bridge const void *)(destinationClass)), NSStringFromProtocol(configProtocol), destinationClass);
+    CFSetAddValue(_factoryBlocks, CFBridgingRetain(block));
+    CFDictionaryAddValue(self.moduleConfigProtocolToFactoryMap, (__bridge const void *)configProtocol, (void *)block);
+    CFDictionaryAddValue(self.destinationToDefaultConfigFactoryMap, (__bridge const void *)destinationClass, (void *)block);
+    CFDictionaryAddValue(self.moduleConfigProtocolToDestinationMap, (__bridge const void *)configProtocol, (__bridge const void *)destinationClass);
 }
 
 + (void)registerIdentifier:(NSString *)identifier forMakingDestination:(Class)destinationClass factoryBlock:(id _Nullable(^ _Nonnull)(ZIKPerformRouteConfiguration * _Nonnull))block {
@@ -549,54 +627,97 @@ static __attribute__((always_inline)) void _registerIdentifierWithRoute(NSString
     NSAssert([self isDestinationClassRoutable:destinationClass], @"destination class (%@) should conforms to ZIKRoutableView or ZIKRoutableService.", NSStringFromClass(destinationClass));
     NSAssert3(!CFDictionaryGetValue(self.identifierToRouterMap, (CFStringRef)identifier)
               , @"Identifier (%@) already registered with another router (%@), can't register with destination class (%@).",identifier, CFDictionaryGetValue(self.identifierToRouterMap, (CFStringRef)identifier), NSStringFromClass(destinationClass));
-    NSAssert3(!CFDictionaryGetValue(self.identifierToDestinationMap, (CFStringRef)identifier), @"Identifier (%@) already registered with another destination (%@), can't be registered with destination (%@).", identifier, NSStringFromClass((Class)CFDictionaryGetValue(self.identifierToDestinationMap, (CFStringRef)identifier)), NSStringFromClass(destinationClass));
-    NSAssert3(!CFDictionaryGetValue(self.identifierToFactoryMap, (CFStringRef)identifier), @"Identifier (%@) already registered with a factory or block (%p), can't be registered with destination (%@).", identifier, CFDictionaryGetValue(self.identifierToFactoryMap, (CFStringRef)identifier), NSStringFromClass(destinationClass));
+    NSAssert4(!CFDictionaryGetValue(self.identifierToFactoryMap, (CFStringRef)identifier), @"Identifier (%@) already registered with a factory or block (%p) for destination (%@), can't be registered with destination (%@).", identifier, CFDictionaryGetValue(self.identifierToFactoryMap, (CFStringRef)identifier), NSStringFromClass(CFDictionaryGetValue(self.identifierToDestinationMap, (CFStringRef)identifier)), NSStringFromClass(destinationClass));
+    NSAssert4(!CFDictionaryGetValue(self.identifierToConfigFactoryMap, (CFStringRef)identifier), @"Identifier (%@) already registered with a config factory or block (%p) for destination (%@), can't be registered with destination (%@).", identifier, CFDictionaryGetValue(self.identifierToConfigFactoryMap, (CFStringRef)identifier), NSStringFromClass(CFDictionaryGetValue(self.identifierToDestinationMap, (CFStringRef)identifier)), NSStringFromClass(destinationClass));
     NSAssert3(!self.destinationToExclusiveRouterMap ||
               (self.destinationToExclusiveRouterMap && !CFDictionaryGetValue(self.destinationToExclusiveRouterMap, (__bridge const void *)(destinationClass))), @"There is a registered exclusive router (%@), can't register identifier (%@) for this destinationClass (%@).",CFDictionaryGetValue(self.destinationToExclusiveRouterMap, (__bridge const void *)(destinationClass)), identifier, destinationClass);
     CFSetAddValue(_factoryBlocks, CFBridgingRetain(block));
-    CFDictionarySetValue(self.identifierToFactoryMap, (CFStringRef)identifier, (__bridge const void *)block);
-    CFMutableArrayRef factories = (CFMutableArrayRef)CFDictionaryGetValue(self.destinationToFactoriesMap, (__bridge const void *)destinationClass);
-    if (!factories) {
-        factories = CFArrayCreateMutable(kCFAllocatorDefault, 0, NULL);
-        CFDictionaryAddValue(self.destinationToFactoriesMap, (__bridge const void *)destinationClass, factories);
-    }
-    CFArrayAppendValue(factories, (void *)block);
+    CFDictionaryAddValue(self.identifierToFactoryMap, (CFStringRef)identifier, (__bridge const void *)block);
+    CFDictionaryAddValue(self.destinationToDefaultFactoryMap, (__bridge const void *)destinationClass, (void *)block);
+    CFDictionaryAddValue(self.identifierToDestinationMap, (CFStringRef)identifier, (__bridge const void *)destinationClass);
+}
+
++ (void)registerIdentifier:(NSString *)identifier forMakingDestination:(Class)destinationClass configFactoryBlock:(ZIKPerformRouteConfiguration<ZIKConfigurationMakeable> *(^ _Nonnull)(void))block {
+    NSParameterAssert(identifier);
+    NSParameterAssert(block);
+#if DEBUG
+    ZIKPerformRouteConfiguration<ZIKConfigurationMakeable> *config = block();
+    [self validateMakeableConfiguration:config];
+#endif
+    NSAssert([self isDestinationClassRoutable:destinationClass], @"destination class (%@) should conforms to ZIKRoutableView or ZIKRoutableService.", NSStringFromClass(destinationClass));
+    NSAssert3(!CFDictionaryGetValue(self.identifierToRouterMap, (CFStringRef)identifier)
+              , @"Identifier (%@) already registered with another router (%@), can't register with destination class (%@).",identifier, CFDictionaryGetValue(self.identifierToRouterMap, (CFStringRef)identifier), NSStringFromClass(destinationClass));
+    NSAssert4(!CFDictionaryGetValue(self.identifierToFactoryMap, (CFStringRef)identifier), @"Identifier (%@) already registered with a factory or block (%p) for destination (%@), can't be registered with destination (%@).", identifier, CFDictionaryGetValue(self.identifierToFactoryMap, (CFStringRef)identifier), NSStringFromClass(CFDictionaryGetValue(self.identifierToDestinationMap, (CFStringRef)identifier)), NSStringFromClass(destinationClass));
+    NSAssert4(!CFDictionaryGetValue(self.identifierToConfigFactoryMap, (CFStringRef)identifier), @"Identifier (%@) already registered with a config factory or block (%p) for destination (%@), can't be registered with destination (%@).", identifier, CFDictionaryGetValue(self.identifierToConfigFactoryMap, (CFStringRef)identifier), NSStringFromClass(CFDictionaryGetValue(self.identifierToDestinationMap, (CFStringRef)identifier)), NSStringFromClass(destinationClass));
+    NSAssert3(!self.destinationToExclusiveRouterMap ||
+              (self.destinationToExclusiveRouterMap && !CFDictionaryGetValue(self.destinationToExclusiveRouterMap, (__bridge const void *)(destinationClass))), @"There is a registered exclusive router (%@), can't register identifier (%@) for this destinationClass (%@).",CFDictionaryGetValue(self.destinationToExclusiveRouterMap, (__bridge const void *)(destinationClass)), identifier, destinationClass);
+    CFSetAddValue(_factoryBlocks, CFBridgingRetain(block));
+    CFDictionaryAddValue(self.identifierToConfigFactoryMap, (CFStringRef)identifier, (__bridge const void *)block);
+    CFDictionaryAddValue(self.destinationToDefaultConfigFactoryMap, (__bridge const void *)destinationClass, (void *)block);
+    CFDictionaryAddValue(self.identifierToDestinationMap, (CFStringRef)identifier, (__bridge const void *)destinationClass);
 }
 
 + (void)registerDestinationProtocol:(Protocol *)destinationProtocol forMakingDestination:(Class)destinationClass factoryFunction:(id _Nullable(*)(ZIKPerformRouteConfiguration * _Nonnull))function {
+    NSParameterAssert(function);
     NSAssert([destinationClass conformsToProtocol:destinationProtocol], @"destination class (%@) should conforms to registering protocol (%@)", NSStringFromClass(destinationClass), NSStringFromProtocol(destinationProtocol));
     NSAssert([self isDestinationClassRoutable:destinationClass], @"destination class (%@) should conforms to ZIKRoutableView or ZIKRoutableService.", NSStringFromClass(destinationClass));
-    NSParameterAssert(function);
     NSAssert3(!CFDictionaryGetValue(self.destinationProtocolToDestinationMap, (__bridge const void *)destinationProtocol), @"Protocol (%@) already registered with another destination (%@), can't be registered with destination (%@).", NSStringFromProtocol(destinationProtocol), NSStringFromClass((Class)CFDictionaryGetValue(self.destinationProtocolToDestinationMap, (__bridge const void *)destinationProtocol)), NSStringFromClass(destinationClass));
     NSAssert3(!self.destinationToExclusiveRouterMap ||
               (self.destinationToExclusiveRouterMap && !CFDictionaryGetValue(self.destinationToExclusiveRouterMap, (__bridge const void *)(destinationClass))), @"There is a registered exclusive router (%@), can't register destination protocol (%@) for this destinationClass (%@).",CFDictionaryGetValue(self.destinationToExclusiveRouterMap, (__bridge const void *)(destinationClass)), NSStringFromProtocol(destinationProtocol), destinationClass);
     NSAssert3(!CFDictionaryGetValue(self.destinationProtocolToFactoryMap, (__bridge const void *)destinationProtocol), @"Protocol (%@) already registered with a factory or block (%p), can't be registered with function (%@).", NSStringFromProtocol(destinationProtocol), CFDictionaryGetValue(self.destinationProtocolToFactoryMap, (__bridge const void *)destinationProtocol), [ZIKImageSymbol symbolNameForAddress:function]);
-    CFDictionarySetValue(self.destinationProtocolToFactoryMap, (__bridge const void *)destinationProtocol, (void *)function);
-    CFMutableArrayRef factories = (CFMutableArrayRef)CFDictionaryGetValue(self.destinationToFactoriesMap, (__bridge const void *)destinationClass);
-    if (!factories) {
-        factories = CFArrayCreateMutable(kCFAllocatorDefault, 0, NULL);
-        CFDictionaryAddValue(self.destinationToFactoriesMap, (__bridge const void *)destinationClass, factories);
-    }
-    CFArrayAppendValue(factories, (void *)function);
+    CFDictionaryAddValue(self.destinationProtocolToFactoryMap, (__bridge const void *)destinationProtocol, (void *)function);
+    CFDictionaryAddValue(self.destinationToDefaultFactoryMap, (__bridge const void *)destinationClass, (void *)function);
+    CFDictionaryAddValue(self.destinationProtocolToDestinationMap, (__bridge const void *)destinationProtocol, (__bridge const void *)destinationClass);
+}
+
++ (void)registerModuleProtocol:(Protocol *)configProtocol forMakingDestination:(Class)destinationClass factoryFunction:(ZIKPerformRouteConfiguration<ZIKConfigurationMakeable> *_Nonnull(* _Nonnull)(void))function {
+    NSParameterAssert(function);
+#if DEBUG
+    ZIKPerformRouteConfiguration<ZIKConfigurationMakeable> *config = function();
+    NSAssert([config conformsToProtocol:configProtocol], @"configuration class (%@) should conforms to registering protocol (%@)", NSStringFromClass([config class]), NSStringFromProtocol(configProtocol));
+    [self validateMakeableConfiguration:config];
+#endif
+    NSAssert([self isDestinationClassRoutable:destinationClass], @"destination class (%@) should conforms to ZIKRoutableView or ZIKRoutableService.", NSStringFromClass(destinationClass));
+    NSAssert3(!self.destinationToExclusiveRouterMap ||
+              (self.destinationToExclusiveRouterMap && !CFDictionaryGetValue(self.destinationToExclusiveRouterMap, (__bridge const void *)(destinationClass))), @"There is a registered exclusive router (%@), can't register destination protocol (%@) for this destinationClass (%@).",CFDictionaryGetValue(self.destinationToExclusiveRouterMap, (__bridge const void *)(destinationClass)), NSStringFromProtocol(configProtocol), destinationClass);
+    NSAssert3(!CFDictionaryGetValue(self.moduleConfigProtocolToFactoryMap, (__bridge const void *)configProtocol), @"Protocol (%@) already registered with a factory or block (%p), can't be registered with function (%@).", NSStringFromProtocol(configProtocol), CFDictionaryGetValue(self.moduleConfigProtocolToFactoryMap, (__bridge const void *)configProtocol), [ZIKImageSymbol symbolNameForAddress:function]);
+    CFDictionaryAddValue(self.moduleConfigProtocolToFactoryMap, (__bridge const void *)configProtocol, (void *)function);
+    CFDictionaryAddValue(self.destinationToDefaultConfigFactoryMap, (__bridge const void *)destinationClass, (void *)function);
+    CFDictionaryAddValue(self.moduleConfigProtocolToDestinationMap, (__bridge const void *)configProtocol, (__bridge const void *)destinationClass);
 }
 
 + (void)registerIdentifier:(NSString *)identifier forMakingDestination:(Class)destinationClass factoryFunction:(id _Nullable(*)(ZIKPerformRouteConfiguration * _Nonnull))function {
     NSParameterAssert(identifier);
-    NSAssert([self isDestinationClassRoutable:destinationClass], @"destination class (%@) should conforms to ZIKRoutableView or ZIKRoutableService.", NSStringFromClass(destinationClass));
     NSParameterAssert(function);
+    NSAssert([self isDestinationClassRoutable:destinationClass], @"destination class (%@) should conforms to ZIKRoutableView or ZIKRoutableService.", NSStringFromClass(destinationClass));
     NSAssert3(!CFDictionaryGetValue(self.identifierToRouterMap, (CFStringRef)identifier)
               , @"Identifier (%@) already registered with another router (%@), can't register with destination class (%@).",identifier, CFDictionaryGetValue(self.identifierToRouterMap, (CFStringRef)identifier), NSStringFromClass(destinationClass));
-    NSAssert3(!CFDictionaryGetValue(self.identifierToDestinationMap, (CFStringRef)identifier), @"Identifier (%@) already registered with another destination (%@), can't be registered with destination (%@).", identifier, NSStringFromClass((Class)CFDictionaryGetValue(self.identifierToDestinationMap, (CFStringRef)identifier)), NSStringFromClass(destinationClass));
     NSAssert3(!self.destinationToExclusiveRouterMap ||
               (self.destinationToExclusiveRouterMap && CFDictionaryGetValue(self.destinationToExclusiveRouterMap, (__bridge const void *)(destinationClass))), @"There is a registered exclusive router (%@), can't register identifier (%@) for this destinationClass (%@).",CFDictionaryGetValue(self.destinationToExclusiveRouterMap, (__bridge const void *)(destinationClass)), identifier, destinationClass);
-    NSAssert3(!CFDictionaryGetValue(self.identifierToFactoryMap, (CFStringRef)identifier), @"Identifier (%@) already registered with another factory function (%@), can't be registered with function (%@).", identifier, CFDictionaryGetValue(self.identifierToFactoryMap, (__bridge CFStringRef)identifier), [ZIKImageSymbol symbolNameForAddress:function]);
-    CFDictionarySetValue(self.identifierToFactoryMap, (CFStringRef)identifier, (void *)function);
-    CFMutableArrayRef factories = (CFMutableArrayRef)CFDictionaryGetValue(self.destinationToFactoriesMap, (__bridge const void *)destinationClass);
-    if (!factories) {
-        factories = CFArrayCreateMutable(kCFAllocatorDefault, 0, NULL);
-        CFDictionaryAddValue(self.destinationToFactoriesMap, (__bridge const void *)destinationClass, factories);
-    }
-    CFArrayAppendValue(factories, (void *)function);
+    NSAssert4(!CFDictionaryGetValue(self.identifierToFactoryMap, (CFStringRef)identifier), @"Identifier (%@) already registered with another factory function (%@) for destination (%@), can't be registered with function (%@).", identifier, CFDictionaryGetValue(self.identifierToFactoryMap, (__bridge CFStringRef)identifier), NSStringFromClass(CFDictionaryGetValue(self.identifierToDestinationMap, (CFStringRef)identifier)), [ZIKImageSymbol symbolNameForAddress:function]);
+    NSAssert4(!CFDictionaryGetValue(self.identifierToConfigFactoryMap, (CFStringRef)identifier), @"Identifier (%@) already registered with another config factory function (%@) for destination (%@), can't be registered with function (%@).", identifier, CFDictionaryGetValue(self.identifierToConfigFactoryMap, (__bridge CFStringRef)identifier), NSStringFromClass(CFDictionaryGetValue(self.identifierToDestinationMap, (CFStringRef)identifier)), [ZIKImageSymbol symbolNameForAddress:function]);
+    CFDictionaryAddValue(self.identifierToFactoryMap, (CFStringRef)identifier, (void *)function);
+    CFDictionaryAddValue(self.destinationToDefaultFactoryMap, (__bridge const void *)destinationClass, (void *)function);
+    CFDictionaryAddValue(self.identifierToDestinationMap, (CFStringRef)identifier, (__bridge const void *)destinationClass);
+}
+
++ (void)registerIdentifier:(NSString *)identifier forMakingDestination:(Class)destinationClass configFactoryFunction:(ZIKPerformRouteConfiguration<ZIKConfigurationMakeable> *_Nonnull(* _Nonnull)(void))function {
+    NSParameterAssert(identifier);
+    NSParameterAssert(function);
+#if DEBUG
+    ZIKPerformRouteConfiguration<ZIKConfigurationMakeable> *config = function();
+    [self validateMakeableConfiguration:config];
+#endif
+    NSAssert([self isDestinationClassRoutable:destinationClass], @"destination class (%@) should conforms to ZIKRoutableView or ZIKRoutableService.", NSStringFromClass(destinationClass));
+    NSAssert3(!CFDictionaryGetValue(self.identifierToRouterMap, (CFStringRef)identifier)
+              , @"Identifier (%@) already registered with another router (%@), can't register with destination class (%@).",identifier, CFDictionaryGetValue(self.identifierToRouterMap, (CFStringRef)identifier), NSStringFromClass(destinationClass));
+    NSAssert3(!self.destinationToExclusiveRouterMap ||
+              (self.destinationToExclusiveRouterMap && CFDictionaryGetValue(self.destinationToExclusiveRouterMap, (__bridge const void *)(destinationClass))), @"There is a registered exclusive router (%@), can't register identifier (%@) for this destinationClass (%@).",CFDictionaryGetValue(self.destinationToExclusiveRouterMap, (__bridge const void *)(destinationClass)), identifier, destinationClass);
+    NSAssert4(!CFDictionaryGetValue(self.identifierToFactoryMap, (CFStringRef)identifier), @"Identifier (%@) already registered with another factory function (%@) for destination (%@), can't be registered with function (%@).", identifier, CFDictionaryGetValue(self.identifierToFactoryMap, (__bridge CFStringRef)identifier), NSStringFromClass(CFDictionaryGetValue(self.identifierToDestinationMap, (CFStringRef)identifier)), [ZIKImageSymbol symbolNameForAddress:function]);
+    NSAssert4(!CFDictionaryGetValue(self.identifierToConfigFactoryMap, (CFStringRef)identifier), @"Identifier (%@) already registered with another config factory function (%@) for destination (%@), can't be registered with function (%@).", identifier, CFDictionaryGetValue(self.identifierToConfigFactoryMap, (__bridge CFStringRef)identifier), NSStringFromClass(CFDictionaryGetValue(self.identifierToDestinationMap, (CFStringRef)identifier)), [ZIKImageSymbol symbolNameForAddress:function]);
+    CFDictionaryAddValue(self.identifierToConfigFactoryMap, (CFStringRef)identifier, (void *)function);
+    CFDictionaryAddValue(self.destinationToDefaultConfigFactoryMap, (__bridge const void *)destinationClass, (void *)function);
+    CFDictionaryAddValue(self.identifierToDestinationMap, (CFStringRef)identifier, (__bridge const void *)destinationClass);
 }
 
 + (void)registerDestination:(Class)destinationClass router:(Class)routerClass {
@@ -718,6 +839,11 @@ static __attribute__((always_inline)) void _registerIdentifierWithRoute(NSString
 #endif
 }
 
++ (void)validateMakeableConfiguration:(ZIKPerformRouteConfiguration<ZIKConfigurationMakeable> *)config {
+    NSAssert1([config conformsToProtocol:@protocol(ZIKConfigurationMakeable)], @"configuration class (%@) should conforms to ZIKConfigurationMakeable when registering as factory.", config);
+    NSAssert1(config.makeDestination || [config valueForKey:@"_constructDestination"] || [[NSStringFromClass([config class]) demangledAsSwift] containsString:@"."], @"configuration (%@) must has makeDestination block or constructDestination block when registering as factory.", config);
+}
+
 #pragma mark Override
 
 + (CFMutableDictionaryRef)destinationProtocolToRouterMap {
@@ -752,6 +878,10 @@ static __attribute__((always_inline)) void _registerIdentifierWithRoute(NSString
     NSAssert(NO, @"%@ must override %@",self,NSStringFromSelector(_cmd));
     return nil;
 }
++ (CFMutableDictionaryRef)moduleConfigProtocolToDestinationMap {
+    NSAssert(NO, @"%@ must override %@",self,NSStringFromSelector(_cmd));
+    return nil;
+}
 + (CFMutableDictionaryRef)identifierToDestinationMap {
     NSAssert(NO, @"%@ must override %@",self,NSStringFromSelector(_cmd));
     return nil;
@@ -768,7 +898,19 @@ static __attribute__((always_inline)) void _registerIdentifierWithRoute(NSString
     NSAssert(NO, @"%@ must override %@",self,NSStringFromSelector(_cmd));
     return nil;
 }
-+ (CFMutableDictionaryRef)destinationToFactoriesMap {
++ (CFMutableDictionaryRef)destinationToDefaultFactoryMap {
+    NSAssert(NO, @"%@ must override %@",self,NSStringFromSelector(_cmd));
+    return nil;
+}
++ (CFMutableDictionaryRef)moduleConfigProtocolToFactoryMap {
+    NSAssert(NO, @"%@ must override %@",self,NSStringFromSelector(_cmd));
+    return nil;
+}
++ (CFMutableDictionaryRef)identifierToConfigFactoryMap {
+    NSAssert(NO, @"%@ must override %@",self,NSStringFromSelector(_cmd));
+    return nil;
+}
++ (CFMutableDictionaryRef)destinationToDefaultConfigFactoryMap {
     NSAssert(NO, @"%@ must override %@",self,NSStringFromSelector(_cmd));
     return nil;
 }

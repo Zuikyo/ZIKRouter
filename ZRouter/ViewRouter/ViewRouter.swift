@@ -722,6 +722,100 @@ public extension ViewRouterType {
     }
 }
 
+// MARK: Makeable Config
+
+/**
+ Convenient configuration for using custom configuration without configuration subclass. The service will be created with the `makeDestination` block in the configuration.
+ 
+ If a module need a few required parameters when creating destination, you can declare constructDestination in module config protocol:
+ 
+ ```
+ protocol LoginViewModuleInput {
+    // Pass required parameter for initializing destination.
+    var constructDestination: (_ account: String) -> Void { get }
+    // Designate destination is LoginViewInput.
+    var didMakeDestination:((LoginViewInput) -> Void)? { get set }
+ }
+ extension RoutableViewModule where Protocol == LoginViewModuleInput {
+ init() { self.init(declaredProtocol: Protocol.self) }
+ }
+ 
+ // Let ViewMakeableConfiguration conform to LoginViewModuleInput
+ extension ViewMakeableConfiguration: LoginViewModuleInput where Destination == LoginViewInput, Constructor == (String) -> Void {
+ }
+ ```
+ Register in some registerRoutableDestination:
+ ```
+ ZIKAnyViewRouter.register(RoutableViewModule<LoginViewModuleInput>(), forMakingView: LoginViewController.self) { () -> LoginViewModuleInput in
+     let config = ViewMakeableConfiguration<LoginViewInput, (String) -> Void>({_,_ in })
+ 
+     // User is responsible for calling constructDestination and giving parameters
+     config.constructDestination = { [unowned config] (account) in
+         // Capture parameters in makeDestination, so we don't need configuration subclass to hold the parameters
+         // MakeDestination will be used for creating destination instance
+         config.makeDestination = {
+             let destination = LoginViewController(account: account)
+             return destination
+         }
+     }
+     return config
+ }
+ ```
+ You can use this module with LoginViewModuleInput:
+ ```
+ Router.makeDestination(to: RoutableViewModule<LoginViewModuleInput>()) { (config) in
+     var config = config
+     config.constructDestination("account")
+     config.didMakeDestination = { destination in
+        // Did get LoginViewInput
+     }
+ }
+ ```
+ */
+public class ViewMakeableConfiguration<Destination, Constructor>: ZIKSwiftViewMakeableConfiguration {
+    
+    /// Let the caller pass parameters to the module, and let makeDestination capture parameters directly. Then we don't need configuration subclass to hold parameters.
+    /// Genetic Constructor is a function type: ViewMakeableConfiguration<LoginViewInput, (String) -> Void>
+    public var constructDestination: Constructor
+    
+    /// Make destination with block.
+    ///
+    /// Set this in constructDestination block. It's for passing parameters with constructDestination easily, so we don't need configuration subclass to hold parameters.
+    ///
+    /// When using configuration with `register<Protocol>(_ routableServiceModule: RoutableServiceModule<Protocol>, forMakingService serviceClass: AnyClass, making factory: @escaping () -> Protocol)`, makeDestination is auto used for making destination.
+    ///
+    /// When using a router subclass with makeable configuration, the router subclass is responsible for check and use makeDestination in `-destinationWithConfiguration:`.
+    public var makeDestination: (() -> Destination?)? {
+        didSet {
+            self.__makeDestination = { [unowned self] () -> Any? in
+                if let destination = self.makeDestination?() {
+                    return destination
+                }
+                return nil
+            }
+        }
+    }
+    
+    /// Give the destination with specfic type to the caller.
+    ///
+    /// When using configuration with `register<Protocol>(_ routableServiceModule: RoutableServiceModule<Protocol>, forMakingService serviceClass: AnyClass, making factory: @escaping () -> Protocol)`, didMakeDestination is auto called after making destination.
+    ///
+    /// When using a router subclass with makeable configuration, the router subclass is responsible for check and call didMakeDestination after creating and preparing destination.
+    public var didMakeDestination: ((Destination) -> Void)? {
+        didSet {
+            self.__didMakeDestination = { [unowned self] (d: Any) -> Void in
+                if let destination = d as? Destination {
+                    self.didMakeDestination?(destination)
+                }
+            }
+        }
+    }
+    
+    public init(_ constructor: Constructor) {
+        constructDestination = constructor
+    }
+}
+
 // MARK: Strict Config
 
 /// Proxy of ZIKViewRouteConfiguration to handle configuration in a type safe way.
