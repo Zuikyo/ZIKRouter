@@ -772,7 +772,7 @@ public extension ViewRouterType {
  }
  ```
  */
-public class ViewMakeableConfiguration<Destination, Constructor>: ZIKSwiftViewMakeableConfiguration {
+open class ViewMakeableConfiguration<Destination, Constructor>: ZIKSwiftViewMakeableConfiguration {
     
     /// Let the caller pass parameters to the module, and let makeDestination capture parameters directly. Then we don't need configuration subclass to hold parameters.
     /// Genetic Constructor is a function type: ViewMakeableConfiguration<LoginViewInput, (String) -> Void>

@@ -328,7 +328,7 @@ public class ServiceRouter<Destination, ModuleConfig> {
  }
  ```
  */
-public class ServiceMakeableConfiguration<Destination, Constructor>: ZIKSwiftServiceMakeableConfiguration {
+open class ServiceMakeableConfiguration<Destination, Constructor>: ZIKSwiftServiceMakeableConfiguration {
     
     /// Let the caller pass parameters to the module, and let makeDestination capture parameters directly. Then we don't need configuration subclass to hold parameters.
     /// Genetic Constructor is a function type: ServiceMakeableConfiguration<LoginServiceInput, (String) -> Void>
