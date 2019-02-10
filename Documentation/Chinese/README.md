@@ -330,7 +330,7 @@ DeclareRoutableView(NoteEditorViewController, NoteEditorViewRouter)
 
 </details>
 
-如果获取路由时，protocol 未经过声明，将会产生编译错误。
+**如果获取路由时，protocol 未经过声明，将会产生编译错误。这是 ZIKRouter 最特别的功能之一，可以让你更简单地管理所使用的路由接口。**
 
 现在你可以用所声明的 protocol 进行路由操作了。
 
@@ -482,6 +482,8 @@ protocol EditorViewModuleInput: class {
 }
 ```
 
+使用自定义 configuration 时，可以使用 configuration 子类，在子类上用自定义属性保存参数。
+
 在创建路由时，可以使用 router 子类，也可以使用更简单的 block 进行创建：
 
 ```swift
@@ -514,10 +516,6 @@ ZIKAnyViewRouter.register(RoutableViewModule<EditorViewModuleInput>(),
             return EditorViewModuleConfiguration<Any>()
         }
 ```
-
-使用自定义 configuration 时，可以使用 configuration 子类，在子类上用自定义属性保存参数。
-
-Swift 泛型类不是 OC Class，不会出现在 Mach-O 的`__objc_classlist`节中，所以不会对 app 的启动速度造成影响。
 
 <details><summary>使用 router 子类创建路由</summary>
 
@@ -577,6 +575,9 @@ class EditorViewRouter: ZIKViewRouter<NoteEditorViewController, ZIKViewMakeableC
     
     override func prepareDestination(_ destination: NoteEditorViewController, configuration: ZIKViewRouteConfiguration) {
         // 配置模块内其他组件，例如 VIPER 对象
+        guard destination.presenter == nil else {
+			return
+        }
         let presenter = Presenter(view: destination)
         destination.presenter = presenter
         let interactor = Interactor(presenter: presenter)
@@ -608,7 +609,7 @@ Router.makeDestination(to: RoutableViewModule<EditorViewModuleInput>()) { (confi
 
 这种方式省去了很多胶水代码，通过闭包直接传参，无需通过属性保存参数，而且每个模块都能自己重写参数类型。
 
-如果你的协议很简单，不需要用到子类，或者你用的是 Objective-C，不想创建过多的子类影响 app 启动速度，可以用泛型类`ZIKViewMakeableConfiguration`和`ViewMakeableConfiguration`：
+如果你的协议很简单，不需要用到 configuration 子类，或者你用的是 Objective-C，不想创建过多的子类影响 app 启动速度，可以用泛型类`ZIKViewMakeableConfiguration`和`ViewMakeableConfiguration`：
 
 ```swift
 extension ViewMakeableConfiguration: EditorViewModuleInput where Destination == NoteEditorInput, Constructor == (EditorViewModel, Note) -> Void {
