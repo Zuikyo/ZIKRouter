@@ -164,10 +164,6 @@ typedef void(^ZIKPerformRouteCompletion)(BOOL success, id _Nullable destination,
              weakConfig.makeDestination = ^LoginService * _Nullable{
                 // Use custom initializer
                 LoginService *destination = [LoginService alloc] initWithAccount:account];
-                if (weakConfig.didMakeDestination) {
-                    weakConfig.didMakeDestination(destination);
-                    weakConfig.didMakeDestination = nil;
-                }
                 return destination;
              };
          };
@@ -187,6 +183,8 @@ typedef void(^ZIKPerformRouteCompletion)(BOOL success, id _Nullable destination,
         };
  }];
  @endcode
+ 
+ @note In swift, it's preferred to use ServiceMakeableConfiguration instead.
  */
 @interface ZIKServiceMakeableConfiguration<__covariant Destination>: ZIKPerformRouteConfiguration<ZIKConfigurationMakeable>
 
@@ -202,12 +200,7 @@ typedef void(^ZIKPerformRouteCompletion)(BOOL success, id _Nullable destination,
 @property (nonatomic, copy, nullable) Destination _Nullable(^makeDestination)();
 
 /**
- Give the destination with specfic type to the caller.
- 
- @note
- When using configuration with `registerModuleProtocol:forMakingService:making:`, didMakeDestination is auto called after making destination.
- 
- When using a router subclass with makeable configuration, the router subclass is responsible for check and call didMakeDestination after creating and preparing destination.
+ Give the destination with specfic type to the caller. This is auto called and reset to nil after `didFinishPrepareDestination:configuration:`.
  */
 @property (nonatomic, copy, nullable) void(^didMakeDestination)(Destination destination) NS_REFINED_FOR_SWIFT;
 

@@ -84,27 +84,24 @@ public extension ViewRouterExtension {
      ```
      Then register module with module config factory block:
      ```
+     // Let ViewMakeableConfiguration conform to LoginViewModuleInput
+     extension ViewMakeableConfiguration: LoginViewModuleInput where Destination == LoginViewInput, Constructor == (String) -> Void {
+     }
+     
      // Register in some +registerRoutableDestination
      ZIKAnyViewRouter.register(RoutableViewModule<LoginViewModuleInput>(), forMakingView: LoginViewController.self) { () -> LoginViewModuleInput in
-     // Swift generic class is not in __objc_classlist section of Mach-O file, so it won't affect the objc launching time
-         class LoginViewConfiguration<T>: ZIKViewMakeableConfiguration<LoginView>, LoginViewModuleInput {
-             var didMakeDestination: ((LoginViewInput) -> Void)?
+         let config = ViewMakeableConfiguration<LoginViewInput, (String) -> Void>({ _ in })
      
-             // User is responsible for calling constructDestination and giving parameters
-             var constructDestination: (String) -> Void {
-                 return { account in
-                     // Capture parameters in makeDestination, so we don't need configuration subclass to hold the parameters
-                     // MakeDestination will be used for creating destination instance
-                     self.makeDestination = { [unowned self] () in
-                         let destination = LoginViewController(account: account)
-                         self.didMakeDestination?(destination)
-                         self.didMakeDestination = nil
-                         return destination
-                     }
-                 }
+         // User is responsible for calling constructDestination and giving parameters
+         config.constructDestination = { [unowned config] account in
+             // Capture parameters in makeDestination, so we don't need configuration subclass to hold the parameters
+             // MakeDestination will be used for creating destination instance
+             config.makeDestination = { () in
+                 let destination = LoginViewController(account: account)
+                 return destination
              }
          }
-         return LoginViewConfiguration<Any>()
+         return config
      }
      ```
      You can use this module with LoginViewModuleInput:

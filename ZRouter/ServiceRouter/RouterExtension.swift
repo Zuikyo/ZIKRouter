@@ -79,27 +79,24 @@ public extension ServiceRouterExtension {
      ```
      Then register module with module config factory block:
      ```
+     // Let ServiceMakeableConfiguration conform to LoginServiceModuleInput
+     extension ServiceMakeableConfiguration: LoginServiceModuleInput where Destination == LoginServiceInput, Constructor == (String) -> Void {
+     }
+     
      // Register in some +registerRoutableDestination
      ZIKAnyServiceRouter.register(RoutableServiceModule<LoginServiceModuleInput>(), forMakingService: LoginService.self) { () -> LoginServiceModuleInput in
-         // Swift generic class is not in __objc_classlist section of Mach-O file, so it won't affect the objc launching time
-         class LoginServiceConfiguration<T>: ZIKServiceMakeableConfiguration<LoginService>, LoginServiceModuleInput {
-             var didMakeDestination: ((LoginServiceInput) -> Void)?
+         let config = ServiceMakeableConfiguration<LoginServiceInput, (String) -> Void>({ _ in })
      
-             // User is responsible for calling constructDestination and giving parameters
-             var constructDestination: (String) -> Void {
-                 return { account in
-                     // Capture parameters in makeDestination, so we don't need configuration subclass to hold the parameters
-                     // MakeDestination will be used for creating destination instance
-                     self.makeDestination = { [unowned self] () in
-                         let destination = LoginService(account: account)
-                         self.didMakeDestination?(destination)
-                         self.didMakeDestination = nil
-                         return destination
-                     }
-                }
-            }
+         // User is responsible for calling constructDestination and giving parameters
+         config.constructDestination = { [unowned config] account in
+             // Capture parameters in makeDestination, so we don't need configuration subclass to hold the parameters
+             // MakeDestination will be used for creating destination instance
+             config.makeDestination = { () in
+                 let destination = LoginService(account: account)
+                 return destination
+             }
          }
-         return LoginServiceConfiguration<Any>()
+         return config
      }
      ```
      You can use this module with LoginServiceModuleInput:

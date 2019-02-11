@@ -116,25 +116,31 @@ class TestViewController: UIViewController {
 
 不过 Xcode 的自动补全在这种情况下有 bug。调用`ZIKViewRouteStrictConfiguration`的方法时参数没有被正确地补全，你需要手动改成正确的参数类型。
 
-## Lazy Perform
+## 获取模块
 
-你可以先创建 router，再稍后执行路由。这样可以把路由的提供者和执行者分开。
+如果不想执行路由，只是想获取模块，可以使用`makeDestination`方法。在获取模块时，可以在 preparation block 里进行依赖注入。
 
-需要注意的是，router 可能会执行失败（比如当前已经执行了路由，不能再重复执行），因此在执行路由前需要先检查状态。
+Swift示例：
 
 ```swift
+///time service 的接口
+protocol TimeServiceInput {
+    func currentTimeString() -> String
+}
+```
+```swift
 class TestViewController: UIViewController {
-    var routerType: ViewRouterType<EditorViewInput, ViewRouteConfig>?
-    func viewDidLoad() {
-        super.viewDidLoad()
-        routerType = Router.to(RoutableView<EditorViewInput>())
-    }
+    @IBOutlet weak var timeLabel: UILabel!
     
-    func showEditor() {
-        guard let routerType = self. routerType else {
-            return
-        }
-        routerType.perform(path: .push(from: self))
+    func callTimeService() {
+        //获取 TimeServiceInput 对应的模块
+        let timeService = Router.makeDestination(
+            to: RoutableService<TimeServiceInput>(),
+            preparation: { destination in
+            //配置 service
+        })
+        //调用 service
+        timeLabel.text = timeService.currentTimeString()
     }
 }
 ```
@@ -142,16 +148,25 @@ class TestViewController: UIViewController {
 <details><summary>Objective-C示例</summary>
 
 ```objectivec
-@implementation ZIKTestPushViewController
-
-- (void)viewDidLoad {
-    [super viewDidLoad];
-    self.routerType = ZIKRouterToView(EditorViewInput);
-}
-- (void)showEditor {
-    [self.routerType performPath:ZIKViewRoutePath.pushFrom(self)];
-}
+///time service 的接口
+@protocol TimeServiceInput <ZIKServiceRoutable>
+- (NSString *)currentTimeString;
 @end
+```
+
+```objectivec
+@interface TestViewController ()
+@property (weak, nonatomic) IBOutlet UILabel *timeLabel;
+@end
+
+@implementation TestViewController
+
+- (void)callTimeService {
+   //用 protocol 获取对应的模块
+   id<TimeServiceInput> timeService = [ZIKRouterToService(TimeServiceInput) makeDestination];
+   self.timeLabel.text = [timeService currentTimeString];    
+}
+
 ```
 
 </details>

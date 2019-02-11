@@ -68,10 +68,6 @@ DeclareRoutableViewModuleProtocol(EasyInfoViewModuleProtocol)
                  destination.name = title;
                  destination.age = age;
                  destination.delegate = delegate;
-                 if (weakConfig.didMakeDestination) {
-                     weakConfig.didMakeDestination(destination);
-                     weakConfig.didMakeDestination = nil;
-                 }
                  return destination;
              };
          };

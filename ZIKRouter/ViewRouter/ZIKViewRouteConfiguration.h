@@ -304,10 +304,6 @@ typedef void(^ZIKViewRouteSegueConfiger)(NS_NOESCAPE ZIKViewRouteSegueConfigure)
             weakConfig.makeDestination = ^LoginViewController * _Nullable{
                 // Use custom initializer
                 LoginViewController *destination = [LoginViewController alloc] initWithAccount:account];
-                if (weakConfig.didMakeDestination) {
-                    weakConfig.didMakeDestination(destination);
-                    weakConfig.didMakeDestination = nil;
-                }
                 return destination;
             };
         };
@@ -327,6 +323,8 @@ typedef void(^ZIKViewRouteSegueConfiger)(NS_NOESCAPE ZIKViewRouteSegueConfigure)
         };
  }];
  @endcode
+ 
+ @note In swift, it's preferred to use ViewMakeableConfiguration instead.
  */
 @interface ZIKViewMakeableConfiguration<__covariant Destination>: ZIKViewRouteConfiguration<ZIKConfigurationMakeable>
 
@@ -342,12 +340,7 @@ typedef void(^ZIKViewRouteSegueConfiger)(NS_NOESCAPE ZIKViewRouteSegueConfigure)
 @property (nonatomic, copy, nullable) Destination _Nullable(^makeDestination)();
 
 /**
- Give the destination with specfic type to the caller.
- 
- @note
- When using configuration with `registerModuleProtocol:forMakingView:making:`, didMakeDestination is auto called after making destination.
- 
- When using a router subclass with makeable configuration, the router subclass is responsible for check and call didMakeDestination after creating and preparing destination.
+ Give the destination with specfic type to the caller. This is auto called and reset to nil after `didFinishPrepareDestination:configuration:`.
  */
 @property (nonatomic, copy, nullable) void(^didMakeDestination)(Destination destination) NS_REFINED_FOR_SWIFT;
 

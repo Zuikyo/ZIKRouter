@@ -112,25 +112,31 @@ Type of `ZIKViewRouteStrictConfiguration` changes with it's generic parameter. S
 
 But there is bug in Xcode auto completions. Parameters in `ZIKViewRouteStrictConfiguration`'s methods are not correctly completed, you have to manually fix the type.
 
-## Lazy Perform
+## Make Destination
 
-You can create the router, then perform it later. This let you separate the router's provider and performer.
+If you only want to get the destination, use `makeDestination`, and prepare the destination in block.
 
-When performer performs the router, it may fail. The router may be performed already and can't be performed unless it's removed. So the performer needs to check the router's state.
+Swift Sample:
 
 ```swift
+///time service's interface
+protocol TimeServiceInput {
+    func currentTimeString() -> String
+}
+```
+```swift
 class TestViewController: UIViewController {
-    var routerType: ViewRouterType<EditorViewInput, ViewRouteConfig>?
-    func viewDidLoad() {
-        super.viewDidLoad()
-        routerType = Router.to(RoutableView<EditorViewInput>())
-    }
+    @IBOutlet weak var timeLabel: UILabel!
     
-    func showEditor() {
-        guard let routerType = self. routerType else {
-            return
-        }
-        routerType.perform(path: .push(from: self))
+    func callTimeService() {
+        //Get service for TimeServiceInput
+        let timeService = Router.makeDestination(
+            to: RoutableService<TimeServiceInput>(),
+            preparation: { destination in
+            //Prepare the service
+        })
+        //Call service
+        timeLabel.text = timeService.currentTimeString()
     }
 }
 ```
@@ -138,16 +144,26 @@ class TestViewController: UIViewController {
 <details><summary>Objective-C Sample</summary>
 
 ```objectivec
-@implementation ZIKTestPushViewController
-
-- (void)viewDidLoad {
-    [super viewDidLoad];
-    self.routerType = ZIKRouterToView(EditorViewInput);
-}
-- (void)showEditor {
-    [self.routerType performPath:ZIKViewRoutePath.pushFrom(self)];
-}
+///time service's interface
+@protocol TimeServiceInput <ZIKServiceRoutable>
+- (NSString *)currentTimeString;
 @end
+```
+
+```objectivec
+@interface TestViewController ()
+@property (weak, nonatomic) IBOutlet UILabel *timeLabel;
+@end
+
+@implementation TestViewController
+
+- (void)callTimeService {
+   //Get service for TimeServiceInput
+   id<TimeServiceInput> timeService = [ZIKRouterToService(TimeServiceInput) makeDestination];
+   //Call service
+   self.timeLabel.text = [timeService currentTimeString];    
+}
+
 ```
 
 </details>

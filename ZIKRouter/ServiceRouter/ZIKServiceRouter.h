@@ -215,10 +215,6 @@ typedef void(^ZIKServiceRouteGlobalErrorHandler)(__kindof ZIKServiceRouter * _Nu
          weakConfig.makeDestination = ^LoginService * _Nullable{
              // Use custom initializer
              LoginService *destination = [LoginService alloc] initWithAccount:account];
-             if (weakConfig.didMakeDestination) {
-                weakConfig.didMakeDestination(destination);
-                weakConfig.didMakeDestination = nil;
-             }
              return destination;
          };
      };
@@ -285,10 +281,6 @@ typedef void(^ZIKServiceRouteGlobalErrorHandler)(__kindof ZIKServiceRouter * _Nu
             weakConfig.makeDestination = ^LoginService * _Nullable{
                 // Use custom initializer
                 LoginService *destination = [LoginService alloc] initWithAccount:account];
-                if (weakConfig.didMakeDestination) {
-                    weakConfig.didMakeDestination(destination);
-                    weakConfig.didMakeDestination = nil;
-                }
                 return destination;
             };
         };

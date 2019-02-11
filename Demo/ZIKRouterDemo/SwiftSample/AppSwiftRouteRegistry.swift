@@ -93,22 +93,14 @@ class EasyRouteRegistry: ZIKViewRouteAdapter {
         }
         
         ZIKAnyServiceRouter.register(RoutableServiceModule<EasyServiceModuleInput>(), forMakingService: EasyService2.self) { () -> EasyServiceModuleInput in
-            // Swift generic class is not in __objc_classlist section of Mach-O file, so it won't affect the objc launching time
-            class EasyService2Configuration<T>: ZIKServiceMakeableConfiguration<EasyService2>, EasyServiceModuleInput {
-                var didMakeDestination: ((EasyServiceInput) -> Void)?
-                
-                var constructDestination: (String) -> Void {
-                    return { name in
-                        self.makeDestination = { [unowned self] () in
-                            let destination = EasyService2(name: name)
-                            self.didMakeDestination?(destination)
-                            self.didMakeDestination = nil
-                            return destination
-                        }
-                    }
+            let config = ServiceMakeableConfiguration<EasyServiceInput, (String) -> Void>({_ in})
+            config.constructDestination = { [unowned config] name in
+                config.makeDestination = {
+                    let destination = EasyService2(name: name)
+                    return destination
                 }
             }
-            return EasyService2Configuration<Any>()
+            return config
         }
     }
     
@@ -155,6 +147,9 @@ protocol EasyServiceModuleInput {
 }
 extension RoutableServiceModule where Protocol == EasyServiceModuleInput {
     init() { self.init(declaredProtocol: Protocol.self) }
+}
+extension ServiceMakeableConfiguration: EasyServiceModuleInput where Destination == EasyServiceInput, Constructor == (String) -> Void {
+    
 }
 
 class EasyService: NSObject, ZIKRoutableService, EasyServiceInput {

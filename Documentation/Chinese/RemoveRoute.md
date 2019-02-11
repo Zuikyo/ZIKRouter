@@ -87,4 +87,4 @@ Service router 默认不支持移除操作。如果要用移除操作来销毁�
 4. 用`beginRemoveRoute`、`endRemoveRouteWithSuccess`、`endRemoveRouteWithError:`改变路由状态
 
 ---
-#### 下一节：[获取模块](MakeDestination.md)
+#### 下一节：[自定义 configuration 传参](CustomConfiguration.md)

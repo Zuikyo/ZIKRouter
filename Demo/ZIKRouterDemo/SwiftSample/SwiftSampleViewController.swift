@@ -179,7 +179,6 @@ class SwiftSampleViewController: UIViewController, PureSwiftSampleViewInput, Swi
                 print("easy service2: \(String(describing: destiantion))")
             }
         }
-        print("easy service2: \(String(describing: service2))")
     }
     
     @IBAction func testInjectedRouter(_ sender: Any) {

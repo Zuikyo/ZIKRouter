@@ -65,10 +65,6 @@ static NSMutableArray<Class> *_routerClasses;
         if ([config conformsToProtocol:@protocol(ZIKConfigurationMakeable)]) {
             if ([config respondsToSelector:@selector(makeDestination)] && config.makeDestination) {
                 id destination = config.makeDestination();
-                if (destination && [config respondsToSelector:@selector(didMakeDestination)] && config.didMakeDestination) {
-                    config.didMakeDestination(destination);
-                    config.didMakeDestination = nil;
-                }
                 return destination;
             }
         }

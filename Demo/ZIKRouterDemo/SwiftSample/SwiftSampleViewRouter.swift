@@ -10,28 +10,13 @@ import UIKit
 import ZIKRouter.Internal
 import ZRouter
 
-protocol SwiftSampleViewConfig {
+protocol SwiftSampleViewModuleInput {
     
 }
 
 //Custom configuration of this router.
-class SwiftSampleViewConfiguration: ZIKViewMakeableConfiguration<SwiftSampleViewController>, SwiftSampleViewConfig {
-    
-    override func copy(with zone: NSZone? = nil) -> Any {
-        return super.copy(with: zone)
-    }
-    var constructDestinationWithTitle: ((_ title: String) -> Void) {
-        return { title in
-            self.makeDestination = {
-                let title = title
-                let sb = UIStoryboard.init(name: "Main", bundle: nil)
-                let destination = sb.instantiateViewController(withIdentifier: "SwiftSampleViewController") as! SwiftSampleViewController
-                destination.title = title
-                return destination
-            }
-        }
-    }
-//    var makeDestination: (() -> SwiftSampleViewController?)?
+class SwiftSampleViewConfiguration: ZIKViewMakeableConfiguration<SwiftSampleViewController>, SwiftSampleViewModuleInput {
+
 }
 
 //Router for SwiftSampleViewController.
@@ -41,7 +26,7 @@ class SwiftSampleViewRouter: ZIKViewRouter<SwiftSampleViewController, ZIKViewMak
         registerView(SwiftSampleViewController.self)
         register(RoutableView<SwiftSampleViewInput>())
         register(RoutableView<PureSwiftSampleViewInput>())
-        register(RoutableViewModule<SwiftSampleViewConfig>())
+        register(RoutableViewModule<SwiftSampleViewModuleInput>())
         registerIdentifier("swiftSample")
     }
     
@@ -81,6 +66,6 @@ extension RoutableView where Protocol == PureSwiftSampleViewInput {
     init() { self.init(declaredProtocol: Protocol.self) }
 }
 //Declare SwiftSampleViewConfig is routable
-extension RoutableViewModule where Protocol == SwiftSampleViewConfig {
+extension RoutableViewModule where Protocol == SwiftSampleViewModuleInput {
     init() { self.init(declaredProtocol: Protocol.self) }
 }

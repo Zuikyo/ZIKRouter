@@ -15,7 +15,6 @@ public typealias ViewRouteType = ZIKViewRouteType
 public typealias ViewRouteError = ZIKViewRouteError
 public typealias ViewRouteConfig = ZIKViewRouteConfiguration
 public typealias ViewRemoveConfig = ZIKViewRemoveConfiguration
-public typealias ViewMakeableConfig = ZIKViewMakeableConfiguration
 public typealias ViewRouteSegueConfig = ZIKViewRouteSegueConfiguration
 public typealias ViewRoutePopoverConfig = ZIKViewRoutePopoverConfiguration
 

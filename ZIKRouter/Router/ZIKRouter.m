@@ -608,6 +608,14 @@ NSErrorDomain const ZIKRouteErrorDomain = @"ZIKRouteErrorDomain";
     }
     [self prepareDestination:destination configuration:configuration];
     [self didFinishPrepareDestination:destination configuration:configuration];
+    if ([configuration conformsToProtocol:@protocol(ZIKConfigurationMakeable)] && [configuration respondsToSelector:@selector(didMakeDestination)]) {
+        id<ZIKConfigurationMakeable> makeableConfig = (id)configuration;
+        void(^didMakeDestination)(id) = makeableConfig.didMakeDestination;
+        if (didMakeDestination) {
+            makeableConfig.didMakeDestination = nil;
+            didMakeDestination(destination);
+        }
+    }
 }
 
 - (void)endPerformRouteWithSuccess {

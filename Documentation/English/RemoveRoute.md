@@ -89,4 +89,5 @@ Steps to support removing a service:
 4. Manage the router's state with `beginRemoveRoute`、`endRemoveRouteWithSuccess`、`endRemoveRouteWithError:`
 
 ---
-#### Next section: [Make Destination](MakeDestination.md)
+#### Next section: [Transfer Parameters with Custom Configuration](CustomConfiguration.md)
+

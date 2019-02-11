@@ -444,10 +444,6 @@ typedef void(^ZIKViewRouteGlobalErrorHandler)(__kindof ZIKViewRouter * _Nullable
          weakConfig.makeDestination = ^LoginViewController * _Nullable{
              // Use custom initializer
              LoginViewController *destination = [LoginViewController alloc] initWithAccount:account];
-             if (weakConfig.didMakeDestination) {
-                 weakConfig.didMakeDestination(destination);
-                 weakConfig.didMakeDestination = nil;
-             }
              return destination;
          };
      };
@@ -515,10 +511,6 @@ typedef void(^ZIKViewRouteGlobalErrorHandler)(__kindof ZIKViewRouter * _Nullable
             weakConfig.makeDestination = ^LoginViewController * _Nullable{
                 // Use custom initializer
                 LoginViewController *destination = [LoginViewController alloc] initWithAccount:account];
-                if (weakConfig.didMakeDestination) {
-                    weakConfig.didMakeDestination(destination);
-                    weakConfig.didMakeDestination = nil;
-                }
                 return destination;
             };
         };

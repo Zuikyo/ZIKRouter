@@ -57,7 +57,7 @@ Module protocol is for declaring parameters used by the module.
 
 When you need a module protocol ?
 
-When the destination class uses custom initializer to create instance. router needs to get required parameter from the caller. 
+When the destination class uses custom initializer to create instance, router needs to get required parameter from the caller. 
 
 Or when your module contains multi components, and you need to pass parameters to those components. And those parameters are not belong to destination. you need a module config protocol to store them in configuration, and configure components' dependencies inside the router.
 
