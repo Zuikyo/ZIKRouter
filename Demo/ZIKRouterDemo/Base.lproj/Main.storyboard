@@ -762,14 +762,6 @@
                                     <action selector="testRouteForConfig:" destination="eYQ-z4-9Qd" eventType="touchUpInside" id="bY3-6u-KEj"/>
                                 </connections>
                             </button>
-                            <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="9hQ-eX-jYZ">
-                                <rect key="frame" x="122" y="389" width="131" height="30"/>
-                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                <state key="normal" title="test injected router"/>
-                                <connections>
-                                    <action selector="testInjectedRouter:" destination="eYQ-z4-9Qd" eventType="touchUpInside" id="gHj-zt-eTw"/>
-                                </connections>
-                            </button>
                             <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="KXc-pf-vnw">
                                 <rect key="frame" x="114" y="162" width="144" height="30"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
@@ -787,9 +779,9 @@
                                 </connections>
                             </button>
                             <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="V1K-aa-eWy">
-                                <rect key="frame" x="98" y="427" width="179" height="30"/>
+                                <rect key="frame" x="129" y="389" width="117" height="30"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                <state key="normal" title="test route for swift service"/>
+                                <state key="normal" title="test swift service"/>
                                 <connections>
                                     <action selector="testRouteForSwiftService:" destination="eYQ-z4-9Qd" eventType="touchUpInside" id="Gi8-zW-8f4"/>
                                 </connections>
@@ -824,6 +816,14 @@
                                 <state key="normal" title="test easy service route 2"/>
                                 <connections>
                                     <action selector="testEasyServiceRoute2:" destination="eYQ-z4-9Qd" eventType="touchUpInside" id="ahc-YP-9c7"/>
+                                </connections>
+                            </button>
+                            <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="9hQ-eX-jYZ">
+                                <rect key="frame" x="100" y="427" width="171" height="30"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <state key="normal" title="test swift serivce module"/>
+                                <connections>
+                                    <action selector="testRouteForSwiftServiceModule:" destination="eYQ-z4-9Qd" eventType="touchUpInside" id="cbN-QD-TRj"/>
                                 </connections>
                             </button>
                         </subviews>

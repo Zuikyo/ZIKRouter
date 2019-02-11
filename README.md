@@ -50,7 +50,7 @@ View router 将 UIKit / AppKit 中的所有界面跳转方式封装成一个统�
 - [x] Send custom events to router
 - [x] Auto register all routers
 
-## Table of Contents
+## Documentation
 
 ### Design Idea
 
@@ -76,6 +76,26 @@ View router 将 UIKit / AppKit 中的所有界面跳转方式封装成一个统�
 6. [Module Adapter](Documentation/English/ModuleAdapter.md)
 
 [FAQ](Documentation/English/FAQ.md)
+
+
+
+## Quick Started Guide
+
+1. [Create Router](#1.-Create-Router)
+   1. [Router Subclass](#1.1-Router-Subclass)
+   2. [Simple Router](#1.2-Simple-Router)
+2. [Declare Routable Type](#2.-Declare-Routable-Type)
+3. [View Router](#View-Router)
+   1. [Transition directly](#Transition-directly)
+   2. [Prepare before Transition](#Prepare-before-Transition)
+   3. [Make Destination](#Make-Destination)
+   4. [Transfer Parameters in a Powerful Pattern](#Transfer-Parameters-in-a-Powerful-Pattern)
+   5. [Remove](#Remove)
+   6. [Adapter](#Adapter)
+   7. [URL Router](#URL-Router)
+4. [Service Router](#Service-Router)
+5. [Demo and Practice](#Demo-and-Practice)
+6. [File Template](#File Template)
 
 ## Requirements
 
@@ -392,9 +412,9 @@ enum ViewRoutePath {
 }
 ```
 
-#### Transition and Prepare
+#### Prepare before Transition
 
-Transition to editor view, and prepare it before transition:
+Prepare it before transition to editor view:
 
 ```swift
 class TestViewController: UIViewController {
@@ -542,13 +562,13 @@ func makeEditorViewModuleConfiguration() -> ZIKViewMakeableConfiguration<NoteEdi
 If the protocol is very simple and you don't need a configuration subclass,or you're using Objective-C and don't want too many subclass, you can choose generic class`ViewMakeableConfiguration`and`ZIKViewMakeableConfiguration`:
 
 ```swift
-extension ViewMakeableConfiguration: EditorViewModuleInput where Destination == NoteEditorInput, Constructor == (EditorViewModel, Note) -> Void {
+extension ViewMakeableConfiguration: EditorViewModuleInput where Destination == NoteEditorInput, Constructor == (Note) -> Void {
 }
 
 // ViewMakeableConfiguration with generic arguments works as the same as  EditorViewModuleConfiguration
 // The config works like EditorViewModuleConfiguration<Any>()
-func makeEditorViewModuleConfiguration() -> ViewMakeableConfiguration<NoteEditorInput, (EditorViewModel, Note) -> Void> {
-	let config = ViewMakeableConfiguration<NoteEditorInput, (EditorViewModel, Note) -> Void>({ _,_ in})
+func makeEditorViewModuleConfiguration() -> ViewMakeableConfiguration<NoteEditorInput, (Note) -> Void> {
+	let config = ViewMakeableConfiguration<NoteEditorInput, (Note) -> Void>({ _,_ in})
 	
 	// User is responsible for calling constructDestination and giving parameters
 	config.constructDestination = { [unowned config] note in
@@ -701,6 +721,8 @@ Note *note = ...
 </details>
 
 In this design pattern, we reduce much glue code for transferring parameters, and the module can re-declare their parameters with generic arguments and module config protocol.
+
+For more detail, read [Transfer Parameters with Custom Configuration](Documentation/English/CustomConfiguration.md).
 
 #### Remove
 

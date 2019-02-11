@@ -10,22 +10,9 @@
 #import <ZIKRouter/ZIKRouterInternal.h>
 #import <ZIKRouter/ZIKViewRouterInternal.h>
 #import "___VARIABLE_destinationClass___.h"
-#import "___VARIABLE_protocolName___.h"
-
-
-@interface ___VARIABLE_configClass___()
-@end
-@implementation ___VARIABLE_configClass___
- 
- - (id)copyWithZone:(nullable NSZone *)zone {
-     ___VARIABLE_configClass___ *copy = [super copyWithZone:zone];
-     //Set values to copy
-     return copy;
- }
- 
-@end
 
 DeclareRoutableView(___VARIABLE_destinationClass___, ___VARIABLE_productName___)
+DeclareRoutableViewModuleProtocol(___VARIABLE_moduleProtocolName___)
 
 @interface ___VARIABLE_productName___ ()
 
@@ -35,10 +22,28 @@ DeclareRoutableView(___VARIABLE_destinationClass___, ___VARIABLE_productName___)
 
 + (void)registerRoutableDestination {
     [self registerExclusiveView:[___VARIABLE_destinationClass___ class]];
-    [self registerModuleProtocol:ZIKRoutable(___VARIABLE_protocolName___)];
+    [self registerModuleProtocol:ZIKRoutable(___VARIABLE_moduleProtocolName___)];
 }
 
-- (nullable ___VARIABLE_destinationClass___ *)destinationWithConfiguration:(ZIKViewRouteConfiguration *)configuration {
+// Return your custom configuration
++ (ZIKViewMakeableConfiguration<___VARIABLE_moduleProtocolName___> *)defaultRouteConfiguration {
+    ZIKViewMakeableConfiguration<___VARIABLE_destinationClass___ *> *config = [[ZIKViewMakeableConfiguration<___VARIABLE_destinationClass___ *> alloc] init];
+    __weak typeof(config) weakConfig = config;
+    config.constructDestination = ^(/*arguments*/) {
+        weakConfig.makeDestination = ^{
+#error TODO: instantiate destination
+            // Instantiate destination. Return nil if configuration is invalid.
+            ___VARIABLE_destinationClass___ *destination = [[___VARIABLE_destinationClass___ alloc] init];
+            return destination;
+        };
+    };
+    return config;
+}
+
+- (nullable ___VARIABLE_destinationClass___ *)destinationWithConfiguration:(ZIKViewMakeableConfiguration<___VARIABLE_moduleProtocolName___> *)configuration {
+    if (configuration.makeDestination) {
+        return configuration.makeDestination();
+    }
 #error TODO: instantiate destination
     // Instantiate destination with configuration. Return nil if configuration is invalid.
     ___VARIABLE_destinationClass___ *destination = [[___VARIABLE_destinationClass___ alloc] init];
@@ -46,13 +51,8 @@ DeclareRoutableView(___VARIABLE_destinationClass___, ___VARIABLE_productName___)
     return destination;
 }
 
-- (void)prepareDestination:(___VARIABLE_destinationClass___ *)destination configuration:(ZIKViewRouteConfiguration *)configuration {
+- (void)prepareDestination:(___VARIABLE_destinationClass___ *)destination configuration:(ZIKViewMakeableConfiguration<___VARIABLE_moduleProtocolName___> *)configuration {
     // Prepare destination
-}
-
- // Return your custom configuration
-+ (___VARIABLE_configClass___ *)defaultRouteConfiguration {
-    return [[___VARIABLE_configClass___ alloc] init];
 }
 
 /*

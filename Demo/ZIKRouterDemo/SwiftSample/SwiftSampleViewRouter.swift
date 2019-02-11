@@ -44,15 +44,6 @@ class SwiftSampleViewRouter: ZIKViewRouter<SwiftSampleViewController, ZIKViewMak
         return destination
     }
     
-    override func destinationFromExternalPrepared(destination: SwiftSampleViewController) -> Bool {
-        if (destination.injectedAlertRouter != nil) {
-            return true
-        }
-        return false
-    }
-    override func prepareDestination(_ destination: SwiftSampleViewController, configuration: ZIKViewRouteConfiguration) {
-        destination.injectedAlertRouter = Router.to(RoutableViewModule<RequiredCompatibleAlertModuleInput>())
-    }
 }
 
 // MARK: Declare Routable

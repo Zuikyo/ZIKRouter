@@ -11,33 +11,37 @@ import ZIKRouter
 import ZRouter
 import ZIKRouter.Internal
 
-protocol SwiftServiceConfig {
-    
-}
-
-//Custom configuration of this router.
-class SwiftServiceConfiguration: ZIKServiceMakeableConfiguration<SwiftService>, SwiftServiceConfig {
-    override func copy(with zone: NSZone? = nil) -> Any {
-        return super.copy(with: zone)
-    }
+protocol SwiftServiceModuleInput:class {
+    var constructDestination: (String) -> Void { get }
+    var didMakeDestination: ((SwiftServiceInput) -> Void)? { get set }
 }
 
 //Router for SwiftService. Generic of ZIKRouter can't be pure swift type, so we use `AnyObject` here.
-class SwiftServiceRouter: ZIKServiceRouter<AnyObject, ZIKServiceMakeableConfiguration<SwiftService>> {
+class SwiftServiceRouter: ZIKServiceRouter<AnyObject, PerformRouteConfig> {
     override class func registerRoutableDestination() {
         registerService(SwiftService.self)
         if TEST_BLOCK_ROUTES == 0 {
             register(RoutableService<SwiftServiceInput>())
-            register(RoutableServiceModule<SwiftServiceConfig>())
+            register(RoutableServiceModule<SwiftServiceModuleInput>())
         }
     }
     
-    override func destination(with configuration: ZIKServiceMakeableConfiguration<SwiftService>) -> AnyObject? {
-        return SwiftService()
+    override class func defaultRouteConfiguration() -> PerformRouteConfig {
+        let config = ServiceMakeableConfiguration<SwiftServiceInput, (String) -> Void>({ _ in })
+        config.constructDestination = { [unowned config] (param) in
+            config.makeDestination = { () in
+                return SwiftService()
+            }
+        }
+        return config
     }
     
-    override class func defaultRouteConfiguration() -> ZIKServiceMakeableConfiguration<SwiftService> {
-        return SwiftServiceConfiguration()
+    override func destination(with configuration: PerformRouteConfig) -> AnyObject? {
+        if let config = configuration as? ServiceMakeableConfiguration<SwiftServiceInput, (String) -> Void>,
+            let makeDestination = config.makeDestination {
+            return makeDestination() as AnyObject?
+        }
+        return SwiftService()
     }
     
     @objc class func applicationDidEnterBackground(_ application: UIApplication) {
@@ -54,6 +58,10 @@ extension SwiftService: ZIKRoutableService {
 extension RoutableService where Protocol == SwiftServiceInput {
     init() { self.init(declaredProtocol: Protocol.self) }
 }
-extension RoutableServiceModule where Protocol == SwiftServiceConfig {
+extension RoutableServiceModule where Protocol == SwiftServiceModuleInput {
     init() { self.init(declaredProtocol: Protocol.self) }
+}
+
+extension ServiceMakeableConfiguration: SwiftServiceModuleInput where Destination == SwiftServiceInput, Constructor == (String) -> Void {
+    
 }

@@ -6,8 +6,7 @@
 //___COPYRIGHT___
 //
 
-
-// TODO: let ___VARIABLE_destinationClass___ conform to this protocol
+#error("let ___VARIABLE_destinationClass___ conform to this protocol")
 protocol ___VARIABLE_protocolName___ {
     
 }

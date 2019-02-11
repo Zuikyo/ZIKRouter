@@ -36,9 +36,6 @@ class SwiftSampleViewController: UIViewController, PureSwiftSampleViewInput, Swi
         willSet { anyRouter = newValue?.router }
     }
     
-    //You can inject alertRouter from outside, then use the router directly
-    var injectedAlertRouter: ViewRouterType<Any, RequiredCompatibleAlertModuleInput>?
-    
     override func viewDidLoad() {
         if #available(iOS 9.0, *) {
             registerForPreviewing(with: self, sourceView: view)
@@ -172,7 +169,8 @@ class SwiftSampleViewController: UIViewController, PureSwiftSampleViewInput, Swi
     @IBAction func testEasyServiceRoute2(_ sender: Any) {
         let service = Router.makeDestination(to: RoutableService<EasyServiceInput2>())
         print("easy service: \(String(describing: service))")
-        let service2 = Router.makeDestination(to: RoutableServiceModule<EasyServiceModuleInput>()) { (module) in
+        
+        Router.perform(to: RoutableServiceModule<EasyServiceModuleInput>()) { (module) in
             var module = module
             module.constructDestination("123")            
             module.didMakeDestination = { destiantion in
@@ -180,34 +178,19 @@ class SwiftSampleViewController: UIViewController, PureSwiftSampleViewInput, Swi
             }
         }
     }
-    
-    @IBAction func testInjectedRouter(_ sender: Any) {
-        injectedAlertRouter?.perform(
-            path: .custom(from: self),
-            configuring: { (config, prepareModule) in
-                prepareModule({ module in
-                    module.title = "Compatible Alert"
-                    module.message = "Test custom route for alert with UIAlertView and UIAlertController"
-                    module.addCancelButtonTitle("Cancel", handler: {
-                        print("Tap cancel alert")
-                    })
-                    module.addOtherButtonTitle("Hello", handler: {
-                        print("Tap Hello alert")
-                    })
-                })
-                
-                config.successHandler = { d in
-                    print("show custom alert complete")
-                }
-                config.errorHandler = { (action, error) in
-                    print("show custom alert failed: %@",error)
-                }
-            })
-    }
 
     @IBAction func testRouteForSwiftService(_ sender: Any) {
         let service = Router.makeDestination(to: RoutableService<SwiftServiceInput>())
         service?.swiftFunction()
+    }
+    
+    @IBAction func testRouteForSwiftServiceModule(_ sender: Any) {
+        Router.perform(to: RoutableServiceModule<SwiftServiceModuleInput>()) { (config) in
+            config.constructDestination("123")
+            config.didMakeDestination = { service in
+                service.swiftFunction()
+            }
+        }
     }
     
     public func previewingContext(_ previewingContext: UIViewControllerPreviewing, viewControllerForLocation location: CGPoint) -> UIViewController? {

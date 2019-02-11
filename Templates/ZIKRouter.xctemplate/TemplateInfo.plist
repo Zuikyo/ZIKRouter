@@ -73,7 +73,7 @@
 			<key>Identifier</key>
 			<string>protocolType</string>
 			<key>Name</key>
-			<string>Protocol Type of Module</string>
+			<string>Routable Protocol Type</string>
 			<key>Description</key>
 			<string>Protocol type of this module</string>
 			<key>Type</key>
@@ -91,9 +91,9 @@
 			<key>Identifier</key>
 			<string>protocolName</string>
 			<key>Name</key>
-			<string>Name of protocol</string>
+			<string>Destination protocol</string>
 			<key>Description</key>
-			<string>Name of protocol</string>
+			<string>Destination protocol comformed by destination</string>
 			<key>Type</key>
 			<string>text</string>
 			<key>Default</key>
@@ -109,15 +109,15 @@
 		</dict>
 		<dict>
 			<key>Identifier</key>
-			<string>configClass</string>
+			<string>moduleProtocolName</string>
 			<key>Name</key>
-			<string>Custom Configuration Class</string>
+			<string>Module Config Protocol</string>
 			<key>Description</key>
-			<string>Name of the custom configuration class</string>
+			<string>Module config protocol conformed by configuration of router</string>
 			<key>Type</key>
 			<string>text</string>
 			<key>Default</key>
-			<string>___Configuration</string>
+			<string>__ModuleInput</string>
 			<key>RequiredOptions</key>
 			<dict>
 				<key>protocolType</key>

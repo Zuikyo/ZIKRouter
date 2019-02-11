@@ -6,11 +6,12 @@
 //___COPYRIGHT___
 //
 
-#import <ZIKRouter/ZIKViewModuleRoutable.h>
+#import <Foundation/Foundation.h>
 
 NS_ASSUME_NONNULL_BEGIN
 
-@protocol ___VARIABLE_protocolName___ <ZIKViewModuleRoutable>
+#error TODO: let ___VARIABLE_destinationClass___ conform to this protocol
+@protocol ___VARIABLE_protocolName___ <NSObject>
 
 @end
 

@@ -43,7 +43,7 @@ View router 将 UIKit / AppKit 中的所有界面跳转方式封装成一个统�
 - [x] 高性能的自动注册方式，也支持手动注册
 - [x] 支持多种路由实现方式： 强大的 router 子类、简单的工厂 block 和 C 函数
 
-## 目录
+## 文档目录
 
 ### 设计思路
 
@@ -68,7 +68,25 @@ View router 将 UIKit / AppKit 中的所有界面跳转方式封装成一个统�
 5. [循环依赖问题](CircularDependencies.md)
 6. [模块化和解耦](ModuleAdapter.md)
 
-[FAQ](FAQ.md)
+[常见问题](FAQ.md)
+
+## 快速入门
+
+1. [创建 Router](#1.-创建-Router)
+  1. [Router 子类](#1.1-Router-子类)
+  2. [快捷注册](#1.2-快捷注册)
+2. [声明 Routable 类型](#2.-声明-Routable-类型)
+3. [View Router](#View-Router)
+   1. [直接跳转](#直接跳转)
+   2. [跳转前进行配置](#跳转前进行配置)
+   3. [Make Destination](#Make-Destination)
+   4. [更强大的传参方式](#更强大的传参方式)
+   5. [Remove](#Remove)
+   6. [Adapter](#Adapter)
+   7. [URL Router](#URL-Router)
+4. [Service Router](#Service-Router)
+5. [Demo 和实践](#Demo-和实践)
+6. [代码模板](#代码模板)
 
 ## Requirements
 
@@ -533,13 +551,13 @@ func makeEditorViewModuleConfiguration() -> ZIKViewMakeableConfiguration<NoteEdi
 如果你的协议很简单，不需要用到 configuration 子类，或者你用的是 Objective-C，不想创建过多的子类影响 app 启动速度，可以用泛型类`ViewMakeableConfiguration`和`ZIKViewMakeableConfiguration`：
 
 ```swift
-extension ViewMakeableConfiguration: EditorViewModuleInput where Destination == NoteEditorInput, Constructor == (EditorViewModel, Note) -> Void {
+extension ViewMakeableConfiguration: EditorViewModuleInput where Destination == NoteEditorInput, Constructor == (Note) -> Void {
 }
 
 // 用泛型类可以实现 EditorViewModuleConfiguration 子类一样的效果
 // 此时的 config 相当于 EditorViewModuleConfiguration<Any>()
-func makeEditorViewModuleConfiguration() -> ViewMakeableConfiguration<NoteEditorInput, (EditorViewModel, Note) -> Void> {
-	let config = ViewMakeableConfiguration<NoteEditorInput, (EditorViewModel, Note) -> Void>({ _,_ in})
+func makeEditorViewModuleConfiguration() -> ViewMakeableConfiguration<NoteEditorInput, (Note) -> Void> {
+	let config = ViewMakeableConfiguration<NoteEditorInput, (Note) -> Void>({ _,_ in})
 	
 	// 使用者调用 constructDestination 向模块传参
 	config.constructDestination = { [unowned config] note in
@@ -677,6 +695,8 @@ Note *note = ...
 </details>
 
 这种方式省去了很多胶水代码，通过闭包直接传参，无需通过属性保存参数，而且每个模块都能用泛型和 protocol 重新声明参数类型。
+
+更详细的内容，可以参考[自定义 configuration 传参](CustomConfiguration.md)。
 
 #### Remove
 
@@ -982,7 +1002,7 @@ Demo 目录下的 ZIKRouterDemo 展示了如何用 ZIKRouter 进行各种界面�
 
 想要查看 router 是如何应用在 VIPER 架构中的，可以参考这个项目：[ZIKViper](https://github.com/Zuikyo/ZIKViper)。
 
-## File Template
+## 代码模板
 
 可以用 Xcode 的文件模板快速生成 router 和 protocol 的代码：
 

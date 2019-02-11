@@ -29,13 +29,23 @@ class AppBlockRouteRegistry: ZIKViewRouteAdapter {
             let route = ZIKServiceRoute<SwiftService, PerformRouteConfig>
                 .make(withDestination: SwiftService.self,
                       makeDestination: { (config, router) -> SwiftService? in
+                        if let config = config as? ServiceMakeableConfiguration<SwiftServiceInput, (String) -> Void>,
+                            let makeDestination = config.makeDestination {
+                            return makeDestination() as? SwiftService ?? nil
+                        }
                         return SwiftService()
                 }).makeDefaultConfiguration({
-                    return SwiftServiceConfiguration()
+                    let config = ServiceMakeableConfiguration<SwiftServiceInput, (String) -> Void>({ _ in })
+                    config.constructDestination = { [unowned config] (param) in
+                        config.makeDestination = { () in
+                            return SwiftService()
+                        }
+                    }
+                    return config
                 })
             if TEST_BLOCK_ROUTES == 1 {
                 route.register(RoutableService<SwiftServiceInput>())
-                route.register(RoutableServiceModule<SwiftServiceConfig>())
+                route.register(RoutableServiceModule<SwiftServiceModuleInput>())
             }
         }
     }
@@ -57,7 +67,6 @@ func makeSampleViewController(config:ViewRouteConfig) -> SwiftSampleViewControll
     let sb = UIStoryboard.init(name: "Main", bundle: nil)
     let destination = sb.instantiateViewController(withIdentifier: "SwiftSampleViewController") as! SwiftSampleViewController
     destination.title = "Swift Sample from easy register"
-    destination.injectedAlertRouter = Router.to(RoutableViewModule<RequiredCompatibleAlertModuleInput>())
     return destination
 }
 
@@ -69,7 +78,6 @@ class EasyRouteRegistry: ZIKViewRouteAdapter {
             let sb = UIStoryboard.init(name: "Main", bundle: nil)
             let destination = sb.instantiateViewController(withIdentifier: "SwiftSampleViewController") as! SwiftSampleViewController
             destination.title = "Swift Sample from easy register"
-            destination.injectedAlertRouter = Router.to(RoutableViewModule<RequiredCompatibleAlertModuleInput>())
             return destination
         }
         
@@ -80,7 +88,6 @@ class EasyRouteRegistry: ZIKViewRouteAdapter {
                     let sb = UIStoryboard.init(name: "Main", bundle: nil)
                     let destination = sb.instantiateViewController(withIdentifier: "SwiftSampleViewController") as! SwiftSampleViewController
                     destination.title = "Swift Sample from easy register"
-                    destination.injectedAlertRouter = Router.to(RoutableViewModule<RequiredCompatibleAlertModuleInput>())
                     return destination
                 }
             }

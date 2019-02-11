@@ -9,33 +9,37 @@
 import ZRouter
 import ZIKRouter.Internal
 
-class ___VARIABLE_configClass___: ZIKPerformRouteConfiguration, ___VARIABLE_protocolName___ {
-    override func copy(with zone: NSZone? = nil) -> Any {
-        let copy = super.copy(with: zone) as! ___VARIABLE_configClass___
-        // Set values to copy
-        return copy
-    }
-}
-
-class ___VARIABLE_productName___: ZIKServiceRouter<___VARIABLE_destinationClass___, ___VARIABLE_configClass___> {
+class ___VARIABLE_productName___: ZIKServiceRouter<___VARIABLE_destinationClass___, PerformRouteConfig> {
     
     override class func registerRoutableDestination() {
         registerExclusiveService(___VARIABLE_destinationClass___.self)
-        register(RoutableServiceModule<___VARIABLE_protocolName___>())
+        register(RoutableServiceModule<___VARIABLE_moduleProtocolName___>())
     }
     
-    override func destination(with configuration: ___VARIABLE_configClass___) -> ___VARIABLE_destinationClass___? {
+    override class func defaultRouteConfiguration() -> PerformRouteConfig {
+        let config = ServiceMakeableConfiguration<___VARIABLE_protocolName___, (/*arguments*/) -> Void>({ _ in })
+        config.constructDestination = { [unowned config] (param) in
+            config.makeDestination = { () in
+                // Instantiate destination. Return nil if configuration is invalid.
+                let destination: ___VARIABLE_destinationClass___? = /*___VARIABLE_destinationClass___()*/
+                return destination
+            }
+        }
+        return config
+    }
+    
+    override func destination(with configuration: PerformRouteConfig) -> ___VARIABLE_destinationClass___? {
+        if let config = configuration as? ServiceMakeableConfiguration<___VARIABLE_protocolName___, (/*arguments*/) -> Void>,
+            let makeDestination = config.makeDestination {
+            return makeDestination() as? ___VARIABLE_destinationClass___ ?? nil
+        }
         // Instantiate destination with configuration. Return nil if configuration is invalid.
         let destination: ___VARIABLE_destinationClass___? = /*___VARIABLE_destinationClass___()*/
         return destination
     }
     
-    override func prepareDestination(_ destination: ___VARIABLE_destinationClass___, configuration: ___VARIABLE_configClass___) {
+    override func prepareDestination(_ destination: ___VARIABLE_destinationClass___, configuration: PerformRouteConfig) {
         // Prepare destination
-    }
-    
-    override class func defaultRouteConfiguration() -> ___VARIABLE_configClass___ {
-        return ___VARIABLE_configClass___()
     }
     
 }
@@ -44,6 +48,10 @@ extension ___VARIABLE_destinationClass___: ZIKRoutableService {
     
 }
 
-extension RoutableServiceModule where Protocol == ___VARIABLE_protocolName___ {
-    init() { self.init(declaredTypeName: "___VARIABLE_protocolName___") }
+extension RoutableServiceModule where Protocol == ___VARIABLE_moduleProtocolName___ {
+    init() { self.init(declaredTypeName: "___VARIABLE_moduleProtocolName___") }
+}
+
+extension ServiceMakeableConfiguration: ___VARIABLE_moduleProtocolName___ where Destination == ___VARIABLE_protocolName___, Constructor == (/*arguments*/) -> Void {
+    
 }
