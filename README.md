@@ -81,10 +81,10 @@ View router 将 UIKit / AppKit 中的所有界面跳转方式封装成一个统�
 
 ## Quick Started Guide
 
-1. [Create Router](#1.-Create-Router)
-   1. [Router Subclass](#1.1-Router-Subclass)
-   2. [Simple Router](#1.2-Simple-Router)
-2. [Declare Routable Type](#2.-Declare-Routable-Type)
+1. [Create Router](#1-Create-Router)
+   1. [Router Subclass](#11-Router-Subclass)
+   2. [Simple Router](#12-Simple-Router)
+2. [Declare Routable Type](#2-Declare-Routable-Type)
 3. [View Router](#View-Router)
    1. [Transition directly](#Transition-directly)
    2. [Prepare before Transition](#Prepare-before-Transition)
