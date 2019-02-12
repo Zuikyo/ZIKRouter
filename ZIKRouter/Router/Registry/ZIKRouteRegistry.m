@@ -211,6 +211,11 @@ static CFMutableSetRef _factoryBlocks;
             return factory(config);
         }];
     }
+    if (CFSetContainsValue(self.runtimeFactoryDestinationClasses, (__bridge const void *)(destinationClass))) {
+        return [self easyRouteForDestinationClass:destinationClass factory:^id(ZIKPerformRouteConfiguration * _Nonnull config, __kindof ZIKRouter * _Nonnull router) {
+            return [[destinationClass alloc] init];
+        }];
+    }
     return nil;
 }
 
