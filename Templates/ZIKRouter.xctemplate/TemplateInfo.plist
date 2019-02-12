@@ -91,7 +91,7 @@
 			<key>Identifier</key>
 			<string>protocolName</string>
 			<key>Name</key>
-			<string>Destination protocol</string>
+			<string>Destination Protocol</string>
 			<key>Description</key>
 			<string>Destination protocol comformed by destination</string>
 			<key>Type</key>

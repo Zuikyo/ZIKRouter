@@ -362,6 +362,8 @@ open class ServiceMakeableConfiguration<Destination, Constructor>: ZIKSwiftServi
             self.__didMakeDestination = { [unowned self] (d: Any) -> Void in
                 if let destination = d as? Destination {
                     self.didMakeDestination?(destination)
+                } else {
+                    assertionFailure("Invalid destination. Destination is not type of (\(Destination.self)): \(d)")
                 }
             }
         }
