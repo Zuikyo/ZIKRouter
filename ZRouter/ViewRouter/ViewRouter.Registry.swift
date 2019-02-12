@@ -501,7 +501,7 @@ private class _ViewRouterValidater: ZIKViewRouteAdapter {
                         declaredRoutableTypes.append(simplifiedName)
                     } else if symbolName.contains("." + String(describing: ViewController.self)), symbolName.contains(".ZIKViewRoutable") {
                         let imagePath = imagePathOfAddress(name)
-                        assert(imagePath.contains("/ZRouter.framework/") || !hasDynamicLibrary("ZRouter"), """
+                        assert(imagePath.contains("/ZRouter.framework/") || !zix_hasDynamicLibrary("ZRouter"), """
                             Don't use an UIViewController as generic parameter of RoutableView:
                             ```
                             @objc protocol SomeViewProtocol: ZIKViewRoutable {
@@ -522,7 +522,7 @@ private class _ViewRouterValidater: ZIKViewRouteAdapter {
                             """)
                     } else if symbolName.contains("." + String(describing: View.self)), symbolName.contains(".ZIKViewRoutable") {
                         let imagePath = imagePathOfAddress(name)
-                        assert(imagePath.contains("/ZRouter.framework/") || !hasDynamicLibrary("ZRouter"), """
+                        assert(imagePath.contains("/ZRouter.framework/") || !zix_hasDynamicLibrary("ZRouter"), """
                             Don't use an UIViewController as generic parameter of RoutableView:
                             ```
                             @objc protocol SomeViewProtocol: ZIKViewRoutable {
@@ -543,7 +543,7 @@ private class _ViewRouterValidater: ZIKViewRouteAdapter {
                             """)
                     } else if symbolName.contains(".ZIKViewRouteConfiguration"), symbolName.contains(".ZIKViewModuleRoutable") {
                         let imagePath = imagePathOfAddress(name)
-                        assert(imagePath.contains("/ZRouter.framework/") || !hasDynamicLibrary("ZRouter"), """
+                        assert(imagePath.contains("/ZRouter.framework/") || !zix_hasDynamicLibrary("ZRouter"), """
                             Don't use a ZIKViewRouteConfiguration as generic parameter of RoutableViewModule:
                             ```
                             @objc protocol SomeViewModuleProtocol: ZIKViewModuleRoutable {
@@ -564,7 +564,7 @@ private class _ViewRouterValidater: ZIKViewRouteAdapter {
                             """)
                     } else if symbolName.contains("where"), symbolName.contains("=="), (symbolName.contains(".ZIKViewRoutable>") || symbolName.contains(".ZIKViewModuleRoutable>")) {
                         let imagePath = imagePathOfAddress(name)
-                        assert(imagePath.contains("/ZRouter.framework/") || !hasDynamicLibrary("ZRouter"), """
+                        assert(imagePath.contains("/ZRouter.framework/") || !zix_hasDynamicLibrary("ZRouter"), """
                             Don't use ZIKViewRoutable or ZIKViewModuleRoutable as generic parameter:
                             ```
                             // Invalid usage

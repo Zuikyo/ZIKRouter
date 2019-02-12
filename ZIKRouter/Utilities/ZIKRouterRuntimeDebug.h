@@ -40,7 +40,7 @@ FOUNDATION_EXTERN bool _swift_typeIsTargetType(id sourceType, id targetType);
  */
 FOUNDATION_EXTERN void _enumerateSymbolName(bool(^handler)(const char *name, NSString *(^demangledAsSwift)(const char *mangledName, bool simplified)));
 
-FOUNDATION_EXTERN bool hasDynamicLibrary(NSString *libName);
+FOUNDATION_EXTERN bool zix_hasDynamicLibrary(NSString *libName);
 
 /// Generate code for importing routers when manually registering routers.
 FOUNDATION_EXTERN NSString *codeForImportingRouters(void);
@@ -49,7 +49,7 @@ FOUNDATION_EXTERN NSString *codeForImportingRouters(void);
 FOUNDATION_EXTERN NSString *codeForRegisteringRouters(void);
 
 /// Check whether the object is dealloced after delay second.
-FOUNDATION_EXTERN void checkMemoryLeak(id object, NSTimeInterval delaySecond, void(^_Nullable handler)(id leakedObject));
+FOUNDATION_EXTERN void zix_checkMemoryLeak(id object, NSTimeInterval delaySecond, void(^_Nullable handler)(id leakedObject));
 #endif
 
 NS_ASSUME_NONNULL_END

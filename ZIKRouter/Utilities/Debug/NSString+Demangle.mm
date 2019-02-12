@@ -79,7 +79,7 @@ static std::string _demangleSymbolAsString(const char *mangledName, size_t mangl
     if (demangleSymbolAsString) {
         return demangleSymbolAsString(mangledName, mangledNameLength, options);
     }
-    NSCAssert(demangleSymbolAsString != NULL || !hasDynamicLibrary(@"libswiftCore.dylib"), @"Can't find demangleSymbolAsString in libswiftCore.dylib.");
+    NSCAssert(demangleSymbolAsString != NULL || !zix_hasDynamicLibrary(@"libswiftCore.dylib"), @"Can't find demangleSymbolAsString in libswiftCore.dylib.");
     return mangledName;
 };
 

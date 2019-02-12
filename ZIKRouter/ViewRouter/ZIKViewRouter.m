@@ -1894,7 +1894,7 @@ destinationStateBeforeRoute:(ZIKPresentationState *)destinationStateBeforeRoute
     }];
 #if DEBUG
     if (shouldDetectMemoryLeak) {
-        checkMemoryLeak(destination, [self detectMemoryLeakDelay], [self didDetectLeakingHandler]);
+        zix_checkMemoryLeak(destination, [self detectMemoryLeakDelay], [self didDetectLeakingHandler]);
     }    
 #endif
 }

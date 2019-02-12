@@ -590,7 +590,7 @@ private class _ServiceRouterValidater: ZIKServiceRouteAdapter {
                         declaredRoutableTypes.append(simplifiedName)
                     } else if symbolName.contains(".NSObject"), symbolName.contains(".ZIKServiceRoutable") {
                         let imagePath = imagePathOfAddress(name)
-                        assert(imagePath.contains("/ZRouter.framework/") || !hasDynamicLibrary("ZRouter"), """
+                        assert(imagePath.contains("/ZRouter.framework/") || !zix_hasDynamicLibrary("ZRouter"), """
                             Don't use a Class type as generic parameter of RoutableService:
                             ```
                             @objc protocol SomeServiceProtocol: ZIKServiceRoutable {
@@ -611,7 +611,7 @@ private class _ServiceRouterValidater: ZIKServiceRouteAdapter {
                             """)
                     } else if symbolName.contains(".ZIKPerformRouteConfiguration"), symbolName.contains(".ZIKServiceModuleRoutable") {
                         let imagePath = imagePathOfAddress(name)
-                        assert(imagePath.contains("/ZRouter.framework/") || !hasDynamicLibrary("ZRouter"), """
+                        assert(imagePath.contains("/ZRouter.framework/") || !zix_hasDynamicLibrary("ZRouter"), """
                             Don't use a ZIKPerformRouteConfiguration as generic parameter of RoutableServiceModule:
                             ```
                             @objc protocol SomeServiceModuleProtocol: ZIKServiceModuleRoutable {
@@ -632,7 +632,7 @@ private class _ServiceRouterValidater: ZIKServiceRouteAdapter {
                             """)
                     } else if symbolName.contains("where"), symbolName.contains("=="), (symbolName.contains(".ZIKServiceRoutable>") || symbolName.contains(".ZIKServiceModuleRoutable>")) {
                         let imagePath = imagePathOfAddress(name)
-                        assert(imagePath.contains("/ZRouter.framework/") || !hasDynamicLibrary("ZRouter"), """
+                        assert(imagePath.contains("/ZRouter.framework/") || !zix_hasDynamicLibrary("ZRouter"), """
                             Don't use ZIKServiceRoutable or ZIKServiceModuleRoutable as generic parameter:
                             ```
                             // Invalid usage

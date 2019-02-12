@@ -308,7 +308,7 @@ bool _swift_typeIsTargetType(id sourceType, id targetType) {
 
 #pragma clang diagnostic pop
 
-bool hasDynamicLibrary(NSString *libName) {
+bool zix_hasDynamicLibrary(NSString *libName) {
     const void *image = [ZIKImageSymbol imageByName:libName.UTF8String];
     return image != NULL;
 }
@@ -541,7 +541,7 @@ NSString *codeForRegisteringRouters() {
 #import "UIViewController+ZIKViewRouter.h"
 #endif
 
-void checkMemoryLeak(id object, NSTimeInterval delaySecond, void(^handler)(id leakedObject)) {
+void zix_checkMemoryLeak(id object, NSTimeInterval delaySecond, void(^handler)(id leakedObject)) {
     if (!object) {
         return;
     }
@@ -557,9 +557,13 @@ void checkMemoryLeak(id object, NSTimeInterval delaySecond, void(^handler)(id le
         _existingObjects = [NSHashTable weakObjectsHashTable];
         memoryLeakCheckQueue = dispatch_queue_create("com.zuik.router.object_leak_check_queue", DISPATCH_QUEUE_SERIAL);
     });
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wundeclared-selector"
+    
     if ([[object class] respondsToSelector:@selector(sharedInstance)]) {
         return;
     }
+#pragma clang diagnostic pop
     __weak id weakObject = object;
     dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(delaySecond * NSEC_PER_SEC)), memoryLeakCheckQueue, ^{
         if (_leakedObjects.count > 0) {
