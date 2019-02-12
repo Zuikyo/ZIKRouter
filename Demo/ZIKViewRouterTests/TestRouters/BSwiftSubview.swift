@@ -74,7 +74,9 @@ class BSwiftSubviewRouter: ZIKViewRouter<BSwiftSubview, BSwiftSubviewModuleConfi
     }
     
     override func prepareDestination(_ destination: BSwiftSubview, configuration: BSwiftSubviewModuleConfiguration) {
-        
+        if let title = configuration.title {
+            destination.title = title
+        }
     }
     
     override func didFinishPrepareDestination(_ destination: BSwiftSubview, configuration: BSwiftSubviewModuleConfiguration) {

@@ -74,7 +74,9 @@ class ASwiftViewRouter: ZIKViewRouter<ASwiftViewController, ASwiftViewModuleConf
     }
     
     override func prepareDestination(_ destination: ASwiftViewController, configuration: ASwiftViewModuleConfiguration) {
-        
+        if let title = configuration.title {
+            destination.title = title
+        }
     }
     
     override func didFinishPrepareDestination(_ destination: ASwiftViewController, configuration: ASwiftViewModuleConfiguration) {

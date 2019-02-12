@@ -49,9 +49,12 @@ DeclareRoutableView(BSubview, BSubviewModuleRouter)
 }
 
 - (BSubview *)destinationWithConfiguration:(BSubviewModuleConfiguration *)configuration {
-    BSubview *destination = [[BSubview alloc] init];
-    destination.title = configuration.title;
+    BSubview *destination = [[BSubview alloc] init];    
     return destination;
+}
+
+- (void)prepareDestination:(BSubview *)destination configuration:(BSubviewModuleConfiguration *)configuration {
+    destination.title = configuration.title;
 }
 
 - (void)didFinishPrepareDestination:(BSubview *)destination configuration:(BSubviewModuleConfiguration *)configuration {

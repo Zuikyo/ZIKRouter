@@ -47,6 +47,10 @@ DeclareRoutableView(AViewController, AViewModuleRouter)
     return destination;
 }
 
+- (void)prepareDestination:(AViewController *)destination configuration:(AViewModuleConfiguration *)configuration {
+    destination.title = configuration.title;
+}
+
 - (void)didFinishPrepareDestination:(AViewController *)destination configuration:(AViewModuleConfiguration *)configuration {
     if (configuration.makeDestinationCompletion) {
         configuration.makeDestinationCompletion(destination);
