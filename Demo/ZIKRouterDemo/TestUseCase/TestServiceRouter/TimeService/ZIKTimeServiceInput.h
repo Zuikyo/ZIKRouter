@@ -20,3 +20,7 @@
 @protocol EasyTimeServiceInput2 <ZIKServiceRoutable>
 - (NSString *)currentTimeString;
 @end
+
+@protocol EasyTimeServiceInput3 <ZIKServiceRoutable>
+- (NSString *)currentTimeString;
+@end

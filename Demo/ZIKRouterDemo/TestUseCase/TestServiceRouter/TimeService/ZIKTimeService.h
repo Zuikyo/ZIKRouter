@@ -9,7 +9,7 @@
 #import <Foundation/Foundation.h>
 #import "ZIKTimeServiceInput.h"
 
-@interface ZIKTimeService : NSObject <ZIKTimeServiceInput, EasyTimeServiceInput1, EasyTimeServiceInput2>
+@interface ZIKTimeService : NSObject <ZIKTimeServiceInput, EasyTimeServiceInput1, EasyTimeServiceInput2, EasyTimeServiceInput3>
 
 + (instancetype)sharedInstance;
 - (NSString *)currentTimeString;

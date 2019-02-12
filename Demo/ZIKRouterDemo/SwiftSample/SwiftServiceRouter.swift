@@ -11,7 +11,7 @@ import ZIKRouter
 import ZRouter
 import ZIKRouter.Internal
 
-protocol SwiftServiceModuleInput:class {
+protocol SwiftServiceModuleInput: class {
     var constructDestination: (String) -> Void { get }
     var didMakeDestination: ((SwiftServiceInput) -> Void)? { get set }
 }

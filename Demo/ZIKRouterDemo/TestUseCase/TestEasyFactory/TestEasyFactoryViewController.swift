@@ -57,6 +57,13 @@ class TestEasyFactoryViewController: UIViewController, ZIKInfoViewDelegate {
             module.addOtherButtonTitle("OK")
         }
     }
+    @IBAction func testEasyService3(_ sender: Any) {
+        let service = Router.makeDestination(to: RoutableService<EasyTimeServiceInput3>())
+        Router.perform(to: RoutableViewModule<RequiredCompatibleAlertModuleInput>(), path: .defaultPath(from: self)) { (module) in
+            module.message = service?.currentTimeString()
+            module.addOtherButtonTitle("OK")
+        }
+    }
 }
 
 

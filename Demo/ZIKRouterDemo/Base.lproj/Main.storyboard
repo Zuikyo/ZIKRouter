@@ -726,6 +726,14 @@
                                     <action selector="testEasyViewModule:" destination="8cs-ai-1ff" eventType="touchUpInside" id="GnV-Ul-b8t"/>
                                 </connections>
                             </button>
+                            <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="M2D-o7-Iv6">
+                                <rect key="frame" x="124" y="419" width="129" height="30"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <state key="normal" title="test easy service 3"/>
+                                <connections>
+                                    <action selector="testEasyService3:" destination="8cs-ai-1ff" eventType="touchUpInside" id="fHx-qI-cYE"/>
+                                </connections>
+                            </button>
                         </subviews>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                     </view>

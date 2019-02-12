@@ -26,9 +26,11 @@ ZIKTimeService *makeTimeService(ZIKPerformRouteConfig *config) {
     [self registerIdentifier:@"com.zuik.service.timeService"];
     
     // Test easy factory
-    [ZIKDestinationServiceRouter(ZIKTimeService *) registerServiceProtocol:ZIKRoutable(EasyTimeServiceInput1) forMakingService:[ZIKTimeService class] factory:makeTimeService];
+    [ZIKDestinationServiceRouter(ZIKTimeService *) registerServiceProtocol:ZIKRoutable(EasyTimeServiceInput1) forMakingService:[ZIKTimeService class]];
     
-    [ZIKDestinationServiceRouter(ZIKTimeService *) registerServiceProtocol:ZIKRoutable(EasyTimeServiceInput2) forMakingService:[ZIKTimeService class] making:^ZIKTimeService * _Nullable(ZIKPerformRouteConfig * _Nonnull config) {
+    [ZIKDestinationServiceRouter(ZIKTimeService *) registerServiceProtocol:ZIKRoutable(EasyTimeServiceInput2) forMakingService:[ZIKTimeService class] factory:makeTimeService];
+    
+    [ZIKDestinationServiceRouter(ZIKTimeService *) registerServiceProtocol:ZIKRoutable(EasyTimeServiceInput3) forMakingService:[ZIKTimeService class] making:^ZIKTimeService * _Nullable(ZIKPerformRouteConfig * _Nonnull config) {
         return [ZIKTimeService sharedInstance];
     }];
 }
