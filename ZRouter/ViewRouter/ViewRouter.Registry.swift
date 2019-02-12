@@ -166,7 +166,9 @@ extension Registry {
     
     internal static func register<Protocol>(_ routableView: RoutableView<Protocol>, forMakingView destinationClass: AnyClass) {
         let destinationProtocol = Protocol.self
+#if DEBUG
         assert(_swift_typeIsTargetType(destinationClass, destinationProtocol), "Destination (\(destinationClass)) should conforms to protocol (\(destinationProtocol))")
+#endif
         assert(ZIKAnyViewRouter.isRegistrationFinished() == false, "Can't register after app did finish launch. Only register in registerRoutableDestination().")
         // `UIViewController & ObjcProtocol` type is also a Protocol in objc, but we want to keep it in swift container
         if let routableProtocol = _routableViewProtocolFromObject(destinationProtocol), routableView.typeName == routableProtocol.name {
@@ -179,7 +181,9 @@ extension Registry {
     
     internal static func register<Protocol>(_ routableView: RoutableView<Protocol>, forMakingView destinationClass: AnyClass, making factory: @escaping (ViewRouteConfig) -> Protocol?) {
         let destinationProtocol = Protocol.self
+#if DEBUG
         assert(_swift_typeIsTargetType(destinationClass, destinationProtocol), "Destination (\(destinationClass)) should conforms to protocol (\(destinationProtocol))")
+#endif
         assert(ZIKAnyViewRouter.isRegistrationFinished() == false, "Can't register after app did finish launch. Only register in registerRoutableDestination().")
         // `UIViewController & ObjcProtocol` type is also a Protocol in objc, but we want to keep it in swift container
         if let routableProtocol = _routableViewProtocolFromObject(destinationProtocol), routableView.typeName == routableProtocol.name {

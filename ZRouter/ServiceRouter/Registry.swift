@@ -239,7 +239,9 @@ internal class Registry {
     
     internal static func register<Protocol>(_ routableService: RoutableService<Protocol>, forMakingService destinationClass: AnyClass) {
         let destinationProtocol = Protocol.self
+#if DEBUG
         assert(_swift_typeIsTargetType(destinationClass, destinationProtocol), "Destination (\(destinationClass)) should conforms to protocol (\(destinationProtocol))")
+#endif
         assert(ZIKAnyServiceRouter.isRegistrationFinished() == false, "Can't register after app did finish launch. Only register in registerRoutableDestination().")
         // `UIViewController & ObjcProtocol` type is also a Protocol in objc, but we want to keep it in swift container
         if let routableProtocol = _routableServiceProtocolFromObject(destinationProtocol), routableService.typeName == routableProtocol.name {
@@ -252,7 +254,9 @@ internal class Registry {
     
     static func register<Protocol>(_ routableService: RoutableService<Protocol>, forMakingService destinationClass: AnyClass, making factory: @escaping (PerformRouteConfig) -> Protocol?) {
         let destinationProtocol = Protocol.self
+#if DEBUG
         assert(_swift_typeIsTargetType(destinationClass, destinationProtocol), "Destination (\(destinationClass)) should conforms to protocol (\(destinationProtocol))")
+#endif
         assert(ZIKAnyServiceRouter.isRegistrationFinished() == false, "Can't register after app did finish launch. Only register in registerRoutableDestination().")
         // `UIViewController & ObjcProtocol` type is also a Protocol in objc, but we want to keep it in swift container
         if let routableProtocol = _routableServiceProtocolFromObject(destinationProtocol), routableService.typeName == routableProtocol.name {

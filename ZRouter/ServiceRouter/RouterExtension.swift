@@ -56,7 +56,6 @@ public extension ServiceRouterExtension {
     ///   - serviceClass: The service class.
     ///   - making: Block creating the service.
     static func register<Protocol>(_ routableService: RoutableService<Protocol>, forMakingService serviceClass: AnyClass, making factory: @escaping (PerformRouteConfig) -> Protocol?) {
-        assert(_swift_typeIsTargetType(serviceClass, Protocol.self), "When registering, destination (\(serviceClass)) should conforms to protocol (\(Protocol.self))")
         Registry.register(routableService, forMakingService: serviceClass, making: factory)
     }
     

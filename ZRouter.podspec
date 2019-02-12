@@ -27,6 +27,7 @@ Pod::Spec.new do |s|
   end
 
   s.subspec 'ViewRouter' do |viewRouter|
+    viewRouter.dependency 'ZRouter/ServiceRouter'
     viewRouter.dependency 'ZIKRouter/ViewRouter', '>= 1.0.8'
     viewRouter.source_files = "ZRouter/ViewRouter/*.swift"
   end
