@@ -25,6 +25,10 @@ typedef void(^ZIKConstructBlock)();
  Hiding the constructDestination getter is just to get better auto completion in Xcode for your custom constructDestination defined in module config protocol. You can declare constructDestination with `@dynamic` when add protocol for configuration.
  */
 //@property (nonatomic, readwrite) void(^constructDestination)();
+
+/**
+ Set block for handling parameters from the caller. See `registerModuleProtocol:forMakingService:factory:`.
+ */
 - (void)setConstructDestination:(ZIKConstructBlock)block;
 @end
 

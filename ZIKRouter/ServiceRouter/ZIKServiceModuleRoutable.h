@@ -42,7 +42,7 @@
  @import ZIKRouter.Internal;
  
  // There're 2 ways to use a custom configuration:
- // 1. Override +defaultConfiguration and use ZIKServiceMakeableConfiguration (preferred way for simple parameters)
+ // 1. Override +defaultConfiguration and use ZIKServiceMakeableConfiguration (preferred way for simple parameters). See `registerModuleProtocol:forMakingService:factory:`
  // 2. Create subclass (or add category) of ZIKPerformRouteConfiguration (powerful way for complicated parameters)
   
  // Configuration subclass conforming to LoginServiceModuleInput

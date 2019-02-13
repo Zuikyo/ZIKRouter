@@ -42,7 +42,7 @@
  @import ZIKRouter.Internal;
  
  // There're 2 ways to use a custom configuration:
- // 1. Override +defaultConfiguration and use ZIKViewMakeableConfiguration (preferred way for simple parameters)
+ // 1. Override +defaultConfiguration and use ZIKViewMakeableConfiguration (preferred way for simple parameters). See `registerModuleProtocol:forMakingView:factory:`
  // 2. Create subclass (or add category) of ZIKViewRouteConfiguration (powerful way for complicated parameters)
  
  // Configuration subclass conforming to LoginViewModuleInput
