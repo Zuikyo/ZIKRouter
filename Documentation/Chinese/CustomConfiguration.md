@@ -8,9 +8,7 @@ Router 可以使用自定义 configuration 传递更多自定义参数。
 
 有时需要传递的参数并不能都通过 destination 的接口设置，例如参数不属于 destination，而是属于模块内其他组件。
 
-例如需要向一个模块传递 model 对象，此时 destination 作为 view，在设计上不能接触到 model。此时就可以用 configuration 保存参数，再在 router 内部用 configuration 去配置模块内的各个部分。
-
-此时可以让 router 使用自定义 configuration 保存参数，配合 module config protocol 传参。
+例如需要向一个模块传递 model 对象，此时 destination 作为 view，在设计上不能接触到 model。此时可以让 router 使用自定义 configuration 保存参数，配合 module config protocol 传参，再在 router 内部用 configuration 去配置模块内的各个部分。
 
 ## Module Config Protocol
 
@@ -120,7 +118,7 @@ ZIKViewMakeableConfiguration<NoteEditorViewController *> * makeEditorViewModuleC
 
 Swift 泛型类不是 OC Class，不会出现在 Mach-O 的 __objc_classlist 节中，所以不会对 app 的启动速度造成影响。所以只需要给`EditorViewModuleConfiguration`加个泛型`T`后就无需再担心类数量的问题。
 
-通过`constructDestination`block 传递参数可以省去很多胶水代码，通过闭包直接传参，无需通过属性保存参数。
+通过`constructDestination`block 传递参数可以省去很多胶水代码，通过闭包直接传参，无需通过属性保存参数。所有模块的传参都能统一到一个`constructDestination`方法上。
 
 ## 非 configuration 子类
 
@@ -307,7 +305,7 @@ Note *note = ...
 
 这种方式省去了很多胶水代码，通过闭包直接传参，无需通过属性保存参数，而且每个模块都能用泛型和 protocol 重新声明参数类型。
 
-在通用情况下使用泛型 configuration 可以避免类爆炸，而 configuration 子类则可以提供更复杂的操作，例如有多个初始化方法时，使用多个`constructDestination`方法。
+在大多数情况下使用泛型 configuration 来避免创建过多的类，同时在某些复杂场景 configuration 子类则可以提供更复杂的操作，例如有多个初始化方法时，定义多个`constructDestination`方法。
 
 ---
 #### 下一节：[错误检查](ErrorHandle.md)
