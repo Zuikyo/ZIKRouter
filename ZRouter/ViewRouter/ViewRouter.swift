@@ -258,7 +258,10 @@ public class ViewRouterType<Destination, ModuleConfig> {
         let destination = routerType.makeDestination()
         assert(destination == nil || destination is Destination, "Router (\(routerType)) returns wrong destination type (\(String(describing: destination))), destination should be \(Destination.self)")
         assert(destination == nil || Registry.validateConformance(destination: destination!, inViewRouterType: routerType))
-        return destination as? Destination
+        if let destination = destination {
+            return destination as? Destination
+        }
+        return nil
     }
     
     /// Synchronously get destination, and prepare the destination with destination protocol. Preparation is an escaping block, use weakSelf to avoid retain cycle.
@@ -272,7 +275,10 @@ public class ViewRouterType<Destination, ModuleConfig> {
         })
         assert(destination == nil || destination is Destination, "Router (\(routerType)) returns wrong destination type (\(String(describing: destination))), destination should be \(Destination.self)")
         assert(destination == nil || Registry.validateConformance(destination: destination!, inViewRouterType: routerType))
-        return destination as? Destination
+        if let destination = destination {
+            return destination as? Destination
+        }
+        return nil
     }
     
     /// Synchronously get destination, and prepare the destination.
@@ -294,7 +300,10 @@ public class ViewRouterType<Destination, ModuleConfig> {
         })
         assert(destination == nil || destination is Destination, "Router (\(routerType)) returns wrong destination type (\(String(describing: destination))), destination should be \(Destination.self)")
         assert(destination == nil || Registry.validateConformance(destination: destination!, inViewRouterType: routerType))
-        return destination as? Destination
+        if let destination = destination {
+            return destination as? Destination
+        }
+        return nil
     }
 }
 

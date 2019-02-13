@@ -126,7 +126,10 @@ public class ServiceRouterType<Destination, ModuleConfig> {
         let routerType = self.routerType
         let destination = routerType.makeDestination()
         assert(destination == nil || ServiceRouterType._castedDestination(destination!, routerType: routerType) != nil, "Router (\(routerType)) returns wrong destination type (\(String(describing: destination))), destination should be \(Destination.self)")
-        return destination as? Destination
+        if let destination = destination {
+            return destination as? Destination
+        }
+        return nil
     }
     
     /// Synchronously get destination, and prepare the destination with destination protocol. Preparation is an escaping block, use weakSelf to avoid retain cycle.
@@ -138,7 +141,10 @@ public class ServiceRouterType<Destination, ModuleConfig> {
             }
         })
         assert(destination == nil || ServiceRouterType._castedDestination(destination!, routerType: routerType) != nil, "Router (\(routerType)) returns wrong destination type (\(String(describing: destination))), destination should be \(Destination.self)")
-        return destination as? Destination
+        if let destination = destination {
+            return destination as? Destination
+        }
+        return nil
     }
     
     /// Synchronously get destination, and prepare the destination.
@@ -160,7 +166,10 @@ public class ServiceRouterType<Destination, ModuleConfig> {
             configBuilder(PerformRouteStrictConfig(configuration: strictConfig), prepareModule)
         })
         assert(destination == nil || ServiceRouterType._castedDestination(destination!, routerType: routerType) != nil, "Router (\(routerType)) returns wrong destination type (\(String(describing: destination))), destination should be \(Destination.self)")
-        return destination as? Destination
+        if let destination = destination {
+            return destination as? Destination
+        }
+        return nil
     }
     
     private static func _castedDestination(_ destination: Any, routerType: ZIKAnyServiceRouterType) -> Destination? {
