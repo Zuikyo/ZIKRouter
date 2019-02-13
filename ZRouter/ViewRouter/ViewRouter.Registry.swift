@@ -131,7 +131,7 @@ extension Registry {
     }
     
     internal static func register<Adapter, Adaptee>(adapter: RoutableView<Adapter>, forAdaptee adaptee: RoutableView<Adaptee>) {
-        let adapterKey = _RouteKey(routable: adapter)
+        var adapterKey = _RouteKey(routable: adapter)
         let objcAdapter = _routableViewProtocolFromObject(Adapter.self)
         let objcAdaptee = _routableViewProtocolFromObject(Adaptee.self)
         if let objcAdapter = objcAdapter, let objcAdaptee = objcAdaptee,
@@ -144,11 +144,22 @@ extension Registry {
         }
         assert(viewProtocolContainer[adapterKey] == nil, "Adapter (\(Adapter.self)) is already registered with a router (\(viewProtocolContainer[adapterKey]!))")
         assert(viewAdapterContainer[adapterKey] == nil, "Adapter (\(Adapter.self)) can't register adaptee (\(Adaptee.self)), already register another adaptee (\(viewAdapterContainer[adapterKey]!.key))")
-        viewAdapterContainer[adapterKey] = _RouteKey(routable: adaptee)
+        
+        if let objcAdapter = objcAdapter {
+            adapterKey = _RouteKey(type: Adapter.self, name: adapter.typeName, adapterProtocol: objcAdapter)
+        }
+        let adapteeKey: _RouteKey
+        if let objcAdaptee = objcAdaptee {
+            adapteeKey = _RouteKey(type: Adaptee.self, name: adaptee.typeName, adapterProtocol: objcAdaptee)
+        } else {
+            adapteeKey = _RouteKey(routable: adaptee)
+        }
+        
+        viewAdapterContainer[adapterKey] = adapteeKey
     }
     
     internal static func register<Adapter, Adaptee>(adapter: RoutableViewModule<Adapter>, forAdaptee adaptee: RoutableViewModule<Adaptee>) {
-        let adapterKey = _RouteKey(routable: adapter)
+        var adapterKey = _RouteKey(routable: adapter)
         let objcAdapter = _routableViewModuleProtocolFromObject(Adapter.self)
         let objcAdaptee = _routableViewModuleProtocolFromObject(Adaptee.self)
         if let objcAdapter = objcAdapter, let objcAdaptee = objcAdaptee,
@@ -161,7 +172,18 @@ extension Registry {
         }
         assert(viewModuleProtocolContainer[adapterKey] == nil, "Adapter (\(Adapter.self)) is already registered with a router (\(viewModuleProtocolContainer[adapterKey]!))")
         assert(viewModuleAdapterContainer[adapterKey] == nil, "Adapter (\(Adapter.self)) can't register adaptee (\(Adaptee.self)), already register another adaptee (\(viewModuleAdapterContainer[adapterKey]!.key))")
-        viewModuleAdapterContainer[adapterKey] = _RouteKey(routable: adaptee)
+        
+        if let objcAdapter = objcAdapter {
+            adapterKey = _RouteKey(type: Adapter.self, name: adapter.typeName, adapterProtocol: objcAdapter)
+        }
+        let adapteeKey: _RouteKey
+        if let objcAdaptee = objcAdaptee {
+            adapteeKey = _RouteKey(type: Adaptee.self, name: adaptee.typeName, adapterProtocol: objcAdaptee)
+        } else {
+            adapteeKey = _RouteKey(routable: adaptee)
+        }
+        
+        viewModuleAdapterContainer[adapterKey] = adapteeKey
     }
     
     internal static func register<Protocol>(_ routableView: RoutableView<Protocol>, forMakingView destinationClass: AnyClass) {
@@ -239,27 +261,17 @@ extension Registry {
 
 extension ZIKViewRouteRegistry {
     @objc class func _swiftRouteForDestinationAdapter(_ adapter: Protocol) -> Any? {
-        let adaptee = Registry.viewAdapterContainer[_RouteKey(protocol: adapter)]
-        var route: Any?
-        repeat {
-            guard let adaptee = adaptee else {
-                return nil
-            }
-            route = Registry.viewProtocolContainer[adaptee]
-        } while route == nil
-        return route
+        guard let adaptee = Registry.viewAdapterContainer[_RouteKey(protocol: adapter)] else {
+            return nil
+        }
+        return Registry._swiftRouter(toViewKey: adaptee)?.routeObject
     }
     
     @objc class func _swiftRouteForModuleAdapter(_ adapter: Protocol) -> Any? {
-        let adaptee = Registry.viewModuleAdapterContainer[_RouteKey(protocol: adapter)]
-        var route: Any?
-        repeat {
-            guard let adaptee = adaptee else {
-                return nil
-            }
-            route = Registry.viewModuleProtocolContainer[adaptee]
-        } while route == nil
-        return route
+        guard let adaptee = Registry.viewModuleAdapterContainer[_RouteKey(protocol: adapter)] else {
+            return nil
+        }
+        return Registry._swiftRouter(toViewModuleKey: adaptee)?.routeObject
     }
 }
 
@@ -331,7 +343,7 @@ fileprivate extension Registry {
     /// - Parameter name: The name of the protocol.
     /// - Returns: The view router class for the view protocol.
     fileprivate static func _router(toView viewProtocol: Any.Type, name: String) -> ZIKAnyViewRouterType? {
-        if let routerType = _swiftRouter(toView: viewProtocol, name: name) {
+        if let routerType = _swiftRouter(toViewKey: _RouteKey(type: viewProtocol, name: name)) {
             return routerType
         }
         if let routableProtocol = _routableViewProtocolFromObject(viewProtocol), let routerType = _ZIKViewRouterToView(routableProtocol) {
@@ -347,17 +359,18 @@ fileprivate extension Registry {
         }
         return nil
     }
-    fileprivate static func _swiftRouter(toView viewProtocol: Any.Type, name: String) -> ZIKAnyViewRouterType? {
-        if let route = viewProtocolContainer[_RouteKey(type: viewProtocol, name: name)], let routerType = ZIKAnyViewRouterType.tryMakeType(forRoute: route) {
+    
+    fileprivate static func _swiftRouter(toViewKey viewRouteKey: _RouteKey) -> ZIKAnyViewRouterType? {
+        if let route = viewProtocolContainer[viewRouteKey], let routerType = ZIKAnyViewRouterType.tryMakeType(forRoute: route) {
             return routerType
         }
-        if let routerType = _ZIKViewRouterToIdentifier(makingDestinationIdentifierPrefix + name) {
+        if let routerType = _ZIKViewRouterToIdentifier(makingDestinationIdentifierPrefix + viewRouteKey.key) {
             return routerType
         }
         #if DEBUG
         var traversedProtocols: [_RouteKey] = []
         #endif
-        var adapter = _RouteKey(type: viewProtocol, name: name)
+        var adapter = viewRouteKey
         var adaptee: _RouteKey?
         repeat {
             adaptee = viewAdapterContainer[adapter]
@@ -365,9 +378,9 @@ fileprivate extension Registry {
                 if let route = viewProtocolContainer[adaptee], let routerType = ZIKAnyViewRouterType.tryMakeType(forRoute: route) {
                     return routerType
                 }
-                if let adapteeProtocol = NSProtocolFromString(adaptee.key),
-                   let routableProtocol = _routableViewProtocolFromObject(adapteeProtocol),
-                   let routerType = _ZIKViewRouterToView(routableProtocol) {
+                if let adapteeProtocol = adaptee.adapterProtocol,
+                    let routableProtocol = _routableViewProtocolFromObject(adapteeProtocol),
+                    let routerType = _ZIKViewRouterToView(routableProtocol) {
                     return routerType
                 }
                 if let routerType = _ZIKViewRouterToIdentifier(makingDestinationIdentifierPrefix + adaptee.key) {
@@ -395,7 +408,7 @@ fileprivate extension Registry {
     /// - Parameter name: The name of the protocol.
     /// - Returns: The view router class for the config protocol.
     fileprivate static func _router(toViewModule configProtocol: Any.Type, name: String) -> ZIKAnyViewRouterType? {
-        if let routerType = _swiftRouter(toViewModule: configProtocol, name: name) {
+        if let routerType = _swiftRouter(toViewModuleKey: _RouteKey(type: configProtocol, name: name)) {
             return routerType
         }
         if let routableProtocol = _routableViewModuleProtocolFromObject(configProtocol), let routerType = _ZIKViewRouterToModule(routableProtocol) {
@@ -412,17 +425,18 @@ fileprivate extension Registry {
         }
         return nil
     }
-    fileprivate static func _swiftRouter(toViewModule configProtocol: Any.Type, name: String) -> ZIKAnyViewRouterType? {
-        if let route = viewModuleProtocolContainer[_RouteKey(type: configProtocol, name: name)], let routerType = ZIKAnyViewRouterType.tryMakeType(forRoute: route) {
+    
+    fileprivate static func _swiftRouter(toViewModuleKey moduleRouteKey: _RouteKey) -> ZIKAnyViewRouterType? {
+        if let route = viewModuleProtocolContainer[moduleRouteKey], let routerType = ZIKAnyViewRouterType.tryMakeType(forRoute: route) {
             return routerType
         }
-        if let routerType = _ZIKViewRouterToIdentifier(makingModuleIdentifierPrefix + name) {
+        if let routerType = _ZIKViewRouterToIdentifier(makingModuleIdentifierPrefix + moduleRouteKey.key) {
             return routerType
         }
         #if DEBUG
         var traversedProtocols: [_RouteKey] = []
         #endif
-        var adapter = _RouteKey(type: configProtocol, name: name)
+        var adapter = moduleRouteKey
         var adaptee: _RouteKey?
         repeat {
             adaptee = viewModuleAdapterContainer[adapter]
@@ -430,9 +444,9 @@ fileprivate extension Registry {
                 if let route = viewModuleProtocolContainer[adaptee], let routerType = ZIKAnyViewRouterType.tryMakeType(forRoute: route) {
                     return routerType
                 }
-                if let adapteeProtocol = NSProtocolFromString(adaptee.key),
-                   let routableProtocol = _routableViewModuleProtocolFromObject(adapteeProtocol),
-                   let routerType = _ZIKViewRouterToModule(routableProtocol) {
+                if let adapteeProtocol = adaptee.adapterProtocol,
+                    let routableProtocol = _routableViewModuleProtocolFromObject(adapteeProtocol),
+                    let routerType = _ZIKViewRouterToModule(routableProtocol) {
                     return routerType
                 }
                 if let routerType = _ZIKViewRouterToIdentifier(makingModuleIdentifierPrefix + adaptee.key) {
@@ -654,7 +668,7 @@ private class _ViewRouterValidater: ZIKViewRouteAdapter {
         // Destination should conforms to registered adapter destination protocols
         for (adapter, _) in Registry.viewAdapterContainer {
             assert(adapter.type != nil)
-            guard let type = adapter.type, let routerType = Registry._swiftRouter(toView: type, name: adapter.key) else {
+            guard let routerType = Registry._swiftRouter(toViewKey: adapter) else {
                 assertionFailure("View adapter protocol(\(adapter.key)) is not registered with any router!")
                 continue
             }
@@ -687,7 +701,7 @@ private class _ViewRouterValidater: ZIKViewRouteAdapter {
         // Router's defaultRouteConfiguration should conforms to registered adapter module config protocols
         for (adapter, _) in Registry.viewModuleAdapterContainer {
             assert(adapter.type != nil)
-            guard let type = adapter.type, let routerType = Registry._swiftRouter(toViewModule: type, name: adapter.key) else {
+            guard let routerType = Registry._swiftRouter(toViewModuleKey: adapter) else {
                 assertionFailure("View adapter protocol(\(adapter.key)) is not registered with any router!")
                 continue
             }

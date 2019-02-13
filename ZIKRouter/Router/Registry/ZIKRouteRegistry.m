@@ -335,6 +335,9 @@ static CFMutableSetRef _factoryBlocks;
     if (route == nil) {
         route = [self easyRouteForDestinationProtocol:destinationProtocol];
     }
+    if (route == nil && [self respondsToSelector:@selector(_swiftRouteForDestinationAdapter:)]) {
+        route = [self _swiftRouteForDestinationAdapter:destinationProtocol];
+    }
     if (route == nil) {
         Protocol *adapter = destinationProtocol;
         Protocol *adaptee = nil;
@@ -362,11 +365,11 @@ static CFMutableSetRef _factoryBlocks;
             if (route == nil) {
                 route = [self easyRouteForDestinationProtocol:adaptee];
             }
+            if (route == nil && [self respondsToSelector:@selector(_swiftRouteForDestinationAdapter:)]) {
+                route = [self _swiftRouteForDestinationAdapter:adaptee];
+            }
             adapter = adaptee;
         } while (route == nil);
-    }
-    if (route == nil && [self respondsToSelector:@selector(_swiftRouteForDestinationAdapter:)]) {
-        route = [self _swiftRouteForDestinationAdapter:destinationProtocol];
     }
     return [self _routerTypeForObject:route];
 }
@@ -381,6 +384,9 @@ static CFMutableSetRef _factoryBlocks;
     id route = CFDictionaryGetValue(self.moduleConfigProtocolToRouterMap, (__bridge const void *)(configProtocol));
     if (route == nil) {
         route = [self easyRouteForModuleProtocol:configProtocol];
+    }
+    if (route == nil && [self respondsToSelector:@selector(_swiftRouteForDestinationAdapter:)]) {
+        route = [self _swiftRouteForModuleAdapter:configProtocol];
     }
     if (route == nil) {
         Protocol *adapter = configProtocol;
@@ -409,11 +415,11 @@ static CFMutableSetRef _factoryBlocks;
             if (route == nil) {
                 route = [self easyRouteForModuleProtocol:adaptee];
             }
+            if (route == nil && [self respondsToSelector:@selector(_swiftRouteForDestinationAdapter:)]) {
+                route = [self _swiftRouteForModuleAdapter:adaptee];
+            }
             adapter = adaptee;
         } while (route == nil);
-    }
-    if (route == nil && [self respondsToSelector:@selector(_swiftRouteForModuleAdapter:)]) {
-        route = [self _swiftRouteForModuleAdapter:configProtocol];
     }
     return [self _routerTypeForObject:route];
 }

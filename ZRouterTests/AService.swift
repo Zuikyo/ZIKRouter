@@ -23,11 +23,23 @@ protocol AServiceInputAdapter: class {
     var title: String? { get set }
 }
 
+protocol AServiceInputAdapter2: class {
+    var title: String? { get set }
+}
+
 @objc protocol AServiceInputObjcAdapter: ZIKServiceRoutable {
     var title: String? { get set }
 }
 
-extension AService: ZIKRoutableService, AServiceInput, AServiceInputAdapter, AServiceInputObjcAdapter {
+@objc protocol AServiceInputObjcAdapter2: ZIKServiceRoutable {
+    var title: String? { get set }
+}
+
+@objc protocol AServiceInputObjcAdapter3: ZIKServiceRoutable {
+    var title: String? { get set }
+}
+
+extension AService: ZIKRoutableService, AServiceInput, AServiceInputAdapter, AServiceInputAdapter2, AServiceInputObjcAdapter, AServiceInputObjcAdapter2, AServiceInputObjcAdapter3 {
     
 }
 
@@ -44,6 +56,11 @@ protocol AServiceModuleInput: class {
     func makeDestinationCompletion(_ block: @escaping (AServiceInput) -> Void)
 }
 
+protocol AServiceModuleInput2: class {
+    var title: String? { get set }
+    func makeDestinationCompletion(_ block: @escaping (AServiceInput) -> Void)
+}
+
 protocol AServiceModuleInputAdapter: class {
     var title: String? { get set }
     func makeDestinationCompletion(_ block: @escaping (AServiceInput) -> Void)
@@ -55,6 +72,10 @@ protocol AServiceModuleInputAdapter: class {
 }
 
 extension RoutableServiceModule where Protocol == AServiceModuleInput {
+    init() { self.init(declaredProtocol: Protocol.self) }
+}
+
+extension RoutableServiceModule where Protocol == AServiceModuleInput2 {
     init() { self.init(declaredProtocol: Protocol.self) }
 }
 
@@ -122,9 +143,48 @@ class AServiceRouter: ZIKServiceRouter<AnyObject, AServiceModuleConfiguration> {
 
 class AServiceAdapter: ZIKServiceRouteAdapter {
     override static func registerRoutableDestination() {
-        register(adapter: RoutableService<AServiceInputAdapter>(), forAdaptee: RoutableService<AServiceInput>())
-        register(adapter: RoutableService<AServiceInputObjcAdapter>(), forAdaptee: RoutableService<AServiceInput>())
-        register(adapter: RoutableServiceModule<AServiceModuleInputAdapter>(), forAdaptee: RoutableServiceModule<AServiceModuleInput>())
+        ZIKAnyServiceRouter.register(RoutableServiceModule<AServiceModuleInput2>(), forMakingService: AService.self) { () -> AServiceModuleInput2 in
+            class AServiceModuleConfiguration: ServiceMakeableConfiguration<AServiceInput, (String) -> Void>, AServiceModuleInput2 {
+                var title: String? {
+                    didSet {
+                        makeDestination = { [unowned self] () in
+                            if TestConfig.routeShouldFail {
+                                return nil
+                            }
+                            let destination = AService()
+                            destination.title = self.title
+                            return destination
+                        }
+                    }
+                }
+                func makeDestinationCompletion(_ block: @escaping (AServiceInput) -> Void) {
+                    self.didMakeDestination = block
+                }
+                
+                func makeDestinationCompletion(_ block: @escaping (AServiceInputObjcAdapter) -> Void) {
+                    self.didMakeDestination = { d in
+                        if let d = d as? AServiceInputObjcAdapter {
+                            block(d)
+                        }
+                    }
+                }
+            }
+            let config = AServiceModuleConfiguration({_ in})
+            config.makeDestination = {
+                if TestConfig.routeShouldFail {
+                    return nil
+                }
+                let destination = AService()
+                return destination
+            }
+            return config
+        }
+        
+        register(adapter: RoutableService<AServiceInputObjcAdapter>(), forAdaptee: RoutableService<AServiceInputAdapter>())
+        register(adapter: RoutableService<AServiceInputAdapter>(), forAdaptee: RoutableService<AServiceInputObjcAdapter2>())
+        register(adapter: RoutableService<AServiceInputObjcAdapter2>(), forAdaptee: RoutableService<AServiceInputObjcAdapter3>())
+        register(adapter: RoutableService<AServiceInputObjcAdapter3>(), forAdaptee: RoutableService<AServiceInput>())
+        register(adapter: RoutableServiceModule<AServiceModuleInputAdapter>(), forAdaptee: RoutableServiceModule<AServiceModuleInputObjcAdapter>())
         register(adapter: RoutableServiceModule<AServiceModuleInputObjcAdapter>(), forAdaptee: RoutableServiceModule<AServiceModuleInput>())
     }
 }

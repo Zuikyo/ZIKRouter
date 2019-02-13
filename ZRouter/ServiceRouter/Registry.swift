@@ -30,6 +30,7 @@ internal struct _RouteKey: Hashable {
     internal let type: Any.Type?
     #endif
     internal let key: String
+    internal private(set) var adapterProtocol: Protocol?
     internal init(type: Any.Type, name: String) {
         assert(name == String(describing: type), "name should be equal to String(describing:) of \(type)")
         #if DEBUG
@@ -43,7 +44,24 @@ internal struct _RouteKey: Hashable {
         self.type = nil
         #endif
         key = p.name
+        adapterProtocol = p
         assert(key.contains(".") == false, "Remove module prefix for swift type.")
+    }
+    internal init(adapterProtocol p: Protocol) {
+        #if DEBUG
+        self.type = nil
+        #endif
+        key = p.name
+        adapterProtocol = p
+    }
+    internal init(type: Any.Type, name: String, adapterProtocol p: Protocol) {
+        #if DEBUG
+        self.type = type
+        #endif
+        key = name
+        adapterProtocol = p
+        assert(key == String(describing: type), "name should be equal to String(describing:) of \(type)")
+        assert(key.contains(".") == false, "Key shouldn't contain module prefix.")
     }
     fileprivate init<Protocol>(routable: RoutableService<Protocol>) {
         self.init(type: Protocol.self, name: routable.typeName)
@@ -201,7 +219,7 @@ internal class Registry {
     }
     
     internal static func register<Adapter, Adaptee>(adapter: RoutableService<Adapter>, forAdaptee adaptee: RoutableService<Adaptee>) {
-        let adapterKey = _RouteKey(routable: adapter)
+        var adapterKey = _RouteKey(routable: adapter)
         let objcAdapter = _routableServiceProtocolFromObject(Adapter.self)
         let objcAdaptee = _routableServiceProtocolFromObject(Adaptee.self)
         if let objcAdapter = objcAdapter, let objcAdaptee = objcAdaptee,
@@ -214,11 +232,22 @@ internal class Registry {
         }
         assert(serviceProtocolContainer[adapterKey] == nil, "Adapter (\(Adapter.self)) is already registered with a router (\(serviceProtocolContainer[adapterKey]!))")
         assert(serviceAdapterContainer[adapterKey] == nil, "Adapter (\(Adapter.self)) can't register adaptee (\(Adaptee.self)), already register another adaptee (\(serviceAdapterContainer[adapterKey]!.key))")
-        serviceAdapterContainer[adapterKey] = _RouteKey(routable: adaptee)
+        
+        if let objcAdapter = objcAdapter {
+            adapterKey = _RouteKey(type: Adapter.self, name: adapter.typeName, adapterProtocol: objcAdapter)
+        }
+        let adapteeKey: _RouteKey
+        if let objcAdaptee = objcAdaptee {
+            adapteeKey = _RouteKey(type: Adaptee.self, name: adaptee.typeName, adapterProtocol: objcAdaptee)
+        } else {
+            adapteeKey = _RouteKey(routable: adaptee)
+        }
+        
+        serviceAdapterContainer[adapterKey] = adapteeKey
     }
     
     internal static func register<Adapter, Adaptee>(adapter: RoutableServiceModule<Adapter>, forAdaptee adaptee: RoutableServiceModule<Adaptee>) {
-        let adapterKey = _RouteKey(routable: adapter)
+        var adapterKey = _RouteKey(routable: adapter)
         let objcAdapter = _routableServiceModuleProtocolFromObject(Adapter.self)
         let objcAdaptee = _routableServiceModuleProtocolFromObject(Adaptee.self)
         if let objcAdapter = objcAdapter, let objcAdaptee = objcAdaptee,
@@ -231,7 +260,18 @@ internal class Registry {
         }
         assert(serviceModuleProtocolContainer[adapterKey] == nil, "Adapter (\(Adapter.self)) is already registered with a router (\(serviceModuleProtocolContainer[adapterKey]!))")
         assert(serviceModuleAdapterContainer[adapterKey] == nil, "Adapter (\(Adapter.self)) can't register adaptee (\(Adaptee.self)), already register another adaptee (\(serviceModuleAdapterContainer[adapterKey]!.key))")
-        serviceModuleAdapterContainer[adapterKey] = _RouteKey(routable: adaptee)
+        
+        if let objcAdapter = objcAdapter {
+            adapterKey = _RouteKey(type: Adapter.self, name: adapter.typeName, adapterProtocol: objcAdapter)
+        }
+        let adapteeKey: _RouteKey
+        if let objcAdaptee = objcAdaptee {
+            adapteeKey = _RouteKey(type: Adaptee.self, name: adaptee.typeName, adapterProtocol: objcAdaptee)
+        } else {
+            adapteeKey = _RouteKey(routable: adaptee)
+        }
+        
+        serviceModuleAdapterContainer[adapterKey] = adapteeKey
     }
     
     internal static let makingDestinationIdentifierPrefix = "~SwiftMakingDestination~"
@@ -312,27 +352,17 @@ internal class Registry {
 
 extension ZIKServiceRouteRegistry {
     @objc class func _swiftRouteForDestinationAdapter(_ adapter: Protocol) -> Any? {
-        let adaptee = Registry.serviceAdapterContainer[_RouteKey(protocol: adapter)]
-        var route: Any?
-        repeat {
-            guard let adaptee = adaptee else {
-                return nil
-            }
-            route = Registry.serviceProtocolContainer[adaptee]
-        } while route == nil
-        return route
+        if let adaptee = Registry.serviceAdapterContainer[_RouteKey(protocol: adapter)] {
+            return Registry._swiftRouter(toServiceKey: adaptee)?.routeObject
+        }
+        return nil
     }
     
     @objc class func _swiftRouteForModuleAdapter(_ adapter: Protocol) -> Any? {
-        let adaptee = Registry.serviceModuleAdapterContainer[_RouteKey(protocol: adapter)]
-        var route: Any?
-        repeat {
-            guard let adaptee = adaptee else {
-                return nil
-            }
-            route = Registry.serviceModuleProtocolContainer[adaptee]
-        } while route == nil
-        return route
+        if let adaptee = Registry.serviceModuleAdapterContainer[_RouteKey(protocol: adapter)] {
+            return Registry._swiftRouter(toServiceModuleKey: adaptee)?.routeObject
+        }
+        return nil
     }
 }
 
@@ -403,7 +433,7 @@ fileprivate extension Registry {
     /// - Parameter name: The name of the protocol.
     /// - Returns: The service router class for the service protocol.
     fileprivate static func _router(toService serviceProtocol: Any.Type, name: String) -> ZIKAnyServiceRouterType? {
-        if let routerType = _swiftRouter(toService: serviceProtocol, name: name) {
+        if let routerType = _swiftRouter(toServiceKey: _RouteKey(type: serviceProtocol, name: name)) {
             return routerType
         }
         if let routableProtocol = _routableServiceProtocolFromObject(serviceProtocol), let routerType = _ZIKServiceRouterToService(routableProtocol) {
@@ -419,17 +449,18 @@ fileprivate extension Registry {
         }
         return nil
     }
-    fileprivate static func _swiftRouter(toService serviceProtocol: Any.Type, name: String) -> ZIKAnyServiceRouterType? {
-        if let route = serviceProtocolContainer[_RouteKey(type: serviceProtocol, name: name)], let routerType = ZIKAnyServiceRouterType.tryMakeType(forRoute: route) {
+    
+    fileprivate static func _swiftRouter(toServiceKey serviceRouteKey: _RouteKey) -> ZIKAnyServiceRouterType? {
+        if let route = serviceProtocolContainer[serviceRouteKey], let routerType = ZIKAnyServiceRouterType.tryMakeType(forRoute: route) {
             return routerType
         }
-        if let routerType = _ZIKServiceRouterToIdentifier(makingDestinationIdentifierPrefix + name) {
+        if let routerType = _ZIKServiceRouterToIdentifier(makingDestinationIdentifierPrefix + serviceRouteKey.key) {
             return routerType
         }
         #if DEBUG
         var traversedProtocols: [_RouteKey] = []
         #endif
-        var adapter = _RouteKey(type: serviceProtocol, name: name)
+        var adapter = serviceRouteKey
         var adaptee: _RouteKey?
         repeat {
             adaptee = serviceAdapterContainer[adapter]
@@ -437,9 +468,9 @@ fileprivate extension Registry {
                 if let route = serviceProtocolContainer[adaptee], let routerType = ZIKAnyServiceRouterType.tryMakeType(forRoute: route) {
                     return routerType
                 }
-                if let adapteeProtocol = NSProtocolFromString(adaptee.key),
-                   let routableProtocol = _routableServiceProtocolFromObject(adapteeProtocol),
-                   let routerType = _ZIKServiceRouterToService(routableProtocol) {
+                if let adapteeProtocol = adaptee.adapterProtocol,
+                    let routableProtocol = _routableServiceProtocolFromObject(adapteeProtocol),
+                    let routerType = _ZIKServiceRouterToService(routableProtocol) {
                     return routerType
                 }
                 if let routerType = _ZIKServiceRouterToIdentifier(makingDestinationIdentifierPrefix + adaptee.key) {
@@ -467,7 +498,7 @@ fileprivate extension Registry {
     /// - Parameter name: The name of the protocol.
     /// - Returns: The service router class for the config protocol.
     fileprivate static func _router(toServiceModule configProtocol: Any.Type, name: String) -> ZIKAnyServiceRouterType? {
-        if let routerType = _swiftRouter(toServiceModule: configProtocol, name: name) {
+        if let routerType = _swiftRouter(toServiceModuleKey: _RouteKey(type: configProtocol, name: name)) {
             return routerType
         }
         
@@ -484,17 +515,18 @@ fileprivate extension Registry {
         }
         return nil
     }
-    fileprivate static func _swiftRouter(toServiceModule configProtocol: Any.Type, name: String) -> ZIKAnyServiceRouterType? {
-        if let route = serviceModuleProtocolContainer[_RouteKey(type: configProtocol, name: name)], let routerType = ZIKAnyServiceRouterType.tryMakeType(forRoute: route) {
+    
+    fileprivate static func _swiftRouter(toServiceModuleKey moduleRouteKey: _RouteKey) -> ZIKAnyServiceRouterType? {
+        if let route = serviceModuleProtocolContainer[moduleRouteKey], let routerType = ZIKAnyServiceRouterType.tryMakeType(forRoute: route) {
             return routerType
         }
-        if let routerType = _ZIKServiceRouterToIdentifier(makingModuleIdentifierPrefix + name) {
+        if let routerType = _ZIKServiceRouterToIdentifier(makingModuleIdentifierPrefix + moduleRouteKey.key) {
             return routerType
         }
         #if DEBUG
         var traversedProtocols: [_RouteKey] = []
         #endif
-        var adapter = _RouteKey(type: configProtocol, name: name)
+        var adapter = moduleRouteKey
         var adaptee: _RouteKey?
         repeat {
             adaptee = serviceModuleAdapterContainer[adapter]
@@ -502,9 +534,9 @@ fileprivate extension Registry {
                 if let route = serviceModuleProtocolContainer[adaptee], let routerType = ZIKAnyServiceRouterType.tryMakeType(forRoute: route) {
                     return routerType
                 }
-                if let adapteeProtocol = NSProtocolFromString(adaptee.key),
-                   let routableProtocol = _routableServiceModuleProtocolFromObject(adapteeProtocol),
-                   let routerType = _ZIKServiceRouterToModule(routableProtocol) {
+                if let adapteeProtocol = adaptee.adapterProtocol,
+                    let routableProtocol = _routableServiceModuleProtocolFromObject(adapteeProtocol),
+                    let routerType = _ZIKServiceRouterToModule(routableProtocol) {
                     return routerType
                 }
                 if let routerType = _ZIKServiceRouterToIdentifier(makingModuleIdentifierPrefix + adaptee.key) {
@@ -525,6 +557,7 @@ fileprivate extension Registry {
         } while adaptee != nil
         return nil
     }
+    
 }
 
 // MARK: Validate
@@ -722,7 +755,7 @@ private class _ServiceRouterValidater: ZIKServiceRouteAdapter {
         // Destination should conforms to registered adapter destination protocols
         for (adapter, _) in Registry.serviceAdapterContainer {
             assert(adapter.type != nil)
-            guard let type = adapter.type, let routerType = Registry._swiftRouter(toService: type, name: adapter.key) else {
+            guard let routerType = Registry._swiftRouter(toServiceKey: adapter) else {
                 assertionFailure("Service adapter protocol(\(adapter.key)) is not registered with any router!")
                 continue
             }
@@ -755,7 +788,7 @@ private class _ServiceRouterValidater: ZIKServiceRouteAdapter {
         // Router's defaultRouteConfiguration should conforms to registered adapter module config protocols
         for (adapter, _) in Registry.serviceModuleAdapterContainer {
             assert(adapter.type != nil)
-            guard let type = adapter.type, let routerType = Registry._swiftRouter(toServiceModule: type, name: adapter.key) else {
+            guard let routerType = Registry._swiftRouter(toServiceModuleKey: adapter) else {
                 assertionFailure("Service module adapter protocol(\(adapter.key)) is not registered with any router!")
                 continue
             }
