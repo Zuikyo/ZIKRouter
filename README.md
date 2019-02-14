@@ -79,7 +79,7 @@ View router 将 UIKit / AppKit 中的所有界面跳转方式封装成一个统�
 
 
 
-## Quick Started Guide
+## Quick Start Guide
 
 1. [Create Router](#1-Create-Router)
    1. [Router Subclass](#11-Router-Subclass)
