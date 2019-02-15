@@ -23,7 +23,7 @@ NS_ASSUME_NONNULL_BEGIN
 @interface ZIKServiceRouter<__covariant Destination: id, __covariant RouteConfig: ZIKPerformRouteConfiguration *> (Discover)
 
 /**
- Get the router class registered with a service protocol. Always use macro `ZIKServiceRouterToService` to get router class, don't use this method directly.
+ Get the router class registered with a service protocol. Always use macro `ZIKRouterToService` to get router class, don't use this method directly.
  
  The parameter serviceProtocol of the block is: the protocol conformed by the service. Should be a ZIKServiceRoutable protocol.
  
@@ -32,7 +32,7 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic,class,readonly) ZIKServiceRouterType<Destination, RouteConfig> * _Nullable (^toService)(Protocol<ZIKServiceRoutable> *serviceProtocol) NS_SWIFT_UNAVAILABLE("Use `Router.to(RoutableService<ServiceProtocol>())` in ZRouter instead");
 
 /**
- Get the router class combined with a custom ZIKRouteConfiguration conforming to a unique protocol. Always use `ZIKServiceRouterToModule`, don't use this method directly.
+ Get the router class combined with a custom ZIKRouteConfiguration conforming to a unique protocol. Always use `ZIKRouterToModule`, don't use this method directly.
  
  The parameter configProtocol of the block is: the protocol conformed by defaultConfiguration of router. Should be a ZIKServiceModuleRoutable protocol.
  The return value `ZIKServiceRouterType` of the block is a router matched with the service. Return nil if protocol is nil or not declared. There will be an assert failure when result is nil.

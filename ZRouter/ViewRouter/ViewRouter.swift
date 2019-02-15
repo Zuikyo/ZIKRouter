@@ -805,16 +805,19 @@ open class ViewMakeableConfiguration<Destination, Constructor>: ZIKSwiftViewMake
         }
     }
     
-    /// Give the destination with specfic type to the caller.
-    ///
-    /// When using configuration with `register<Protocol>(_ routableServiceModule: RoutableServiceModule<Protocol>, forMakingService serviceClass: AnyClass, making factory: @escaping () -> Protocol)`, didMakeDestination is auto called after making destination.
-    ///
-    /// When using a router subclass with makeable configuration, the router subclass is responsible for check and call didMakeDestination after creating and preparing destination.
+    /// Give the destination with specfic type to the caller. This is auto called and reset to nil after `didFinishPrepareDestination:configuration:`.
     public var didMakeDestination: ((Destination) -> Void)? {
         didSet {
+            if self.didMakeDestination == nil {
+                self.__didMakeDestination = nil
+                return
+            }
             self.__didMakeDestination = { [unowned self] (d: Any) -> Void in
                 if let destination = d as? Destination {
-                    self.didMakeDestination?(destination)
+                    if let didMakeDestination = self.didMakeDestination {                        
+                        self.didMakeDestination = nil
+                        didMakeDestination(destination)
+                    }
                 } else {
                     assertionFailure("Invalid destination. Destination is not type of (\(Destination.self)): \(d)")
                 }

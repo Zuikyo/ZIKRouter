@@ -270,7 +270,7 @@ ZIKAnyViewRouter.register(RoutableView<NoteEditorInput>(), forMakingView: NoteEd
 ```swift
 ZIKAnyViewRouter.register(RoutableView<NoteEditorInput>(), 
                  forMakingView: NoteEditorViewController.self) { (config, router) -> NoteEditorInput? in
-                     NoteEditorViewController *destination = ... // 实例化 view controller
+                     let destination: NoteEditorViewController? = ... // 实例化 view controller
                      return destination;
         }
 
@@ -294,7 +294,7 @@ ZIKAnyViewRouter.register(RoutableView<NoteEditorInput>(),
 
 ```swift
 function makeEditorViewController(config: ViewRouteConfig) -> NoteEditorInput? {
-    NoteEditorViewController *destination = ... // 实例化 view controller
+    let destination: NoteEditorViewController? = ... // 实例化 view controller
     return destination;
 }
 
@@ -563,7 +563,7 @@ extension ViewMakeableConfiguration: EditorViewModuleInput where Destination == 
 // 用泛型类可以实现 EditorViewModuleConfiguration 子类一样的效果
 // 此时的 config 相当于 EditorViewModuleConfiguration<Any>()
 func makeEditorViewModuleConfiguration() -> ViewMakeableConfiguration<NoteEditorInput, (Note) -> Void> {
-	let config = ViewMakeableConfiguration<NoteEditorInput, (Note) -> Void>({ _,_ in})
+	let config = ViewMakeableConfiguration<NoteEditorInput, (Note) -> Void>({ _ in})
 	
 	// 使用者调用 constructDestination 向模块传参
 	config.constructDestination = { [unowned config] note in

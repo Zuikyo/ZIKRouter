@@ -184,7 +184,7 @@ Steps to support custom transition:
 
 If you want to do custom route action, override `-performRouteOnDestination:configuration:`.
 
-Most service routers are just for getting a service object. You can use [Make Destination](MakeDestination.md).
+Most service routers are just for getting a service object. You can use Make Destination.
 
 After performing, you will get a router instance. You can hold the router and remove route later. See [Remove Route](RemoveRoute.md).
 

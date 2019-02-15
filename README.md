@@ -282,7 +282,7 @@ or with custom creating block:
 ```swift
 ZIKAnyViewRouter.register(RoutableView<NoteEditorInput>(), 
                  forMakingView: NoteEditorViewController.self) { (config, router) -> NoteEditorInput? in
-                     NoteEditorViewController *destination = ... // instantiate your view controller
+                     let destination: NoteEditorViewController? = ... // instantiate your view controller
                      return destination;
         }
 
@@ -306,7 +306,7 @@ or with custom factory function:
 
 ```swift
 function makeEditorViewController(config: ViewRouteConfig) -> NoteEditorInput? {
-    NoteEditorViewController *destination = ... // instantiate your view controller
+    let destination: NoteEditorViewController? = ... // instantiate your view controller
     return destination;
 }
 
@@ -574,7 +574,7 @@ extension ViewMakeableConfiguration: EditorViewModuleInput where Destination == 
 // ViewMakeableConfiguration with generic arguments works as the same as  EditorViewModuleConfiguration
 // The config works like EditorViewModuleConfiguration<Any>()
 func makeEditorViewModuleConfiguration() -> ViewMakeableConfiguration<NoteEditorInput, (Note) -> Void> {
-	let config = ViewMakeableConfiguration<NoteEditorInput, (Note) -> Void>({ _,_ in})
+	let config = ViewMakeableConfiguration<NoteEditorInput, (Note) -> Void>({ _ in})
 	
 	// User is responsible for calling constructDestination and giving parameters
 	config.constructDestination = { [unowned config] note in

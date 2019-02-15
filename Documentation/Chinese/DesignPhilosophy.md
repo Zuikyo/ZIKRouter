@@ -75,7 +75,7 @@ URL router 的缺点：
 * 无法保证所使用的模块一定存在
 * 无法区分 required protocol 和 provided protocol，因此无法彻底解耦
 * 过于依赖 runtime 特性，无法应用到纯 swift 上
-* 使用 runtime 相关的接口调用任意类的任意方法，有被苹果审核拒绝的风险，需要注意不被。参考：[Are performSelector and respondsToSelector banned by App Store?
+* 使用 runtime 相关的接口调用任意类的任意方法，有被苹果审核拒绝的风险，需要注意别被苹果的审核误伤。参考：[Are performSelector and respondsToSelector banned by App Store?
   ](https://stackoverflow.com/questions/42662028/are-performselector-and-respondstoselector-banned-by-app-store)
 
 #### 代表框架

@@ -35,7 +35,7 @@ NS_ASSUME_NONNULL_BEGIN
  */
 @property (nonatomic, readonly) BOOL zix_routed;
 
-/// Whether the UIView/NSView is removing. YES in -willMoveToSuperview:nil and didMoveToWindow nil.
+/// Whether the UIView/NSView is removing. YES in -willMoveToSuperview:nil and -didMoveToWindow nil.
 @property (nonatomic, readonly) BOOL zix_removing;
 
 /// Get the ViewController containing the view. Only available in and after -willMoveToWindow:.

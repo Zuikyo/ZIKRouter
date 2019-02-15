@@ -26,7 +26,7 @@
 }
 
 - (void)showAlert {
-    ///If the protocol passed to `ZIKViewRouterToModule` is changed, parameter type in `prepareModule` will also change. So it's much safer when you change the routable protocol.
+    ///If the protocol passed to `ZIKRouterToModule` is changed, parameter type in `prepareModule` will also change. So it's much safer when you change the routable protocol.
     self.alertViewRouter = [ZIKRouterToViewModule(RequiredCompatibleAlertModuleInput)
      performPath:ZIKViewRoutePath.presentCompatibleAlertFrom(self)
      strictConfiguring:^(ZIKPerformRouteStrictConfiguration *config, ZIKViewRouteConfiguration<RequiredCompatibleAlertModuleInput> *module) {

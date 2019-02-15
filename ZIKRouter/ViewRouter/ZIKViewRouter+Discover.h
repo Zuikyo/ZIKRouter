@@ -23,7 +23,7 @@ NS_ASSUME_NONNULL_BEGIN
 @interface ZIKViewRouter<__covariant Destination: id, __covariant RouteConfig: ZIKViewRouteConfiguration *> (Discover)
 
 /**
- Get the view router class registered with a view protocol. Always use macro `ZIKViewRouterToView`, don't use this method directly.
+ Get the view router class registered with a view protocol. Always use macro `ZIKRouterToView`, don't use this method directly.
  
  The parameter viewProtocol of the block is the protocol conformed by the view. Should be a ZIKViewRoutable protocol.
  
@@ -66,7 +66,7 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic, class, readonly) ZIKViewRouterType<Destination, RouteConfig> * _Nullable (^toView)(Protocol<ZIKViewRoutable> *viewProtocol) NS_SWIFT_UNAVAILABLE("Use `Router.to(RoutableView<ViewProtocol>())` in ZRouter instead");
 
 /**
- Get the view router class combined with a custom ZIKViewRouteConfiguration conforming to a module config protocol. Always use macro `ZIKViewRouterToModule`, don't use this method directly.
+ Get the view router class combined with a custom ZIKViewRouteConfiguration conforming to a module config protocol. Always use macro `ZIKRouterToModule`, don't use this method directly.
  
  The parameter configProtocol of the block is: The protocol conformed by defaultConfiguration of router. Should be a ZIKViewModuleRoutable protocol.
  
