@@ -28,6 +28,12 @@ NS_ASSUME_NONNULL_BEGIN
 
 + (nullable instancetype)tryMakeRouterTypeForRoute:(id)route;
 
+/// Default configuration to perform route.
+- (RouteConfig)defaultRouteConfiguration;
+
+/// Default configuration to remove route.
+- (RemoveConfig)defaultRemoveConfiguration;
+
 #pragma mark Factory
 
 /// Whether the destination is instantiated synchronously.
@@ -52,10 +58,6 @@ NS_ASSUME_NONNULL_BEGIN
  @return The prepared destination.
  */
 - (nullable Destination)makeDestinationWithStrictConfiguring:(void(NS_NOESCAPE ^ _Nullable)(ZIKPerformRouteStrictConfiguration<Destination> *config, RouteConfig module))configBuilder;
-
-#pragma mark Internal
-
-- (RouteConfig)defaultRouteConfiguration;
 
 #pragma mark Unavailable
 

@@ -1960,6 +1960,9 @@ destinationStateBeforeRoute:(ZIKPresentationState *)destinationStateBeforeRoute
             if (configuration.handleExternalRoute) {
                 [self prepareDestinationForPerforming];
             } else {
+                if (configuration._prepareDestination) {
+                    configuration._prepareDestination(destination);
+                }
                 [self prepareDestination:destination configuration:configuration];
                 [self didFinishPrepareDestination:destination configuration:configuration];
             }

@@ -13,32 +13,20 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wstrict-prototypes"
-
-typedef void(^ZIKConstructBlock)();
-
-@interface ZIKPerformRouteConfiguration (Internal)
-/**
- Pass any type and any number of parameters for initializing destination module.
- @note
- Hiding the constructDestination getter is just to get better auto completion in Xcode for your custom constructDestination defined in module config protocol. You can declare constructDestination with `@dynamic` when add protocol for configuration.
- */
-//@property (nonatomic, readwrite) void(^constructDestination)();
-
-/**
- Set block for handling parameters from the caller. See `registerModuleProtocol:forMakingService:factory:`.
- */
-- (void)setConstructDestination:(ZIKConstructBlock)block;
+@interface ZIKRouteConfiguration ()
+/// Prepare the destination from the router internal before `prepareDestination:configuration:`.
+@property (nonatomic, copy, nullable) void(^_prepareDestination)(id destination);
 @end
 
-#pragma clang diagnostic pop
+@interface ZIKServiceMakeableConfiguration<__covariant Destination> ()
+/// Prepare the destination from the router internal before `prepareDestination:configuration:`.
+@property (nonatomic, copy, nullable) void(^_prepareDestination)(Destination destination);
+@end
 
 #define DeclareMakeableConfig(Config, Protocol)    \
 @interface Config (Protocol) <Protocol>    \
 @end    \
 @implementation Config (Protocol) \
-@dynamic constructDestination;  \
 @end    \
 
 /// Internal methods for subclass.

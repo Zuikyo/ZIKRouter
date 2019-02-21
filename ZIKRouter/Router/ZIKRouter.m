@@ -145,7 +145,17 @@ NSErrorDomain const ZIKRouteErrorDomain = @"ZIKRouteErrorDomain";
 - (void)performWithConfiguration:(ZIKPerformRouteConfiguration *)configuration {
     NSAssert(self.state == ZIKRouterStateRouting, @"State should be routing in -performWithConfiguration:");
     NSAssert([configuration isKindOfClass:[[[self class] defaultRouteConfiguration] class]], @"When using custom configuration class，you must override +defaultRouteConfiguration to return your custom configuration instance.");
-    id destination = [self destinationWithConfiguration:configuration];
+    id destination;
+    if ([configuration conformsToProtocol:@protocol(ZIKConfigurationSyncMakeable)]) {
+        id<ZIKConfigurationSyncMakeable> makeableConfiguration = (id<ZIKConfigurationSyncMakeable>)configuration;
+        id makedDestination = makeableConfiguration.makedDestination;
+        if (makedDestination) {
+            destination = makedDestination;
+        }
+    }
+    if (destination == nil) {
+        destination = [self destinationWithConfiguration:configuration];
+    }
     [self attachDestination:destination];
     if (destination == nil) {
         [self endPerformRouteWithError:[ZIKRouter errorWithCode:ZIKRouteErrorDestinationUnavailable localizedDescriptionFormat:@"Destination from router is nil. Maybe your configuration is invalid (%@), or there is a bug in the router.", configuration]];
@@ -606,15 +616,31 @@ NSErrorDomain const ZIKRouteErrorDomain = @"ZIKRouteErrorDomain";
     if (configuration.prepareDestination) {
         configuration.prepareDestination(destination);
     }
-    [self prepareDestination:destination configuration:configuration];
+    BOOL hasMakedDestination = NO;
+    if ([configuration conformsToProtocol:@protocol(ZIKConfigurationSyncMakeable)]) {
+        id<ZIKConfigurationSyncMakeable> makeableConfiguration = (id<ZIKConfigurationSyncMakeable>)configuration;
+        if (makeableConfiguration.makedDestination == destination) {
+            hasMakedDestination = YES;            
+        }
+    }
+    if (!hasMakedDestination) {
+        if (configuration._prepareDestination) {
+            configuration._prepareDestination(destination);
+        }
+        [self prepareDestination:destination configuration:configuration];
+    }
     [self didFinishPrepareDestination:destination configuration:configuration];
-    if ([configuration conformsToProtocol:@protocol(ZIKConfigurationMakeable)] && [configuration respondsToSelector:@selector(didMakeDestination)]) {
-        id<ZIKConfigurationMakeable> makeableConfig = (id)configuration;
+    if ([configuration conformsToProtocol:@protocol(ZIKConfigurationAsyncMakeable)] && [configuration respondsToSelector:@selector(didMakeDestination)]) {
+        id<ZIKConfigurationAsyncMakeable> makeableConfig = (id)configuration;
         void(^didMakeDestination)(id) = makeableConfig.didMakeDestination;
         if (didMakeDestination) {
             makeableConfig.didMakeDestination = nil;
             didMakeDestination(destination);
         }
+    }
+    if (hasMakedDestination) {
+        id<ZIKConfigurationSyncMakeable> makeableConfiguration = (id<ZIKConfigurationSyncMakeable>)configuration;
+        makeableConfiguration.makedDestination = nil;
     }
 }
 
@@ -639,6 +665,9 @@ NSErrorDomain const ZIKRouteErrorDomain = @"ZIKRouteErrorDomain";
     ZIKRemoveRouteConfiguration *configuration = self.original_removeConfiguration;
     if (configuration.prepareDestination && destination) {
         configuration.prepareDestination(destination);
+    }
+    if (configuration._prepareDestination && destination) {
+        configuration._prepareDestination(destination);
     }
 }
 

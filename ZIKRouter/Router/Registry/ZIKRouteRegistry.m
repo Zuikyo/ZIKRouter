@@ -848,7 +848,7 @@ static __attribute__((always_inline)) void _registerIdentifierWithRoute(NSString
 
 + (void)validateMakeableConfiguration:(ZIKPerformRouteConfiguration<ZIKConfigurationMakeable> *)config {
     NSAssert1([config conformsToProtocol:@protocol(ZIKConfigurationMakeable)], @"configuration class (%@) should conforms to ZIKConfigurationMakeable when registering as factory.", config);
-    NSAssert1(config.makeDestination || [config valueForKey:@"_constructDestination"] || [[NSStringFromClass([config class]) demangledAsSwift] containsString:@"."], @"configuration (%@) must has makeDestination block or constructDestination block when registering as factory.", config);
+    NSAssert1(config.makeDestination || [config valueForKey:@"_constructDestination"] || [[NSStringFromClass([config class]) demangledAsSwift] rangeOfString:@"."].length != 0, @"configuration (%@) must has makeDestination block or constructDestination block when registering as factory.", config);
 }
 
 #pragma mark Override

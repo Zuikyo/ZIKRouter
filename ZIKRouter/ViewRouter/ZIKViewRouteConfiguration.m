@@ -382,23 +382,68 @@ ZIKRouteAction const ZIKRouteActionPerformOnDestination = @"ZIKRouteActionPerfor
 @end
 
 @implementation ZIKViewMakeableConfiguration
+@dynamic _prepareDestination;
+
+- (ZIKMakeBlock)makeDestinationWith {
+    if (!_makeDestinationWith) {
+        return ^id{
+            NSAssert(NO, @"makeDestinationWith is not set");
+            return nil;
+        };
+    }
+    return _makeDestinationWith;
+}
+
+- (ZIKConstructBlock)constructDestination {
+    if (!_constructDestination) {
+        return ^{ NSAssert(NO, @"constructDestination is not set"); };
+    }
+    return _constructDestination;
+}
+
 - (id)copyWithZone:(nullable NSZone *)zone {
     ZIKViewMakeableConfiguration *config = [super copyWithZone:zone];
     config.makeDestination = self.makeDestination;
+    config.makeDestinationWith = self.makeDestinationWith;
+    config.makedDestination = self.makedDestination;
+    config.constructDestination = self.constructDestination;
     config.didMakeDestination = self.didMakeDestination;
     return config;
 }
+
 @end
 
-@interface ZIKSwiftViewMakeableConfiguration ()<ZIKConfigurationMakeable>
+@interface ZIKSwiftViewMakeableConfiguration ()<ZIKConfigurationAsyncMakeable, ZIKConfigurationSyncMakeable>
 @end
 @implementation ZIKSwiftViewMakeableConfiguration
+
+- (ZIKMakeBlock)makeDestinationWith {
+    if (!_makeDestinationWith) {
+        return ^id{
+            NSAssert(NO, @"makeDestinationWith is not set");
+            return nil;
+        };
+    }
+    return _makeDestinationWith;
+}
+
+- (ZIKConstructBlock)constructDestination {
+    if (!_constructDestination) {
+        return ^{ NSAssert(NO, @"constructDestination is not set"); };
+    }
+    return _constructDestination;
+}
+
 - (id)copyWithZone:(nullable NSZone *)zone {
     ZIKSwiftViewMakeableConfiguration *config = [super copyWithZone:zone];
     config.makeDestination = self.makeDestination;
+    config.makeDestinationWith = self.makeDestinationWith;
+    config.makedDestination = self.makedDestination;
+    config.constructDestination = self.constructDestination;
     config.didMakeDestination = self.didMakeDestination;
     return config;
 }
+
 @end
 
 @implementation ZIKViewRoutePopoverConfiguration

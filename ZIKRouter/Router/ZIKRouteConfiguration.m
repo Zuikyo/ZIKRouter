@@ -26,6 +26,7 @@
     config.errorHandler = self.errorHandler;
     config.performerErrorHandler = self.performerErrorHandler;
     config.stateNotifier = self.stateNotifier;
+    config._prepareDestination = self._prepareDestination;
     return config;
 }
 
@@ -68,17 +69,9 @@
 
 @interface ZIKPerformRouteConfiguration()
 @property (nonatomic, strong) NSMutableDictionary<NSString *, id> *userInfo;
-@property (nonatomic, copy) ZIKConstructBlock constructDestination;
 @end
 
 @implementation ZIKPerformRouteConfiguration
-
-- (ZIKConstructBlock)constructDestination {
-    if (!_constructDestination) {
-        _constructDestination = ^{ };
-    }
-    return _constructDestination;
-}
 
 - (void)setRouteCompletion:(void (^)(id _Nonnull))routeCompletion {
     self.successHandler = routeCompletion;
@@ -124,7 +117,6 @@
 
 - (id)copyWithZone:(nullable NSZone *)zone {
     ZIKPerformRouteConfiguration *config = [super copyWithZone:zone];
-    config.constructDestination = self.constructDestination;
     config.prepareDestination = self.prepareDestination;
     config.successHandler = self.successHandler;
     config.completionHandler = self.completionHandler;
@@ -139,23 +131,68 @@
 @end
 
 @implementation ZIKServiceMakeableConfiguration
+@dynamic _prepareDestination;
+
+- (ZIKMakeBlock)makeDestinationWith {
+    if (!_makeDestinationWith) {
+        return ^id{
+            NSAssert(NO, @"makeDestinationWith is not set");
+            return nil;
+        };
+    }
+    return _makeDestinationWith;
+}
+
+- (ZIKConstructBlock)constructDestination {
+    if (!_constructDestination) {
+        return ^{ NSAssert(NO, @"constructDestination is not set"); };
+    }
+    return _constructDestination;
+}
+
 - (id)copyWithZone:(nullable NSZone *)zone {
     ZIKServiceMakeableConfiguration *config = [super copyWithZone:zone];
     config.makeDestination = self.makeDestination;
+    config.makeDestinationWith = self.makeDestinationWith;
+    config.makedDestination = self.makedDestination;
+    config.constructDestination = self.constructDestination;
     config.didMakeDestination = self.didMakeDestination;
     return config;
 }
+
 @end
 
-@interface ZIKSwiftServiceMakeableConfiguration ()<ZIKConfigurationMakeable>
+@interface ZIKSwiftServiceMakeableConfiguration ()<ZIKConfigurationAsyncMakeable, ZIKConfigurationSyncMakeable>
 @end
 @implementation ZIKSwiftServiceMakeableConfiguration
+
+- (ZIKMakeBlock)makeDestinationWith {
+    if (!_makeDestinationWith) {
+        return ^id{
+            NSAssert(NO, @"makeDestinationWith is not set");
+            return nil;
+        };
+    }
+    return _makeDestinationWith;
+}
+
+- (ZIKConstructBlock)constructDestination {
+    if (!_constructDestination) {
+        return ^{ NSAssert(NO, @"constructDestination is not set"); };
+    }
+    return _constructDestination;
+}
+
 - (id)copyWithZone:(nullable NSZone *)zone {
     ZIKSwiftServiceMakeableConfiguration *config = [super copyWithZone:zone];
     config.makeDestination = self.makeDestination;
+    config.makeDestinationWith = self.makeDestinationWith;
+    config.makedDestination = self.makedDestination;
+    config.constructDestination = self.constructDestination;
     config.didMakeDestination = self.didMakeDestination;
     return config;
 }
+
 @end
 
 @implementation ZIKRemoveRouteConfiguration

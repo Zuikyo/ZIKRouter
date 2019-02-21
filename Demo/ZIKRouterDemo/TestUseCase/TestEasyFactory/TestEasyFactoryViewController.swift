@@ -37,10 +37,13 @@ class TestEasyFactoryViewController: UIViewController, ZIKInfoViewDelegate {
     }
     @IBAction func testEasyViewModule(_ sender: Any) {
         anyViewRouter = Router.perform(to: RoutableViewModule<EasyInfoViewModuleProtocol>(), path: .show(from: self)) { (config) in
-            config.constructDestination("zuik", 18, self)
-            config.didMakeDestination = { destination in
-                // get ZIKInfoViewProtocol
-            }
+            let d = config.makeDestinationWith("zuik", 18, self)
+            
+//            config.constructDestination("zuik", 18, self)
+//            config.didMakeDestination = { destination in
+//                // get ZIKInfoViewProtocol
+//            }
+            
         }?.router
     }    
     @IBAction func testEasyService1(_ sender: Any) {

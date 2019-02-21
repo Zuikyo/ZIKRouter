@@ -53,8 +53,26 @@ DeclareRoutableViewModuleProtocol(EasyInfoViewModuleProtocol)
      registerModuleProtocol:ZIKRoutable(EasyInfoViewModuleProtocol)
      forMakingView:[ZIKInfoViewController class]
      making:^ZIKViewRouteConfiguration<ZIKConfigurationMakeable> * _Nonnull{
-         ZIKViewMakeableConfiguration *config = [ZIKViewMakeableConfiguration new];
+         ZIKViewMakeableConfiguration<id<ZIKInfoViewProtocol>><EasyInfoViewModuleProtocol> *config = [ZIKViewMakeableConfiguration new];
          __weak typeof(config) weakConfig = config;
+         
+         config._prepareDestination = ^(id<ZIKInfoViewProtocol>  _Nonnull destination) {
+             NSLog(@"_prepareDestination: %@", destination);
+         };
+         
+         config.makeDestinationWith = ^id(NSString *title, NSInteger age, __weak _Nullable id<ZIKInfoViewDelegate> delegate) {
+             weakConfig.makeDestination = ^ZIKInfoViewController * _Nullable{
+                 UIStoryboard *sb = [UIStoryboard storyboardWithName:@"Main" bundle:nil];
+                 ZIKInfoViewController *destination = [sb instantiateViewControllerWithIdentifier:@"info"];
+                 destination.title = @"info";
+                 destination.name = title;
+                 destination.age = age;
+                 destination.delegate = delegate;
+                 return destination;
+             };
+             weakConfig.makedDestination = weakConfig.makeDestination();
+             return weakConfig.makedDestination;
+         };
          
          // User is responsible for calling constructDestination and giving parameters
          config.constructDestination = ^(NSString *title, NSInteger age, __weak _Nullable id<ZIKInfoViewDelegate> delegate) {

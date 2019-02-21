@@ -30,6 +30,7 @@ NS_ASSUME_NONNULL_BEGIN
 @protocol EasyInfoViewProtocol2 <ZIKInfoViewProtocol, ZIKViewRoutable>
 @end
 @protocol EasyInfoViewModuleProtocol <ZIKViewModuleRoutable>
+@property (nonatomic, copy, readonly) id<ZIKInfoViewProtocol> _Nullable(^makeDestinationWith)(NSString *name, NSInteger age, __weak _Nullable id<ZIKInfoViewDelegate> delegate);
 @property (nonatomic, copy, readonly) void(^constructDestination)(NSString *name, NSInteger age, __weak _Nullable id<ZIKInfoViewDelegate> delegate);
 @property (nonatomic, copy, nullable) void(^didMakeDestination)(id<ZIKInfoViewProtocol> destination);
 @end

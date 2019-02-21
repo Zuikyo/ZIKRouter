@@ -82,7 +82,21 @@ class EasyRouteRegistry: ZIKViewRouteAdapter {
         }
         
         ZIKAnyViewRouter.register(RoutableViewModule<EasyViewModuleInput>(), forMakingView: SwiftSampleViewController.self) { () -> EasyViewModuleInput in
-            let config = ViewMakeableConfiguration<EasyViewInput, (String, Int)->Void>({_,_ in })
+            let config = AnyViewMakeableConfiguration<EasyViewInput, (String, Int)->EasyViewInput?, (String, Int)->Void>(maker: { _,_ in return nil }, constructor: {_,_ in })
+            config.makeDestinationWith = { [unowned config] (title, num) in
+                config.makeDestination = { () -> EasyViewInput? in
+                    let sb = UIStoryboard.init(name: "Main", bundle: nil)
+                    let destination = sb.instantiateViewController(withIdentifier: "SwiftSampleViewController") as! SwiftSampleViewController
+                    destination.title = "Swift Sample from easy register"
+                    return destination
+                }
+                if let destination = config.makeDestination?() {
+                    config.__prepareDestination?(destination)
+                    config.makedDestination = destination
+                    return destination
+                }
+                return nil
+            }
             config.constructDestination = { [unowned config] (title, num) in
                 config.makeDestination = {
                     let sb = UIStoryboard.init(name: "Main", bundle: nil)
@@ -125,6 +139,8 @@ extension RoutableView where Protocol == EasyViewInput2 {
 extension SwiftSampleViewController: EasyViewInput, EasyViewInput2 { }
 
 protocol EasyViewModuleInput {
+    var makeDestinationWith: (String, Int) -> EasyViewInput? { get }
+    
     var constructDestination: (String, Int) -> Void { get }
     var didMakeDestination:((EasyViewInput) -> Void)? { get set }
     
@@ -132,7 +148,7 @@ protocol EasyViewModuleInput {
 extension RoutableViewModule where Protocol == EasyViewModuleInput {
     init() { self.init(declaredProtocol: Protocol.self) }
 }
-extension ViewMakeableConfiguration: EasyViewModuleInput where Destination == EasyViewInput, Constructor == (String, Int) -> Void {
+extension AnyViewMakeableConfiguration: EasyViewModuleInput where Destination == EasyViewInput, Maker == (String, Int) -> EasyViewInput?, Constructor == (String, Int) -> Void {
     
 }
 

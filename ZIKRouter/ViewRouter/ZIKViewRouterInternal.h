@@ -19,6 +19,11 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
+@interface ZIKViewMakeableConfiguration<__covariant Destination> ()
+/// Prepare the destination from the router internal before `prepareDestination:configuration:`.
+@property (nonatomic, copy, nullable) void(^_prepareDestination)(Destination destination);
+@end
+
 /// Internal methods for subclass to override. Use these methods when implementing your custom route.
 @interface ZIKViewRouter<__covariant Destination, __covariant RouteConfig: ZIKViewRouteConfiguration *> ()
 @property (nonatomic, readonly, copy) RouteConfig original_configuration;
