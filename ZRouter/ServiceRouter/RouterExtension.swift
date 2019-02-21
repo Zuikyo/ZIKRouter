@@ -132,7 +132,7 @@ public extension ZIKServiceRouteAdapter {
     ///
     /// - Parameter adapter: The required protocol used in the user. The protocol should not be directly registered with any router yet.
     /// - Parameter adaptee: The provided protocol.
-    public static func register<Adapter, Adaptee>(adapter: RoutableService<Adapter>, forAdaptee adaptee: RoutableService<Adaptee>) {
+    static func register<Adapter, Adaptee>(adapter: RoutableService<Adapter>, forAdaptee adaptee: RoutableService<Adaptee>) {
         Registry.register(adapter: adapter, forAdaptee: adaptee)
     }
     
@@ -140,7 +140,7 @@ public extension ZIKServiceRouteAdapter {
     ///
     /// - Parameter adapter: The required protocol used in the user. The protocol should not be directly registered with any router yet.
     /// - Parameter adaptee: The provided protocol.
-    public static func register<Adapter, Adaptee>(adapter: RoutableServiceModule<Adapter>, forAdaptee adaptee: RoutableServiceModule<Adaptee>) {
+    static func register<Adapter, Adaptee>(adapter: RoutableServiceModule<Adapter>, forAdaptee adaptee: RoutableServiceModule<Adaptee>) {
         Registry.register(adapter: adapter, forAdaptee: adaptee)
     }
 }

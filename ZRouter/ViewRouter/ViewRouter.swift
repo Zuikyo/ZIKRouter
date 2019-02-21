@@ -647,7 +647,7 @@ public enum ViewRoutePath {
 
 public extension ViewRouterType {
     @available(iOS, deprecated: 8.0, message: "Use perform(path:configuring:removing:) instead")
-    @discardableResult public func perform(
+    @discardableResult func perform(
         from source: ZIKViewRouteSource?,
         configuring configBuilder: (ViewRouteStrictConfig<Destination>, ModulePreparation) -> Void,
         removing removeConfigBuilder: ((ViewRemoveStrictConfig<Destination>) -> Void)? = nil
@@ -685,7 +685,7 @@ public extension ViewRouterType {
     }
     
     @available(iOS, deprecated: 8.0, message: "Use perform(path:) instead")
-    @discardableResult public func perform(
+    @discardableResult func perform(
         from source: ZIKViewRouteSource?,
         routeType: ViewRouteType
         ) -> ViewRouter<Destination, ModuleConfig>? {
@@ -695,7 +695,7 @@ public extension ViewRouterType {
     }
     
     @available(iOS, deprecated: 8.0, message: "Use perform(onDestination:path:configuring:removing:) instead")
-    @discardableResult public func perform(
+    @discardableResult func perform(
         onDestination destination: Destination,
         from source: ZIKViewRouteSource?,
         configuring configBuilder: (ViewRouteStrictConfig<Destination>, ModulePreparation) -> Void,
@@ -730,7 +730,7 @@ public extension ViewRouterType {
     }
     
     @available(iOS, deprecated: 8.0, message: "Use perform(onDestination:path:) instead")
-    @discardableResult public func perform(
+    @discardableResult func perform(
         onDestination destination: Destination,
         from source: ZIKViewRouteSource?,
         routeType: ViewRouteType

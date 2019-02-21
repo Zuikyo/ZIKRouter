@@ -78,7 +78,7 @@ public extension Router {
     ///     - prepareModule: Prepare custom module config.
     ///   - removeConfigure: Configure the configuration for removing service.
     /// - Returns: The service router.
-    @discardableResult public static func perform<Protocol>(
+    @discardableResult static func perform<Protocol>(
         to routableService: RoutableService<Protocol>,
         configuring configure: (PerformRouteStrictConfig<Protocol>, ((PerformRouteConfig) -> Void) -> Void) -> Void,
         removing removeConfigure: ((RemoveRouteStrictConfig<Protocol>) -> Void)? = nil
@@ -93,7 +93,7 @@ public extension Router {
     ///   - routableService: A routabe entry carrying a service protocol.
     ///   - performerCompletion: Completion for current performing.
     /// - Returns: The service router.
-    @discardableResult public static func perform<Protocol>(
+    @discardableResult static func perform<Protocol>(
         to routableService: RoutableService<Protocol>,
         completion performerCompletion: @escaping (Bool, Any?, ZIKRouteAction, Error?) -> Void
         ) -> ServiceRouter<Protocol, PerformRouteConfig>? {
@@ -107,7 +107,7 @@ public extension Router {
     ///   - routableService: A routable entry carrying a service protocol.
     ///   - preparation: Prepare the destination with destination protocol. It's an escaping block, use weakSelf to avoid retain cycle.
     /// - Returns: The service router for this route.
-    @discardableResult public static func perform<Protocol>(
+    @discardableResult static func perform<Protocol>(
         to routableService: RoutableService<Protocol>,
         preparation prepare: @escaping ((Protocol) -> Void)
         ) -> ServiceRouter<Protocol, PerformRouteConfig>? {
@@ -122,7 +122,7 @@ public extension Router {
     ///   - performerSuccessHandler: Success handler for current performing.
     ///   - performerErrorHandler: Error handler for current performing.
     /// - Returns: The service router.
-    @discardableResult public static func perform<Protocol>(
+    @discardableResult static func perform<Protocol>(
         to routableService: RoutableService<Protocol>,
         successHandler performerSuccessHandler: ((Protocol) -> Void)? = nil,
         errorHandler performerErrorHandler: ((ZIKRouteAction, Error) -> Void)? = nil
@@ -140,7 +140,7 @@ public extension Router {
     ///     - prepareModule: Prepare custom module config.
     ///   - removeConfigure: Configure the configuration for removing service.
     /// - Returns: The service router.
-    @discardableResult public static func perform<Protocol>(
+    @discardableResult static func perform<Protocol>(
         to routableServiceModule: RoutableServiceModule<Protocol>,
         configuring configure: (PerformRouteStrictConfig<Any>, ((Protocol) -> Void) -> Void) -> Void,
         removing removeConfigure: ((RemoveRouteStrictConfig<Any>) -> Void)? = nil
@@ -156,7 +156,7 @@ public extension Router {
     ///   - routableServiceModule: A routabe entry carrying a module config protocol.
     ///   - performerCompletion: Completion for current performing.
     /// - Returns: The service router.
-    @discardableResult public static func perform<Protocol>(
+    @discardableResult static func perform<Protocol>(
         to routableServiceModule: RoutableServiceModule<Protocol>,
         completion performerCompletion: @escaping (Bool, Any?, ZIKRouteAction, Error?) -> Void
         ) -> ServiceRouter<Any, Protocol>? {
@@ -170,7 +170,7 @@ public extension Router {
     ///   - routableServiceModule: A routable entry carrying a module config protocol.
     ///   - preparation: Prepare the module with protocol.
     /// - Returns: The service router for this route.
-    @discardableResult public static func perform<Protocol>(
+    @discardableResult static func perform<Protocol>(
         to routableServiceModule: RoutableServiceModule<Protocol>,
         preparation prepare: @escaping ((Protocol) -> Void)
         ) -> ServiceRouter<Any, Protocol>? {
@@ -190,7 +190,7 @@ public extension Router {
     ///   - routableService: A routabe entry carrying a service protocol.
     ///   - prepare: Prepare the destination with the protocol. This is an escaping block, use weakSelf to avoid retain cycle.
     /// - Returns: The service destination.
-    public static func makeDestination<Protocol>(
+    static func makeDestination<Protocol>(
         to routableService: RoutableService<Protocol>,
         preparation prepare: ((Protocol) -> Void)? = nil
         ) -> Protocol? {
@@ -204,7 +204,7 @@ public extension Router {
     ///   - routableService: A routabe entry carrying a service protocol.
     ///   - configure: Prepare the destination and other parameters.
     /// - Returns: The service destination.
-    public static func makeDestination<Protocol>(
+    static func makeDestination<Protocol>(
         to routableService: RoutableService<Protocol>,
         configuring configure: (PerformRouteStrictConfig<Protocol>, ((PerformRouteConfig) -> Void) -> Void) -> Void
         ) -> Protocol? {
@@ -218,7 +218,7 @@ public extension Router {
     ///   - routableServiceModule: A routabe entry carrying a service module config protocol.
     ///   - prepare: Prepare the module with the protocol. This is an escaping block, use weakSelf to avoid retain cycle.
     /// - Returns: The service destination.
-    public static func makeDestination<Protocol>(
+    static func makeDestination<Protocol>(
         to routableServiceModule: RoutableServiceModule<Protocol>,
         preparation prepare: ((Protocol) -> Void)? = nil
         ) -> Any? {
@@ -236,7 +236,7 @@ public extension Router {
     ///   - routableServiceModule: A routabe entry carrying a service module config protocol.
     ///   - configure: Prepare the module with the protocol.
     /// - Returns: The service destination.
-    public static func makeDestination<Protocol>(
+    static func makeDestination<Protocol>(
         to routableServiceModule: RoutableServiceModule<Protocol>,
         configuring configure: (PerformRouteStrictConfig<Any>, ((Protocol) -> Void) -> Void) -> Void
         ) -> Any? {
@@ -249,7 +249,7 @@ public extension Router {
     /// Enumerate all service routers. You can notify custom events to service routers with it.
     ///
     /// - Parameter handler: The enumerator gives subclasses of ZIKServiceRouter.
-    public static func enumerateAllServiceRouters(_ handler: (ZIKAnyServiceRouter.Type) -> Void) -> Void {
+    static func enumerateAllServiceRouters(_ handler: (ZIKAnyServiceRouter.Type) -> Void) -> Void {
         ZIKAnyServiceRouter.enumerateAllServiceRouters { (routerClass) in
             if let routerType = routerClass as? ZIKAnyServiceRouter.Type {
                 handler(routerType)

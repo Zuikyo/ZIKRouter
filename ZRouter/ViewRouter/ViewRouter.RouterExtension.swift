@@ -12,7 +12,7 @@
 import ZIKRouter
 
 public extension ViewRouteConfig {
-    public func configurePath(_ path: ViewRoutePath) {
+    func configurePath(_ path: ViewRoutePath) {
         if let source = path.source {
             self.source = source
         }
@@ -138,7 +138,7 @@ public extension ZIKViewRouteAdapter {
     ///
     /// - Parameter adapter: The required protocol used in the user. The protocol should not be directly registered with any router yet.
     /// - Parameter adaptee: The provided protocol.
-    public static func register<Adapter, Adaptee>(adapter: RoutableView<Adapter>, forAdaptee adaptee: RoutableView<Adaptee>) {
+    static func register<Adapter, Adaptee>(adapter: RoutableView<Adapter>, forAdaptee adaptee: RoutableView<Adaptee>) {
         Registry.register(adapter: adapter, forAdaptee: adaptee)
     }
     
@@ -146,7 +146,7 @@ public extension ZIKViewRouteAdapter {
     ///
     /// - Parameter adapter: The required protocol used in the user. The protocol should not be directly registered with any router yet.
     /// - Parameter adaptee: The provided protocol.
-    public static func register<Adapter, Adaptee>(adapter: RoutableViewModule<Adapter>, forAdaptee adaptee: RoutableViewModule<Adaptee>) {
+    static func register<Adapter, Adaptee>(adapter: RoutableViewModule<Adapter>, forAdaptee adaptee: RoutableViewModule<Adaptee>) {
         Registry.register(adapter: adapter, forAdaptee: adaptee)
     }
 }

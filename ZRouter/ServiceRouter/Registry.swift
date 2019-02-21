@@ -99,6 +99,9 @@ internal struct _RouteKey: Hashable {
     var hashValue: Int {
         return key.hashValue
     }
+    func hash(into hasher: inout Hasher) {
+        hasher.combine(key.hashValue)
+    }
     static func ==(lhs: _RouteKey, rhs: _RouteKey) -> Bool {
         return lhs.key == rhs.key
     }
@@ -303,7 +306,7 @@ internal class Registry {
             _registerServiceProtocolWithSwiftFactory(routableProtocol, destinationClass, factory)
             return
         }
-        assert(_ZIKServiceRouterToIdentifier(makingDestinationIdentifierPrefix + routableService.typeName) == nil, "Protocol (\(routableService.typeName)) already registered with router (\(_ZIKServiceRouterToIdentifier(makingDestinationIdentifierPrefix + routableService.typeName)!.routeObject)), can't register for making destination (\(destinationClass)) with factory (\(factory))");
+        assert(_ZIKServiceRouterToIdentifier(makingDestinationIdentifierPrefix + routableService.typeName) == nil, "Protocol (\(routableService.typeName)) already registered with router (\(_ZIKServiceRouterToIdentifier(makingDestinationIdentifierPrefix + routableService.typeName)!.routeObject)), can't register for making destination (\(destinationClass)) with factory (\(String(describing: factory)))");
         _registerServiceIdentifierWithSwiftFactory(makingDestinationIdentifierPrefix + routableService.typeName, destinationClass, factory)
     }
     
@@ -315,7 +318,7 @@ internal class Registry {
             _registerServiceModuleProtocolWithSwiftFactory(routableProtocol, destinationClass, factory)
             return
         }
-        assert(_ZIKServiceRouterToIdentifier(makingModuleIdentifierPrefix + routableServiceModule.typeName) == nil, "Protocol (\(routableServiceModule.typeName)) already registered with router (\(_ZIKServiceRouterToIdentifier(makingModuleIdentifierPrefix + routableServiceModule.typeName)!.routeObject)), can't register for making destination (\(destinationClass)) with factory (\(factory))");
+        assert(_ZIKServiceRouterToIdentifier(makingModuleIdentifierPrefix + routableServiceModule.typeName) == nil, "Protocol (\(routableServiceModule.typeName)) already registered with router (\(_ZIKServiceRouterToIdentifier(makingModuleIdentifierPrefix + routableServiceModule.typeName)!.routeObject)), can't register for making destination (\(destinationClass)) with factory (\(String(describing: factory)))");
         _registerServiceModuleIdentifierWithSwiftFactory(makingModuleIdentifierPrefix + routableServiceModule.typeName, destinationClass, factory)
     }
     
@@ -373,7 +376,7 @@ internal extension Registry {
     ///
     /// - Parameter routableService: A routabe entry carrying a service protocol conformed by the service registered with a service router. Support objc protocol and pure Swift protocol.
     /// - Returns: The service router type for the service protocol.
-    internal static func router<Destination>(to routableService: RoutableService<Destination>) -> ServiceRouterType<Destination, PerformRouteConfig>? {
+    static func router<Destination>(to routableService: RoutableService<Destination>) -> ServiceRouterType<Destination, PerformRouteConfig>? {
         let routerType = _router(toService: Destination.self, name: routableService.typeName)
         if let routerType = routerType {
             return ServiceRouterType(routerType: routerType)
@@ -385,7 +388,7 @@ internal extension Registry {
     ///
     /// - Parameter routableServiceModule: A routabe entry carrying a cconfg protocol registered with a service router. Support objc protocol and pure Swift protocol.
     /// - Returns: The service router type for the config protocol.
-    internal static func router<Module>(to routableServiceModule: RoutableServiceModule<Module>) -> ServiceRouterType<Any, Module>? {
+    static func router<Module>(to routableServiceModule: RoutableServiceModule<Module>) -> ServiceRouterType<Any, Module>? {
         let routerType = _router(toServiceModule: Module.self, name: routableServiceModule.typeName)
         if let routerType = routerType {
             return ServiceRouterType(routerType: routerType)
@@ -402,7 +405,7 @@ internal extension Registry {
     ///
     /// - Parameter switchableService: A struct carrying any routable service protocol, but not a specified one.
     /// - Returns: The service router type for the service protocol.
-    internal static func router(to switchableService: SwitchableService) -> ServiceRouterType<Any, PerformRouteConfig>? {
+    static func router(to switchableService: SwitchableService) -> ServiceRouterType<Any, PerformRouteConfig>? {
         let routerType = _router(toService: switchableService.routableProtocol, name: switchableService.typeName)
         if let routerType = routerType {
             return ServiceRouterType(routerType: routerType)
@@ -414,7 +417,7 @@ internal extension Registry {
     ///
     /// - Parameter switchableServiceModule: A struct carrying any routable service module config protocol, but not a specified one.
     /// - Returns: The service router type for the service module config protocol.
-    internal static func router(to switchableServiceModule: SwitchableServiceModule) -> ServiceRouterType<Any, PerformRouteConfig>? {
+    static func router(to switchableServiceModule: SwitchableServiceModule) -> ServiceRouterType<Any, PerformRouteConfig>? {
         let routerType = _router(toServiceModule: switchableServiceModule.routableProtocol, name: switchableServiceModule.typeName)
         if let routerType = routerType {
             return ServiceRouterType(routerType: routerType)
@@ -432,7 +435,7 @@ fileprivate extension Registry {
     /// - Parameter serviceProtocol: Service protocol conformed by the service registered with a service router. Support objc protocol and pure Swift protocol.
     /// - Parameter name: The name of the protocol.
     /// - Returns: The service router class for the service protocol.
-    fileprivate static func _router(toService serviceProtocol: Any.Type, name: String) -> ZIKAnyServiceRouterType? {
+    static func _router(toService serviceProtocol: Any.Type, name: String) -> ZIKAnyServiceRouterType? {
         if let routerType = _swiftRouter(toServiceKey: _RouteKey(type: serviceProtocol, name: name)) {
             return routerType
         }
@@ -450,7 +453,7 @@ fileprivate extension Registry {
         return nil
     }
     
-    fileprivate static func _swiftRouter(toServiceKey serviceRouteKey: _RouteKey) -> ZIKAnyServiceRouterType? {
+    static func _swiftRouter(toServiceKey serviceRouteKey: _RouteKey) -> ZIKAnyServiceRouterType? {
         if let route = serviceProtocolContainer[serviceRouteKey], let routerType = ZIKAnyServiceRouterType.tryMakeType(forRoute: route) {
             return routerType
         }
@@ -497,7 +500,7 @@ fileprivate extension Registry {
     /// - Parameter configProtocol: Service module config protocol registered with a service router. Support objc protocol and pure Swift protocol.
     /// - Parameter name: The name of the protocol.
     /// - Returns: The service router class for the config protocol.
-    fileprivate static func _router(toServiceModule configProtocol: Any.Type, name: String) -> ZIKAnyServiceRouterType? {
+    static func _router(toServiceModule configProtocol: Any.Type, name: String) -> ZIKAnyServiceRouterType? {
         if let routerType = _swiftRouter(toServiceModuleKey: _RouteKey(type: configProtocol, name: name)) {
             return routerType
         }
@@ -516,7 +519,7 @@ fileprivate extension Registry {
         return nil
     }
     
-    fileprivate static func _swiftRouter(toServiceModuleKey moduleRouteKey: _RouteKey) -> ZIKAnyServiceRouterType? {
+    static func _swiftRouter(toServiceModuleKey moduleRouteKey: _RouteKey) -> ZIKAnyServiceRouterType? {
         if let route = serviceModuleProtocolContainer[moduleRouteKey], let routerType = ZIKAnyServiceRouterType.tryMakeType(forRoute: route) {
             return routerType
         }
@@ -563,7 +566,7 @@ fileprivate extension Registry {
 // MARK: Validate
 
 internal extension Registry {
-    internal class func validateConformance(destination: Any, inServiceRouterType routerType: ZIKAnyServiceRouterType) -> Bool {
+    class func validateConformance(destination: Any, inServiceRouterType routerType: ZIKAnyServiceRouterType) -> Bool {
         #if DEBUG
         guard let routeKey = _RouteKey(routerType: routerType) else {
             return false

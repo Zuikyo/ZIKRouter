@@ -212,7 +212,7 @@ extension Registry {
             _registerViewProtocolWithSwiftFactory(routableProtocol, destinationClass, factory)
             return
         }
-        assert(_ZIKViewRouterToIdentifier(makingDestinationIdentifierPrefix + routableView.typeName) == nil, "Protocol (\(routableView.typeName)) already registered with router (\(_ZIKViewRouterToIdentifier(makingDestinationIdentifierPrefix + routableView.typeName)!.routeObject)), can't register for making destination (\(destinationClass)) with factory (\(factory))");
+        assert(_ZIKViewRouterToIdentifier(makingDestinationIdentifierPrefix + routableView.typeName) == nil, "Protocol (\(routableView.typeName)) already registered with router (\(_ZIKViewRouterToIdentifier(makingDestinationIdentifierPrefix + routableView.typeName)!.routeObject)), can't register for making destination (\(destinationClass)) with factory (\(String(describing: factory)))");
         _registerViewIdentifierWithSwiftFactory(makingDestinationIdentifierPrefix + routableView.typeName, destinationClass, factory)
     }
     
@@ -224,7 +224,7 @@ extension Registry {
             _registerViewModuleProtocolWithSwiftFactory(routableProtocol, destinationClass, factory)
             return
         }
-        assert(_ZIKViewRouterToIdentifier(makingModuleIdentifierPrefix + routableViewModule.typeName) == nil, "Protocol (\(routableViewModule.typeName)) already registered with router (\(_ZIKViewRouterToIdentifier(makingModuleIdentifierPrefix + routableViewModule.typeName)!.routeObject)), can't register for making destination (\(destinationClass)) with factory (\(factory))");
+        assert(_ZIKViewRouterToIdentifier(makingModuleIdentifierPrefix + routableViewModule.typeName) == nil, "Protocol (\(routableViewModule.typeName)) already registered with router (\(_ZIKViewRouterToIdentifier(makingModuleIdentifierPrefix + routableViewModule.typeName)!.routeObject)), can't register for making destination (\(destinationClass)) with factory (\(String(describing: factory)))");
         _registerViewModuleIdentifierWithSwiftFactory(makingModuleIdentifierPrefix + routableViewModule.typeName, destinationClass, factory)
     }
     
@@ -282,7 +282,7 @@ internal extension Registry {
     ///
     /// - Parameter routableView: A routabe entry carrying a view protocol conformed by the view registered with a view router. Support objc protocol and pure Swift protocol.
     /// - Returns: The view router type for the view protocol.
-    internal static func router<Destination>(to routableView: RoutableView<Destination>) -> ViewRouterType<Destination, ViewRouteConfig>? {
+    static func router<Destination>(to routableView: RoutableView<Destination>) -> ViewRouterType<Destination, ViewRouteConfig>? {
         let routerType = _router(toView: Destination.self, name: routableView.typeName)
         if let routerType = routerType {
             return ViewRouterType(routerType: routerType)
@@ -294,7 +294,7 @@ internal extension Registry {
     ///
     /// - Parameter routableViewModule: A routabe entry carrying a view module config protocol registered with a view router. Support objc protocol and pure Swift protocol.
     /// - Returns: The view router type for the config protocol.
-    internal static func router<Module>(to routableViewModule: RoutableViewModule<Module>) -> ViewRouterType<Any, Module>? {
+    static func router<Module>(to routableViewModule: RoutableViewModule<Module>) -> ViewRouterType<Any, Module>? {
         let routerType = _router(toViewModule: Module.self , name: routableViewModule.typeName)
         if let routerType = routerType {
             return ViewRouterType(routerType: routerType)
@@ -311,7 +311,7 @@ internal extension Registry {
     ///
     /// - Parameter switchableView: A struct carrying any routable view protocol, but not a specified one.
     /// - Returns: The view router type for the view protocol.
-    internal static func router(to switchableView: SwitchableView) -> ViewRouterType<Any, ViewRouteConfig>? {
+    static func router(to switchableView: SwitchableView) -> ViewRouterType<Any, ViewRouteConfig>? {
         let routerType = _router(toView: switchableView.routableProtocol, name: switchableView.typeName)
         if let routerType = routerType {
             return ViewRouterType(routerType: routerType)
@@ -323,7 +323,7 @@ internal extension Registry {
     ///
     /// - Parameter switchableViewModule: A struct carrying any routable view module config protocol, but not a specified one.
     /// - Returns: The view router type for the view module config protocol.
-    internal static func router(to switchableViewModule: SwitchableViewModule) -> ViewRouterType<Any, ViewRouteConfig>? {
+    static func router(to switchableViewModule: SwitchableViewModule) -> ViewRouterType<Any, ViewRouteConfig>? {
         let routerType = _router(toViewModule: switchableViewModule.routableProtocol, name: switchableViewModule.typeName)
         if let routerType = routerType {
             return ViewRouterType(routerType: routerType)
@@ -342,7 +342,7 @@ fileprivate extension Registry {
     /// - Parameter viewProtocol: View protocol conformed by the view registered with a view router. Support objc protocol and pure Swift protocol.
     /// - Parameter name: The name of the protocol.
     /// - Returns: The view router class for the view protocol.
-    fileprivate static func _router(toView viewProtocol: Any.Type, name: String) -> ZIKAnyViewRouterType? {
+    static func _router(toView viewProtocol: Any.Type, name: String) -> ZIKAnyViewRouterType? {
         if let routerType = _swiftRouter(toViewKey: _RouteKey(type: viewProtocol, name: name)) {
             return routerType
         }
@@ -360,7 +360,7 @@ fileprivate extension Registry {
         return nil
     }
     
-    fileprivate static func _swiftRouter(toViewKey viewRouteKey: _RouteKey) -> ZIKAnyViewRouterType? {
+    static func _swiftRouter(toViewKey viewRouteKey: _RouteKey) -> ZIKAnyViewRouterType? {
         if let route = viewProtocolContainer[viewRouteKey], let routerType = ZIKAnyViewRouterType.tryMakeType(forRoute: route) {
             return routerType
         }
@@ -407,7 +407,7 @@ fileprivate extension Registry {
     /// - Parameter configProtocol: View module config protocol registered with a view router. Support objc protocol and pure Swift protocol.
     /// - Parameter name: The name of the protocol.
     /// - Returns: The view router class for the config protocol.
-    fileprivate static func _router(toViewModule configProtocol: Any.Type, name: String) -> ZIKAnyViewRouterType? {
+    static func _router(toViewModule configProtocol: Any.Type, name: String) -> ZIKAnyViewRouterType? {
         if let routerType = _swiftRouter(toViewModuleKey: _RouteKey(type: configProtocol, name: name)) {
             return routerType
         }
@@ -426,7 +426,7 @@ fileprivate extension Registry {
         return nil
     }
     
-    fileprivate static func _swiftRouter(toViewModuleKey moduleRouteKey: _RouteKey) -> ZIKAnyViewRouterType? {
+    static func _swiftRouter(toViewModuleKey moduleRouteKey: _RouteKey) -> ZIKAnyViewRouterType? {
         if let route = viewModuleProtocolContainer[moduleRouteKey], let routerType = ZIKAnyViewRouterType.tryMakeType(forRoute: route) {
             return routerType
         }
@@ -473,7 +473,7 @@ fileprivate extension Registry {
 // MARK: Validate
 
 internal extension Registry {
-    internal class func validateConformance(destination: Any, inViewRouterType routerType: ZIKAnyViewRouterType) -> Bool {
+    class func validateConformance(destination: Any, inViewRouterType routerType: ZIKAnyViewRouterType) -> Bool {
         #if DEBUG
         guard let routeKey = _RouteKey(routerType: routerType) else {
             return false
