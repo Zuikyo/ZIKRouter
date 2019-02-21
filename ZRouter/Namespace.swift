@@ -11,7 +11,7 @@
 
 import Foundation
 
-public protocol NamespaceWrappable {
+public protocol NamespaceWrappable: class {
     associatedtype WrapperType
     var zix: WrapperType { get }
     static var zix: WrapperType.Type { get }
@@ -19,11 +19,17 @@ public protocol NamespaceWrappable {
 
 public extension NamespaceWrappable {
     var zix: NamespaceWrapper<Self> {
-        return NamespaceWrapper(value: self)
+        get {
+            return NamespaceWrapper(value: self)
+        }
+        set { }
     }
     
     static var zix: NamespaceWrapper<Self>.Type {
-        return NamespaceWrapper.self
+        get {
+            return NamespaceWrapper.self
+        }
+        set { }
     }
 }
 

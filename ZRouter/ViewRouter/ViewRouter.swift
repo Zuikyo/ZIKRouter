@@ -173,7 +173,7 @@ public class ViewRouterType<Destination, ModuleConfig> {
             }
         }
         guard let dest = destination as? ZIKRoutableView else {
-            ZIKAnyViewRouter.notifyGlobalError(with: nil, action: .init, error: ZIKAnyViewRouter.routeError(withCode: .invalidConfiguration, localizedDescription: "Perform route on invalid destination: \(destination)"))
+            ZIKAnyViewRouter.notifyGlobalError(with: nil, action: ZIKRouteAction.`init`, error: ZIKAnyViewRouter.routeError(withCode: .invalidConfiguration, localizedDescription: "Perform route on invalid destination: \(destination)"))
             return nil
         }
         let router = routerType.perform(onDestination: dest, path: path.path, strictConfiguring: { (strictConfig, config) in
@@ -230,7 +230,7 @@ public class ViewRouterType<Destination, ModuleConfig> {
             }
         }
         guard let dest = destination as? ZIKRoutableView else {
-            ZIKAnyViewRouter.notifyGlobalError(with: nil, action: .init, error: ZIKAnyViewRouter.routeError(withCode: .invalidConfiguration, localizedDescription: "Perform route on invalid destination: \(destination)"))
+            ZIKAnyViewRouter.notifyGlobalError(with: nil, action: ZIKRouteAction.`init`, error: ZIKAnyViewRouter.routeError(withCode: .invalidConfiguration, localizedDescription: "Perform route on invalid destination: \(destination)"))
             return nil
         }
         let router = routerType.prepareDestination(dest, strictConfiguring: { (strictConfig, config) in
@@ -708,7 +708,7 @@ public extension ViewRouterType {
             }
         }
         guard let dest = destination as? ZIKRoutableView else {
-            ZIKAnyViewRouter.notifyGlobalError(with: nil, action: .init, error: ZIKAnyViewRouter.routeError(withCode: .invalidConfiguration, localizedDescription: "Perform route on invalid destination: \(destination)"))
+            ZIKAnyViewRouter.notifyGlobalError(with: nil, action: ZIKRouteAction.`init`, error: ZIKAnyViewRouter.routeError(withCode: .invalidConfiguration, localizedDescription: "Perform route on invalid destination: \(destination)"))
             return nil
         }
         let router = routerType.perform(onDestination: dest, from: source, strictConfiguring: { (strictConfig, config) in
