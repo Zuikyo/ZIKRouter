@@ -16,12 +16,12 @@ You need a module config protocol to store them in configuration, and configure 
 
 Module protocol is for declaring parameters used by the module, conformed by the configuration of the router.
 
-Instead of  `NoteEditorInput`, we use another routable protocol `EditorViewModuleInput`  as config protocol for routing:
+Instead of  `EditorViewInput`, we use another routable protocol `EditorViewModuleInput`  as config protocol for routing:
 
 ```swift
 protocol EditorViewModuleInput: class {
     // Transfer parameters and make destination
-    var makeDestinationWith: (viewModel: EditorViewModel, _ note: Note) -> NoteEditorInput? { get }
+    var makeDestinationWith: (viewModel: EditorViewModel, _ note: Note) -> EditorViewInput? { get }
 }
 ```
 
@@ -30,7 +30,7 @@ protocol EditorViewModuleInput: class {
 ```objectivec
 @protocol EditorViewModuleInput <ZIKViewModuleRoutable>
  //  Transfer parameters for making destination
- @property (nonatomic, copy, readonly) id<NoteEditorInput> _Nullable(^makeDestinationWith)(EditorViewModel *viewModel, Note *note);
+ @property (nonatomic, copy, readonly) id<EditorViewInput> _Nullable(^makeDestinationWith)(EditorViewModel *viewModel, Note *note);
  @end
 ```
 
@@ -46,7 +46,7 @@ You can use a configuration subclass and store parameters on its properties.
 // Configuration subclass conforming to EditorViewModuleInput
 class EditorViewModuleConfiguration<T>: ZIKViewMakeableConfiguration<NoteEditorViewController>, EditorViewModuleInput {
     // User is responsible for calling makeDestinationWith and giving parameters
-    var makeDestinationWith: (viewModel: EditorViewModel, _ note: Note) -> NoteEditorInput? {
+    var makeDestinationWith: (viewModel: EditorViewModel, _ note: Note) -> EditorViewInput? {
         return { viewModel, note in
                 
             // Prepare the destination
@@ -94,8 +94,8 @@ func makeEditorViewModuleConfiguration() -> ZIKViewMakeableConfiguration<NoteEdi
 @implementation EditorViewModuleConfiguration
 
 // User is responsible for calling makeDestinationWith and giving parameters
-- (id<NoteEditorInput> _Nullable(^)(Note *))makeDestinationWith {
-    return ^id<NoteEditorInput> _Nullable(EditorViewModel *viewModel, Note *note) {
+- (id<EditorViewInput> _Nullable(^)(Note *))makeDestinationWith {
+    return ^id<EditorViewInput> _Nullable(EditorViewModel *viewModel, Note *note) {
         
         // Prepare the destination
         self._prepareDestination = ^(NoteEditorViewController *destination) {
@@ -143,13 +143,13 @@ Transferring parameters with `makeDestinationWith` block can reduce much glue co
 If the protocol is very simple and you don't need a configuration subclass, or you're using Objective-C and don't want too many subclass, you can choose generic class`ViewMakeableConfiguration`and`ZIKViewMakeableConfiguration`:
 
 ```swift
-extension ViewMakeableConfiguration: EditorViewModuleInput where Destination == NoteEditorInput, Constructor == (EditorViewModel, Note) -> Void {
+extension ViewMakeableConfiguration: EditorViewModuleInput where Destination == EditorViewInput, Constructor == (EditorViewModel, Note) -> Void {
 }
 
 // ViewMakeableConfiguration with generic arguments works as the same as  EditorViewModuleConfiguration
 // The config works like EditorViewModuleConfiguration<Any>()
-func makeEditorViewModuleConfiguration() -> ViewMakeableConfiguration<NoteEditorInput, (EditorViewModel, Note) -> Void> {
-    let config = ViewMakeableConfiguration<NoteEditorInput, (EditorViewModel, Note) -> Void>({ _,_ in})        
+func makeEditorViewModuleConfiguration() -> ViewMakeableConfiguration<EditorViewInput, (EditorViewModel, Note) -> Void> {
+    let config = ViewMakeableConfiguration<EditorViewInput, (EditorViewModel, Note) -> Void>({ _,_ in})        
     
     // User is responsible for calling makeDestinationWith and giving parameters
     config.makeDestinationWith = { [unowned config] (viewModel, note) in
@@ -192,14 +192,14 @@ Generic class`ZIKViewMakeableConfiguration`has property`makeDestinationWith`with
 ```objectivec
 // The config works like EditorViewModuleConfiguration
 ZIKViewMakeableConfiguration<NoteEditorViewController *> * makeEditorViewModuleConfiguration(void) {
-    ZIKViewMakeableConfiguration<NoteEditorViewController *> *config = [ZIKViewMakeableConfiguration<id<NoteEditorInput>> new];
+    ZIKViewMakeableConfiguration<NoteEditorViewController *> *config = [ZIKViewMakeableConfiguration<id<EditorViewInput>> new];
     __weak typeof(config) weakConfig = config;        
     
     // User is responsible for calling makeDestinationWith and giving parameters
-    config.makeDestinationWith = ^id<NoteEditorInput> _Nullable(EditorViewModel *viewModel, Note *note) {
+    config.makeDestinationWith = ^id<EditorViewInput> _Nullable(EditorViewModel *viewModel, Note *note) {
         
         // Prepare the destination
-        config._prepareDestination = ^(id<NoteEditorInput> destination) {
+        config._prepareDestination = ^(id<EditorViewInput> destination) {
         	EditorPresenter *presenter = [EditorPresenter alloc] init];
             EditorInteractor *interactor = [EditorInteractor alloc] init];
             destination.presenter = presenter;
@@ -322,7 +322,7 @@ The user can use the module with its module config protocol and transfer paramet
 var viewModel = ...
 var note = ...
 Router.makeDestination(to: RoutableViewModule<EditorViewModuleInput>()) { (config) in
-     // Transfer parameters and get NoteEditorInput
+     // Transfer parameters and get EditorViewInput
      let destination = config.makeDestinationWith(note)
 }
 ```
@@ -335,8 +335,8 @@ Note *note = ...
 [ZIKRouterToViewModule(EditorViewModuleInput)
     performPath:ZIKViewRoutePath.showFrom(self)
     configuring:^(ZIKViewRouteConfiguration<EditorViewModuleInput> *config) {
-        // Transfer parameters and get NoteEditorInput
-        id<NoteEditorInput> destination = config.makeDestinationWith(note);
+        // Transfer parameters and get EditorViewInput
+        id<EditorViewInput> destination = config.makeDestinationWith(note);
  }];
 ```
 

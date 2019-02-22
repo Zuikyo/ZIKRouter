@@ -26,7 +26,7 @@ Swift 中，用条件 extension 来声明可路由的 protocol，从而利用编
     [self registerView:[EditorViewController class]];
     
     //如果 protocol 不是继承自 ZIKViewRoutable，将会产生编译警告
-    [self registerViewProtocol:ZIKRoutable(NoteEditorInput)];
+    [self registerViewProtocol:ZIKRoutable(EditorViewInput)];
 }
 
 @end
@@ -46,11 +46,11 @@ ZIKRouterToView(UndeclaredProtocol)
 
 ```objectivec
 //3处地方的参数有继承关系
-[ZIKRouterToView(NoteEditorInput) //1
+[ZIKRouterToView(EditorViewInput) //1
      performPath:ZIKViewRoutePath.pushFrom(self)
-     strictConfiguring:^(ZIKViewRouteStrictConfiguration<id<NoteEditorInput>> *config, //2
+     strictConfiguring:^(ZIKViewRouteStrictConfiguration<id<EditorViewInput>> *config, //2
                          ZIKViewRouteConfiguration *module) {
-         config.prepareDestination = ^(id<NoteEditorInput> destination) { //3
+         config.prepareDestination = ^(id<EditorViewInput> destination) { //3
          	   destination.delegate = weakSelf;
              destination.name = @"zuik";
              destination.age = 18;
@@ -130,7 +130,7 @@ RouteConfig 是指 router 用于执行路由时的 configuration 类型。当使
 
 两个泛型每次只会自定义一个。可以用`DestinationViewRouter`、`DestinationServiceRouter`、`ModuleViewRouter`、`ModuleServiceRouter`来指定一个泛型值，另一个用默认值。
 
-例如`ViewRouter<NoteEditorInput, ViewRouteConfig>`可以简写为`DestinationViewRouter<NoteEditorInput>`。
+例如`ViewRouter<EditorViewInput, ViewRouteConfig>`可以简写为`DestinationViewRouter<EditorViewInput>`。
 
 当指定了 module config protocol 时，就不需要再指定 destination 的类型了。因为目前不支持同时用 module protocol 和 destination protocol 查找 router。如果需要返回指定的destination，则在 module config protocol 的接口里返回。
 

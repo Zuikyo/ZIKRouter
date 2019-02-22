@@ -6,11 +6,11 @@ Swift Sample
 
 ```swift
 class TestViewController: UIViewController {
-    var editorRouter: DestinationViewRouter<NoteEditorInput>?
+    var editorRouter: DestinationViewRouter<EditorViewInput>?
     
     func showEditor() {
         //Hold router for this routing
-        editorRouter = Router.perform(to: RoutableView<NoteEditorInput>(), path: .push(from: self))
+        editorRouter = Router.perform(to: RoutableView<EditorViewInput>(), path: .push(from: self))
     }
     
     func removeEditor() {
@@ -43,7 +43,7 @@ class TestViewController: UIViewController {
 @implementation TestViewController: UIViewController
 
 - (void)showEditor {
-  self.editorRouter = [ZIKRouterToView(NoteEditorInput) performPath:ZIKViewRoutePath.pushFrom(self)];
+  self.editorRouter = [ZIKRouterToView(EditorViewInput) performPath:ZIKViewRoutePath.pushFrom(self)];
 }
 
 - (void)removeEditor {

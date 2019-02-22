@@ -7,12 +7,12 @@ Here is an example for creating router for `EditorViewController`.
 Swift sample:
 
 ```swift
-protocol NoteEditorInput {
+protocol EditorViewInput {
     weak var delegate: EditorDelegate? { get set }
     func constructForCreatingNewNote()
 }
 
-class EditorViewController: UIViewController, NoteEditorInput {
+class EditorViewController: UIViewController, EditorViewInput {
     ...
 }
 ```
@@ -27,8 +27,8 @@ Create a `ZIKViewRouter` subclass for `EditorViewController` and override router
 extension EditorViewController: ZIKRoutableView {
 
 }
-//Declare that NoteEditorInput is routable protocol
-extension RoutableView where Protocol == NoteEditorInput {
+//Declare that EditorViewInput is routable protocol
+extension RoutableView where Protocol == EditorViewInput {
     init() { self.init(declaredProtocol: Protocol.self) }
 }
 
@@ -38,8 +38,8 @@ class EditorViewRouter: ZIKViewRouter<EditorViewController, ZIKViewRouteConfigur
         //Register EditorViewController with this router. A router can register multi views, and a view can be registered with multi router
         registerView(EditorViewController.self)
         
-        //Register NoteEditorInput, then you can use this protocol to get this router
-        register(RoutableView<NoteEditorInput>())
+        //Register EditorViewInput, then you can use this protocol to get this router
+        register(RoutableView<EditorViewInput>())
     }
     //Make sure all routable dependencies in this module is available.
     override class func _didFinishRegistration() {
@@ -91,16 +91,16 @@ class EditorViewRouter: ZIKViewRouter<EditorViewController, ZIKViewRouteConfigur
 <details><summary>Objective-C Sample</summary>
 
 ```objectivec
-//NoteEditorInput.h
+//EditorViewInput.h
 
-//Declare that NoteEditorInput is routable protocol
-@protocol NoteEditorInput: ZIKViewRoutable
+//Declare that EditorViewInput is routable protocol
+@protocol EditorViewInput: ZIKViewRoutable
 @property (nonatomic, weak) id<EditorDelegate> delegate;
 - (void)constructForCreatingNewNote;
 @end
 ```
 ```objectivec
-@interface EditorViewController: UIViewController <NoteEditorInput>
+@interface EditorViewController: UIViewController <EditorViewInput>
 @end
 ```
 
@@ -127,8 +127,8 @@ Create a `ZIKViewRouter` subclass for `EditorViewController`:
     //Register EditorViewController with this router. A router can register multi views, and a view can be registered with multi router
     [self registerView:[EditorViewController class]];
     
-    //Register NoteEditorInput, then you can use this protocol to get this router
-    [self registerViewProtocol:ZIKRoutable(NoteEditorInput)];
+    //Register EditorViewInput, then you can use this protocol to get this router
+    [self registerViewProtocol:ZIKRoutable(EditorViewInput)];
 }
 
 //Return the destination module
@@ -182,13 +182,13 @@ The router subclass can set generic parameters when inheriting from ZIKViewRoute
 If your module is very simple and don't need a router subclass, you can just register the class in a simpler way:
 
 ```swift
-ZIKAnyViewRouter.register(RoutableView<NoteEditorInput>(), forMakingView: EditorViewController.self)
+ZIKAnyViewRouter.register(RoutableView<EditorViewInput>(), forMakingView: EditorViewController.self)
 ```
 
 <details><summary>Objective-C Sample</summary>
 
 ```objectivec
-[ZIKViewRouter registerViewProtocol:ZIKRoutable(NoteEditorInput) forMakingView:[EditorViewController class]];
+[ZIKViewRouter registerViewProtocol:ZIKRoutable(EditorViewInput) forMakingView:[EditorViewController class]];
 ```
 
 </details>
@@ -200,8 +200,8 @@ The destination will be created by`[[RegisteredClass alloc] init]`.
 Or you can register class with custom creating block:
 
 ```swift
-ZIKAnyViewRouter.register(RoutableView<NoteEditorInput>(), 
-                 forMakingView: EditorViewController.self) { (config, router) -> NoteEditorInput? in
+ZIKAnyViewRouter.register(RoutableView<EditorViewInput>(), 
+                 forMakingView: EditorViewController.self) { (config, router) -> EditorViewInput? in
                      EditorViewController *destination = ... // instantiate your view controller
                      return destination;
         }
@@ -212,7 +212,7 @@ ZIKAnyViewRouter.register(RoutableView<NoteEditorInput>(),
 
 ```objectivec
 [ZIKViewRouter
-    registerViewProtocol:ZIKRoutable(NoteEditorInput)
+    registerViewProtocol:ZIKRoutable(EditorViewInput)
     forMakingView:[EditorViewController class]
     making:^id _Nullable(ZIKViewRouteConfiguration *config, ZIKViewRouter *router) {
         EditorViewController *destination = ... // instantiate your view controller
@@ -225,25 +225,25 @@ ZIKAnyViewRouter.register(RoutableView<NoteEditorInput>(),
 or with custom factory function:
 
 ```swift
-function makeEditorViewController(config: ViewRouteConfig) -> NoteEditorInput? {
+function makeEditorViewController(config: ViewRouteConfig) -> EditorViewInput? {
     NoteEditorViewController *destination = ... // instantiate your view controller
     return destination;
 }
 
-ZIKAnyViewRouter.register(RoutableView<NoteEditorInput>(), 
+ZIKAnyViewRouter.register(RoutableView<EditorViewInput>(), 
                  forMakingView: NoteEditorViewController.self, making: makeEditorViewController)
 ```
 
 <details><summary>Objective-C Sample</summary>
 
 ```objectivec
-id<NoteEditorInput> makeEditorViewController(ZIKViewRouteConfiguration *config) {
+id<EditorViewInput> makeEditorViewController(ZIKViewRouteConfiguration *config) {
     NoteEditorViewController *destination = ... // instantiate your view controller
     return destination;
 }
 
 [ZIKViewRouter
-    registerViewProtocol:ZIKRoutable(NoteEditorInput)
+    registerViewProtocol:ZIKRoutable(EditorViewInput)
     forMakingView:[NoteEditorViewController class]
     factory:makeEditorViewController];
 ```
@@ -258,7 +258,7 @@ ZIKViewRoute<EditorViewController, ViewRouteConfig>
           makeDestination: { (config, router) -> EditorViewController? in
             return EditorViewController()
     })
-    .register(RoutableView<NoteEditorInput>())
+    .register(RoutableView<EditorViewInput>())
 ```
 
 <details><summary>Objective-C Sample</summary>

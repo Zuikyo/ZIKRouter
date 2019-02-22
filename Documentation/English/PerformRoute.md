@@ -12,7 +12,7 @@ It's safe to perform route with routable protocol.
 class TestViewController: UIViewController {
     func showEditorViewController() {
         Router.perform(
-            to: RoutableView<NoteEditorInput>(),
+            to: RoutableView<EditorViewInput>(),
             path: .push(from: self),
             configuring: { (config, _) in
                 //Config the route
@@ -24,7 +24,7 @@ class TestViewController: UIViewController {
                 }
                 //Config the destination before performing route
                 config.prepareDestination = { destination in
-                    //destination is inferred as NoteEditorInput
+                    //destination is inferred as EditorViewInput
                     //Config editor view
                     destination.delegate = self
                     destination.constructForCreatingNewNote()
@@ -64,15 +64,15 @@ class TestViewController: UIViewController {
 @implementation TestViewController
 
 - (void)showEditorViewController {
-	[ZIKRouterToView(NoteEditorInput)
+	[ZIKRouterToView(EditorViewInput)
 	          performPath:ZIKViewRoutePath.presentModallyFrom(self)
 	          configuring:^(ZIKViewRouteConfiguration *config) {
 	              config.animated = YES;
-	              config.prepareDestination = ^(id<NoteEditorInput> destination) {
+	              config.prepareDestination = ^(id<EditorViewInput> destination) {
 	                  destination.delegate = self;
 	                  [destination constructForCreatingNewNote];
 	              };
-	              config.succeeHandler = ^(id<NoteEditorInput> destination) {
+	              config.succeeHandler = ^(id<EditorViewInput> destination) {
 	                  //Transition completed
 	              };
 	              config.errorHandler = ^(ZIKRouteAction routeAction, NSError *error) {
@@ -88,17 +88,17 @@ Comparing to `performPath:configuring:` method, `performPath:strictConfiguring:`
 @implementation TestViewController
 
 - (void)showEditorViewController {
-	[ZIKRouterToView(NoteEditorInput)
+	[ZIKRouterToView(EditorViewInput)
 	          performPath:ZIKViewRoutePath.presentModallyFrom(self)
-	          strictConfiguring:^(ZIKViewRouteStrictConfiguration<id<NoteEditorInput>> *config,
+	          strictConfiguring:^(ZIKViewRouteStrictConfiguration<id<EditorViewInput>> *config,
 	          					   ZIKViewRouteConfiguration *module) {
 	              config.animated = YES;
 	              //Type of prepareDest block changes with the router's generic parameters.
-	              config.prepareDestination = ^(id<NoteEditorInput> destination){
+	              config.prepareDestination = ^(id<EditorViewInput> destination){
 	                  destination.delegate = self;
 	                  [destination constructForCreatingNewNote];
 	              };
-	              config.routeCompletion = ^(id<NoteEditorInput> destination) {
+	              config.routeCompletion = ^(id<EditorViewInput> destination) {
 	                  //Transition completed
 	              };
 	              config.errorHandler = ^(ZIKRouteAction routeAction, NSError *error) {

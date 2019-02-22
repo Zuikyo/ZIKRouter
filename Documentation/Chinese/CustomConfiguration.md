@@ -14,12 +14,12 @@ Router 可以使用自定义 configuration 传递更多自定义参数。
 
 Module config protocol 用来声明模块需要用到的参数。由自定义 configuration 遵守。
 
-之前用于路由的`NoteEditorInput`是由 destination 遵守的，现在使用`EditorViewModuleInput`进行路由，由自定义的 configuration 遵守，用于声明模块需要的参数：
+之前用于路由的`EditorViewInput`是由 destination 遵守的，现在使用`EditorViewModuleInput`进行路由，由自定义的 configuration 遵守，用于声明模块需要的参数：
 
 ```swift
 protocol EditorViewModuleInput: class {
-    // 传递参数，用于创建模块；这里声明了需要两个参数，并且返回一个 NoteEditorInput
-    var makeDestinationWith: (viewModel: EditorViewModel, _ note: Note) -> NoteEditorInput? { get }
+    // 传递参数，用于创建模块；这里声明了需要两个参数，并且返回一个 EditorViewInput
+    var makeDestinationWith: (viewModel: EditorViewModel, _ note: Note) -> EditorViewInput? { get }
 }
 ```
 
@@ -27,8 +27,8 @@ protocol EditorViewModuleInput: class {
 
 ```objectivec
 @protocol EditorViewModuleInput <ZIKViewModuleRoutable>
- // 传递参数，用于创建模块；这里声明了需要两个参数，并且返回一个 NoteEditorInput
- @property (nonatomic, copy, readonly) id<NoteEditorInput> _Nullable(^makeDestinationWith)(EditorViewModel *viewModel, Note *note);
+ // 传递参数，用于创建模块；这里声明了需要两个参数，并且返回一个 EditorViewInput
+ @property (nonatomic, copy, readonly) id<EditorViewInput> _Nullable(^makeDestinationWith)(EditorViewModel *viewModel, Note *note);
  @end
 ```
 
@@ -43,10 +43,10 @@ Module config protocol 里一般只需要`makeDestinationWith`，分别用于声
 ```swift
 // 使用自定义子类，遵守 EditorViewModuleInput
 class EditorViewModuleConfiguration<T>: ZIKViewMakeableConfiguration<NoteEditorViewController>, EditorViewModuleInput {
-    var didMakeDestination: ((NoteEditorInput) -> Void)?
+    var didMakeDestination: ((EditorViewInput) -> Void)?
     
     // 使用者调用 makeDestinationWith 向模块传参
-    var makeDestinationWith: (viewModel: EditorViewModel, _ note: Note) -> NoteEditorInput？ {
+    var makeDestinationWith: (viewModel: EditorViewModel, _ note: Note) -> EditorViewInput？ {
         return { viewModel, note in
                 
             // 配置 destination
@@ -94,8 +94,8 @@ func makeEditorViewModuleConfiguration() -> ZIKViewMakeableConfiguration<NoteEdi
 @implementation EditorViewModuleConfiguration
 
 // 使用者调用 makeDestinationWith 向模块传参
-- (id<NoteEditorInput> _Nullable(^)(Note *))makeDestinationWith {
-    return ^id<NoteEditorInput> _Nullable(EditorViewModel *viewModel, Note *note) {
+- (id<EditorViewInput> _Nullable(^)(Note *))makeDestinationWith {
+    return ^id<EditorViewInput> _Nullable(EditorViewModel *viewModel, Note *note) {
         
         // 配置 destination
         self._prepareDestination = ^(NoteEditorViewController *destination) {
@@ -143,13 +143,13 @@ Swift 泛型类不是 OC Class，不会出现在 Mach-O 的 __objc_classlist 节
 如果你的协议很简单，不需要用到 configuration 子类，或者你用的是 Objective-C，不想创建过多的子类影响 app 启动速度，可以用泛型类`ViewMakeableConfiguration`和`ZIKViewMakeableConfiguration`：
 
 ```swift
-extension ViewMakeableConfiguration: EditorViewModuleInput where Destination == NoteEditorInput, Constructor == (EditorViewModel, Note) -> Void {
+extension ViewMakeableConfiguration: EditorViewModuleInput where Destination == EditorViewInput, Constructor == (EditorViewModel, Note) -> Void {
 }
 
 // 用泛型类可以实现 EditorViewModuleConfiguration 子类一样的效果
 // 此时的 config 相当于 EditorViewModuleConfiguration<Any>()
-func makeEditorViewModuleConfiguration() -> ViewMakeableConfiguration<NoteEditorInput, (EditorViewModel, Note) -> Void> {
-	let config = ViewMakeableConfiguration<NoteEditorInput, (EditorViewModel, Note) -> Void>({ _,_ in})	    
+func makeEditorViewModuleConfiguration() -> ViewMakeableConfiguration<EditorViewInput, (EditorViewModel, Note) -> Void> {
+	let config = ViewMakeableConfiguration<EditorViewInput, (EditorViewModel, Note) -> Void>({ _,_ in})	    
     
 	// 使用者调用 makeDestinationWith 向模块传参
 	config.makeDestinationWith = { [unowned config] (viewModel, note) in
@@ -208,7 +208,7 @@ ZIKViewMakeableConfiguration<NoteEditorViewController *> * makeEditorViewModuleC
     };
     
 	// 配置 makeDestinationWith，使用者调用 makeDestinationWith 向模块传参
-	config.makeDestinationWith = ^id<NoteEditorInput> _Nullable(EditorViewModel *viewModel, Note *note) {
+	config.makeDestinationWith = ^id<EditorViewInput> _Nullable(EditorViewModel *viewModel, Note *note) {
         
 	    // makeDestination 会被用于创建 destination
 	    // 用闭包捕获了传入的参数，可以直接用于创建 destination，不必保存到 configuration 的属性上
@@ -321,7 +321,7 @@ ZIKAnyViewRouter.register(RoutableViewModule<EditorViewModuleInput>(),
 var viewModel = ...
 var note = ...
 Router.makeDestination(to: RoutableViewModule<EditorViewModuleInput>()) { (config) in
-     // 传递参数，得到 NoteEditorInput
+     // 传递参数，得到 EditorViewInput
      let destination = config.makeDestinationWith(note)
 }
 ```
@@ -334,8 +334,8 @@ Note *note = ...
 [ZIKRouterToViewModule(EditorViewModuleInput)
     performPath:ZIKViewRoutePath.showFrom(self)
     configuring:^(ZIKViewRouteConfiguration<EditorViewModuleInput> *config) {
-        // 传递参数，得到 NoteEditorInput
-        id<NoteEditorInput> destination = config.makeDestinationWith(note);
+        // 传递参数，得到 EditorViewInput
+        id<EditorViewInput> destination = config.makeDestinationWith(note);
  }];
 ```
 </details>

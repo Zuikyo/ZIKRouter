@@ -12,7 +12,7 @@ ZIKRouter 是用 Objective-C 写的，在 swift 里则需要使用`ZRouter`，�
 class TestViewController: UIViewController {
     func showEditorViewController() {
         Router.perform(
-            to: RoutableView<NoteEditorInput>(),
+            to: RoutableView<EditorViewInput>(),
             path: .push(from: self),
             configuring: { (config, _) in
                 //路由相关的设置
@@ -24,7 +24,7 @@ class TestViewController: UIViewController {
                 }
                 //配置目的界面
                 config.prepareDestination = { [weak self] destination in
-                    //destination 被 swift 自动推断为 NoteEditorInput 类型
+                    //destination 被 swift 自动推断为 EditorViewInput 类型
                     //配置 editor 界面
                     destination.delegate = self
                     destination.constructForCreatingNewNote()
@@ -66,17 +66,17 @@ class TestViewController: UIViewController {
 @implementation TestViewController
 
 - (void)showEditorViewController {
-	//用 NoteEditorInput 获取router类
-	[ZIKRouterToView(NoteEditorInput)
+	//用 EditorViewInput 获取router类
+	[ZIKRouterToView(EditorViewInput)
 	          performPath:ZIKViewRoutePath.presentModallyFrom(self)
 	          configuring:^(ZIKViewRouteConfiguration *config) {
 	              config.animated = YES;
 	              //配置目的界面
-	              config.prepareDestination = ^(id<NoteEditorInput> destination) {
+	              config.prepareDestination = ^(id<EditorViewInput> destination) {
 	                  destination.delegate = self;
 	                  [destination constructForCreatingNewNote];
 	              };
-	              config.successHandler = ^(id<NoteEditorInput> destination) {
+	              config.successHandler = ^(id<EditorViewInput> destination) {
 	                  //界面显示完毕
 	              };
 	              config.errorHandler = ^(ZIKRouteAction routeAction, NSError *error) {
@@ -92,17 +92,17 @@ class TestViewController: UIViewController {
 @implementation TestViewController
 
 - (void)showEditorViewController {
-	[ZIKRouterToView(NoteEditorInput)
+	[ZIKRouterToView(EditorViewInput)
 	          performPath:ZIKViewRoutePath.presentModallyFrom(self)
-	          strictConfiguring:^(ZIKViewRouteStrictConfiguration<id<NoteEditorInput>> *config,
+	          strictConfiguring:^(ZIKViewRouteStrictConfiguration<id<EditorViewInput>> *config,
 	          					  ZIKViewRouteConfiguration *module) {
 	              config.animated = YES;
 	              //Type of prepareDestination block changes with the router's generic parameters.
-	              config.prepareDestination = ^(id<NoteEditorInput> destination){
+	              config.prepareDestination = ^(id<EditorViewInput> destination){
 	                  destination.delegate = self;
 	                  [destination constructForCreatingNewNote];
 	              };
-	              config.successHandler = ^(id<NoteEditorInput> destination) {
+	              config.successHandler = ^(id<EditorViewInput> destination) {
 	                  //Transition completed
 	              };
 	              config.errorHandler = ^(ZIKRouteAction routeAction, NSError *error) {

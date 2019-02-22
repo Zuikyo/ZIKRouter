@@ -155,13 +155,13 @@ This is the demo view controller and protocol：
 
 ```swift
 ///Editor view's interface
-protocol NoteEditorInput: class {
+protocol EditorViewInput: class {
     weak var delegate: EditorDelegate? { get set }
     func constructForCreatingNewNote()
 }
 
 ///Editor view controller
-class NoteEditorViewController: UIViewController, NoteEditorInput {
+class NoteEditorViewController: UIViewController, EditorViewInput {
     ...
 }
 ```
@@ -170,7 +170,7 @@ class NoteEditorViewController: UIViewController, NoteEditorInput {
 
 ```objectivec
 ///editor view's interface
-@protocol NoteEditorInput <ZIKViewRoutable>
+@protocol EditorViewInput <ZIKViewRoutable>
 @property (nonatomic, weak) id<EditorDelegate> delegate;
 - (void)constructForCreatingNewNote;
 @end
@@ -178,7 +178,7 @@ class NoteEditorViewController: UIViewController, NoteEditorInput {
 
 ```objectivec
 ///Editor view controller
-@interface NoteEditorViewController: UIViewController <NoteEditorInput>
+@interface NoteEditorViewController: UIViewController <EditorViewInput>
 @end
 @implementation NoteEditorViewController
 @end
@@ -206,7 +206,7 @@ class NoteEditorViewRouter: ZIKViewRouter<NoteEditorViewController, ViewRouteCon
         // Register class with this router. A router can register multi views, and a view can be registered with multi routers
         registerView(NoteEditorViewController.self)
         // Register protocol. Then we can fetch this router with the protocol
-        register(RoutableView<NoteEditorInput>())
+        register(RoutableView<EditorViewInput>())
     }
     
     // Return the destination module
@@ -240,7 +240,7 @@ class NoteEditorViewRouter: ZIKViewRouter<NoteEditorViewController, ViewRouteCon
     // Register class with this router. A router can register multi views, and a view can be registered with multi routers
     [self registerView:[NoteEditorViewController class]];
     // Register protocol. Then we can fetch this router with the protocol
-    [self registerViewProtocol:ZIKRoutable(NoteEditorInput)];
+    [self registerViewProtocol:ZIKRoutable(EditorViewInput)];
 }
 
 // Return the destination module
@@ -266,13 +266,13 @@ Read the documentation for more details and more methods to override.
 If your module is very simple and don't need a router subclass, you can just register the class in a simpler way:
 
 ```swift
-ZIKAnyViewRouter.register(RoutableView<NoteEditorInput>(), forMakingView: NoteEditorViewController.self)
+ZIKAnyViewRouter.register(RoutableView<EditorViewInput>(), forMakingView: NoteEditorViewController.self)
 ```
 
 <details><summary>Objective-C Sample</summary>
 
 ```objectivec
-[ZIKViewRouter registerViewProtocol:ZIKRoutable(NoteEditorInput) forMakingView:[NoteEditorViewController class]];
+[ZIKViewRouter registerViewProtocol:ZIKRoutable(EditorViewInput) forMakingView:[NoteEditorViewController class]];
 ```
 
 </details>
@@ -280,8 +280,8 @@ ZIKAnyViewRouter.register(RoutableView<NoteEditorInput>(), forMakingView: NoteEd
 or with custom creating block:
 
 ```swift
-ZIKAnyViewRouter.register(RoutableView<NoteEditorInput>(), 
-                 forMakingView: NoteEditorViewController.self) { (config, router) -> NoteEditorInput? in
+ZIKAnyViewRouter.register(RoutableView<EditorViewInput>(), 
+                 forMakingView: NoteEditorViewController.self) { (config, router) -> EditorViewInput? in
                      let destination: NoteEditorViewController? = ... // instantiate your view controller
                      return destination;
         }
@@ -292,7 +292,7 @@ ZIKAnyViewRouter.register(RoutableView<NoteEditorInput>(),
 
 ```objectivec
 [ZIKViewRouter
-    registerViewProtocol:ZIKRoutable(NoteEditorInput)
+    registerViewProtocol:ZIKRoutable(EditorViewInput)
     forMakingView:[NoteEditorViewController class]
     making:^id _Nullable(ZIKViewRouteConfiguration *config, ZIKViewRouter *router) {
         NoteEditorViewController *destination = ... // instantiate your view controller
@@ -305,25 +305,25 @@ ZIKAnyViewRouter.register(RoutableView<NoteEditorInput>(),
 or with custom factory function:
 
 ```swift
-function makeEditorViewController(config: ViewRouteConfig) -> NoteEditorInput? {
+function makeEditorViewController(config: ViewRouteConfig) -> EditorViewInput? {
     let destination: NoteEditorViewController? = ... // instantiate your view controller
     return destination;
 }
 
-ZIKAnyViewRouter.register(RoutableView<NoteEditorInput>(), 
+ZIKAnyViewRouter.register(RoutableView<EditorViewInput>(), 
                  forMakingView: NoteEditorViewController.self, making: makeEditorViewController)
 ```
 
 <details><summary>Objective-C Sample</summary>
 
 ```objectivec
-id<NoteEditorInput> makeEditorViewController(ZIKViewRouteConfiguration *config) {
+id<EditorViewInput> makeEditorViewController(ZIKViewRouteConfiguration *config) {
     NoteEditorViewController *destination = ... // instantiate your view controller
     return destination;
 }
 
 [ZIKViewRouter
-    registerViewProtocol:ZIKRoutable(NoteEditorInput)
+    registerViewProtocol:ZIKRoutable(EditorViewInput)
     forMakingView:[NoteEditorViewController class]
     factory:makeEditorViewController];
 ```
@@ -340,9 +340,9 @@ The declaration is for checking routes at compile time, and supporting storyboar
 extension NoteEditorViewController: ZIKRoutableView {
 }
 
-// Declare NoteEditorInput is routable
-// This means you can use NoteEditorInput to fetch router
-extension RoutableView where Protocol == NoteEditorInput {
+// Declare EditorViewInput is routable
+// This means you can use EditorViewInput to fetch router
+extension RoutableView where Protocol == EditorViewInput {
     init() { self.init(declaredProtocol: Protocol.self) }
 }
 ```
@@ -355,9 +355,9 @@ extension RoutableView where Protocol == NoteEditorInput {
 DeclareRoutableView(NoteEditorViewController, NoteEditorViewRouter)
 
 // If the protocol inherits from ZIKViewRoutable, it's routable
-// This means you can use NoteEditorInput to fetch router
+// This means you can use EditorViewInput to fetch router
 // If you use an undeclared protocol, there will be compile time warning
-@protocol NoteEditorInput <ZIKViewRoutable>
+@protocol EditorViewInput <ZIKViewRoutable>
 @property (nonatomic, weak) id<EditorDelegate> delegate;
 - (void)constructForCreatingNewNote;
 @end
@@ -380,7 +380,7 @@ class TestViewController: UIViewController {
 
     // Transition to editor view directly
     func showEditorDirectly() {
-        Router.perform(to: RoutableView<NoteEditorInput>(), path: .push(from: self))
+        Router.perform(to: RoutableView<EditorViewInput>(), path: .push(from: self))
     }
 }
 ```
@@ -392,7 +392,7 @@ class TestViewController: UIViewController {
 
 - (void)showEditorDirectly {
     // Transition to editor view directly
-    [ZIKRouterToView(NoteEditorInput) performPath:ZIKViewRoutePath.pushFrom(self)];
+    [ZIKRouterToView(EditorViewInput) performPath:ZIKViewRoutePath.pushFrom(self)];
 }
 
 @end
@@ -425,16 +425,16 @@ Prepare it before transition to editor view:
 ```swift
 class TestViewController: UIViewController {
 
-    // Transition to editor view, and prepare the destination with NoteEditorInput
+    // Transition to editor view, and prepare the destination with EditorViewInput
     func showEditor() {
         Router.perform(
-            to: RoutableView<NoteEditorInput>(),
+            to: RoutableView<EditorViewInput>(),
             path: .push(from: self),
             configuring: { (config, _) in
                 // Route config
                 // Prepare the destination before transition
                 config.prepareDestination = { [weak self] destination in
-                    //destination is inferred as NoteEditorInput
+                    //destination is inferred as EditorViewInput
                     destination.delegate = self
                     destination.constructForCreatingNewNote()
                 }
@@ -455,17 +455,17 @@ class TestViewController: UIViewController {
 @implementation TestViewController
 
 - (void)showEditor {
-    // Transition to editor view, and prepare the destination with NoteEditorInput
-    [ZIKRouterToView(NoteEditorInput)
+    // Transition to editor view, and prepare the destination with EditorViewInput
+    [ZIKRouterToView(EditorViewInput)
 	     performPath:ZIKViewRoutePath.pushFrom(self)
 	     configuring:^(ZIKViewRouteConfig *config) {
 	         // Route config
 	         // Prepare the destination before transition
-	         config.prepareDestination = ^(id<NoteEditorInput> destination) {
+	         config.prepareDestination = ^(id<EditorViewInput> destination) {
 	             destination.delegate = self;
 	             [destination constructForCreatingNewNote];
 	         };
-	         config.successHandler = ^(id<NoteEditorInput> destination) {
+	         config.successHandler = ^(id<EditorViewInput> destination) {
 	             // Transition is completed
 	         };
 	         config.errorHandler = ^(ZIKRouteAction routeAction, NSError * error) {
@@ -486,14 +486,14 @@ For more detail, read [Perform Route](Documentation/English/PerformRoute.md).
 If you don't wan't to show a view, but only need to get instance of the module, you can use `makeDestination`:
 
 ```swift
-// destination is inferred as NoteEditorInput
-let destination = Router.makeDestination(to: RoutableView<NoteEditorInput>())
+// destination is inferred as EditorViewInput
+let destination = Router.makeDestination(to: RoutableView<EditorViewInput>())
 ```
 
 <details><summary>Objective-C Sample</summary>
 
 ```objectivec
-id<NoteEditorInput> destination = [ZIKRouterToView(NoteEditorInput) makeDestination];
+id<EditorViewInput> destination = [ZIKRouterToView(EditorViewInput) makeDestination];
 ```
 </details>
 
@@ -505,13 +505,13 @@ Sometimes your module contains multi components, and you need to pass parameters
 
 You can use module config protocol and a custom configuration to transfer parameters.
 
-Instead of  `NoteEditorInput`, we use another routable protocol `EditorViewModuleInput`  as config protocol for routing:
+Instead of  `EditorViewInput`, we use another routable protocol `EditorViewModuleInput`  as config protocol for routing:
 
 ```swift
 // In general, a module config protocol only contains `makeDestinationWith`, for declaring parameters and destination type. You can also add other properties or methods
 protocol EditorViewModuleInput: class {
     // Transfer parameters and make destination
-    var makeDestinationWith: (_ note: Note) -> NoteEditorInput? { get }
+    var makeDestinationWith: (_ note: Note) -> EditorViewInput? { get }
 }
 ```
 
@@ -521,7 +521,7 @@ protocol EditorViewModuleInput: class {
 // In general, a module config protocol only contains `makeDestinationWith`, for declaring parameters and destination type. You can also add other properties or methods
 @protocol EditorViewModuleInput <ZIKViewModuleRoutable>
  // Transfer parameters and make destination
-@property (nonatomic, copy, readonly) id<NoteEditorInput> _Nullable(^makeDestinationWith)(Note *note);
+@property (nonatomic, copy, readonly) id<EditorViewInput> _Nullable(^makeDestinationWith)(Note *note);
 @end
 ```
 
@@ -536,7 +536,7 @@ You can use a configuration subclass and store parameters on its properties.
 // Swift generic class is not OC Class. It won't be in the `__objc_classlist` section of the Mach-O file. So it won't affect the app launching time.
 class EditorViewModuleConfiguration<T>: ZIKViewMakeableConfiguration<NoteEditorViewController>, EditorViewModuleInput {
     // User is responsible for calling makeDestinationWith and giving parameters
-    var makeDestinationWith: (_ note: Note) -> NoteEditorInput? {
+    var makeDestinationWith: (_ note: Note) -> EditorViewInput? {
         return { note in
             // Capture parameters in makeDestination, so we don't need configuration subclass to hold the parameters
             // MakeDestination will be used for creating destination instance
@@ -565,13 +565,13 @@ func makeEditorViewModuleConfiguration() -> ZIKViewMakeableConfiguration<NoteEdi
 If the protocol is very simple and you don't need a configuration subclass,or you're using Objective-C and don't want too many subclass, you can choose generic class`ViewMakeableConfiguration`and`ZIKViewMakeableConfiguration`:
 
 ```swift
-extension ViewMakeableConfiguration: EditorViewModuleInput where Destination == NoteEditorInput, Constructor == (Note) -> NoteEditorInput? {
+extension ViewMakeableConfiguration: EditorViewModuleInput where Destination == EditorViewInput, Constructor == (Note) -> EditorViewInput? {
 }
 
 // ViewMakeableConfiguration with generic arguments works as the same as  EditorViewModuleConfiguration
 // The config works like EditorViewModuleConfiguration<Any>()
-func makeEditorViewModuleConfiguration() -> ViewMakeableConfiguration<NoteEditorInput, (Note) -> NoteEditorInput?> {
-	let config = ViewMakeableConfiguration<NoteEditorInput, (Note) -> NoteEditorInput?>({ _ in})
+func makeEditorViewModuleConfiguration() -> ViewMakeableConfiguration<EditorViewInput, (Note) -> EditorViewInput?> {
+	let config = ViewMakeableConfiguration<EditorViewInput, (Note) -> EditorViewInput?>({ _ in})
 	
 	// User is responsible for calling makeDestinationWith and giving parameters
 	config.makeDestinationWith = { [unowned config] note in
@@ -605,7 +605,7 @@ ZIKViewMakeableConfiguration<NoteEditorViewController *> * makeEditorViewModuleC
 	__weak typeof(config) weakConfig = config;
 	
 	// User is responsible for calling makeDestinationWith and giving parameters
-	config.makeDestinationWith = ^id<NoteEditorInput> _Nullable(Note *note) {
+	config.makeDestinationWith = ^id<EditorViewInput> _Nullable(Note *note) {
 	    // Capture parameters in makeDestination, so we don't need configuration subclass to hold the parameters
         // MakeDestination will be used for creating destination instance
 	    weakConfig.makeDestination = ^ NoteEditorViewController * _Nullable{
@@ -707,7 +707,7 @@ Now the user can use the module with its module config protocol and transfer par
 ```swift
 var note = ...
 Router.makeDestination(to: RoutableViewModule<EditorViewModuleInput>()) { (config) in
-     // Transfer parameters and get NoteEditorInput
+     // Transfer parameters and get EditorViewInput
      let destination = config.makeDestinationWith(note)
 }
 ```
@@ -719,8 +719,8 @@ Note *note = ...
 [ZIKRouterToViewModule(EditorViewModuleInput)
     performPath:ZIKViewRoutePath.showFrom(self)
     configuring:^(ZIKViewRouteConfiguration<EditorViewModuleInput> *config) {
-        // Transfer parameters and get NoteEditorInput
-        id<NoteEditorInput> destination = config.makeDestinationWith(note);
+        // Transfer parameters and get EditorViewInput
+        id<EditorViewInput> destination = config.makeDestinationWith(note);
  }];
 ```
 
@@ -736,11 +736,11 @@ You can remove the view by `removeRoute`, without using pop / dismiss / removeFr
 
 ```swift
 class TestViewController: UIViewController {
-    var router: DestinationViewRouter<NoteEditorInput>?
+    var router: DestinationViewRouter<EditorViewInput>?
     
     func showEditor() {
         // Hold the router
-        router = Router.perform(to: RoutableView<NoteEditorInput>(), path: .push(from: self))
+        router = Router.perform(to: RoutableView<EditorViewInput>(), path: .push(from: self))
     }
     
     // Router will pop the editor view controller
@@ -783,13 +783,13 @@ class TestViewController: UIViewController {
 
 ```objectivec
 @interface TestViewController()
-@property (nonatomic, strong) ZIKDestinationViewRouter(id<NoteEditorInput>) *router;
+@property (nonatomic, strong) ZIKDestinationViewRouter(id<EditorViewInput>) *router;
 @end
 @implementation TestViewController
 
 - (void)showEditorDirectly {
     // Hold the router
-    self.router = [ZIKRouterToView(NoteEditorInput) performPath:ZIKViewRoutePath.pushFrom(self)];
+    self.router = [ZIKRouterToView(EditorViewInput) performPath:ZIKViewRoutePath.pushFrom(self)];
 }
 
 // Router will pop the editor view controller
@@ -819,7 +819,7 @@ class TestViewController: UIViewController {
     }
     [self.router removeRouteWithConfiguring:^(ZIKViewRemoveConfiguration *config) {
         config.animated = YES;
-        config.prepareDestination = ^(UIViewController<NoteEditorInput> *destination) {
+        config.prepareDestination = ^(UIViewController<EditorViewInput> *destination) {
             // Use destination before remove it
         };
     }];
@@ -841,7 +841,7 @@ Required protocol used by the user:
 
 ```swift
 /// Required protocol to use editor module
-protocol RequiredNoteEditorInput: class {
+protocol RequiredEditorViewInput: class {
     weak var delegate: EditorDelegate? { get set }
     func constructForCreatingNewNote()
 }
@@ -851,7 +851,7 @@ protocol RequiredNoteEditorInput: class {
 
 ```objectivec
 /// Required protocol to use editor module
-@protocol RequiredNoteEditorInput <ZIKViewRoutable>
+@protocol RequiredEditorViewInput <ZIKViewRoutable>
 @property (nonatomic, weak) id<EditorDelegate> delegate;
 - (void)constructForCreatingNewNote;
 @end
@@ -859,13 +859,13 @@ protocol RequiredNoteEditorInput: class {
 
 </details>
 
-Use`RequiredNoteEditorInput`to get module:
+Use`RequiredEditorViewInput`to get module:
 
 ```swift
 class TestViewController: UIViewController {
 
     func showEditorDirectly() {
-        Router.perform(to: RoutableView<RequiredNoteEditorInput>(), path: .push(from: self))
+        Router.perform(to: RoutableView<RequiredEditorViewInput>(), path: .push(from: self))
     }
 }
 ```
@@ -876,7 +876,7 @@ class TestViewController: UIViewController {
 @implementation TestViewController
 
 - (void)showEditorDirectly {
-    [ZIKRouterToView(RequiredNoteEditorInput) performPath:ZIKViewRoutePath.pushFrom(self)];
+    [ZIKRouterToView(RequiredEditorViewInput) performPath:ZIKViewRoutePath.pushFrom(self)];
 }
 
 @end

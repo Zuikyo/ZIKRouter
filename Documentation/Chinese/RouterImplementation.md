@@ -7,12 +7,12 @@
 Swift示例：
 
 ```swift
-protocol NoteEditorInput {
+protocol EditorViewInput {
     weak var delegate: EditorDelegate? { get set }
     func constructForCreatingNewNote()
 }
 
-class EditorViewController: UIViewController, NoteEditorInput {
+class EditorViewController: UIViewController, EditorViewInput {
     ...
 }
 ```
@@ -27,8 +27,8 @@ class EditorViewController: UIViewController, NoteEditorInput {
 extension EditorViewController: ZIKRoutableView {
 
 }
-//声明 NoteEditorInput 是可路由的
-extension RoutableView where Protocol == NoteEditorInput {
+//声明 EditorViewInput 是可路由的
+extension RoutableView where Protocol == EditorViewInput {
     init() { self.init(declaredProtocol: Protocol.self) }
 }
 
@@ -38,8 +38,8 @@ class EditorViewRouter: ZIKViewRouter<EditorViewController, ZIKViewRouteConfigur
         //把 EditorViewController 和对应的 Router 子类进行注册，一个 Router 可以注册多个界面，一个界面也可以使用多个 Router
         registerView(EditorViewController.self)
         
-        //注册 NoteEditorInput，注册后就可以用此 protocol 获取此 router
-        register(RoutableView<NoteEditorInput>())
+        //注册 EditorViewInput，注册后就可以用此 protocol 获取此 router
+        register(RoutableView<EditorViewInput>())
     }
     
     //返回需要获取的目的模块
@@ -86,15 +86,15 @@ class EditorViewRouter: ZIKViewRouter<EditorViewController, ZIKViewRouteConfigur
 <details><summary>Objective-C示例</summary>
 
 ```objectivec
-//NoteEditorInput.h
-//声明NoteEditorInput是可路由的
-@protocol NoteEditorInput: ZIKViewRoutable
+//EditorViewInput.h
+//声明EditorViewInput是可路由的
+@protocol EditorViewInput: ZIKViewRoutable
 @property (nonatomic, weak) id<EditorDelegate> delegate;
 - (void)constructForCreatingNewNote;
 @end
 ```
 ```objectivec
-@interface EditorViewController: UIViewController <NoteEditorInput>
+@interface EditorViewController: UIViewController <EditorViewInput>
 @end
 ```
 
@@ -121,8 +121,8 @@ class EditorViewRouter: ZIKViewRouter<EditorViewController, ZIKViewRouteConfigur
     //把 EditorViewController 和对应的 Router 子类进行注册，一个 Router 可以注册多个界面，一个界面也可以使用多个 Router
     [self registerView:[EditorViewController class]];
     
-    //注册 NoteEditorInput，注册后就可以用此 protocol 获取此 router
-    [self registerViewProtocol:ZIKRoutable(NoteEditorInput)];
+    //注册 EditorViewInput，注册后就可以用此 protocol 获取此 router
+    [self registerViewProtocol:ZIKRoutable(EditorViewInput)];
 }
 
 //返回需要获取的目的模块
@@ -175,13 +175,13 @@ class EditorViewRouter: ZIKViewRouter<EditorViewController, ZIKViewRouteConfigur
 如果你的类很简单，并不需要用到 router 子类，直接注册类即可：
 
 ```swift
-ZIKAnyViewRouter.register(RoutableView<NoteEditorInput>(), forMakingView: EditorViewController.self)
+ZIKAnyViewRouter.register(RoutableView<EditorViewInput>(), forMakingView: EditorViewController.self)
 ```
 
 <details><summary>Objective-C Sample</summary>
 
 ```objectivec
-[ZIKViewRouter registerViewProtocol:ZIKRoutable(NoteEditorInput) forMakingView:[EditorViewController class]];
+[ZIKViewRouter registerViewProtocol:ZIKRoutable(EditorViewInput) forMakingView:[EditorViewController class]];
 ```
 
 </details>
@@ -193,8 +193,8 @@ ZIKAnyViewRouter.register(RoutableView<NoteEditorInput>(), forMakingView: Editor
 或者用 block 自定义创建对象的方式：
 
 ```swift
-ZIKAnyViewRouter.register(RoutableView<NoteEditorInput>(), 
-                 forMakingView: EditorViewController.self) { (config, router) -> NoteEditorInput? in
+ZIKAnyViewRouter.register(RoutableView<EditorViewInput>(), 
+                 forMakingView: EditorViewController.self) { (config, router) -> EditorViewInput? in
                      EditorViewController *destination = ... // 实例化 view controller
                      return destination;
         }
@@ -205,7 +205,7 @@ ZIKAnyViewRouter.register(RoutableView<NoteEditorInput>(),
 
 ```objectivec
 [ZIKViewRouter
-    registerViewProtocol:ZIKRoutable(NoteEditorInput)
+    registerViewProtocol:ZIKRoutable(EditorViewInput)
     forMakingView:[EditorViewController class]
     making:^id _Nullable(ZIKViewRouteConfiguration *config, ZIKViewRouter *router) {
         EditorViewController *destination = ... // 实例化 view controller
@@ -218,25 +218,25 @@ ZIKAnyViewRouter.register(RoutableView<NoteEditorInput>(),
 或者用指定 C 函数创建对象：
 
 ```swift
-function makeEditorViewController(config: ViewRouteConfig) -> NoteEditorInput? {
+function makeEditorViewController(config: ViewRouteConfig) -> EditorViewInput? {
     NoteEditorViewController *destination = ... // 实例化 view controller
     return destination;
 }
 
-ZIKAnyViewRouter.register(RoutableView<NoteEditorInput>(), 
+ZIKAnyViewRouter.register(RoutableView<EditorViewInput>(), 
                  forMakingView: NoteEditorViewController.self, making: makeEditorViewController)
 ```
 
 <details><summary>Objective-C Sample</summary>
 
 ```objectivec
-id<NoteEditorInput> makeEditorViewController(ZIKViewRouteConfiguration *config) {
+id<EditorViewInput> makeEditorViewController(ZIKViewRouteConfiguration *config) {
     NoteEditorViewController *destination = ... // 实例化 view controller
     return destination;
 }
 
 [ZIKViewRouter
-    registerViewProtocol:ZIKRoutable(NoteEditorInput)
+    registerViewProtocol:ZIKRoutable(EditorViewInput)
     forMakingView:[NoteEditorViewController class]
     factory:makeEditorViewController];
 ```
@@ -251,7 +251,7 @@ ZIKViewRoute<EditorViewController, ViewRouteConfig>
           makeDestination: { (config, router) -> EditorViewController? in
             return EditorViewController()
     })
-    .register(RoutableView<NoteEditorInput>())
+    .register(RoutableView<EditorViewInput>())
 ```
 
 <details><summary>Objective-C Sample</summary>

@@ -26,7 +26,7 @@ When registering and getting router with protocol, use macro `ZIKRoutable` to wr
     [self registerView:[EditorViewController class]];
     
     //If the protocol is not inherited from ZIKViewRoutable, there will be compile warning
-    [self registerViewProtocol:ZIKRoutable(NoteEditorInput)];
+    [self registerViewProtocol:ZIKRoutable(EditorViewInput)];
 }
 
 @end
@@ -46,11 +46,11 @@ And the protocol type will affect the parameters in methods:
 
 ```objectivec
 //The 3 parameters have inheritance relationship
-[ZIKRouterToView(NoteEditorInput) //1
+[ZIKRouterToView(EditorViewInput) //1
      performPath:ZIKViewRoutePath.pushFrom(self)
-     strictConfiguring:^(ZIKViewRouteStrictConfiguration<id<NoteEditorInput>> *config, //2
+     strictConfiguring:^(ZIKViewRouteStrictConfiguration<id<EditorViewInput>> *config, //2
                          ZIKViewRouteConfiguration *module) {
-         config.prepareDestination = ^(id<NoteEditorInput> destination) { //3
+         config.prepareDestination = ^(id<EditorViewInput> destination) { //3
          	   destination.delegate = weakSelf;
              destination.name = @"zuik";
              destination.age = 18;
@@ -128,7 +128,7 @@ RouteConfig is type of router's configuration. You can use a custom type when us
 
 Custom Swift generic doesn't support covariance and contravariance. So a `ZIKViewRouter<UIViewController, ViewRouteConfig>` type is not a `ZIKViewRouter<AnyObject, ViewRouteConfig>` type, there will be complie error if you assign one type to another. And OC class's generic parameters can't be pure swift types, therefore, we use `ViewRouter` and `ServiceRouter` to wrap `ZIKViewRouter` and `ZIKServiceRouter`, to support pure swift types.
 
-Only one generic parameter will be set for each router. You can use convenient types like `DestinationViewRouter`,`DestinationServiceRouter`,`ModuleViewRouter`,`ModuleServiceRouter`. `ViewRouter<NoteEditorInput, ViewRouteConfig>` can be replaced with `DestinationViewRouter<NoteEditorInput>`.
+Only one generic parameter will be set for each router. You can use convenient types like `DestinationViewRouter`,`DestinationServiceRouter`,`ModuleViewRouter`,`ModuleServiceRouter`. `ViewRouter<EditorViewInput, ViewRouteConfig>` can be replaced with `DestinationViewRouter<EditorViewInput>`.
 
 When the router uses a module config protocol, the destination type can't be designated in generic parameter. If you wan't to designated destination type, you should return the destination in module config protocol's interface.
 

@@ -145,13 +145,13 @@ carthage update --configuration Debug
 
 ```swift
 ///Editor 模块的接口和依赖
-protocol NoteEditorInput: class {
+protocol EditorViewInput: class {
     weak var delegate: EditorDelegate? { get set }
     func constructForCreatingNewNote()
 }
 
 ///Editor view controller
-class NoteEditorViewController: UIViewController, NoteEditorInput {
+class NoteEditorViewController: UIViewController, EditorViewInput {
     ...
 }
 ```
@@ -160,7 +160,7 @@ class NoteEditorViewController: UIViewController, NoteEditorInput {
 
 ```objectivec
 ///Editor 模块的接口和依赖
-@protocol NoteEditorInput <ZIKViewRoutable>
+@protocol EditorViewInput <ZIKViewRoutable>
 @property (nonatomic, weak) id<EditorDelegate> delegate;
 - (void)constructForCreatingNewNote;
 @end
@@ -168,7 +168,7 @@ class NoteEditorViewController: UIViewController, NoteEditorInput {
 
 ```objectivec
 ///Editor view controller
-@interface NoteEditorViewController: UIViewController <NoteEditorInput>
+@interface NoteEditorViewController: UIViewController <EditorViewInput>
 @end
 @implementation NoteEditorViewController
 @end
@@ -195,7 +195,7 @@ class NoteEditorViewRouter: ZIKViewRouter<NoteEditorViewController, ViewRouteCon
         // 注册 class；一个 router 可以注册多个界面，一个界面也可以使用多个 router
         registerView(NoteEditorViewController.self)
         // 注册 protocol；之后就可以用这个 protocol 获取 此 router
-        register(RoutableView<NoteEditorInput>())
+        register(RoutableView<EditorViewInput>())
     }
     
     // 创建模块
@@ -228,7 +228,7 @@ class NoteEditorViewRouter: ZIKViewRouter<NoteEditorViewController, ViewRouteCon
     // 注册 class；一个 Router 可以注册多个界面，一个界面也可以使用多个 Router
     [self registerView:[NoteEditorViewController class]];
     // 注册 protocol；之后就可以用这个 protocol 获取 此 router
-    [self registerViewProtocol:ZIKRoutable(NoteEditorInput)];
+    [self registerViewProtocol:ZIKRoutable(EditorViewInput)];
 }
 
 // 创建模块
@@ -254,13 +254,13 @@ class NoteEditorViewRouter: ZIKViewRouter<NoteEditorViewController, ViewRouteCon
 如果你的类很简单，并不需要用到 router 子类，直接注册类即可：
 
 ```swift
-ZIKAnyViewRouter.register(RoutableView<NoteEditorInput>(), forMakingView: NoteEditorViewController.self)
+ZIKAnyViewRouter.register(RoutableView<EditorViewInput>(), forMakingView: NoteEditorViewController.self)
 ```
 
 <details><summary>Objective-C Sample</summary>
 
 ```objectivec
-[ZIKViewRouter registerViewProtocol:ZIKRoutable(NoteEditorInput) forMakingView:[NoteEditorViewController class]];
+[ZIKViewRouter registerViewProtocol:ZIKRoutable(EditorViewInput) forMakingView:[NoteEditorViewController class]];
 ```
 
 </details>
@@ -268,8 +268,8 @@ ZIKAnyViewRouter.register(RoutableView<NoteEditorInput>(), forMakingView: NoteEd
 或者用 block 自定义创建对象的方式：
 
 ```swift
-ZIKAnyViewRouter.register(RoutableView<NoteEditorInput>(), 
-                 forMakingView: NoteEditorViewController.self) { (config, router) -> NoteEditorInput? in
+ZIKAnyViewRouter.register(RoutableView<EditorViewInput>(), 
+                 forMakingView: NoteEditorViewController.self) { (config, router) -> EditorViewInput? in
                      let destination: NoteEditorViewController? = ... // 实例化 view controller
                      return destination;
         }
@@ -280,7 +280,7 @@ ZIKAnyViewRouter.register(RoutableView<NoteEditorInput>(),
 
 ```objectivec
 [ZIKViewRouter
-    registerViewProtocol:ZIKRoutable(NoteEditorInput)
+    registerViewProtocol:ZIKRoutable(EditorViewInput)
     forMakingView:[NoteEditorViewController class]
     making:^id _Nullable(ZIKViewRouteConfiguration *config, ZIKViewRouter *router) {
         NoteEditorViewController *destination = ... // 实例化 view controller
@@ -293,25 +293,25 @@ ZIKAnyViewRouter.register(RoutableView<NoteEditorInput>(),
 或者指定用 C 函数创建对象：
 
 ```swift
-function makeEditorViewController(config: ViewRouteConfig) -> NoteEditorInput? {
+function makeEditorViewController(config: ViewRouteConfig) -> EditorViewInput? {
     let destination: NoteEditorViewController? = ... // 实例化 view controller
     return destination;
 }
 
-ZIKAnyViewRouter.register(RoutableView<NoteEditorInput>(), 
+ZIKAnyViewRouter.register(RoutableView<EditorViewInput>(), 
                  forMakingView: NoteEditorViewController.self, making: makeEditorViewController)
 ```
 
 <details><summary>Objective-C Sample</summary>
 
 ```objectivec
-id<NoteEditorInput> makeEditorViewController(ZIKViewRouteConfiguration *config) {
+id<EditorViewInput> makeEditorViewController(ZIKViewRouteConfiguration *config) {
     NoteEditorViewController *destination = ... // 实例化 view controller
     return destination;
 }
 
 [ZIKViewRouter
-    registerViewProtocol:ZIKRoutable(NoteEditorInput)
+    registerViewProtocol:ZIKRoutable(EditorViewInput)
     forMakingView:[NoteEditorViewController class]
     factory:makeEditorViewController];
 ```
@@ -329,10 +329,10 @@ id<NoteEditorInput> makeEditorViewController(ZIKViewRouteConfiguration *config) 
 extension NoteEditorViewController: ZIKRoutableView {
 }
 
-//声明 NoteEditorInput 为 routable
-//这份声明意味着我们可以用 NoteEditorInput 来获取路由
+//声明 EditorViewInput 为 routable
+//这份声明意味着我们可以用 EditorViewInput 来获取路由
 //如果获取路由时，protocol 未经过声明，将会产生编译错误
-extension RoutableView where Protocol == NoteEditorInput {
+extension RoutableView where Protocol == EditorViewInput {
     init() { self.init(declaredProtocol: Protocol.self) }
 }
 ```
@@ -345,8 +345,8 @@ extension RoutableView where Protocol == NoteEditorInput {
 DeclareRoutableView(NoteEditorViewController, NoteEditorViewRouter)
 
 ///当 protocol 继承自 ZIKViewRoutable, 就是 routable 的
-//这份声明意味着我们可以用 NoteEditorInput 来获取路由
-@protocol NoteEditorInput <ZIKViewRoutable>
+//这份声明意味着我们可以用 EditorViewInput 来获取路由
+@protocol EditorViewInput <ZIKViewRoutable>
 @property (nonatomic, weak) id<EditorDelegate> delegate;
 - (void)constructForCreatingNewNote;
 @end
@@ -369,7 +369,7 @@ class TestViewController: UIViewController {
 
     //直接跳转到 editor view controller
     func showEditorDirectly() {
-        Router.perform(to: RoutableView<NoteEditorInput>(), path: .push(from: self))
+        Router.perform(to: RoutableView<EditorViewInput>(), path: .push(from: self))
     }
 }
 ```
@@ -381,7 +381,7 @@ class TestViewController: UIViewController {
 
 - (void)showEditorDirectly {
     //直接跳转到 editor view controller
-    [ZIKRouterToView(NoteEditorInput) performPath:ZIKViewRoutePath.pushFrom(self)];
+    [ZIKRouterToView(EditorViewInput) performPath:ZIKViewRoutePath.pushFrom(self)];
 }
 
 @end
@@ -417,13 +417,13 @@ class TestViewController: UIViewController {
     //跳转到 editor 界面；通过 protocol 获取对应的 router 类，同时用 protocol 配置界面
     func showEditor() {
         Router.perform(
-            to: RoutableView<NoteEditorInput>(),
+            to: RoutableView<EditorViewInput>(),
             path: .push(from: self),
             configuring: { (config, _) in
                 //路由相关的设置
                 //跳转前配置界面
                 config.prepareDestination = { [weak self] destination in
-                    //destination 自动推断为 NoteEditorInput
+                    //destination 自动推断为 EditorViewInput
                     destination.delegate = self
                     destination.constructForCreatingNewNote()
                 }
@@ -445,16 +445,16 @@ class TestViewController: UIViewController {
 
 - (void)showEditor {
     //跳转到 editor 界面；通过 protocol 获取对应的 router 类，同时用 protocol 配置界面
-    [ZIKRouterToView(NoteEditorInput)
+    [ZIKRouterToView(EditorViewInput)
 	     performPath:ZIKViewRoutePath.pushFrom(self)
 	     configuring:^(ZIKViewRouteConfig *config) {
 	         //路由相关的设置
 	         //跳转前配置界面
-	         config.prepareDestination = ^(id<NoteEditorInput> destination) {
+	         config.prepareDestination = ^(id<EditorViewInput> destination) {
 	             destination.delegate = self;
 	             [destination constructForCreatingNewNote];
 	         };
-	         config.successHandler = ^(id<NoteEditorInput> destination) {
+	         config.successHandler = ^(id<EditorViewInput> destination) {
 	             //跳转结束
 	         };
 	         config.errorHandler = ^(ZIKRouteAction routeAction, NSError * error) {
@@ -475,14 +475,14 @@ class TestViewController: UIViewController {
 如果不想执行界面跳转，只是想获取模块，执行自定义操作，可以使用`makeDestination`：
 
 ```swift
-//destination 自动推断为 NoteEditorInput
-let destination = Router.makeDestination(to: RoutableView<NoteEditorInput>())
+//destination 自动推断为 EditorViewInput
+let destination = Router.makeDestination(to: RoutableView<EditorViewInput>())
 ```
 
 <details><summary>Objective-C Sample</summary>
 
 ```objectivec
-id<NoteEditorInput> destination = [ZIKRouterToView(NoteEditorInput) makeDestination];
+id<EditorViewInput> destination = [ZIKRouterToView(EditorViewInput) makeDestination];
 ```
 </details>
 
@@ -494,13 +494,13 @@ id<NoteEditorInput> destination = [ZIKRouterToView(NoteEditorInput) makeDestinat
 
 此时可以让 router 使用自定义 configuration 保存参数，配合 module config protocol 传参。
 
-之前用于路由的`NoteEditorInput`是由 destination 遵守的，现在使用`EditorViewModuleInput`，由自定义的 configuration 遵守，用于声明模块需要的参数：
+之前用于路由的`EditorViewInput`是由 destination 遵守的，现在使用`EditorViewModuleInput`，由自定义的 configuration 遵守，用于声明模块需要的参数：
 
 ```swift
 // protocol 里一般只需要 makeDestinationWith，用于声明参数类型和 destination 类型；也可以添加其他自定义的属性参数或者方法
 protocol EditorViewModuleInput: class {
-    // 传递参数，用于创建模块；这里声明了需要一个 Note 类型的参数，并返回一个 NoteEditorInput
-    var makeDestinationWith: (_ note: Note) -> NoteEditorInput? { get }
+    // 传递参数，用于创建模块；这里声明了需要一个 Note 类型的参数，并返回一个 EditorViewInput
+    var makeDestinationWith: (_ note: Note) -> EditorViewInput? { get }
 }
 ```
 
@@ -509,8 +509,8 @@ protocol EditorViewModuleInput: class {
 ```objectivec
 // 一般只需要 makeDestinationWith，用于声明参数类型和 destination 类型；也可以添加其他自定义的属性参数或者方法
 @protocol EditorViewModuleInput <ZIKViewModuleRoutable>
- // 传递参数，用于创建模块； protocol 里声明了需要一个 Note 类型的参数，并返回一个 NoteEditorInput
- @property (nonatomic, copy, readonly) id<NoteEditorInput> _Nullable(^makeDestinationWith)(Note *note);
+ // 传递参数，用于创建模块； protocol 里声明了需要一个 Note 类型的参数，并返回一个 EditorViewInput
+ @property (nonatomic, copy, readonly) id<EditorViewInput> _Nullable(^makeDestinationWith)(Note *note);
  @end
 ```
 
@@ -525,10 +525,10 @@ protocol EditorViewModuleInput: class {
 // Swift 泛型类不是 OC Class，不会出现在 Mach-O 的 __objc_classlist 节中，所以不会对 app 的启动速度造成影响
 class EditorViewModuleConfiguration<T>: ZIKViewMakeableConfiguration<NoteEditorViewController>, EditorViewModuleInput {
     // 使用者调用 makeDestinationWith 向模块传参
-    var makeDestinationWith: (_ note: Note) -> NoteEditorInput? {
+    var makeDestinationWith: (_ note: Note) -> EditorViewInput? {
         return { note in
-        	 // makeDestination 会被用于创建 destination
-        	 // 用闭包捕获了传入的参数，可以直接用于创建 destination
+        	// makeDestination 会被用于创建 destination
+        	// 用闭包捕获了传入的参数，可以直接用于创建 destination
             self.makeDestination = { [unowned self] () in
                 // 调用自定义初始化方法
                 let destination = NoteEditorViewController(note: note)
@@ -554,18 +554,18 @@ func makeEditorViewModuleConfiguration() -> ZIKViewMakeableConfiguration<NoteEdi
 如果你的协议很简单，不需要用到 configuration 子类，或者你用的是 Objective-C，不想创建过多的子类影响 app 启动速度，可以用泛型类`ViewMakeableConfiguration`和`ZIKViewMakeableConfiguration`：
 
 ```swift
-extension ViewMakeableConfiguration: EditorViewModuleInput where Destination == NoteEditorInput, Constructor == (Note) -> NoteEditorInput? {
+extension ViewMakeableConfiguration: EditorViewModuleInput where Destination == EditorViewInput, Constructor == (Note) -> EditorViewInput? {
 }
 
 // 用泛型类可以实现 EditorViewModuleConfiguration 子类一样的效果
 // 此时的 config 相当于 EditorViewModuleConfiguration<Any>()
-func makeEditorViewModuleConfiguration() -> ViewMakeableConfiguration<NoteEditorInput, (Note) -> NoteEditorInput?> {
-	let config = ViewMakeableConfiguration<NoteEditorInput, (Note) -> NoteEditorInput?>({ _ in})
+func makeEditorViewModuleConfiguration() -> ViewMakeableConfiguration<EditorViewInput, (Note) -> EditorViewInput?> {
+	let config = ViewMakeableConfiguration<EditorViewInput, (Note) -> EditorViewInput?>({ _ in})
 	
 	// 使用者调用 makeDestinationWith 向模块传参
 	config.makeDestinationWith = { [unowned config] note in
 	    // makeDestination 会被用于创建 destination
-       // 用闭包捕获了传入的参数，可以直接用于创建 destination
+        // 用闭包捕获了传入的参数，可以直接用于创建 destination
 	    config.makeDestination = { () in
 	        // 调用自定义初始化方法
 	        let destination = NoteEditorViewController(note: note)
@@ -594,7 +594,7 @@ ZIKViewMakeableConfiguration<NoteEditorViewController *> * makeEditorViewModuleC
 	__weak typeof(config) weakConfig = config;
 	
 	// 配置 makeDestinationWith，使用者调用 makeDestinationWith 向模块传参
-	config.makeDestinationWith = ^id<NoteEditorInput> _Nullable(Note *note) {
+	config.makeDestinationWith = ^id<EditorViewInput> _Nullable(Note *note) {
 	    // makeDestination 会被用于创建 destination
 	    // 用闭包捕获了传入的参数，可以直接用于创建 destination，不必保存到 configuration 的属性上
 	    weakConfig.makeDestination = ^ NoteEditorViewController * _Nullable{
@@ -682,7 +682,7 @@ ZIKAnyViewRouter.register(RoutableViewModule<EditorViewModuleInput>(),
 ```swift
 var note = ...
 Router.makeDestination(to: RoutableViewModule<EditorViewModuleInput>()) { (config) in
-     // 传递参数，得到 NoteEditorInput
+     // 传递参数，得到 EditorViewInput
      let destination = config.makeDestinationWith(note)
 }
 ```
@@ -694,8 +694,8 @@ Note *note = ...
 [ZIKRouterToViewModule(EditorViewModuleInput)
     performPath:ZIKViewRoutePath.showFrom(self)
     configuring:^(ZIKViewRouteConfiguration<EditorViewModuleInput> *config) {
-        // 传递参数，得到 NoteEditorInput
-        id<NoteEditorInput> destination = config.makeDestinationWith(note);
+        // 传递参数，得到 EditorViewInput
+        id<EditorViewInput> destination = config.makeDestinationWith(note);
  }];
 ```
 </details>
@@ -710,11 +710,11 @@ Note *note = ...
 
 ```swift
 class TestViewController: UIViewController {
-    var router: DestinationViewRouter<NoteEditorInput>?
+    var router: DestinationViewRouter<EditorViewInput>?
     
     func showEditor() {
         //持有 router
-        router = Router.perform(to: RoutableView<NoteEditorInput>(), path: .push(from: self))
+        router = Router.perform(to: RoutableView<EditorViewInput>(), path: .push(from: self))
     }
     
     //Router 会对 editor view controller 执行 pop 操作，移除界面
@@ -757,13 +757,13 @@ class TestViewController: UIViewController {
 
 ```objectivec
 @interface TestViewController()
-@property (nonatomic, strong) ZIKDestinationViewRouter(id<NoteEditorInput>) *router;
+@property (nonatomic, strong) ZIKDestinationViewRouter(id<EditorViewInput>) *router;
 @end
 @implementation TestViewController
 
 - (void)showEditorDirectly {
     //持有 router
-    self.router = [ZIKRouterToView(NoteEditorInput) performPath:ZIKViewRoutePath.pushFrom(self)];
+    self.router = [ZIKRouterToView(EditorViewInput) performPath:ZIKViewRoutePath.pushFrom(self)];
 }
 
 //Router 会对 editor view controller 执行 pop 操作，移除界面
@@ -793,7 +793,7 @@ class TestViewController: UIViewController {
     }
     [self.router removeRouteWithConfiguring:^(ZIKViewRemoveConfiguration *config) {
         config.animated = YES;
-        config.prepareDestination = ^(UIViewController<NoteEditorInput> *destination) {
+        config.prepareDestination = ^(UIViewController<EditorViewInput> *destination) {
             //在消除界面之前调用界面的方法
         };
     }];
@@ -815,7 +815,7 @@ class TestViewController: UIViewController {
 
 ```swift
 ///使用者需要用到的 editor 模块的接口
-protocol RequiredNoteEditorInput: class {
+protocol RequiredEditorViewInput: class {
     weak var delegate: EditorDelegate? { get set }
     func constructForCreatingNewNote()
 }
@@ -825,7 +825,7 @@ protocol RequiredNoteEditorInput: class {
 
 ```objectivec
 ///使用者需要用到的 editor 模块的接口
-@protocol RequiredNoteEditorInput <ZIKViewRoutable>
+@protocol RequiredEditorViewInput <ZIKViewRoutable>
 @property (nonatomic, weak) id<EditorDelegate> delegate;
 - (void)constructForCreatingNewNote;
 @end
@@ -833,13 +833,13 @@ protocol RequiredNoteEditorInput: class {
 
 </details>
 
-使用`RequiredNoteEditorInput`获取模块：
+使用`RequiredEditorViewInput`获取模块：
 
 ```swift
 class TestViewController: UIViewController {
 
     func showEditorDirectly() {
-        Router.perform(to: RoutableView<RequiredNoteEditorInput>(), path: .push(from: self))
+        Router.perform(to: RoutableView<RequiredEditorViewInput>(), path: .push(from: self))
     }
 }
 ```
@@ -850,7 +850,7 @@ class TestViewController: UIViewController {
 @implementation TestViewController
 
 - (void)showEditorDirectly {
-    [ZIKRouterToView(RequiredNoteEditorInput) performPath:ZIKViewRoutePath.pushFrom(self)];
+    [ZIKRouterToView(RequiredEditorViewInput) performPath:ZIKViewRoutePath.pushFrom(self)];
 }
 
 @end

@@ -40,7 +40,7 @@ ZIKAnyViewRouter.globalErrorHandler = { (router, action, error) in
 
 ```swift
 Router.perform(
-            to: RoutableView<NoteEditorInput>(),
+            to: RoutableView<EditorViewInput>(),
             path: .push(from: self),
             configuring: { (config, _) in
                 config.errorHandler = { (action, error) in
@@ -52,7 +52,7 @@ Router.perform(
 <details><summary>Objective-C示例</summary>
 
 ```objectivec
-[ZIKRouterToView(NoteEditorInput)
+[ZIKRouterToView(EditorViewInput)
 	          performPath:ZIKViewRoutePath.pushFrom(self)
 	          configuring:^(ZIKViewRouteConfiguration *config) {
 	              config.errorHandler = ^(ZIKRouteAction routeAction, NSError *error) {
