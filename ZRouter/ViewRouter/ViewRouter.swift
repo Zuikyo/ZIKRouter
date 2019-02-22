@@ -820,7 +820,7 @@ open class ViewMakeableConfiguration<Destination, Constructor>: ZIKSwiftViewMake
      ```
      Or just:
      ```
-     let destination: LoginViewInput = Router.to(RoutableViewModule<LoginViewModuleInput>()).defaultRouteConfiguration.makeDestinationWith("account")
+     let destination: LoginViewInput = Router.to(RoutableViewModule<LoginViewModuleInput>())?.defaultRouteConfiguration.makeDestinationWith("account")
      ```
      */
     public var makeDestinationWith: Constructor

@@ -379,7 +379,7 @@ open class ServiceMakeableConfiguration<Destination, Constructor>: ZIKSwiftServi
      ```
      Or just:
      ```
-     let destination: LoginServiceInput = Router.to(RoutableServiceModule<LoginServiceModuleInput>()).defaultRouteConfiguration.makeDestinationWith("account")
+     let destination: LoginServiceInput = Router.to(RoutableServiceModule<LoginServiceModuleInput>())?.defaultRouteConfiguration.makeDestinationWith("account")
      ```
      */
     public var makeDestinationWith: Constructor

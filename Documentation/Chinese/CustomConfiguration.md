@@ -18,10 +18,8 @@ Module config protocol 用来声明模块需要用到的参数。由自定义 co
 
 ```swift
 protocol EditorViewModuleInput: class {
-    // 传递参数，用于创建模块；这里声明了需要两个参数
-    var constructDestination: (viewModel: EditorViewModel, _ note: Note) -> Void { get }
-    // 声明 destination 的类型为 NoteEditorInput
-    var didMakeDestination: ((NoteEditorInput) -> Void)? { get set }
+    // 传递参数，用于创建模块；这里声明了需要两个参数，并且返回一个 NoteEditorInput
+    var makeDestinationWith: (viewModel: EditorViewModel, _ note: Note) -> NoteEditorInput? { get }
 }
 ```
 
@@ -29,16 +27,14 @@ protocol EditorViewModuleInput: class {
 
 ```objectivec
 @protocol EditorViewModuleInput <ZIKViewModuleRoutable>
- // 传递参数，用于创建模块；这里声明了需要两个参数
- @property (nonatomic, copy, readonly) void(^constructDestination)(EditorViewModel *viewModel, Note *note);
- // 声明 destination 的类型为 NoteEditorInput
- @property (nonatomic, copy, nullable) void(^didMakeDestination)(id<NoteEditorInput> destination);
+ // 传递参数，用于创建模块；这里声明了需要两个参数，并且返回一个 NoteEditorInput
+ @property (nonatomic, copy, readonly) id<NoteEditorInput> _Nullable(^makeDestinationWith)(EditorViewModel *viewModel, Note *note);
  @end
 ```
 
 </details>
 
-Module config protocol 里一般只需要`constructDestination`和`didMakeDestination`，分别用于声明参数类型和 destination 类型。也可以添加其他自定义的属性参数或者方法。
+Module config protocol 里一般只需要`makeDestinationWith`，分别用于声明参数类型和 destination 类型。也可以添加其他自定义的属性参数或者方法。
 
 ## configuration 子类
 
@@ -49,14 +45,12 @@ Module config protocol 里一般只需要`constructDestination`和`didMakeDestin
 class EditorViewModuleConfiguration<T>: ZIKViewMakeableConfiguration<NoteEditorViewController>, EditorViewModuleInput {
     var didMakeDestination: ((NoteEditorInput) -> Void)?
     
-    // 使用者调用 constructDestination 向模块传参
-    var constructDestination: (viewModel: EditorViewModel, _ note: Note) -> Void {
+    // 使用者调用 makeDestinationWith 向模块传参
+    var makeDestinationWith: (viewModel: EditorViewModel, _ note: Note) -> NoteEditorInput？ {
         return { viewModel, note in
-        	 // makeDestination 会被用于创建 destination
-        	 // 用闭包捕获了传入的参数，可以直接用于创建 destination
-            self.makeDestination = { [unowned self] () in
-                // 调用自定义初始化方法，把 view mdoel 传给 view
-	            let destination = NoteEditorViewController(viewModel: viewModel)
+                
+            // 配置 destination
+            self.__prepareDestination = { destination in
                 let presenter = EditorPresenter()
                 let interactor = EditorInteractor()
                 destination.presenter = presenter
@@ -64,11 +58,23 @@ class EditorViewModuleConfiguration<T>: ZIKViewMakeableConfiguration<NoteEditorV
                 presenter.interactor = interactor
                 // 把 note 传给数据管理者
                 interactor.note = note
-                // 把结果传递给外部
-                self.didMakeDestination?(destination)
-                self.didMakeDestination = nil
+            }
+            
+        	// makeDestination 会被用于创建 destination
+        	// 用闭包捕获了传入的参数，可以直接用于创建 destination
+            self.makeDestination = { [unowned self] () in
+                // 调用自定义初始化方法，把 view mdoel 传给 view
+	            let destination = NoteEditorViewController(viewModel: viewModel)                
                 return destination
             }
+                
+            if let destination = self.makeDestination?() {
+                self.__prepareDestination?(destination)
+                // The router won't make and prepare destination again when perform with this configuration
+                self.makedDestination = destination
+                return destination
+            }
+            return nil
         }
     }
 }
@@ -87,14 +93,12 @@ func makeEditorViewModuleConfiguration() -> ZIKViewMakeableConfiguration<NoteEdi
 
 @implementation EditorViewModuleConfiguration
 
-// 使用者调用 constructDestination 向模块传参
-- (void(^)(Note *))constructDestination {
-    return ^(EditorViewModel *viewModel, Note *note) {
-        // makeDestination 会被用于创建 destination
-        // 用闭包捕获了传入的参数，可以直接用于创建 destination
-        self.makeDestination = ^ NoteEditorViewController * _Nullable{
-            // 调用自定义初始化方法，把 view mdoel 传给 view
-	        NoteEditorViewController *destination = [NoteEditorViewController alloc] initWithViewModel:viewModel];
+// 使用者调用 makeDestinationWith 向模块传参
+- (id<NoteEditorInput> _Nullable(^)(Note *))makeDestinationWith {
+    return ^id<NoteEditorInput> _Nullable(EditorViewModel *viewModel, Note *note) {
+        
+        // 配置 destination
+        self._prepareDestination = ^(NoteEditorViewController *destination) {
             EditorPresenter *presenter = [EditorPresenter alloc] init];
             EditorInteractor *interactor = [EditorInteractor alloc] init];
             destination.presenter = presenter;
@@ -102,8 +106,22 @@ func makeEditorViewModuleConfiguration() -> ZIKViewMakeableConfiguration<NoteEdi
             presenter.interactor = interactor;
             // 把 note 传给数据管理者
             interactor.note = note;
+        };
+        
+        // makeDestination 会被用于创建 destination
+        // 用闭包捕获了传入的参数，可以直接用于创建 destination
+        self.makeDestination = ^NoteEditorViewController * _Nullable{
+            // 调用自定义初始化方法，把 view mdoel 传给 view
+	        NoteEditorViewController *destination = [NoteEditorViewController alloc] initWithViewModel:viewModel];            
             return destination;
         };
+        
+        // 设置 makedDestination 后，router 在执行时就会直接使用此对象
+        self.makedDestination = self.makeDestination();
+        if (self._prepareDestination) {
+            self._prepareDestination(self.makedDestination);
+        }
+        return self.makedDestination;
     };
 }
 
@@ -118,7 +136,7 @@ ZIKViewMakeableConfiguration<NoteEditorViewController *> * makeEditorViewModuleC
 
 Swift 泛型类不是 OC Class，不会出现在 Mach-O 的 __objc_classlist 节中，所以不会对 app 的启动速度造成影响。所以只需要给`EditorViewModuleConfiguration`加个泛型`T`后就无需再担心类数量的问题。
 
-通过`constructDestination`block 传递参数可以省去很多胶水代码，通过闭包直接传参，无需通过属性保存参数。所有模块的传参都能统一到一个`constructDestination`方法上。
+通过`makeDestinationWith`block 传递参数可以省去很多胶水代码，通过闭包直接传参，无需通过属性保存参数。所有模块的传参都能统一到一个`makeDestinationWith`方法上。
 
 ## 非 configuration 子类
 
@@ -131,24 +149,37 @@ extension ViewMakeableConfiguration: EditorViewModuleInput where Destination == 
 // 用泛型类可以实现 EditorViewModuleConfiguration 子类一样的效果
 // 此时的 config 相当于 EditorViewModuleConfiguration<Any>()
 func makeEditorViewModuleConfiguration() -> ViewMakeableConfiguration<NoteEditorInput, (EditorViewModel, Note) -> Void> {
-	let config = ViewMakeableConfiguration<NoteEditorInput, (EditorViewModel, Note) -> Void>({ _,_ in})
-	
-	// 使用者调用 constructDestination 向模块传参
-	config.constructDestination = { [unowned config] (viewModel, note) in
-	    // makeDestination 会被用于创建 destination
-       // 用闭包捕获了传入的参数，可以直接用于创建 destination
-	    config.makeDestination = { () in
-	        // 调用自定义初始化方法，把 view mdoel 传给 view
-	        let destination = NoteEditorViewController(viewModel: viewModel)
-            let presenter = EditorPresenter()
+	let config = ViewMakeableConfiguration<NoteEditorInput, (EditorViewModel, Note) -> Void>({ _,_ in})	    
+    
+	// 使用者调用 makeDestinationWith 向模块传参
+	config.makeDestinationWith = { [unowned config] (viewModel, note) in
+        
+        // 配置 destination
+        config.__prepareDestination = { destination in
+        	let presenter = EditorPresenter()
             let interactor = EditorInteractor()
             destination.presenter = presenter
             presenter.view = destination
             presenter.interactor = interactor
             // 把 note 传给数据管理者
             interactor.note = note
+    	};
+        
+	    // makeDestination 会被用于创建 destination
+       // 用闭包捕获了传入的参数，可以直接用于创建 destination
+	    config.makeDestination = { () in
+	        // 调用自定义初始化方法，把 view mdoel 传给 view
+	        let destination = NoteEditorViewController(viewModel: viewModel)            
 	        return destination
 	    }
+        
+        if let destination = config.makeDestination?() {
+            config.__prepareDestination?(destination)
+            // 设置 makedDestination 后，router 在执行时就会直接使用此对象
+            config.makedDestination = destination
+            return destination
+        }
+        return nil
 	}
 	return config
 }
@@ -157,7 +188,7 @@ func makeEditorViewModuleConfiguration() -> ViewMakeableConfiguration<NoteEditor
 
 <details><summary>Objective-C Sample</summary>
 
-泛型类`ZIKViewMakeableConfiguration`有类型为`void(^)()`的`constructDestination`属性，`void(^)()`表示这个 block 接受可变参数，因此可以通过 protocol 自由声明`constructDestination`的参数。
+泛型类`ZIKViewMakeableConfiguration`有类型为`id(^)()`的`makeDestinationWith`属性，`id(^)()`表示这个 block 接受可变参数，因此可以通过 protocol 自由声明`makeDestinationWith`的参数。
 
 ```objectivec
 // 此时的 config 效果和使用子类是一样的
@@ -165,22 +196,34 @@ ZIKViewMakeableConfiguration<NoteEditorViewController *> * makeEditorViewModuleC
 	ZIKViewMakeableConfiguration<NoteEditorViewController *> *config = [ZIKViewMakeableConfiguration<NoteEditorViewController *> new];
 	__weak typeof(config) weakConfig = config;
 	
-	// 配置 constructDestination，使用者调用 constructDestination 向模块传参
-	config.constructDestination = ^(EditorViewModel *viewModel, Note *note) {
+    // 配置 destination
+    config._prepareDestination = ^(NoteEditorViewController *destination) {
+        EditorPresenter *presenter = [EditorPresenter alloc] init];
+        EditorInteractor *interactor = [EditorInteractor alloc] init];
+        destination.presenter = presenter;
+        presenter.view = destination;
+        presenter.interactor = interactor;
+        // 把 note 传给数据管理者
+        interactor.note = note;
+    };
+    
+	// 配置 makeDestinationWith，使用者调用 makeDestinationWith 向模块传参
+	config.makeDestinationWith = ^id<NoteEditorInput> _Nullable(EditorViewModel *viewModel, Note *note) {
+        
 	    // makeDestination 会被用于创建 destination
 	    // 用闭包捕获了传入的参数，可以直接用于创建 destination，不必保存到 configuration 的属性上
 	    weakConfig.makeDestination = ^ NoteEditorViewController * _Nullable{
 	        // 调用自定义初始化方法，把 view mdoel 传给 view
-	        NoteEditorViewController *destination = [NoteEditorViewController alloc] initWithViewModel:viewModel];
-            EditorPresenter *presenter = [EditorPresenter alloc] init];
-            EditorInteractor *interactor = [EditorInteractor alloc] init];
-            destination.presenter = presenter;
-            presenter.view = destination;
-            presenter.interactor = interactor;
-            // 把 note 传给数据管理者
-            interactor.note = note;
+	        NoteEditorViewController *destination = [NoteEditorViewController alloc] initWithViewModel:viewModel];            
 	        return destination;
 	    };
+        
+        // 设置 makedDestination 后，router 在执行时就会直接使用此对象
+        weakConfig.makedDestination = weakConfig.makeDestination();
+        if (weakConfig._prepareDestination) {
+            weakConfig._prepareDestination(weakConfig.makedDestination);
+        }
+        return weakConfig.makedDestination;
 	};
 	return config;
 }
@@ -278,11 +321,8 @@ ZIKAnyViewRouter.register(RoutableViewModule<EditorViewModuleInput>(),
 var viewModel = ...
 var note = ...
 Router.makeDestination(to: RoutableViewModule<EditorViewModuleInput>()) { (config) in
-     // 传递参数
-     config.constructDestination(viewModel, note)
-     config.didMakeDestination = { destiantion in
-        // 得到 NoteEditorInput
-     }
+     // 传递参数，得到 NoteEditorInput
+     let destination = config.makeDestinationWith(note)
 }
 ```
 
@@ -294,18 +334,15 @@ Note *note = ...
 [ZIKRouterToViewModule(EditorViewModuleInput)
     performPath:ZIKViewRoutePath.showFrom(self)
     configuring:^(ZIKViewRouteConfiguration<EditorViewModuleInput> *config) {
-        // 传递参数
-        config.constructDestination(viewModel, note);
-        config.didMakeDestination = ^(id<NoteEditorInput> destination) {
-            // 得到 NoteEditorInput
-        };
+        // 传递参数，得到 NoteEditorInput
+        id<NoteEditorInput> destination = config.makeDestinationWith(note);
  }];
 ```
 </details>
 
 这种方式省去了很多胶水代码，通过闭包直接传参，无需通过属性保存参数，而且每个模块都能用泛型和 protocol 重新声明参数类型。
 
-在大多数情况下使用泛型 configuration 来避免创建过多的类，同时在某些复杂场景 configuration 子类则可以提供更复杂的操作，例如有多个初始化方法时，定义多个`constructDestination`方法。
+在大多数情况下使用泛型 configuration 来避免创建过多的类，同时在某些复杂场景 configuration 子类则可以提供更复杂的操作，例如有多个初始化方法时，定义多个`makeDestinationWith`方法。
 
 ---
 #### 下一节：[错误检查](ErrorHandle.md)

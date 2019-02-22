@@ -508,25 +508,21 @@ You can use module config protocol and a custom configuration to transfer parame
 Instead of  `NoteEditorInput`, we use another routable protocol `EditorViewModuleInput`  as config protocol for routing:
 
 ```swift
-// In general, a module config protocol only contains `constructDestination`and`didMakeDestination`, for declaring parameters and destination type. You can also add other properties or methods
+// In general, a module config protocol only contains `makeDestinationWith`, for declaring parameters and destination type. You can also add other properties or methods
 protocol EditorViewModuleInput: class {
-    // Transfer parameters for making destination
-    var constructDestination: (_ note: Note) -> Void { get }
-    // Declare that destination type is NoteEditorInput
-    var didMakeDestination: ((NoteEditorInput) -> Void)? { get set }
+    // Transfer parameters and make destination
+    var makeDestinationWith: (_ note: Note) -> NoteEditorInput? { get }
 }
 ```
 
 <details><summary>Objective-C Sample</summary>
 
 ```objectivec
-// In general, a module config protocol only contains `constructDestination`and`didMakeDestination`, for declaring parameters and destination type. You can also add other properties or methods
+// In general, a module config protocol only contains `makeDestinationWith`, for declaring parameters and destination type. You can also add other properties or methods
 @protocol EditorViewModuleInput <ZIKViewModuleRoutable>
- // Transfer parameters for making destination
- @property (nonatomic, copy, readonly) void(^constructDestination)(Note *note);
- // Declare that destination type is NoteEditorInput
- @property (nonatomic, copy, nullable) void(^didMakeDestination)(id<NoteEditorInput> destination);
- @end
+ // Transfer parameters and make destination
+@property (nonatomic, copy, readonly) id<NoteEditorInput> _Nullable(^makeDestinationWith)(Note *note);
+@end
 ```
 
 </details>
@@ -539,21 +535,22 @@ You can use a configuration subclass and store parameters on its properties.
 // Configuration subclass conforming to EditorViewModuleInput
 // Swift generic class is not OC Class. It won't be in the `__objc_classlist` section of the Mach-O file. So it won't affect the app launching time.
 class EditorViewModuleConfiguration<T>: ZIKViewMakeableConfiguration<NoteEditorViewController>, EditorViewModuleInput {
-    var didMakeDestination: ((NoteEditorInput) -> Void)?
-    
-    // User is responsible for calling constructDestination and giving parameters
-    var constructDestination: (_ note: Note) -> Void {
+    // User is responsible for calling makeDestinationWith and giving parameters
+    var makeDestinationWith: (_ note: Note) -> NoteEditorInput? {
         return { note in
-        	 // Capture parameters in makeDestination, so we don't need configuration subclass to hold the parameters
-        // MakeDestination will be used for creating destination instance
+            // Capture parameters in makeDestination, so we don't need configuration subclass to hold the parameters
+            // MakeDestination will be used for creating destination instance
             self.makeDestination = { [unowned self] () in
                 // Use custom initializer
                 let destination = NoteEditorViewController(note: note)
-                // Give destination to the caller
-                self.didMakeDestination?(destination)
-                self.didMakeDestination = nil
                 return destination
             }
+            if let destination = self.makeDestination?() {
+                // Set makedDestination so router will use this destination when performing
+                self.makedDestination = destination
+                return destination
+            }
+            return nil
         }
     }
 }
@@ -568,16 +565,16 @@ func makeEditorViewModuleConfiguration() -> ZIKViewMakeableConfiguration<NoteEdi
 If the protocol is very simple and you don't need a configuration subclass,or you're using Objective-C and don't want too many subclass, you can choose generic class`ViewMakeableConfiguration`and`ZIKViewMakeableConfiguration`:
 
 ```swift
-extension ViewMakeableConfiguration: EditorViewModuleInput where Destination == NoteEditorInput, Constructor == (Note) -> Void {
+extension ViewMakeableConfiguration: EditorViewModuleInput where Destination == NoteEditorInput, Constructor == (Note) -> NoteEditorInput? {
 }
 
 // ViewMakeableConfiguration with generic arguments works as the same as  EditorViewModuleConfiguration
 // The config works like EditorViewModuleConfiguration<Any>()
-func makeEditorViewModuleConfiguration() -> ViewMakeableConfiguration<NoteEditorInput, (Note) -> Void> {
-	let config = ViewMakeableConfiguration<NoteEditorInput, (Note) -> Void>({ _ in})
+func makeEditorViewModuleConfiguration() -> ViewMakeableConfiguration<NoteEditorInput, (Note) -> NoteEditorInput?> {
+	let config = ViewMakeableConfiguration<NoteEditorInput, (Note) -> NoteEditorInput?>({ _ in})
 	
-	// User is responsible for calling constructDestination and giving parameters
-	config.constructDestination = { [unowned config] note in
+	// User is responsible for calling makeDestinationWith and giving parameters
+	config.makeDestinationWith = { [unowned config] note in
 	    // Capture parameters in makeDestination, so we don't need configuration subclass to hold the parameters
         // MakeDestination will be used for creating destination instance
 	    config.makeDestination = { () in
@@ -585,6 +582,12 @@ func makeEditorViewModuleConfiguration() -> ViewMakeableConfiguration<NoteEditor
 	        let destination = NoteEditorViewController(note: note)
 	        return destination
 	    }
+        if let destination = config.makeDestination?() {
+            // Set makedDestination so router will use this destination when performing
+            config.makedDestination = destination
+            return destination
+        }
+        return nil
 	}
 	return config
 }
@@ -593,7 +596,7 @@ func makeEditorViewModuleConfiguration() -> ViewMakeableConfiguration<NoteEditor
 
 <details><summary>Objective-C Sample</summary>
 
-Generic class`ZIKViewMakeableConfiguration`has property`constructDestination`with`void(^)()`type. `void(^)()`means the block can accept any parameters. So you can declare your custom parameters of `constructDestination` in protocol.
+Generic class`ZIKViewMakeableConfiguration`has property`makeDestinationWith`with`id(^)()`type. `id(^)()`means the block can accept any parameters. So you can declare your custom parameters of `makeDestinationWith` in protocol.
 
 ```objectivec
 // The config works like EditorViewModuleConfiguration
@@ -601,8 +604,8 @@ ZIKViewMakeableConfiguration<NoteEditorViewController *> * makeEditorViewModuleC
 	ZIKViewMakeableConfiguration<NoteEditorViewController *> *config = [ZIKViewMakeableConfiguration<NoteEditorViewController *> new];
 	__weak typeof(config) weakConfig = config;
 	
-	// User is responsible for calling constructDestination and giving parameters
-	config.constructDestination = ^(Note *note) {
+	// User is responsible for calling makeDestinationWith and giving parameters
+	config.makeDestinationWith = ^id<NoteEditorInput> _Nullable(Note *note) {
 	    // Capture parameters in makeDestination, so we don't need configuration subclass to hold the parameters
         // MakeDestination will be used for creating destination instance
 	    weakConfig.makeDestination = ^ NoteEditorViewController * _Nullable{
@@ -610,6 +613,9 @@ ZIKViewMakeableConfiguration<NoteEditorViewController *> * makeEditorViewModuleC
 	        NoteEditorViewController *destination = [NoteEditorViewController alloc] initWithNote:note];
 	        return destination;
 	    };
+        // Set makedDestination so router will use this destination when performing
+        weakConfig.makedDestination = weakConfig.makeDestination();
+        return weakConfig.makedDestination;
 	};
 	return config;
 }
@@ -701,11 +707,8 @@ Now the user can use the module with its module config protocol and transfer par
 ```swift
 var note = ...
 Router.makeDestination(to: RoutableViewModule<EditorViewModuleInput>()) { (config) in
-     // Transfer parameters
-     config.constructDestination(note)
-     config.didMakeDestination = { destiantion in
-        // Get NoteEditorInput
-     }
+     // Transfer parameters and get NoteEditorInput
+     let destination = config.makeDestinationWith(note)
 }
 ```
 
@@ -716,11 +719,8 @@ Note *note = ...
 [ZIKRouterToViewModule(EditorViewModuleInput)
     performPath:ZIKViewRoutePath.showFrom(self)
     configuring:^(ZIKViewRouteConfiguration<EditorViewModuleInput> *config) {
-        // Transfer parameters
-        config.constructDestination(note);
-        config.didMakeDestination = ^(id<NoteEditorInput> destination) {
-            // Get NoteEditorInput
-        };
+        // Transfer parameters and get NoteEditorInput
+        id<NoteEditorInput> destination = config.makeDestinationWith(note);
  }];
 ```
 
