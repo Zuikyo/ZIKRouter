@@ -14,8 +14,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 #error TODO: replace /*arguments*/ with type of module config parameters
 @protocol ___VARIABLE_moduleProtocolName___ <ZIKServiceModuleRoutable>
-@property (nonatomic, copy, readonly) void(^constructDestination)(/*arguments*/);
-@property (nonatomic, copy, nullable) void(^didMakeDestination)(id<___VARIABLE_protocolName___> destination);
+@property (nonatomic, copy, readonly) id<___VARIABLE_protocolName___> _Nullable(^makeDestinationWith)(/*arguments*/);
 @end
 
 NS_ASSUME_NONNULL_END

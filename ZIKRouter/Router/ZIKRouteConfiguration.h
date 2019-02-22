@@ -305,7 +305,7 @@ typedef void(^ZIKConstructBlock)();
  @note
  You should set makedDestination in `makeDestinationWith`, so the router won't make and prepare destination again when perform with this configuration. If router's configuration has makedDestination, then it won't call `destinationWithConfiguration:` and `prepareDestination:configuration:` and `configuration._prepareDestiantion` when performing.
  */
-@property (nonatomic, weak, nullable) id makedDestination;
+@property (nonatomic, strong, nullable) id makedDestination;
 @property (nonatomic, copy) void(^constructDestination)() NS_REFINED_FOR_SWIFT;
 @property (nonatomic, copy, nullable) void(^didMakeDestination)(id destination) NS_REFINED_FOR_SWIFT;
 @end

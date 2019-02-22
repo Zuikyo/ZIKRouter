@@ -71,6 +71,7 @@ DeclareRoutableViewModuleProtocol(EasyInfoViewModuleProtocol)
                  return destination;
              };
              weakConfig.makedDestination = weakConfig.makeDestination();
+             weakConfig._prepareDestination(weakConfig.makedDestination);
              return weakConfig.makedDestination;
          };
          

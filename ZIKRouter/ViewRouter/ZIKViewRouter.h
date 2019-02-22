@@ -612,7 +612,7 @@ typedef void(^ZIKViewRouteGlobalErrorHandler)(__kindof ZIKViewRouter * _Nullable
 
 @end
 
-/// Add module config protocol that only has constructDestination and didMakeDestination to ZIKViewMakeableConfiguration.
+/// Add module config protocol that only has makeDestinationWith, or constructDestination and didMakeDestination to ZIKViewMakeableConfiguration.
 #define DeclareRoutableViewModuleProtocol(PROTOCOL) DeclareMakeableConfig(ZIKViewMakeableConfiguration, PROTOCOL)
 
 @interface ZIKViewRouter (Utility)
