@@ -60,11 +60,11 @@ class EditorViewModuleConfiguration<T>: ZIKViewMakeableConfiguration<NoteEditorV
                 interactor.note = note
             }
             
-        	// makeDestination 会被用于创建 destination
-        	// 用闭包捕获了传入的参数，可以直接用于创建 destination
+            // makeDestination 会被用于创建 destination
+            // 用闭包捕获了传入的参数，可以直接用于创建 destination
             self.makeDestination = { [unowned self] () in
                 // 调用自定义初始化方法，把 view mdoel 传给 view
-	            let destination = NoteEditorViewController(viewModel: viewModel)                
+                let destination = NoteEditorViewController(viewModel: viewModel)                
                 return destination
             }
                 
@@ -112,7 +112,7 @@ func makeEditorViewModuleConfiguration() -> ZIKViewMakeableConfiguration<NoteEdi
         // 用闭包捕获了传入的参数，可以直接用于创建 destination
         self.makeDestination = ^NoteEditorViewController * _Nullable{
             // 调用自定义初始化方法，把 view mdoel 传给 view
-	        NoteEditorViewController *destination = [NoteEditorViewController alloc] initWithViewModel:viewModel];            
+            NoteEditorViewController *destination = [NoteEditorViewController alloc] initWithViewModel:viewModel];            
             return destination;
         };
         
@@ -163,25 +163,25 @@ func makeEditorViewModuleConfiguration() -> ViewMakeableConfiguration<EditorView
             presenter.interactor = interactor
             // 把 note 传给数据管理者
             interactor.note = note
-    	};
+    	 };
         
-	    // makeDestination 会被用于创建 destination
-       // 用闭包捕获了传入的参数，可以直接用于创建 destination
-	    config.makeDestination = { () in
-	        // 调用自定义初始化方法，把 view mdoel 传给 view
-	        let destination = NoteEditorViewController(viewModel: viewModel)            
-	        return destination
-	    }
+	     // makeDestination 会被用于创建 destination
+        // 用闭包捕获了传入的参数，可以直接用于创建 destination
+        config.makeDestination = { () in
+	         // 调用自定义初始化方法，把 view mdoel 传给 view
+	         let destination = NoteEditorViewController(viewModel: viewModel)            
+	         return destination
+	     }
         
-        if let destination = config.makeDestination?() {
-            config.__prepareDestination?(destination)
-            // 设置 makedDestination 后，router 在执行时就会直接使用此对象
-            config.makedDestination = destination
-            return destination
-        }
-        return nil
-	}
-	return config
+         if let destination = config.makeDestination?() {
+             config.__prepareDestination?(destination)
+             // 设置 makedDestination 后，router 在执行时就会直接使用此对象
+             config.makedDestination = destination
+             return destination
+         }
+         return nil
+	 }
+	 return config
 }
 
 ```

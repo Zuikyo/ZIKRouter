@@ -527,8 +527,8 @@ class EditorViewModuleConfiguration<T>: ZIKViewMakeableConfiguration<NoteEditorV
     // 使用者调用 makeDestinationWith 向模块传参
     var makeDestinationWith: (_ note: Note) -> EditorViewInput? {
         return { note in
-        	// makeDestination 会被用于创建 destination
-        	// 用闭包捕获了传入的参数，可以直接用于创建 destination
+        	  // makeDestination 会被用于创建 destination
+            // 用闭包捕获了传入的参数，可以直接用于创建 destination
             self.makeDestination = { [unowned self] () in
                 // 调用自定义初始化方法
                 let destination = NoteEditorViewController(note: note)
@@ -564,13 +564,13 @@ func makeEditorViewModuleConfiguration() -> ViewMakeableConfiguration<EditorView
 	
 	// 使用者调用 makeDestinationWith 向模块传参
 	config.makeDestinationWith = { [unowned config] note in
-	    // makeDestination 会被用于创建 destination
+        // makeDestination 会被用于创建 destination
         // 用闭包捕获了传入的参数，可以直接用于创建 destination
-	    config.makeDestination = { () in
-	        // 调用自定义初始化方法
-	        let destination = NoteEditorViewController(note: note)
-	        return destination
-	    }
+	     config.makeDestination = { () in
+	         // 调用自定义初始化方法
+	         let destination = NoteEditorViewController(note: note)
+	         return destination
+	     }
         if let destination = config.makeDestination?() {
             // 设置 makedDestination 后，router 在执行时就会直接使用此对象
             config.makedDestination = destination
@@ -595,13 +595,13 @@ ZIKViewMakeableConfiguration<NoteEditorViewController *> * makeEditorViewModuleC
 	
 	// 配置 makeDestinationWith，使用者调用 makeDestinationWith 向模块传参
 	config.makeDestinationWith = ^id<EditorViewInput> _Nullable(Note *note) {
-	    // makeDestination 会被用于创建 destination
-	    // 用闭包捕获了传入的参数，可以直接用于创建 destination，不必保存到 configuration 的属性上
-	    weakConfig.makeDestination = ^ NoteEditorViewController * _Nullable{
-	        // 调用自定义初始化方法
-	        NoteEditorViewController *destination = [NoteEditorViewController alloc] initWithNote:note];
-	        return destination;
-	    };
+        // makeDestination 会被用于创建 destination
+        // 用闭包捕获了传入的参数，可以直接用于创建 destination，不必保存到 configuration 的属性上
+	     weakConfig.makeDestination = ^ NoteEditorViewController * _Nullable{
+	         // 调用自定义初始化方法
+	         NoteEditorViewController *destination = [NoteEditorViewController alloc] initWithNote:note];
+	         return destination;
+	     };
         // 设置 makedDestination 后，router 在执行时就会直接使用此对象
         weakConfig.makedDestination = weakConfig.makeDestination();
         return weakConfig.makedDestination;

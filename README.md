@@ -575,12 +575,12 @@ func makeEditorViewModuleConfiguration() -> ViewMakeableConfiguration<EditorView
 	
 	// User is responsible for calling makeDestinationWith and giving parameters
 	config.makeDestinationWith = { [unowned config] note in
-	    // Capture parameters in makeDestination, so we don't need configuration subclass to hold the parameters
+        // Capture parameters in makeDestination, so we don't need configuration subclass to hold the parameters
         // MakeDestination will be used for creating destination instance
 	    config.makeDestination = { () in
-	        // Use custom initializer
-	        let destination = NoteEditorViewController(note: note)
-	        return destination
+	         // Use custom initializer
+	         let destination = NoteEditorViewController(note: note)
+	         return destination
 	    }
         if let destination = config.makeDestination?() {
             // Set makedDestination so router will use this destination when performing
@@ -606,13 +606,13 @@ ZIKViewMakeableConfiguration<NoteEditorViewController *> * makeEditorViewModuleC
 	
 	// User is responsible for calling makeDestinationWith and giving parameters
 	config.makeDestinationWith = ^id<EditorViewInput> _Nullable(Note *note) {
-	    // Capture parameters in makeDestination, so we don't need configuration subclass to hold the parameters
+        // Capture parameters in makeDestination, so we don't need configuration subclass to hold the parameters
         // MakeDestination will be used for creating destination instance
-	    weakConfig.makeDestination = ^ NoteEditorViewController * _Nullable{
-	        // Use custom initializer
-	        NoteEditorViewController *destination = [NoteEditorViewController alloc] initWithNote:note];
-	        return destination;
-	    };
+	     weakConfig.makeDestination = ^ NoteEditorViewController * _Nullable{
+	         // Use custom initializer
+	         NoteEditorViewController *destination = [NoteEditorViewController alloc] initWithNote:note];
+	         return destination;
+	     };
         // Set makedDestination so router will use this destination when performing
         weakConfig.makedDestination = weakConfig.makeDestination();
         return weakConfig.makedDestination;
