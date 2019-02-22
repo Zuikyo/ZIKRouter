@@ -165,7 +165,7 @@ func makeEditorViewModuleConfiguration() -> ViewMakeableConfiguration<EditorView
             interactor.note = note
     	 };
         
-	     // makeDestination 会被用于创建 destination
+        // makeDestination 会被用于创建 destination
         // 用闭包捕获了传入的参数，可以直接用于创建 destination
         config.makeDestination = { () in
 	         // 调用自定义初始化方法，把 view mdoel 传给 view
