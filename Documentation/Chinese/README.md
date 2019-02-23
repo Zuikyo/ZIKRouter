@@ -357,11 +357,11 @@ DeclareRoutableView(NoteEditorViewController, NoteEditorViewRouter)
 
 Swift 中使用未声明的 protocol：
 
-![Unroutable-error-Swift](/Users/zhangweike/Documents/code/ZIKRouter/Documentation/Resources/Unroutable-error-Swift.png)
+![Unroutable-error-Swift](../Resources/Unroutable-error-Swift.png)
 
 Objective-C 中使用未声明的 protocol：
 
-![Unroutable-error-OC](/Users/zhangweike/Documents/code/ZIKRouter/Documentation/Resources/Unroutable-error-OC.png)
+![Unroutable-error-OC](../Resources/Unroutable-error-OC.png)
 
 现在你可以用所声明的 protocol 进行路由操作了。
 
