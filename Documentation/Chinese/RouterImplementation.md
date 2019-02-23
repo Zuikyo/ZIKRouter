@@ -170,6 +170,14 @@ class EditorViewRouter: ZIKViewRouter<EditorViewController, ZIKViewRouteConfigur
 
 在继承时可以指定泛型参数，参考[Type Checking](TypeChecking.md#泛型)。
 
+## Router 子类的优点
+
+* 支持多个 protocol
+* 支持多种类型的对象，例如可以根据不同系统版本，返回不同的控件
+* 支持自定义操作，例如自定义跳转方式
+* 支持处理界面跳转的 AOP
+* 支持自定义事件
+
 ## 非 router 子类
 
 如果你的类很简单，并不需要用到 router 子类，直接注册类即可：

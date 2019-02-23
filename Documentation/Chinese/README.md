@@ -29,13 +29,12 @@ View router 将 UIKit / AppKit 中的所有界面跳转方式封装成一个统�
 - [x] 支持界面路由和任意 OC 模块、swift 模块的路由，无需修改模块代码即可让其支持路由
 - [x] 支持对模块进行静态依赖注入和动态依赖注入
 - [x] **明确声明可用于路由的 protocol，进行编译时检查，使用未声明的 protocol 会产生编译错误。这是 ZIKRouter 最特别的功能之一**
-- [x] **用 protocol 动态获取模块，同时用 protocol 向模块传递参数，基于接口进行类型安全的调用和参数传递**
+- [x] **用 protocol 获取模块并传递参数，基于接口进行类型安全的交互**
 - [x] **可以用字符串获取模块，和其他 URL router 框架兼容**
-- [x] **使用 required protocol 和 provided protocol 指向同一个模块，因此路由时不必和某个固定的 protocol 耦合，也无需在一个公共库中集中管理所有的 protocol**
+- [x] **使用 required protocol 和 provided protocol 指向同一个模块，解除 protocol 依赖，支持各模块独立编译**
 - [x] **支持 storyboard，可以对从 segue 中跳转的界面自动执行依赖注入**
 - [x] 用 adapter 对两个模块进行解耦和接口兼容
-- [x] 封装 UIKit 和 AppKit 里的所有界面跳转方式（push、present modally、present as popover、present as sheet、segue、show、showDetail、addChildViewController、addSubview）以及自定义的展示方式，统一成一个方法
-- [x] 用一个方法执行界面回退和模块销毁，不必区分使用pop、dismiss、removeFromParentViewController、removeFromSuperview
+- [x] 封装 UIKit 和 AppKit 里的所有界面跳转方式，同时支持界面回退
 - [x] 完备的错误检查，可以检测界面跳转时的大部分问题
 - [x] 支持界面跳转过程中的 AOP 回调
 - [x] 检测界面跳转和移除时的内存泄露
@@ -700,7 +699,7 @@ Note *note = ...
 ```
 </details>
 
-这种方式省去了很多胶水代码，通过闭包直接传参，无需通过属性保存参数，而且每个模块都能用泛型和 protocol 重新声明参数类型。
+这种方式省去了很多胶水代码，通过闭包直接传参，无需通过属性保存参数，而且每个模块都能用泛型和 protocol 重新声明参数类型，同时所有的传参都能统一到一个`makeDestinationWith`方法上。
 
 更详细的内容，可以参考[自定义 configuration 传参](CustomConfiguration.md)。
 

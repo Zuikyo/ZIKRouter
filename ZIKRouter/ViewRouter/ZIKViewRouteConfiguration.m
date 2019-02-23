@@ -381,6 +381,9 @@ ZIKRouteAction const ZIKRouteActionPerformOnDestination = @"ZIKRouteActionPerfor
 
 @end
 
+@interface ZIKViewMakeableConfiguration()
+@property (nonatomic, strong) NSMutableDictionary<NSString *, id> *constructorContainer;
+@end
 @implementation ZIKViewMakeableConfiguration
 @dynamic _prepareDestination;
 
@@ -401,13 +404,21 @@ ZIKRouteAction const ZIKRouteActionPerformOnDestination = @"ZIKRouteActionPerfor
     return _constructDestination;
 }
 
+- (NSMutableDictionary<NSString *, id> *)constructorContainer {
+    if (!_constructorContainer) {
+        _constructorContainer =[NSMutableDictionary dictionary];
+    }
+    return _constructorContainer;
+}
+
 - (id)copyWithZone:(nullable NSZone *)zone {
     ZIKViewMakeableConfiguration *config = [super copyWithZone:zone];
     config.makeDestination = self.makeDestination;
-    config.makeDestinationWith = self.makeDestinationWith;
+    config.makeDestinationWith = _makeDestinationWith;
     config.makedDestination = self.makedDestination;
-    config.constructDestination = self.constructDestination;
+    config.constructDestination = _constructDestination;
     config.didMakeDestination = self.didMakeDestination;
+    config.constructorContainer = _constructorContainer;
     return config;
 }
 

@@ -62,51 +62,52 @@ public extension ServiceRouterExtension {
     /**
      Register service class with module config protocol without using any router subclass. The service will be created with the `makeDestination` block in the configuration. Use this if your service is very easy and don't need a router subclass.
      
-     If a module need a few required parameters when creating destination, you can declare constructDestination in module config protocol:
+     If a module need a few required parameters when creating destination, you can declare makeDestinationWith in module config protocol:
      ```
      protocol LoginServiceModuleInput {
-        // Pass required parameter for initializing destination.
-        var constructDestination: (String) -> Void { get }
-        // Designate destination is LoginServiceInput.
-        var didMakeDestination: ((LoginServiceInput) -> Void)? { get set }
+        // Pass required parameter and return destination with LoginServiceInput type.
+        var makeDestinationWith: (_ account: String) -> LoginServiceInput? { get }
      }
      
      // Declare routable protocol
      extension RoutableServiceModule where Protocol == LoginServiceModuleInput {
-     init() { self.init(declaredProtocol: Protocol.self) }
+        init() { self.init(declaredProtocol: Protocol.self) }
      }
      ```
      Then register module with module config factory block:
      ```
      // Let ServiceMakeableConfiguration conform to LoginServiceModuleInput
-     extension ServiceMakeableConfiguration: LoginServiceModuleInput where Destination == LoginServiceInput, Constructor == (String) -> Void {
+     extension ServiceMakeableConfiguration: LoginServiceModuleInput where Destination == LoginServiceInput, Constructor == (String) -> LoginServiceInput? {
      }
      
      // Register in some +registerRoutableDestination
      ZIKAnyServiceRouter.register(RoutableServiceModule<LoginServiceModuleInput>(), forMakingService: LoginService.self) { () -> LoginServiceModuleInput in
-         let config = ServiceMakeableConfiguration<LoginServiceInput, (String) -> Void>({ _ in })
-     
-         // User is responsible for calling constructDestination and giving parameters
-         config.constructDestination = { [unowned config] account in
-             // Capture parameters in makeDestination, so we don't need configuration subclass to hold the parameters
-             // MakeDestination will be used for creating destination instance
-             config.makeDestination = { () in
-                 let destination = LoginService(account: account)
-                 return destination
-             }
-         }
-         return config
+        let config = ServiceMakeableConfiguration<LoginServiceInput, (String) -> Void>({_,_ in })
+        config.__prepareDestination = { destination in
+            // Prepare the destination
+        }
+        // User is responsible for calling makeDestinationWith and giving parameters
+        config.makeDestinationWith = { [unowned config] (account) in
+            // Capture parameters in makeDestination, so we don't need configuration subclass to hold the parameters
+            // MakeDestination will be used for creating destination instance
+            config.makeDestination = { () -> LoginServiceInput?
+            let destination = LoginService(account: account)
+                return destination
+            }
+            if let destination = config.makeDestination?() {
+                config.__prepareDestination?(destination)
+                config.makedDestination = destination
+                return destination
+            }
+            return nil
+        }
+        return config
      }
      ```
      You can use this module with LoginServiceModuleInput:
      ```
      Router.makeDestination(to: RoutableServiceModule<LoginServiceModuleInput>()) { (config) in
-         var config = config
-         // Give parameters for making destination
-         config.constructDestination("account")
-         config.didMakeDestination = { destiantion in
-            // Did get LoginServiceInput
-         }
+         let destination = config.makeDestinationWith("account")
      }
      ```
      

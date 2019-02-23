@@ -112,7 +112,6 @@
     if (_userInfo) {
         [_userInfo removeAllObjects];
     }
-    
 }
 
 - (id)copyWithZone:(nullable NSZone *)zone {
@@ -130,6 +129,9 @@
 
 @end
 
+@interface ZIKServiceMakeableConfiguration ()
+@property (nonatomic, strong) NSMutableDictionary<NSString *, id> *constructorContainer;
+@end
 @implementation ZIKServiceMakeableConfiguration
 @dynamic _prepareDestination;
 
@@ -150,13 +152,21 @@
     return _constructDestination;
 }
 
+- (NSMutableDictionary<NSString *, id> *)constructorContainer {
+    if (!_constructorContainer) {
+        _constructorContainer = [NSMutableDictionary dictionary];
+    }
+    return _constructorContainer;
+}
+
 - (id)copyWithZone:(nullable NSZone *)zone {
     ZIKServiceMakeableConfiguration *config = [super copyWithZone:zone];
     config.makeDestination = self.makeDestination;
-    config.makeDestinationWith = self.makeDestinationWith;
+    config.makeDestinationWith = _makeDestinationWith;
     config.makedDestination = self.makedDestination;
-    config.constructDestination = self.constructDestination;
+    config.constructDestination = _constructDestination;
     config.didMakeDestination = self.didMakeDestination;
+    config.constructorContainer = _constructorContainer;
     return config;
 }
 

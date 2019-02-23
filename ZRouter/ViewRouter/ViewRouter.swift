@@ -748,7 +748,7 @@ open class ViewMakeableConfiguration<Destination, Constructor>: ZIKSwiftViewMake
     
     /// Make destination with block.
     ///
-    /// Set this in constructDestination block. It's for passing parameters with constructDestination easily, so we don't need configuration subclass to hold parameters.
+    /// Set this in makeDestinationWith or constructDestination block. It's for passing parameters easily, so we don't need configuration subclass to hold parameters.
     ///
     /// When using configuration with `register<Protocol>(_ routableViewModule: RoutableViewModule<Protocol>, forMakingView viewClass: AnyClass, making factory: @escaping () -> Protocol)`, makeDestination is auto used for making destination.
     ///
@@ -996,7 +996,7 @@ open class AnyViewMakeableConfiguration<Destination, Maker, Constructor>: ZIKSwi
     
     /// Make destination with block.
     ///
-    /// Set this in constructDestination block. It's for passing parameters with constructDestination easily, so we don't need configuration subclass to hold parameters.
+    /// Set this in makeDestiantionWith or constructDestination block. It's for passing parameters easily, so we don't need configuration subclass to hold parameters.
     ///
     /// When using configuration with `register<Protocol>(_ routableViewModule: RoutableViewModule<Protocol>, forMakingView viewClass: AnyClass, making factory: @escaping () -> Protocol)`, makeDestination is auto used for making destination.
     ///

@@ -27,9 +27,8 @@
  @code
  // LoginServiceModuleInput inherits from ZIKServiceModuleRoutable
  @protocol LoginServiceModuleInput <ZIKServiceModuleRoutable>
- - (void)constructDestination:(NSString *)account;
- // Return the destination
- @property (nonatomic, copy, nullable) void(^didMakeDestination)(id<LoginServiceInput> destination);
+ /// Pass required parameter and return destination with LoginServiceInput type.
+ @property (nonatomic, copy, readonly) id<LoginServiceInput> _Nullable(^makeDestinationWith)(NSString *account);
  @end
  @endcode
  
@@ -42,22 +41,14 @@
  @import ZIKRouter.Internal;
  
  // There're 2 ways to use a custom configuration:
- // 1. Override +defaultConfiguration and use ZIKServiceMakeableConfiguration (preferred way for simple parameters). See `registerModuleProtocol:forMakingService:factory:`
+ // 1. Override +defaultConfiguration and use ZIKServiceMakeableConfiguration (preferred way for simple parameters)
  // 2. Create subclass (or add category) of ZIKPerformRouteConfiguration (powerful way for complicated parameters)
-  
- // Configuration subclass conforming to LoginServiceModuleInput
- @interface LoginServiceModuleConfiguration: ZIKPerformRouteConfiguration <LoginServiceModuleInput>
- @property (nonatomic, copy, nullable) NSString *account;
- @property (nonatomic, copy, nullable) void(^didMakeDestination)(id<LoginServiceInput> destination);
- @end
- 
- @implementation LoginServiceModuleConfiguration
- - (void)constructDestination:(NSString *)account {
-    self.account = account;
- }
- @end
  
  DeclareRoutableService(LoginService, LoginServiceRouter)
+ 
+ // Let ZIKServiceMakeableConfiguration conform to LoginServiceModuleInput
+ DeclareRoutableServiceModuleProtocol(LoginServiceModuleInput)
+ 
  @implementation LoginServiceRouter
  
  + (void)registerRoutableDestination {
@@ -67,24 +58,37 @@
  
  // Use custom configuration for this router
  + (ZIKPerformRouteConfiguration *)defaultConfiguration {
-    return [[LoginServiceModuleConfiguration alloc] init];
+    ZIKServiceMakeableConfiguration<LoginService *> *config = [ZIKServiceMakeableConfiguration new];
+    __weak typeof(config) weakConfig = config;
+    config._prepareDestination = ^(LoginService *destination) {
+       // Prepare the destination
+    };
+    // User is responsible for calling makeDestinationWith and giving parameters
+    config.makeDestinationWith = id^(NSString *account) {
+ 
+        // Capture parameters in makeDestination, so we don't need configuration subclass to hold the parameters
+        // MakeDestination will be used for creating destination instance
+        weakConfig.makeDestination = ^LoginService * _Nullable{
+            // Use custom initializer
+            LoginService *destination = [LoginService alloc] initWithAccount:account];
+            return destination;
+        };
+        // Set makedDestination, so the router won't make destination and prepare destination again when perform with this configuration
+        weakConfig.makedDestination = weakConfig.makeDestination();
+        if (weakConfig._prepareDestination) {
+            weakConfig._prepareDestination(weakConfig.makedDestination);
+        }
+        return weakConfig.makedDestination;
+    };
+    return config;
  }
  
  - (id<LoginServiceInput>)destinationWithConfiguration:(LoginServiceModuleConfiguration *)configuration {
-    if (configuration.account == nil) {
-        return nil;
+    if (configuration.makeDestination) {
+        return configuration.makeDestination();
     }
     // LoginService requires account parameter when initializing.
-    LoginService *destination = [[LoginService alloc] initWithAccount:configuration.account];
-    return destination;
- }
- 
- - (void)didFinishPrepareDestination:(id<LoginServiceInput>)destination configuration:(LoginServiceModuleConfiguration *)configuration {
-    // Give the destination to the caller
-    if (configuration.didMakeDestination) {
-        configuration.didMakeDestination(destination);
-        configuration.didMakeDestination = nil;
-    }
+    return nil;
  }
  
  @end
@@ -94,10 +98,7 @@
  @code
  [ZIKRouterToServiceModule(LoginServiceModuleInput)
     makeDestinationWithConfiguring:^(ZIKPerformRouteConfiguration<LoginServiceModuleInput> *config) {
-        [config constructDestination:@"account"];
-        config.didMakeDestination = ^(id<LoginServiceInput> destination) {
-            // Did get the destination
-        };
+        id<LoginServiceInput> destination = config.makeDestinationWith(@"account");
  }];
  @endcode
  

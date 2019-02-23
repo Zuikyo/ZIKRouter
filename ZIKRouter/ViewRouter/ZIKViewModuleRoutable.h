@@ -27,9 +27,8 @@
  @code
  // LoginViewModuleInput inherits from ZIKViewModuleRoutable
  @protocol LoginViewModuleInput <ZIKViewModuleRoutable>
- - (void)constructDestination:(NSString *)account;
- // Return the destination
- @property (nonatomic, copy, nullable) void(^didMakeDestination)(id<LoginViewInput> destination);
+ /// Pass required parameter and return destination with LoginViewInput type.
+ @property (nonatomic, copy, readonly) id<LoginViewInput> _Nullable(^makeDestinationWith)(NSString *account);
  @end
  @endcode
  
@@ -42,22 +41,14 @@
  @import ZIKRouter.Internal;
  
  // There're 2 ways to use a custom configuration:
- // 1. Override +defaultConfiguration and use ZIKViewMakeableConfiguration (preferred way for simple parameters). See `registerModuleProtocol:forMakingView:factory:`
+ // 1. Override +defaultConfiguration and use ZIKViewMakeableConfiguration (preferred way for simple parameters)
  // 2. Create subclass (or add category) of ZIKViewRouteConfiguration (powerful way for complicated parameters)
  
- // Configuration subclass conforming to LoginViewModuleInput
- @interface LoginViewModuleConfiguration: ZIKViewRouteConfiguration <LoginViewModuleInput>
- @property (nonatomic, copy, nullable) NSString *account;
- @property (nonatomic, copy, nullable) void(^didMakeDestination)(id<LoginViewInput> destination);
- @end
- 
- @implementation LoginViewModuleConfiguration
- - (void)constructDestination:(NSString *)account {
-    self.account = account;
- }
- @end
- 
  DeclareRoutableView(LoginViewController, LoginViewRouter)
+ 
+ // Let ZIKViewMakeableConfiguration conform to LoginViewModuleInput
+ DeclareRoutableViewModuleProtocol(LoginViewModuleInput)
+ 
  @implementation LoginViewRouter
  
  + (void)registerRoutableDestination {
@@ -67,24 +58,38 @@
  
  // Use custom configuration for this router
  + (ZIKViewRouteConfiguration *)defaultConfiguration {
-    return [[LoginViewModuleConfiguration alloc] init];
+    ZIKViewMakeableConfiguration<LoginViewController *> *config = [ZIKViewMakeableConfiguration new];
+    __weak typeof(config) weakConfig = config;
+ 
+    config._prepareDestination = ^(id destination) {
+        // Prepare the destination
+    };
+    // User is responsible for calling makeDestinationWith and giving parameters
+    config.makeDestinationWith = id^(NSString *account) {
+ 
+        // Capture parameters in makeDestination, so we don't need configuration subclass to hold the parameters
+        // MakeDestination will be used for creating destination instance
+        weakConfig.makeDestination = ^LoginViewController * _Nullable{
+        // Use custom initializer
+        LoginViewController *destination = [LoginViewController alloc] initWithAccount:account];
+            return destination;
+        };
+        // Set makedDestination, so the router won't make destination and prepare destination again when perform with this configuration
+        weakConfig.makedDestination = weakConfig.makeDestination();
+        if (weakConfig._prepareDestination) {
+            weakConfig._prepareDestination(weakConfig.makedDestination);
+        }
+        return weakConfig.makedDestination;
+    };
+    return config;
  }
  
  - (id<LoginViewInput>)destinationWithConfiguration:(LoginViewModuleConfiguration *)configuration {
-    if (configuration.account == nil) {
-        return nil;
+    if (configuration.makeDestination) {
+        return configuration.makeDestination();
     }
     // LoginViewController requires account parameter when initializing.
-    LoginViewController *destination = [[LoginViewController alloc] initWithAccount:configuration.account];
-    return destination;
- }
- 
- - (void)didFinishPrepareDestination:(id<LoginViewInput>)destination configuration:(LoginViewModuleConfiguration *)configuration {
-    // Give the destination to the caller
-    if (configuration.didMakeDestination) {
-        configuration.didMakeDestination(destination);
-        configuration.didMakeDestination = nil;
-    }
+    return nil;
  }
  
  @end
@@ -96,10 +101,8 @@
  [ZIKRouterToViewModule(LoginViewModuleInput)
     performPath:ZIKViewRoutePath.pushFrom(self)
     configuring:^(ZIKViewRouteConfiguration<LoginViewModuleInput> *config) {
-        [config constructDestination:@"account"];
-        config.didMakeDestination = ^(id<LoginViewInput> destination) {
-            // Did get the destination
-        };
+        // Give parameters and make destination
+        id<LoginViewInput> destination = config.makeDestinationWith(@"account");
  }];
  @endcode
  

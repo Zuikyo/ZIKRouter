@@ -99,7 +99,7 @@ typedef void(^ZIKPerformRouteCompletion)(BOOL success, id _Nullable destination,
  */
 @property (nonatomic, copy, nullable) ZIKPerformRouteCompletion completionHandler;
 
-/// User info when handle route action from URL Scheme.
+/// User info when handle route action from URL Scheme. Will reset to empty after router remove route.
 @property (nonatomic, strong, readonly) NSDictionary<NSString *, id> *userInfo;
 
 /**
@@ -108,7 +108,7 @@ typedef void(^ZIKPerformRouteCompletion)(BOOL success, id _Nullable destination,
  @note
  You should only use user info when handle route action from URL Scheme, because it's not recommanded to passing parameters in dictionary. The compiler can't check parameters' type.
  */
-- (void)addUserInfoForKey:(NSString *)key object:(id)object;
+- (void)addUserInfoForKey:(NSString *)key object:(nullable id)object;
 
 /**
  Add user info.
@@ -293,6 +293,31 @@ typedef void(^ZIKConstructBlock)();
 /// Give the destination with specfic type to the caller. This is auto called and reset to nil after `didFinishPrepareDestination:configuration:`.
 @property (nonatomic, copy, nullable) void(^didMakeDestination)(Destination destination) NS_REFINED_FOR_SWIFT;
 
+/**
+ Container to hold custom `makeDestinationWith` and `constructDestination` block. If the destination has multi custom initializers, you can add new constructor and store them in the container.
+ 
+ @code
+ @protocol LoginServiceModuleInput <ZIKServiceModuleRoutable>
+ @property (nonatomic, copy, readonly) id<LoginServiceInput> _Nullable(^makeDestinationWith)(NSString *account);
+ 
+ // The second constructor
+ @property (nonatomic, copy, readonly) id<LoginServiceInput> _Nullable(^makeDestinationForNewAccountWith)(NSString *account);
+ @end
+ 
+ @interface ZIKSwiftServiceMakeableConfiguration (LoginServiceModuleInput) <LoginServiceModuleInput>
+ @end
+ @implementation ZIKSwiftServiceMakeableConfiguration
+ - (ZIKMakeBlock)makeDestinationForNewAccountWith {
+     return self.constructorContainer[@"makeDestinationForNewAccountWith"];
+ }
+ - (void)setMakeDestinationForNewAccountWith:(ZIKMakeBlock)block {
+     self.constructorContainer[@"makeDestinationForNewAccountWith"] = block;
+ }
+ @end
+ @endcode
+ */
+@property (nonatomic, strong, readonly) NSMutableDictionary<NSString *, id> *constructorContainer;
+
 @end
 
 @interface ZIKSwiftServiceMakeableConfiguration : ZIKPerformRouteConfiguration /**<ZIKConfigurationAsyncMakeable, ZIKConfigurationSyncMakeable>**/
@@ -415,7 +440,7 @@ typedef void(^ZIKRemoveRouteCompletion)(BOOL success, ZIKRouteAction routeAction
  @note
  You should only use user info when handle route action from URL Scheme, because it's not recommanded to passing parameters in dictionary. The compiler can't check parameters' type.
  */
-- (void)addUserInfoForKey:(NSString *)key object:(id)object;
+- (void)addUserInfoForKey:(NSString *)key object:(nullable id)object;
 
 /**
  Add user info.

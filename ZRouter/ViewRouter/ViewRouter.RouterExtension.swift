@@ -68,13 +68,11 @@ public extension ViewRouterExtension {
     /**
      Register view class with module config protocol without using any router subclass. The view will be created with the `makeDestination` block in the configuration. Use this if your view is very easy and don't need a router subclass.
      
-     If a module need a few required parameters when creating destination, you can declare constructDestination in module config protocol:
+     If a module need a few required parameters when creating destination, you can declare makeDestiantionWith in module config protocol:
      ```
      protocol LoginViewModuleInput {
-        // Pass required parameter for initializing destination.
-        var constructDestination: (String) -> Void { get }
-        // Designate destination is LoginViewInput.
-        var didMakeDestination: ((LoginViewInput) -> Void)? { get set }
+        // Pass required parameter and return destination with LoginViewInput type.
+        var makeDestinationWith: (_ account: String) -> LoginViewInput? { get }
      }
      
      // Declare routable protocol
@@ -85,34 +83,37 @@ public extension ViewRouterExtension {
      Then register module with module config factory block:
      ```
      // Let ViewMakeableConfiguration conform to LoginViewModuleInput
-     extension ViewMakeableConfiguration: LoginViewModuleInput where Destination == LoginViewInput, Constructor == (String) -> Void {
+     extension ViewMakeableConfiguration: LoginViewModuleInput where Destination == LoginViewInput, Constructor == (String) -> LoginViewInput? {
      }
      
      // Register in some +registerRoutableDestination
      ZIKAnyViewRouter.register(RoutableViewModule<LoginViewModuleInput>(), forMakingView: LoginViewController.self) { () -> LoginViewModuleInput in
-         let config = ViewMakeableConfiguration<LoginViewInput, (String) -> Void>({ _ in })
-     
-         // User is responsible for calling constructDestination and giving parameters
-         config.constructDestination = { [unowned config] account in
-             // Capture parameters in makeDestination, so we don't need configuration subclass to hold the parameters
-             // MakeDestination will be used for creating destination instance
-             config.makeDestination = { () in
-                 let destination = LoginViewController(account: account)
-                 return destination
-             }
-         }
-         return config
+        let config = ViewMakeableConfiguration<LoginViewInput, (String) -> Void>({_,_ in })
+        config.__prepareDestination = { destination in
+            // Prepare the destination
+        }
+        // User is responsible for calling makeDestinationWith and giving parameters
+        config.makeDestinationWith = { [unowned config] (account) in
+            // Capture parameters in makeDestination, so we don't need configuration subclass to hold the parameters
+            // MakeDestination will be used for creating destination instance
+            config.makeDestination = { () -> LoginViewInput?
+                let destination = LoginViewController(account: account)
+                return destination
+            }
+            if let destination = config.makeDestination?() {
+                config.__prepareDestination?(destination)
+                config.makedDestination = destination
+                return destination
+            }
+            return nil
+        }
+        return config
      }
      ```
      You can use this module with LoginViewModuleInput:
      ```
      Router.makeDestination(to: RoutableViewModule<LoginViewModuleInput>()) { (config) in
-         var config = config
-         // Give parameters for making destination
-         config.constructDestination("account")
-         config.didMakeDestination = { destiantion in
-            // Did get LoginViewInput
-         }
+         let destination: LoginViewInput = config.makeDestinationWith("account")
      }
      ```
      

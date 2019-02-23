@@ -420,6 +420,34 @@ typedef void(^ZIKViewRouteSegueConfiger)(NS_NOESCAPE ZIKViewRouteSegueConfigure)
 /// Give the destination with specfic type to the caller. This is auto called and reset to nil after `didFinishPrepareDestination:configuration:`.
 @property (nonatomic, copy, nullable) void(^didMakeDestination)(Destination destination) NS_REFINED_FOR_SWIFT;
 
+/**
+ Container to hold custom `makeDestinationWith` and `constructDestination` block. If the destination has multi custom initializers, you can add new constructor and store them in the container.
+ 
+ @code
+ @protocol LoginViewModuleInput <NSObject>
+ @property (nonatomic, copy, readonly) id<LoginViewInput> _Nullable(^makeDestinationWith)(NSString *account);
+ 
+ // The second constructor
+ @property (nonatomic, copy, readonly) id<LoginViewInput> _Nullable(^makeDestinationForNewAccountWith)(NSString *account);
+ @end
+ 
+ // Add category for your constructor
+ @interface ZIKSwiftServiceMakeableConfiguration (LoginViewModuleInput) <LoginViewModuleInput>
+ @end
+ @implementation ZIKSwiftServiceMakeableConfiguration (LoginViewModuleInput)
+ 
+ - (ZIKMakeBlock)makeDestinationForNewAccountWith {
+     return self.constructorContainer[@"makeDestinationForNewAccountWith"];
+ }
+ - (void)setMakeDestinationForNewAccountWith:(ZIKMakeBlock)block {
+     self.constructorContainer[@"makeDestinationForNewAccountWith"] = block;
+ }
+ 
+ @end
+ @endcode
+ */
+@property (nonatomic, strong, readonly) NSMutableDictionary<NSString *, id> *constructorContainer;
+
 @end
 
 @interface ZIKSwiftViewMakeableConfiguration : ZIKViewRouteConfiguration

@@ -20,7 +20,6 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic, copy, readonly, nullable) void(^prepareDestinationBlock)(Destination destination, RouteConfig config, ZIKRouter *router);
 @property (nonatomic, copy, readonly, nullable) void(^didFinishPrepareDestinationBlock)(Destination destination, RouteConfig config, ZIKRouter *router);
 
-- (Class)routerClass;
 + (Class)registryClass;
 
 @end

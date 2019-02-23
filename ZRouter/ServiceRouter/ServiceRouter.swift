@@ -304,7 +304,7 @@ open class ServiceMakeableConfiguration<Destination, Constructor>: ZIKSwiftServi
     
     /// Make destination with block.
     ///
-    /// Set this in constructDestination block. It's for passing parameters with constructDestination easily, so we don't need configuration subclass to hold parameters.
+    /// Set this in makeDestinationWith or constructDestination block. It's for passing parameters easily, so we don't need configuration subclass to hold parameters.
     ///
     /// When using configuration with `register<Protocol>(_ routableServiceModule: RoutableServiceModule<Protocol>, forMakingService serviceClass: AnyClass, making factory: @escaping () -> Protocol)`, makeDestination is auto used for making destination.
     ///
@@ -371,10 +371,7 @@ open class ServiceMakeableConfiguration<Destination, Constructor>: ZIKSwiftServi
      You can use this module with LoginServiceModuleInput:
      ```
      Router.makeDestination(to: RoutableServiceModule<LoginServiceModuleInput>()) { (config) in
-        config.constructDestination("account")
-        config.didMakeDestination = { destination in
-            // Did get LoginServiceInput
-        }
+        let destination = config.makeDestinationWith("account")
      }
      ```
      Or just:
@@ -554,7 +551,7 @@ open class AnyServiceMakeableConfiguration<Destination, Maker, Constructor>: ZIK
     
     /// Make destination with block.
     ///
-    /// Set this in constructDestination block. It's for passing parameters with constructDestination easily, so we don't need configuration subclass to hold parameters.
+    /// Set this in makeDestinationWith or constructDestination block. It's for passing parameters easily, so we don't need configuration subclass to hold parameters.
     ///
     /// When using configuration with `register<Protocol>(_ routableServiceModule: RoutableServiceModule<Protocol>, forMakingService serviceClass: AnyClass, making factory: @escaping () -> Protocol)`, makeDestination is auto used for making destination.
     ///

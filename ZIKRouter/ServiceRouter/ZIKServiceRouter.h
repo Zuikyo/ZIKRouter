@@ -188,13 +188,11 @@ typedef void(^ZIKServiceRouteGlobalErrorHandler)(__kindof ZIKServiceRouter * _Nu
 /**
  Register module config protocol with service class and config factory function, without using any router subclass or configuration subclass. The service will be created with the `makeDestination` block in the configuration. Use this if your service is very easy and don't need a router subclass or configuration subclass.
  
- If a module need a few required parameters when creating destination, you can declare constructDestination in module config protocol:
+ If a module need a few required parameters when creating destination, you can declare makeDestinationWith in module config protocol:
  @code
  @protocol LoginServiceModuleInput <ZIKServiceModuleRoutable>
- /// Pass required parameter for initializing destination.
- @property (nonatomic, copy, readonly) void(^constructDestination)(NSString *account);
- /// Designate destination type.
- @property (nonatomic, copy, nullable) void(^didMakeDestination)(id<LoginServiceInput> destination);
+ /// Pass required parameter and return destination with LoginServiceInput type.
+ @property (nonatomic, copy, readonly) id<LoginServiceInput> _Nullable(^makeDestinationWith)(NSString *account);
  @end
  @endcode
  
@@ -204,21 +202,30 @@ typedef void(^ZIKServiceRouteGlobalErrorHandler)(__kindof ZIKServiceRouter * _Nu
  DeclareRoutableServiceModuleProtocol(LoginServiceModuleInput)
  
  // C function that creating the configuration
- ZIKPerformRouteConfiguration<ZIKConfigurationMakeable> makeLoginServiceModuleConfiguration(void) {
-     ZIKServiceMakeableConfiguration *config = [ZIKServiceMakeableConfiguration new];
-     __weak typeof(config) weakConfig = config;
+ ZIKPerformRouteConfiguration<ZIKConfigurationMakeable> *makeLoginServiceModuleConfiguration(void) {
+    ZIKServiceMakeableConfiguration *config = [ZIKServiceMakeableConfiguration new];
+    __weak typeof(config) weakConfig = config;
+    config._prepareDestination = ^(id destination) {
+        // Prepare the destination
+    };
+    // User is responsible for calling makeDestinationWith and giving parameters
+    config.makeDestinationWith = id^(NSString *account) {
  
-     // User is responsible for calling constructDestination and giving parameters
-     config.constructDestination = ^(NSString *account) {
-         // Capture parameters in makeDestination, so we don't need configuration subclass to hold the parameters
-         // MakeDestination will be used for creating destination instance
-         weakConfig.makeDestination = ^LoginService * _Nullable{
-             // Use custom initializer
-             LoginService *destination = [LoginService alloc] initWithAccount:account];
-             return destination;
-         };
-     };
-     return config;
+        // Capture parameters in makeDestination, so we don't need configuration subclass to hold the parameters
+        // MakeDestination will be used for creating destination instance
+        weakConfig.makeDestination = ^LoginService * _Nullable{
+            // Use custom initializer
+            LoginService *destination = [LoginService alloc] initWithAccount:account];
+            return destination;
+        };
+        // Set makedDestination, so the router won't make destination and prepare destination again when perform with this configuration
+        weakConfig.makedDestination = weakConfig.makeDestination();
+        if (weakConfig._prepareDestination) {
+            weakConfig._prepareDestination(weakConfig.makedDestination);
+        }
+        return weakConfig.makedDestination;
+    };
+    return config;
  }
  
  // Register the function with LoginServiceModuleInput in some +registerRoutableDestination
@@ -232,11 +239,7 @@ typedef void(^ZIKServiceRouteGlobalErrorHandler)(__kindof ZIKServiceRouter * _Nu
  @code
  [ZIKRouterToServiceModule(LoginServiceModuleInput)
     performWithConfiguring:^(ZIKPerformRouteConfiguration<LoginServiceModuleInput> *config) {
-         // Give parameters for making destination
-         config.constructDestination(@"account");
-         config.didMakeDestination = ^(id<LoginServiceInput> destination) {
-            // Did get the destination
-         };
+         id<LoginServiceInput> destination = config.makeDestinationWith(@"account");
  }];
  @endcode
  
@@ -251,13 +254,11 @@ typedef void(^ZIKServiceRouteGlobalErrorHandler)(__kindof ZIKServiceRouter * _Nu
 /**
  Register module config protocol with service class and config factory block, without using any router subclass or configuration subclass. The service will be created with the `makeDestination` block in the configuration. Use this if your service is very easy and don't need a router subclass or configuration subclass.
  
- If a module need a few required parameters when creating destination, you can declare constructDestination in module config protocol:
+ If a module need a few required parameters when creating destination, you can declare makeDestinationWith in module config protocol:
  @code
  @protocol LoginServiceModuleInput <ZIKServiceModuleRoutable>
- /// Pass required parameter for initializing destination.
- @property (nonatomic, copy, readonly) void(^constructDestination)(NSString *account);
- /// Designate destination type.
- @property (nonatomic, copy, nullable) void(^didMakeDestination)(id<LoginServiceInput> destination);
+ /// Pass required parameter and return destination with LoginServiceInput type.
+ @property (nonatomic, copy, readonly) id<LoginServiceInput> _Nullable(^makeDestinationWith)(NSString *account);
  @end
  @endcode
  
@@ -271,11 +272,15 @@ typedef void(^ZIKServiceRouteGlobalErrorHandler)(__kindof ZIKServiceRouter * _Nu
     registerModuleProtocol:ZIKRoutable(LoginServiceModuleInput)
     forMakingService:[LoginService class]
     making:^ZIKPerformRouteConfiguration<ZIKConfigurationMakeable> * _Nonnull{
+ 
         ZIKServiceMakeableConfiguration *config = [ZIKServiceMakeableConfiguration new];
         __weak typeof(config) weakConfig = config;
+        config._prepareDestination = ^(id destination) {
+            // Prepare the destination
+        };
+        // User is responsible for calling makeDestinationWith and giving parameters
+        config.makeDestinationWith = id^(NSString *account) {
  
-        // User is responsible for calling constructDestination and giving parameters
-        config.constructDestination = ^(NSString *account) {
             // Capture parameters in makeDestination, so we don't need configuration subclass to hold the parameters
             // MakeDestination will be used for creating destination instance
             weakConfig.makeDestination = ^LoginService * _Nullable{
@@ -283,6 +288,12 @@ typedef void(^ZIKServiceRouteGlobalErrorHandler)(__kindof ZIKServiceRouter * _Nu
                 LoginService *destination = [LoginService alloc] initWithAccount:account];
                 return destination;
             };
+            // Set makedDestination, so the router won't make destination and prepare destination again when perform with this configuration
+            weakConfig.makedDestination = weakConfig.makeDestination();
+            if (weakConfig._prepareDestination) {
+                weakConfig._prepareDestination(weakConfig.makedDestination);
+            }
+            return weakConfig.makedDestination;
         };
         return config;
  }];
@@ -292,11 +303,7 @@ typedef void(^ZIKServiceRouteGlobalErrorHandler)(__kindof ZIKServiceRouter * _Nu
  @code
  [ZIKRouterToServiceModule(LoginServiceModuleInput)
      performWithConfiguring:^(ZIKPerformRouteConfiguration<LoginServiceModuleInput> *config) {
-        // Give parameters for making destination
-        config.constructDestination(@"account");
-        config.didMakeDestination = ^(id<LoginServiceInput> destination) {
-            // Did get the destination
-        };
+        id<LoginServiceInput> destination = config.makeDestinationWith(@"account");
  }];
  @endcode
  

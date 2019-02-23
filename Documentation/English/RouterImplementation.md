@@ -177,6 +177,14 @@ Create a `ZIKViewRouter` subclass for `EditorViewController`:
 
 The router subclass can set generic parameters when inheriting from ZIKViewRouter. See [Type Checking](TypeChecking.md).
 
+## Advantages of Router Subclass
+
+- Support multi protocols in one router
+- Support multi classes of destination
+- You can add custom actions in the subclass, such as custom transition and custom AOP
+- Support AOP of view transition
+- Handle custom events the router
+
 ## Simple Router
 
 If your module is very simple and don't need a router subclass, you can just register the class in a simpler way:
