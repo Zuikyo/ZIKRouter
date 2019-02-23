@@ -157,8 +157,8 @@ public extension ZIKViewRouteAdapter {
 /// Add Swift methods for ZIKViewRoute. Unavailable for any other classes.
 public protocol ViewRouteExtension: class {
     #if swift(>=4.1)
-    func register<Protocol>(_ routableView: RoutableView<Protocol>) -> Self
-    func register<Protocol>(_ routableViewModule: RoutableViewModule<Protocol>) -> Self
+    @discardableResult func register<Protocol>(_ routableView: RoutableView<Protocol>) -> Self
+    @discardableResult func register<Protocol>(_ routableViewModule: RoutableViewModule<Protocol>) -> Self
     #else
     func register<Protocol>(_ routableView: RoutableView<Protocol>)
     func register<Protocol>(_ routableViewModule: RoutableViewModule<Protocol>)
@@ -173,7 +173,7 @@ public extension ViewRouteExtension {
     ///
     /// - Parameter routableView: A routabe entry carrying a protocol conformed by the destination of the router.
     /// - Returns: Self
-    func register<Protocol>(_ routableView: RoutableView<Protocol>) -> Self {
+    @discardableResult func register<Protocol>(_ routableView: RoutableView<Protocol>) -> Self {
         Registry.register(routableView, forRoute: self)
         return self
     }
@@ -182,7 +182,7 @@ public extension ViewRouteExtension {
     ///
     /// - Parameter routableViewModule: A routabe entry carrying a module config protocol conformed by the custom configuration of the router.
     /// - Returns: Self
-    func register<Protocol>(_ routableViewModule: RoutableViewModule<Protocol>) -> Self {
+    @discardableResult func register<Protocol>(_ routableViewModule: RoutableViewModule<Protocol>) -> Self {
         Registry.register(routableViewModule, forRoute: self)
         return self
     }

@@ -913,6 +913,33 @@ open class ViewMakeableConfiguration<Destination, Constructor>: ZIKSwiftViewMake
         }
     }
     
+    /**
+     Container to hold custom `makeDestinationWith` and `constructDestination` block. If the destination has multi custom initializers, you can add new constructor and store them in the container.
+     
+     ```
+     protocol LoginViewModuleInput {
+        var makeDestinationWith: (_ account: String) -> LoginViewInput? { get }
+        var makeDestinationForNewUserWith: (_ account: String) -> LoginViewInput? { get }
+     }
+     
+     // Let ViewMakeableConfiguration conform to LoginViewModuleInput
+     extension ViewMakeableConfiguration: LoginViewModuleInput where Destination == LoginViewInput, Constructor == (String) -> LoginViewInput? {
+        var makeDestinationForNewUserWith: (String) -> LoginViewInput? {
+            get {
+                if let block = self.constructorContainer["makeDestinationForNewUserWith"] as? (String) -> LoginViewInput? {
+                    return block
+                }
+                return { _ in return nil }
+            }
+            set {
+                self.constructorContainer["makeDestinationForNewUserWith"] = newValue
+            }
+        }
+     }
+     ```
+     */
+    public lazy var constructorContainer: [String : Any] = [:]
+    
     public init(_ constructor: Constructor) {
         makeDestinationWith = constructor
         constructDestination = constructor
@@ -1056,6 +1083,33 @@ open class AnyViewMakeableConfiguration<Destination, Maker, Constructor>: ZIKSwi
             }
         }
     }
+    
+    /**
+     Container to hold custom `makeDestinationWith` and `constructDestination` block. If the destination has multi custom initializers, you can add new constructor and store them in the container.
+     
+     ```
+     protocol LoginViewModuleInput {
+        var makeDestinationWith: (_ account: String) -> LoginViewInput? { get }
+        var makeDestinationForNewUserWith: (_ account: String) -> LoginViewInput? { get }
+     }
+     
+     // Let ViewMakeableConfiguration conform to LoginViewModuleInput
+     extension ViewMakeableConfiguration: LoginViewModuleInput where Destination == LoginViewInput, Constructor == (String) -> LoginViewInput? {
+        var makeDestinationForNewUserWith: (String) -> LoginViewInput? {
+            get {
+                if let block = self.constructorContainer["makeDestinationForNewUserWith"] as? (String) -> LoginViewInput? {
+                    return block
+                }
+                return { _ in return nil }
+            }
+            set {
+                self.constructorContainer["makeDestinationForNewUserWith"] = newValue
+            }
+        }
+     }
+     ```
+     */
+    public lazy var constructorContainer: [String : Any] = [:]
     
     public init(maker: Maker, constructor: Constructor) {
         makeDestinationWith = maker

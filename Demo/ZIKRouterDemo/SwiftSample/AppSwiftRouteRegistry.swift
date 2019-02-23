@@ -45,7 +45,7 @@ class AppBlockRouteRegistry: ZIKViewRouteAdapter {
                 })
             if TEST_BLOCK_ROUTES == 1 {
                 route.register(RoutableService<SwiftServiceInput>())
-                route.register(RoutableServiceModule<SwiftServiceModuleInput>())
+                    .register(RoutableServiceModule<SwiftServiceModuleInput>())
             }
         }
     }

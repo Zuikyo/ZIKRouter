@@ -2,7 +2,7 @@
 
 ### 是否需要用公共库存放所有的 protocol？
 
-用一个公共库管理所有的 protocol 是最直接的方式，但是维护起来可能会很麻烦，而且也可能会导致引入许多没有使用到的 protocol。
+不需要。用一个公共库管理所有的 protocol 是最直接的方式，但是维护起来可能会很麻烦，而且也可能会导致引入许多没有使用到的 protocol。
 
 ZIKRouter 所使用的 protocol 都经过路由声明，而且允许你使用多个 protocol 指向相同的模块，因此 protocol 可以分散管理，不必全都放在一个公共库里管理。
 
@@ -92,7 +92,7 @@ class TestViewController: UIViewController {
 
 例如需要向一个模块传递 model 对象，此时 destination 作为 view，在设计上不能接触到 model。此时就可以用 configuration 保存参数，再在 router 内部用 configuration 去配置模块内的各个部分。
 
-示例代码可以参考：[注册-protocol](./ModuleRegistration.md#注册-protocol)
+示例代码可以参考：[自定义 configuration 传参](CustomConfiguration.md)
 
 ### 什么是 required protocol 和 provided protocol？
 
@@ -110,7 +110,7 @@ class TestViewController: UIViewController {
 
 一般 required protocol 和 provided protocol 只是名字不同，接口完全一样，或者 required protocol 是 provided protocol 的子集。只有在出现了模块替换时，才会出现两个 protocol 的接口出现差别的情况。
 
-不过你不能滥用这种适配方式，因为成本比较高。如果是功能模块间的互相依赖，建议直接引用类，或者在模块的接口上把依赖交给外部来设置。只有在你的业务模块的确允许使用者使用不同的依赖模块时，才进行不同接口间的适配。例如登录界面模块允许不同的 app 使用不同的登陆 service 模块。
+不过你不能滥用这种适配方式，因为成本比较高。如果是功能模块间的互相依赖，建议直接引用类，或者在模块的接口上把依赖交给外部来设置。只有在你的业务模块的确允许使用者使用不同的依赖模块时，才进行不同接口间的适配。例如一个通用的登录界面模块允许不同的 app 使用不同的登陆 service 模块。
 
 ### adapter 的作用是什么？
 

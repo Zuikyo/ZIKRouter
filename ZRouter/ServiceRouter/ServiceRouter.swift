@@ -468,6 +468,33 @@ open class ServiceMakeableConfiguration<Destination, Constructor>: ZIKSwiftServi
         }
     }
     
+    /**
+     Container to hold custom `makeDestinationWith` and `constructDestination` block. If the destination has multi custom initializers, you can add new constructor and store them in the container.
+     
+     ```
+     protocol LoginServiceModuleInput {
+        var makeDestinationWith: (_ account: String) -> LoginServiceInput? { get }
+        var makeDestinationForNewUserWith: (_ account: String) -> LoginServiceInput? { get }
+     }
+     
+     // Let ServiceMakeableConfiguration conform to LoginServiceModuleInput
+     extension ServiceMakeableConfiguration: LoginServiceModuleInput where Destination == LoginServiceInput, Constructor == (String) -> LoginServiceInput? {
+        var makeDestinationForNewUserWith: (String) -> LoginServiceInput? {
+            get {
+                if let block = self.constructorContainer["makeDestinationForNewUserWith"] as? (String) -> LoginServiceInput? {
+                    return block
+                }
+                return { _ in return nil }
+            }
+            set {
+                self.constructorContainer["makeDestinationForNewUserWith"] = newValue
+            }
+        }
+     }
+     ```
+     */
+    public lazy var constructorContainer: [String : Any] = [:]
+    
     public init(_ constructor: Constructor) {
         makeDestinationWith = constructor
         constructDestination = constructor
@@ -610,6 +637,33 @@ open class AnyServiceMakeableConfiguration<Destination, Maker, Constructor>: ZIK
             }
         }
     }
+    
+    /**
+     Container to hold custom `makeDestinationWith` and `constructDestination` block. If the destination has multi custom initializers, you can add new constructor and store them in the container.
+     
+     ```
+     protocol LoginServiceModuleInput {
+        var makeDestinationWith: (_ account: String) -> LoginServiceInput? { get }
+        var makeDestinationForNewUserWith: (_ account: String) -> LoginServiceInput? { get }
+     }
+     
+     // Let ServiceMakeableConfiguration conform to LoginServiceModuleInput
+     extension ServiceMakeableConfiguration: LoginServiceModuleInput where Destination == LoginServiceInput, Constructor == (String) -> LoginServiceInput? {
+        var makeDestinationForNewUserWith: (String) -> LoginServiceInput? {
+            get {
+                if let block = self.constructorContainer["makeDestinationForNewUserWith"] as? (String) -> LoginServiceInput? {
+                    return block
+                }
+                return { _ in return nil }
+            }
+            set {
+                self.constructorContainer["makeDestinationForNewUserWith"] = newValue
+            }
+        }
+     }
+     ```
+     */
+    public lazy var constructorContainer: [String : Any] = [:]
     
     public init(maker: Maker, constructor: Constructor) {
         makeDestinationWith = maker

@@ -19,7 +19,7 @@ Module config protocol 用来声明模块需要用到的参数。由自定义 co
 ```swift
 protocol EditorViewModuleInput: class {
     // 传递参数，用于创建模块；这里声明了需要两个参数，并且返回一个 EditorViewInput
-    var makeDestinationWith: (viewModel: EditorViewModel, _ note: Note) -> EditorViewInput? { get }
+    var makeDestinationWith: (_ viewModel: EditorViewModel, _ note: Note) -> EditorViewInput? { get }
 }
 ```
 
@@ -27,9 +27,9 @@ protocol EditorViewModuleInput: class {
 
 ```objectivec
 @protocol EditorViewModuleInput <ZIKViewModuleRoutable>
- // 传递参数，用于创建模块；这里声明了需要两个参数，并且返回一个 EditorViewInput
- @property (nonatomic, copy, readonly) id<EditorViewInput> _Nullable(^makeDestinationWith)(EditorViewModel *viewModel, Note *note);
- @end
+// 传递参数，用于创建模块；这里声明了需要两个参数，并且返回一个 EditorViewInput
+@property (nonatomic, copy, readonly) id<EditorViewInput> _Nullable(^makeDestinationWith)(EditorViewModel *viewModel, Note *note);
+@end
 ```
 
 </details>
@@ -134,7 +134,7 @@ ZIKViewMakeableConfiguration<NoteEditorViewController *> * makeEditorViewModuleC
 
 </details>
 
-Swift 泛型类不是 OC Class，不会出现在 Mach-O 的 __objc_classlist 节中，所以不会对 app 的启动速度造成影响。所以只需要给`EditorViewModuleConfiguration`加个泛型`T`后就无需再担心类数量的问题。
+Swift 泛型类不是 OC class，不会出现在 Mach-O 的 `__objc_classlist` 节中，所以不会对 app 的启动速度造成影响。所以只需要给`EditorViewModuleConfiguration`加个泛型`T`后就无需再担心类数量的问题。
 
 通过`makeDestinationWith`block 传递参数可以省去很多胶水代码，通过闭包直接传参，无需通过属性保存参数。所有模块的传参都能统一到一个`makeDestinationWith`方法上。
 
@@ -143,13 +143,13 @@ Swift 泛型类不是 OC Class，不会出现在 Mach-O 的 __objc_classlist 节
 如果你的协议很简单，不需要用到 configuration 子类，或者你用的是 Objective-C，不想创建过多的子类影响 app 启动速度，可以用泛型类`ViewMakeableConfiguration`和`ZIKViewMakeableConfiguration`：
 
 ```swift
-extension ViewMakeableConfiguration: EditorViewModuleInput where Destination == EditorViewInput, Constructor == (EditorViewModel, Note) -> Void {
+extension ViewMakeableConfiguration: EditorViewModuleInput where Destination == EditorViewInput, Constructor == (EditorViewModel, Note) -> EditorViewInput? {
 }
 
 // 用泛型类可以实现 EditorViewModuleConfiguration 子类一样的效果
 // 此时的 config 相当于 EditorViewModuleConfiguration<Any>()
-func makeEditorViewModuleConfiguration() -> ViewMakeableConfiguration<EditorViewInput, (EditorViewModel, Note) -> Void> {
-	let config = ViewMakeableConfiguration<EditorViewInput, (EditorViewModel, Note) -> Void>({ _,_ in})	    
+func makeEditorViewModuleConfiguration() -> ViewMakeableConfiguration<EditorViewInput, (EditorViewModel, Note) -> EditorViewInput?> {
+	let config = ViewMakeableConfiguration<EditorViewInput, (EditorViewModel, Note) -> EditorViewInput?>({ _,_ in})	    
     
 	// 使用者调用 makeDestinationWith 向模块传参
 	config.makeDestinationWith = { [unowned config] (viewModel, note) in
@@ -344,5 +344,49 @@ Note *note = ...
 
 在大多数情况下使用泛型 configuration 来避免创建过多的类，同时在某些复杂场景 configuration 子类则可以提供更复杂的操作，例如有多个初始化方法时，定义多个`makeDestinationWith`方法。
 
+```swift
+protocol EditorViewModuleInput: class {    
+    var makeDestinationWith: (_ viewModel: EditorViewModel, _ note: Note) -> EditorViewInput? { get }
+    var makeDestinationForNewNoteWith: (_ noteName: String) -> EditorViewInput? { get }
+}
+
+extension ViewMakeableConfiguration: EditorViewModuleInput where Destination == EditorViewInput, Constructor == (EditorViewModel, Note) -> EditorViewInput? {
+    var makeDestinationForNewNoteWith: (String) -> EditorViewInput? {
+        get {
+            if let block = self.constructorContainer["makeDestinationForNewNoteWith"] as? (String) -> EditorViewInput? {
+                return block
+            }
+            return { _ in return nil }
+        }
+        set {
+            self.constructorContainer["makeDestinationForNewNoteWith"] = newValue
+        }
+    }
+}
+```
+<details><summary>Objective-C Sample</summary>
+
+```objectivec
+@protocol EditorViewModuleInput <ZIKViewModuleRoutable>
+@property (nonatomic, copy, readonly) id<EditorViewInput> _Nullable(^makeDestinationWith)(EditorViewModel *viewModel, Note *note);
+@property (nonatomic, copy, readonly) id<EditorViewInput> _Nullable(^makeDestinationForNewNoteWith)(EditorViewModel *viewModel, Note *note);
+@end
+
+@interface ZIKViewMakeableConfiguration (EditorViewModuleInput) <EditorViewModuleInput>
+@end
+@implementation ZIKViewMakeableConfiguration (EditorViewModuleInput) 
+
+- (ZIKMakeBlock)makeDestinationForNewNoteWith {
+    return self.constructorContainer[@"makeDestinationForNewNoteWith"];
+}
+- (void)setMakeDestinationForNewNoteWith:(ZIKMakeBlock)block {
+    self.constructorContainer[@"makeDestinationForNewNoteWith"] = block;
+}
+@end
+```
+
+</details>
+
 ---
 #### 下一节：[错误检查](ErrorHandle.md)
+

@@ -355,6 +355,14 @@ DeclareRoutableView(NoteEditorViewController, NoteEditorViewRouter)
 
 **如果获取路由时，protocol 未经过声明，将会产生编译错误。这是 ZIKRouter 最特别的功能之一，可以让你更简单地管理所使用的路由接口。**
 
+Swift 中使用未声明的 protocol：
+
+![Unroutable-error-Swift](/Users/zhangweike/Documents/code/ZIKRouter/Documentation/Resources/Unroutable-error-Swift.png)
+
+Objective-C 中使用未声明的 protocol：
+
+![Unroutable-error-OC](/Users/zhangweike/Documents/code/ZIKRouter/Documentation/Resources/Unroutable-error-OC.png)
+
 现在你可以用所声明的 protocol 进行路由操作了。
 
 ### View Router
@@ -486,6 +494,8 @@ id<EditorViewInput> destination = [ZIKRouterToView(EditorViewInput) makeDestinat
 </details>
 
 #### 更强大的传参方式
+
+有一个问题所有其他的模块管理工具都没有解决。
 
 有时模块有自定义初始化方法，需要从外部传入一些参数后才能创建实例。
 

@@ -134,7 +134,7 @@ ZIKViewMakeableConfiguration<NoteEditorViewController *> * makeEditorViewModuleC
 
 </details>
 
-Swift generic class is not OC Class. It won't be in the `__objc_classlist` section of the Mach-O file. So it won't affect the app launching time.
+Swift generic class is not OC class. It won't be in the `__objc_classlist` section of the Mach-O file. So it won't affect the app launching time.
 
 Transferring parameters with `makeDestinationWith` block can reduce much glue code. We don't need to store parameters in some properties, just pass them through block.
 
@@ -143,13 +143,13 @@ Transferring parameters with `makeDestinationWith` block can reduce much glue co
 If the protocol is very simple and you don't need a configuration subclass, or you're using Objective-C and don't want too many subclass, you can choose generic class`ViewMakeableConfiguration`and`ZIKViewMakeableConfiguration`:
 
 ```swift
-extension ViewMakeableConfiguration: EditorViewModuleInput where Destination == EditorViewInput, Constructor == (EditorViewModel, Note) -> Void {
+extension ViewMakeableConfiguration: EditorViewModuleInput where Destination == EditorViewInput, Constructor == (EditorViewModel, Note) -> EditorViewInput? {
 }
 
 // ViewMakeableConfiguration with generic arguments works as the same as  EditorViewModuleConfiguration
 // The config works like EditorViewModuleConfiguration<Any>()
-func makeEditorViewModuleConfiguration() -> ViewMakeableConfiguration<EditorViewInput, (EditorViewModel, Note) -> Void> {
-    let config = ViewMakeableConfiguration<EditorViewInput, (EditorViewModel, Note) -> Void>({ _,_ in})        
+func makeEditorViewModuleConfiguration() -> ViewMakeableConfiguration<EditorViewInput, (EditorViewModel, Note) -> EditorViewInput?> {
+    let config = ViewMakeableConfiguration<EditorViewInput, (EditorViewModel, Note) -> EditorViewInput?>({ _,_ in})        
     
     // User is responsible for calling makeDestinationWith and giving parameters
     config.makeDestinationWith = { [unowned config] (viewModel, note) in
@@ -345,6 +345,49 @@ Note *note = ...
 In this design pattern, we reduce much glue code for transferring parameters, and the module can re-declare their parameters with generic arguments and module config protocol.
 
 You can use the generic configuration to reduce subclass count. And You can also transfer complicated parameters with a configuration subclass, such as multi `makeDestinationWith` for multi situations.
+
+```swift
+protocol EditorViewModuleInput: class {    
+    var makeDestinationWith: (_ viewModel: EditorViewModel, _ note: Note) -> EditorViewInput? { get }
+    var makeDestinationForNewNoteWith: (_ noteName: String) -> EditorViewInput? { get }
+}
+
+extension ViewMakeableConfiguration: EditorViewModuleInput where Destination == EditorViewInput, Constructor == (EditorViewModel, Note) -> EditorViewInput? {
+    var makeDestinationForNewNoteWith: (String) -> EditorViewInput? {
+        get {
+            if let block = self.constructorContainer["makeDestinationForNewNoteWith"] as? (String) -> EditorViewInput? {
+                return block
+            }
+            return { _ in return nil }
+        }
+        set {
+            self.constructorContainer["makeDestinationForNewNoteWith"] = newValue
+        }
+    }
+}
+```
+<details><summary>Objective-C Sample</summary>
+
+```objectivec
+@protocol EditorViewModuleInput <ZIKViewModuleRoutable>
+@property (nonatomic, copy, readonly) id<EditorViewInput> _Nullable(^makeDestinationWith)(EditorViewModel *viewModel, Note *note);
+@property (nonatomic, copy, readonly) id<EditorViewInput> _Nullable(^makeDestinationForNewNoteWith)(EditorViewModel *viewModel, Note *note);
+@end
+
+@interface ZIKViewMakeableConfiguration (EditorViewModuleInput) <EditorViewModuleInput>
+@end
+@implementation ZIKViewMakeableConfiguration (EditorViewModuleInput) 
+
+- (ZIKMakeBlock)makeDestinationForNewNoteWith {
+    return self.constructorContainer[@"makeDestinationForNewNoteWith"];
+}
+- (void)setMakeDestinationForNewNoteWith:(ZIKMakeBlock)block {
+    self.constructorContainer[@"makeDestinationForNewNoteWith"] = block;
+}
+@end
+```
+
+</details>
 
 ------
 

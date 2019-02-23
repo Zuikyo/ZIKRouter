@@ -151,8 +151,8 @@ public extension ZIKServiceRouteAdapter {
 /// Add Swift methods for ZIKServiceRoute. Unavailable for any other classes.
 public protocol ServiceRouteExtension: class {
     #if swift(>=4.1)
-    func register<Protocol>(_ routableService: RoutableService<Protocol>) -> Self
-    func register<Protocol>(_ routableServiceModule: RoutableServiceModule<Protocol>) -> Self
+    @discardableResult func register<Protocol>(_ routableService: RoutableService<Protocol>) -> Self
+    @discardableResult func register<Protocol>(_ routableServiceModule: RoutableServiceModule<Protocol>) -> Self
     #else
     func register<Protocol>(_ routableService: RoutableService<Protocol>)
     func register<Protocol>(_ routableServiceModule: RoutableServiceModule<Protocol>)
@@ -167,7 +167,7 @@ public extension ServiceRouteExtension {
     ///
     /// - Parameter routableService: A routabe entry carrying a protocol conformed by the destination of the router. Can be pure Swift protocol or objc protocol.
     /// - Returns: Self
-    func register<Protocol>(_ routableService: RoutableService<Protocol>) -> Self {
+    @discardableResult func register<Protocol>(_ routableService: RoutableService<Protocol>) -> Self {
         Registry.register(routableService, forRoute: self)
         return self
     }
@@ -176,7 +176,7 @@ public extension ServiceRouteExtension {
     ///
     /// - Parameter routableServiceModule: A routabe entry carrying a module config protocol conformed by the custom configuration of the router.
     /// - Returns: Self
-    func register<Protocol>(_ routableServiceModule: RoutableServiceModule<Protocol>) -> Self {
+    @discardableResult func register<Protocol>(_ routableServiceModule: RoutableServiceModule<Protocol>) -> Self {
         Registry.register(routableServiceModule, forRoute: self)
         return self
     }

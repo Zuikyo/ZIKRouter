@@ -365,7 +365,15 @@ DeclareRoutableView(NoteEditorViewController, NoteEditorViewRouter)
 
 </details>
 
-If you use an undeclared protocol for routing, there will be compile time error.
+**If you use an undeclared protocol for routing, there will be compile time error. So it's much easier to manage protocols and to know which protocols are routable.**
+
+Unroutable error in Swift:
+
+![Unroutable-error-Swift](Documentation/Resources/Unroutable-error-Swift.png)
+
+Unroutable error in Objective-C:
+
+![Unroutable-error-OC](Documentation/Resources/Unroutable-error-OC.png)
 
 Now you can get and show `NoteEditorViewController` with router.
 

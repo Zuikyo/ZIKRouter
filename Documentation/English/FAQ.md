@@ -96,7 +96,7 @@ Or when your module contains multi components, and you need to pass parameters t
 
 For example, when you pass a model to a VIPER module, the destination is the view in VIPER, and the view is not responsible for accepting any models.
 
-You can see sample code in: [Register protocol](./ModuleRegistration.md#Register protocol).
+You can see sample code in: [Transfer Parameters with Custom Configuration](Documentation/English/CustomConfiguration.md).
 
 ### What's required protocol and provided protocol？
 
