@@ -27,7 +27,11 @@ NS_ASSUME_NONNULL_BEGIN
 /// Invoked after all registrations are finished when ZIKROUTER_CHECK is enabled, when ZIKROUTER_CHECK is disabled, this won't be invoked. You can override and do some debug checking.
 + (void)_didFinishRegistration;
 
-/// Prepare the destination after -prepareDestination is invoked.
+/**
+ Prepare the destination after -prepareDestination is invoked.
+ 
+ If configuration conforms to ZIKConfigurationSyncMakeable and makedDestination is not nil, this method won't be called, because destination should already be prepared.
+ */
 - (void)prepareDestination:(Destination)destination configuration:(RouteConfig)configuration;
 
 /// Check whether destination is prepared correctly.

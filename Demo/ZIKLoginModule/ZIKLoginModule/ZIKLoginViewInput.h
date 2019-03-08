@@ -10,6 +10,7 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
+/// Login view demostrating module reuse in iOS and macOS.
 @protocol ZIKLoginViewInput <ZIKViewRoutable>
 
 @end

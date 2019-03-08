@@ -12,11 +12,11 @@
 ![Carthage compatible](https://img.shields.io/badge/Carthage-compatible-4BC51D.svg?style=flat)
 ![license](https://img.shields.io/github/license/mashape/apistatus.svg)
 
-一个用于模块间解耦和通信，基于接口进行模块管理和依赖注入的组件化路由工具。
+一个用于模块间解耦和通信，基于接口进行模块管理和依赖注入的组件化路由工具。用多种方式最大程度地发挥编译检查的功能。
 
 通过 protocol 寻找对应的模块，并用 protocol 进行依赖注入和模块通信。
 
-View router 将 UIKit / AppKit 中的所有界面跳转方式封装成一个统一的方法。Service router 用于支持任意自定义模块。
+Service Router 可以管理任意自定义模块。View Router 进一步封装了界面跳转。
 
 `ZRouter`为 Swift 提供更加 Swifty、更加安全的路由方式。
 
@@ -80,9 +80,11 @@ View router 将 UIKit / AppKit 中的所有界面跳转方式封装成一个统�
    2. [跳转前进行配置](#跳转前进行配置)
    3. [Make Destination](#Make-Destination)
    4. [更强大的传参方式](#更强大的传参方式)
-   5. [Remove](#Remove)
-   6. [Adapter](#Adapter)
-   7. [URL Router](#URL-Router)
+   5. [Perform on Destination](#Perform-on-Destination)
+   6. [Prepare on Destination](#Prepare-on-Destination)
+   7. [Remove](#Remove)
+   8. [Adapter](#Adapter)
+   9. [URL Router](#URL-Router)
 4. [Service Router](#Service-Router)
 5. [Demo 和实践](#Demo-和实践)
 6. [代码模板](#代码模板)
@@ -232,7 +234,7 @@ class NoteEditorViewRouter: ZIKViewRouter<NoteEditorViewController, ViewRouteCon
 
 // 创建模块
 - (NoteEditorViewController *)destinationWithConfiguration:(ZIKViewRouteConfiguration *)configuration {
-	// 可以从configuration 中获取外部传入的参数，用于创建实例
+    // 可以从configuration 中获取外部传入的参数，用于创建实例
     NoteEditorViewController *destination = ... // 实例化 view controller
     return destination;
 }
@@ -414,6 +416,8 @@ enum ViewRoutePath {
 }
 ```
 
+封装界面跳转可以屏蔽 UIKit 的细节，此时界面跳转的代码就可以放在非 view 层（例如 presenter、view model、interactor、service），并且能够跨平台。
+
 #### 跳转前进行配置
 
 可以在跳转前配置页面，传递参数:
@@ -495,7 +499,7 @@ id<EditorViewInput> destination = [ZIKRouterToView(EditorViewInput) makeDestinat
 
 #### 更强大的传参方式
 
-有一个问题所有其他的模块管理工具都没有解决。
+有一个问题其他的模块管理工具都没有解决。
 
 有时模块有自定义初始化方法，需要从外部传入一些参数后才能创建实例。
 
@@ -531,12 +535,12 @@ protocol EditorViewModuleInput: class {
 
 ```swift
 // 使用自定义子类，遵守 EditorViewModuleInput
-// Swift 泛型类不是 OC Class，不会出现在 Mach-O 的 __objc_classlist 节中，所以不会对 app 的启动速度造成影响
+// Swift 泛型类不会出现在 Mach-O 的 __objc_classlist 节中，所以不会对 app 的启动速度造成影响
 class EditorViewModuleConfiguration<T>: ZIKViewMakeableConfiguration<NoteEditorViewController>, EditorViewModuleInput {
     // 使用者调用 makeDestinationWith 向模块传参
     var makeDestinationWith: (_ note: Note) -> EditorViewInput? {
         return { note in
-        	  // makeDestination 会被用于创建 destination
+            // makeDestination 会被用于创建 destination
             // 用闭包捕获了传入的参数，可以直接用于创建 destination
             self.makeDestination = { [unowned self] () in
                 // 调用自定义初始化方法
@@ -569,25 +573,25 @@ extension ViewMakeableConfiguration: EditorViewModuleInput where Destination == 
 // 用泛型类可以实现 EditorViewModuleConfiguration 子类一样的效果
 // 此时的 config 相当于 EditorViewModuleConfiguration<Any>()
 func makeEditorViewModuleConfiguration() -> ViewMakeableConfiguration<EditorViewInput, (Note) -> EditorViewInput?> {
-	let config = ViewMakeableConfiguration<EditorViewInput, (Note) -> EditorViewInput?>({ _ in})
-	
-	// 使用者调用 makeDestinationWith 向模块传参
-	config.makeDestinationWith = { [unowned config] note in
+    let config = ViewMakeableConfiguration<EditorViewInput, (Note) -> EditorViewInput?>({ _ in})
+    
+    // 使用者调用 makeDestinationWith 向模块传参
+    config.makeDestinationWith = { [unowned config] note in
         // makeDestination 会被用于创建 destination
         // 用闭包捕获了传入的参数，可以直接用于创建 destination
-	     config.makeDestination = { () in
-	         // 调用自定义初始化方法
-	         let destination = NoteEditorViewController(note: note)
-	         return destination
-	     }
+        config.makeDestination = { () in
+            // 调用自定义初始化方法
+            let destination = NoteEditorViewController(note: note)
+            return destination
+        }
         if let destination = config.makeDestination?() {
             // 设置 makedDestination 后，router 在执行时就会直接使用此对象
             config.makedDestination = destination
             return destination
         }
         return nil
-	}
-	return config
+    }
+    return config
 }
 
 ```
@@ -599,23 +603,23 @@ func makeEditorViewModuleConfiguration() -> ViewMakeableConfiguration<EditorView
 ```objectivec
 // 此时的 config 效果和使用子类是一样的
 ZIKViewMakeableConfiguration<NoteEditorViewController *> * makeEditorViewModuleConfiguration() {
-	ZIKViewMakeableConfiguration<NoteEditorViewController *> *config = [ZIKViewMakeableConfiguration<NoteEditorViewController *> new];
-	__weak typeof(config) weakConfig = config;
-	
-	// 配置 makeDestinationWith，使用者调用 makeDestinationWith 向模块传参
-	config.makeDestinationWith = ^id<EditorViewInput> _Nullable(Note *note) {
+    ZIKViewMakeableConfiguration<NoteEditorViewController *> *config = [ZIKViewMakeableConfiguration<NoteEditorViewController *> new];
+    __weak typeof(config) weakConfig = config;
+    
+    // 配置 makeDestinationWith，使用者调用 makeDestinationWith 向模块传参
+    config.makeDestinationWith = ^id<EditorViewInput> _Nullable(Note *note) {
         // makeDestination 会被用于创建 destination
         // 用闭包捕获了传入的参数，可以直接用于创建 destination，不必保存到 configuration 的属性上
-	     weakConfig.makeDestination = ^ NoteEditorViewController * _Nullable{
-	         // 调用自定义初始化方法
-	         NoteEditorViewController *destination = [NoteEditorViewController alloc] initWithNote:note];
-	         return destination;
-	     };
+        weakConfig.makeDestination = ^ NoteEditorViewController * _Nullable{
+            // 调用自定义初始化方法
+            NoteEditorViewController *destination = [NoteEditorViewController alloc] initWithNote:note];
+            return destination;
+        };
         // 设置 makedDestination 后，router 在执行时就会直接使用此对象
         weakConfig.makedDestination = weakConfig.makeDestination();
         return weakConfig.makedDestination;
-	};
-	return config;
+    };
+    return config;
 }
 ```
 
@@ -713,6 +717,84 @@ Note *note = ...
 
 更详细的内容，可以参考[自定义 configuration 传参](CustomConfiguration.md)。
 
+#### Perform on Destination
+
+如果你从其他地方得到了一个 destination 对象，你可以用对应的 router 在这个 destination 上执行路由。
+
+例如，某个 UIViewController 支持 3D touch，实现了`UIViewControllerPreviewingDelegate`：
+
+```swift
+class SourceViewController: UIViewController, UIViewControllerPreviewingDelegate {
+    func previewingContext(_ previewingContext: UIViewControllerPreviewing, viewControllerForLocation location: CGPoint) -> UIViewController? {
+        //返回 destination UIViewController， 让系统执行预览
+        let destination = Router.makeDestination(to: RoutableView<EditorViewInput>())
+        return destination
+    }
+    
+    func previewingContext(_ previewingContext: UIViewControllerPreviewing, commit viewControllerToCommit: UIViewController) {
+        guard let destination = viewControllerToCommit as? EditorViewInput else {
+            return
+        }
+        //跳转到 destination
+        Router.to(RoutableView<EditorViewInput>())?.perform(onDestination: destination, path: .presentModally(from: self))
+}
+
+```
+
+<details><summary>Objective-C Sample</summary>
+
+```objectivec
+@implementation SourceViewController
+
+- (nullable UIViewController *)previewingContext:(id <UIViewControllerPreviewing>)previewingContext viewControllerForLocation:(CGPoint)location {
+    //返回 destination UIViewController， 让系统执行预览
+    UIViewController<EditorViewInput> *destination = [ZIKRouterToView(EditorViewInput) makeDestination];
+    return destination;
+}
+
+- (void)previewingContext:(id <UIViewControllerPreviewing>)previewingContext commitViewController:(UIViewController *)viewControllerToCommit {
+    //跳转到 destination
+    UIViewController<EditorViewInput> *destination;
+    if ([viewControllerToCommit conformsToProtocol:@protocol(EditorViewInput)]) {
+        destination = viewControllerToCommit;
+    } else {
+        return;
+    }
+    [ZIKRouterToView(EditorViewInput) performOnDestination:destination path:ZIKViewRoutePath.presentModallyFrom(self)];
+}
+
+@end
+```
+
+</details>
+
+#### Prepare on Destination
+
+如果你并不想执行路由，而只是想配置某个 destination 对象，可以用 router 执行 prepare 操作。这样， router 内部对 destination 对象执行的所有依赖注入操作就都会生效，destination 就被正确地配置好了。
+
+```swift
+var destination: DestinationViewInput = ...
+Router.to(RoutableView<EditorViewInput>())?.prepare(destination: destination, configuring: { (config, _) in
+            config.prepareDestination = { destination in
+                // Prepare
+            }
+        })
+
+```
+
+<details><summary>Objective-C Sample</summary>
+
+```objectivec
+UIViewController<EditorViewInput> *destination = ...
+[ZIKRouterToView(EditorViewInput) prepareDestination:destination configuring:^(ZIKViewRouteConfiguration *config) {
+            config.prepareDestination = ^(id<EditorViewInput> destination) {
+                // Prepare
+            };
+        }];
+```
+
+</details>
+
 #### Remove
 
 执行路由后，可以用`removeRoute`一键移除界面，无需区分调用 pop / dismiss / removeFromParentViewController / removeFromSuperview:
@@ -752,11 +834,11 @@ class TestViewController: UIViewController {
             return
         }
         router.removeRoute(configuring: { (config) in
-	            config.animated = true
-	            config.prepareDestination = { destination in
-	                //在消除界面之前调用界面的方法
-	            }
-            })
+            config.animated = true
+            config.prepareDestination = { destination in
+                //在消除界面之前调用界面的方法
+            }
+        })
         router = nil
     }
 }

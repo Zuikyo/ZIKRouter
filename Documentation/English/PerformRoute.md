@@ -15,17 +15,17 @@ class TestViewController: UIViewController {
             to: RoutableView<EditorViewInput>(),
             path: .push(from: self),
             configuring: { (config, _) in
-                //Config the route
+                // Config the route
                 config.successHandler = { destination in
-                    //Transition succeed
+                    // Transition succeed
                 }
                 config.errorHandler = { (action, error) in
-                    //Transition failed
+                    // Transition failed
                 }
-                //Config the destination before performing route
+                // Config the destination before performing route
                 config.prepareDestination = { destination in
-                    //destination is inferred as EditorViewInput
-                    //Config editor view
+                    // destination is inferred as EditorViewInput
+                    // Config editor view
                     destination.delegate = self
                     destination.constructForCreatingNewNote()
                 }
@@ -73,10 +73,10 @@ class TestViewController: UIViewController {
 	                  [destination constructForCreatingNewNote];
 	              };
 	              config.succeeHandler = ^(id<EditorViewInput> destination) {
-	                  //Transition completed
+	                  // Transition completed
 	              };
 	              config.errorHandler = ^(ZIKRouteAction routeAction, NSError *error) {
-	                  //Transition failed
+	                  // Transition failed
 	              };
 	          }];
 }
@@ -93,16 +93,16 @@ Comparing to `performPath:configuring:` method, `performPath:strictConfiguring:`
 	          strictConfiguring:^(ZIKViewRouteStrictConfiguration<id<EditorViewInput>> *config,
 	          					   ZIKViewRouteConfiguration *module) {
 	              config.animated = YES;
-	              //Type of prepareDest block changes with the router's generic parameters.
+	              // Type of prepareDest block changes with the router's generic parameters.
 	              config.prepareDestination = ^(id<EditorViewInput> destination){
 	                  destination.delegate = self;
 	                  [destination constructForCreatingNewNote];
 	              };
 	              config.routeCompletion = ^(id<EditorViewInput> destination) {
-	                  //Transition completed
+	                  // Transition completed
 	              };
 	              config.errorHandler = ^(ZIKRouteAction routeAction, NSError *error) {
-	                  //Transition failed
+	                  // Transition failed
 	              };
 	          }];
 }
@@ -119,7 +119,7 @@ If you only want to get the destination, use `makeDestination`, and prepare the 
 Swift Sample:
 
 ```swift
-///time service's interface
+/// time service's interface
 protocol TimeServiceInput {
     func currentTimeString() -> String
 }
@@ -129,13 +129,13 @@ class TestViewController: UIViewController {
     @IBOutlet weak var timeLabel: UILabel!
     
     func callTimeService() {
-        //Get service for TimeServiceInput
+        // Get service for TimeServiceInput
         let timeService = Router.makeDestination(
             to: RoutableService<TimeServiceInput>(),
             preparation: { destination in
-            //Prepare the service
+            // Prepare the service
         })
-        //Call service
+        // Call service
         timeLabel.text = timeService.currentTimeString()
     }
 }
@@ -144,7 +144,7 @@ class TestViewController: UIViewController {
 <details><summary>Objective-C Sample</summary>
 
 ```objectivec
-///time service's interface
+/// time service's interface
 @protocol TimeServiceInput <ZIKServiceRoutable>
 - (NSString *)currentTimeString;
 @end
@@ -158,9 +158,9 @@ class TestViewController: UIViewController {
 @implementation TestViewController
 
 - (void)callTimeService {
-   //Get service for TimeServiceInput
+   // Get service for TimeServiceInput
    id<TimeServiceInput> timeService = [ZIKRouterToService(TimeServiceInput) makeDestination];
-   //Call service
+   // Call service
    self.timeLabel.text = [timeService currentTimeString];    
 }
 
@@ -197,7 +197,7 @@ For example, an UIViewController supports 3D touch, and implments `UIViewControl
 ```swift
 class SourceViewController: UIViewController, UIViewControllerPreviewingDelegate {
 	func previewingContext(_ previewingContext: UIViewControllerPreviewing, viewControllerForLocation location: CGPoint) -> UIViewController? {
-	     //Return the destination UIViewController to let system preview it
+	     // Return the destination UIViewController to let system preview it
         let destination = Router.makeDestination(to: RoutableView<DestinationViewInput>())
         return destination
     }
@@ -206,7 +206,7 @@ class SourceViewController: UIViewController, UIViewControllerPreviewingDelegate
         guard let destination = viewControllerToCommit as? DestinationViewInput else {
             return
         }
-        //Show the destination
+        // Show the destination
         Router.to(RoutableView<DestinationViewInput>())?.perform(onDestination: destination, path: .presentModally(from: self))
 }
 
@@ -218,13 +218,13 @@ class SourceViewController: UIViewController, UIViewControllerPreviewingDelegate
 @implementation SourceViewController
 
 - (nullable UIViewController *)previewingContext:(id <UIViewControllerPreviewing>)previewingContext viewControllerForLocation:(CGPoint)location {
-    //Return the destination UIViewController to let system preview it
+    // Return the destination UIViewController to let system preview it
     UIViewController<DestinationViewInput> *destination = [ZIKRouterToView(DestinationViewInput) makeDestination];
     return destination;
 }
 
 - (void)previewingContext:(id <UIViewControllerPreviewing>)previewingContext commitViewController:(UIViewController *)viewControllerToCommit {
-    //Show the destination
+    // Show the destination
     UIViewController<DestinationViewInput> *destination;
     if ([viewControllerToCommit conformsToProtocol:@protocol(DestinationViewInput)]) {
         destination = viewControllerToCommit;
@@ -241,7 +241,7 @@ class SourceViewController: UIViewController, UIViewControllerPreviewingDelegate
 
 ## Prepare on Destination
 
-If you don't want to show the destination, but just want to prepare an existing destination, you can prepare the destination with router.
+If you don't want to show the destination, but just want to prepare an existing destination, you can prepare the destination with its router.
 
 If the router injects dependencies inside it, this can properly setting the destination instance.
 
@@ -283,7 +283,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     ...
     override func application(_ app: UIApplication, open url: URL, options: [UIApplicationOpenURLOptionsKey : Any] = [:]) -> Bool {
     
-        //You can use other url router framework to handle the url
+        // You can use other url router framework to handle the url
         let identifier: String = // route identifier from the url
         let routerType = Router.to(viewIdentifier: identifier)
         if routerType == nil {
@@ -312,7 +312,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
 - (BOOL)application:(UIApplication *)app openURL:(NSURL *)url options:(NSDictionary<UIApplicationOpenURLOptionsKey,id> *)options {
     
-    //You can use other URL router framework to handle the url
+    // You can use other URL router framework to handle the url
     NSString *identifier = // route identifier from the url
     ZIKViewRouterType *routerType = ZIKViewRouter.toIdentifier(identifier);
     if (routerType == nil) {

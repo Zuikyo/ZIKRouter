@@ -134,7 +134,7 @@ ZIKViewMakeableConfiguration<NoteEditorViewController *> * makeEditorViewModuleC
 
 </details>
 
-Swift generic class is not OC class. It won't be in the `__objc_classlist` section of the Mach-O file. So it won't affect the app launching time.
+Swift generic class won't be in the `__objc_classlist` section of the Mach-O file. So it won't affect the app launching time.
 
 Transferring parameters with `makeDestinationWith` block can reduce much glue code. We don't need to store parameters in some properties, just pass them through block.
 

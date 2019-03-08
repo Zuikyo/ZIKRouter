@@ -14,12 +14,20 @@
 NS_ASSUME_NONNULL_BEGIN
 
 @interface ZIKRouteConfiguration ()
-/// Prepare the destination from the router internal before `prepareDestination:configuration:`.
+/**
+ Prepare the destination from the router internal before `prepareDestination:configuration:`.
+ 
+ If configuration conforms to ZIKConfigurationSyncMakeable and makedDestination is not nil, this method won't be called, because destination should already be prepared.
+*/
 @property (nonatomic, copy, nullable) void(^_prepareDestination)(id destination);
 @end
 
 @interface ZIKServiceMakeableConfiguration<__covariant Destination> ()
-/// Prepare the destination from the router internal before `prepareDestination:configuration:`.
+/**
+ Prepare the destination from the router internal before `prepareDestination:configuration:`.
+ 
+ If configuration conforms to ZIKConfigurationSyncMakeable and makedDestination is not nil, this method won't be called, because destination should already be prepared.
+ */
 @property (nonatomic, copy, nullable) void(^_prepareDestination)(Destination destination);
 @end
 

@@ -134,7 +134,7 @@ ZIKViewMakeableConfiguration<NoteEditorViewController *> * makeEditorViewModuleC
 
 </details>
 
-Swift 泛型类不是 OC class，不会出现在 Mach-O 的 `__objc_classlist` 节中，所以不会对 app 的启动速度造成影响。所以只需要给`EditorViewModuleConfiguration`加个泛型`T`后就无需再担心类数量的问题。
+Swift 泛型类不会出现在 Mach-O 的 `__objc_classlist` 节中，所以不会对 app 的启动速度造成影响。所以只需要给`EditorViewModuleConfiguration`加个泛型`T`后就无需再担心类数量的问题。
 
 通过`makeDestinationWith`block 传递参数可以省去很多胶水代码，通过闭包直接传参，无需通过属性保存参数。所有模块的传参都能统一到一个`makeDestinationWith`方法上。
 

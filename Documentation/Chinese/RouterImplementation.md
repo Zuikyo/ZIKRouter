@@ -177,6 +177,7 @@ class EditorViewRouter: ZIKViewRouter<EditorViewController, ZIKViewRouteConfigur
 * 支持自定义操作，例如自定义跳转方式
 * 支持处理界面跳转的 AOP
 * 支持自定义事件
+* 可以进行自定义功能扩展
 
 ## 非 router 子类
 

@@ -80,17 +80,20 @@ NS_ASSUME_NONNULL_BEGIN
 
 /**
  Prepare the destination with the configuration when view first appears. Unwind segue to destination won't call this method.
+ 
+ @note
+ When it's removed and routed again, it's alse treated as first appearance, so this method may be called more than once. You should check whether the destination is already prepared to avoid unnecessary preparation.
+ 
+ If you get a prepared destination by ZIKViewRouteTypeMakeDestination or -prepareDestination:configuring:removing:, this method will be called. When the destination is routing, this method will also be called, because the destination may be changed.
+ 
+ If configuration conforms to ZIKConfigurationSyncMakeable and makedDestination is not nil, this method won't be called, because destination should already be prepared.
+ 
  @warning
  Cycle Dependency: read https://github.com/Zuikyo/ZIKRouter/blob/master/Documentation/English/CircularDependencies.md
  
  If a router(A) fetch destination(A)'s dependency destination(B) with another router(B) in router(A)'s -prepareDestination:configuration:, and the destination(A) is also the destination(B)'s dependency, so destination(B)'s router(B) will also fetch destination(A) with router(A) in its -prepareDestination:configuration:. Then there will be an infinite recursion.
  
  To void it, when router(A) fetch destination(B) in -prepareDestination:configuration:, router(A) must inject destination(A) to destination(B) in -prepareDestination block of router(B)'s config or use custom config property. And router(B) should check in -prepareDestination:configuration: to avoid unnecessary preparation to fetch destination(A) again.
- 
- @note
- When it's removed and routed again, it's alse treated as first appearance, so this method may be called more than once. You should check whether the destination is already prepared to avoid unnecessary preparation.
- 
- If you get a prepared destination by ZIKViewRouteTypeMakeDestination or -prepareDestination:configuring:removing:, this method will be called. When the destination is routed, this method will also be called, because the destination may be changed.
  
  @param destination The view to perform route.
  @param configuration The configuration for route.

@@ -134,7 +134,12 @@ typedef id _Nullable(^ZIKMakeBlock)();
 @protocol ZIKConfigurationSyncMakeable <ZIKConfigurationMakeable>
 /// Create destination with parameters.
 @property (nonatomic, copy, readonly) id _Nullable(^makeDestinationWith)();
-/// Created destination with `makeDestinationWith`.
+/**
+ Maked destination after calling `makeDestinationWith`.
+ 
+ @note
+ You should set makedDestination in `makeDestinationWith`, so the router won't make and prepare destination again when perform with this configuration. If router's configuration has makedDestination, then it won't call `destinationWithConfiguration:` and `prepareDestination:configuration:` and `configuration._prepareDestiantion` when performing.
+ */
 @property (nonatomic, strong, nullable) id makedDestination;
 @end
 

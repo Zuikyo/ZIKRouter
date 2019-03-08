@@ -563,10 +563,16 @@ NSErrorDomain const ZIKRouteErrorDomain = @"ZIKRouteErrorDomain";
 
 - (void)performRouteOnDestination:(id)destination configuration:(ZIKPerformRouteConfiguration *)configuration {
     NSAssert(NO, @"Router: %@ must override %@!",[self class],NSStringFromSelector(_cmd));
+    [self prepareDestinationForPerforming];
+    // Do perform action
+    [self endPerformRouteWithSuccess];
 }
 
 - (void)removeDestination:(id)destination removeConfiguration:(ZIKRemoveRouteConfiguration *)removeConfiguration {
     NSAssert(NO, @"Router: %@ must override %@!",[self class],NSStringFromSelector(_cmd));
+    [self prepareDestinationForRemoving];
+    // Do remove action
+    [self endRemoveRouteWithSuccess];
 }
 
 - (id)destinationWithConfiguration:(ZIKPerformRouteConfiguration *)configuration {

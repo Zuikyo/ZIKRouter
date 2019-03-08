@@ -10,6 +10,7 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
+/// Login view router demostrating module reuse in iOS and macOS.
 @interface ZIKLoginViewRouter : ZIKViewRouter
 
 @end

@@ -19,11 +19,11 @@ The service router can discover and prepare corresponding module with its protoc
 
 ---
 
-一个用于模块间解耦和通信，基于接口进行模块管理和依赖注入的组件化路由工具。
+一个用于模块间解耦和通信，基于接口进行模块管理和依赖注入的组件化路由工具。用多种方式最大程度地发挥编译检查的功能。
 
 通过 protocol 寻找对应的模块，并用 protocol 进行依赖注入和模块通信。
 
-View router 将 UIKit / AppKit 中的所有界面跳转方式封装成一个统一的方法。Service router 用于支持任意自定义模块。
+Service Router 可以管理任意自定义模块。View Router 进一步封装了界面跳转。
 
 ### [中文文档](Documentation/Chinese/README.md)
 
@@ -90,9 +90,11 @@ View router 将 UIKit / AppKit 中的所有界面跳转方式封装成一个统�
    2. [Prepare before Transition](#Prepare-before-Transition)
    3. [Make Destination](#Make-Destination)
    4. [Transfer Parameters in a Powerful Pattern](#Transfer-Parameters-in-a-Powerful-Pattern)
-   5. [Remove](#Remove)
-   6. [Adapter](#Adapter)
-   7. [URL Router](#URL-Router)
+   5. [Perform on Destination](#Perform-on-Destination)
+   6. [Prepare on Destination](#Prepare-on-Destination)
+   7. [Remove](#Remove)
+   8. [Adapter](#Adapter)
+   9. [URL Router](#URL-Router)
 4. [Service Router](#Service-Router)
 5. [Demo and Practice](#Demo-and-Practice)
 6. [File Template](#File-Template)
@@ -245,7 +247,7 @@ class NoteEditorViewRouter: ZIKViewRouter<NoteEditorViewController, ViewRouteCon
 
 // Return the destination module
 - (NoteEditorViewController *)destinationWithConfiguration:(ZIKViewRouteConfiguration *)configuration {
-	// In configuration, you can get parameters from the caller for creating the instance 
+    // In configuration, you can get parameters from the caller for creating the instance 
     NoteEditorViewController *destination = ... // instantiate your view controller
     return destination;
 }
@@ -426,6 +428,8 @@ enum ViewRoutePath {
 }
 ```
 
+Encapsulating view transition can hide the UIKit detail, then you can perform route outside the view layer (presenter, view model, interactor, service) and be cross-platform.
+
 #### Prepare before Transition
 
 Prepare it before transition to editor view:
@@ -537,11 +541,11 @@ protocol EditorViewModuleInput: class {
 
 You can use a configuration subclass and store parameters on its properties.
 
-<details><summary>configuration subclass</summary>
+<details><summary>Configuration Subclass</summary>
 
 ```swift
 // Configuration subclass conforming to EditorViewModuleInput
-// Swift generic class is not OC Class. It won't be in the `__objc_classlist` section of the Mach-O file. So it won't affect the app launching time.
+// Swift generic class won't be in the `__objc_classlist` section of the Mach-O file. So it won't affect the app launching time.
 class EditorViewModuleConfiguration<T>: ZIKViewMakeableConfiguration<NoteEditorViewController>, EditorViewModuleInput {
     // User is responsible for calling makeDestinationWith and giving parameters
     var makeDestinationWith: (_ note: Note) -> EditorViewInput? {
@@ -579,25 +583,25 @@ extension ViewMakeableConfiguration: EditorViewModuleInput where Destination == 
 // ViewMakeableConfiguration with generic arguments works as the same as  EditorViewModuleConfiguration
 // The config works like EditorViewModuleConfiguration<Any>()
 func makeEditorViewModuleConfiguration() -> ViewMakeableConfiguration<EditorViewInput, (Note) -> EditorViewInput?> {
-	let config = ViewMakeableConfiguration<EditorViewInput, (Note) -> EditorViewInput?>({ _ in})
-	
-	// User is responsible for calling makeDestinationWith and giving parameters
-	config.makeDestinationWith = { [unowned config] note in
+    let config = ViewMakeableConfiguration<EditorViewInput, (Note) -> EditorViewInput?>({ _ in})
+    
+    // User is responsible for calling makeDestinationWith and giving parameters
+    config.makeDestinationWith = { [unowned config] note in
         // Capture parameters in makeDestination, so we don't need configuration subclass to hold the parameters
         // MakeDestination will be used for creating destination instance
-	    config.makeDestination = { () in
-	         // Use custom initializer
-	         let destination = NoteEditorViewController(note: note)
-	         return destination
-	    }
+        config.makeDestination = { () in
+            // Use custom initializer
+            let destination = NoteEditorViewController(note: note)
+            return destination
+        }
         if let destination = config.makeDestination?() {
             // Set makedDestination so router will use this destination when performing
             config.makedDestination = destination
             return destination
         }
         return nil
-	}
-	return config
+    }
+    return config
 }
 
 ```
@@ -609,23 +613,23 @@ Generic class`ZIKViewMakeableConfiguration`has property`makeDestinationWith`with
 ```objectivec
 // The config works like EditorViewModuleConfiguration
 ZIKViewMakeableConfiguration<NoteEditorViewController *> * makeEditorViewModuleConfiguration() {
-	ZIKViewMakeableConfiguration<NoteEditorViewController *> *config = [ZIKViewMakeableConfiguration<NoteEditorViewController *> new];
-	__weak typeof(config) weakConfig = config;
-	
-	// User is responsible for calling makeDestinationWith and giving parameters
-	config.makeDestinationWith = ^id<EditorViewInput> _Nullable(Note *note) {
+    ZIKViewMakeableConfiguration<NoteEditorViewController *> *config = [ZIKViewMakeableConfiguration<NoteEditorViewController *> new];
+    __weak typeof(config) weakConfig = config;
+    
+    // User is responsible for calling makeDestinationWith and giving parameters
+    config.makeDestinationWith = ^id<EditorViewInput> _Nullable(Note *note) {
         // Capture parameters in makeDestination, so we don't need configuration subclass to hold the parameters
         // MakeDestination will be used for creating destination instance
-	     weakConfig.makeDestination = ^ NoteEditorViewController * _Nullable{
-	         // Use custom initializer
-	         NoteEditorViewController *destination = [NoteEditorViewController alloc] initWithNote:note];
-	         return destination;
-	     };
+        weakConfig.makeDestination = ^ NoteEditorViewController * _Nullable{
+            // Use custom initializer
+            NoteEditorViewController *destination = [NoteEditorViewController alloc] initWithNote:note];
+            return destination;
+        };
         // Set makedDestination so router will use this destination when performing
         weakConfig.makedDestination = weakConfig.makeDestination();
         return weakConfig.makedDestination;
-	};
-	return config;
+    };
+    return config;
 }
 ```
 
@@ -738,6 +742,86 @@ In this design pattern, we reduce much glue code for transferring parameters, an
 
 For more detail, read [Transfer Parameters with Custom Configuration](Documentation/English/CustomConfiguration.md).
 
+#### Perform on Destination
+
+If you get a destination from other place, you can perform on the destination with its router.
+
+For example, an UIViewController supports 3D touch, and implments `UIViewControllerPreviewingDelegate`:
+
+```swift
+class SourceViewController: UIViewController, UIViewControllerPreviewingDelegate {
+    func previewingContext(_ previewingContext: UIViewControllerPreviewing, viewControllerForLocation location: CGPoint) -> UIViewController? {
+        // Return the destination UIViewController to let system preview it
+        let destination = Router.makeDestination(to: RoutableView<EditorViewInput>())
+        return destination
+    }
+    
+    func previewingContext(_ previewingContext: UIViewControllerPreviewing, commit viewControllerToCommit: UIViewController) {
+        guard let destination = viewControllerToCommit as? EditorViewInput else {
+            return
+        }
+        // Show the destination
+        Router.to(RoutableView<EditorViewInput>())?.perform(onDestination: destination, path: .presentModally(from: self))
+}
+
+```
+
+<details><summary>Objective-C Sample</summary>
+
+```objectivec
+@implementation SourceViewController
+
+- (nullable UIViewController *)previewingContext:(id <UIViewControllerPreviewing>)previewingContext viewControllerForLocation:(CGPoint)location {
+    //Return the destination UIViewController to let system preview it
+    UIViewController<EditorViewInput> *destination = [ZIKRouterToView(EditorViewInput) makeDestination];
+    return destination;
+}
+
+- (void)previewingContext:(id <UIViewControllerPreviewing>)previewingContext commitViewController:(UIViewController *)viewControllerToCommit {
+    // Show the destination
+    UIViewController<EditorViewInput> *destination;
+    if ([viewControllerToCommit conformsToProtocol:@protocol(EditorViewInput)]) {
+        destination = viewControllerToCommit;
+    } else {
+        return;
+    }
+    [ZIKRouterToView(EditorViewInput) performOnDestination:destination path:ZIKViewRoutePath.presentModallyFrom(self)];
+}
+
+@end
+```
+
+</details>
+
+#### Prepare on Destination
+
+If you don't want to show the destination, but just want to prepare an existing destination, you can prepare the destination with its router.
+
+If the router injects dependencies inside it, this can properly setting the destination instance.
+
+```swift
+var destination: DestinationViewInput = ...
+Router.to(RoutableView<EditorViewInput>())?.prepare(destination: destination, configuring: { (config, _) in
+            config.prepareDestination = { destination in
+                // Prepare
+            }
+        })
+
+```
+
+<details><summary>Objective-C Sample</summary>
+
+```objectivec
+UIViewController<EditorViewInput> *destination = ...
+[ZIKRouterToView(EditorViewInput) prepareDestination:destination configuring:^(ZIKViewRouteConfiguration *config) {
+            config.prepareDestination = ^(id<EditorViewInput> destination) {
+                // Prepare
+            };
+        }];
+```
+
+</details>
+
 #### Remove
 
 You can remove the view by `removeRoute`, without using pop / dismiss / removeFromParentViewController / removeFromSuperview:
@@ -777,11 +861,11 @@ class TestViewController: UIViewController {
             return
         }
         router.removeRoute(configuring: { (config) in
-	            config.animated = true
-	            config.prepareDestination = { destination in
-	                // Use destination before remove it
-	            }
-            })
+            config.animated = true
+            config.prepareDestination = { destination in
+                // Use destination before remove it
+            }
+        })
         router = nil
     }
 }

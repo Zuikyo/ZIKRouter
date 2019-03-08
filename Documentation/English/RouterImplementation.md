@@ -183,7 +183,8 @@ The router subclass can set generic parameters when inheriting from ZIKViewRoute
 - Support multi classes of destination
 - You can add custom actions in the subclass, such as custom transition and custom AOP
 - Support AOP of view transition
-- Handle custom events the router
+- Handle custom events in the router
+- Add other custom features with your router subclass
 
 ## Simple Router
 

@@ -1526,10 +1526,7 @@ destinationStateBeforeRoute:(ZIKPresentationState *)destinationStateBeforeRoute
                                 errorDescription:@"Destination was deallced when removeRoute, router:%@",self];
         return;
     }
-    
-    if (removeConfiguration.prepareDestination) {
-        removeConfiguration.prepareDestination(destination);
-    }
+    [self prepareDestinationForRemoving];
     ZIKViewRouteConfiguration *configuration = self.original_configuration;
     if (configuration.routeType == ZIKViewRouteTypeCustom) {
         [self _removeCustomOnDestination:destination fromSource:configuration.source];
