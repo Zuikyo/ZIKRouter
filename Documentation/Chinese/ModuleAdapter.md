@@ -55,7 +55,7 @@ Router.perform(
 
 `ZIKViewAdapter`和`ZIKServiceAdapter`专门负责为其他 router 添加 protocol。
 
-在 App Context 中让登陆模块支持`ModuleARequiredLoginViewInput`：
+在宿主 App Context 中让登陆模块支持`ModuleARequiredLoginViewInput`：
 
 ```swift
 //登陆界面提供的接口
@@ -68,7 +68,7 @@ protocol ProvidedLoginViewInput {
 class LoginViewAdapter: ZIKViewRouteAdapter {
     override class func registerRoutableDestination() {
         //如果可以获取到 router 类，可以直接为 router 添加 ModuleARequiredLoginViewInput
-        ZIKEditorViewRouter.register(RoutableView<ModuleARequiredLoginViewInput>())
+        LoginViewRouter.register(RoutableView<ModuleARequiredLoginViewInput>())
         //如果不能得到对应模块的 router，可以注册 adapter
         register(adapter: RoutableView<ModuleARequiredLoginViewInput>(), forAdaptee: RoutableView<ProvidedLoginViewInput>())
     }
@@ -103,7 +103,7 @@ extension LoginViewController: ModuleARequiredLoginViewInput {
 
 + (void)registerRoutableDestination {
 	//如果可以获取到 router 类，可以直接为 router 添加 ModuleARequiredLoginViewInput
-	[ZIKEditorViewRouter registerViewProtocol:ZIKRoutable(ModuleARequiredLoginViewInput)];
+	[LoginViewRouter registerViewProtocol:ZIKRoutable(ModuleARequiredLoginViewInput)];
 	//如果不能得到对应模块的 router，可以注册 adapter
 	[self registerDestinationAdapter:ZIKRoutable(ModuleARequiredLoginViewInput) forAdaptee:ZIKRoutable(ProvidedLoginViewInput)];
 }
@@ -180,13 +180,13 @@ protocol ProvidedLoginViewInput {
 相同方法有不同参数类型时，可以用一个新的 router 代替真正的 router，在新的 router 里插入一个中介者，负责转发接口：
 
 ```swift
-class ModuleAReqiredEditorViewRouter: ZIKViewRouter {
+class ModuleAReqiredLoginViewRouter: ZIKViewRouter {
    override class func registerRoutableDestination() {
        registerView(/* proxy 类*/);
        register(RoutableView<ModuleARequiredLoginViewInput>())
    }
    override func destination(with configuration: ZIKViewRouteConfiguration) -> ModuleARequiredLoginViewInput? {
-       let realDestination: ProvidedLoginViewInput = ZIKEditorViewRouter.makeDestination()
+       let realDestination: ProvidedLoginViewInput = LoginViewRouter.makeDestination()
        //proxy 负责把 ModuleARequiredLoginViewInput 转发为 ProvidedLoginViewInput
        let proxy: ModuleARequiredLoginViewInput = ProxyForDestination(realDestination)
        return proxy
@@ -197,15 +197,15 @@ class ModuleAReqiredEditorViewRouter: ZIKViewRouter {
 <details><summary>Objective-C示例</summary>
 
 ```objectivec
-@implementation ZIKModuleARequiredEditorViewRouter
+@implementation ModuleARequiredLoginViewRouter
 + (void)registerRoutableDestination {
-	//注册 ModuleARequiredLoginViewInput，和新的ZIKModuleARequiredEditorViewRouter 配对，而不是目的模块中的 ZIKEditorViewRouter
+	//注册 ModuleARequiredLoginViewInput，和新的ModuleARequiredLoginViewRouter 配对，而不是目的模块中的 LoginViewRouter
 	[self registerView:/* proxy 类*/];
-	[self registerViewProtocol:ZIKRoutable(NoteListRequiredNoteEditorProtocol)];
+	[self registerViewProtocol:ZIKRoutable(ModuleARequiredLoginViewInput)];
 }
 - (id)destinationWithConfiguration:(ZIKViewRouteConfiguration *)configuration {
-   //用 ZIKEditorViewRouter 获取真正的 destination
-   id<ProvidedLoginViewInput> realDestination = [ZIKEditorViewRouter makeDestination];
+   //用 LoginViewRouter 获取真正的 destination
+   id<ProvidedLoginViewInput> realDestination = [LoginViewRouter makeDestination];
     //proxy 负责把 ModuleARequiredLoginViewInput 转发为 ProvidedLoginViewInput
     id<ModuleARequiredLoginViewInput> proxy = ProxyForDestination(realDestination);
     return mediator;

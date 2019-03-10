@@ -65,11 +65,11 @@ protocol ProvidedLoginViewInput {
 }
 ```
 ```swift
-//Write in app context, make ZIKEditorViewRouter supports ModuleARequiredLoginViewInput
+//Write in app context, make LoginViewRouter support ModuleARequiredLoginViewInput
 class LoginViewAdapter: ZIKViewRouteAdapter {
     override class func registerRoutableDestination() {
         //If you can get the router, you can just register ModuleARequiredLoginViewInput to it
-        ZIKEditorViewRouter.register(RoutableView<ModuleARequiredLoginViewInput>())
+        LoginViewRouter.register(RoutableView<ModuleARequiredLoginViewInput>())
         //If you don't know the router, you can use adapter
         register(adapter: RoutableView<ModuleARequiredLoginViewInput>(), forAdaptee: RoutableView<ProvidedLoginViewInput>())
     }
@@ -104,7 +104,7 @@ extension LoginViewController: ModuleARequiredLoginViewInput {
 
 + (void)registerRoutableDestination {
 	//If you can get the router, you can just register ModuleARequiredLoginViewInput to it
-	[ZIKEditorViewRouter registerViewProtocol:ZIKRoutable(ModuleARequiredLoginViewInput)];
+	[LoginViewRouter registerViewProtocol:ZIKRoutable(ModuleARequiredLoginViewInput)];
 	//If you don't know the router, you can use adapter
 	[self registerDestinationAdapter:ZIKRoutable(ModuleARequiredLoginViewInput) forAdaptee:ZIKRoutable(ProvidedLoginViewInput)];
 }
@@ -181,14 +181,14 @@ protocol ProvidedLoginViewInput {
 In this situation, you can create a new router to forward the real router, and return a proxy for the real destination:
 
 ```swift
-class ModuleAReqiredEditorViewRouter: ZIKViewRouter {
+class ModuleAReqiredLoginViewRouter: ZIKViewRouter {
    override class func registerRoutableDestination() {
        registerView(/*proxy class*/)
        register(RoutableView<ModuleARequiredLoginViewInput>())
    }
    override func destination(with configuration: ZIKViewRouteConfiguration) -> ModuleARequiredLoginViewInput? {
        //Get real destination with ProvidedLoginViewInput's router
-       let realDestination: ProvidedLoginViewInput = ZIKEditorViewRouter.makeDestination()
+       let realDestination: ProvidedLoginViewInput = LoginViewRouter.makeDestination()
        //Proxy is responsible for forwarding ModuleARequiredLoginViewInput to ProvidedLoginViewInput
        let proxy: ModuleARequiredLoginViewInput = ProxyForDestination(realDestination)
        return proxy
@@ -199,15 +199,15 @@ class ModuleAReqiredEditorViewRouter: ZIKViewRouter {
 <details><summary>Objective-C Sample</summary>
 
 ```objectivec
-@implementation ZIKModuleARequiredEditorViewRouter
+@implementation ModuleARequiredLoginViewRouter
 + (void)registerRoutableDestination {
-	//Register ModuleARequiredLoginViewInput with ZIKModuleARequiredEditorViewRouter
+	//Register ModuleARequiredLoginViewInput with ModuleARequiredLoginViewRouter
 	[self registerView:/* proxy class*/];
-	[self registerViewProtocol:ZIKRoutable(NoteListRequiredNoteEditorProtocol)];
+	[self registerViewProtocol:ZIKRoutable(ModuleARequiredLoginViewInput)];
 }
 - (id)destinationWithConfiguration:(ZIKViewRouteConfiguration *)configuration {
    //Get real destination with ProvidedLoginViewDelegate's router
-   id<ProvidedLoginViewInput> realDestination = [ZIKEditorViewRouter makeDestination];
+   id<ProvidedLoginViewInput> realDestination = [LoginViewRouter makeDestination];
     //Proxy is responsible for forwarding ModuleARequiredLoginViewInput to ProvidedLoginViewInput
     id<ModuleARequiredLoginViewInput> proxy = ProxyForDestination(realDestination);
     return proxy;

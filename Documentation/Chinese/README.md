@@ -499,8 +499,6 @@ id<EditorViewInput> destination = [ZIKRouterToView(EditorViewInput) makeDestinat
 
 #### 更强大的传参方式
 
-有一个问题其他的模块管理工具都没有解决。
-
 有时模块有自定义初始化方法，需要从外部传入一些参数后才能创建实例。
 
 有时需要传递的参数并不能都通过 destination 的接口设置，例如参数不属于 destination，而是属于模块内其他组件。
@@ -923,6 +921,56 @@ protocol RequiredEditorViewInput: class {
 ```
 
 </details>
+
+由宿主 app 对接 required protocol 和 provided protocol：
+```swift
+/// 在宿主 app 中，为 router 添加 required protocol
+class EditorViewAdapter: ZIKViewRouteAdapter {
+    override class func registerRoutableDestination() {
+        //如果可以获取到 router 类，可以直接为 router 添加 RequiredEditorViewInput
+        NoteEditorViewRouter.register(RoutableView<RequiredEditorViewInput>())
+        
+        //如果不能得到对应模块的 router，可以注册 adapter
+        register(adapter: RoutableView<RequiredEditorViewInput>(), forAdaptee: RoutableView<EditorViewInput>())
+    }
+}
+
+/// 让 NoteEditorViewController 支持 RequiredEditorViewInput
+extension NoteEditorViewController: RequiredEditorViewInput {
+}
+```
+
+<details><summary>Objective-C Sample</summary>
+
+```objectivec
+/// 在宿主 app 中，为 router 添加 required protocol
+
+//EditorViewAdapter.h
+@interface EditorViewAdapter : ZIKViewRouteAdapter
+@end
+
+//EditorViewAdapter.m
+@implementation EditorViewAdapter
+
++ (void)registerRoutableDestination {
+	//如果可以获取到 router 类，可以直接为 router 添加 RequiredEditorViewInput
+	[NoteEditorViewRouter registerViewProtocol:ZIKRoutable(RequiredEditorViewInput)];
+	//如果不能得到对应模块的 router，可以注册 adapter
+	[self registerDestinationAdapter:ZIKRoutable(RequiredEditorViewInput) forAdaptee:ZIKRoutable(EditorViewInput)];
+}
+
+@end
+
+/// 让 NoteEditorViewController 支持 RequiredEditorViewInput
+@interface NoteEditorViewController (Adapter) <RequiredEditorViewInput>
+@end
+@implementation NoteEditorViewController (Adapter)
+@end
+```
+
+</details>
+
+适配之后，`RequiredEditorViewInput` 和 `EditorViewInput` 就会指向同一个 router。
 
 使用`RequiredEditorViewInput`获取模块：
 

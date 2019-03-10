@@ -951,6 +951,56 @@ protocol RequiredEditorViewInput: class {
 
 </details>
 
+In the host app context, connect required protocol and provided protocol:
+```swift
+/// In the host app, add required protocol to editor router
+class EditorViewAdapter: ZIKViewRouteAdapter {
+    override class func registerRoutableDestination() {
+        // If you can get the router, you can just register RequiredEditorViewInput to it
+        NoteEditorViewRouter.register(RoutableView<RequiredEditorViewInput>())
+        
+        // If you don't know the router, you can use adapter
+        register(adapter: RoutableView<RequiredEditorViewInput>(), forAdaptee: RoutableView<EditorViewInput>())
+    }
+}
+
+/// Make NoteEditorViewController conform to RequiredEditorViewInput
+extension NoteEditorViewController: RequiredEditorViewInput {
+}
+```
+
+<details><summary>Objective-C Sample</summary>
+
+```objectivec
+/// In the host app, add required protocol to editor router
+
+//EditorViewAdapter.h
+@interface EditorViewAdapter : ZIKViewRouteAdapter
+@end
+
+//EditorViewAdapter.m
+@implementation EditorViewAdapter
+
++ (void)registerRoutableDestination {
+	// If you can get the router, you can just register RequiredEditorViewInput to it
+	[NoteEditorViewRouter registerViewProtocol:ZIKRoutable(RequiredEditorViewInput)];
+	// If you don't know the router, you can use adapter
+	[self registerDestinationAdapter:ZIKRoutable(RequiredEditorViewInput) forAdaptee:ZIKRoutable(EditorViewInput)];
+}
+
+@end
+
+/// Make NoteEditorViewController conform to RequiredEditorViewInput
+@interface NoteEditorViewController (Adapter) <RequiredEditorViewInput>
+@end
+@implementation NoteEditorViewController (Adapter)
+@end
+```
+
+</details>
+
+After adapting, `RequiredEditorViewInput` and `EditorViewInput` can get the same router.
+
 Use`RequiredEditorViewInput`to get module:
 
 ```swift
