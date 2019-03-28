@@ -20,6 +20,7 @@ Pod::Spec.new do |s|
   s.ios.frameworks = "Foundation", "UIKit"
   s.tvos.frameworks = "Foundation", "UIKit"
   s.osx.frameworks = "Foundation", "AppKit"
+  s.libraries = 'c++'
   s.requires_arc = true
 
   s.preserve_path = 'ZIKRouter/Framework/module.modulemap'
