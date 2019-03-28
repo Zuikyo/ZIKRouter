@@ -102,19 +102,19 @@ Service Router 可以管理任意自定义模块。View Router 进一步封装�
 可以用 Cocoapods 安装 ZIKRouter：
 
 ```
-pod 'ZIKRouter', '>= 1.0.10'
+pod 'ZIKRouter', '>= 1.0.11'
 
 # 或者只使用 ServiceRouter 子模块
-pod 'ZIKRouter/ServiceRouter' , '>=1.0.10'
+pod 'ZIKRouter/ServiceRouter' , '>=1.0.11'
 ```
 
 如果是 Swift 项目，则使用 ZRouter：
 
 ```
-pod 'ZRouter', '>= 1.0.10'
+pod 'ZRouter', '>= 1.0.11'
 
 # 或者只使用 ServiceRouter 子模块
-pod 'ZRouter/ServiceRouter' , '>=1.0.10'
+pod 'ZRouter/ServiceRouter' , '>=1.0.11'
 ```
 
 ### Carthage
@@ -122,7 +122,7 @@ pod 'ZRouter/ServiceRouter' , '>=1.0.10'
 添加到 Cartfile 文件：
 
 ```
-github "Zuikyo/ZIKRouter" >= 1.0.10
+github "Zuikyo/ZIKRouter" >= 1.0.11
 ```
 
 编译 framework：

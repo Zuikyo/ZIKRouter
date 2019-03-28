@@ -478,7 +478,7 @@ public enum ViewRoutePath {
     ///     - completion: Invoke the completion block when adding is finished.
     ///
     /// - Note: Use weak self in addingChildViewHandler to avoid retain cycle.
-    case addAsChildViewController(from: ViewController, addingChildViewHandler: (ViewController, @escaping () -> Void) -> Void)
+    case addAsChildViewController(from: ViewController, addingChildViewHandler: (_ destination: ViewController, _ completion: @escaping () -> Void) -> Void)
     /// Add the destination as subview to the superview.
     case addAsSubview(from: View)
     /// Perform custom transition type from the source.

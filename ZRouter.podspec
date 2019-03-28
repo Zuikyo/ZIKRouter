@@ -1,7 +1,7 @@
 Pod::Spec.new do |s|
 
   s.name         = "ZRouter"
-  s.version      = "1.0.10"
+  s.version      = "1.0.11"
   s.summary      = "Interface-Oriented iOS Swift router for discovering modules and injecting dependencies with protocol."
   s.description  = <<-DESC
                 Interface-Oriented iOS Swift router for discovering modules and injecting dependencies with protocol, designed for VIPER. The view router can perform all navigation types in UIKit through one method. The service router can discover service with protocol.
@@ -21,14 +21,14 @@ Pod::Spec.new do |s|
   s.default_subspecs = 'ServiceRouter','ViewRouter'
 
   s.subspec 'ServiceRouter' do |serviceRouter|
-    serviceRouter.dependency 'ZIKRouter/ServiceRouter', '>= 1.0.10'
+    serviceRouter.dependency 'ZIKRouter/ServiceRouter', '>= 1.0.11'
     serviceRouter.source_files = "ZRouter/*.swift",
                                  "ZRouter/ServiceRouter/*.swift"
   end
 
   s.subspec 'ViewRouter' do |viewRouter|
     viewRouter.dependency 'ZRouter/ServiceRouter'
-    viewRouter.dependency 'ZIKRouter/ViewRouter', '>= 1.0.10'
+    viewRouter.dependency 'ZIKRouter/ViewRouter', '>= 1.0.11'
     viewRouter.source_files = "ZRouter/ViewRouter/*.swift"
   end
 

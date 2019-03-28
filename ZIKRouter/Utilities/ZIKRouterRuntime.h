@@ -50,13 +50,13 @@ FOUNDATION_EXTERN bool ZIKRouter_replaceMethodWithMethod(Class originalClass, SE
 FOUNDATION_EXTERN bool ZIKRouter_replaceMethodWithMethodType(Class originalClass, SEL originalSelector, bool originIsClassMethod,
                                                   Class swizzledClass, SEL swizzledSelector, bool swizzledIsClassMethod);
 
-/// Enumerate all classes
+/// Enumerate all classes.
 FOUNDATION_EXTERN void ZIKRouter_enumerateClassList(void(^handler)(Class aClass));
 
-/// Enumerate all protocols
+/// Enumerate all protocols.
 FOUNDATION_EXTERN void ZIKRouter_enumerateProtocolList(void(^handler)(Protocol *protocol));
 
-/// Check whether a class is a subclass of another class
+/// Check whether a class is a subclass of another class.
 FOUNDATION_EXTERN bool ZIKRouter_classIsSubclassOfClass(Class aClass, Class parentClass);
 
 /// Check whether a class is from Apple's system framework, or from your project.

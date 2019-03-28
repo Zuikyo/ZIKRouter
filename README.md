@@ -114,18 +114,18 @@ Add this to your Podfile.
 For Objective-C project:
 
 ```
-pod 'ZIKRouter', '>= 1.0.10'
+pod 'ZIKRouter', '>= 1.0.11'
 
 # or only use ServiceRouter
-pod 'ZIKRouter/ServiceRouter' , '>=1.0.10'
+pod 'ZIKRouter/ServiceRouter' , '>=1.0.11'
 ```
 For Swift project:
 
 ```
-pod 'ZRouter', '>= 1.0.10'
+pod 'ZRouter', '>= 1.0.11'
 
 # or only use ServiceRouter
-pod 'ZRouter/ServiceRouter' , '>=1.0.10'
+pod 'ZRouter/ServiceRouter' , '>=1.0.11'
 ```
 
 ### Carthage
@@ -133,7 +133,7 @@ pod 'ZRouter/ServiceRouter' , '>=1.0.10'
 Add this to your Cartfile:
 
 ```
-github "Zuikyo/ZIKRouter" >= 1.0.10
+github "Zuikyo/ZIKRouter" >= 1.0.11
 ```
 
 Build frameworks:

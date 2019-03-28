@@ -102,7 +102,7 @@
 		F85389CA217192E2003EA2DD /* UIStoryboardSegue+ZIKViewRouterPrivate.m in Sources */ = {isa = PBXBuildFile; fileRef = F833153D1F6FCC3E00891004 /* UIStoryboardSegue+ZIKViewRouterPrivate.m */; };
 		F85389CB217192E2003EA2DD /* ZIKRouterRuntime.m in Sources */ = {isa = PBXBuildFile; fileRef = F8564E191F717F2700C16A8A /* ZIKRouterRuntime.m */; };
 		F85389CC217192E2003EA2DD /* ZIKRouterRuntimeDebug.m in Sources */ = {isa = PBXBuildFile; fileRef = F8F6B1BA20A6142100110B03 /* ZIKRouterRuntimeDebug.m */; };
-		F85389CD217192E2003EA2DD /* NSString+Demangle.mm in Sources */ = {isa = PBXBuildFile; fileRef = F8F6B1FD20AA90F200110B03 /* NSString+Demangle.mm */; };
+		F85389CD217192E2003EA2DD /* NSString+Demangle.m in Sources */ = {isa = PBXBuildFile; fileRef = F8F6B1FD20AA90F200110B03 /* NSString+Demangle.m */; };
 		F85389CE217192E2003EA2DD /* ZIKFindSymbol.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F88D8B5E1FECECE200157E71 /* ZIKFindSymbol.cpp */; };
 		F85389CF217192E2003EA2DD /* ZIKImageSymbol.mm in Sources */ = {isa = PBXBuildFile; fileRef = F88D8B651FECFB0900157E71 /* ZIKImageSymbol.mm */; };
 		F8564E1A1F717F2700C16A8A /* ZIKRouterRuntime.h in Headers */ = {isa = PBXBuildFile; fileRef = F8564E181F717F2700C16A8A /* ZIKRouterRuntime.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -200,7 +200,7 @@
 		F8F6B1BB20A6142100110B03 /* ZIKRouterRuntimeDebug.h in Headers */ = {isa = PBXBuildFile; fileRef = F8F6B1B920A6142100110B03 /* ZIKRouterRuntimeDebug.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		F8F6B1BC20A6142100110B03 /* ZIKRouterRuntimeDebug.m in Sources */ = {isa = PBXBuildFile; fileRef = F8F6B1BA20A6142100110B03 /* ZIKRouterRuntimeDebug.m */; };
 		F8F6B1BD20A6156300110B03 /* ZIKRouterRuntimeDebug.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = F8F6B1B920A6142100110B03 /* ZIKRouterRuntimeDebug.h */; };
-		F8F6B1FF20AA90F300110B03 /* NSString+Demangle.mm in Sources */ = {isa = PBXBuildFile; fileRef = F8F6B1FD20AA90F200110B03 /* NSString+Demangle.mm */; };
+		F8F6B1FF20AA90F300110B03 /* NSString+Demangle.m in Sources */ = {isa = PBXBuildFile; fileRef = F8F6B1FD20AA90F200110B03 /* NSString+Demangle.m */; };
 		F8F6B20020AA90F300110B03 /* NSString+Demangle.h in Headers */ = {isa = PBXBuildFile; fileRef = F8F6B1FE20AA90F200110B03 /* NSString+Demangle.h */; };
 		F8F7A61C21F9E0EA0016246B /* TestEasyRegistry.m in Sources */ = {isa = PBXBuildFile; fileRef = F8F7A61B21F9E0EA0016246B /* TestEasyRegistry.m */; };
 		F8FD8EB41F3AAEAB00D7EECB /* ZIKServiceRouter.h in Headers */ = {isa = PBXBuildFile; fileRef = F8FD8EB21F3AAEAB00D7EECB /* ZIKServiceRouter.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -402,7 +402,7 @@
 		F8EF187720D2BB9900496EED /* module.modulemap */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = "sourcecode.module-map"; path = module.modulemap; sourceTree = "<group>"; };
 		F8F6B1B920A6142100110B03 /* ZIKRouterRuntimeDebug.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ZIKRouterRuntimeDebug.h; sourceTree = "<group>"; };
 		F8F6B1BA20A6142100110B03 /* ZIKRouterRuntimeDebug.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ZIKRouterRuntimeDebug.m; sourceTree = "<group>"; };
-		F8F6B1FD20AA90F200110B03 /* NSString+Demangle.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = "NSString+Demangle.mm"; sourceTree = "<group>"; };
+		F8F6B1FD20AA90F200110B03 /* NSString+Demangle.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSString+Demangle.m"; sourceTree = "<group>"; };
 		F8F6B1FE20AA90F200110B03 /* NSString+Demangle.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSString+Demangle.h"; sourceTree = "<group>"; };
 		F8F7A61A21F9E0EA0016246B /* TestEasyRegistry.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = TestEasyRegistry.h; sourceTree = "<group>"; };
 		F8F7A61B21F9E0EA0016246B /* TestEasyRegistry.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = TestEasyRegistry.m; sourceTree = "<group>"; };
@@ -773,7 +773,7 @@
 			isa = PBXGroup;
 			children = (
 				F8F6B1FE20AA90F200110B03 /* NSString+Demangle.h */,
-				F8F6B1FD20AA90F200110B03 /* NSString+Demangle.mm */,
+				F8F6B1FD20AA90F200110B03 /* NSString+Demangle.m */,
 				F83B1A6A2006963200675251 /* ZIKImageSymbol */,
 			);
 			path = Debug;
@@ -1062,7 +1062,7 @@
 				F85C584E201517040096821B /* ZIKViewRouter+Discover.m in Sources */,
 				F8564E1B1F717F2700C16A8A /* ZIKRouterRuntime.m in Sources */,
 				F85F4D171F223F0F003106C3 /* ZIKViewRouter.m in Sources */,
-				F8F6B1FF20AA90F300110B03 /* NSString+Demangle.mm in Sources */,
+				F8F6B1FF20AA90F300110B03 /* NSString+Demangle.m in Sources */,
 				F850CF941F4B1E52004319A0 /* ZIKServiceRouteAdapter.m in Sources */,
 				F85F4D1C1F223F0F003106C3 /* UIView+ZIKViewRouter.m in Sources */,
 				F85A69961F90E37100F33285 /* ZIKRouteConfiguration.m in Sources */,
@@ -1101,7 +1101,7 @@
 				F85389CA217192E2003EA2DD /* UIStoryboardSegue+ZIKViewRouterPrivate.m in Sources */,
 				F85389CB217192E2003EA2DD /* ZIKRouterRuntime.m in Sources */,
 				F85389CC217192E2003EA2DD /* ZIKRouterRuntimeDebug.m in Sources */,
-				F85389CD217192E2003EA2DD /* NSString+Demangle.mm in Sources */,
+				F85389CD217192E2003EA2DD /* NSString+Demangle.m in Sources */,
 				F85389CE217192E2003EA2DD /* ZIKFindSymbol.cpp in Sources */,
 				F85389CF217192E2003EA2DD /* ZIKImageSymbol.mm in Sources */,
 				F85F4D311F224116003106C3 /* ZIKRouter.m in Sources */,
@@ -1325,7 +1325,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				CODE_SIGN_IDENTITY = "";
-				CURRENT_PROJECT_VERSION = 1.0.10;
+				CURRENT_PROJECT_VERSION = 1.0.11;
 				DEFINES_MODULE = YES;
 				DEVELOPMENT_TEAM = "";
 				DYLIB_COMPATIBILITY_VERSION = 1;
@@ -1349,7 +1349,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				CODE_SIGN_IDENTITY = "";
-				CURRENT_PROJECT_VERSION = 1.0.10;
+				CURRENT_PROJECT_VERSION = 1.0.11;
 				DEFINES_MODULE = YES;
 				DEVELOPMENT_TEAM = "";
 				DYLIB_COMPATIBILITY_VERSION = 1;

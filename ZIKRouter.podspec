@@ -1,7 +1,7 @@
 Pod::Spec.new do |s|
 
   s.name         = "ZIKRouter"
-  s.version      = "1.0.10"
+  s.version      = "1.0.11"
   s.summary      = "Interface-Oriented iOS router for discovering modules and injecting dependencies with protocol in both Swift and Objective-C."
   s.description  = <<-DESC
                 Interface-Oriented iOS router for discovering modules and injecting dependencies with protocol in both Swift and Objective-C, designed for VIPER. The view router can perform all navigation types in UIKit through one method. The service router can discover service with protocol.
@@ -20,7 +20,6 @@ Pod::Spec.new do |s|
   s.ios.frameworks = "Foundation", "UIKit"
   s.tvos.frameworks = "Foundation", "UIKit"
   s.osx.frameworks = "Foundation", "AppKit"
-  s.libraries = 'c++'
   s.requires_arc = true
 
   s.preserve_path = 'ZIKRouter/Framework/module.modulemap'
