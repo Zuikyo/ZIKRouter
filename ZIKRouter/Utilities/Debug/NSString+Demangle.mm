@@ -13,95 +13,38 @@
 
 #if DEBUG
 
-#include <string>
-#import "ZIKFindSymbol.h"
-#import "ZIKRouterRuntimeDebug.h"
+#import <dlfcn.h>
 
-struct DemangleOptions {
-    bool SynthesizeSugarOnTypes = false;
-    bool DisplayDebuggerGeneratedModule = true;
-    bool QualifyEntities = true;
-    bool DisplayExtensionContexts = true;
-    bool DisplayUnmangledSuffix = true;
-    bool DisplayModuleNames = true;
-    bool DisplayGenericSpecializations = true;
-    bool DisplayProtocolConformances = true;
-    bool DisplayWhereClauses = true;
-    bool DisplayEntityTypes = true;
-    bool ShortenPartialApply = false;
-    bool ShortenThunk = false;
-    bool ShortenValueWitness = false;
-    bool ShortenArchetype = false;
-    bool ShowPrivateDiscriminators = true;
-    bool ShowFunctionArgumentTypes = true;
-    
-    DemangleOptions() {}
-    
-    static DemangleOptions FullDemangleOptions() {
-        auto Opt = DemangleOptions();
-        Opt.SynthesizeSugarOnTypes = true;
-        Opt.DisplayDebuggerGeneratedModule = true;
-        Opt.QualifyEntities = true;
-        Opt.DisplayExtensionContexts = true;
-        Opt.DisplayUnmangledSuffix = false;
-        Opt.DisplayModuleNames = true;
-        Opt.DisplayGenericSpecializations = true;
-        Opt.DisplayProtocolConformances = true;
-        Opt.DisplayWhereClauses = true;
-        Opt.DisplayEntityTypes = true;
-        Opt.ShortenPartialApply = true;
-        Opt.ShortenThunk = true;
-        Opt.ShortenValueWitness = true;
-        Opt.ShortenArchetype = true;
-        Opt.ShowPrivateDiscriminators = true;
-        Opt.ShowFunctionArgumentTypes = true;
-        return Opt;
-    };
-};
-
-static std::string _demangleSymbolAsString(const char *mangledName, size_t mangledNameLength, const DemangleOptions &options = DemangleOptions()) {
-    static std::string (*demangleSymbolAsString)(const char *, size_t, const DemangleOptions &) = nullptr;
+static const char *demangleAsSwiftString(const char *name) {
+    typedef char *(*swift_demangle_ft)(const char *mangledName, size_t mangledNameLength, char *outputBuffer, size_t *outputBufferSize, uint32_t flags);
+    static swift_demangle_ft swift_demangle_f;
     static dispatch_once_t onceToken;
     dispatch_once(&onceToken, ^{
-        demangleSymbolAsString = (std::string (*)(const char *, size_t, const DemangleOptions &))
-        ZIKFindSymbol(ZIKGetImageByName("libSwiftCore.dylib"), ^bool(const char *symbolName) {
-            if (strstr(symbolName, "swift") != 0 &&
-                strstr(symbolName, "Demangle") != 0 &&
-                strstr(symbolName, "demangleSymbolAsString") != 0 &&
-                strstr(symbolName, "DemangleOptions") != 0 &&
-                strstr(symbolName, "llvm") == 0 &&
-                strstr(symbolName, "StringRef") == 0) {
-                return true;
-            }
-            return false;
-        });
+        swift_demangle_f = (swift_demangle_ft) dlsym(RTLD_DEFAULT, "swift_demangle");
     });
-    if (demangleSymbolAsString) {
-        return demangleSymbolAsString(mangledName, mangledNameLength, options);
+    
+    if (swift_demangle_f) {
+        return swift_demangle_f(name, strlen(name), 0, 0, 0);
     }
-    NSCAssert(demangleSymbolAsString != NULL || !zix_hasDynamicLibrary(@"libswiftCore.dylib"), @"Can't find demangleSymbolAsString in libswiftCore.dylib.");
-    return mangledName;
-};
+    return name;
+}
 
 @implementation NSString (Demangle)
 
 - (NSString *)demangledAsSwift {
-    DemangleOptions options = DemangleOptions::FullDemangleOptions();
-    std::string demangled = _demangleSymbolAsString(self.UTF8String, self.length, options);
-    if(demangled.length() == 0) {
-        return nil;
+    const char *demangledString = demangleAsSwiftString(self.UTF8String);
+    if (demangledString) {
+        return @(demangledString);
     }
-    return [NSString stringWithUTF8String:demangled.c_str()];
+    return self;
 }
 
 - (NSString *)demangledAsSimplifiedSwift {
-    DemangleOptions options = DemangleOptions::FullDemangleOptions();
-    options.QualifyEntities = false;
-    std::string demangled = _demangleSymbolAsString(self.UTF8String, self.length, options);
-    if(demangled.length() == 0) {
-        return nil;
+    const char *demangledString = demangleAsSwiftString(self.UTF8String);
+    if (demangledString) {
+        return @(demangledString);
     }
-    return [NSString stringWithUTF8String:demangled.c_str()];
+    return self;
 }
 
 @end

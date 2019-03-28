@@ -816,7 +816,7 @@ static __attribute__((always_inline)) void _registerIdentifierWithRoute(NSString
     CFMutableSetRef destinationProtocols = (CFMutableSetRef)CFDictionaryGetValue(self._check_routerToDestinationProtocolsMap, (__bridge const void *)(routeKey));
     if (destinationProtocols != NULL) {
         for (Protocol *destinationProtocol in (__bridge NSSet*)destinationProtocols) {
-            if (!class_conformsToProtocol(destinationClass, destinationProtocol)) {
+            if (![destinationClass conformsToProtocol:destinationProtocol]) {
                 *protocol = destinationProtocol;
                 return NO;
             }

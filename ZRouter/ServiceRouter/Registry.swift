@@ -16,7 +16,7 @@ import ZIKRouter.Private
 extension Protocol {
     var name: String {
         var name = NSStringFromProtocol(self)
-        if let dotRange = name.range(of: ".") {
+        if let dotRange = name.range(of: ".", options: .backwards) {
             name.removeSubrange(name.startIndex...dotRange.lowerBound)
         }
         return name
@@ -605,6 +605,26 @@ internal func imagePathOfAddress(_ address: UnsafePointer<Int8>) -> String {
     return imagePath
 }
 
+internal extension String {
+    var undotted: String {
+        var undotted = self
+        if undotted.contains(" & ") {
+            let strs = self.components(separatedBy: " & ").map({ (str: String) -> String in
+                var str = str
+                if let dotRange = str.range(of: ".", options: .backwards)  {
+                    str.removeSubrange(str.startIndex...dotRange.lowerBound)
+                }
+                return str
+            })
+            return strs.joined(separator: " & ")
+        }
+        if let dotRange = undotted.range(of: ".", options: .backwards)  {
+            undotted.removeSubrange(undotted.startIndex...dotRange.lowerBound)
+        }
+        return undotted
+    }
+}
+
 /// Make sure all registered service classes conform to their registered service protocols.
 private class _ServiceRouterValidater: ZIKServiceRouteAdapter {
     override class func isAbstractRouter() -> Bool {
@@ -700,15 +720,15 @@ private class _ServiceRouterValidater: ZIKServiceRouteAdapter {
             return true
         }
         
-        let destinationProtocolRegex = try! NSRegularExpression(pattern: "(?<=-> RoutableService<).*(?=>$)", options: [.anchorsMatchLines])
-        let moduleProtocolRegex = try! NSRegularExpression(pattern: "(?<=-> RoutableServiceModule<).*(?=>$)", options: [.anchorsMatchLines])
+        let destinationProtocolRegex = try! NSRegularExpression(pattern: "(?<=-> ZRouter.RoutableService<)(.)*.*(?=>$)", options: [.anchorsMatchLines])
+        let moduleProtocolRegex = try! NSRegularExpression(pattern: "(?<=-> ZRouter.RoutableServiceModule<)(.)*.*(?=>$)", options: [.anchorsMatchLines])
         var declaredDestinationProtocols = [String]()
         var declaredModuleProtocols = [String]()
         for declaration in declaredRoutableTypes {
             if let declaredProtocol = declaration.subString(forRegex: destinationProtocolRegex) {
-                declaredDestinationProtocols.append(declaredProtocol)
+                declaredDestinationProtocols.append(declaredProtocol.undotted)
             } else if let declaredProtocol = declaration.subString(forRegex: moduleProtocolRegex) {
-                declaredModuleProtocols.append(declaredProtocol)
+                declaredModuleProtocols.append(declaredProtocol.undotted)
             }
         }
         

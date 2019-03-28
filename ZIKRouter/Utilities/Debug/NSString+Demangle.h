@@ -23,16 +23,16 @@ NS_ASSUME_NONNULL_BEGIN
 /**
  Demangle as a Swift symbol with full type information. Only available when use swift code.
  
- @return The demangled string or nil if it can't be demangled as Swift.
+ @return The demangled string or self if it can't be demangled as Swift.
  */
-- (nullable NSString *)demangledAsSwift;
+- (NSString *)demangledAsSwift;
 
 /**
  Demangle as a simplified Swift symbol. Module name, extension name, `where` clauses will be striped. Only available when use swift code.
  
- @return The demangled string or nil if it can't be demangled as Swift.
+ @return The demangled string or self if it can't be demangled as Swift.
  */
-- (nullable NSString *)demangledAsSimplifiedSwift;
+- (NSString *)demangledAsSimplifiedSwift;
 
 @end
 

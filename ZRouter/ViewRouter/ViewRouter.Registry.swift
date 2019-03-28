@@ -510,7 +510,7 @@ private class _ViewRouterValidater: ZIKViewRouteAdapter {
         var viewModuleRoutingTypes = [(String, String)]()
         let viewRoutingTypeRegex = try! NSRegularExpression(pattern: "(?<=RoutableView<).*(?=>$)", options: [.anchorsMatchLines])
         let viewModuleRoutingTypeRegex = try! NSRegularExpression(pattern: "(?<=RoutableViewModule<).*(?=>$)", options: [.anchorsMatchLines])
-        _enumerateSymbolName { (name, demangledAsSwift) -> Bool in
+        _enumerateSymbolName { (name, demangledAsSwift) -> Bool in            
             if (strstr(name, "RoutableView") != nil) {
                 let symbolName = demangledAsSwift(name, false)
                 if symbolName.hasPrefix("(extension in"), symbolName.contains(">.init") {
@@ -610,15 +610,15 @@ private class _ViewRouterValidater: ZIKViewRouteAdapter {
             return true
         }
         
-        let destinationProtocolRegex = try! NSRegularExpression(pattern: "(?<=-> RoutableView<).*(?=>$)", options: [.anchorsMatchLines])
-        let moduleProtocolRegex = try! NSRegularExpression(pattern: "(?<=-> RoutableViewModule<).*(?=>$)", options: [.anchorsMatchLines])
+        let destinationProtocolRegex = try! NSRegularExpression(pattern: "(?<=-> ZRouter.RoutableView<)(.)*.*(?=>$)", options: [.anchorsMatchLines])
+        let moduleProtocolRegex = try! NSRegularExpression(pattern: "(?<=-> ZRouter.RoutableViewModule<)(.)*.*(?=>$)", options: [.anchorsMatchLines])
         var declaredDestinationProtocols = [String]()
         var declaredModuleProtocols = [String]()
         for declaration in declaredRoutableTypes {
             if let declaredProtocol = declaration.subString(forRegex: destinationProtocolRegex) {
-                declaredDestinationProtocols.append(declaredProtocol)
+                declaredDestinationProtocols.append(declaredProtocol.undotted)
             } else if let declaredProtocol = declaration.subString(forRegex: moduleProtocolRegex) {
-                declaredModuleProtocols.append(declaredProtocol)
+                declaredModuleProtocols.append(declaredProtocol.undotted)
             }
         }
         

@@ -27,129 +27,6 @@
 }
 @end
 
-/**
- Check whether a type conforms to the given protocol. Use private C++ function inside libswiftCore.dylib:
- `bool _conformsToProtocols(const OpaqueValue *value, const Metadata *type, const ExistentialTypeMetadata *existentialType, const WitnessTable **conformances)`.
- 
- @return The function pointer of _conformsToProtocols().
- */
-static bool swift_conformsToProtocols(uintptr_t value, uintptr_t type, uintptr_t existentialType, uintptr_t* conformances) {
-    static bool(*_conformsToProtocols)(uintptr_t, uintptr_t, uintptr_t, uintptr_t*) = NULL;
-    static dispatch_once_t onceToken;
-    dispatch_once(&onceToken, ^{
-        ZIKImageRef libswiftCoreImage = [ZIKImageSymbol imageByName:"libswiftCore.dylib"];
-        _conformsToProtocols = [ZIKImageSymbol findSymbolInImage:libswiftCoreImage matching:^BOOL(const char * _Nonnull symbolName) {
-            if(strstr(symbolName, "_conformsToProtocols") &&
-               strstr(symbolName, "OpaqueValue") &&
-               strstr(symbolName, "TargetMetadata") &&
-               strstr(symbolName, "WitnessTable")) {
-                return YES;
-            }
-            return NO;
-        }];
-        NSCAssert(_conformsToProtocols != NULL, @"Can't find _conformsToProtocols in libswiftCore.dylib. You should use swift 3.3 or higher.");
-        NSCAssert1([[ZIKImageSymbol symbolNameForAddress:_conformsToProtocols] zix_containsString:@"OpaqueValue"] &&
-                   [[ZIKImageSymbol symbolNameForAddress:_conformsToProtocols] zix_containsString:@"TargetMetadata"] &&
-                   [[ZIKImageSymbol symbolNameForAddress:_conformsToProtocols] zix_containsString:@"WitnessTable"]
-                   , @"The symbol name is not matched: %@", [ZIKImageSymbol symbolNameForAddress:_conformsToProtocols]);
-    });
-    if (_conformsToProtocols == NULL) {
-        return false;
-    }
-    return _conformsToProtocols(value, type, existentialType, conformances);
-}
-
-static bool _objcClassConformsToSwiftProtocolName(Class objcClass, NSString *swiftProtocolName) {
-    NSCAssert1([swiftProtocolName zix_containsString:@"."], @"Invalid swift protocol name: %@", swiftProtocolName);
-    static NSMutableSet<NSString *> *conformancesCache;
-    static dispatch_once_t onceToken;
-    dispatch_once(&onceToken, ^{
-        conformancesCache = [NSMutableSet set];
-    });
-    __block BOOL conform = NO;
-    NSString *className = NSStringFromClass(objcClass);
-    NSString *record = [[className stringByAppendingString:@"_"] stringByAppendingString:swiftProtocolName];
-    if ([conformancesCache containsObject:record]) {
-        return true;
-    }
-    NSMutableArray<NSString *> *classNames = [NSMutableArray array];
-    Class aClass = objcClass;
-    while (aClass) {
-        [classNames addObject:NSStringFromClass(aClass)];
-        aClass = [aClass superclass];
-    }
-    
-    // Handle composed protocol
-    NSMutableSet<NSString *> *protocolNames = [NSMutableSet setWithArray:[swiftProtocolName componentsSeparatedByString:@" & "]];
-    // Check objc protocol in composed protocol
-    for (NSString *protocolName in [swiftProtocolName componentsSeparatedByString:@" & "]) {
-        if ([protocolName hasPrefix:@"__ObjC."]) {
-            NSString *objcProtocolName = [protocolName substringFromIndex:7];
-            Protocol *objcProtocol = NSProtocolFromString(objcProtocolName);
-            if (objcProtocol) {
-                if ([objcClass conformsToProtocol:objcProtocol]) {
-                    [protocolNames removeObject:protocolName];
-                } else {
-                    return false;
-                }
-            }
-        }
-    }
-    NSInteger protocolCount = protocolNames.count;
-    NSMutableSet<NSString *> *conformedProtocolNames = [NSMutableSet set];
-        
-    _enumerateSymbolName(^bool(const char * _Nonnull name, NSString * _Nonnull (^ _Nonnull demangledAsSwift)(const char * _Nonnull, bool)) {
-        size_t str_len = strlen(name);
-        if (str_len <= 3) {
-            return YES;
-        }
-        // swift mangled symbol
-        if(strncmp("__T", name, 3) != 0) {
-            return YES;
-        }
-        // suffix for protocol witness table: WP
-        // suffix for generic protocol witness table: WG
-        char *suffix = "WP";
-        size_t suffix_len = strlen(suffix);
-        BOOL isProtocolWitnessTable = (0 == strcmp(name + (str_len - suffix_len), suffix));
-        if (isProtocolWitnessTable == NO) {
-            return YES;
-        }
-        NSString *containedClassName = nil;
-        for (NSString *className in classNames) {
-            if (strstr(name, className.UTF8String)) {
-                containedClassName = className;
-                break;
-            }
-        }
-        if (containedClassName == nil) {
-            return YES;
-        }
-        NSString *demangledName = demangledAsSwift(name, false);
-        if ([demangledName zix_containsString:@"protocol witness table for"]) {
-
-            for (NSString *protocolName in protocolNames) {
-                if ([demangledName zix_containsString:[NSString stringWithFormat:@"__ObjC.%@ : %@", containedClassName, protocolName]]) {
-                    [conformedProtocolNames addObject:protocolName];
-                    if (conformedProtocolNames.count == protocolCount) {
-                        conform = YES;
-                        [conformancesCache addObject:record];
-                        return NO;
-                    }
-                }
-            }
-            
-        }
-        return YES;
-    });
-    return conform;
-}
-
-static uintptr_t dereferencedPointer(uintptr_t pointer) {
-    uintptr_t **deref = (uintptr_t **)pointer;
-    return (uintptr_t)*deref;
-}
-
 #define MetadataKindIsNonType 0x400
 #define MetadataKindIsNonHeap 0x200
 #define MetadataKindIsRuntimePrivate 0x100
@@ -190,6 +67,324 @@ typedef NS_ENUM(NSInteger, ZIKSwiftMetadataKind) {
     ZIKSwiftMetadataKindHeapGenericLocalVariable = 0 | MetadataKindIsNonType | MetadataKindIsRuntimePrivate,
     ZIKSwiftMetadataKindErrorObject              = 1 | MetadataKindIsNonType | MetadataKindIsRuntimePrivate
 };
+
+typedef struct {
+    /// Unused by the Swift runtime.
+    void *_ObjC_Isa;
+    
+    /// The mangled name of the protocol.
+    char *Name;
+    
+    /// The list of protocols this protocol refines.
+    void *InheritedProtocols;
+    
+} TargetProtocolDescriptor_Old;
+
+static bool isObjCProtocolDescriptor(TargetProtocolDescriptor_Old *protocolDescriptor) {
+    return protocolDescriptor->_ObjC_Isa != 0;
+}
+
+typedef struct {
+    /// A direct pointer to a protocol descriptor for either an Objective-C
+    /// protocol (if the low bit is set) or a Swift protocol (if the low bit
+    /// is clear).
+    uintptr_t storage;
+    
+} TargetProtocolDescriptorRef;
+
+enum: uintptr_t {
+    IsObjCBit = 0x1U,
+};
+
+static uintptr_t getProtocolWithProtocolDescriptorRef(TargetProtocolDescriptorRef protocolDescriptorRef) {
+    return (protocolDescriptorRef.storage & ~IsObjCBit);
+}
+
+static bool isObjCProtocolDescriptorRef(TargetProtocolDescriptorRef protocolDescriptorRef) {
+    return (protocolDescriptorRef.storage & IsObjCBit) != 0;
+}
+
+enum: uint32_t {
+    NumWitnessTablesMask  = 0x00FFFFFFU,
+    ClassConstraintMask   = 0x80000000U,
+    HasSuperclassMask     = 0x40000000U,
+    SpecialProtocolMask   = 0x3F000000U,
+    SpecialProtocolShift  = 24U,
+};
+
+typedef struct  {
+    uint32_t Data;
+} ExistentialTypeFlags;
+
+typedef struct  {
+    size_t Data;
+} ExistentialTypeFlags_Old;
+
+static bool hasSuperclassConstraint(ExistentialTypeFlags flag) {
+    return flag.Data & HasSuperclassMask;
+}
+
+typedef struct {
+    ZIKSwiftMetadataKind Kind;
+} TargetMetadata;
+
+typedef struct {
+    ZIKSwiftMetadataKind Kind;
+    Class aClass;
+} ObjCClassWrapperMetadata;
+
+typedef union {
+    TargetMetadata *targetMetadata;
+    Class targetClass;
+    TargetProtocolDescriptorRef protocolDescriptorRef; // Swift 5
+    TargetProtocolDescriptor_Old *protocolDescriptor; // Swift 4
+} ExistentialTypeMetadataEntry;
+
+typedef struct {
+    ZIKSwiftMetadataKind Kind;
+    /// The number of witness tables and class-constrained-ness of the type.
+    ExistentialTypeFlags Flags;
+    
+    /// The number of protocols.
+    uint32_t NumProtocols;
+    
+    /// Size is NumProtocols
+    ExistentialTypeMetadataEntry protocols[];
+} ExistentialTypeMetadata; // Swift 5
+
+typedef struct {
+    ZIKSwiftMetadataKind Kind;
+    /// The number of witness tables and class-constrained-ness of the type.
+    ExistentialTypeFlags_Old Flags;
+    
+    /// The number of protocols.
+    size_t NumProtocols;
+    
+    /// Size is NumProtocols
+    ExistentialTypeMetadataEntry protocols[];
+} ExistentialTypeMetadata_Old; // Swift 4
+
+typedef struct {
+    TargetMetadata *metadata;
+} SwiftValueHeader;
+
+static TargetMetadata *swift_dynamicCastMetatype(TargetMetadata *sourceType, TargetMetadata *targetType) {
+    static TargetMetadata*(*_swift_dynamicCastMetatype)(TargetMetadata *, TargetMetadata *) = NULL;
+    static dispatch_once_t onceToken;
+    dispatch_once(&onceToken, ^{
+        ZIKImageRef libswiftCoreImage = [ZIKImageSymbol imageByName:"libswiftCore.dylib"];
+        _swift_dynamicCastMetatype = (TargetMetadata*(*)(TargetMetadata *, TargetMetadata *))[ZIKImageSymbol findSymbolInImage:libswiftCoreImage name:"_swift_dynamicCastMetatype"];
+    });
+    if (!_swift_dynamicCastMetatype) {
+        return NULL;
+    }
+    return _swift_dynamicCastMetatype(sourceType, targetType);
+}
+
+static bool swift_conformsToProtocols(bool isSourceClassType, TargetMetadata *type, ExistentialTypeMetadata *existentialType, uintptr_t* conformances) {
+    static uintptr_t(*_swift_conformsToProtocol)(TargetMetadata *, uintptr_t) = NULL;
+    static dispatch_once_t onceToken;
+    dispatch_once(&onceToken, ^{
+        ZIKImageRef libswiftCoreImage = [ZIKImageSymbol imageByName:"libswiftCore.dylib"];
+        _swift_conformsToProtocol = (uintptr_t(*)(TargetMetadata *, uintptr_t))[ZIKImageSymbol findSymbolInImage:libswiftCoreImage name:"_swift_conformsToProtocol"];
+    });
+    if (_swift_conformsToProtocol == NULL) {
+        return false;
+    }
+    
+    /*
+     ExistentialTypeMetadata layout after Xcode 10.2 with Swift 5:
+     
+     member       |    size (64-bit / 32-bit)
+     
+     kind           8 bit / 4 bit
+     flags          4 bit
+     numProtocols   4 bit
+     superclass     8 bit / 4 bit   // Metadata* or ObjCClassWrapperMetadata* or Class.
+                                    // Class constraint in protocol composition. If there's no class constraint, this doesn't exist
+     protocol1      8 bit / 4 bit   // ProtocolDescriptorRef or Protocol*
+     protocol2      8 bit / 4 bit   // ProtocolDescriptorRef or Protocol*
+     ...                            // The size is numProtocols
+     00000000                       // End with zero
+     
+     
+     ExistentialTypeMetadata layout before Xcode 10.2 and Swift 4.2:
+     
+     member       |    size (64-bit / 32-bit)
+     
+     kind           8 bit / 4 bit
+     flags          8 bit / 4 bit
+     numProtocols   8 bit / 4 bit
+     protocol1      8 bit / 4 bit   // ProtocolDescriptor or Protocol*
+     protocol2      8 bit / 4 bit   // ProtocolDescriptor or Protocol*
+     ...                            // The size is numProtocols
+     superclass     8 bit / 4 bit   // Metadata* or ObjCClassWrapperMetadata* or Class.
+                                    // Class constraint in protocol composition. If there's no class constraint, this doesn't exist
+     00000000                       // End with zero
+     */
+    
+    int32_t startIdx = 0;
+    int32_t maxIdx = 0;
+    bool isSwift5 = (existentialType->Kind != ZIKSwiftMetadataKindExistential_old);
+    
+    if (!isSwift5) {
+        size_t NumProtocols = ((ExistentialTypeMetadata_Old *)existentialType)->NumProtocols;
+        maxIdx = (int)NumProtocols - 1;
+    } else {
+        maxIdx = existentialType->NumProtocols - 1;
+    }
+    
+    // Target is a protocol composition: UIViewController & SomeProtocol
+    if (hasSuperclassConstraint(existentialType->Flags)) {
+        if (!isSourceClassType &&
+            type->Kind != ZIKSwiftMetadataKindObjCClassWrapper &&
+            type->Kind != ZIKSwiftMetadataKindObjCClassWrapper_old) {
+            return false;
+        }
+        
+        int classIdx = 0;
+        if (!isSwift5) {
+            size_t NumProtocols = ((ExistentialTypeMetadata_Old *)existentialType)->NumProtocols;
+            // The class constraint is at the end of the list
+            classIdx = (int)NumProtocols;
+            startIdx = 0;
+            maxIdx = (int)NumProtocols - 1;
+        } else {
+            // The class constraint is at the head of the list
+            classIdx = 0;
+            startIdx = 1;
+            maxIdx = existentialType->NumProtocols - 1 + startIdx;            
+        }
+        
+        TargetMetadata *targetMetadata = NULL;
+        if (!isSwift5) {
+            targetMetadata = ((ExistentialTypeMetadata_Old *)existentialType)->protocols[classIdx].targetMetadata;
+        } else {
+            targetMetadata = existentialType->protocols[classIdx].targetMetadata;
+        }
+        if (targetMetadata->Kind == ZIKSwiftMetadataKindObjCClassWrapper ||
+            targetMetadata->Kind == ZIKSwiftMetadataKindObjCClassWrapper_old) {
+            // Target is Metadata wrapper for pure objc class
+            Class sourceClass = nil;
+            if (isSourceClassType) {
+                sourceClass = (__bridge Class)type;
+            } else if (type->Kind == ZIKSwiftMetadataKindObjCClassWrapper ||
+                       type->Kind == ZIKSwiftMetadataKindObjCClassWrapper_old) {
+                sourceClass = ((ObjCClassWrapperMetadata *)type)->aClass;
+            } else {
+                return false;
+            }
+            Class targetClass = ((ObjCClassWrapperMetadata *)targetMetadata)->aClass;
+            if (![sourceClass isSubclassOfClass:targetClass]) {
+                return false;
+            }
+        } else if (targetMetadata->Kind > ZIKSwiftMetadataKindErrorObject) {
+            // Target is Class
+            Class sourceClass = nil;
+            if (isSourceClassType) {
+                sourceClass = (__bridge Class)type;
+            } else if (type->Kind == ZIKSwiftMetadataKindObjCClassWrapper ||
+                       type->Kind == ZIKSwiftMetadataKindObjCClassWrapper_old) {
+                sourceClass = ((ObjCClassWrapperMetadata *)type)->aClass;
+            } else {
+                return false;
+            }
+            Class targetClass = nil;
+            if (!isSwift5) {
+                targetClass = ((ExistentialTypeMetadata_Old *)existentialType)->protocols[classIdx].targetClass;
+            } else {
+                targetClass = existentialType->protocols[classIdx].targetClass;
+            }
+            if (![sourceClass isSubclassOfClass:targetClass]) {
+                return false;
+            }
+        } else if (!swift_dynamicCastMetatype(type, targetMetadata)) {
+            // Target is Metadata*
+            return false;
+        }
+    }
+    
+    // Check the protocol list
+    for (int i = startIdx; i <= maxIdx; i++) {
+        // Protocol format before Xcode 10.2 in Swift 4.2
+        TargetProtocolDescriptor_Old *protocolDescriptor = NULL;
+        // Protocol format after Xcode 10.2 in Swift 5
+        TargetProtocolDescriptorRef protocolDescriptorRef = {0};
+        if (!isSwift5) {
+            protocolDescriptor = ((ExistentialTypeMetadata_Old *)existentialType)->protocols[i].protocolDescriptor;
+            if (protocolDescriptor == NULL) {
+                if (i == startIdx) {
+                    return false;
+                }
+                break;
+            }
+        } else {
+            protocolDescriptorRef = existentialType->protocols[i].protocolDescriptorRef;
+            if (protocolDescriptorRef.storage == 0) {
+                if (i == startIdx) {
+                    return false;
+                }
+                break;
+            }
+        }
+        
+        // ObjC protocol is Protocol *
+        bool isObjCProtocol = false;
+        if (!isSwift5) {
+            isObjCProtocol = isObjCProtocolDescriptor(protocolDescriptor);
+        } else {
+            isObjCProtocol = isObjCProtocolDescriptorRef(protocolDescriptorRef);
+        }
+        if (isObjCProtocol) {
+            Class sourceClass = nil;
+            Protocol *targetProtocol;
+            if (!isSwift5) {
+                targetProtocol = (__bridge Protocol *)protocolDescriptor;
+            } else {
+                targetProtocol = (__bridge Protocol *)(void *)getProtocolWithProtocolDescriptorRef(protocolDescriptorRef);
+            }
+            
+            // Get class
+            if (isSourceClassType) {
+                sourceClass = (__bridge Class)type;
+            } else {
+                switch (type->Kind) {
+                    case ZIKSwiftMetadataKindClass: {
+                        sourceClass = (__bridge Class)type;
+                        break;
+                    }
+                    case ZIKSwiftMetadataKindObjCClassWrapper:
+                    case ZIKSwiftMetadataKindObjCClassWrapper_old: {
+                        ObjCClassWrapperMetadata *sourceType = (ObjCClassWrapperMetadata *)type;
+                        sourceClass = sourceType->aClass;
+                        break;
+                    }
+                    default:
+                        return false;
+                        break;
+                }
+            }
+            
+            if (![sourceClass conformsToProtocol:targetProtocol]) {
+                return false;
+            }
+        } else {
+            // Get ProtocolDescriptor
+            uintptr_t protocol;
+            if (!isSwift5) {
+                protocol = (uintptr_t)protocolDescriptor;
+            } else {
+                protocol = getProtocolWithProtocolDescriptorRef(protocolDescriptorRef);
+            }
+            uintptr_t result = _swift_conformsToProtocol(type, protocol);
+            if (result == 0) {
+                return false;
+            }
+        }
+    }
+    
+    return true;
+}
 
 static BOOL object_is_class(id obj) {
     if ([obj class] == obj) {
@@ -253,48 +448,50 @@ bool _swift_typeIsTargetType(id sourceType, id targetType) {
             return true;
         }
     }
-    
-    uintptr_t sourceTypeOpaqueValue;
-    uintptr_t sourceTypeMetadata;
+    bool isSourceClassType = false;
+    SwiftValueHeader *sourceTypeOpaqueValue;
+    TargetMetadata *sourceTypeMetadata;
     if (isSourceSwiftObjectType) {
         //swift class or swift object
-        sourceTypeMetadata = (uintptr_t)(sourceType);
-        sourceTypeOpaqueValue = (uintptr_t)(sourceType);
+        sourceTypeMetadata = (__bridge TargetMetadata *)(sourceType);
+        sourceTypeOpaqueValue = (__bridge SwiftValueHeader *)(sourceType);
+        isSourceClassType = true;
     } else if (isSourceSwiftValueType) {
         //swift struct or swift enum or swift protocol
         NSCAssert2([sourceType respondsToSelector:NSSelectorFromString(@"_swiftValue")], @"Swift value(%@) doesn't have method(%@), the API may be changed in libswiftCore.dylib.",sourceType,@"_swiftValue");
-        sourceTypeOpaqueValue = (uintptr_t)[sourceType performSelector:NSSelectorFromString(@"_swiftValue")];
+        sourceTypeOpaqueValue = (__bridge SwiftValueHeader *)[sourceType performSelector:NSSelectorFromString(@"_swiftValue")];
         //Get type metadata of this value, like `type(of: T)`
-        sourceTypeMetadata = (uintptr_t)[sourceType performSelector:NSSelectorFromString(@"_swiftTypeMetadata")];
+        sourceTypeMetadata = (__bridge TargetMetadata *)[sourceType performSelector:NSSelectorFromString(@"_swiftTypeMetadata")];
         //Get the first member `Kind` in TargetMetadata, it's an enum `MetadataKind`
-        ZIKSwiftMetadataKind type = (ZIKSwiftMetadataKind)dereferencedPointer(sourceTypeMetadata);
+        ZIKSwiftMetadataKind type = sourceTypeMetadata->Kind;
         //Source is a metatype, get its metadata
         if (type == ZIKSwiftMetadataKindMetatype || type == ZIKSwiftMetadataKindExistentialMetatype || type == ZIKSwiftMetadataKindMetatype_old || type == ZIKSwiftMetadataKindExistentialMetatype_old) {
             //OpaqueValue is struct SwiftValueHeader, `Metadata *` is its first member
-            sourceTypeMetadata = dereferencedPointer(sourceTypeOpaqueValue);
+            sourceTypeMetadata = sourceTypeOpaqueValue->metadata;
         }
     } else {
         //objc class or objc protocol
-        sourceTypeMetadata = (uintptr_t)sourceType;
-        sourceTypeOpaqueValue = (uintptr_t)sourceType;
+        sourceTypeMetadata = (__bridge TargetMetadata *)(sourceType);
+        sourceTypeOpaqueValue = (__bridge SwiftValueHeader *)(sourceType);
+        isSourceClassType = true;
     }
     
-    uintptr_t targetTypeOpaqueValue;
-    uintptr_t targetTypeMetadata;
+    SwiftValueHeader *targetTypeOpaqueValue;
+    TargetMetadata *targetTypeMetadata;
     uintptr_t targetWitnessTables = 0;
     if (isTargetSwiftValueType) {
         //swift struct or swift enum or swift protocol
         NSCAssert2([targetType respondsToSelector:NSSelectorFromString(@"_swiftValue")], @"Swift value(%@) doesn't have method(%@), the API may be changed in libswiftCore.dylib.",targetType,@"_swiftValue");
-        targetTypeOpaqueValue = (uintptr_t)[targetType performSelector:NSSelectorFromString(@"_swiftValue")];
+        targetTypeOpaqueValue = (__bridge SwiftValueHeader *)[targetType performSelector:NSSelectorFromString(@"_swiftValue")];
         //Get type metadata of this value, like `type(of: T)`
-        targetTypeMetadata = (uintptr_t)[targetType performSelector:NSSelectorFromString(@"_swiftTypeMetadata")];
+        targetTypeMetadata = (__bridge TargetMetadata *)[targetType performSelector:NSSelectorFromString(@"_swiftTypeMetadata")];
         //Get the first member `Kind` in TargetMetadata, it's an enum `MetadataKind`
-        ZIKSwiftMetadataKind type = (ZIKSwiftMetadataKind)dereferencedPointer(targetTypeMetadata);
+        ZIKSwiftMetadataKind type = targetTypeMetadata->Kind;
         //Target is a metatype, get its metadata
         if (type == ZIKSwiftMetadataKindMetatype || type == ZIKSwiftMetadataKindExistentialMetatype || type == ZIKSwiftMetadataKindMetatype_old || type == ZIKSwiftMetadataKindExistentialMetatype_old) {
             //OpaqueValue is struct SwiftValueHeader, `Metadata *` is its first member
-            targetTypeMetadata = dereferencedPointer(targetTypeOpaqueValue);
-            type = (ZIKSwiftMetadataKind)dereferencedPointer(targetTypeMetadata);
+            targetTypeMetadata = targetTypeOpaqueValue->metadata;
+            type = targetTypeMetadata->Kind;
         }
         //target should be swift protocol
         if (type != ZIKSwiftMetadataKindExistential && type != ZIKSwiftMetadataKindExistential_old) {
@@ -303,16 +500,16 @@ bool _swift_typeIsTargetType(id sourceType, id targetType) {
             //For pure objc class, can't check conformance with swift_conformsToProtocols, need to use swift type metadata of this class as sourceTypeMetadata, or just search protocol witness table for this class
             if (object_is_class(sourceType) && isSourceSwiftObjectType == NO &&
                 [[NSStringFromClass(sourceType) demangledAsSwift] zix_containsString:@"."] == NO) {
-                static void*(*swift_getObjCClassMetadata)(void*);
+                static TargetMetadata *(*swift_getObjCClassMetadata)(void*);
                 static dispatch_once_t onceToken;
                 dispatch_once(&onceToken, ^{
                     ZIKImageRef libswiftCoreImage = [ZIKImageSymbol imageByName:"libswiftCore.dylib"];
-                    swift_getObjCClassMetadata = [ZIKImageSymbol findSymbolInImage:libswiftCoreImage name:"_swift_getObjCClassMetadata"];
+                    swift_getObjCClassMetadata = (TargetMetadata*(*)(void*))[ZIKImageSymbol findSymbolInImage:libswiftCoreImage name:"_swift_getObjCClassMetadata"];
                 });
                 if (swift_getObjCClassMetadata) {
-                    sourceTypeMetadata = (uintptr_t)swift_getObjCClassMetadata((__bridge void *)(sourceType));
-                } else {
-                    return _objcClassConformsToSwiftProtocolName(sourceType, [targetType description]);
+                    // type is ZIKSwiftMetadataKindObjCClassWrapper
+                    sourceTypeMetadata = swift_getObjCClassMetadata((__bridge void *)(sourceType));
+                    isSourceClassType = false;
                 }
             }
         }
@@ -321,11 +518,11 @@ bool _swift_typeIsTargetType(id sourceType, id targetType) {
         if ([targetType isKindOfClass:NSClassFromString(@"Protocol")] == NO) {
             return false;
         }
-        targetTypeMetadata = (uintptr_t)targetType;
-        targetTypeOpaqueValue = (uintptr_t)targetType;
+        targetTypeMetadata = (__bridge TargetMetadata *)targetType;
+        targetTypeOpaqueValue = (__bridge SwiftValueHeader *)targetType;
     }
     
-    bool result = swift_conformsToProtocols(0, sourceTypeMetadata, targetTypeMetadata, &targetWitnessTables);
+    bool result = swift_conformsToProtocols(isSourceClassType, (TargetMetadata *)sourceTypeMetadata, (ExistentialTypeMetadata *)targetTypeMetadata, &targetWitnessTables);
     return result;
 }
 
@@ -391,27 +588,27 @@ NSString *codeForImportingRouters() {
     NSMutableArray<Class> *objcServiceRouters = [NSMutableArray array];
     NSMutableArray<Class> *objcServiceAdapters = [NSMutableArray array];
     
-    ZIKRouter_enumerateClassList(^(__unsafe_unretained Class class) {
+    ZIKRouter_enumerateClassList(^(__unsafe_unretained Class aClass) {
 #if __has_include("ZIKViewRouter.h")
-        if ([ZIKViewRouteRegistry isRegisterableRouterClass:class]) {
-            if ([NSStringFromClass(class) zix_containsString:@"."]) {
+        if ([ZIKViewRouteRegistry isRegisterableRouterClass:aClass]) {
+            if ([NSStringFromClass(aClass) zix_containsString:@"."]) {
                 return;
             }
-            if ([class isAdapter]) {
-                [objcViewAdapters addObject:class];
+            if ([aClass isAdapter]) {
+                [objcViewAdapters addObject:aClass];
             } else {
-                [objcViewRouters addObject:class];
+                [objcViewRouters addObject:aClass];
             }
         } else
 #endif
-        if ([ZIKServiceRouteRegistry isRegisterableRouterClass:class]) {
-            if ([NSStringFromClass(class) zix_containsString:@"."]) {
+        if ([ZIKServiceRouteRegistry isRegisterableRouterClass:aClass]) {
+            if ([NSStringFromClass(aClass) zix_containsString:@"."]) {
                 return;
             }
-            if ([class isAdapter]) {
-                [objcServiceAdapters addObject:class];
+            if ([aClass isAdapter]) {
+                [objcServiceAdapters addObject:aClass];
             } else {
-                [objcServiceRouters addObject:class];
+                [objcServiceRouters addObject:aClass];
             }
         }
     });
@@ -421,17 +618,17 @@ NSString *codeForImportingRouters() {
     NSMutableString *code = [NSMutableString string];
     
     void(^generateCodeForImportingRouters)(NSArray<Class> *) = ^(NSArray<Class> *routers) {
-        for (Class class in routers) {
-            NSBundle *bundle = [NSBundle bundleForClass:class];
-            NSCAssert1(bundle, @"Failed to get bundle for class %@",NSStringFromClass(class));
+        for (Class aClass in routers) {
+            NSBundle *bundle = [NSBundle bundleForClass:aClass];
+            NSCAssert1(bundle, @"Failed to get bundle for class %@",NSStringFromClass(aClass));
             if ([bundle isEqual:mainBundle]) {
-                [code appendFormat:@"\n#import \"%@.h\"",NSStringFromClass(class)];
+                [code appendFormat:@"\n#import \"%@.h\"",NSStringFromClass(aClass)];
             } else {
                 NSString *bundleName = [bundle.infoDictionary objectForKey:(__bridge NSString *)kCFBundleNameKey];
-                NSCAssert2(bundle, @"Failed to get bundle name for class %@, bundle:%@",NSStringFromClass(class), bundle);
-                NSString *headerPath = [bundle.bundlePath stringByAppendingPathComponent:[NSString stringWithFormat:@"Headers/%@.h",NSStringFromClass(class)]];
+                NSCAssert2(bundle, @"Failed to get bundle name for class %@, bundle:%@",NSStringFromClass(aClass), bundle);
+                NSString *headerPath = [bundle.bundlePath stringByAppendingPathComponent:[NSString stringWithFormat:@"Headers/%@.h",NSStringFromClass(aClass)]];
                 if ([[NSFileManager defaultManager] fileExistsAtPath:headerPath]) {
-                    [code appendFormat:@"\n#import <%@/%@.h>",bundleName,NSStringFromClass(class)];
+                    [code appendFormat:@"\n#import <%@/%@.h>",bundleName,NSStringFromClass(aClass)];
                 } else {
                     [code appendFormat:@"\n#import <%@/%@.h>",bundleName,bundleName];
                 }
@@ -471,36 +668,36 @@ NSString *codeForRegisteringRouters() {
     NSMutableArray<Class> *swiftServiceRouters = [NSMutableArray array];
     NSMutableArray<Class> *swiftServiceAdapters = [NSMutableArray array];
     
-    ZIKRouter_enumerateClassList(^(__unsafe_unretained Class class) {
+    ZIKRouter_enumerateClassList(^(__unsafe_unretained Class aClass) {
 #if __has_include("ZIKViewRouter.h")
-        if ([ZIKViewRouteRegistry isRegisterableRouterClass:class]) {
-            if ([class isAdapter]) {
-                if ([NSStringFromClass(class) zix_containsString:@"."]) {
-                    [swiftViewAdapters addObject:class];
+        if ([ZIKViewRouteRegistry isRegisterableRouterClass:aClass]) {
+            if ([aClass isAdapter]) {
+                if ([NSStringFromClass(aClass) zix_containsString:@"."]) {
+                    [swiftViewAdapters addObject:aClass];
                 } else {
-                    [objcViewAdapters addObject:class];
+                    [objcViewAdapters addObject:aClass];
                 }
             } else {
-                if ([NSStringFromClass(class) zix_containsString:@"."]) {
-                    [swiftViewRouters addObject:class];
+                if ([NSStringFromClass(aClass) zix_containsString:@"."]) {
+                    [swiftViewRouters addObject:aClass];
                 } else {
-                    [objcViewRouters addObject:class];
+                    [objcViewRouters addObject:aClass];
                 }
             }
         } else
 #endif
-        if ([ZIKServiceRouteRegistry isRegisterableRouterClass:class]) {
-            if ([class isAdapter]) {
-                if ([NSStringFromClass(class) zix_containsString:@"."]) {
-                    [swiftServiceAdapters addObject:class];
+        if ([ZIKServiceRouteRegistry isRegisterableRouterClass:aClass]) {
+            if ([aClass isAdapter]) {
+                if ([NSStringFromClass(aClass) zix_containsString:@"."]) {
+                    [swiftServiceAdapters addObject:aClass];
                 } else {
-                    [objcServiceAdapters addObject:class];
+                    [objcServiceAdapters addObject:aClass];
                 }
             } else {
-                if ([NSStringFromClass(class) zix_containsString:@"."]) {
-                    [swiftServiceRouters addObject:class];
+                if ([NSStringFromClass(aClass) zix_containsString:@"."]) {
+                    [swiftServiceRouters addObject:aClass];
                 } else {
-                    [objcServiceRouters addObject:class];
+                    [objcServiceRouters addObject:aClass];
                 }
             }
         }
@@ -509,13 +706,13 @@ NSString *codeForRegisteringRouters() {
     NSMutableString *code = [NSMutableString string];
     
     void(^generateCodeForObjcRouters)(NSArray<Class> *) = ^(NSArray<Class> *routers) {
-        for (Class class in routers) {
-            [code appendFormat:@"[%@ registerRoutableDestination];\n",NSStringFromClass(class)];
+        for (Class aClass in routers) {
+            [code appendFormat:@"[%@ registerRoutableDestination];\n",NSStringFromClass(aClass)];
         }
     };
     void(^generateCodeForSwiftRouters)(NSArray<Class> *) = ^(NSArray<Class> *routers) {
-        for (Class class in routers) {
-            [code appendFormat:@"%@.registerRoutableDestination()\n",NSStringFromClass(class)];
+        for (Class aClass in routers) {
+            [code appendFormat:@"%@.registerRoutableDestination()\n",NSStringFromClass(aClass)];
         }
     };
     

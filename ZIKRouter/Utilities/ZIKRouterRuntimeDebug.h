@@ -16,10 +16,21 @@ NS_ASSUME_NONNULL_BEGIN
 #if DEBUG
 
 /**
- Check whether a swift type is the target type(is same type or subclass, or conforms to the target protocol), works like `is` operator in swift. Only available in DEBUG mode.
+ Check whether a swift type is the target type (is same type or subclass, or conforms to the target protocol), works like `is` operator in swift. Only available in DEBUG mode.
  @warning
- This function is for type safe checking in DEBUG mode. It uses private APIs in Swift bridging class, and these code won't be compiled in release mode. It will search private function pointer in libswiftCore.dylib when first invoked:
- `bool _conformsToProtocols(const OpaqueValue *value, const Metadata *type, const ExistentialTypeMetadata *existentialType, const WitnessTable **conformances)`. See `https://github.com/apple/swift/blob/master/stdlib/public/runtime/Casting.cpp`.
+ This function is for type safe checking in DEBUG mode. It uses private APIs in Swift bridging class, and Swift ABI function `_swift_conformsToProtocol` `_swift_dynamicCastMetatype` `_swift_getObjCClassMetadata`. These code won't be compiled in release mode.
+ 
+ @code
+ _swift_typeIsTargetType(SwiftClass.self, SwiftClassProtocol.self)
+ _swift_typeIsTargetType(SwiftClass.self, (ProtocolA & ProtocolB).self)
+ _swift_typeIsTargetType(SwiftClass.self, (SwiftClass & ProtocolA & ProtocolB).self)
+ 
+ _swift_typeIsTargetType(SwiftStruct.self, SwiftStruct.self)
+ _swift_typeIsTargetType(SwiftStruct.self, SwiftStructProtocol.self)
+ 
+ _swift_typeIsTargetType(SwiftEnum.self, SwiftEnum.self)
+ _swift_typeIsTargetType(SwiftEnum.self, SwiftEnumProtocol.self)
+ @endcode
  
  @since Swift 3.2
  
