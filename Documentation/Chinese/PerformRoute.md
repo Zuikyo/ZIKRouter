@@ -185,7 +185,7 @@ class TestViewController: UIViewController {
 
 ### Service Router
 
-Service router 只是用于返回一个对象。如果你需要自定义 service router 的路由，可以重写`-performRouteOnDestination:configuration:`。
+Service router 只是用于返回一个对象。如果你需要自定义 service router 的路由操作，可以重写`-performRouteOnDestination:configuration:`。
 
 Service router 的使用和 view router 也是类似的，只是去掉了界面跳转的封装，要比 view router 更加简单和通用。而大多数 service 并不需要 view controller 那样的一个路由过程，只是需要获取某个 service 模块。此时可以使用 Make Destination。
 

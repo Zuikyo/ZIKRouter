@@ -48,7 +48,7 @@ typedef NS_ENUM(NSInteger,ZIKRouterTestType) {
 
 @interface MasterViewController () <UIViewControllerPreviewingDelegate>
 @property (nonatomic, strong) NSArray<NSString *> *cellNames;
-@property (nonatomic, strong) NSArray<Class> *routerClasses;
+@property (nonatomic, strong) NSArray<Class> *routerTypes;
 @end
 
 @implementation MasterViewController
@@ -78,28 +78,28 @@ typedef NS_ENUM(NSInteger,ZIKRouterTestType) {
                        @"URL Router",
                        @"Test Modularization"
                        ];
-    self.routerClasses = @[
-                           [TestPushViewRouter class],
-                           [TestPresentModallyViewRouter class],
-                           [TestPresentAsPopoverViewRouter class],
-                           [TestPerformSegueViewRouter class],
-                           [TestShowViewRouter class],
-                           [TestShowDetailViewRouter class],
-                           [TestAddAsChildViewRouter class],
-                           [TestAddAsSubviewViewRouter class],
-                           [TestCustomViewRouter class],
-                           [TestMakeDestinationViewRouter class],
-                           [TestAutoCreateViewRouter class],
-                           [TestCircularDependenciesViewRouter class],
-                           [TestClassHierarchyViewRouter class],
-                           [TestServiceRouterViewRouter class],
-                           ZIKRouterToView(SwiftSampleViewInput),
-                           ZIKViewRouter.toIdentifier(@"testEasyFactory"),
-                           [TestURLRouterViewRouter class],
-                           ZIKRouterToView(ZIKLoginViewInput)
-                           ];
+    self.routerTypes = @[
+                         [TestPushViewRouter class],
+                         [TestPresentModallyViewRouter class],
+                         [TestPresentAsPopoverViewRouter class],
+                         [TestPerformSegueViewRouter class],
+                         [TestShowViewRouter class],
+                         [TestShowDetailViewRouter class],
+                         [TestAddAsChildViewRouter class],
+                         [TestAddAsSubviewViewRouter class],
+                         [TestCustomViewRouter class],
+                         [TestMakeDestinationViewRouter class],
+                         [TestAutoCreateViewRouter class],
+                         [TestCircularDependenciesViewRouter class],
+                         [TestClassHierarchyViewRouter class],
+                         [TestServiceRouterViewRouter class],
+                         ZIKRouterToView(SwiftSampleViewInput),
+                         ZIKViewRouter.toIdentifier(@"testEasyFactory"),
+                         [TestURLRouterViewRouter class],
+                         ZIKRouterToView(ZIKLoginViewInput)
+                         ];
     
-    NSAssert(self.cellNames.count == self.routerClasses.count, nil);
+    NSAssert(self.cellNames.count == self.routerTypes.count, nil);
 }
 
 - (void)viewWillAppear:(BOOL)animated {
@@ -157,8 +157,8 @@ typedef NS_ENUM(NSInteger,ZIKRouterTestType) {
 
 - (Class)routerClassForIndexPath:(NSIndexPath *)indexPath {
     Class routerClass;
-    if (self.routerClasses.count > indexPath.row) {
-        routerClass = self.routerClasses[indexPath.row];
+    if (self.routerTypes.count > indexPath.row) {
+        routerClass = self.routerTypes[indexPath.row];
     }
     return routerClass;
 }

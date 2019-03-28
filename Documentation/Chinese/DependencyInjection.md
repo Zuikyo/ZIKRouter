@@ -54,11 +54,6 @@ class PersonConfiguration: ZIKPerformRouteConfiguration, PersonConfig {
     func constructWithName(name: Name) {
         self.name = name
     }
-    override func copy(with zone: NSZone? = nil) -> Any {
-        let copy = super.copy(with: zone) as! PersonConfiguration
-        copy.name = self.name
-        return copy
-    }
 }
 class PersonRouter: ZIKServiceRouter<Person, PersonConfiguration> {
     ...    
@@ -94,11 +89,6 @@ let person = Router.makeDestination(to: RoutableServiceModule<PersonConfig>(), p
 @implementation PersonConfiguration
 - (void)constructWithName:(id<Name>)name {
     self.name = name;
-}
-- (id)copyWithZone:(nullable NSZone *)zone {
-    PersonConfiguration *copy = [super copyWithZone:zone];
-    copy.name = self.name;
-    return copy;
 }
 @end
 
