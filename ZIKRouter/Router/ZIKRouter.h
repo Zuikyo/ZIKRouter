@@ -14,9 +14,11 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-/// Enable this to check whether all routers and routable protocols are properly implemented.
+/// Enable this to check whether all routers and routable protocols are properly implemented. If you wan't to disable this checking, add ZIKROUTER_CHECK=0 in Build Settings -> Preprocessor Macros of ZIKRouter target.
 #ifdef DEBUG
+#ifndef ZIKROUTER_CHECK
 #define ZIKROUTER_CHECK 1
+#endif
 #else
 #define ZIKROUTER_CHECK 0
 #endif
