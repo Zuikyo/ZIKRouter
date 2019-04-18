@@ -42,6 +42,26 @@ Service Router 可以管理任意自定义模块。View Router 进一步封装�
 - [x] 高性能的自动注册方式，也支持手动注册
 - [x] 支持多种路由实现方式： 强大的 router 子类、简单的工厂 block 和 C 函数
 
+## 快速入门
+
+1. [创建 Router](#1-创建-Router)
+   1. [Router 子类](#11-Router-子类)
+   2. [快捷注册](#12-快捷注册)
+2. [声明 Routable 类型](#2-声明-Routable-类型)
+3. [View Router](#View-Router)
+   1. [直接跳转](#直接跳转)
+   2. [跳转前进行配置](#跳转前进行配置)
+   3. [Make Destination](#Make-Destination)
+   4. [更强大的传参方式](#更强大的传参方式)
+   5. [Perform on Destination](#Perform-on-Destination)
+   6. [Prepare on Destination](#Prepare-on-Destination)
+   7. [Remove](#Remove)
+   8. [Adapter](#Adapter)
+   9. [URL Router](#URL-Router)
+4. [Service Router](#Service-Router)
+5. [Demo 和实践](#Demo-和实践)
+6. [代码模板](#代码模板)
+
 ## 文档目录
 
 ### 设计思路
@@ -68,26 +88,6 @@ Service Router 可以管理任意自定义模块。View Router 进一步封装�
 6. [模块化和解耦](ModuleAdapter.md)
 
 [常见问题](FAQ.md)
-
-## 快速入门
-
-1. [创建 Router](#1-创建-Router)
-   1. [Router 子类](#11-Router-子类)
-   2. [快捷注册](#12-快捷注册)
-2. [声明 Routable 类型](#2-声明-Routable-类型)
-3. [View Router](#View-Router)
-   1. [直接跳转](#直接跳转)
-   2. [跳转前进行配置](#跳转前进行配置)
-   3. [Make Destination](#Make-Destination)
-   4. [更强大的传参方式](#更强大的传参方式)
-   5. [Perform on Destination](#Perform-on-Destination)
-   6. [Prepare on Destination](#Prepare-on-Destination)
-   7. [Remove](#Remove)
-   8. [Adapter](#Adapter)
-   9. [URL Router](#URL-Router)
-4. [Service Router](#Service-Router)
-5. [Demo 和实践](#Demo-和实践)
-6. [代码模板](#代码模板)
 
 ## Requirements
 
@@ -355,7 +355,7 @@ DeclareRoutableView(NoteEditorViewController, NoteEditorViewRouter)
 
 </details>
 
-**如果获取路由时，protocol 未经过声明，将会产生编译错误。这是 ZIKRouter 最特别的功能之一，可以让你更简单地管理所使用的路由接口。**
+**如果获取路由时，protocol 未经过声明，将会产生编译错误。这是 ZIKRouter 最特别的功能之一，可以让你更安全、更简单地管理所使用的路由接口。**
 
 Swift 中使用未声明的 protocol：
 
@@ -667,7 +667,7 @@ class EditorViewRouter: ZIKViewRouter<NoteEditorViewController, ZIKViewMakeableC
 
 </details>
 
-也可以用注册 config 创建函数的方式创建路由，不需要使用 router 子类：
+也可以用注册 config 工厂函数的方式创建路由，不需要使用 router 子类：
 
 ```swift
 // 注册 EditorViewModuleInput 和自定义 configuration 的创建函数
@@ -711,7 +711,7 @@ Note *note = ...
 ```
 </details>
 
-这种方式省去了很多胶水代码，通过闭包直接传参，无需通过属性保存参数，而且每个模块都能用泛型和 protocol 重新声明参数类型，同时所有的传参都能统一到一个`makeDestinationWith`方法上。
+这种方式省去了很多胶水代码，通过闭包直接传参，无需通过属性保存参数，而且每个模块都能用泛型和 protocol 重新声明参数类型，并且所有的传参都能统一到一个`makeDestinationWith`方法上，后续可以实现通过 URL 统一调用。
 
 更详细的内容，可以参考[自定义 configuration 传参](CustomConfiguration.md)。
 
@@ -996,7 +996,7 @@ class TestViewController: UIViewController {
 ```
 </details>
 
-使用 required protocol 和 provided protocol，就可以让模块间完美解耦，并进行接口适配，同时还能用 required protocol 声明模块所需的依赖。不再需要用一个公共库来集中存放所有的 protocol，即便模块间有互相依赖，也可以各自单独进行编译。
+使用 required protocol 和 provided protocol，就可以让模块间完美解耦，并进行接口适配，同时还能用 required protocol 声明模块所需的依赖。并且 required protocol 只需要是 provided protocol 的子集，让使用者只接触到自己用到的那些接口。此时不再需要用一个公共库来集中存放所有的 protocol，即便模块间有互相依赖，也可以各自单独进行编译。
 
 使用 required protocol 需要将 required protocol 和 provided protocol 进行对接。更详细的内容，可以参考[模块化和解耦](ModuleAdapter.md)。
 
@@ -1010,7 +1010,7 @@ ZIKRouter 和其他 URL Router 框架兼容。
 class NoteEditorViewRouter: ZIKViewRouter<NoteEditorViewController, ViewRouteConfig> {
     override class func registerRoutableDestination() {
         //注册字符串
-        registerIdentifier("myapp://noteEditor")
+        registerIdentifier("noteEditor")
     }
 }
 ```
@@ -1022,7 +1022,7 @@ class NoteEditorViewRouter: ZIKViewRouter<NoteEditorViewController, ViewRouteCon
 
 + (void)registerRoutableDestination {
     //注册字符串
-    [self registerIdentifier:@"myapp://noteEditor"];
+    [self registerIdentifier:@"noteEditor"];
 }
 
 @end
@@ -1090,6 +1090,15 @@ public func application(_ app: UIApplication, open url: URL, options: [UIApplica
 }
 ```
 </details>
+
+你可以使用自定义的 URL router 作为父类，重写方法并添加更多强大的功能，例如：
+
+1. 通过 URL 调用 destination 的任意方法。Router 可以从 URL 中获取参数，并且通过 OC runtime 动态调用。例如这样一个 URL：`router://loginView/?action=callMethod&method=fillAccount&account=abc`，可以实现显示登录界面并调用原生方法填充账号信息
+2. 执行完方法后，自动把数据回调给 h5。如果你使用的是`JavaScriptBridge`，可以把  `responseCallback` 传递给 configuration 的 `userInfo`，并在执行方法之后传递调用的结果
+3. 除了显示界面，也可以调用内置模块
+4. 进行多级跳转。可以从 URL 的 path 中获取多个 identifier，从而按顺序显示多个界面，可以通过跳转时 configuration 的 `successHandler` 参数实现逐个显示的效果
+
+这些通过 router 父类都可以很轻松地实现。可以参考 demo 中的`ZIKViewURLRouter`和`ZIKServiceURLRouter`。由于每个项目对 URL 路由的需求都不一样，因此 ZIKRouter 没有默认添加这些功能。你可以按照项目需求实现自己的 URL 路由。
 
 ### Service Router
 

@@ -50,6 +50,26 @@ Service Router 可以管理任意自定义模块。View Router 进一步封装�
 - [x] Send custom events to router
 - [x] Auto register all routers
 
+## Quick Start Guide
+
+1. [Create Router](#1-Create-Router)
+   1. [Router Subclass](#11-Router-Subclass)
+   2. [Simple Router](#12-Simple-Router)
+2. [Declare Routable Type](#2-Declare-Routable-Type)
+3. [View Router](#View-Router)
+   1. [Transition directly](#Transition-directly)
+   2. [Prepare before Transition](#Prepare-before-Transition)
+   3. [Make Destination](#Make-Destination)
+   4. [Transfer Parameters in a Powerful Pattern](#Transfer-Parameters-in-a-Powerful-Pattern)
+   5. [Perform on Destination](#Perform-on-Destination)
+   6. [Prepare on Destination](#Prepare-on-Destination)
+   7. [Remove](#Remove)
+   8. [Adapter](#Adapter)
+   9. [URL Router](#URL-Router)
+4. [Service Router](#Service-Router)
+5. [Demo and Practice](#Demo-and-Practice)
+6. [File Template](#File-Template)
+
 ## Documentation
 
 ### Design Idea
@@ -76,28 +96,6 @@ Service Router 可以管理任意自定义模块。View Router 进一步封装�
 6. [Module Adapter](Documentation/English/ModuleAdapter.md)
 
 [FAQ](Documentation/English/FAQ.md)
-
-
-
-## Quick Start Guide
-
-1. [Create Router](#1-Create-Router)
-   1. [Router Subclass](#11-Router-Subclass)
-   2. [Simple Router](#12-Simple-Router)
-2. [Declare Routable Type](#2-Declare-Routable-Type)
-3. [View Router](#View-Router)
-   1. [Transition directly](#Transition-directly)
-   2. [Prepare before Transition](#Prepare-before-Transition)
-   3. [Make Destination](#Make-Destination)
-   4. [Transfer Parameters in a Powerful Pattern](#Transfer-Parameters-in-a-Powerful-Pattern)
-   5. [Perform on Destination](#Perform-on-Destination)
-   6. [Prepare on Destination](#Prepare-on-Destination)
-   7. [Remove](#Remove)
-   8. [Adapter](#Adapter)
-   9. [URL Router](#URL-Router)
-4. [Service Router](#Service-Router)
-5. [Demo and Practice](#Demo-and-Practice)
-6. [File Template](#File-Template)
 
 ## Requirements
 
@@ -367,7 +365,7 @@ DeclareRoutableView(NoteEditorViewController, NoteEditorViewRouter)
 
 </details>
 
-**If you use an undeclared protocol for routing, there will be compile time error. So it's much easier to manage protocols and to know which protocols are routable.**
+**If you use an undeclared protocol for routing, there will be compile time error. So it's much safer and easier to manage protocols and to know which protocols are routable.**
 
 Unroutable error in Swift:
 
@@ -1039,7 +1037,7 @@ You can register string identifier with router:
 class NoteEditorViewRouter: ZIKViewRouter<NoteEditorViewController, ViewRouteConfig> {
     override class func registerRoutableDestination() {
         // Register identifier with this router
-        registerIdentifier("myapp://noteEditor")
+        registerIdentifier("noteEditor")
     }
 }
 ```
@@ -1051,7 +1049,7 @@ class NoteEditorViewRouter: ZIKViewRouter<NoteEditorViewController, ViewRouteCon
 
 + (void)registerRoutableDestination {
     // Register identifier with this router
-    [self registerIdentifier:@"myapp://noteEditor"];
+    [self registerIdentifier:@"noteEditor"];
 }
 
 @end
@@ -1119,6 +1117,17 @@ public func application(_ app: UIApplication, open url: URL, options: [UIApplica
 }
 ```
 </details>
+
+You can create custom URL router as parent class, add more powerful features in it, such as:
+
+1. Call any methods of destination via url. the URL router can get parameters and call methods with OC runtime. Think about this URL: `router://loginView/?action=callMethod&method=fillAccount&account=abc`, it can open login view and call native method to fill a default account
+2. Automatically give data back to h5 after performing action. If you are using `JavaScriptBridge`, the you can pass the `responseCallback` to router's userInfo and call it after performing action
+3. Call native services via URL, not only open view
+4. Get multi identifiers from `path` in url , and present multi views in order with `successHandler` in router's configuration
+
+These features are not hard to implement with  parent router class. You can see `ZIKViewURLRouter` and `ZIKServiceURLRouter` in the demo. 
+
+Since each project has different requirements for URL router, ZIKRouter didn't implement those features. You can write your URL router by yourself.
 
 ### Service Router
 

@@ -15,9 +15,11 @@ NS_ASSUME_NONNULL_BEGIN
  
  It's easy to add other custom features with a custom URL router parent class, such as:
  
- 1. Call any methods of destination via url. the URL router can get parameters and call methods with OC runtime: router://LoginView/?action=callMethod&method=fillAccount&account=abc
+ 1. Call any methods of destination via url. the URL router can get parameters and call methods with OC runtime: router://loginView/?action=callMethod&method=fillAccount&account=abc
  
  2. Automatically give data back to h5 after performing action. If you are using JavaScriptBridge, the you can pass the `responseCallback` to router's userInfo and call it after performing action.
+ 
+ 3. Get multi identifiers from `path` in url , and present multi views in order with `successHandler` in router's configuration.
  
  You can implement these features by yourself if needed.
  */

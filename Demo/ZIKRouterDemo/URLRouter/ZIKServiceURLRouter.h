@@ -10,7 +10,17 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-/// A URL router to search and handle view routing from url.
+/**
+ A URL router to search and call service from url.
+ 
+ It's easy to add other custom features with a custom URL router parent class, such as:
+ 
+ 1. Call any methods of destination via url. the URL router can get parameters and call methods with OC runtime: router://loginService/?action=callMethod&method=fillAccount&account=abc
+ 
+ 2. Automatically give data back to h5 after performing action. If you are using JavaScriptBridge, the you can pass the `responseCallback` to router's userInfo and call it after performing action.
+ 
+ You can implement these features by yourself if needed.
+ */
 @interface ZIKServiceURLRouter<__covariant Destination, __covariant RouteConfig: ZIKPerformRouteConfiguration *> : ZIKServiceRouter<Destination, RouteConfig>
 
 /// Perform route for the url. It will search router with `+routerForURL:`, get userInfo with `+userInfoFromURL:` then perform route.
