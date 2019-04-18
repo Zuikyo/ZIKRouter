@@ -28,7 +28,7 @@ DeclareRoutableView(UIViewController, URLRouteHandler)
         return;
     }
     NSDictionary *userInfo = router.original_configuration.userInfo;
-    if ([userInfo objectForKey:@"url"]) {
+    if ([userInfo objectForKey:@"origin-url"]) {
         // From URL Scheme
         NSString *title = destination.title;
         if (title == nil) {

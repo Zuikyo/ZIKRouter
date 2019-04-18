@@ -56,13 +56,31 @@
     [self.view addSubview:jumpButton];
     jumpButton.translatesAutoresizingMaskIntoConstraints = NO;
     [jumpButton.centerXAnchor constraintEqualToAnchor:pickerView.centerXAnchor].active = YES;
-    [jumpButton.bottomAnchor constraintEqualToAnchor:self.view.bottomAnchor constant:-50].active = YES;
+    [jumpButton.bottomAnchor constraintEqualToAnchor:self.view.bottomAnchor constant:-100].active = YES;
     [jumpButton.widthAnchor constraintEqualToConstant:100].active = YES;
     [jumpButton.heightAnchor constraintEqualToConstant:30].active = YES;
+    
+    UIButton *callServiceButton = [UIButton buttonWithType:UIButtonTypeSystem];
+    [callServiceButton setTitle:@"call service via URL" forState:UIControlStateNormal];
+    [callServiceButton addTarget:self action:@selector(callServiceViaURL:) forControlEvents:UIControlEventTouchUpInside];
+    [self.view addSubview:callServiceButton];
+    callServiceButton.translatesAutoresizingMaskIntoConstraints = NO;
+    [callServiceButton.centerXAnchor constraintEqualToAnchor:pickerView.centerXAnchor].active = YES;
+    [callServiceButton.bottomAnchor constraintEqualToAnchor:self.view.bottomAnchor constant:-50].active = YES;
+    [callServiceButton.widthAnchor constraintEqualToConstant:200].active = YES;
+    [callServiceButton.heightAnchor constraintEqualToConstant:30].active = YES;
 }
 
 - (void)openURL:(id)sender {
-    NSString *url = [NSString stringWithFormat:@"router://%@",self.selectedIdentifier];
+    NSString *url = [NSString stringWithFormat:@"router://%@/?action=showAlert",self.selectedIdentifier];
+    [[UIApplication sharedApplication] openURL:[NSURL URLWithString:url]];
+}
+
+- (void)callServiceViaURL:(id)sender {
+    NSString *url = [NSString
+                     stringWithFormat:@"router://alert/?action=showAlert&title=%@&message=%@",
+                     [@"Alert from URL" stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding],
+                     [@"This alert service is called via URL" stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding]];
     [[UIApplication sharedApplication] openURL:[NSURL URLWithString:url]];
 }
 

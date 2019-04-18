@@ -18,22 +18,8 @@
 
 + (ZIKViewRouterType *)routerForURL:(NSURL *)url {
     NSString *identifier = url.host;
-    return ZIKViewRouter.toIdentifier(identifier);
+    return _ZIKViewRouterToIdentifier(identifier);
 }
-
-+ (nullable instancetype)performPath:(ZIKViewRoutePath *)path url:(NSURL *)url {
-    ZIKViewRouterType *routerType = [self routerForURL:url];
-    NSDictionary *userInfo;
-    if ([routerType respondsToSelector:@selector(userInfoFromURL:)]) {
-        userInfo = [(id)routerType userInfoFromURL:url];
-    }
-    
-    return (id)[routerType performPath:path configuring:^(ZIKViewRouteConfiguration * _Nonnull config) {
-        [config addUserInfo:userInfo];
-    }];
-}
-
-# pragma mark Override
 
 + (NSDictionary *)userInfoFromURL:(NSURL *)url {
     if (!url) {
@@ -50,6 +36,7 @@
             if (kv.count == 2) {
                 NSString *key = [kv firstObject];
                 NSString *value = [kv lastObject];
+                value = [value stringByReplacingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
                 userInfo[key] = value;
             }
         }
@@ -57,24 +44,96 @@
     return userInfo;
 }
 
++ (ZIKViewRoutePath *)pathFromURL:(NSURL *)url source:(UIViewController *)source {
+    NSDictionary *userInfo = [self userInfoFromURL:url];
+    return [self pathForTransitionType:userInfo[@"transition-type"] source:source];
+}
+
++ (ZIKViewRoutePath *)pathForTransitionType:(NSString *)type source:(UIViewController *)source {
+    if (!type) {
+        if (@available(iOS 8.0, *)) {
+            return ZIKViewRoutePath.showFrom(source);
+        } else {
+            return ZIKViewRoutePath.presentModallyFrom(source);
+        }
+    }
+    ZIKViewRoutePath *path;
+    if ([type isEqualToString:@"present"]) {
+        path = ZIKViewRoutePath.presentModallyFrom(source);
+    } else if ([type isEqualToString:@"push"]) {
+        path = ZIKViewRoutePath.pushFrom(source);
+    } else if ([type isEqualToString:@"show"]) {
+        path = ZIKViewRoutePath.showFrom(source);
+    } else if ([type isEqualToString:@"showDetail"]) {
+        path = ZIKViewRoutePath.showDetailFrom(source);
+    } else if ([type isEqualToString:@"addAsSubview"]) {
+        path = ZIKViewRoutePath.addAsSubviewFrom(source.view);
+    } else {
+        if (@available(iOS 8.0, *)) {
+            path = ZIKViewRoutePath.showFrom(source);
+        } else {
+            path = ZIKViewRoutePath.presentModallyFrom(source);
+        }
+    }
+    return path;
+}
+
++ (ZIKViewRouter *)performURL:(NSURL *)url fromSource:(UIViewController *)source {
+    ZIKViewRouterType *routerType = [self routerForURL:url];
+    if (!routerType) {
+        return nil;
+    }
+    NSDictionary *userInfo;
+    if ([routerType respondsToSelector:@selector(userInfoFromURL:)]) {
+        userInfo = [(id)routerType userInfoFromURL:url];
+    }
+    ZIKViewRoutePath *path;
+    if ([routerType respondsToSelector:@selector(pathFromURL:source:)]) {
+        path = [(id)routerType pathFromURL:url source:source];
+    } else {
+        path = [self pathFromURL:url source:source];
+    }
+    return [routerType performPath:path configuring:^(ZIKViewRouteConfiguration * _Nonnull config) {
+        [config addUserInfo:userInfo];
+    }];
+}
+
++ (ZIKViewRouter *)performURL:(NSURL *)url path:(ZIKViewRoutePath *)path {
+    ZIKViewRouterType *routerType = [self routerForURL:url];
+    if (!routerType) {
+        return nil;
+    }
+    NSDictionary *userInfo;
+    if ([routerType respondsToSelector:@selector(userInfoFromURL:)]) {
+        userInfo = [(id)routerType userInfoFromURL:url];
+    }
+    
+    return [routerType performPath:path configuring:^(ZIKViewRouteConfiguration * _Nonnull config) {
+        [config addUserInfo:userInfo];
+    }];
+}
+
+# pragma mark Subclass Override
+
 - (void)performRouteOnDestination:(id)destination configuration:(ZIKViewRouteConfiguration *)configuration {
-    [self processUserInfo:configuration.userInfo url:configuration.userInfo[@"origin-url"]];
+    [self processUserInfo:configuration.userInfo fromURL:configuration.userInfo[@"origin-url"]];
     [super performRouteOnDestination:destination configuration:configuration];
 }
 
 - (void)endPerformRouteWithSuccess {
     [super endPerformRouteWithSuccess];
-    NSString *action = self.configuration.userInfo[@"action"];
+    NSDictionary *userInfo = self.configuration.userInfo;
+    NSString *action = userInfo[@"action"];
     if (action) {
-        [self performAction:action url:self.configuration.userInfo[@"origin-url"]];
+        [self performAction:action userInfo:userInfo fromURL:userInfo[@"origin-url"]];
     }
 }
 
-- (void)processUserInfo:(NSDictionary *)userInfo url:(NSURL *)url {
+- (void)processUserInfo:(NSDictionary *)userInfo fromURL:(NSURL *)url {
     
 }
 
-- (void)performAction:(NSString *)action url:(NSURL *)url {
+- (void)performAction:(NSString *)action userInfo:(NSDictionary *)userInfo fromURL:(NSURL *)url {
     
 }
 

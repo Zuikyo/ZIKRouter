@@ -75,6 +75,8 @@
 		F860554F2268CC8B00BCC384 /* ZIKViewURLRouter.m in Sources */ = {isa = PBXBuildFile; fileRef = F86055472268CC8B00BCC384 /* ZIKViewURLRouter.m */; };
 		F86055502268CC8B00BCC384 /* TestURLRouterViewRouter.m in Sources */ = {isa = PBXBuildFile; fileRef = F86055482268CC8B00BCC384 /* TestURLRouterViewRouter.m */; };
 		F86055512268CC8B00BCC384 /* TestURLRouterViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = F86055492268CC8B00BCC384 /* TestURLRouterViewController.m */; };
+		F86055542268D67C00BCC384 /* ZIKServiceURLRouter.m in Sources */ = {isa = PBXBuildFile; fileRef = F86055532268D67C00BCC384 /* ZIKServiceURLRouter.m */; };
+		F86055572268D7B000BCC384 /* TestURLServiceRouter.m in Sources */ = {isa = PBXBuildFile; fileRef = F86055562268D7B000BCC384 /* TestURLServiceRouter.m */; };
 		F86F0F132084980F00A81DC3 /* ZIKViewRouterTestCase.m in Sources */ = {isa = PBXBuildFile; fileRef = F86F0F122084980F00A81DC3 /* ZIKViewRouterTestCase.m */; };
 		F86F0F1620852C1900A81DC3 /* ZIKViewRouterRemoveTests.m in Sources */ = {isa = PBXBuildFile; fileRef = F86F0F1520852C1900A81DC3 /* ZIKViewRouterRemoveTests.m */; };
 		F86F0F192085BD2C00A81DC3 /* ZIKViewRouterPerformAddAsChildTests.m in Sources */ = {isa = PBXBuildFile; fileRef = F86F0F182085BD2C00A81DC3 /* ZIKViewRouterPerformAddAsChildTests.m */; };
@@ -299,6 +301,10 @@
 		F860554B2268CC8B00BCC384 /* TestURLRouterViewRouter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TestURLRouterViewRouter.h; sourceTree = "<group>"; };
 		F860554C2268CC8B00BCC384 /* ZIKViewURLRouter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ZIKViewURLRouter.h; sourceTree = "<group>"; };
 		F860554D2268CC8B00BCC384 /* TestURLRouterViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TestURLRouterViewController.h; sourceTree = "<group>"; };
+		F86055522268D67B00BCC384 /* ZIKServiceURLRouter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ZIKServiceURLRouter.h; sourceTree = "<group>"; };
+		F86055532268D67C00BCC384 /* ZIKServiceURLRouter.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ZIKServiceURLRouter.m; sourceTree = "<group>"; };
+		F86055552268D7B000BCC384 /* TestURLServiceRouter.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = TestURLServiceRouter.h; sourceTree = "<group>"; };
+		F86055562268D7B000BCC384 /* TestURLServiceRouter.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = TestURLServiceRouter.m; sourceTree = "<group>"; };
 		F86F0F122084980F00A81DC3 /* ZIKViewRouterTestCase.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ZIKViewRouterTestCase.m; sourceTree = "<group>"; };
 		F86F0F142084987200A81DC3 /* ZIKViewRouterTestCase.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ZIKViewRouterTestCase.h; sourceTree = "<group>"; };
 		F86F0F1520852C1900A81DC3 /* ZIKViewRouterRemoveTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ZIKViewRouterRemoveTests.m; sourceTree = "<group>"; };
@@ -692,14 +698,18 @@
 		F86055452268CC8B00BCC384 /* URLRouter */ = {
 			isa = PBXGroup;
 			children = (
+				F860554C2268CC8B00BCC384 /* ZIKViewURLRouter.h */,
+				F86055472268CC8B00BCC384 /* ZIKViewURLRouter.m */,
+				F86055522268D67B00BCC384 /* ZIKServiceURLRouter.h */,
+				F86055532268D67C00BCC384 /* ZIKServiceURLRouter.m */,
 				F860554D2268CC8B00BCC384 /* TestURLRouterViewController.h */,
 				F86055492268CC8B00BCC384 /* TestURLRouterViewController.m */,
 				F860554B2268CC8B00BCC384 /* TestURLRouterViewRouter.h */,
 				F86055482268CC8B00BCC384 /* TestURLRouterViewRouter.m */,
 				F860554A2268CC8B00BCC384 /* URLRouteHandler.h */,
 				F86055462268CC8B00BCC384 /* URLRouteHandler.m */,
-				F860554C2268CC8B00BCC384 /* ZIKViewURLRouter.h */,
-				F86055472268CC8B00BCC384 /* ZIKViewURLRouter.m */,
+				F86055552268D7B000BCC384 /* TestURLServiceRouter.h */,
+				F86055562268D7B000BCC384 /* TestURLServiceRouter.m */,
 			);
 			path = URLRouter;
 			sourceTree = "<group>";
@@ -960,7 +970,9 @@
 				F830EFF722045FAF00859618 /* TestEasyFactoryViewController.swift in Sources */,
 				F88DD30F1FBB303B00715097 /* SubclassViewRouter.m in Sources */,
 				F8C021C422056748004FDB27 /* TestMakeDestinationViewRouter.m in Sources */,
+				F86055572268D7B000BCC384 /* TestURLServiceRouter.m in Sources */,
 				F88DD3061FBB2ED400715097 /* TestClassHierarchyViewController.m in Sources */,
+				F86055542268D67C00BCC384 /* ZIKServiceURLRouter.m in Sources */,
 				F84239D21F0CDE78000FEE5F /* MasterViewController.m in Sources */,
 				F87317DF1F924EFC00A5F5D4 /* ZIKChildViewRouter.m in Sources */,
 				F88DD3091FBB2F0400715097 /* TestClassHierarchyViewRouter.m in Sources */,

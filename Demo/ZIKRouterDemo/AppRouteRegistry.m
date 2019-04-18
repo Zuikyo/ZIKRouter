@@ -102,7 +102,7 @@
     [ZIKCompatibleAlertViewRouter registerRoutableDestination];
     [ZIKTimeServiceRouter registerRoutableDestination];
     
-    ///Can't access swift routers, because it use generic. You have to register swift router in swift code.
+    ///Can't access swift routers, because it uses generic. You have to register swift router in swift code.
 //    [SwiftSampleViewRouter registerRoutableDestination];
 //    [SwiftServiceRouter registerRoutableDestination];
     

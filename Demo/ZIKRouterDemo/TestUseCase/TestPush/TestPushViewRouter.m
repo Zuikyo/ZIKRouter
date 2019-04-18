@@ -27,11 +27,11 @@ DeclareRoutableView(TestPushViewController, TestPushViewRouter)
     return destination;
 }
 
-- (void)processUserInfo:(NSDictionary *)userInfo url:(NSURL *)url {
+- (void)processUserInfo:(NSDictionary *)userInfo fromURL:(NSURL *)url {
     
 }
 
-- (void)performAction:(NSString *)action url:(NSURL *)url {
+- (void)performAction:(NSString *)action userInfo:(nonnull NSDictionary *)userInfo fromURL:(NSURL *)url {
     [ZIKRouterToViewModule(RequiredCompatibleAlertModuleInput) performPath:ZIKViewRoutePath.defaultPathFrom(self.destination) configuring:^(ZIKViewRouteConfiguration<RequiredCompatibleAlertModuleInput> * _Nonnull config) {
         config.title = @"URL route";
         config.message = @"This view is from URL Scheme";

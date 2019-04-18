@@ -11,6 +11,7 @@
 #import "AppRouteRegistry.h"
 @import ZIKRouter;
 #import "ZIKViewURLRouter.h"
+#import "ZIKServiceURLRouter.h"
 
 @interface AppDelegate () <UISplitViewControllerDelegate>
 
@@ -70,7 +71,9 @@
     UINavigationController *navigationController = [splitViewController.viewControllers firstObject];
     
     // You can create your custom URL router like ZIKViewURLRouter
-    if ([ZIKViewURLRouter performPath:ZIKViewRoutePath.showFrom(navigationController) url:url]) {
+    if ([ZIKViewURLRouter performURL:url fromSource:navigationController]) {
+        return YES;
+    } else if ([ZIKServiceURLRouter performURL:url]) {
         return YES;
     }
     
