@@ -73,7 +73,7 @@ Steps to support custom transition for removing a view:
 
 1. Override `supportedRouteTypes`, add`ZIKViewRouteTypeCustom`
 2. Override `removeCustomRouteOnDestination:fromSource:removeConfiguration:configuration:` to do custom transition
-3. Manage router's state with `beginRemoveRouteFromSource:`、`endRemoveRouteWithSuccessOnDestination:fromSource:`、`endRemoveRouteWithError:`
+3. Manage router's state with `beginRemoveRouteFromSource:`,  `endRemoveRouteWithSuccessOnDestination:fromSource:`,  `endRemoveRouteWithError:`
 
 You can also override `-canRemoveCustomRoute` to check whether the view can be removed now.
 
@@ -85,8 +85,8 @@ Steps to support removing a service:
 
 1. Override `canRemove` or `canRemoveCustomRoute`, if the service can be removed, return true
 2. Override `-removeDestination:removeConfiguration:`, check whether the destination exists, and do unload action
-3. Call `-prepareDestinationBeforeRemoving` to let the performer prepare the destination before unloading
-4. Manage the router's state with `beginRemoveRoute`、`endRemoveRouteWithSuccess`、`endRemoveRouteWithError:`
+3. Before removing, call `-prepareDestinationBeforeRemoving` to let the performer prepare the destination
+4. After removing, call `endRemoveRouteWithSuccess` or `endRemoveRouteWithError:` to change router's state
 
 ---
 #### Next section: [Transfer Parameters with Custom Configuration](CustomConfiguration.md)

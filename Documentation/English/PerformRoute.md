@@ -48,9 +48,9 @@ class TestViewController: UIViewController {
     func showViewForError(_ error: RequestError) {
         var switchableView: SwitchableView
         switch error {
-        case invalidAccount:
+        case .invalidAccount:
             switchableView = SwitchableView(RoutableView<LoginViewInput>())
-        case networkNotConnected:
+        case .networkNotConnected:
             switchableView = SwitchableView(RoutableView<NetworkDisconnectedViewInput>())
         }
         Router.to(switchableView)?.perform(path: .push(from: self))
@@ -93,16 +93,13 @@ Comparing to `performPath:configuring:` method, `performPath:strictConfiguring:`
 	          strictConfiguring:^(ZIKViewRouteStrictConfiguration<id<EditorViewInput>> *config,
 	          					   ZIKViewRouteConfiguration *module) {
 	              config.animated = YES;
-	              // Type of prepareDest block changes with the router's generic parameters.
+	              // Type of prepareDestination block changes with the router's generic parameters.
 	              config.prepareDestination = ^(id<EditorViewInput> destination){
 	                  destination.delegate = self;
 	                  [destination constructForCreatingNewNote];
 	              };
-	              config.routeCompletion = ^(id<EditorViewInput> destination) {
+	              config.successHandler = ^(id<EditorViewInput> destination) {
 	                  // Transition completed
-	              };
-	              config.errorHandler = ^(ZIKRouteAction routeAction, NSError *error) {
-	                  // Transition failed
 	              };
 	          }];
 }
@@ -178,11 +175,15 @@ Steps to support custom transition:
 2. If the router needs to validate the configuration, override `-validateCustomRouteConfiguration:removeConfiguration:`
 3. Override `canPerformCustomRoute` to check whether the router can perform route now because the default return value is false
 4. Override `performCustomRouteOnDestination:fromSource:configuration:` to do custom transition. If the transition is performing a segue, use `_performSegueWithIdentifier:fromSource:sender:`
-5. Manage router's state with `beginPerformRoute`、`endPerformRouteWithSuccess`、`endPerformRouteWithError:`
+5. Manage router's state with `beginPerformRoute`,  `endPerformRouteWithSuccess` , `endPerformRouteWithError:`
 
 ### Service Router
 
-If you want to do custom route action, override `-performRouteOnDestination:configuration:`.
+If you want to do custom route action:
+
+1. Override `-performRouteOnDestination:configuration:`
+2. Before performing custom action, call `prepareDestinationForPerforming` to prepare the destination
+3. After performing custom action, call `endPerformRouteWithSuccess` or `endPerformRouteWithError` to change router's state
 
 Most service routers are just for getting a service object. You can use Make Destination.
 

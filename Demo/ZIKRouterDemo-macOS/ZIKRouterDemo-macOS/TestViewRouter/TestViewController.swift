@@ -28,10 +28,10 @@ class TestViewController: NSViewController, TestViewInput {
     
     @IBAction func removeSelf(_ sender: Any) {
         router.removeRoute(configuring: { (config) in
-            config.successHandler = {
+            config.performerSuccessHandler = {
                 print("remove test view success")
             }
-            config.errorHandler = { (action, error) in
+            config.performerErrorHandler = { (action, error) in
                 print("remove test view failed")
             }
         })

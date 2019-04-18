@@ -707,13 +707,13 @@ private class _ServiceRouterValidater: ZIKServiceRouteAdapter {
                     let simplifiedName = demangledAsSwift(name, true)
                     if let routingType = symbolName.subString(forRegex: serviceRoutingTypeRegex),
                         let simplifiedRoutingType = simplifiedName.subString(forRegex: serviceRoutingTypeRegex) {
-                        serviceRoutingTypes.append((routingType, simplifiedRoutingType))
+                        serviceRoutingTypes.append((routingType, simplifiedRoutingType.undotted))
                     }
                 } else if symbolName.hasPrefix("type metadata accessor for ZRouter.RoutableServiceModule<") {
                     let simplifiedName = demangledAsSwift(name, true)
                     if let routingType = symbolName.subString(forRegex: serviceModuleRoutingTypeRegex),
                         let simplifiedRoutingType = simplifiedName.subString(forRegex: serviceModuleRoutingTypeRegex) {
-                        serviceModuleRoutingTypes.append((routingType, simplifiedRoutingType))
+                        serviceModuleRoutingTypes.append((routingType, simplifiedRoutingType.undotted))
                     }
                 }
             }

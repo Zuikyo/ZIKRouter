@@ -75,16 +75,38 @@ NS_ASSUME_NONNULL_BEGIN
  */
 - (void)performWithConfiguration:(RouteConfig)configuration;
 
-/// Perform your custom route action.
+/**
+ Perform custom route action.
+ 
+ Steps to use custom route action:
+ 
+ 1. Override `-performRouteOnDestination:configuration:`
+ 
+ 2. Before performing custom action, call `prepareDestinationForPerforming` to prepare the destination
+ 
+ 3. After performing custom action, call `endPerformRouteWithSuccess` or `endPerformRouteWithError` to change router's state
+ */
 - (void)performRouteOnDestination:(nullable Destination)destination configuration:(RouteConfig)configuration;
 
 /// Check whether can remove route. If can't, return the error message.
 - (nullable NSString *)checkCanRemove NS_REQUIRES_SUPER;
 
-/// If you can undo your route action, such as dismiss a routed view, do remove in this. The destination was hold as weak in router, so you should check whether the destination still exists.
+/**
+ Do custom removing action. If you can undo your route action, such as dismiss a routed view, do removing in this.
+ 
+ Steps to use custom removing action:
+ 
+ 1. Override `canRemove` or `canRemoveCustomRoute`, if the service can be removed, return true
+ 
+ 2. Override `-removeDestination:removeConfiguration:`, check whether the destination exists, and do unload action
+ 
+ 3. Before removing, call `-prepareDestinationBeforeRemoving` to let the performer prepare the destination
+ 
+ 4. After removing, call `endRemoveRouteWithSuccess` or `endRemoveRouteWithError:` to change router's state
+ */
 - (void)removeDestination:(nullable Destination)destination removeConfiguration:(RemoveConfig)removeConfiguration;
 
-/// Whether this router is an abstract router.
+/// Whether this router is an abstract router. If a router class is not abstract, there must be a destination class registered with it.
 + (BOOL)isAbstractRouter;
 
 /// Whether this router is an adapter for another router.

@@ -48,9 +48,9 @@ class TestViewController: UIViewController {
     func showViewForError(_ error: RequestError) {
         var switchableView: SwitchableView
         switch error {
-        case invalidAccount:
+        case .invalidAccount:
             switchableView = SwitchableView(RoutableView<LoginViewInput>())
-        case networkNotConnected:
+        case .networkNotConnected:
             switchableView = SwitchableView(RoutableView<NetworkDisconnectedViewInput>())
         }
         Router.to(switchableView)?.perform(path: .push(from: self))
@@ -79,9 +79,6 @@ class TestViewController: UIViewController {
 	              config.successHandler = ^(id<EditorViewInput> destination) {
 	                  //界面显示完毕
 	              };
-	              config.errorHandler = ^(ZIKRouteAction routeAction, NSError *error) {
-	                  //界面显示失败
-	              };
 	          }];
 }
 ```
@@ -104,9 +101,6 @@ class TestViewController: UIViewController {
 	              };
 	              config.successHandler = ^(id<EditorViewInput> destination) {
 	                  //Transition completed
-	              };
-	              config.errorHandler = ^(ZIKRouteAction routeAction, NSError *error) {
-	                  //Transition failed
 	              };
 	          }];
 }
@@ -185,7 +179,11 @@ class TestViewController: UIViewController {
 
 ### Service Router
 
-Service router 只是用于返回一个对象。如果你需要自定义 service router 的路由操作，可以重写`-performRouteOnDestination:configuration:`。
+Service router 只是用于返回一个对象。如果你需要自定义 service router 的路由操作，需要：
+
+1. 重写`-performRouteOnDestination:configuration:`
+2. 在执行自定义操作前用 `prepareDestinationForPerforming`配置 destination
+3. 执行完自定操作后，用 `endPerformRouteWithSuccess`、 `endPerformRouteWithError`改变路由状态
 
 Service router 的使用和 view router 也是类似的，只是去掉了界面跳转的封装，要比 view router 更加简单和通用。而大多数 service 并不需要 view controller 那样的一个路由过程，只是需要获取某个 service 模块。此时可以使用 Make Destination。
 

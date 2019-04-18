@@ -597,13 +597,13 @@ private class _ViewRouterValidater: ZIKViewRouteAdapter {
                     let simplifiedName = demangledAsSwift(name, true)
                     if let routingType = symbolName.subString(forRegex: viewRoutingTypeRegex),
                         let simplifiedRoutingType = simplifiedName.subString(forRegex: viewRoutingTypeRegex) {
-                        viewRoutingTypes.append((routingType, simplifiedRoutingType))
+                        viewRoutingTypes.append((routingType, simplifiedRoutingType.undotted))
                     }
                 } else if symbolName.hasPrefix("type metadata accessor for ZRouter.RoutableViewModule<") {
                     let simplifiedName = demangledAsSwift(name, true)
                     if let routingType = symbolName.subString(forRegex: viewModuleRoutingTypeRegex),
                         let simplifiedRoutingType = simplifiedName.subString(forRegex: viewModuleRoutingTypeRegex) {
-                        viewModuleRoutingTypes.append((routingType, simplifiedRoutingType))
+                        viewModuleRoutingTypes.append((routingType, simplifiedRoutingType.undotted))
                     }
                 }
             }

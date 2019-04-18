@@ -252,8 +252,8 @@ static NSMutableArray<Class> *_routerClasses;
 + (void)didFinishRegistration {
 #if ZIKROUTER_CHECK
     [self _searchAllRoutersAndDestinations];
-    [self _checkAllRoutableDestinations];
     [self _checkAllRouters];
+    [self _checkAllRoutableDestinations];    
     [self _checkAllRoutableProtocols];
 #endif
 }
