@@ -10,6 +10,7 @@
 #import "DetailViewController.h"
 #import "AppRouteRegistry.h"
 @import ZIKRouter;
+#import "ZIKViewURLRouter.h"
 
 @interface AppDelegate () <UISplitViewControllerDelegate>
 
@@ -65,7 +66,15 @@
 
 - (BOOL)application:(UIApplication *)app openURL:(NSURL *)url options:(NSDictionary<UIApplicationOpenURLOptionsKey,id> *)options {
     
-    //You can use other url router framework, here is only for demonstrating.
+    UISplitViewController *splitViewController = (UISplitViewController *)self.window.rootViewController;
+    UINavigationController *navigationController = [splitViewController.viewControllers firstObject];
+    
+    // You can create your custom URL router like ZIKViewURLRouter
+    if ([ZIKViewURLRouter performPath:ZIKViewRoutePath.showFrom(navigationController) url:url]) {
+        return YES;
+    }
+    
+    // You can use other url router framework, here is only for demonstrating.
     NSString *identifier = url.host;
     if (identifier == nil) {
         return NO;
@@ -74,10 +83,7 @@
     if (routerType == nil) {
         return NO;
     }
-    UISplitViewController *splitViewController = (UISplitViewController *)self.window.rootViewController;
-    UINavigationController *navigationController = [splitViewController.viewControllers firstObject];
-    
-    NSDictionary *params = @{ @"url": url,
+    NSDictionary *params = @{ @"origin-url": url,
                               @"options" : options
                               };
     [routerType performPath:ZIKViewRoutePath.showFrom(navigationController)
