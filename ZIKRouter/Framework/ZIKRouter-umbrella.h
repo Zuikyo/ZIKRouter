@@ -37,6 +37,13 @@
 #import "UIViewController+ZIKViewRouter.h"
 #endif
 
+#if __has_include("ZIKRouter+URLRouter.h")
+#import "ZIKRouter+URLRouter.h"
+#endif
+#if __has_include("ZIKViewRouter+URLRouter.h")
+#import "ZIKViewRouter+URLRouter.h"
+#endif
+
 //! Project version number for ZIKRouter.
 FOUNDATION_EXPORT double ZIKRouterVersionNumber;
 

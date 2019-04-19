@@ -7,8 +7,7 @@
 //
 
 @import ZIKRouter;
-#import "ZIKViewURLRouter.h"
 
-@interface TestPushViewRouter : ZIKViewURLRouter
+@interface TestPushViewRouter : ZIKViewRouter
 
 @end

@@ -1291,8 +1291,7 @@ destinationStateBeforeRoute:(ZIKPresentationState *)destinationStateBeforeRoute
     NSParameterAssert(error);
     NSAssert(self.state == ZIKRouterStateRouting, @"state should be routing when end route.");
     ZIKRouterState preState = self.preState;
-    [self notifyRouteState:preState];
-    [self notifyError:error routeAction:ZIKRouteActionPerformRoute];
+    [super endPerformRouteWithError:error];
     if (self.state == preState) {
         self.routingFromInternal = NO;
         self.retainedSelf = nil;
@@ -1856,9 +1855,9 @@ destinationStateBeforeRoute:(ZIKPresentationState *)destinationStateBeforeRoute
 - (void)endRemoveRouteWithError:(NSError *)error {
     NSParameterAssert(error);
     NSAssert(self.state == ZIKRouterStateRemoving, @"state should be removing when end remove.");
-    [self notifyRouteState:self.preState];
-    [self notifyError:error routeAction:ZIKRouteActionRemoveRoute];
-    if (self.state == ZIKRouterStateRemoved) {
+    ZIKRouterState preState = self.preState;
+    [super endRemoveRouteWithError:error];
+    if (self.state == preState) {
         self.routingFromInternal = NO;
         self.retainedSelf = nil;
     }
@@ -2941,7 +2940,6 @@ static  ZIKViewRouterType *_Nullable _routerTypeToRegisteredView(Class viewClass
 - (void)ZIKViewRouter_hook_didMoveToWindow {
     XXView *destination = (XXView *)self;
     XXWindow *window = destination.window;
-    XXView *superview = destination.superview;
     BOOL routed = destination.zix_routed;
     BOOL removing = destination.zix_removing;
     if ([self conformsToProtocol:@protocol(ZIKRoutableView)]) {

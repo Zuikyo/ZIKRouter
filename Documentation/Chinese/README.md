@@ -623,7 +623,7 @@ ZIKViewMakeableConfiguration<NoteEditorViewController *> * makeEditorViewModuleC
 
 </details>
 
-在创建路由时，在 router 子类中重写`defaultRouteConfiguration`使用自定义的 configuration:
+创建了自定义 configuration 之后，就可以在创建路由时，在 router 子类中重写`defaultRouteConfiguration`使用自定义的 configuration:
 
 ```swift
 class EditorViewRouter: ZIKViewRouter<NoteEditorViewController, ZIKViewMakeableConfiguration<NoteEditorViewController>> {
@@ -667,7 +667,7 @@ class EditorViewRouter: ZIKViewRouter<NoteEditorViewController, ZIKViewMakeableC
 
 </details>
 
-也可以用注册 config 工厂函数的方式创建路由，不需要使用 router 子类：
+除了使用 router 子类，也可以用注册 config 工厂函数的方式创建路由：
 
 ```swift
 // 注册 EditorViewModuleInput 和自定义 configuration 的创建函数
@@ -688,7 +688,7 @@ ZIKAnyViewRouter.register(RoutableViewModule<EditorViewModuleInput>(),
 
 </details>
 
-使用者在使用模块时就能动态传入参数：
+模块路由创建完毕，使用者在使用模块时就能动态传入参数：
 
 ```swift
 var note = ...

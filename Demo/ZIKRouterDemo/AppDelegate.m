@@ -10,8 +10,6 @@
 #import "DetailViewController.h"
 #import "AppRouteRegistry.h"
 @import ZIKRouter;
-#import "ZIKViewURLRouter.h"
-#import "ZIKServiceURLRouter.h"
 
 @interface AppDelegate () <UISplitViewControllerDelegate>
 
@@ -52,6 +50,9 @@
     
     ZIKViewRouter.detectMemoryLeakDelay = 1;
     
+    [ZIKRouter enableDefaultURLRouteRule];
+    
+    
     UISplitViewController *splitViewController = (UISplitViewController *)self.window.rootViewController;
     splitViewController.delegate = self;
     UINavigationController *detailViewController = [splitViewController.viewControllers lastObject];
@@ -70,30 +71,15 @@
     UISplitViewController *splitViewController = (UISplitViewController *)self.window.rootViewController;
     UINavigationController *navigationController = [splitViewController.viewControllers firstObject];
     
-    // You can create your custom URL router like ZIKViewURLRouter
-    if ([ZIKViewURLRouter performURL:url fromSource:navigationController]) {
+    // You can create your custom URL router rule, or use other url router framework then fetch router with identifier
+    if ([ZIKViewRouter performURL:url fromSource:navigationController]) {
         return YES;
-    } else if ([ZIKServiceURLRouter performURL:url]) {
+    } else if ([ZIKServiceRouter performURL:url]) {
         return YES;
-    }
-    
-    // You can use other url router framework, here is only for demonstrating.
-    NSString *identifier = url.host;
-    if (identifier == nil) {
+    } else {
+        // Can't handle the url, you can show a default error page
         return NO;
     }
-    ZIKViewRouterType *routerType = ZIKViewRouter.toIdentifier(identifier);
-    if (routerType == nil) {
-        return NO;
-    }
-    NSDictionary *params = @{ @"origin-url": url,
-                              @"options" : options
-                              };
-    [routerType performPath:ZIKViewRoutePath.showFrom(navigationController)
-                configuring:^(ZIKViewRouteConfiguration * _Nonnull config) {
-                    [config addUserInfo:params];
-                }];
-    return YES;
 }
 
 

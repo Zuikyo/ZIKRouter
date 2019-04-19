@@ -8,7 +8,6 @@
 
 #import "TestURLServiceRouter.h"
 #import "RequiredCompatibleAlertModuleInput.h"
-@import ZIKRouter;
 @import ZIKRouter.Internal;
 
 @implementation AlertService
@@ -20,12 +19,13 @@
          config.title = title;
          config.message = message;
          [config addOtherButtonTitle:@"OK" handler:^{
-             
+
          }];
     }];
 }
 
 @end
+
 
 @implementation TestURLAlertServiceConfiguration
 

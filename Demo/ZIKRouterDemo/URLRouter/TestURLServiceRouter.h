@@ -6,7 +6,7 @@
 //  Copyright © 2019 zuik. All rights reserved.
 //
 
-#import "ZIKServiceURLRouter.h"
+@import ZIKRouter;
 
 NS_ASSUME_NONNULL_BEGIN
 
@@ -19,7 +19,7 @@ NS_ASSUME_NONNULL_BEGIN
 @property(nullable,nonatomic,copy) NSString *message;
 @end
 
-@interface TestURLServiceRouter : ZIKServiceURLRouter<AlertService *, TestURLAlertServiceConfiguration *>
+@interface TestURLServiceRouter : ZIKServiceRouter<AlertService *, TestURLAlertServiceConfiguration *>
 
 @end
 
