@@ -764,13 +764,6 @@ void zix_checkMemoryLeak(id object, NSTimeInterval delaySecond, void(^handler)(i
     }
     static NSMutableDictionary<NSString *, NSString *> *_leakedObjects;
     static NSHashTable *_existingObjects;
-    static dispatch_queue_t memoryLeakCheckQueue;
-    static dispatch_once_t onceToken;
-    dispatch_once(&onceToken, ^{
-        _leakedObjects = [NSMutableDictionary dictionary];
-        _existingObjects = [NSHashTable weakObjectsHashTable];
-        memoryLeakCheckQueue = dispatch_queue_create("com.zuik.router.object_leak_check_queue", DISPATCH_QUEUE_SERIAL);
-    });
 #pragma clang diagnostic push
 #pragma clang diagnostic ignored "-Wundeclared-selector"
     
@@ -779,7 +772,7 @@ void zix_checkMemoryLeak(id object, NSTimeInterval delaySecond, void(^handler)(i
     }
 #pragma clang diagnostic pop
     __weak id weakObject = object;
-    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(delaySecond * NSEC_PER_SEC)), memoryLeakCheckQueue, ^{
+    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(delaySecond * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
         if (_leakedObjects.count > 0) {
             // Check reclaimed objects since last checking
             NSMutableSet<NSString *> *reclaimedObjects = [NSMutableSet setWithArray:_leakedObjects.allKeys];
