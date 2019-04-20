@@ -32,40 +32,40 @@
 #define MetadataKindIsRuntimePrivate 0x100
 
 /// Swift ABI: MetadataKind.def
-typedef NS_ENUM(NSInteger, ZIKSwiftMetadataKind) {
-    ZIKSwiftMetadataKindClass_old                    = 0,
-    ZIKSwiftMetadataKindStruct_old                   = 1,
-    ZIKSwiftMetadataKindEnum_old                     = 2,
-    ZIKSwiftMetadataKindOptional_old                 = 3,
-    ZIKSwiftMetadataKindOpaque_old                   = 8,
-    ZIKSwiftMetadataKindTuple_old                    = 9,
-    ZIKSwiftMetadataKindFunction_old                 = 10,
-    ZIKSwiftMetadataKindExistential_old              = 12,
-    ZIKSwiftMetadataKindMetatype_old                 = 13,
-    ZIKSwiftMetadataKindObjCClassWrapper_old         = 14,
-    ZIKSwiftMetadataKindExistentialMetatype_old      = 15,
-    ZIKSwiftMetadataKindForeignClass_old             = 16,
-    ZIKSwiftMetadataKindHeapLocalVariable_old        = 64,
-    ZIKSwiftMetadataKindHeapGenericLocalVariable_old = 65,
-    ZIKSwiftMetadataKindErrorObject_old              = 128,
+typedef NS_ENUM(NSInteger, MetadataKind) {
+    MetadataKindClass_old                    = 0,
+    MetadataKindStruct_old                   = 1,
+    MetadataKindEnum_old                     = 2,
+    MetadataKindOptional_old                 = 3,
+    MetadataKindOpaque_old                   = 8,
+    MetadataKindTuple_old                    = 9,
+    MetadataKindFunction_old                 = 10,
+    MetadataKindExistential_old              = 12,
+    MetadataKindMetatype_old                 = 13,
+    MetadataKindObjCClassWrapper_old         = 14,
+    MetadataKindExistentialMetatype_old      = 15,
+    MetadataKindForeignClass_old             = 16,
+    MetadataKindHeapLocalVariable_old        = 64,
+    MetadataKindHeapGenericLocalVariable_old = 65,
+    MetadataKindErrorObject_old              = 128,
     
     /// ABI after Xcode 10.2 with Swift 5
     
-    ZIKSwiftMetadataKindClass                    = 0,
-    ZIKSwiftMetadataKindStruct                   = 0 | MetadataKindIsNonHeap,
-    ZIKSwiftMetadataKindEnum                     = 1 | MetadataKindIsNonHeap,
-    ZIKSwiftMetadataKindOptional                 = 2 | MetadataKindIsNonHeap,
-    ZIKSwiftMetadataKindForeignClass             = 3 | MetadataKindIsNonHeap,
-    ZIKSwiftMetadataKindOpaque                   = 0 | MetadataKindIsRuntimePrivate | MetadataKindIsNonHeap,
-    ZIKSwiftMetadataKindTuple                    = 1 | MetadataKindIsRuntimePrivate | MetadataKindIsNonHeap,
-    ZIKSwiftMetadataKindFunction                 = 2 | MetadataKindIsRuntimePrivate | MetadataKindIsNonHeap,
-    ZIKSwiftMetadataKindExistential              = 3 | MetadataKindIsRuntimePrivate | MetadataKindIsNonHeap,
-    ZIKSwiftMetadataKindMetatype                 = 4 | MetadataKindIsRuntimePrivate | MetadataKindIsNonHeap,
-    ZIKSwiftMetadataKindObjCClassWrapper         = 5 | MetadataKindIsRuntimePrivate | MetadataKindIsNonHeap,
-    ZIKSwiftMetadataKindExistentialMetatype      = 6 | MetadataKindIsRuntimePrivate | MetadataKindIsNonHeap,
-    ZIKSwiftMetadataKindHeapLocalVariable        = 0 | MetadataKindIsNonType,
-    ZIKSwiftMetadataKindHeapGenericLocalVariable = 0 | MetadataKindIsNonType | MetadataKindIsRuntimePrivate,
-    ZIKSwiftMetadataKindErrorObject              = 1 | MetadataKindIsNonType | MetadataKindIsRuntimePrivate
+    MetadataKindClass                        = 0,
+    MetadataKindStruct                       = 0 | MetadataKindIsNonHeap,
+    MetadataKindEnum                         = 1 | MetadataKindIsNonHeap,
+    MetadataKindOptional                     = 2 | MetadataKindIsNonHeap,
+    MetadataKindForeignClass                 = 3 | MetadataKindIsNonHeap,
+    MetadataKindOpaque                       = 0 | MetadataKindIsRuntimePrivate | MetadataKindIsNonHeap,
+    MetadataKindTuple                        = 1 | MetadataKindIsRuntimePrivate | MetadataKindIsNonHeap,
+    MetadataKindFunction                     = 2 | MetadataKindIsRuntimePrivate | MetadataKindIsNonHeap,
+    MetadataKindExistential                  = 3 | MetadataKindIsRuntimePrivate | MetadataKindIsNonHeap,
+    MetadataKindMetatype                     = 4 | MetadataKindIsRuntimePrivate | MetadataKindIsNonHeap,
+    MetadataKindObjCClassWrapper             = 5 | MetadataKindIsRuntimePrivate | MetadataKindIsNonHeap,
+    MetadataKindExistentialMetatype          = 6 | MetadataKindIsRuntimePrivate | MetadataKindIsNonHeap,
+    MetadataKindHeapLocalVariable            = 0 | MetadataKindIsNonType,
+    MetadataKindHeapGenericLocalVariable     = 0 | MetadataKindIsNonType | MetadataKindIsRuntimePrivate,
+    MetadataKindErrorObject                  = 1 | MetadataKindIsNonType | MetadataKindIsRuntimePrivate
 };
 
 typedef struct {
@@ -125,11 +125,11 @@ static bool hasSuperclassConstraint(ExistentialTypeFlags flag) {
 }
 
 typedef struct {
-    ZIKSwiftMetadataKind Kind;
+    MetadataKind Kind;
 } TargetMetadata;
 
 typedef struct {
-    ZIKSwiftMetadataKind Kind;
+    MetadataKind Kind;
     Class aClass;
 } ObjCClassWrapperMetadata;
 
@@ -141,7 +141,7 @@ typedef union {
 } ExistentialTypeMetadataEntry;
 
 typedef struct {
-    ZIKSwiftMetadataKind Kind;
+    MetadataKind Kind;
     /// The number of witness tables and class-constrained-ness of the type.
     ExistentialTypeFlags Flags;
     
@@ -153,7 +153,7 @@ typedef struct {
 } ExistentialTypeMetadata; // Swift 5
 
 typedef struct {
-    ZIKSwiftMetadataKind Kind;
+    MetadataKind Kind;
     /// The number of witness tables and class-constrained-ness of the type.
     ExistentialTypeFlags_Old Flags;
     
@@ -181,7 +181,7 @@ static TargetMetadata *swift_dynamicCastMetatype(TargetMetadata *sourceType, Tar
     return _swift_dynamicCastMetatype(sourceType, targetType);
 }
 
-static bool swift_conformsToProtocols(bool isSourceClassType, TargetMetadata *type, ExistentialTypeMetadata *existentialType, uintptr_t* conformances) {
+static bool swift_conformsToProtocols(bool isSourceClassPointer, TargetMetadata *type, ExistentialTypeMetadata *existentialType) {
     static uintptr_t(*_swift_conformsToProtocol)(TargetMetadata *, uintptr_t) = NULL;
     static dispatch_once_t onceToken;
     dispatch_once(&onceToken, ^{
@@ -215,8 +215,8 @@ static bool swift_conformsToProtocols(bool isSourceClassType, TargetMetadata *ty
      kind           8 bit / 4 bit
      flags          8 bit / 4 bit
      numProtocols   8 bit / 4 bit
-     protocol1      8 bit / 4 bit   // ProtocolDescriptor or Protocol*
-     protocol2      8 bit / 4 bit   // ProtocolDescriptor or Protocol*
+     protocol1      8 bit / 4 bit   // ProtocolDescriptor* or Protocol*
+     protocol2      8 bit / 4 bit   // ProtocolDescriptor* or Protocol*
      ...                            // The size is numProtocols
      superclass     8 bit / 4 bit   // Metadata* or ObjCClassWrapperMetadata* or Class.
                                     // Class constraint in protocol composition. If there's no class constraint, this doesn't exist
@@ -224,21 +224,21 @@ static bool swift_conformsToProtocols(bool isSourceClassType, TargetMetadata *ty
      */
     
     int32_t startIdx = 0;
-    int32_t maxIdx = 0;
-    bool isSwift5 = (existentialType->Kind != ZIKSwiftMetadataKindExistential_old);
+    int32_t endIdx = 0;
+    bool isSwift5 = (existentialType->Kind != MetadataKindExistential_old);
     
     if (!isSwift5) {
         size_t NumProtocols = ((ExistentialTypeMetadata_Old *)existentialType)->NumProtocols;
-        maxIdx = (int)NumProtocols - 1;
+        endIdx = (int)NumProtocols - 1;
     } else {
-        maxIdx = existentialType->NumProtocols - 1;
+        endIdx = existentialType->NumProtocols - 1;
     }
     
     // Target is a protocol composition: UIViewController & SomeProtocol
     if (hasSuperclassConstraint(existentialType->Flags)) {
-        if (!isSourceClassType &&
-            type->Kind != ZIKSwiftMetadataKindObjCClassWrapper &&
-            type->Kind != ZIKSwiftMetadataKindObjCClassWrapper_old) {
+        if (!isSourceClassPointer &&
+            type->Kind != MetadataKindObjCClassWrapper &&
+            type->Kind != MetadataKindObjCClassWrapper_old) {
             return false;
         }
         
@@ -248,12 +248,12 @@ static bool swift_conformsToProtocols(bool isSourceClassType, TargetMetadata *ty
             // The class constraint is at the end of the list
             classIdx = (int)NumProtocols;
             startIdx = 0;
-            maxIdx = (int)NumProtocols - 1;
+            endIdx = (int)NumProtocols - 1;
         } else {
             // The class constraint is at the head of the list
             classIdx = 0;
             startIdx = 1;
-            maxIdx = existentialType->NumProtocols - 1 + startIdx;            
+            endIdx = existentialType->NumProtocols - 1 + startIdx;            
         }
         
         TargetMetadata *targetMetadata = NULL;
@@ -262,14 +262,16 @@ static bool swift_conformsToProtocols(bool isSourceClassType, TargetMetadata *ty
         } else {
             targetMetadata = existentialType->protocols[classIdx].targetMetadata;
         }
-        if (targetMetadata->Kind == ZIKSwiftMetadataKindObjCClassWrapper ||
-            targetMetadata->Kind == ZIKSwiftMetadataKindObjCClassWrapper_old) {
+        if (targetMetadata->Kind == MetadataKindObjCClassWrapper ||
+            targetMetadata->Kind == MetadataKindObjCClassWrapper_old) {
             // Target is Metadata wrapper for pure objc class
             Class sourceClass = nil;
-            if (isSourceClassType) {
+            if (isSourceClassPointer) {
                 sourceClass = (__bridge Class)type;
-            } else if (type->Kind == ZIKSwiftMetadataKindObjCClassWrapper ||
-                       type->Kind == ZIKSwiftMetadataKindObjCClassWrapper_old) {
+            } else if (type->Kind == MetadataKindClass) {
+                sourceClass = (__bridge Class)type;
+            } else if (type->Kind == MetadataKindObjCClassWrapper ||
+                       type->Kind == MetadataKindObjCClassWrapper_old) {
                 sourceClass = ((ObjCClassWrapperMetadata *)type)->aClass;
             } else {
                 return false;
@@ -278,13 +280,15 @@ static bool swift_conformsToProtocols(bool isSourceClassType, TargetMetadata *ty
             if (![sourceClass isSubclassOfClass:targetClass]) {
                 return false;
             }
-        } else if (targetMetadata->Kind > ZIKSwiftMetadataKindErrorObject) {
-            // Target is Class
+        } else if (targetMetadata->Kind > MetadataKindErrorObject) {
+            // Target is Class*
             Class sourceClass = nil;
-            if (isSourceClassType) {
+            if (isSourceClassPointer) {
                 sourceClass = (__bridge Class)type;
-            } else if (type->Kind == ZIKSwiftMetadataKindObjCClassWrapper ||
-                       type->Kind == ZIKSwiftMetadataKindObjCClassWrapper_old) {
+            } else if (type->Kind == MetadataKindClass) {
+                sourceClass = (__bridge Class)type;
+            } else if (type->Kind == MetadataKindObjCClassWrapper ||
+                       type->Kind == MetadataKindObjCClassWrapper_old) {
                 sourceClass = ((ObjCClassWrapperMetadata *)type)->aClass;
             } else {
                 return false;
@@ -305,7 +309,7 @@ static bool swift_conformsToProtocols(bool isSourceClassType, TargetMetadata *ty
     }
     
     // Check the protocol list
-    for (int i = startIdx; i <= maxIdx; i++) {
+    for (int i = startIdx; i <= endIdx; i++) {
         // Protocol format before Xcode 10.2 in Swift 4.2
         TargetProtocolDescriptor_Old *protocolDescriptor = NULL;
         // Protocol format after Xcode 10.2 in Swift 5
@@ -345,24 +349,15 @@ static bool swift_conformsToProtocols(bool isSourceClassType, TargetMetadata *ty
             }
             
             // Get class
-            if (isSourceClassType) {
+            if (isSourceClassPointer) {
                 sourceClass = (__bridge Class)type;
+            } else if (type->Kind == MetadataKindClass) {
+                sourceClass = (__bridge Class)type;
+            } else if (type->Kind == MetadataKindObjCClassWrapper ||
+                       type->Kind == MetadataKindObjCClassWrapper_old) {
+                sourceClass = ((ObjCClassWrapperMetadata *)type)->aClass;
             } else {
-                switch (type->Kind) {
-                    case ZIKSwiftMetadataKindClass: {
-                        sourceClass = (__bridge Class)type;
-                        break;
-                    }
-                    case ZIKSwiftMetadataKindObjCClassWrapper:
-                    case ZIKSwiftMetadataKindObjCClassWrapper_old: {
-                        ObjCClassWrapperMetadata *sourceType = (ObjCClassWrapperMetadata *)type;
-                        sourceClass = sourceType->aClass;
-                        break;
-                    }
-                    default:
-                        return false;
-                        break;
-                }
+                return false;
             }
             
             if (![sourceClass conformsToProtocol:targetProtocol]) {
@@ -448,14 +443,14 @@ bool _swift_typeIsTargetType(id sourceType, id targetType) {
             return true;
         }
     }
-    bool isSourceClassType = false;
+    bool isSourceClassPointer = false;
     SwiftValueHeader *sourceTypeOpaqueValue;
     TargetMetadata *sourceTypeMetadata;
     if (isSourceSwiftObjectType) {
         //swift class or swift object
         sourceTypeMetadata = (__bridge TargetMetadata *)(sourceType);
         sourceTypeOpaqueValue = (__bridge SwiftValueHeader *)(sourceType);
-        isSourceClassType = true;
+        isSourceClassPointer = true;
     } else if (isSourceSwiftValueType) {
         //swift struct or swift enum or swift protocol
         NSCAssert2([sourceType respondsToSelector:NSSelectorFromString(@"_swiftValue")], @"Swift value(%@) doesn't have method(%@), the API may be changed in libswiftCore.dylib.",sourceType,@"_swiftValue");
@@ -463,9 +458,9 @@ bool _swift_typeIsTargetType(id sourceType, id targetType) {
         //Get type metadata of this value, like `type(of: T)`
         sourceTypeMetadata = (__bridge TargetMetadata *)[sourceType performSelector:NSSelectorFromString(@"_swiftTypeMetadata")];
         //Get the first member `Kind` in TargetMetadata, it's an enum `MetadataKind`
-        ZIKSwiftMetadataKind type = sourceTypeMetadata->Kind;
+        MetadataKind type = sourceTypeMetadata->Kind;
         //Source is a metatype, get its metadata
-        if (type == ZIKSwiftMetadataKindMetatype || type == ZIKSwiftMetadataKindExistentialMetatype || type == ZIKSwiftMetadataKindMetatype_old || type == ZIKSwiftMetadataKindExistentialMetatype_old) {
+        if (type == MetadataKindMetatype || type == MetadataKindExistentialMetatype || type == MetadataKindMetatype_old || type == MetadataKindExistentialMetatype_old) {
             //OpaqueValue is struct SwiftValueHeader, `Metadata *` is its first member
             sourceTypeMetadata = sourceTypeOpaqueValue->metadata;
         }
@@ -473,12 +468,11 @@ bool _swift_typeIsTargetType(id sourceType, id targetType) {
         //objc class or objc protocol
         sourceTypeMetadata = (__bridge TargetMetadata *)(sourceType);
         sourceTypeOpaqueValue = (__bridge SwiftValueHeader *)(sourceType);
-        isSourceClassType = true;
+        isSourceClassPointer = true;
     }
     
     SwiftValueHeader *targetTypeOpaqueValue;
     TargetMetadata *targetTypeMetadata;
-    uintptr_t targetWitnessTables = 0;
     if (isTargetSwiftValueType) {
         //swift struct or swift enum or swift protocol
         NSCAssert2([targetType respondsToSelector:NSSelectorFromString(@"_swiftValue")], @"Swift value(%@) doesn't have method(%@), the API may be changed in libswiftCore.dylib.",targetType,@"_swiftValue");
@@ -486,15 +480,15 @@ bool _swift_typeIsTargetType(id sourceType, id targetType) {
         //Get type metadata of this value, like `type(of: T)`
         targetTypeMetadata = (__bridge TargetMetadata *)[targetType performSelector:NSSelectorFromString(@"_swiftTypeMetadata")];
         //Get the first member `Kind` in TargetMetadata, it's an enum `MetadataKind`
-        ZIKSwiftMetadataKind type = targetTypeMetadata->Kind;
+        MetadataKind type = targetTypeMetadata->Kind;
         //Target is a metatype, get its metadata
-        if (type == ZIKSwiftMetadataKindMetatype || type == ZIKSwiftMetadataKindExistentialMetatype || type == ZIKSwiftMetadataKindMetatype_old || type == ZIKSwiftMetadataKindExistentialMetatype_old) {
+        if (type == MetadataKindMetatype || type == MetadataKindExistentialMetatype || type == MetadataKindMetatype_old || type == MetadataKindExistentialMetatype_old) {
             //OpaqueValue is struct SwiftValueHeader, `Metadata *` is its first member
             targetTypeMetadata = targetTypeOpaqueValue->metadata;
             type = targetTypeMetadata->Kind;
         }
         //target should be swift protocol
-        if (type != ZIKSwiftMetadataKindExistential && type != ZIKSwiftMetadataKindExistential_old) {
+        if (type != MetadataKindExistential && type != MetadataKindExistential_old) {
             return false;
         } else {
             //For pure objc class, can't check conformance with swift_conformsToProtocols, need to use swift type metadata of this class as sourceTypeMetadata, or just search protocol witness table for this class
@@ -507,9 +501,9 @@ bool _swift_typeIsTargetType(id sourceType, id targetType) {
                     swift_getObjCClassMetadata = (TargetMetadata*(*)(void*))[ZIKImageSymbol findSymbolInImage:libswiftCoreImage name:"_swift_getObjCClassMetadata"];
                 });
                 if (swift_getObjCClassMetadata) {
-                    // type is ZIKSwiftMetadataKindObjCClassWrapper
+                    // type is MetadataKindObjCClassWrapper
                     sourceTypeMetadata = swift_getObjCClassMetadata((__bridge void *)(sourceType));
-                    isSourceClassType = false;
+                    isSourceClassPointer = false;
                 }
             }
         }
@@ -522,7 +516,7 @@ bool _swift_typeIsTargetType(id sourceType, id targetType) {
         targetTypeOpaqueValue = (__bridge SwiftValueHeader *)targetType;
     }
     
-    bool result = swift_conformsToProtocols(isSourceClassType, (TargetMetadata *)sourceTypeMetadata, (ExistentialTypeMetadata *)targetTypeMetadata, &targetWitnessTables);
+    bool result = swift_conformsToProtocols(isSourceClassPointer, (TargetMetadata *)sourceTypeMetadata, (ExistentialTypeMetadata *)targetTypeMetadata);
     return result;
 }
 
