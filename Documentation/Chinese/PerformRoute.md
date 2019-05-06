@@ -267,33 +267,39 @@ UIViewController<DestinationViewInput> *destination = ...
 
 </details>
 
-## URL router
+## URL Router
 
-如果你的 app 要支持 URL scheme，你可以用字符串 identifier 来查找 router，执行界面跳转。
+如果你的 app 要支持 URL scheme，你可以用 url 来查找 router，执行界面跳转。
+
+```swift
+ZIKAnyViewRouter.performURL("app://editor/test_note", path: .push(from: self))
+```
+
+<details><summary>Objective-C Sample</summary>
+
+```objectivec
+[ZIKAnyViewRouter performURL:@"app://editor/test_note" path:ZIKViewRoutePath.pushFrom(self)];
+```
+
+</details>
+
+以及处理 URL Scheme:
 
 ```swift
 // 在你的 app 内部，或者在其他 app 内执行 openURL
 func openURL(_ url: NSURL) {
-    // your-app-scheme://listView/settingView?item=1
+    // app://editor/test_note
     UIApplication.shared.openURL(url)
 }
 
-class AppDelegate: UIResponder, UIApplicationDelegate {
-    ...
-    override func application(_ app: UIApplication, open url: URL, options: [UIApplicationOpenURLOptionsKey : Any] = [:]) -> Bool {
-    
-        //可以用其他 URL router 库处理 url
-        let identifier: String = // 从 url 中取出的 identifier
-        let routerType = Router.to(viewIdentifier: identifier)
-        if routerType == nil {
-            return false
-        }
-        let params: [String : Any] = // url 里 取出的参数
-        let rootViewController = // get rootViewController
-        routerType?.perform(path: .show(from: rootViewController), configuring: { (config, _) in
-            config.addUserInfo(params)
-        })
-        
+public func application(_ app: UIApplication, open url: URL, options: [UIApplicationOpenURLOptionsKey : Any] = [:]) -> Bool {
+    let urlString = url.absoluteString
+    if let _ = ZIKAnyViewRouter.performURL(urlString, fromSource: self.rootViewController) {
+        return true
+    } else if let _ = ZIKAnyServiceRouter.performURL(urlString) {
+        return true
+    } else {
+        return false
     }
 }
 ```
@@ -303,35 +309,22 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 ```objectivec
 // 在你的 app 内部，或者在其他 app 内执行 openURL
 - (void)openURL:(NSURL *)url {
-    // your-app-scheme://listView/settingView?item=1
+    // app://editor/test_note
     [[UIApplication sharedApplication] openURL: url];
 }
 
-@implementation AppDelegate
-
 - (BOOL)application:(UIApplication *)app openURL:(NSURL *)url options:(NSDictionary<UIApplicationOpenURLOptionsKey,id> *)options {
-    
-    //可以用其他 URL router 库处理 url
-    NSString *identifier = // 从 url 中取出的 identifier
-    ZIKViewRouterType *routerType = ZIKViewRouter.toIdentifier(identifier);
-    if (routerType == nil) {
+    if ([ZIKAnyViewRouter performURL:urlString fromSource:self.rootViewController]) {
+        return YES;
+    } else if ([ZIKAnyServiceRouter performURL:urlString]) {
+        return YES;
+    } else {
         return NO;
     }
-    
-    NSDictionary *params = // url 里 取出的参数
-    UIViewController *rootViewController = // get rootViewController
-    [routerType performPath:ZIKViewRoutePath.showFrom(rootViewController)
-                configuring:^(ZIKViewRouteConfiguration *config) {
-                    [config addUserInfo:params];
-                }];
-    return YES;
 }
-@end
 ```
 
 </details>
-
-你可以用其他 URL router 库处理 url，只需要从 url 中获取到 identifier，就能执行界面跳转。
 
 ## 自定义事件
 

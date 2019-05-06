@@ -332,7 +332,6 @@ extension NoteEditorViewController: ZIKRoutableView {
 
 //声明 EditorViewInput 为 routable
 //这份声明意味着我们可以用 EditorViewInput 来获取路由
-//如果获取路由时，protocol 未经过声明，将会产生编译错误
 extension RoutableView where Protocol == EditorViewInput {
     init() { self.init(declaredProtocol: Protocol.self) }
 }
@@ -355,7 +354,7 @@ DeclareRoutableView(NoteEditorViewController, NoteEditorViewRouter)
 
 </details>
 
-**如果获取路由时，protocol 未经过声明，将会产生编译错误。这是 ZIKRouter 最特别的功能之一，可以让你更安全、更简单地管理所使用的路由接口。**
+**如果获取路由时，protocol 未经过声明，将会产生编译错误。这是 ZIKRouter 最特别的功能之一，可以让你更安全、更简单地管理所使用的路由接口，不必再用其他复杂的方式进行检查和维护。**
 
 Swift 中使用未声明的 protocol：
 
@@ -398,7 +397,7 @@ class TestViewController: UIViewController {
 
 </details>
 
-可以用 `routeType` 一键切换不同的跳转方式:
+可以用 `ViewRoutePath` 一键切换不同的跳转方式:
 
 ```swift
 enum ViewRoutePath {
@@ -416,7 +415,7 @@ enum ViewRoutePath {
 }
 ```
 
-封装界面跳转可以屏蔽 UIKit 的细节，此时界面跳转的代码就可以放在非 view 层（例如 presenter、view model、interactor、service），并且能够跨平台。
+封装界面跳转可以屏蔽 UIKit 的细节，此时界面跳转的代码就可以放在非 view 层（例如 presenter、view model、interactor、service），并且能够跨平台，也能轻易地通过配置切换跳转方式。
 
 #### 跳转前进行配置
 
@@ -501,7 +500,7 @@ id<EditorViewInput> destination = [ZIKRouterToView(EditorViewInput) makeDestinat
 
 有时模块有自定义初始化方法，需要从外部传入一些参数后才能创建实例。
 
-有时需要传递的参数并不能都通过 destination 的接口设置，例如参数不属于 destination，而是属于模块内其他组件。
+有时需要传递的参数并不能都通过 destination 的接口设置，例如参数不属于 destination，而是属于模块内其他组件。如果把参数都放到 destination 的接口上，会导致接口被污染。
 
 此时可以让 router 使用自定义 configuration 保存参数，配合 module config protocol 传参。
 
@@ -526,6 +525,8 @@ protocol EditorViewModuleInput: class {
 ```
 
 </details>
+
+此时的 `EditorViewModuleInput ` 就类似于一个工厂类，通过它来声明和创建 destination。
 
 使用自定义 configuration 时，可以使用 configuration 子类，在子类上用自定义属性传递参数。
 
@@ -688,7 +689,7 @@ ZIKAnyViewRouter.register(RoutableViewModule<EditorViewModuleInput>(),
 
 </details>
 
-模块路由创建完毕，使用者在使用模块时就能动态传入参数：
+模块路由创建完毕后，使用者在调用模块时就能动态传入参数，调用者的代码将会变成这样：
 
 ```swift
 var note = ...
@@ -1002,15 +1003,17 @@ class TestViewController: UIViewController {
 
 ### URL Router
 
-ZIKRouter 和其他 URL Router 框架兼容。
+ZIKRouter 也实现了一个默认的 URLRouter，可以方便地通过 url 调用模块，让模块能够统一处理 url 路由和接口调用。
 
-你可以给 router 注册自定义字符串：
+ZIKRouter 默认没有附带此功能，如果需要，则在 `Podfile` 中添加子模块：`pod 'ZIKRouter/URLRouter'`，并且调用`[ZIKRouter enableDefaultURLRouteRule]`开启 URL router。
+
+你可以给 router 注册 url：
 
 ```swift
 class NoteEditorViewRouter: ZIKViewRouter<NoteEditorViewController, ViewRouteConfig> {
     override class func registerRoutableDestination() {
-        //注册字符串
-        registerIdentifier("noteEditor")
+        //注册 url
+        registerURLPattern("app://editor/:title")
     }
 }
 ```
@@ -1021,24 +1024,24 @@ class NoteEditorViewRouter: ZIKViewRouter<NoteEditorViewController, ViewRouteCon
 @implementation NoteEditorViewRouter
 
 + (void)registerRoutableDestination {
-    //注册字符串
-    [self registerIdentifier:@"noteEditor"];
+    //注册 url
+    [self registerURLPattern:@"app://editor/:title"];
 }
 
 @end
 ```
 </details>
 
-之后就可以用相应的字符串获取 router:
+之后就可以用相应的 url 获取 router:
 
 ```swift
-Router.to(viewIdentifier: "myapp://noteEditor")?.perform(path .push(from: self))
+ZIKAnyViewRouter.performURL("app://editor/test_note", path: .push(from: self))
 ```
 
 <details><summary>Objective-C Sample</summary>
 
 ```objectivec
-[ZIKViewRouter.toIdentifier(@"myapp://noteEditor") performPath:ZIKViewRoutePath.pushFrom(self)];
+[ZIKAnyViewRouter performURL:@"app://editor/test_note" path:ZIKViewRoutePath.pushFrom(self)];
 ```
 </details>
 
@@ -1046,59 +1049,33 @@ Router.to(viewIdentifier: "myapp://noteEditor")?.perform(path .push(from: self))
 
 ```swift
 public func application(_ app: UIApplication, open url: URL, options: [UIApplicationOpenURLOptionsKey : Any] = [:]) -> Bool {
-        //可以使用其他的第三方 URL router 库
-        let routerIdentifier = URLRouter.routerIdentifierFromURL(url)
-        guard let identifier = routerIdentifier else {
-            return false
-        }
-        guard let routerType = Router.to(viewIdentifier: identifier) else {
-            return false
-        }
-        let params: [String : Any] = [ "url": url, "options": options ]
-        routerType.perform(path: .show(from: rootViewController), configuring: { (config, _) in
-            // 传递参数
-            config.addUserInfo(params)
-        })
+    let urlString = url.absoluteString
+    if let _ = ZIKAnyViewRouter.performURL(urlString, fromSource: self.rootViewController) {
         return true
+    } else if let _ = ZIKAnyServiceRouter.performURL(urlString) {
+        return true
+    } else {
+        return false
     }
+}
 ```
 
 <details><summary>Objective-C Sample</summary>
 
 ```objectivec
 - (BOOL)application:(UIApplication *)app openURL:(NSURL *)url options:(NSDictionary<UIApplicationOpenURLOptionsKey,id> *)options {
-    
-    //可以使用其他的第三方 URL router 库
-    NSString *identifier = [URLRouter routerIdentifierFromURL:url];
-    if (identifier == nil) {
+    if ([ZIKAnyViewRouter performURL:urlString fromSource:self.rootViewController]) {
+        return YES;
+    } else if ([ZIKAnyServiceRouter performURL:urlString]) {
+        return YES;
+    } else {
         return NO;
     }
-    ZIKViewRouterType *routerType = ZIKViewRouter.toIdentifier(identifier);
-    if (routerType == nil) {
-        return NO;
-    }
-    
-    NSDictionary *params = @{ @"url": url,
-                              @"options" : options
-                              };
-    [routerType performPath:ZIKViewRoutePath.showFrom(self.rootViewController)
-                configuring:^(ZIKViewRouteConfiguration * _Nonnull config) {
-                    //传递参数
-                    [config addUserInfo:params];
-                }];
-    return YES;
 }
 ```
 </details>
 
-你可以使用自定义的 URL router 作为父类，重写方法并添加更多强大的功能，例如：
-
-1. 通过 URL 调用 destination 的任意方法。Router 可以从 URL 中获取参数，并且通过 OC runtime 动态调用。例如这样一个 URL：`router://loginView/?action=callMethod&method=fillAccount&account=abc`，可以实现显示登录界面并调用原生方法填充账号信息
-2. 执行完方法后，自动把数据回调给 h5。如果你使用的是`JavaScriptBridge`，可以把  `responseCallback` 传递给 configuration 的 `userInfo`，并在执行方法之后传递调用的结果
-3. 除了显示界面，也可以调用内置模块
-4. 进行多级跳转。可以从 URL 的 path 中获取多个 identifier，从而按顺序显示多个界面，可以通过跳转时 configuration 的 `successHandler` 参数实现逐个显示的效果
-
-这些通过 router 父类都可以很轻松地实现。可以参考 demo 中的`ZIKViewURLRouter`和`ZIKServiceURLRouter`。由于每个项目对 URL 路由的需求都不一样，因此 ZIKRouter 没有默认添加这些功能。你可以按照项目需求实现自己的 URL 路由。
+每个项目对 URL 路由的需求都不一样，你可以按照项目需求实现自己的 URL 路由。基于 ZIKRouter 强大的可扩展性，你可以使用一个自定义的 ZIKRouter 作为父类，重写方法并添加自定义的功能。参考 `ZIKRouter+URLRouter.h`。
 
 ### Service Router
 

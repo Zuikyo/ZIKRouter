@@ -22,6 +22,7 @@
 #import "ZIKServiceRouteAdapter.h"
 #import "ZIKServiceRoutable.h"
 #import "ZIKServiceModuleRoutable.h"
+#import "ZIKServiceRoute.h"
 
 #if __has_include("ZIKViewRouter.h")
 #import "ZIKViewRouter.h"
@@ -35,9 +36,11 @@
 #import "ZIKPresentationState.h"
 #import "UIView+ZIKViewRouter.h"
 #import "UIViewController+ZIKViewRouter.h"
+#import "ZIKViewRoute.h"
 #endif
 
 #if __has_include("ZIKRouter+URLRouter.h")
+#import "ZIKURLRouteResult.h"
 #import "ZIKRouter+URLRouter.h"
 #endif
 #if __has_include("ZIKViewRouter+URLRouter.h")

@@ -9,6 +9,7 @@
 #import "TestURLServiceRouter.h"
 #import "RequiredCompatibleAlertModuleInput.h"
 @import ZIKRouter.Internal;
+#import "AppRouteRegistry.h"
 
 @implementation AlertService
 
@@ -37,7 +38,36 @@ DeclareRoutableService(AlertService, TestURLServiceRouter)
 
 + (void)registerRoutableDestination {
     [self registerService:[AlertService class]];
-    [self registerIdentifier:@"alert"];
+#if !TEST_BLOCK_ROUTES
+    [self registerURLPattern:@"router://service/alert"];
+#else
+    [ZIKServiceRoute<AlertService *, TestURLAlertServiceConfiguration *> makeRouteWithDestination:[AlertService class] makeDestination:^AlertService * _Nullable(TestURLAlertServiceConfiguration * _Nonnull config, __kindof ZIKRouter<AlertService *,TestURLAlertServiceConfiguration *,ZIKRemoveRouteConfiguration *> * _Nonnull router) {
+        return [AlertService new];
+    }]
+    .makeDefaultConfiguration(^TestURLAlertServiceConfiguration * _Nonnull{
+        return [TestURLAlertServiceConfiguration new];
+    })
+    .registerURLPattern(@"router://service/alert")
+    .processUserInfoFromURL(^(NSDictionary * _Nonnull userInfo, NSURL * _Nonnull url, TestURLAlertServiceConfiguration * _Nonnull config, ZIKServiceRouter * _Nonnull router) {
+        NSString *title = userInfo[@"title"];
+        NSString *message = userInfo[@"message"];
+        config.title = title;
+        config.message = message;
+    })
+    .performActionFromURL(^(NSString * _Nonnull action, NSDictionary * _Nonnull userInfo, NSURL * _Nonnull url, TestURLAlertServiceConfiguration * _Nonnull config, ZIKServiceRouter * _Nonnull router) {
+        if ([action isEqualToString:@"showAlert"]) {
+            [router.destination showAlertWithTitle:config.title
+                                         message:config.message];
+        }
+    })
+    .beforePerformWithConfigurationFromURL(^(TestURLAlertServiceConfiguration * _Nonnull config, ZIKServiceRouter * _Nonnull router) {
+        
+    })
+    .afterSuccessActionFromURL(^(ZIKRouteAction  _Nonnull routeAction, TestURLAlertServiceConfiguration * _Nonnull config, ZIKServiceRouter * _Nonnull router) {
+        
+    });
+    
+#endif
 }
 
 + (TestURLAlertServiceConfiguration *)defaultRouteConfiguration {

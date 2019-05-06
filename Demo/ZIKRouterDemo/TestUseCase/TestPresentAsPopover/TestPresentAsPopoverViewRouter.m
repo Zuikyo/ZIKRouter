@@ -18,7 +18,7 @@
 
 + (void)registerRoutableDestination {
     [self registerView:[TestPresentAsPopoverViewController class]];
-    [self registerIdentifier:@"testPresentAsPopover"];
+    [self registerURLPattern:@"router://testPresentAsPopover"];
 }
 
 - (id<ZIKRoutableView>)destinationWithConfiguration:(ZIKViewRouteConfiguration *)configuration {

@@ -356,7 +356,6 @@ DeclareRoutableView(NoteEditorViewController, NoteEditorViewRouter)
 
 // If the protocol inherits from ZIKViewRoutable, it's routable
 // This means you can use EditorViewInput to fetch router
-// If you use an undeclared protocol, there will be compile time warning
 @protocol EditorViewInput <ZIKViewRoutable>
 @property (nonatomic, weak) id<EditorDelegate> delegate;
 - (void)constructForCreatingNewNote;
@@ -1029,15 +1028,19 @@ You need to connect required protocol and provided protocol. For more detail, re
 
 ### URL Router
 
-ZIKRouter is also compatible with other URL router frameworks.
+ZIKRouter also provides a default URLRouter. It's easy to communicate with modules via url.
 
-You can register string identifier with router:
+URLRouter is not contained by default. If you wan't to use it, add submodule `pod 'ZIKRouter/URLRouter'` to your  `Podfile` , and call `[ZIKRouter enableDefaultURLRouteRule]` to enable URLRouter.
+
+You can register router with a url:
 
 ```swift
 class NoteEditorViewRouter: ZIKViewRouter<NoteEditorViewController, ViewRouteConfig> {
     override class func registerRoutableDestination() {
-        // Register identifier with this router
-        registerIdentifier("noteEditor")
+        registerView(NoteEditorViewController.self)
+        register(RoutableView<EditorViewInput>())
+        // Register url
+        registerURLPattern("app://editor/:title")
     }
 }
 ```
@@ -1048,86 +1051,63 @@ class NoteEditorViewRouter: ZIKViewRouter<NoteEditorViewController, ViewRouteCon
 @implementation NoteEditorViewRouter
 
 + (void)registerRoutableDestination {
-    // Register identifier with this router
-    [self registerIdentifier:@"noteEditor"];
+    [self registerView:[NoteEditorViewController class]];
+    [self registerViewProtocol:ZIKRoutable(EditorViewInput)];
+    // Register url
+    [self registerURLPattern:@"app://editor/:title"];
 }
 
 @end
 ```
+
 </details>
 
-Then perform route with the identifier:
+Then you can get the router with it's url:
 
 ```swift
-Router.to(viewIdentifier: "myapp://noteEditor")?.perform(path .push(from: self))
+ZIKAnyViewRouter.performURL("app://editor/test_note", path: .push(from: self))
 ```
 
 <details><summary>Objective-C Sample</summary>
 
 ```objectivec
-[ZIKViewRouter.toIdentifier(@"myapp://noteEditor") performPath:ZIKViewRoutePath.pushFrom(self)];
+[ZIKAnyViewRouter performURL:@"app://editor/test_note" path:ZIKViewRoutePath.pushFrom(self)];
 ```
+
 </details>
 
 And handle URL Scheme:
 
 ```swift
 public func application(_ app: UIApplication, open url: URL, options: [UIApplicationOpenURLOptionsKey : Any] = [:]) -> Bool {
-        // You can use other URL router frameworks
-        let routerIdentifier = URLRouter.routerIdentifierFromURL(url)
-        guard let identifier = routerIdentifier else {
-            return false
-        }
-        guard let routerType = Router.to(viewIdentifier: identifier) else {
-            return false
-        }
-        let params: [String : Any] = [ "url": url, "options": options ]
-        routerType.perform(path: .show(from: rootViewController), configuring: { (config, _) in
-            // Pass parameters
-            config.addUserInfo(params)
-        })
+    let urlString = url.absoluteString
+    if let _ = ZIKAnyViewRouter.performURL(urlString, fromSource: self.rootViewController) {
         return true
+    } else if let _ = ZIKAnyServiceRouter.performURL(urlString) {
+        return true
+    } else {
+        return false
     }
+}
 ```
 
 <details><summary>Objective-C Sample</summary>
 
 ```objectivec
 - (BOOL)application:(UIApplication *)app openURL:(NSURL *)url options:(NSDictionary<UIApplicationOpenURLOptionsKey,id> *)options {
-    
-    // You can use other URL router frameworks
-    NSString *identifier = [URLRouter routerIdentifierFromURL:url];
-    if (identifier == nil) {
+    if ([ZIKAnyViewRouter performURL:urlString fromSource:self.rootViewController]) {
+        return YES;
+    } else if ([ZIKAnyServiceRouter performURL:urlString]) {
+        return YES;
+    } else {
         return NO;
     }
-    ZIKViewRouterType *routerType = ZIKViewRouter.toIdentifier(identifier);
-    if (routerType == nil) {
-        return NO;
-    }
-    
-    NSDictionary *params = @{ @"url": url,
-                              @"options" : options
-                              };
-    [routerType performPath:ZIKViewRoutePath.showFrom(self.rootViewController)
-                configuring:^(ZIKViewRouteConfiguration * _Nonnull config) {
-                    // Pass parameters
-                    [config addUserInfo:params];
-                }];
-    return YES;
 }
 ```
+
 </details>
 
-You can create custom URL router as parent class, add more powerful features in it, such as:
-
-1. Call any methods of destination via url. the URL router can get parameters and call methods with OC runtime. Think about this URL: `router://loginView/?action=callMethod&method=fillAccount&account=abc`, it can open login view and call native method to fill a default account
-2. Automatically give data back to h5 after performing action. If you are using `JavaScriptBridge`, the you can pass the `responseCallback` to router's userInfo and call it after performing action
-3. Call native services via URL, not only open view
-4. Get multi identifiers from `path` in url , and present multi views in order with `successHandler` in router's configuration
-
-These features are not hard to implement with  parent router class. You can see `ZIKViewURLRouter` and `ZIKServiceURLRouter` in the demo. 
-
-Since each project has different requirements for URL router, ZIKRouter didn't implement those features. You can write your URL router by yourself.
+If your project has different requirements for URL router, you can write your URL router by yourself. You can create custom ZIKRouter as parent class, add more powerful features in it. See `ZIKRouter+URLRouter.h`.
 
 ### Service Router
 

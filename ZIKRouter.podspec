@@ -66,4 +66,24 @@ Pod::Spec.new do |s|
                                       "ZIKRouter/ViewRouter/BlockRouter/ZIKBlockViewRouter.h"
   end
 
+  s.subspec 'ServiceURLRouter' do |serviceURLRouter|
+    serviceURLRouter.dependency 'ZIKRouter/ServiceRouter'
+    serviceURLRouter.source_files = "ZIKRouter/URLRouter/ZIKURLRouter.{h,m}",
+                                    "ZIKRouter/URLRouter/ZIKRouter+URLRouter.{h,m}",
+                                    "ZIKRouter/URLRouter/ZIKURLRouteResult{h,m}"
+    serviceURLRouter.public_header_files = "ZIKRouter/URLRouter/ZIKRouter+URLRouter.h",
+                                           "ZIKRouter/URLRouter/ZIKURLRouteResult.h"
+    serviceURLRouter.private_header_files = "ZIKRouter/URLRouter/ZIKURLRouter.h"
+  end
+
+  s.subspec 'ViewURLRouter' do |viewURLRouter|
+    viewURLRouter.dependency 'ZIKRouter/ViewRouter', 'ZIKRouter/ServiceURLRouter'
+    viewURLRouter.source_files = "ZIKRouter/URLRouter/ZIKViewRouter+URLRouter.{h,m}"
+    viewURLRouter.public_header_files = "ZIKRouter/URLRouter/ZIKViewRouter+URLRouter.h"
+  end
+
+  s.subspec 'URLRouter' do |urlRouter|
+    urlRouter.dependency 'ZIKRouter/ServiceURLRouter', 'ZIKRouter/ViewURLRouter'
+  end
+
 end

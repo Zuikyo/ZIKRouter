@@ -71,10 +71,12 @@
     UISplitViewController *splitViewController = (UISplitViewController *)self.window.rootViewController;
     UINavigationController *navigationController = [splitViewController.viewControllers firstObject];
     
+    NSString *urlString = url.absoluteString;
+    
     // You can create your custom URL router rule, or use other url router framework then fetch router with identifier
-    if ([ZIKViewRouter performURL:url fromSource:navigationController]) {
+    if ([ZIKAnyViewRouter performURL:urlString fromSource:navigationController]) {
         return YES;
-    } else if ([ZIKServiceRouter performURL:url]) {
+    } else if ([ZIKAnyServiceRouter performURL:urlString]) {
         return YES;
     } else {
         // Can't handle the url, you can show a default error page

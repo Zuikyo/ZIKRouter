@@ -61,7 +61,7 @@ Module protocol 是用来声明模块需要用到的参数的。
 
 代码参考：[自定义 configuration](CustomConfiguration.md)
 
-## 字符串 Identifier 注册
+## 注册字符串 Identifier
 
 你可以给 router 注册一个字符串唯一码：
 
@@ -84,6 +84,85 @@ Router.to(viewIdentifier: "viewController-editor")?
 ```
 
 字典传参无法检查参数类型，因此不建议在正常情况下使用。你应该只有在模块需要支持 URL scheme 时，才使用这种方式。用字符串匹配，可以让 ZIKRouter 和其他 URL router 兼容。
+
+## 注册 URL
+
+ZIKRouter 实现了一个默认的 URLRouter，可以方便地通过 url 调用模块。
+
+ZIKRouter 默认没有附带此功能，如果需要，则在 `Podfile` 中添加子模块：`pod 'ZIKRouter/URLRouter'`，并且调用`[ZIKRouter enableDefaultURLRouteRule]`开启 URL router。
+
+你可以给 router 注册 url：
+
+```swift
+class NoteEditorViewRouter: ZIKViewRouter<NoteEditorViewController, ViewRouteConfig> {
+    override class func registerRoutableDestination() {
+        //注册 url
+        registerURLPattern("app://editor/:title")
+    }
+}
+```
+
+<details><summary>Objective-C Sample</summary>
+
+```objectivec
+@implementation NoteEditorViewRouter
+
++ (void)registerRoutableDestination {
+    //注册 url
+    [self registerURLPattern:@"app://editor/:title"];
+}
+
+@end
+```
+
+</details>
+
+之后就可以用相应的 url 获取 router:
+
+```swift
+ZIKAnyViewRouter.performURL("app://editor/test_note", path: .push(from: self))
+```
+
+<details><summary>Objective-C Sample</summary>
+
+```objectivec
+[ZIKAnyViewRouter performURL:@"app://editor/test_note" path:ZIKViewRoutePath.pushFrom(self)];
+```
+
+</details>
+
+以及处理 URL Scheme:
+
+```swift
+public func application(_ app: UIApplication, open url: URL, options: [UIApplicationOpenURLOptionsKey : Any] = [:]) -> Bool {
+    let urlString = url.absoluteString
+    if let _ = ZIKAnyViewRouter.performURL(urlString, fromSource: self.rootViewController) {
+        return true
+    } else if let _ = ZIKAnyServiceRouter.performURL(urlString) {
+        return true
+    } else {
+        return false
+    }
+}
+```
+
+<details><summary>Objective-C Sample</summary>
+
+```objectivec
+- (BOOL)application:(UIApplication *)app openURL:(NSURL *)url options:(NSDictionary<UIApplicationOpenURLOptionsKey,id> *)options {
+    if ([ZIKAnyViewRouter performURL:urlString fromSource:self.rootViewController]) {
+        return YES;
+    } else if ([ZIKAnyServiceRouter performURL:urlString]) {
+        return YES;
+    } else {
+        return NO;
+    }
+}
+```
+
+</details>
+
+每个项目对 URL 路由的需求都不一样，你可以按照项目需求实现自己的 URL 路由。基于 ZIKRouter 强大的可扩展性，你可以使用一个自定义的 ZIKRouter 作为父类，重写方法并添加自定义的功能。参考 `ZIKRouter+URLRouter.h`。
 
 ## 自动注册
 

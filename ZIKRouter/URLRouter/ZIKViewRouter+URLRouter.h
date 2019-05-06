@@ -6,12 +6,13 @@
 //  Copyright © 2019 zuik. All rights reserved.
 //
 
-#import <ZIKRouter/ZIKViewRouterType.h>
+#import "ZIKViewRouterType.h"
 #import "ZIKRouter+URLRouter.h"
+#import "ZIKViewRoute.h"
 
 NS_ASSUME_NONNULL_BEGIN
 
-/// Default is @"transition-type". You can change this key like: ZIKURLRouteKeyTransitionType = @"transition"
+/// Default is @"transition". You can change this key like: ZIKURLRouteKeyTransitionType = @"displaytype"
 FOUNDATION_EXTERN ZIKURLRouteKey ZIKURLRouteKeyTransitionType;
 /// Default is @"present". app://loginView/?transition-type=present
 FOUNDATION_EXTERN ZIKURLRouteKey ZIKURLRouteKeyTransitionTypePresent;
@@ -29,32 +30,84 @@ FOUNDATION_EXTERN ZIKURLRouteKey ZIKURLRouteKeyTransitionTypeAddAsSubview;
  
  Feature of this view URL router:
  
- 1. Open view with specific transition type. The url `app://loginView/?transition-type=present` can present the  login view.
+ 1. Open view with specific transition type. The url `app://loginView/?transition=present` can present the  login view.
  
- It's easy to add other custom features with a custom URL router parent class, such as:
- 
- 1. Call any methods of destination via url. the URL router can get parameters and call methods with OC runtime: router://loginView/?action=callMethod&method=fillAccount&account=abc
- 
- 2. Automatically give data back to html5 after performing action
- 
- 3. Get multi identifiers from `path` in url , and present multi views in order with `successHandler` in router's configuration.
- 
- You can implement these features by yourself if needed.
+ You can implement your URL router if needed.
  */
 @interface ZIKViewRouter<__covariant Destination, __covariant RouteConfig: ZIKViewRouteConfiguration *> (URLRouter)
 
-/// Perform route for the url. It will search router with `+routerForURL:`, get userInfo with `+userInfoFromURL:` then perform route with path from `+pathFromURL:source:`.
-+ (nullable ZIKViewRouter<Destination, RouteConfig> *)performURL:(NSURL *)url fromSource:(UIViewController *)source;
+/**
+ Register URL pattern, then you can get the router with `+[ZIKAnyViewRouter routerForURL:]` or perform the url with `+[ZIKAnyViewRouter performURL:]`.
+ 
+ Supported patterns:
+ 
+ app://view/path
+ app://view/path?k=v&k2&v2
+ app://view/path/:id
+ app://view/path/:id/:number
+ app://view/path/:id/:number?k=v&k2&v2
+ app://view/path/:id/path/:number
+ */
++ (void)registerURLPattern:(NSString *)pattern;
 
-/// Perform route for the url. It will search router with `+routerForURL:`, get userInfo with `+userInfoFromURL:` then perform route with the path.
-+ (nullable ZIKViewRouter<Destination, RouteConfig> *)performURL:(NSURL *)url path:(ZIKViewRoutePath *)path;
+/// Perform route for the url. It will search router and get parameters with `+routeFromURL:`, then perform route with the path.
++ (nullable ZIKViewRouter<Destination, RouteConfig> *)performURL:(NSString *)url path:(ZIKViewRoutePath *)path;
+
+/// Perform route for the url with completion for current performing. It will search router and get parameters with `+routeFromURL:`, then perform route with the path.
++ (nullable ZIKViewRouter<Destination, RouteConfig> *)performURL:(NSString *)url path:(ZIKViewRoutePath *)path completion:(void(^)(BOOL success, Destination _Nullable destination, ZIKRouteAction routeAction, NSError *_Nullable error))performerCompletion;
 
 /// Get router for identifier from URL.
-+ (nullable ZIKViewRouterType<Destination, RouteConfig> *)routerForURL:(NSURL *)url;
++ (nullable ZIKViewRouterType<Destination, RouteConfig> *)routerForURL:(NSString *)url;
+
+/// Perform route for the url. It will search router and get userInfo with `+routeFromURL:`, then perform route with path from `+pathForTransitionType:source:`.
+#if ZIK_HAS_UIKIT
++ (nullable ZIKViewRouter<Destination, RouteConfig> *)performURL:(NSString *)url fromSource:(UIViewController *)source;
+#else
++ (nullable ZIKViewRouter<Destination, RouteConfig> *)performURL:(NSString *)url fromSource:(NSViewController *)source;
+#endif
+
+/// Perform route for the url with completion for current performing. It will search router and get parameters with `+routeFromURL:`, then perform route with path from `+pathForTransitionType:source:`.
+#if ZIK_HAS_UIKIT
++ (nullable ZIKViewRouter<Destination, RouteConfig> *)performURL:(NSString *)url fromSource:(UIViewController *)source completion:(void(^)(BOOL success, Destination _Nullable destination, ZIKRouteAction routeAction, NSError *_Nullable error))performerCompletion;
+#else
++ (nullable ZIKViewRouter<Destination, RouteConfig> *)performURL:(NSString *)url fromSource:(NSViewController *)source completion:(void(^)(BOOL success, Destination _Nullable destination, ZIKRouteAction routeAction, NSError *_Nullable error))performerCompletion;
+#endif
 
 /// Generate view route path from URL.
-+ (ZIKViewRoutePath *)pathFromURL:(NSURL *)url source:(UIViewController *)source;
+#if ZIK_HAS_UIKIT
++ (ZIKViewRoutePath *)pathForTransitionType:(NSString *)type source:(UIViewController *)source;
+#else
++ (ZIKViewRoutePath *)pathForTransitionType:(NSString *)type source:(NSViewController *)source;
+#endif
+@end
 
+@interface ZIKViewRoute<__covariant Destination, __covariant RouteConfig: ZIKViewRouteConfiguration *> (URLRouter)
+
+/**
+ Register URL pattern, then you can get the router with `+[ZIKAnyViewRouter routerForURL:]` or perform the url with `+[ZIKAnyViewRouter performURL:]`.
+ 
+ Supported patterns:
+ 
+ app://view/path
+ app://view/path?k=v&k2&v2
+ app://view/path/:id
+ app://view/path/:id/:number
+ app://view/path/:id/:number?k=v&k2&v2
+ app://view/path/:id/path/:number
+ */
+@property (nonatomic, readonly) ZIKViewRoute<Destination, RouteConfig> *(^registerURLPattern)(NSString *pattern);
+
+/// Process the user info from url. This method is called before `performWithConfiguration:`. You can config the configuration with the user info.
+@property (nonatomic, readonly) ZIKViewRoute<Destination, RouteConfig> *(^processUserInfoFromURL)(void(^)(NSDictionary *userInfo, NSURL *url, RouteConfig config, ZIKViewRouter *router));
+
+/// Perform `action` from the url (app://loginView/?action=showAlert) after performing ended. You can store a completion handler in userInfo and give some data back to the caller.
+@property (nonatomic, readonly) ZIKViewRoute<Destination, RouteConfig> *(^performActionFromURL)(void(^)(NSString *action, NSDictionary *userInfo, NSURL *url, RouteConfig config, ZIKViewRouter *router));
+
+/// Do actions before `-performWithConfiguration:` for URL route rule.
+@property (nonatomic, readonly) ZIKViewRoute<Destination, RouteConfig> *(^beforePerformWithConfigurationFromURL)(void(^)(RouteConfig config, ZIKViewRouter *router));
+
+/// Do actions after `-notifySuccessWithAction:` for URL route rule. The routeAction is ZIKRouteActionPerformRoute or ZIKRouteActionRemoveRoute.
+@property (nonatomic, readonly) ZIKViewRoute<Destination, RouteConfig> *(^afterSuccessActionFromURL)(void(^)(ZIKRouteAction routeAction, RouteConfig config, ZIKViewRouter *router));
 @end
 
 NS_ASSUME_NONNULL_END

@@ -8,6 +8,7 @@
 
 #import "TestPresentModallyViewRouter.h"
 #import "TestPresentModallyViewController.h"
+#import "AppRouteRegistry.h"
 
 @interface TestPresentModallyViewController (TestPresentModallyViewRouter) <ZIKRoutableView>
 @end
@@ -18,7 +19,31 @@
 
 + (void)registerRoutableDestination {
     [self registerView:[TestPresentModallyViewController class]];
-    [self registerIdentifier:@"testPresentModally"];
+#if !TEST_BLOCK_ROUTES
+    [self registerURLPattern:@"router://testPresentModally"];
+#else
+    [ZIKDestinationViewRoute(TestPresentModallyViewController *)
+     makeRouteWithDestination:[TestPresentModallyViewController class]
+     makeDestination:^TestPresentModallyViewController * _Nullable(ZIKViewRouteConfig * _Nonnull config, __kindof ZIKRouter<TestPresentModallyViewController *,ZIKViewRouteConfig *,ZIKViewRemoveConfiguration *> * _Nonnull router) {
+        UIStoryboard *sb = [UIStoryboard storyboardWithName:@"Main" bundle:nil];
+        TestPresentModallyViewController *destination = [sb instantiateViewControllerWithIdentifier:@"testPresentModally"];
+        destination.title = @"Test PresentModally";
+        return destination;
+    }]
+    .registerURLPattern(@"router://testPresentModally")
+    .processUserInfoFromURL(^(NSDictionary *userInfo, NSURL *url, ZIKViewRouteConfig *config, ZIKViewRouter *router) {
+        
+    })
+    .performActionFromURL(^(NSString *action, NSDictionary *userInfo, NSURL *url, ZIKViewRouteConfig *config, ZIKViewRouter *router) {
+        
+    })
+    .beforePerformWithConfigurationFromURL(^(ZIKViewRouteConfig *config, ZIKViewRouter *router) {
+        
+    })
+    .afterSuccessActionFromURL(^(ZIKRouteAction routeAction, ZIKViewRouteConfig *config, ZIKViewRouter *router) {
+        
+    });
+#endif
 }
 
 - (id<ZIKRoutableView>)destinationWithConfiguration:(ZIKViewRouteConfiguration *)configuration {

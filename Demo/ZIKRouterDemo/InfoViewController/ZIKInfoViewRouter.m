@@ -30,7 +30,7 @@ DeclareRoutableViewModuleProtocol(EasyInfoViewModuleProtocol)
 + (void)registerRoutableDestination {
     [self registerView:[ZIKInfoViewController class]];
     [self registerViewProtocol:ZIKRoutable(ZIKInfoViewProtocol)];
-    [self registerIdentifier:@"info"];
+    [self registerURLPattern:@"router://info"];
     
     // Test easy factory
     [ZIKDestinationViewRouter(id<EasyInfoViewProtocol1>)

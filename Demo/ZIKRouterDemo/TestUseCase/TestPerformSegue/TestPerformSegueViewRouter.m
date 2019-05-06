@@ -18,7 +18,7 @@
 
 + (void)registerRoutableDestination {
     [self registerView:[TestPerformSegueViewController class]];
-    [self registerIdentifier:@"testPerformSegue"];
+    [self registerURLPattern:@"router://testPerformSegue"];
 }
 
 - (id<ZIKRoutableView>)destinationWithConfiguration:(ZIKViewRouteConfiguration *)configuration {

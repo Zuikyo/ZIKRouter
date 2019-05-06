@@ -267,7 +267,90 @@ Router.to(viewIdentifier: "viewController-editor")?
 	})
 ```
 
-We can't check type of parameters when passing in a dictionary, so it's not recommanded to use this method for most cases. You should only use this method when the module needs to support URL scheme. You can combine other URL router with ZIKRouter by identifier matching.
+We can't check type of parameters when passing in a dictionary, so it's not recommanded to use this method for most cases. You should only use this method when the module needs to support URL scheme.
+
+## Register URL
+
+ZIKRouter also provides a default URLRouter. It's easy to communicate with modules via url.
+
+URLRouter is not contained by default. If you wan't to use it, add submodule `pod 'ZIKRouter/URLRouter'` to your  `Podfile` , and call `[ZIKRouter enableDefaultURLRouteRule]` to enable URLRouter.
+
+You can register router with a url:
+
+```swift
+class NoteEditorViewRouter: ZIKViewRouter<NoteEditorViewController, ViewRouteConfig> {
+    override class func registerRoutableDestination() {
+        registerView(NoteEditorViewController.self)
+        register(RoutableView<EditorViewInput>())
+        // Register url
+        registerURLPattern("app://editor/:title")
+    }
+}
+```
+
+<details><summary>Objective-C Sample</summary>
+
+```objectivec
+@implementation NoteEditorViewRouter
+
++ (void)registerRoutableDestination {
+    [self registerView:[NoteEditorViewController class]];
+    [self registerViewProtocol:ZIKRoutable(EditorViewInput)];
+    // Register url
+    [self registerURLPattern:@"app://editor/:title"];
+}
+
+@end
+```
+
+</details>
+
+Then you can get the router with it's url:
+
+```swift
+ZIKAnyViewRouter.performURL("app://editor/test_note", path: .push(from: self))
+```
+
+<details><summary>Objective-C Sample</summary>
+
+```objectivec
+[ZIKAnyViewRouter performURL:@"app://editor/test_note" path:ZIKViewRoutePath.pushFrom(self)];
+```
+
+</details>
+
+And handle URL Scheme:
+
+```swift
+public func application(_ app: UIApplication, open url: URL, options: [UIApplicationOpenURLOptionsKey : Any] = [:]) -> Bool {
+    let urlString = url.absoluteString
+    if let _ = ZIKAnyViewRouter.performURL(urlString, fromSource: self.rootViewController) {
+        return true
+    } else if let _ = ZIKAnyServiceRouter.performURL(urlString) {
+        return true
+    } else {
+        return false
+    }
+}
+```
+
+<details><summary>Objective-C Sample</summary>
+
+```objectivec
+- (BOOL)application:(UIApplication *)app openURL:(NSURL *)url options:(NSDictionary<UIApplicationOpenURLOptionsKey,id> *)options {
+    if ([ZIKAnyViewRouter performURL:urlString fromSource:self.rootViewController]) {
+        return YES;
+    } else if ([ZIKAnyServiceRouter performURL:urlString]) {
+        return YES;
+    } else {
+        return NO;
+    }
+}
+```
+
+</details>
+
+If your project has different requirements for URL router, you can write your URL router by yourself. You can create custom ZIKRouter as parent class, add more powerful features in it. See `ZIKRouter+URLRouter.h`.
 
 ## Auto Registration
 

@@ -269,33 +269,39 @@ UIViewController<DestinationViewInput> *destination = ...
 
 </details>
 
-## URL router
+## URL Router
 
-If your app needs to support URL scheme, you can use identifier to perofrm route.
+If your app needs to support URL scheme, you can use URL Router.
+
+```swift
+ZIKAnyViewRouter.performURL("app://editor/test_note", path: .push(from: self))
+```
+
+<details><summary>Objective-C Sample</summary>
+
+```objectivec
+[ZIKAnyViewRouter performURL:@"app://editor/test_note" path:ZIKViewRoutePath.pushFrom(self)];
+```
+
+</details>
+
+And handle URL Scheme:
 
 ```swift
 // openURL inside your app or from other app
 func openURL(_ url: NSURL) {
-    // your-app-scheme://listView/settingView?item=1
+    // app://editor/test_note
     UIApplication.shared.openURL(url)
 }
 
-class AppDelegate: UIResponder, UIApplicationDelegate {
-    ...
-    override func application(_ app: UIApplication, open url: URL, options: [UIApplicationOpenURLOptionsKey : Any] = [:]) -> Bool {
-    
-        // You can use other url router framework to handle the url
-        let identifier: String = // route identifier from the url
-        let routerType = Router.to(viewIdentifier: identifier)
-        if routerType == nil {
-            return false
-        }
-        let params: [String : Any] = // parameters from the url
-        let rootViewController = // get rootViewController
-        routerType?.perform(path: .show(from: rootViewController), configuring: { (config, _) in
-            config.addUserInfo(params)
-        })
-        
+public func application(_ app: UIApplication, open url: URL, options: [UIApplicationOpenURLOptionsKey : Any] = [:]) -> Bool {
+    let urlString = url.absoluteString
+    if let _ = ZIKAnyViewRouter.performURL(urlString, fromSource: self.rootViewController) {
+        return true
+    } else if let _ = ZIKAnyServiceRouter.performURL(urlString) {
+        return true
+    } else {
+        return false
     }
 }
 ```
@@ -305,36 +311,22 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 ```objectivec
 // openURL inside your app or from other app
 - (void)openURL:(NSURL *)url {
-    // your-app-scheme://listView/settingView?item=1
+    // app://editor/test_note
     [[UIApplication sharedApplication] openURL: url];
 }
 
-@implementation AppDelegate
-
 - (BOOL)application:(UIApplication *)app openURL:(NSURL *)url options:(NSDictionary<UIApplicationOpenURLOptionsKey,id> *)options {
-    
-    // You can use other URL router framework to handle the url
-    NSString *identifier = // route identifier from the url
-    ZIKViewRouterType *routerType = ZIKViewRouter.toIdentifier(identifier);
-    if (routerType == nil) {
+    if ([ZIKAnyViewRouter performURL:urlString fromSource:self.rootViewController]) {
+        return YES;
+    } else if ([ZIKAnyServiceRouter performURL:urlString]) {
+        return YES;
+    } else {
         return NO;
     }
-    UISplitViewController *splitViewController = (UISplitViewController *)self.window.rootViewController;
-    UINavigationController *navigationController = [splitViewController.viewControllers lastObject];
-    
-    NSDictionary *params = // parameters from the url
-    [routerType performPath:ZIKViewRoutePath.showFrom(navigationController)
-                configuring:^(ZIKViewRouteConfiguration *config) {
-                    [config addUserInfo:params];
-                }];
-    return YES;
 }
-@end
 ```
 
 </details>
-
-You can use other URL router framework to handle the url, the URL router needs to set and get the identifier for router.
 
 ## Custom Event
 

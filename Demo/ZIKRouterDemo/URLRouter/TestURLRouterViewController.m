@@ -78,7 +78,7 @@
 
 - (void)callServiceViaURL:(id)sender {
     NSString *url = [NSString
-                     stringWithFormat:@"router://alert/?action=showAlert&title=%@&message=%@",
+                     stringWithFormat:@"router://service/alert/?action=showAlert&title=%@&message=%@",
                      [@"Alert from URL" stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding],
                      [@"This alert service is called via URL" stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding]];
     [[UIApplication sharedApplication] openURL:[NSURL URLWithString:url]];

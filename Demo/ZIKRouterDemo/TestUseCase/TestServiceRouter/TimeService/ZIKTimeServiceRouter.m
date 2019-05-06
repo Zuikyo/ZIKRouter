@@ -23,7 +23,7 @@ ZIKTimeService *makeTimeService(ZIKPerformRouteConfig *config) {
 + (void)registerRoutableDestination {
     [self registerService:[ZIKTimeService class]];
     [self registerServiceProtocol:ZIKRoutable(ZIKTimeServiceInput)];
-    [self registerIdentifier:@"com.zuik.service.timeService"];
+    [self registerURLPattern:@"router://timeService"];
     
     // Test easy factory
     [ZIKDestinationServiceRouter(ZIKTimeService *) registerServiceProtocol:ZIKRoutable(EasyTimeServiceInput1) forMakingService:[ZIKTimeService class]];

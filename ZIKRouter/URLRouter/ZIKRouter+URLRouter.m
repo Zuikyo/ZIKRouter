@@ -18,14 +18,14 @@ ZIKURLRouteKey ZIKURLRouteKeyAction = @"action";
 
 + (void)enableDefaultURLRouteRule {
     [ZIKRouter interceptBeforePerformWithConfiguration:^(ZIKRouter * _Nonnull router, ZIKPerformRouteConfiguration * _Nonnull configuration) {
-        [router URLRouter_beforePerformWithConfiguration:configuration];
+        [router beforePerformWithConfigurationFromURL:configuration];
     }];
     [ZIKRouter interceptAfterSuccessAction:^(ZIKRouter * _Nonnull router, ZIKRouteAction  _Nonnull routeAction) {
-        [router URLRouter_afterSuccessAction:routeAction];
+        [router afterSuccessActionFromURL:routeAction];
     }];
 }
 
-- (void)URLRouter_beforePerformWithConfiguration:(ZIKPerformRouteConfiguration *)configuration {
+- (void)beforePerformWithConfigurationFromURL:(ZIKPerformRouteConfiguration *)configuration {
     NSDictionary *userInfo = [self.configuration valueForKey:@"_userInfo"];
     if (!userInfo) {
         return;
@@ -37,7 +37,7 @@ ZIKURLRouteKey ZIKURLRouteKeyAction = @"action";
     [self processUserInfo:userInfo fromURL:url];
 }
 
-- (void)URLRouter_afterSuccessAction:(ZIKRouteAction)routeAction {
+- (void)afterSuccessActionFromURL:(ZIKRouteAction)routeAction {
     // Only handle perform route acation
     if (![routeAction isEqualToString:ZIKRouteActionPerformRoute]) {
         return;
@@ -64,31 +64,182 @@ ZIKURLRouteKey ZIKURLRouteKeyAction = @"action";
     
 }
 
-+ (NSString *)routerIdentifierFromURL:(NSURL *)url {
-    return url.host;
++ (ZIKURLRouteResult *)routeFromURL:(NSString *)url {
+    return nil;
 }
 
-+ (NSDictionary *)userInfoFromURL:(NSURL *)url {
-    if (!url) {
-        return @{};
+@end
+
+#import "ZIKServiceRouterInternal.h"
+#import "ZIKURLRouter.h"
+
+static ZIKURLRouter *_serviceURLRouter;
+
+static void _createURLRouter() {
+    static dispatch_once_t onceToken;
+    dispatch_once(&onceToken, ^{
+        if (!_serviceURLRouter) {
+            _serviceURLRouter = [ZIKURLRouter new];
+        }
+    });
+}
+
+@implementation ZIKServiceRouter (URLRouter)
+
++ (void)registerURLPattern:(NSString *)pattern {
+    _createURLRouter();
+    [_serviceURLRouter registerURLPattern:pattern];
+    [self registerIdentifier:pattern];
+}
+
++ (ZIKURLRouteResult *)routeFromURL:(NSString *)url {
+    ZIKURLRouteResult *result = [_serviceURLRouter resultForURL:url];
+    if (!result) {
+        return nil;
     }
     NSMutableDictionary *userInfo = [NSMutableDictionary dictionary];
-    userInfo[ZIKURLRouteKeyOriginURL] = url;
-    
-    NSString *query = url.query;
-    if (query) {
-        NSArray *params = [query componentsSeparatedByString:@"&"];
-        for (NSString *param in params) {
-            NSArray *kv = [param componentsSeparatedByString:@"="];
-            if (kv.count == 2) {
-                NSString *key = [kv firstObject];
-                NSString *value = [kv lastObject];
-                value = [value stringByReplacingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
-                userInfo[key] = value;
-            }
-        }
+    userInfo[ZIKURLRouteKeyOriginURL] = [NSURL URLWithString:url];
+    if (result.parameters) {
+        [userInfo addEntriesFromDictionary:result.parameters];
     }
-    return userInfo;
+    result.parameters = userInfo;
+    return result;
+}
+
++ (ZIKServiceRouterType *)routerForURL:(NSString *)url {
+    NSString *identifier = [self routeFromURL:url].identifier;
+    if (!identifier) {
+        return nil;
+    }
+    return _ZIKServiceRouterToIdentifier(identifier);
+}
+
++ (ZIKServiceRouter *)performURL:(NSString *)url {
+    return [self performURL:url completion:^(BOOL success, id  _Nullable destination, ZIKRouteAction routeAction, NSError * _Nullable error) {
+        
+    }];
+}
+
++ (ZIKServiceRouter *)performURL:(NSString *)url completion:(void(^)(BOOL success, id _Nullable destination, ZIKRouteAction routeAction, NSError *_Nullable error))performerCompletion {
+    ZIKURLRouteResult *result = [self routeFromURL:url];
+    NSString *identifier = result.identifier;
+    if (!identifier) {
+        if (performerCompletion) {
+            NSError *error = [ZIKServiceRouter errorWithCode:ZIKRouteErrorInvalidConfiguration localizedDescriptionFormat:@"Can't find router from url: %@", url];
+            performerCompletion(NO, nil, ZIKRouteActionToService, error);
+        }
+        return nil;
+    }
+    ZIKServiceRouterType *routerType = _ZIKServiceRouterToIdentifier(identifier);
+    if (!routerType) {
+        if (performerCompletion) {
+            NSError *error = [ZIKServiceRouter errorWithCode:ZIKRouteErrorInvalidConfiguration localizedDescriptionFormat:@"Can't find router with identifier (%@) from url: %@", identifier, url];
+            performerCompletion(NO, nil, ZIKRouteActionToService, error);
+            [ZIKServiceRouter notifyGlobalErrorWithRouter:nil action:ZIKRouteActionToService error:error];
+        }
+        return nil;
+    }
+    NSDictionary *userInfo = result.parameters;
+    return [routerType performWithConfiguring:^(ZIKPerformRouteConfiguration * _Nonnull config) {
+        [config addUserInfo:userInfo];
+        if (!performerCompletion) {
+            return;
+        }
+        config.performerSuccessHandler = ^(id  _Nonnull destination) {
+            performerCompletion(YES, destination, ZIKRouteActionPerformRoute, nil);
+        };
+        config.performerErrorHandler = ^(ZIKRouteAction  _Nonnull routeAction, NSError * _Nonnull error) {
+            performerCompletion(NO, nil, routeAction, error);
+        };
+    }];
+}
+
+@end
+
+#import "ZIKServiceRouteRegistry.h"
+#import "ZIKRouteRegistryInternal.h"
+#import <objc/runtime.h>
+
+@implementation ZIKServiceRoute (URLRouter)
+
+- (ZIKServiceRoute<id, ZIKPerformRouteConfiguration *> *(^)(NSString *))registerURLPattern {
+    _createURLRouter();
+    return ^(NSString *pattern) {
+        [_serviceURLRouter registerURLPattern:pattern];
+        [ZIKServiceRouteRegistry registerIdentifier:pattern route:self];
+        return self;
+    };
+};
+
+- (ZIKServiceRoute<id, ZIKPerformRouteConfiguration *> *(^)(void(^)(NSDictionary *, NSURL *, ZIKPerformRouteConfiguration *, ZIKServiceRouter *)))processUserInfoFromURL {
+    return ^(void(^block)(NSDictionary *userInfo, NSURL *url, ZIKPerformRouteConfiguration *config, ZIKServiceRouter *router)) {
+        objc_setAssociatedObject(self, @selector(processUserInfoFromURL), block, OBJC_ASSOCIATION_COPY_NONATOMIC);
+        return self;
+    };
+}
+
+- (ZIKServiceRoute<id, ZIKPerformRouteConfiguration *> *(^)(void(^)(NSString *, NSDictionary *, NSURL *, ZIKPerformRouteConfiguration *, ZIKServiceRouter *)))performActionFromURL {
+    return ^(void(^block)(NSString *action, NSDictionary *userInfo, NSURL *url, ZIKPerformRouteConfiguration *config, ZIKServiceRouter *router)) {
+        objc_setAssociatedObject(self, @selector(performActionFromURL), block, OBJC_ASSOCIATION_COPY_NONATOMIC);
+        return self;
+    };
+}
+
+- (ZIKServiceRoute<id, ZIKPerformRouteConfiguration *> *(^)(void(^)(ZIKPerformRouteConfiguration *, ZIKServiceRouter *)))beforePerformWithConfigurationFromURL {
+    return ^(void(^block)(ZIKPerformRouteConfiguration *config, ZIKServiceRouter *router)) {
+        objc_setAssociatedObject(self, @selector(beforePerformWithConfigurationFromURL), block, OBJC_ASSOCIATION_COPY_NONATOMIC);
+        return self;
+    };
+}
+
+- (ZIKServiceRoute<id, ZIKPerformRouteConfiguration *> *(^)(void(^)(ZIKRouteAction, ZIKPerformRouteConfiguration *, ZIKServiceRouter *)))afterSuccessActionFromURL {
+    return ^(void(^block)(ZIKRouteAction routeAction, ZIKPerformRouteConfiguration *config, ZIKServiceRouter *router)) {
+        objc_setAssociatedObject(self, @selector(afterSuccessActionFromURL), block, OBJC_ASSOCIATION_COPY_NONATOMIC);
+        return self;
+    };
+}
+
+@end
+
+#import "ZIKBlockServiceRouter.h"
+
+@interface ZIKBlockServiceRouter (URLRouter)
+@end
+
+@implementation ZIKBlockServiceRouter (URLRouter)
+
+- (void)processUserInfo:(NSDictionary *)userInfo fromURL:(NSURL *)url {
+    void(^block)(NSDictionary *userInfo, NSURL *url, ZIKPerformRouteConfiguration *config, ZIKServiceRouter *router);
+    block = objc_getAssociatedObject(self.route, @selector(processUserInfoFromURL));
+    if (block) {
+        block(userInfo, url, self.configuration, self);
+    }
+}
+
+- (void)performAction:(NSString *)action userInfo:(NSDictionary *)userInfo fromURL:(NSURL *)url {
+    void(^block)(NSString *action, NSDictionary *userInfo, NSURL *url, ZIKPerformRouteConfiguration *config, ZIKServiceRouter *router);
+    block = objc_getAssociatedObject(self.route, @selector(performActionFromURL));
+    if (block) {
+        block(action, userInfo, url, self.configuration, self);
+    }
+}
+
+- (void)beforePerformWithConfigurationFromURL:(ZIKPerformRouteConfiguration *)configuration {
+    void(^block)(ZIKPerformRouteConfiguration *config, ZIKServiceRouter *router);
+    block = objc_getAssociatedObject(self.route, @selector(beforePerformWithConfigurationFromURL));
+    if (block) {
+        block(configuration, self);
+    }
+    [super beforePerformWithConfigurationFromURL:configuration];
+}
+
+- (void)afterSuccessActionFromURL:(ZIKRouteAction)routeAction {
+    [super afterSuccessActionFromURL:routeAction];
+    void(^block)(ZIKRouteAction routeAction, ZIKPerformRouteConfiguration *config, ZIKServiceRouter *router);
+    block = objc_getAssociatedObject(self.route, @selector(afterSuccessActionFromURL));
+    if (block) {
+        block(routeAction, self.configuration, self);
+    }
 }
 
 @end
@@ -182,32 +333,6 @@ static void(^_Nullable _interceptorAfterEndPerformWithError)(ZIKRouter *, NSErro
 
 + (void(^_Nullable)(ZIKRouter *, NSError *))interceptorAfterEndPerformWithError {
     return _interceptorAfterEndPerformWithError;
-}
-
-@end
-
-#import "ZIKServiceRouterInternal.h"
-
-@implementation ZIKServiceRouter (URLRouter)
-
-+ (ZIKServiceRouterType *)routerForURL:(NSURL *)url {
-    NSString *identifier = [self routerIdentifierFromURL:url];
-    return _ZIKServiceRouterToIdentifier(identifier);
-}
-
-+ (ZIKServiceRouter *)performURL:(NSURL *)url {
-    ZIKServiceRouterType *routerType = [self routerForURL:url];
-    if (!routerType) {
-        return nil;
-    }
-    NSDictionary *userInfo;
-    if ([routerType respondsToSelector:@selector(userInfoFromURL:)]) {
-        userInfo = [(id)routerType userInfoFromURL:url];
-    }
-    
-    return [routerType performWithConfiguring:^(ZIKPerformRouteConfiguration * _Nonnull config) {
-        [config addUserInfo:userInfo];
-    }];
 }
 
 @end
