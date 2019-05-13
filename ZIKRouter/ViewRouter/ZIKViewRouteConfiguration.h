@@ -526,9 +526,12 @@ typedef void(^ZIKViewRouteSegueConfiger)(NS_NOESCAPE ZIKViewRouteSegueConfigure)
 @interface ZIKViewRoutePath : NSObject
 /// Use default setting of ZIKViewRouteConfiguration, then the path's routeType won't be set to configuration.
 @property (nonatomic) BOOL useDefault;
+
+/// Configure the configuration before performing, such as setting custom transition animator for the destination in config._prepareDestination.
+@property (nonatomic, copy, nullable) void(^configure)(ZIKViewRouteConfiguration *config);
+
 @property (nonatomic, strong, readonly, nullable) id<ZIKViewRouteSource> source;
 @property (nonatomic, readonly) ZIKViewRouteType routeType;
-
 @property (nonatomic, strong, readonly, nullable) ZIKViewRoutePopoverConfigure configurePopover;
 @property (nonatomic, copy, readonly, nullable) NSString *segueIdentifier;
 @property (nonatomic, strong, readonly, nullable) id segueSender;

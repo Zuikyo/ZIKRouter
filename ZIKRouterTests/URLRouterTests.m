@@ -8,6 +8,7 @@
 
 #import <XCTest/XCTest.h>
 #import "ZIKURLRouter.h"
+@import ZIKRouter;
 
 @interface URLRouterTests : XCTestCase
     @property (nonatomic, strong) ZIKURLRouter *router;

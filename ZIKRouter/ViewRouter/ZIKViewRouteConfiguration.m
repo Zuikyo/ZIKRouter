@@ -241,6 +241,9 @@ ZIKRouteAction const ZIKRouteActionPerformOnDestination = @"ZIKRouteActionPerfor
                 self.source = path.source;
             }
         }
+        if (path.configure) {
+            path.configure(self);
+        }
         return;
     }
     if (path.source) {
@@ -278,6 +281,9 @@ ZIKRouteAction const ZIKRouteActionPerformOnDestination = @"ZIKRouteActionPerfor
 #endif
         default:
             break;
+    }
+    if (path.configure) {
+        path.configure(self);
     }
 }
 
