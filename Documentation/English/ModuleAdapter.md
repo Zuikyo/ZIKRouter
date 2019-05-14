@@ -218,7 +218,7 @@ class ModuleAReqiredLoginViewRouter: ZIKViewRouter {
 
 For simple objc classes, you can use NSProxy to create a proxy. For those complex classes such as UIViewController in UIKit, you can subclass the UIViewController, and override methods to adapt interface.
 
-## Do not abuse
+## When should you use an adapter?
 
 You don't have to always separate `required protocol` and `provided protocol`. It's OK to use the same protocol in module and its user. Or you can just make a copy and change the protocol name, letting `required protocol` to be subset of `provided protocol`. You only need to do adapting when changing to another provided module.
 

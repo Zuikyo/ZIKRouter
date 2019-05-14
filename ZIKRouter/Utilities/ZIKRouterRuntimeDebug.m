@@ -193,6 +193,8 @@ static bool swift_conformsToProtocols(bool isSourceClassPointer, TargetMetadata 
     }
     
     /*
+     https://github.com/apple/swift/blob/master/docs/ABI/TypeMetadata.rst#protocol-metadata
+     
      ExistentialTypeMetadata layout after Xcode 10.2 with Swift 5:
      
      member       |    size (64-bit / 32-bit)

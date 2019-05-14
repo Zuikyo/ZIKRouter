@@ -172,12 +172,13 @@ class EditorViewRouter: ZIKViewRouter<EditorViewController, ZIKViewRouteConfigur
 
 ## Router 子类的优点
 
+* 离散式管理，让每个模块自由管理路由过程
+* 极强的可扩展性，可以进行非常多的自定义功能扩展
 * 支持多个 protocol
 * 支持多种类型的对象，例如可以根据不同系统版本，返回不同的控件
 * 支持自定义操作，例如自定义跳转方式
 * 支持处理界面跳转的 AOP
 * 支持自定义事件
-* 可以进行自定义功能扩展
 
 ## 非 router 子类
 

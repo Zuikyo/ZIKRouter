@@ -60,7 +60,7 @@ Service Router 可以管理任意自定义模块。View Router 进一步封装�
    1. [Transition directly](#Transition-directly)
    2. [Prepare before Transition](#Prepare-before-Transition)
    3. [Make Destination](#Make-Destination)
-   4. [Transfer Parameters in a Powerful Pattern](#Transfer-Parameters-in-a-Powerful-Pattern)
+   4. [Required Parameter and Special Parameter](#Required-Parameter-and-Special-Parameter)
    5. [Perform on Destination](#Perform-on-Destination)
    6. [Prepare on Destination](#Prepare-on-Destination)
    7. [Remove](#Remove)
@@ -112,18 +112,18 @@ Add this to your Podfile.
 For Objective-C project:
 
 ```
-pod 'ZIKRouter', '>= 1.0.11'
+pod 'ZIKRouter', '>= 1.0.12'
 
 # or only use ServiceRouter
-pod 'ZIKRouter/ServiceRouter' , '>=1.0.11'
+pod 'ZIKRouter/ServiceRouter' , '>=1.0.12'
 ```
 For Swift project:
 
 ```
-pod 'ZRouter', '>= 1.0.11'
+pod 'ZRouter', '>= 1.0.12'
 
 # or only use ServiceRouter
-pod 'ZRouter/ServiceRouter' , '>=1.0.11'
+pod 'ZRouter/ServiceRouter' , '>=1.0.12'
 ```
 
 ### Carthage
@@ -131,7 +131,7 @@ pod 'ZRouter/ServiceRouter' , '>=1.0.11'
 Add this to your Cartfile:
 
 ```
-github "Zuikyo/ZIKRouter" >= 1.0.11
+github "Zuikyo/ZIKRouter" >= 1.0.12
 ```
 
 Build frameworks:
@@ -506,11 +506,13 @@ id<EditorViewInput> destination = [ZIKRouterToView(EditorViewInput) makeDestinat
 ```
 </details>
 
-#### Transfer Parameters in a Powerful Pattern
+#### Required Parameter and Special Parameter
 
-Sometimes the destination class uses custom initializers to create instance, router needs to get required parameter from the caller. 
+Some parameters can be delivered though destination's protocol:
 
-Sometimes your module contains multi components, and you need to pass parameters to those components. And those parameters do not belong to the destination. 
+* the destination class uses custom initializers to create instance, router needs to get required parameter from the caller
+
+* the module contains multi components, and you need to pass parameters to those components. Those parameters do not belong to the destination, so they should not exist in destination's protocol
 
 You can use module config protocol and a custom configuration to transfer parameters.
 

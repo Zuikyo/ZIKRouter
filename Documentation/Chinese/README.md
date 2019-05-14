@@ -12,7 +12,7 @@
 ![Carthage compatible](https://img.shields.io/badge/Carthage-compatible-4BC51D.svg?style=flat)
 ![license](https://img.shields.io/github/license/mashape/apistatus.svg)
 
-一个用于模块间解耦和通信，基于接口进行模块管理和依赖注入的组件化路由工具。用多种方式最大程度地发挥编译检查的功能。
+一个用于模块间解耦和通信，基于接口进行模块管理和依赖注入的组件化路由工具。用多种方式最大程度地发挥编译检查的功能，消除动态特性带来的隐患。
 
 通过 protocol 寻找对应的模块，并用 protocol 进行依赖注入和模块通信。
 
@@ -30,7 +30,7 @@ Service Router 可以管理任意自定义模块。View Router 进一步封装�
 - [x] 支持对模块进行静态依赖注入和动态依赖注入
 - [x] **明确声明可用于路由的 protocol，进行编译时检查，使用未声明的 protocol 会产生编译错误。这是 ZIKRouter 最特别的功能之一**
 - [x] **用 protocol 获取模块并传递参数，基于接口进行类型安全的交互**
-- [x] **可以用字符串获取模块，和其他 URL router 框架兼容**
+- [x] **支持 URL 路由**
 - [x] **使用 required protocol 和 provided protocol 指向同一个模块，解除 protocol 依赖，支持各模块独立编译**
 - [x] **支持 storyboard，可以对从 segue 中跳转的界面自动执行依赖注入**
 - [x] 用 adapter 对两个模块进行解耦和接口兼容
@@ -52,7 +52,7 @@ Service Router 可以管理任意自定义模块。View Router 进一步封装�
    1. [直接跳转](#直接跳转)
    2. [跳转前进行配置](#跳转前进行配置)
    3. [Make Destination](#Make-Destination)
-   4. [更强大的传参方式](#更强大的传参方式)
+   4. [必需参数与特殊参数](#必需参数与特殊参数)
    5. [Perform on Destination](#Perform-on-Destination)
    6. [Prepare on Destination](#Prepare-on-Destination)
    7. [Remove](#Remove)
@@ -102,19 +102,19 @@ Service Router 可以管理任意自定义模块。View Router 进一步封装�
 可以用 Cocoapods 安装 ZIKRouter：
 
 ```
-pod 'ZIKRouter', '>= 1.0.11'
+pod 'ZIKRouter', '>= 1.0.12'
 
 # 或者只使用 ServiceRouter 子模块
-pod 'ZIKRouter/ServiceRouter' , '>=1.0.11'
+pod 'ZIKRouter/ServiceRouter' , '>=1.0.12'
 ```
 
 如果是 Swift 项目，则使用 ZRouter：
 
 ```
-pod 'ZRouter', '>= 1.0.11'
+pod 'ZRouter', '>= 1.0.12'
 
 # 或者只使用 ServiceRouter 子模块
-pod 'ZRouter/ServiceRouter' , '>=1.0.11'
+pod 'ZRouter/ServiceRouter' , '>=1.0.12'
 ```
 
 ### Carthage
@@ -122,7 +122,7 @@ pod 'ZRouter/ServiceRouter' , '>=1.0.11'
 添加到 Cartfile 文件：
 
 ```
-github "Zuikyo/ZIKRouter" >= 1.0.11
+github "Zuikyo/ZIKRouter" >= 1.0.12
 ```
 
 编译 framework：
@@ -247,6 +247,8 @@ class NoteEditorViewRouter: ZIKViewRouter<NoteEditorViewController, ViewRouteCon
 ```
 
 </details>
+
+使用子类是一种离散式管理，让每个模块各自管理路由过程，同时也能带来极强的可扩展性，可以进行非常多的自定义功能扩展。
 
 关于更多可用于 override 的方法，请参考详细文档。
 
@@ -496,13 +498,15 @@ id<EditorViewInput> destination = [ZIKRouterToView(EditorViewInput) makeDestinat
 ```
 </details>
 
-#### 更强大的传参方式
+#### 必需参数与特殊参数
 
-有时模块有自定义初始化方法，需要从外部传入一些参数后才能创建实例。
+有些参数不能直接通过接口传递：
 
-有时需要传递的参数并不能都通过 destination 的接口设置，例如参数不属于 destination，而是属于模块内其他组件。如果把参数都放到 destination 的接口上，会导致接口被污染。
+* 模块有自定义初始化方法，需要从外部传入一些必需参数后才能创建实例
 
-此时可以让 router 使用自定义 configuration 保存参数，配合 module config protocol 传参。
+* 需要传递的参数并不能都通过 destination 的接口设置，例如参数不属于 destination，而是属于模块内其他组件。如果把参数都放到 destination 的接口上，会导致接口被污染
+
+此时可以对 router 的 configuration 进行扩展，用于保存参数。
 
 之前用于路由的`EditorViewInput`是由 destination 遵守的，现在使用`EditorViewModuleInput`，由自定义的 configuration 遵守，用于声明模块需要的参数：
 
@@ -689,7 +693,7 @@ ZIKAnyViewRouter.register(RoutableViewModule<EditorViewModuleInput>(),
 
 </details>
 
-模块路由创建完毕后，使用者在调用模块时就能动态传入参数，调用者的代码将会变成这样：
+模块路由创建完毕后，使用者在调用模块时就能动态传入必需参数，调用者的代码将会变成这样：
 
 ```swift
 var note = ...
@@ -904,7 +908,7 @@ class TestViewController: UIViewController {
 使用者需要用到的接口：
 
 ```swift
-///使用者需要用到的 editor 模块的接口
+/// 使用者需要用到的 editor 模块的接口
 protocol RequiredEditorViewInput: class {
     weak var delegate: EditorDelegate? { get set }
     func constructForCreatingNewNote()
@@ -914,7 +918,7 @@ protocol RequiredEditorViewInput: class {
 <details><summary>Objective-C Sample</summary>
 
 ```objectivec
-///使用者需要用到的 editor 模块的接口
+/// 使用者需要用到的 editor 模块的接口
 @protocol RequiredEditorViewInput <ZIKViewRoutable>
 @property (nonatomic, weak) id<EditorDelegate> delegate;
 - (void)constructForCreatingNewNote;
@@ -997,7 +1001,7 @@ class TestViewController: UIViewController {
 ```
 </details>
 
-使用 required protocol 和 provided protocol，就可以让模块间完美解耦，并进行接口适配，同时还能用 required protocol 声明模块所需的依赖。并且 required protocol 只需要是 provided protocol 的子集，让使用者只接触到自己用到的那些接口。此时不再需要用一个公共库来集中存放所有的 protocol，即便模块间有互相依赖，也可以各自单独进行编译。
+使用 required protocol 和 provided protocol，就可以让模块间完美解耦，并进行接口适配，同时还能用 required protocol 声明模块所需的依赖。并且 required protocol 只需要是 provided protocol 的子集，让使用者只接触到自己用到的那些接口，限制接口的粒度。此时不再需要用一个公共库来集中存放所有的 protocol，即便模块间有互相依赖，也可以各自单独进行编译。
 
 使用 required protocol 需要将 required protocol 和 provided protocol 进行对接。更详细的内容，可以参考[模块化和解耦](ModuleAdapter.md)。
 

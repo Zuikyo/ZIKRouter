@@ -2,7 +2,7 @@
 
 ZIKRouter checks and limits the routing to make dynamic routing safer. The  principle:
 
-* Only routable protocol can be used for routing, or there will be complie errors
+* Only routable protocol can be used for routing, or there will be complier errors
 * If a protocol is routable, there must be a router for it
 
 ## Compile-Time Checking

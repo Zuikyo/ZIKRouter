@@ -70,8 +70,8 @@
         // Capture parameters in makeDestination, so we don't need configuration subclass to hold the parameters
         // MakeDestination will be used for creating destination instance
         weakConfig.makeDestination = ^LoginViewController * _Nullable{
-        // Use custom initializer
-        LoginViewController *destination = [LoginViewController alloc] initWithAccount:account];
+            // Use custom initializer
+            LoginViewController *destination = [LoginViewController alloc] initWithAccount:account];
             return destination;
         };
         // Set makedDestination, so the router won't make destination and prepare destination again when perform with this configuration

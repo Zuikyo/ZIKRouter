@@ -44,12 +44,16 @@ FOUNDATION_EXTERN ZIKURLRouteKey ZIKURLRouteKeyAction;
 /// Enable default URL router. You can implement your rules.
 + (void)enableDefaultURLRouteRule;
 
-/// Get identifier and user info from url for fetching its router. Subclass can override and process the url.
+/// Get identifier and user info from url for fetching its router. Custom router parent class can override and process the url.
 + (ZIKURLRouteResult *)routeFromURL:(NSString *)url;
 
 # pragma mark Subclass Override
 
-/// Process the user info from url. This method is called before `performWithConfiguration:`. You can config the configuration with the user info.
+/**
+ Process the user info from url. This method is called before `performWithConfiguration:`. You can configure the configuration with the user info.
+ 
+ If the router uses module config protocol (`makeDestinationWith` in configuration), you can get parameters from userInfo and call `configuration.makeDestinationWith`.
+ */
 - (void)processUserInfo:(NSDictionary *)userInfo fromURL:(NSURL *)url;
 
 /// Perform `action` from the url (app://loginView/?action=showAlert) after performing ended. You can store a completion handler in userInfo and give some data back to the caller.

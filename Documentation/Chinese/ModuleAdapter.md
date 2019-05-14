@@ -216,7 +216,7 @@ class ModuleAReqiredLoginViewRouter: ZIKViewRouter {
 
 对于普通类，proxy 可以用 NSProxy 来实现。对于 UIKit 中的那些复杂的 UI 类，可以用子类，然后在子类中重写方法，进行模块适配。
 
-## 不要过度滥用
+## 什么时候应该使用 adapter
 
 一般来说，并不需要立即把所有的 protocol 都分离为`required protocol`和`provided protocol`。调用模块和目的模块可以暂时共用 protocol，或者只是简单地改个名字，让`required protocol`作为`provided protocol`的子集，在第一次需要替换模块的时候再用 category、extension、proxy、subclass 等技术进行接口适配。
 
