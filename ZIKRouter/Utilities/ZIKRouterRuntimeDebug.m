@@ -529,7 +529,7 @@ bool zix_hasDynamicLibrary(NSString *libName) {
     return image != NULL;
 }
 
-void _enumerateSymbolName(bool(^handler)(const char *name, NSString *(^demangledAsSwift)(const char *mangledName, bool simplified))) {
+void zix_enumerateSymbolName(bool(^handler)(const char *name, NSString *(^demangledAsSwift)(const char *mangledName, bool simplified))) {
     if (handler == nil) {
         return;
     }
@@ -584,7 +584,7 @@ NSString *codeForImportingRouters() {
     NSMutableArray<Class> *objcServiceRouters = [NSMutableArray array];
     NSMutableArray<Class> *objcServiceAdapters = [NSMutableArray array];
     
-    ZIKRouter_enumerateClassList(^(__unsafe_unretained Class aClass) {
+    zix_enumerateClassList(^(__unsafe_unretained Class aClass) {
 #if __has_include("ZIKViewRouter.h")
         if ([ZIKViewRouteRegistry isRegisterableRouterClass:aClass]) {
             if ([NSStringFromClass(aClass) zix_containsString:@"."]) {
@@ -664,7 +664,7 @@ NSString *codeForRegisteringRouters() {
     NSMutableArray<Class> *swiftServiceRouters = [NSMutableArray array];
     NSMutableArray<Class> *swiftServiceAdapters = [NSMutableArray array];
     
-    ZIKRouter_enumerateClassList(^(__unsafe_unretained Class aClass) {
+    zix_enumerateClassList(^(__unsafe_unretained Class aClass) {
 #if __has_include("ZIKViewRouter.h")
         if ([ZIKViewRouteRegistry isRegisterableRouterClass:aClass]) {
             if ([aClass isAdapter]) {

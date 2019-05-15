@@ -14,7 +14,7 @@
 #import <dlfcn.h>
 #include <mach-o/dyld.h>
 
-bool ZIKRouter_replaceMethodWithMethod(Class originalClass, SEL originalSelector, Class swizzledClass, SEL swizzledSelector) {
+bool zix_replaceMethodWithMethod(Class originalClass, SEL originalSelector, Class swizzledClass, SEL swizzledSelector) {
     NSCParameterAssert(originalClass);
     NSCParameterAssert(originalSelector);
     NSCParameterAssert(swizzledClass);
@@ -63,7 +63,7 @@ bool ZIKRouter_replaceMethodWithMethod(Class originalClass, SEL originalSelector
     return true;
 }
 
-bool ZIKRouter_replaceMethodWithMethodType(Class originalClass, SEL originalSelector, bool originIsClassMethod, Class swizzledClass, SEL swizzledSelector, bool swizzledIsClassMethod) {
+bool zix_replaceMethodWithMethodType(Class originalClass, SEL originalSelector, bool originIsClassMethod, Class swizzledClass, SEL swizzledSelector, bool swizzledIsClassMethod) {
     NSCParameterAssert(originalClass);
     NSCParameterAssert(originalSelector);
     NSCParameterAssert(swizzledClass);
@@ -111,7 +111,7 @@ bool ZIKRouter_replaceMethodWithMethodType(Class originalClass, SEL originalSele
     return true;
 }
 
-void ZIKRouter_enumerateClassList(void(^handler)(Class aClass)) {
+void zix_enumerateClassList(void(^handler)(Class aClass)) {
     NSCParameterAssert(handler);
     int numClasses = objc_getClassList(NULL, 0);
     Class *classes = NULL;
@@ -137,7 +137,7 @@ void ZIKRouter_enumerateClassList(void(^handler)(Class aClass)) {
     free(classes);
 }
 
-void ZIKRouter_enumerateProtocolList(void(^handler)(Protocol *protocol)) {
+void zix_enumerateProtocolList(void(^handler)(Protocol *protocol)) {
     NSCParameterAssert(handler);
     unsigned int outCount;
     Protocol *__unsafe_unretained *protocols = objc_copyProtocolList(&outCount);
@@ -150,7 +150,7 @@ void ZIKRouter_enumerateProtocolList(void(^handler)(Protocol *protocol)) {
     free(protocols);
 }
 
-bool ZIKRouter_classIsSubclassOfClass(Class aClass, Class parentClass) {
+bool zix_classIsSubclassOfClass(Class aClass, Class parentClass) {
     NSCParameterAssert(aClass);
     NSCParameterAssert(parentClass);
     Class superClass = aClass;
@@ -164,7 +164,7 @@ bool ZIKRouter_classIsSubclassOfClass(Class aClass, Class parentClass) {
     return true;
 }
 
-bool ZIKRouter_classIsCustomClass(Class aClass) {
+bool zix_classIsCustomClass(Class aClass) {
     NSCParameterAssert(aClass);
     if (!aClass) {
         return false;
@@ -179,7 +179,7 @@ bool ZIKRouter_classIsCustomClass(Class aClass) {
     return true;
 }
 
-bool ZIKRouter_classSelfImplementingMethod(Class aClass, SEL method, bool isClassMethod) {
+bool zix_classSelfImplementingMethod(Class aClass, SEL method, bool isClassMethod) {
     NSCParameterAssert(aClass);
     NSCParameterAssert(method);
     if (!aClass) {
@@ -213,7 +213,7 @@ bool ZIKRouter_classSelfImplementingMethod(Class aClass, SEL method, bool isClas
     return method_getImplementation(selfMethod) != method_getImplementation(superMethod);
 }
 
-bool ZIKRouter_isObjcProtocol(id protocol) {
+bool zix_isObjcProtocol(id protocol) {
     static Class ProtocolClass;
     static dispatch_once_t onceToken;
     dispatch_once(&onceToken, ^{
@@ -222,7 +222,7 @@ bool ZIKRouter_isObjcProtocol(id protocol) {
     return [protocol isKindOfClass:ProtocolClass];
 }
 
-bool ZIKRouter_protocolConformsToProtocol(Protocol *protocol, Protocol *parentProtocol) {
+bool zix_protocolConformsToProtocol(Protocol *protocol, Protocol *parentProtocol) {
     unsigned int count;
     Protocol * __unsafe_unretained _Nonnull *list = protocol_copyProtocolList(protocol, &count);
     if (list == NULL) {
@@ -234,7 +234,7 @@ bool ZIKRouter_protocolConformsToProtocol(Protocol *protocol, Protocol *parentPr
         if (parent == parentProtocol) {
             result = YES;
             break;
-        } else if (ZIKRouter_protocolConformsToProtocol(parent, parentProtocol)) {
+        } else if (zix_protocolConformsToProtocol(parent, parentProtocol)) {
             result = YES;
             break;
         }
@@ -243,8 +243,8 @@ bool ZIKRouter_protocolConformsToProtocol(Protocol *protocol, Protocol *parentPr
     return result;
 }
 
-Protocol *_Nullable ZIKRouter_objcProtocol(id protocol) {
-    if (ZIKRouter_isObjcProtocol(protocol)) {
+Protocol *_Nullable zix_objcProtocol(id protocol) {
+    if (zix_isObjcProtocol(protocol)) {
         return (Protocol *)protocol;
     }
     return nil;
@@ -365,7 +365,7 @@ static BOOL canReadSuperclassOfClass(Class aClass) {
     return YES;
 }
 
-BOOL canEnumerateClassesInImage() {
+BOOL zix_canEnumerateClassesInImage() {
     if (canReadSuperclassOfClass([NSObject class]) == NO) {
         return NO;
     }
@@ -442,7 +442,7 @@ static bool classIsSubclassOfClass(class_t *cls, class_t *parentClass) {
     return false;
 }
 
-void enumerateClassesInMainBundleForParentClass(Class parentClass, void(^handler)(__unsafe_unretained Class aClass)) {
+void zix_enumerateClassesInMainBundleForParentClass(Class parentClass, void(^handler)(__unsafe_unretained Class aClass)) {
     if (handler == nil) {
         return;
     }

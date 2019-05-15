@@ -49,7 +49,7 @@ FOUNDATION_EXTERN bool _swift_typeIsTargetType(id sourceType, id targetType);
  
  @param handler  Handler for each mangled symbol name, return false to stop. `demangledAsSwift` is for demangling a mangled swift symbol, when `simplified` is true, the demangled symbol will strip module name, extension name and `where` clauses in the swift symbol.
  */
-FOUNDATION_EXTERN void _enumerateSymbolName(bool(^handler)(const char *name, NSString *(^demangledAsSwift)(const char *mangledName, bool simplified)));
+FOUNDATION_EXTERN void zix_enumerateSymbolName(bool(^handler)(const char *name, NSString *(^demangledAsSwift)(const char *mangledName, bool simplified)));
 
 FOUNDATION_EXTERN bool zix_hasDynamicLibrary(NSString *libName);
 

@@ -50,9 +50,10 @@ static CFMutableSetRef _factoryBlocks;
     static dispatch_once_t onceToken;
     dispatch_once(&onceToken, ^{
         _factoryBlocks = CFSetCreateMutable(kCFAllocatorDefault, 0, NULL);
-        ZIKRouter_replaceMethodWithMethod([XXApplication class], @selector(setDelegate:),
-                                          self, @selector(ZIKRouteRegistry_hook_setDelegate:));
-        ZIKRouter_replaceMethodWithMethodType([XXStoryboard class], @selector(storyboardWithName:bundle:), true, self, @selector(ZIKRouteRegistry_hook_storyboardWithName:bundle:), true);
+        zix_replaceMethodWithMethod([XXApplication class], @selector(setDelegate:),
+                                    self, @selector(ZIKRouteRegistry_hook_setDelegate:));
+        zix_replaceMethodWithMethodType([XXStoryboard class], @selector(storyboardWithName:bundle:), true,
+                                        self, @selector(ZIKRouteRegistry_hook_storyboardWithName:bundle:), true);
     });
 }
 
@@ -112,16 +113,16 @@ static CFMutableSetRef _factoryBlocks;
         return;
     }
     NSSet *registries = [[self registries] copy];
-    if (canEnumerateClassesInImage()) {
+    if (zix_canEnumerateClassesInImage()) {
         // Fast enumeration
-        enumerateClassesInMainBundleForParentClass([ZIKRouter class], ^(__unsafe_unretained Class  _Nonnull aClass) {
+        zix_enumerateClassesInMainBundleForParentClass([ZIKRouter class], ^(__unsafe_unretained Class  _Nonnull aClass) {
             for (Class registry in registries) {
                 [registry handleEnumerateRouterClass:aClass];
             }
         });
     } else {
         // Slow enumeration
-        ZIKRouter_enumerateClassList(^(__unsafe_unretained Class class) {
+        zix_enumerateClassList(^(__unsafe_unretained Class class) {
             for (Class registry in registries) {
                 [registry handleEnumerateRouterClass:class];
             }
@@ -473,7 +474,7 @@ static CFMutableSetRef _factoryBlocks;
 #pragma mark Register
 
 static __attribute__((always_inline)) void _registerDestinationClassWithRoute(Class destinationClass, id routeObject, Class registry) {
-    NSCParameterAssert(ZIKRouter_classIsSubclassOfClass(registry, [ZIKRouteRegistry class]));
+    NSCParameterAssert(zix_classIsSubclassOfClass(registry, [ZIKRouteRegistry class]));
     NSCParameterAssert([registry isDestinationClassRoutable:destinationClass]);
     NSCAssert3(![registry destinationToExclusiveRouterMap] ||
                ([registry destinationToExclusiveRouterMap] && !CFDictionaryGetValue([registry destinationToExclusiveRouterMap], (__bridge const void *)(destinationClass))), @"There is a registered exclusive router (%@), can't register this router (%@) for this destinationClass (%@).",CFDictionaryGetValue([registry destinationToExclusiveRouterMap], (__bridge const void *)(destinationClass)), routeObject, destinationClass);
@@ -501,7 +502,7 @@ static __attribute__((always_inline)) void _registerDestinationClassWithRoute(Cl
 }
 
 static __attribute__((always_inline)) void _registerExclusiveDestinationClassWithRoute(Class destinationClass, id routeObject, Class registry) {
-    NSCParameterAssert(ZIKRouter_classIsSubclassOfClass(registry, [ZIKRouteRegistry class]));
+    NSCParameterAssert(zix_classIsSubclassOfClass(registry, [ZIKRouteRegistry class]));
     NSCParameterAssert([registry isDestinationClassRoutable:destinationClass]);
     NSCAssert3(!CFDictionaryGetValue([registry destinationToExclusiveRouterMap], (__bridge const void *)(destinationClass)), @"There is already a registered exclusive router (%@) for this destinationClass (%@), can't register this router (%@). You can only specific one exclusive router for each destinationClass. Choose the router used as dependency injector.",CFDictionaryGetValue([registry destinationToExclusiveRouterMap], (__bridge const void *)(destinationClass)), NSStringFromClass(destinationClass), routeObject);
     NSCAssert3(!CFDictionaryGetValue([registry destinationToDefaultRouterMap], (__bridge const void *)(destinationClass)), @"destinationClass (%@) already registered with another router (%@), check and remove them. You shall only use this exclusive router (%@) for this destinationClass.",NSStringFromClass(destinationClass), CFDictionaryGetValue([registry destinationToDefaultRouterMap], (__bridge const void *)(destinationClass)), routeObject);
@@ -528,7 +529,7 @@ static __attribute__((always_inline)) void _registerExclusiveDestinationClassWit
 }
 
 static __attribute__((always_inline)) void _registerDestinationProtocolWithRoute(Protocol *destinationProtocol, id routeObject, Class registry) {
-    NSCParameterAssert(ZIKRouter_classIsSubclassOfClass(registry, [ZIKRouteRegistry class]));
+    NSCParameterAssert(zix_classIsSubclassOfClass(registry, [ZIKRouteRegistry class]));
     NSCAssert3(!CFDictionaryGetValue([registry destinationProtocolToRouterMap], (__bridge const void *)(destinationProtocol)) ||
                (Class)CFDictionaryGetValue([registry destinationProtocolToRouterMap], (__bridge const void *)(destinationProtocol)) == routeObject
                , @"Destination protocol (%@) already registered with another router (%@), can't register with this router (%@). Same destination protocol should only be used by one routeObject.",NSStringFromProtocol(destinationProtocol),CFDictionaryGetValue([registry destinationProtocolToRouterMap], (__bridge const void *)(destinationProtocol)),routeObject);
@@ -546,7 +547,7 @@ static __attribute__((always_inline)) void _registerDestinationProtocolWithRoute
 
 
 static __attribute__((always_inline)) void _registerModuleProtocolWithRoute(Protocol *configProtocol, id routeObject, Class registry)  {
-    NSCParameterAssert(ZIKRouter_classIsSubclassOfClass(registry, [ZIKRouteRegistry class]));
+    NSCParameterAssert(zix_classIsSubclassOfClass(registry, [ZIKRouteRegistry class]));
     NSCAssert3(!CFDictionaryGetValue([registry moduleConfigProtocolToRouterMap], (__bridge const void *)(configProtocol)) ||
                (Class)CFDictionaryGetValue([registry moduleConfigProtocolToRouterMap], (__bridge const void *)(configProtocol)) == routeObject
                , @"Module config protocol (%@) already registered with another router (%@), can't register with this router (%@). Same configProtocol should only be used by one routeObject.",NSStringFromProtocol(configProtocol),CFDictionaryGetValue([registry moduleConfigProtocolToRouterMap], (__bridge const void *)(configProtocol)),routeObject);
@@ -555,7 +556,7 @@ static __attribute__((always_inline)) void _registerModuleProtocolWithRoute(Prot
 }
 
 static __attribute__((always_inline)) void _registerIdentifierWithRoute(NSString *identifier, id routeObject, Class registry) {
-    NSCParameterAssert(ZIKRouter_classIsSubclassOfClass(registry, [ZIKRouteRegistry class]));
+    NSCParameterAssert(zix_classIsSubclassOfClass(registry, [ZIKRouteRegistry class]));
     NSCParameterAssert(identifier.length > 0);
     if (identifier == nil) {
         return;

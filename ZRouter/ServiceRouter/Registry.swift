@@ -144,7 +144,7 @@ internal class Registry {
         }
         let destinationProtocol = Protocol.self
         assert(ZIKAnyServiceRouter.isRegistrationFinished() == false, "Can't register after app did finish launch. Only register in registerRoutableDestination().")
-        assert(ZIKRouter_classIsSubclassOfClass(router, ZIKAnyServiceRouter.self), "This router must be subclass of ZIKServiceRouter")
+        assert(zix_classIsSubclassOfClass(router, ZIKAnyServiceRouter.self), "This router must be subclass of ZIKServiceRouter")
         if let routableProtocol = _routableServiceProtocolFromObject(destinationProtocol), routableService.typeName == routableProtocol.name {
             router.registerServiceProtocol(routableProtocol)
             return
@@ -168,7 +168,7 @@ internal class Registry {
         }
         let configProtocol = Protocol.self
         assert(ZIKAnyServiceRouter.isRegistrationFinished() == false, "Can't register after app did finish launch. Only register in registerRoutableDestination().")
-        assert(ZIKRouter_classIsSubclassOfClass(router, ZIKAnyServiceRouter.self), "This router must be subclass of ZIKServiceRouter")
+        assert(zix_classIsSubclassOfClass(router, ZIKAnyServiceRouter.self), "This router must be subclass of ZIKServiceRouter")
         if let routableProtocol = _routableServiceModuleProtocolFromObject(configProtocol), routableServiceModule.typeName == routableProtocol.name {
             router.registerModuleProtocol(routableProtocol)
             return
@@ -641,7 +641,7 @@ private class _ServiceRouterValidater: ZIKServiceRouteAdapter {
         
         let serviceRoutingTypeRegex = try! NSRegularExpression(pattern: "(?<=RoutableService<).*(?=>$)", options: [.anchorsMatchLines])
         let serviceModuleRoutingTypeRegex = try! NSRegularExpression(pattern: "(?<=RoutableServiceModule<).*(?=>$)", options: [.anchorsMatchLines])
-        _enumerateSymbolName { (name, demangledAsSwift) -> Bool in
+        zix_enumerateSymbolName { (name, demangledAsSwift) -> Bool in
             if (strstr(name, "RoutableService") != nil) {
                 let symbolName = demangledAsSwift(name, false)
                 if symbolName.hasPrefix("(extension in"), symbolName.contains(">.init") {

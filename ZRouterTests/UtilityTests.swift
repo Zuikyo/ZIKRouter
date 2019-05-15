@@ -620,7 +620,7 @@ class UtilityTests: XCTestCase {
     func testEnumerateDeclaredProtocol() {
         measure {
             var symbolNames = [String]()
-            _enumerateSymbolName { (name, demangledAsSwift) -> Bool in
+            zix_enumerateSymbolName { (name, demangledAsSwift) -> Bool in
                 if (strstr(name, "RoutableView") != nil) {
                     let symbolName = demangledAsSwift(name, false)
                     if symbolName.contains("(extension in"), symbolName.contains(">.init"), symbolName.contains("(extension in ZRouter)") == false {
@@ -635,7 +635,7 @@ class UtilityTests: XCTestCase {
     
     func testDemangleSwiftSymbol() {
         measure {
-            _enumerateSymbolName { (name, demangledAsSwift) -> Bool in
+            zix_enumerateSymbolName { (name, demangledAsSwift) -> Bool in
                 if (strstr(name, "AViewModuleInput") != nil) {
                     let symbolName = demangledAsSwift(name, false)
                     let simplifiedName = demangledAsSwift(name, true)
@@ -648,13 +648,13 @@ class UtilityTests: XCTestCase {
     
     func testEnumerateSubclasses() {
         var count = 0
-        ZIKRouter_enumerateClassList { (aClass) in
-            if ZIKRouter_classIsSubclassOfClass(aClass, ZIKRouter<AnyObject, ZIKPerformRouteConfiguration, ZIKRemoveRouteConfiguration>.self) {
+        zix_enumerateClassList { (aClass) in
+            if zix_classIsSubclassOfClass(aClass, ZIKRouter<AnyObject, ZIKPerformRouteConfiguration, ZIKRemoveRouteConfiguration>.self) {
                 count = count + 1
             }
         }
         var routerCount = 0
-        enumerateClassesInMainBundleForParentClass(ZIKRouter<AnyObject, ZIKPerformRouteConfiguration, ZIKRemoveRouteConfiguration>.self) { (aClass) in
+        zix_enumerateClassesInMainBundleForParentClass(ZIKRouter<AnyObject, ZIKPerformRouteConfiguration, ZIKRemoveRouteConfiguration>.self) { (aClass) in
             routerCount = routerCount + 1
         }
         assert(routerCount == count, "enumerateSubclassesOfClass give wrong number of subclasses")
@@ -662,7 +662,7 @@ class UtilityTests: XCTestCase {
     
     func testEnumerateAllViewRouters() {
         var routerCount = 0
-        enumerateClassesInMainBundleForParentClass(ZIKAnyViewRouter.self) { (aClass) in
+        zix_enumerateClassesInMainBundleForParentClass(ZIKAnyViewRouter.self) { (aClass) in
             routerCount = routerCount + 1
         }
         var enumeratedRouterCount = 0
@@ -674,7 +674,7 @@ class UtilityTests: XCTestCase {
     
     func testEnumerateAllServiceRouters() {
         var routerCount = 0
-        enumerateClassesInMainBundleForParentClass(ZIKAnyServiceRouter.self) { (aClass) in
+        zix_enumerateClassesInMainBundleForParentClass(ZIKAnyServiceRouter.self) { (aClass) in
             routerCount = routerCount + 1
         }
         var enumeratedRouterCount = 0

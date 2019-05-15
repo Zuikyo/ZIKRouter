@@ -249,9 +249,9 @@ static void _createURLRouter() {
 + (void)enableDefaultInterceptor {
     static dispatch_once_t onceToken;
     dispatch_once(&onceToken, ^{
-        ZIKRouter_replaceMethodWithMethod([ZIKRouter class], @selector(performWithConfiguration:), [ZIKRouter class], @selector(interceptor_performWithConfiguration:));
-        ZIKRouter_replaceMethodWithMethod([ZIKRouter class], @selector(notifySuccessWithAction:), [ZIKRouter class], @selector(interceptor_notifySuccessWithAction:));
-        ZIKRouter_replaceMethodWithMethod([ZIKRouter class], @selector(endPerformRouteWithError:), [ZIKRouter class], @selector(interceptor_endPerformRouteWithError:));
+        zix_replaceMethodWithMethod([ZIKRouter class], @selector(performWithConfiguration:), [ZIKRouter class], @selector(interceptor_performWithConfiguration:));
+        zix_replaceMethodWithMethod([ZIKRouter class], @selector(notifySuccessWithAction:), [ZIKRouter class], @selector(interceptor_notifySuccessWithAction:));
+        zix_replaceMethodWithMethod([ZIKRouter class], @selector(endPerformRouteWithError:), [ZIKRouter class], @selector(interceptor_endPerformRouteWithError:));
     });
 }
 

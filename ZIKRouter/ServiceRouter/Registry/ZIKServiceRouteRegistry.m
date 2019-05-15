@@ -236,10 +236,10 @@ static NSMutableArray<Class> *_routerClasses;
     dispatch_once(&onceToken, ^{
         ZIKServiceRouterClass = [ZIKServiceRouter class];
     });
-    if (ZIKRouter_classIsSubclassOfClass(class, ZIKServiceRouterClass)) {
+    if (zix_classIsSubclassOfClass(class, ZIKServiceRouterClass)) {
         [class registerRoutableDestination];
-        NSCAssert1(ZIKRouter_classSelfImplementingMethod(class, @selector(registerRoutableDestination), true) || [class isAbstractRouter], @"Router(%@) must override +registerRoutableDestination to register destination.",class);
-        NSCAssert1(ZIKRouter_classSelfImplementingMethod(class, @selector(destinationWithConfiguration:), false) || [class isAbstractRouter] || [class isAdapter], @"Router(%@) must override -destinationWithConfiguration: to return destination.",class);
+        NSCAssert1(zix_classSelfImplementingMethod(class, @selector(registerRoutableDestination), true) || [class isAbstractRouter], @"Router(%@) must override +registerRoutableDestination to register destination.",class);
+        NSCAssert1(zix_classSelfImplementingMethod(class, @selector(destinationWithConfiguration:), false) || [class isAbstractRouter] || [class isAdapter], @"Router(%@) must override -destinationWithConfiguration: to return destination.",class);
 #if ZIKROUTER_CHECK
         CFMutableSetRef services = (CFMutableSetRef)CFDictionaryGetValue(self._check_routerToDestinationsMap, (__bridge const void *)(class));
         NSSet *serviceSet = (__bridge NSSet *)(services);
@@ -264,7 +264,7 @@ static NSMutableArray<Class> *_routerClasses;
     dispatch_once(&onceToken, ^{
         ZIKServiceRouterClass = [ZIKServiceRouter class];
     });
-    if (ZIKRouter_classIsSubclassOfClass(aClass, ZIKServiceRouterClass)) {
+    if (zix_classIsSubclassOfClass(aClass, ZIKServiceRouterClass)) {
         if ([aClass isAbstractRouter]) {
             return NO;
         }
@@ -320,13 +320,13 @@ static NSMutableArray<Class> *_routerClasses;
 + (void)_searchAllRoutersAndDestinations {
     _routableDestinations = [NSMutableArray array];
     _routerClasses = [NSMutableArray array];
-    ZIKRouter_enumerateClassList(^(__unsafe_unretained Class class) {
+    zix_enumerateClassList(^(__unsafe_unretained Class class) {
         if (class == nil) {
             return;
         }
         if (class_conformsToProtocol(class, @protocol(ZIKRoutableService))) {
             [_routableDestinations addObject:class];
-        } else if (ZIKRouter_classIsSubclassOfClass(class, [ZIKServiceRouter class])) {
+        } else if (zix_classIsSubclassOfClass(class, [ZIKServiceRouter class])) {
             CFMutableSetRef services = (CFMutableSetRef)CFDictionaryGetValue(self._check_routerToDestinationsMap, (__bridge const void *)(class));
             NSSet *serviceSet = (__bridge NSSet *)(services);
             NSCAssert2(serviceSet.count > 0 || [class isAbstractRouter] || [class isAdapter], @"This router class(%@) was not resgistered with any service class. Use +registerService: to register service in Router(%@)'s +registerRoutableDestination.",class,class);
@@ -350,7 +350,7 @@ static NSMutableArray<Class> *_routerClasses;
 }
 
 + (void)_checkAllRoutableProtocols {
-    ZIKRouter_enumerateProtocolList(^(Protocol *protocol) {
+    zix_enumerateProtocolList(^(Protocol *protocol) {
         if (protocol) {
             [self _checkProtocol:protocol];
         }
@@ -358,7 +358,7 @@ static NSMutableArray<Class> *_routerClasses;
 }
 
 + (void)_checkProtocol:(Protocol *)protocol {
-    if (ZIKRouter_protocolConformsToProtocol(protocol, @protocol(ZIKServiceRoutable)) &&
+    if (zix_protocolConformsToProtocol(protocol, @protocol(ZIKServiceRoutable)) &&
         protocol != @protocol(ZIKServiceRoutable)) {
         ZIKRouterType *routerType = [self routerToDestination:protocol];
         NSCAssert1(routerType, @"Declared service protocol(%@) is not registered with any router class!",NSStringFromProtocol(protocol));
@@ -373,7 +373,7 @@ static NSMutableArray<Class> *_routerClasses;
         for (Class serviceClass in services) {
             NSCAssert3([serviceClass conformsToProtocol:protocol], @"Router(%@)'s serviceClass(%@) should conform to registered protocol(%@)",router, serviceClass, NSStringFromProtocol(protocol));
         }
-    } else if (ZIKRouter_protocolConformsToProtocol(protocol, @protocol(ZIKServiceModuleRoutable)) &&
+    } else if (zix_protocolConformsToProtocol(protocol, @protocol(ZIKServiceModuleRoutable)) &&
                protocol != @protocol(ZIKServiceModuleRoutable)) {
         ZIKRouterType *routerType = [self routerToModule:protocol];
         NSCAssert1(routerType, @"Declared service config protocol(%@) is not registered with any router class!",NSStringFromProtocol(protocol));

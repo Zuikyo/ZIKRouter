@@ -52,7 +52,7 @@ extension Registry {
         }
         let destinationProtocol = Protocol.self
         assert(ZIKAnyViewRouter.isRegistrationFinished() == false, "Can't register after app did finish launch. Only register in registerRoutableDestination().")
-        assert(ZIKRouter_classIsSubclassOfClass(router, ZIKAnyViewRouter.self), "This router must be subclass of ZIKViewRouter")
+        assert(zix_classIsSubclassOfClass(router, ZIKAnyViewRouter.self), "This router must be subclass of ZIKViewRouter")
         // `UIViewController & ObjcProtocol` type is also a Protocol in objc, but we want to keep it in swift container
         if let routableProtocol = _routableViewProtocolFromObject(destinationProtocol), routableView.typeName == routableProtocol.name {
             router.registerViewProtocol(routableProtocol)
@@ -77,7 +77,7 @@ extension Registry {
         }
         let configProtocol = Protocol.self
         assert(ZIKAnyViewRouter.isRegistrationFinished() == false, "Can't register after app did finish launch. Only register in registerRoutableDestination().")
-        assert(ZIKRouter_classIsSubclassOfClass(router, ZIKAnyViewRouter.self), "This router must be subclass of ZIKViewRouter")
+        assert(zix_classIsSubclassOfClass(router, ZIKAnyViewRouter.self), "This router must be subclass of ZIKViewRouter")
         if let routableProtocol = _routableViewModuleProtocolFromObject(configProtocol), routableViewModule.typeName == routableProtocol.name {
             router.registerModuleProtocol(routableProtocol)
             return
@@ -510,7 +510,7 @@ private class _ViewRouterValidater: ZIKViewRouteAdapter {
         var viewModuleRoutingTypes = [(String, String)]()
         let viewRoutingTypeRegex = try! NSRegularExpression(pattern: "(?<=RoutableView<).*(?=>$)", options: [.anchorsMatchLines])
         let viewModuleRoutingTypeRegex = try! NSRegularExpression(pattern: "(?<=RoutableViewModule<).*(?=>$)", options: [.anchorsMatchLines])
-        _enumerateSymbolName { (name, demangledAsSwift) -> Bool in            
+        zix_enumerateSymbolName { (name, demangledAsSwift) -> Bool in            
             if (strstr(name, "RoutableView") != nil) {
                 let symbolName = demangledAsSwift(name, false)
                 if symbolName.hasPrefix("(extension in"), symbolName.contains(">.init") {

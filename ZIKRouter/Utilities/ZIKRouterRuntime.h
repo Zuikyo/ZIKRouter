@@ -18,10 +18,10 @@ NS_ASSUME_NONNULL_BEGIN
  @discussion
  You can call original method by calling the swizzle method name:
  @code
- ZIKRouter_replaceMethodWithMethod([ClassA class],
-                                   @selector(myMethod),
-                                   [ClassB class],
-                                   @selector(hooked_myMethod));
+ zix_replaceMethodWithMethod([ClassA class],
+                             @selector(myMethod),
+                             [ClassB class],
+                             @selector(hooked_myMethod));
  
  @implementation ClassA
  - (void)myMethod {
@@ -43,39 +43,39 @@ NS_ASSUME_NONNULL_BEGIN
  @param swizzledSelector The selector of new method. When there are same selector for class method and instance method, instance method is priority.
  @return True when hook successfully
  */
-FOUNDATION_EXTERN bool ZIKRouter_replaceMethodWithMethod(Class originalClass, SEL originalSelector,
-                                              Class swizzledClass, SEL swizzledSelector);
+FOUNDATION_EXTERN bool zix_replaceMethodWithMethod(Class originalClass, SEL originalSelector,
+                                                   Class swizzledClass, SEL swizzledSelector);
 
-/// Same with ZIKRouter_replaceMethodWithMethod, but you can specify class method or instance method.
-FOUNDATION_EXTERN bool ZIKRouter_replaceMethodWithMethodType(Class originalClass, SEL originalSelector, bool originIsClassMethod,
-                                                  Class swizzledClass, SEL swizzledSelector, bool swizzledIsClassMethod);
+/// Same with zix_replaceMethodWithMethod, but you can specify class method or instance method.
+FOUNDATION_EXTERN bool zix_replaceMethodWithMethodType(Class originalClass, SEL originalSelector, bool originIsClassMethod,
+                                                       Class swizzledClass, SEL swizzledSelector, bool swizzledIsClassMethod);
 
 /// Enumerate all classes.
-FOUNDATION_EXTERN void ZIKRouter_enumerateClassList(void(^handler)(Class aClass));
+FOUNDATION_EXTERN void zix_enumerateClassList(void(^handler)(Class aClass));
 
 /// Enumerate all protocols.
-FOUNDATION_EXTERN void ZIKRouter_enumerateProtocolList(void(^handler)(Protocol *protocol));
+FOUNDATION_EXTERN void zix_enumerateProtocolList(void(^handler)(Protocol *protocol));
 
 /// Check whether a class is a subclass of another class.
-FOUNDATION_EXTERN bool ZIKRouter_classIsSubclassOfClass(Class aClass, Class parentClass);
+FOUNDATION_EXTERN bool zix_classIsSubclassOfClass(Class aClass, Class parentClass);
 
 /// Check whether a class is from Apple's system framework, or from your project.
-FOUNDATION_EXTERN bool ZIKRouter_classIsCustomClass(Class aClass);
+FOUNDATION_EXTERN bool zix_classIsCustomClass(Class aClass);
 
 /// Check whether a class self implementing a method.
-FOUNDATION_EXTERN bool ZIKRouter_classSelfImplementingMethod(Class aClass, SEL method, bool isClassMethod);
+FOUNDATION_EXTERN bool zix_classSelfImplementingMethod(Class aClass, SEL method, bool isClassMethod);
 
 /// Check whether an object is an objc protocol.
-FOUNDATION_EXTERN bool ZIKRouter_isObjcProtocol(id protocol);
+FOUNDATION_EXTERN bool zix_isObjcProtocol(id protocol);
 
 /// Check whether a protocol has a parent protocol.
-FOUNDATION_EXTERN bool ZIKRouter_protocolConformsToProtocol(Protocol *protocol, Protocol *parentProtocol);
+FOUNDATION_EXTERN bool zix_protocolConformsToProtocol(Protocol *protocol, Protocol *parentProtocol);
 
 /// Return objc protocol if object is Protocol.
-FOUNDATION_EXTERN Protocol *_Nullable ZIKRouter_objcProtocol(id protocol);
+FOUNDATION_EXTERN Protocol *_Nullable zix_objcProtocol(id protocol);
 
-// Test whether can use `enumerateClassesInMainBundleForParentClass`. It should always be true unless layout of OC class and Mach-O is changed.
-FOUNDATION_EXTERN BOOL canEnumerateClassesInImage(void);
+// Test whether can use `zix_enumerateClassesInMainBundleForParentClass`. It should always be true unless layout of OC class and Mach-O is changed.
+FOUNDATION_EXTERN BOOL zix_canEnumerateClassesInImage(void);
 
 /**
  Enumerate all subclasses of the parent class in app read from section `__objc_classlist`. It's much faster than `objc_copyClassList` because it won't realize these subclasses.
@@ -85,6 +85,6 @@ FOUNDATION_EXTERN BOOL canEnumerateClassesInImage(void);
  @param parentClass Parent class for enumeration
  @param handler Handler subclasses
  */
-FOUNDATION_EXTERN void enumerateClassesInMainBundleForParentClass(Class parentClass, void(^handler)(__unsafe_unretained Class aClass));
+FOUNDATION_EXTERN void zix_enumerateClassesInMainBundleForParentClass(Class parentClass, void(^handler)(__unsafe_unretained Class aClass));
 
 NS_ASSUME_NONNULL_END

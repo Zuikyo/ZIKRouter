@@ -74,8 +74,8 @@ static NSMutableArray<Class> *_routerClasses;
     _check_routerToDestinationsMap = CFDictionaryCreateMutable(kCFAllocatorDefault, 0, NULL, &kCFTypeDictionaryValueCallBacks);
     _check_routerToDestinationProtocolsMap = CFDictionaryCreateMutable(kCFAllocatorDefault, 0, NULL, &kCFTypeDictionaryValueCallBacks);
 #endif
-    ZIKRouter_replaceMethodWithMethod([XXViewController class], @selector(initWithCoder:), self, @selector(ZIKViewRouteRegistry_hook_initWithCoder:));
-    ZIKRouter_replaceMethodWithMethod([XXStoryboardSegue class], @selector(initWithIdentifier:source:destination:), self, @selector(ZIKViewRouteRegistry_hook_initWithIdentifier:source:destination:));
+    zix_replaceMethodWithMethod([XXViewController class], @selector(initWithCoder:), self, @selector(ZIKViewRouteRegistry_hook_initWithCoder:));
+    zix_replaceMethodWithMethod([XXStoryboardSegue class], @selector(initWithIdentifier:source:destination:), self, @selector(ZIKViewRouteRegistry_hook_initWithIdentifier:source:destination:));
 }
 
 - (nullable instancetype)ZIKViewRouteRegistry_hook_initWithCoder:(NSCoder *)aDecoder {
@@ -105,8 +105,8 @@ static NSMutableArray<Class> *_routerClasses;
 #pragma clang diagnostic push
 #pragma clang diagnostic ignored "-Wundeclared-selector"
     //hook all XXViewController's -prepareForSegue:sender:
-    ZIKRouter_replaceMethodWithMethod(aClass, @selector(prepareForSegue:sender:),
-                                      ZIKViewRouterClass, @selector(ZIKViewRouter_hook_prepareForSegue:sender:));
+    zix_replaceMethodWithMethod(aClass, @selector(prepareForSegue:sender:),
+                                ZIKViewRouterClass, @selector(ZIKViewRouter_hook_prepareForSegue:sender:));
 #pragma clang diagnostic pop
 }
 
@@ -122,8 +122,8 @@ static NSMutableArray<Class> *_routerClasses;
 #pragma clang diagnostic push
 #pragma clang diagnostic ignored "-Wundeclared-selector"
     //hook all XXStoryboardSegue's -perform
-    ZIKRouter_replaceMethodWithMethod(aClass, @selector(perform),
-                                      ZIKViewRouterClass, @selector(ZIKViewRouter_hook_seguePerform));
+    zix_replaceMethodWithMethod(aClass, @selector(perform),
+                                ZIKViewRouterClass, @selector(ZIKViewRouter_hook_seguePerform));
 #pragma clang diagnostic pop
 }
 
@@ -242,10 +242,10 @@ static NSMutableArray<Class> *_routerClasses;
     dispatch_once(&onceToken, ^{
         ZIKViewRouterClass = [ZIKViewRouter class];
     });
-    if (ZIKRouter_classIsSubclassOfClass(class, ZIKViewRouterClass)) {
+    if (zix_classIsSubclassOfClass(class, ZIKViewRouterClass)) {
         [class registerRoutableDestination];
-        NSCAssert1(ZIKRouter_classSelfImplementingMethod(class, @selector(registerRoutableDestination), true) || [class isAbstractRouter], @"Router(%@) must override +registerRoutableDestination to register destination.",class);
-        NSCAssert1(ZIKRouter_classSelfImplementingMethod(class, @selector(destinationWithConfiguration:), false) || [class isAbstractRouter] || [class isAdapter], @"Router(%@) must override -destinationWithConfiguration: to return destination.",class);
+        NSCAssert1(zix_classSelfImplementingMethod(class, @selector(registerRoutableDestination), true) || [class isAbstractRouter], @"Router(%@) must override +registerRoutableDestination to register destination.",class);
+        NSCAssert1(zix_classSelfImplementingMethod(class, @selector(destinationWithConfiguration:), false) || [class isAbstractRouter] || [class isAdapter], @"Router(%@) must override -destinationWithConfiguration: to return destination.",class);
 #if ZIKROUTER_CHECK
         CFMutableSetRef views = (CFMutableSetRef)CFDictionaryGetValue(self._check_routerToDestinationsMap, (__bridge const void *)(class));
         NSSet *viewSet = (__bridge NSSet *)(views);
@@ -270,7 +270,7 @@ static NSMutableArray<Class> *_routerClasses;
     dispatch_once(&onceToken, ^{
         ZIKViewRouterClass = [ZIKViewRouter class];
     });
-    if (ZIKRouter_classIsSubclassOfClass(aClass, ZIKViewRouterClass)) {
+    if (zix_classIsSubclassOfClass(aClass, ZIKViewRouterClass)) {
         if ([aClass isAbstractRouter]) {
             return NO;
         }
@@ -349,16 +349,16 @@ static NSMutableArray<Class> *_routerClasses;
 + (void)_searchAllRoutersAndDestinations {
     _routableDestinations = [NSMutableArray array];
     _routerClasses = [NSMutableArray array];
-    ZIKRouter_enumerateClassList(^(__unsafe_unretained Class class) {
+    zix_enumerateClassList(^(__unsafe_unretained Class class) {
         if (class == nil) {
             return;
         }
-        if (ZIKRouter_classIsSubclassOfClass(class, [XXResponder class])) {
+        if (zix_classIsSubclassOfClass(class, [XXResponder class])) {
             if (class_conformsToProtocol(class, @protocol(ZIKRoutableView))) {
-                NSCAssert(ZIKRouter_classIsSubclassOfClass(class, [XXView class]) || class == [XXView class] || ZIKRouter_classIsSubclassOfClass(class, [XXViewController class]) || class == [XXViewController class], @"ZIKRoutableView only suppourt UIView/NSView and UIViewController/NSViewController");
+                NSCAssert(zix_classIsSubclassOfClass(class, [XXView class]) || class == [XXView class] || zix_classIsSubclassOfClass(class, [XXViewController class]) || class == [XXViewController class], @"ZIKRoutableView only suppourt UIView/NSView and UIViewController/NSViewController");
                 [_routableDestinations addObject:class];
             }
-        } else if (ZIKRouter_classIsSubclassOfClass(class, [ZIKViewRouter class])) {
+        } else if (zix_classIsSubclassOfClass(class, [ZIKViewRouter class])) {
             
             CFMutableSetRef views = (CFMutableSetRef)CFDictionaryGetValue(self._check_routerToDestinationsMap, (__bridge const void *)(class));
             NSSet *viewSet = (__bridge NSSet *)(views);
@@ -389,7 +389,7 @@ static NSMutableArray<Class> *_routerClasses;
             }
             NSAssert([obj isKindOfClass:[ZIKViewRoute class]], @"The object is either a ZIKViewRouter class or a ZIKViewRoute");
             ZIKViewRoute *route = obj;
-            if (ZIKRouter_classIsSubclassOfClass(key, [XXView class])) {
+            if (zix_classIsSubclassOfClass(key, [XXView class])) {
                 NSAssert1([route supportRouteType:ZIKViewRouteTypeAddAsSubview] || [route supportRouteType:ZIKViewRouteTypeCustom], @"If the destination is UIView/NSView type, the router (%@) must set supportedRouteTypes and support ZIKViewRouteTypeAddAsSubview or ZIKViewRouteTypeCustom.", route);
             }
             if ([route supportRouteType:ZIKViewRouteTypeCustom]) {
@@ -401,7 +401,7 @@ static NSMutableArray<Class> *_routerClasses;
 }
 
 + (void)_checkAllRoutableProtocols {
-    ZIKRouter_enumerateProtocolList(^(Protocol *protocol) {
+    zix_enumerateProtocolList(^(Protocol *protocol) {
         if (protocol) {
             [self _checkProtocol:protocol];
         }
@@ -409,7 +409,7 @@ static NSMutableArray<Class> *_routerClasses;
 }
 
 + (void)_checkProtocol:(Protocol *)protocol {
-    if (ZIKRouter_protocolConformsToProtocol(protocol, @protocol(ZIKViewRoutable)) &&
+    if (zix_protocolConformsToProtocol(protocol, @protocol(ZIKViewRoutable)) &&
         protocol != @protocol(ZIKViewRoutable)) {
         ZIKRouterType *routerType = [self routerToDestination:protocol];
         NSCAssert1(routerType, @"Declared view protocol(%@) is not registered with any router class!",NSStringFromProtocol(protocol));
@@ -423,7 +423,7 @@ static NSMutableArray<Class> *_routerClasses;
         for (Class viewClass in views) {
             NSCAssert3([viewClass conformsToProtocol:protocol], @"Router(%@)'s viewClass(%@) should conform to registered protocol(%@)",router, viewClass, NSStringFromProtocol(protocol));
         }
-    } else if (ZIKRouter_protocolConformsToProtocol(protocol, @protocol(ZIKViewModuleRoutable)) &&
+    } else if (zix_protocolConformsToProtocol(protocol, @protocol(ZIKViewModuleRoutable)) &&
                protocol != @protocol(ZIKViewModuleRoutable)) {
         ZIKRouterType *routerType = [self routerToModule:protocol];
         NSCAssert1(routerType, @"Declared routable config protocol(%@) is not registered with any router class!",NSStringFromProtocol(protocol));
@@ -444,11 +444,11 @@ static NSMutableArray<Class> *_routerClasses;
 
 + (void)registerDestination:(Class)destinationClass router:(Class)routerClass {
     NSParameterAssert([routerClass isSubclassOfClass:[ZIKViewRouter class]]);
-    if (ZIKRouter_classIsSubclassOfClass(destinationClass, [XXView class])) {
+    if (zix_classIsSubclassOfClass(destinationClass, [XXView class])) {
         NSAssert1([routerClass supportRouteType:ZIKViewRouteTypeAddAsSubview] || [routerClass supportRouteType:ZIKViewRouteTypeCustom], @"If the destination is UIView/NSView type, the router (%@) must override +supportedRouteTypes and support ZIKViewRouteTypeAddAsSubview or ZIKViewRouteTypeCustom.", routerClass);
         if ([routerClass supportRouteType:ZIKViewRouteTypeCustom]) {
-            NSAssert1(ZIKRouter_classSelfImplementingMethod(routerClass, @selector(canPerformCustomRoute), false), @"The router (%@) supports ZIKViewRouteTypeCustom, but doesn't override -canPerformCustomRoute.", routerClass);
-            NSAssert1(ZIKRouter_classSelfImplementingMethod(routerClass, @selector(performCustomRouteOnDestination:fromSource:configuration:), false), @"The router (%@) supports ZIKViewRouteTypeCustom, but doesn't override -performCustomRouteOnDestination:fromSource:configuration:.", routerClass);
+            NSAssert1(zix_classSelfImplementingMethod(routerClass, @selector(canPerformCustomRoute), false), @"The router (%@) supports ZIKViewRouteTypeCustom, but doesn't override -canPerformCustomRoute.", routerClass);
+            NSAssert1(zix_classSelfImplementingMethod(routerClass, @selector(performCustomRouteOnDestination:fromSource:configuration:), false), @"The router (%@) supports ZIKViewRouteTypeCustom, but doesn't override -performCustomRouteOnDestination:fromSource:configuration:.", routerClass);
         }
     }
     [super registerDestination:destinationClass router:routerClass];

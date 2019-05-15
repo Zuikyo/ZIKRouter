@@ -251,7 +251,7 @@ void _registerServiceModuleIdentifierWithSwiftFactory(NSString *identifier, Clas
 }
 
 Protocol<ZIKServiceRoutable> *_Nullable _routableServiceProtocolFromObject(id object) {
-    if (ZIKRouter_isObjcProtocol(object) == NO) {
+    if (zix_isObjcProtocol(object) == NO) {
         return nil;
     }
     Protocol *p = object;
@@ -262,7 +262,7 @@ Protocol<ZIKServiceRoutable> *_Nullable _routableServiceProtocolFromObject(id ob
 }
 
 Protocol<ZIKServiceModuleRoutable> *_Nullable _routableServiceModuleProtocolFromObject(id object) {
-    if (ZIKRouter_isObjcProtocol(object) == NO) {
+    if (zix_isObjcProtocol(object) == NO) {
         return nil;
     }
     Protocol *p = object;

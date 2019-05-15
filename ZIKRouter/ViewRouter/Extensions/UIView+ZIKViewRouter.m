@@ -71,7 +71,7 @@
         }
 #endif
         if (![performer isKindOfClass:[XXApplication class]] &&
-            !ZIKRouter_classIsCustomClass([performer class])) {
+            !zix_classIsCustomClass([performer class])) {
             return nil;
         }
         return performer;
@@ -79,14 +79,14 @@
     
     XXResponder *nextResponder = [self nextResponder];
     if ([nextResponder isKindOfClass:[XXViewController class]]) {
-        if (ZIKRouter_classIsCustomClass([nextResponder class])) {
+        if (zix_classIsCustomClass([nextResponder class])) {
             return nextResponder;
         }
         
         XXViewController *parent = [(XXViewController *)nextResponder parentViewController];
         NSAssert(parent, @"view controller should have parent. This View may be added to a system ViewController's view, you should use a custom ViewController and prepare this View inside the custom ViewController.");
         while (parent &&
-               (!ZIKRouter_classIsCustomClass([parent class]) ||
+               (!zix_classIsCustomClass([parent class]) ||
                 [parent conformsToProtocol:@protocol(ZIKViewRouteContainer)]
                 )) {
             parent = parent.parentViewController;
