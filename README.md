@@ -35,9 +35,9 @@ Service Router 可以管理任意自定义模块。View Router 进一步封装�
 - [x] Support iOS, macOS and tvOS
 - [x] Routing for UIViewController / NSViewController, UIView / NSView and any OC class and swift class
 - [x] Dependency injection, including dynamic injection and static injection
-- [x] **Declare routable protocol for compile-time checking. Using undeclared protocol will bring compile error. This is one of the most powerful feature**
+- [x] **Declare routable protocol for compile-time checking. Using undeclared protocol will bring compiler error. This is one of the most powerful feature**
 - [x] **Locate module with its protocol**
-- [x] **Locate module with identifier, compatible with other URL router frameworks**
+- [x] **Support URL routing**
 - [x] **Prepare the module with its protocol when performing route, rather than passing a parameter dictionary**
 - [x] **Use different required protocol and provided protocol inside module and module's user to make thorough decouple**
 - [x] **Decouple modules and add compatible interfaces with adapter**
@@ -65,7 +65,8 @@ Service Router 可以管理任意自定义模块。View Router 进一步封装�
    6. [Prepare on Destination](#Prepare-on-Destination)
    7. [Remove](#Remove)
    8. [Adapter](#Adapter)
-   9. [URL Router](#URL-Router)
+   9. [Modularization](#Modularization)
+   10. [URL Router](#URL-Router)
 4. [Service Router](#Service-Router)
 5. [Demo and Practice](#Demo-and-Practice)
 6. [File Template](#File-Template)
@@ -1026,7 +1027,13 @@ class TestViewController: UIViewController {
 
 Use `required protocol` and `provided protocol` to perfectly decouple modules, adapt interface and declare dependencies of the module. And you don't have to use a public header to manage those protocols.
 
-You need to connect required protocol and provided protocol. For more detail, read [Module Adapter](Documentation/English/ModuleAdapter.md).
+### Modularization
+
+Separating `required protocol` and `provided protocol` makes your code truly modular. The caller declares its `required protocol`, and the provided module can easily be replaced by another module with the same `required protocol`.
+
+Read the `ZIKLoginModule` module in demo. The login module depends on an alert module, and the alert module is different in `ZIKRouterDemo ` and `ZIKRouterDemo-macOS`. You can change the provided module without changing anything in the login module.
+
+For more detail, read [Module Adapter](Documentation/English/ModuleAdapter.md).
 
 ### URL Router
 
@@ -1168,7 +1175,7 @@ class TestViewController: UIViewController {
 
 ZIKRouter is designed for VIPER architecture at first. But you can also use it in MVC or anywhere.
 
-The demo (ZIKRouterDemo) in this repository shows how to use ZIKRouter to perform each route type.
+The demo (ZIKRouterDemo) in this repository shows how to use ZIKRouter to perform each route type. Open `Router.xcworkspace` to run it.
 
 If you want to see how it works in a VIPER architecture app, go to [ZIKViper](https://github.com/Zuikyo/ZIKViper).
 

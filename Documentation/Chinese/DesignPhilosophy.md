@@ -33,14 +33,14 @@ ZIKRouter 实现了基于接口的模块管理方式，而大部分路由工具�
 ```objective-c
 // 注册某个URL
 [URLRouter registerURL:@"app://editor" handler:^(NSDictionary *userInfo) {
-    UIViewController *settingViewController = [[SettingViewController alloc] initWithParam:param];
-    return settingViewController;
+    UIViewController *editorViewController = [[EditorViewController alloc] initWithParam:param];
+    return editorViewController;
 }];
 ```
 
 ```objective-c
 // 调用路由
-[URLRouter openURL:@"app://editor/settings?debug=true" completion:^(NSDictionary *info) {
+[URLRouter openURL:@"app://editor/?debug=true" completion:^(NSDictionary *info) {
 
 }];
 ```
@@ -85,7 +85,7 @@ URL router 的缺点：
 示例代码：
 
 ```objective-c
-// 提供了动态调用 target-action 的基本功能
+// 模块管理者，提供了动态调用 target-action 的基本功能
 @interface Mediator : NSObject
 
 + (instancetype)sharedInstance;
@@ -96,12 +96,12 @@ URL router 的缺点：
 ```
 
 ```objective-c
-// 在 category 中添加新接口
-@interface Mediator (ModuleAActions)
+// 模块调用者在 category 中定义新接口
+@interface Mediator (ModuleActions)
 - (UIViewController *)Mediator_editorViewController;
 @end
 
-@implementation Mediator (ModuleAActions)
+@implementation Mediator (ModuleActions)
 
 - (UIViewController *)Mediator_editorViewController {
     // 使用字符串硬编码，通过 runtime 动态创建 Target_Editor，并调用 Action_viewController:
@@ -110,9 +110,13 @@ URL router 的缺点：
 }
 
 @end
+  
+// 调用者通过 Mediator 的接口调用模块
+UIViewController *editor = [[Mediator sharedInstance] Mediator_editorViewController];
 ```
 
 ```objective-c
+// 模块提供者提供 target-action 的调用方式
 @interface Target_Editor : NSObject
 - (UIViewController *)Action_viewController:(NSDictionary *)params;
 @end
@@ -189,7 +193,7 @@ let editor = container.resolve(EditorViewProtocol.self)!
 - 由框架来创建所有对象，创建方式有限，例如不支持外部传入参数，再调用自定义初始化方法
 - 用 OC runtime 创建对象，不支持 Swift
 - 只做了 protocol 和 class 的匹配，不支持更复杂的创建方式和依赖注入
-- 无法保证所使用的 protocol 一定存在对应的模块
+- 无法保证所使用的 protocol 一定存在对应的模块，也无法直接判断某个 protocol 是否能用于获取模块
 
 #### 代表框架
 

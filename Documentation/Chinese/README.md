@@ -57,7 +57,8 @@ Service Router 可以管理任意自定义模块。View Router 进一步封装�
    6. [Prepare on Destination](#Prepare-on-Destination)
    7. [Remove](#Remove)
    8. [Adapter](#Adapter)
-   9. [URL Router](#URL-Router)
+   9. [模块化](#模块化)
+   10. [URL Router](#URL-Router)
 4. [Service Router](#Service-Router)
 5. [Demo 和实践](#Demo-和实践)
 6. [代码模板](#代码模板)
@@ -1003,7 +1004,13 @@ class TestViewController: UIViewController {
 
 使用 required protocol 和 provided protocol，就可以让模块间完美解耦，并进行接口适配，同时还能用 required protocol 声明模块所需的依赖。并且 required protocol 只需要是 provided protocol 的子集，让使用者只接触到自己用到的那些接口，限制接口的粒度。此时不再需要用一个公共库来集中存放所有的 protocol，即便模块间有互相依赖，也可以各自单独进行编译。
 
-使用 required protocol 需要将 required protocol 和 provided protocol 进行对接。更详细的内容，可以参考[模块化和解耦](ModuleAdapter.md)。
+### 模块化
+
+区分了`required protocol`和`provided protocol`后，就可以实现真正的模块化。在调用者声明了所需要的`required protocol`后，被调用模块就可以随时被替换成另一个相同功能的模块。
+
+参考 demo 中的`ZIKLoginModule`示例模块，登录模块依赖于一个弹窗模块，而这个弹窗模块在`ZIKRouterDemo`和`ZIKRouterDemo-macOS`中是不同的，而在切换弹窗模块时，登录模块中的代码不需要做任何改变。
+
+更详细的内容，可以参考[模块化和解耦](ModuleAdapter.md)。
 
 ### URL Router
 
@@ -1133,7 +1140,7 @@ class TestViewController: UIViewController {
 
 ZIKRouter 是为了实践 VIPER 架构而开发的，但是也能用于 MVC、MVVM，并没有任何限制。
 
-Demo 目录下的 ZIKRouterDemo 展示了如何用 ZIKRouter 进行各种界面跳转以及模块获取，并且展示了 Swift 和OC 混编的场景。
+打开 `Router.xcworkspace` 来运行 demo。Demo 中的 ZIKRouterDemo 展示了如何用 ZIKRouter 进行各种界面跳转以及模块获取，并且展示了 Swift 和OC 混编的场景，以及模块解耦的演示。
 
 想要查看 router 是如何应用在 VIPER 架构中的，可以参考这个项目：[ZIKViper](https://github.com/Zuikyo/ZIKViper)。
 

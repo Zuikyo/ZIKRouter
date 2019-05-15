@@ -12,6 +12,8 @@
 
 那么如何实施`Required Interface`和`Provided Interface`？在我的这篇文章[iOS VIPER架构实践(二)：VIPER详解与实现](http://www.jianshu.com/p/de96a056b66a)里有详细讲解过，应该由 App Context 在一个 adapter 里进行接口适配，从而使得调用者可以继续在内部使用`Required Interface`，adapter 负责把`Required Interface`和修改后的`Provided Interface`进行适配。
 
+这时候，调用者中的`required protocol`就相当于是在声明自己所依赖的模块。
+
 ## 为`Provided`模块添加`Required Interface`
 
 用 category、extension、proxy 类为模块添加`required protocol`，工作全部由模块的使用和装配者 App Context 完成。
@@ -216,10 +218,21 @@ class ModuleAReqiredLoginViewRouter: ZIKViewRouter {
 
 对于普通类，proxy 可以用 NSProxy 来实现。对于 UIKit 中的那些复杂的 UI 类，可以用子类，然后在子类中重写方法，进行模块适配。
 
+## 模块化
+
+区分了`required protocol`和`provided protocol`后，就可以实现真正的模块化。在调用者声明了所需要的`required protocol`后，被调用模块就可以随时被替换成另一个相同功能的模块。
+
+参考 demo 中的`ZIKLoginModule`示例模块，登录模块依赖于一个弹窗模块，而这个弹窗模块在`ZIKRouterDemo`和`ZIKRouterDemo-macOS`中是不同的，而在切换弹窗模块时，登录模块中的代码不需要做任何改变。
+
 ## 什么时候应该使用 adapter
 
 一般来说，并不需要立即把所有的 protocol 都分离为`required protocol`和`provided protocol`。调用模块和目的模块可以暂时共用 protocol，或者只是简单地改个名字，让`required protocol`作为`provided protocol`的子集，在第一次需要替换模块的时候再用 category、extension、proxy、subclass 等技术进行接口适配。
 
-接口适配也不能滥用，因为成本比较高。如果是功能模块间的互相依赖，建议直接引用类，或者在模块的接口上把依赖交给外部来设置。只有在你的业务模块的确允许使用者使用不同的依赖模块时，才进行多个接口间的适配。例如登录界面模块允许不同的 app 使用不同的登陆 service 模块。
+接口适配也不能滥用，因为成本比较高。对于模块间耦合的处理，有这么几条建议：
+
+* 如果是特定功能模块间的互相依赖，直接引用类即可
+* 如果是依赖某些简单的通用模块（例如日志模块），可以在模块的接口上把依赖交给外部来设置
+* 大部分需要解耦的模块都是需要重用的业务模块，如果你的模块不需要重用，直接引用对应类即可
+* 只有在你的业务模块的确允许使用者使用不同的依赖模块时，才进行多个接口间的适配。例如需要跨平台的模块，例如登录模块允许不同的 app 使用不同的登陆 service 模块
 
 通过`required protocol`和`provided protocol`，就可以实现模块间的完全解耦。

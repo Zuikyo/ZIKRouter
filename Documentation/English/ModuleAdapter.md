@@ -14,6 +14,8 @@ Read [VIPER architecture](https://github.com/Zuikyo/ZIKViper) to get more detail
 
 App Context is responsible for adapting interfaces. The module's user uses `Required Interface`, and the adapter forwards `Required Interface` to `Provided Interface`.
 
+Those `required protocol` in a module are actually its dependencies.
+
 ## Add `Required Interface` for module
 
 Add `required protocol` for module with category and extension in app context.
@@ -218,12 +220,22 @@ class ModuleAReqiredLoginViewRouter: ZIKViewRouter {
 
 For simple objc classes, you can use NSProxy to create a proxy. For those complex classes such as UIViewController in UIKit, you can subclass the UIViewController, and override methods to adapt interface.
 
+## Modularization
+
+Separating `required protocol` and `provided protocol` makes your code truly modular. The caller declares its `required protocol`, and the provided module can easily be replaced by another module with the same `required protocol`.
+
+Read the `ZIKLoginModule` module in demo. The login module depends on an alert module, and the alert module is different in `ZIKRouterDemo ` and `ZIKRouterDemo-macOS`. You can change the provided module without changing anything in the login module.
+
 ## When should you use an adapter?
 
 You don't have to always separate `required protocol` and `provided protocol`. It's OK to use the same protocol in module and its user. Or you can just make a copy and change the protocol name, letting `required protocol` to be subset of `provided protocol`. You only need to do adapting when changing to another provided module.
 
 But adapting with category, extension, proxy and subclass will write much more code, you should not abuse the adapting.
 
-If functional module depends on each other, it's recomended to directly use the class, or expose dependencies in it's interface, letting the user to inject them.
+There're several suggestions for decouple modules:
 
-Only do adapting when your module really allow multi modules to provide the required protocol. Such as login view module allows different service module in different app.
+- Frameworks for unique functions can be directly used 
+- Some simple dependencies can be declared in module's interface and let the caller to inject them, such as logging function
+- Most of modules that needed to decouple is a reusable business module. If the module is not necessary to be reusable, it can just use other modules directly
+
+* Only do adapting when your module really allow multiple modules to provide the required protocol. Such as login view module allows different service module in different app.

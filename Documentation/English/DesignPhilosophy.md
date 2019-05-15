@@ -28,14 +28,14 @@ Sample code:
 ```objective-c
 // Register a URL
 [URLRouter registerURL:@"app://editor" handler:^(NSDictionary *userInfo) {
-    UIViewController *settingViewController = [[SettingViewController alloc] initWithParam:param];
-    return settingViewController;
+    UIViewController *editorViewController = [[EditorViewController alloc] initWithParam:param];
+    return editorViewController;
 }];
 ```
 
 ```objective-c
 // get instance
-[URLRouter openURL:@"app://editor/settings?debug=true" completion:^(NSDictionary *info) {
+[URLRouter openURL:@"app://editor/?debug=true" completion:^(NSDictionary *info) {
 
 }];
 ```
@@ -80,7 +80,7 @@ There is a target-action pattern. The general implementation is adding new inter
 Sample code:
 
 ```objective-c
-// Provide basic method for target-action pattern
+// The module manager, providing basic method for target-action pattern
 @interface Mediator : NSObject
 
 + (instancetype)sharedInstance;
@@ -91,7 +91,7 @@ Sample code:
 ```
 
 ```objective-c
-// Add interface in category
+// The caller adds interface in category
 @interface Mediator (ModuleAActions)
 - (UIViewController *)Mediator_editorViewController;
 @end
@@ -105,9 +105,13 @@ Sample code:
 }
 
 @end
+  
+// The caller get the module by Mediator's interface
+UIViewController *editor = [[Mediator sharedInstance] Mediator_editorViewController];
 ```
 
 ```objective-c
+// The module provides target-action pattern
 @interface Target_Editor : NSObject
 - (UIViewController *)Action_viewController:(NSDictionary *)params;
 @end
