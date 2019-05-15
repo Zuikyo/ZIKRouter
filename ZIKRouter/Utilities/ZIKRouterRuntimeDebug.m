@@ -766,6 +766,11 @@ void zix_checkMemoryLeak(id object, NSTimeInterval delaySecond, void(^handler)(i
     }
     static NSMutableDictionary<NSString *, NSString *> *_leakedObjects;
     static NSHashTable *_existingObjects;
+    static dispatch_once_t onceToken;
+    dispatch_once(&onceToken, ^{
+        _leakedObjects = [NSMutableDictionary dictionary];
+        _existingObjects = [NSHashTable weakObjectsHashTable];
+    });
 #pragma clang diagnostic push
 #pragma clang diagnostic ignored "-Wundeclared-selector"
     
