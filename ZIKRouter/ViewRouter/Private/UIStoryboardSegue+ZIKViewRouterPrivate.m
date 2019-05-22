@@ -18,9 +18,9 @@
 @implementation NSStoryboardSegue (ZIKViewRouterPrivate)
 #endif
 - (nullable Class)zix_currentClassCallingPerform {
-    return objc_getAssociatedObject(self, "zix_currentClassCallingPerform");
+    return objc_getAssociatedObject(self, @selector(zix_currentClassCallingPerform));
 }
 - (void)setZix_currentClassCallingPerform:(nullable Class)vcClass {
-    objc_setAssociatedObject(self, "zix_currentClassCallingPerform", vcClass, OBJC_ASSOCIATION_RETAIN);
+    objc_setAssociatedObject(self, @selector(zix_currentClassCallingPerform), vcClass, OBJC_ASSOCIATION_RETAIN);
 }
 @end

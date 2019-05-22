@@ -23,21 +23,21 @@
 #endif
 
 - (BOOL)zix_routed {
-    NSNumber *result = objc_getAssociatedObject(self, "zix_routed");
+    NSNumber *result = objc_getAssociatedObject(self, @selector(zix_routed));
     return [result boolValue];
 }
 
 - (void)setZix_routed:(BOOL)routed {
-    objc_setAssociatedObject(self, "zix_routed", @(routed), OBJC_ASSOCIATION_RETAIN);
+    objc_setAssociatedObject(self, @selector(zix_routed), @(routed), OBJC_ASSOCIATION_RETAIN);
 }
 
 - (BOOL)zix_removing {
-    NSNumber *result = objc_getAssociatedObject(self, "zix_removing");
+    NSNumber *result = objc_getAssociatedObject(self, @selector(zix_removing));
     return [result boolValue];
 }
 
 - (void)setZix_removing:(BOOL)removing {
-    objc_setAssociatedObject(self, "zix_removing", @(removing), OBJC_ASSOCIATION_RETAIN);
+    objc_setAssociatedObject(self, @selector(zix_removing), @(removing), OBJC_ASSOCIATION_RETAIN);
 }
 
 #if ZIK_HAS_UIKIT

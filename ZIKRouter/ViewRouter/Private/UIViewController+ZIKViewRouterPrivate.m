@@ -20,35 +20,35 @@
 @implementation NSViewController (ZIKViewRouterPrivate)
 #endif
 - (nullable NSNumber *)zix_routeTypeFromRouter {
-    NSNumber *result = objc_getAssociatedObject(self, "zix_routeTypeFromRouter");
+    NSNumber *result = objc_getAssociatedObject(self, @selector(zix_routeTypeFromRouter));
     return result;
 }
 - (void)setZix_routeTypeFromRouter:(nullable NSNumber *)routeType {
     NSParameterAssert(!routeType ||
                       [routeType integerValue] <= ZIKViewRouteTypeMakeDestination);
-    objc_setAssociatedObject(self, "zix_routeTypeFromRouter", routeType, OBJC_ASSOCIATION_RETAIN);
+    objc_setAssociatedObject(self, @selector(zix_routeTypeFromRouter), routeType, OBJC_ASSOCIATION_RETAIN);
 }
 - (nullable NSArray<ZIKViewRouter *> *)zix_destinationViewRouters {
-    return objc_getAssociatedObject(self, "zix_destinationViewRouters");
+    return objc_getAssociatedObject(self, @selector(zix_destinationViewRouters));
 }
 - (void)setZix_destinationViewRouters:(nullable NSArray<ZIKViewRouter *> *)viewRouters {
     NSParameterAssert(!viewRouters || [viewRouters isKindOfClass:[NSArray class]]);
-    objc_setAssociatedObject(self, "zix_destinationViewRouters", viewRouters, OBJC_ASSOCIATION_RETAIN);
+    objc_setAssociatedObject(self, @selector(zix_destinationViewRouters), viewRouters, OBJC_ASSOCIATION_RETAIN);
 }
 - (__kindof ZIKViewRouter *)zix_sourceViewRouter {
-    return objc_getAssociatedObject(self, "zix_sourceViewRouter");
+    return objc_getAssociatedObject(self, @selector(zix_sourceViewRouter));
 }
 - (void)setZix_sourceViewRouter:(nullable __kindof ZIKViewRouter *)viewRouter {
-    objc_setAssociatedObject(self, "zix_sourceViewRouter", viewRouter, OBJC_ASSOCIATION_RETAIN);
+    objc_setAssociatedObject(self, @selector(zix_sourceViewRouter), viewRouter, OBJC_ASSOCIATION_RETAIN);
 }
 - (nullable Class)zix_currentClassCallingPrepareForSegue {
-    return objc_getAssociatedObject(self, "zix_currentClassCallingPrepareForSegue");
+    return objc_getAssociatedObject(self, @selector(zix_currentClassCallingPrepareForSegue));
 }
 - (void)setZix_currentClassCallingPrepareForSegue:(nullable Class)vcClass {
-    objc_setAssociatedObject(self, "zix_currentClassCallingPrepareForSegue", vcClass, OBJC_ASSOCIATION_RETAIN);
+    objc_setAssociatedObject(self, @selector(zix_currentClassCallingPrepareForSegue), vcClass, OBJC_ASSOCIATION_RETAIN);
 }
 - (nullable XXViewController *)zix_parentMovingTo {
-    XXViewController *(^weakContainer)(void) = objc_getAssociatedObject(self, "zix_parentMovingTo");
+    XXViewController *(^weakContainer)(void) = objc_getAssociatedObject(self, @selector(zix_parentMovingTo));
     if (weakContainer) {
         return weakContainer();
     }
@@ -70,10 +70,10 @@
         };
         object = weakContainer;
     }
-    objc_setAssociatedObject(self, "zix_parentMovingTo", object, OBJC_ASSOCIATION_RETAIN);
+    objc_setAssociatedObject(self, @selector(zix_parentMovingTo), object, OBJC_ASSOCIATION_RETAIN);
 }
 - (nullable XXViewController *)zix_parentRemovingFrom {
-    XXViewController *(^weakContainer)(void) = objc_getAssociatedObject(self, "zix_parentRemovingFrom");
+    XXViewController *(^weakContainer)(void) = objc_getAssociatedObject(self, @selector(zix_parentRemovingFrom));
     if (weakContainer) {
         return weakContainer();
     }
@@ -95,7 +95,7 @@
         };
         object = weakContainer;
     }
-    objc_setAssociatedObject(self, "zix_parentRemovingFrom", object, OBJC_ASSOCIATION_RETAIN);
+    objc_setAssociatedObject(self, @selector(zix_parentRemovingFrom), object, OBJC_ASSOCIATION_RETAIN);
 }
 
 #if ZIK_HAS_UIKIT
@@ -120,23 +120,23 @@
 @implementation NSWindowController (ZIKViewRouterPrivate)
 
 - (nullable NSArray<ZIKViewRouter *> *)zix_destinationViewRouters {
-    return objc_getAssociatedObject(self, "zix_destinationViewRouters");
+    return objc_getAssociatedObject(self, @selector(zix_destinationViewRouters));
 }
 - (void)setZix_destinationViewRouters:(nullable NSArray<ZIKViewRouter *> *)viewRouters {
     NSParameterAssert(!viewRouters || [viewRouters isKindOfClass:[NSArray class]]);
-    objc_setAssociatedObject(self, "zix_destinationViewRouters", viewRouters, OBJC_ASSOCIATION_RETAIN);
+    objc_setAssociatedObject(self, @selector(zix_destinationViewRouters), viewRouters, OBJC_ASSOCIATION_RETAIN);
 }
 - (__kindof ZIKViewRouter *)zix_sourceViewRouter {
-    return objc_getAssociatedObject(self, "zix_sourceViewRouter");
+    return objc_getAssociatedObject(self, @selector(zix_sourceViewRouter));
 }
 - (void)setZix_sourceViewRouter:(nullable __kindof ZIKViewRouter *)viewRouter {
-    objc_setAssociatedObject(self, "zix_sourceViewRouter", viewRouter, OBJC_ASSOCIATION_RETAIN);
+    objc_setAssociatedObject(self, @selector(zix_sourceViewRouter), viewRouter, OBJC_ASSOCIATION_RETAIN);
 }
 - (nullable Class)zix_currentClassCallingPrepareForSegue {
-    return objc_getAssociatedObject(self, "zix_currentClassCallingPrepareForSegue");
+    return objc_getAssociatedObject(self, @selector(zix_currentClassCallingPrepareForSegue));
 }
 - (void)setZix_currentClassCallingPrepareForSegue:(nullable Class)vcClass {
-    objc_setAssociatedObject(self, "zix_currentClassCallingPrepareForSegue", vcClass, OBJC_ASSOCIATION_RETAIN);
+    objc_setAssociatedObject(self, @selector(zix_currentClassCallingPrepareForSegue), vcClass, OBJC_ASSOCIATION_RETAIN);
 }
 
 @end
