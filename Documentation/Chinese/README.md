@@ -12,7 +12,7 @@
 ![Carthage compatible](https://img.shields.io/badge/Carthage-compatible-4BC51D.svg?style=flat)
 ![license](https://img.shields.io/github/license/mashape/apistatus.svg)
 
-一个用于模块间解耦和通信，基于接口进行模块管理和依赖注入的组件化路由工具。用多种方式最大程度地发挥编译检查的功能，消除动态特性带来的隐患。
+一个用于模块间解耦和通信，基于接口进行模块管理和依赖注入的组件化路由工具。用多种方式最大程度地发挥编译检查的功能。
 
 通过 protocol 寻找对应的模块，并用 protocol 进行依赖注入和模块通信。
 
@@ -26,6 +26,7 @@ Service Router 可以管理任意自定义模块。View Router 进一步封装�
 
 - [x] 支持 Swift 和 Objective-C，以及两者混编
 - [x] 支持 iOS、macOS、tvOS
+- [x] 提供规范化的代码模板，一键生成代码
 - [x] 支持界面路由和任意 OC 模块、swift 模块的路由，无需修改模块代码即可让其支持路由
 - [x] 支持对模块进行静态依赖注入和动态依赖注入
 - [x] **明确声明可用于路由的 protocol，进行编译时检查，使用未声明的 protocol 会产生编译错误。这是 ZIKRouter 最特别的功能之一**
@@ -34,13 +35,14 @@ Service Router 可以管理任意自定义模块。View Router 进一步封装�
 - [x] **使用 required protocol 和 provided protocol 指向同一个模块，解除 protocol 依赖，支持各模块独立编译**
 - [x] **支持 storyboard，可以对从 segue 中跳转的界面自动执行依赖注入**
 - [x] 用 adapter 对两个模块进行解耦和接口兼容
-- [x] 封装 UIKit 和 AppKit 里的所有界面跳转方式，同时支持界面回退
+- [x] 封装 UIKit / AppKit 里的所有界面跳转方式，同时支持界面回退和自定义跳转
 - [x] 完备的错误检查，可以检测界面跳转时的大部分问题
 - [x] 支持界面跳转过程中的 AOP 回调
 - [x] 检测界面跳转和移除时的内存泄露
 - [x] 发送自定义事件给 router 处理
 - [x] 高性能的自动注册方式，也支持手动注册
 - [x] 支持多种路由实现方式： 强大的 router 子类、简单的工厂 block 和 C 函数
+- [x] 高可扩展性，可以轻松地加入各种自定义功能
 
 ## 快速入门
 
@@ -59,6 +61,7 @@ Service Router 可以管理任意自定义模块。View Router 进一步封装�
    8. [Adapter](#Adapter)
    9. [模块化](#模块化)
    10. [URL Router](#URL-Router)
+   11. [其他功能](#其他功能)
 4. [Service Router](#Service-Router)
 5. [Demo 和实践](#Demo-和实践)
 6. [代码模板](#代码模板)
@@ -249,7 +252,7 @@ class NoteEditorViewRouter: ZIKViewRouter<NoteEditorViewController, ViewRouteCon
 
 </details>
 
-使用子类是一种离散式管理，让每个模块各自管理路由过程，同时也能带来极强的可扩展性，可以进行非常多的自定义功能扩展。
+ZIKRouter 的路由是离散式的管理方式，让每个模块各自管理路由过程，同时也能带来极强的可扩展性，可以进行非常多的自定义功能扩展。
 
 关于更多可用于 override 的方法，请参考详细文档。
 
@@ -1087,6 +1090,15 @@ public func application(_ app: UIApplication, open url: URL, options: [UIApplica
 </details>
 
 每个项目对 URL 路由的需求都不一样，你可以按照项目需求实现自己的 URL 路由。基于 ZIKRouter 强大的可扩展性，你可以使用一个自定义的 ZIKRouter 作为父类，重写方法并添加自定义的功能。参考 `ZIKRouter+URLRouter.h`。
+
+### 其他功能
+
+还有其他功能，可以阅读详细的文档：
+
+* 每个 router [自定义界面跳转](PerformRoute.md#自定义路由操作)，例如首页切换 tabbar
+* 支持 [storyboard](Storyboard.md)
+* 界面跳转的 [AOP](AOP.md) 回调
+* [自定义事件处理](PerformRoute.md#自定义事件)
 
 ### Service Router
 

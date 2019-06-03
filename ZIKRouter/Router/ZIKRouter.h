@@ -14,7 +14,7 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-/// Enable this to check whether all routers and routable protocols are properly implemented. If you wan't to disable this checking, add ZIKROUTER_CHECK=0 in Build Settings -> Preprocessor Macros of ZIKRouter target.
+/// Enable this to check whether all routers and routable protocols are properly implemented. If you want to disable this checking, add ZIKROUTER_CHECK=0 in Build Settings -> Preprocessor Macros of ZIKRouter target.
 #ifdef DEBUG
 #ifndef ZIKROUTER_CHECK
 #define ZIKROUTER_CHECK 1
@@ -31,9 +31,9 @@ NS_ASSUME_NONNULL_BEGIN
 @interface ZIKRouter<__covariant Destination, __covariant RouteConfig: ZIKPerformRouteConfiguration *, __covariant RemoveConfig: ZIKRemoveRouteConfiguration *> : NSObject
 /// State of route. View router's state will be auto changed when the destination's state is changed.
 @property (nonatomic, readonly, assign) ZIKRouterState state;
-/// Configuration for performRoute; Return copy of configuration, so modify this won't change the real configuration inside router.
+/// Configuration for performRoute. This should not be modified after perform.
 @property (nonatomic, readonly, copy) RouteConfig configuration;
-/// Configuration for removeRoute; return copy of configuration, so modify this won't change the real configuration inside router.
+/// Configuration for removeRoute.
 @property (nonatomic, readonly, copy, nullable) RemoveConfig removeConfiguration;
 /// Latest error when route action failed.
 @property (nonatomic, readonly, strong, nullable) NSError *error;

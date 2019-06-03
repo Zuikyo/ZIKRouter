@@ -165,4 +165,4 @@ You should solve route errors in development stage. You can track all errors in 
 
 You may use non-existent url in URL router, and you can provide a default error view controller in this situation.
 
-But with ZIKRouter, you won't use wrong protocol when routing. You only need to check whether the router exists when fetching router with identifier. If the router is nil, you can use a default router to perform this route.
+But with ZIKRouter, you won't use wrong protocol when routing. You only need to check whether the router exists when fetching router with identifier or URL. If the router is nil, you can use a default router to perform this route.

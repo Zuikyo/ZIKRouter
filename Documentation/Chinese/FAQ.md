@@ -159,4 +159,4 @@ extension RoutableView where Protocol == ViewControllerInput {
 
 按照 URL router 的思维，你可能想要处理模块不存在时的路由操作，降级到某个默认界面。
 
-由于编译阶段就能确保不会使用未声明的 protocol，因此 ZIKRouter 没有直接提供路由下沉的接口。你只有在用字符串 identifier 获取模块时，才会出现模块不存在的情况。如果模块不存在，就使用一个默认的 router 进行跳转。
+由于编译阶段就能确保不会使用未声明的 protocol，因此 ZIKRouter 没有直接提供路由下沉的接口。你只有在用字符串 identifier 或者 URL 获取模块时，才会出现模块不存在的情况。如果模块不存在，就使用一个默认的 router 进行跳转。

@@ -11,7 +11,7 @@
 ![Carthage compatible](https://img.shields.io/badge/Carthage-compatible-4BC51D.svg?style=flat)
 ![license](https://img.shields.io/github/license/mashape/apistatus.svg)
 
-An interface-oriented router for discovering modules and injecting dependencies with protocol.
+An interface-oriented router for managing modules and injecting dependencies with protocol.
 
 The view router can perform all navigation types in UIKit / AppKit through one method.
 
@@ -31,24 +31,25 @@ Service Router 可以管理任意自定义模块。View Router 进一步封装�
 
 ## Features
 
-- [x] Support Swift and Objective-C
-- [x] Support iOS, macOS and tvOS
-- [x] Routing for UIViewController / NSViewController, UIView / NSView and any OC class and swift class
+- [x] Swift and Objective-C support
+- [x] iOS, macOS and tvOS support
+- [x] File template for quickly creating router
+- [x] Routing for UIViewController / NSViewController, UIView / NSView and any class
 - [x] Dependency injection, including dynamic injection and static injection
-- [x] **Declare routable protocol for compile-time checking. Using undeclared protocol will bring compiler error. This is one of the most powerful feature**
-- [x] **Locate module with its protocol**
-- [x] **Support URL routing**
-- [x] **Prepare the module with its protocol when performing route, rather than passing a parameter dictionary**
-- [x] **Use different required protocol and provided protocol inside module and module's user to make thorough decouple**
-- [x] **Decouple modules and add compatible interfaces with adapter**
-- [x] **Support storyboard. UIViewController / NSViewController and UIView / NSView from a segue can auto create it's registered router**
-- [x] Encapsulate navigation methods in UIKit and AppKit (push, present modally, present as popover present as sheet, segue, show, showDetail, addChildViewController, addSubview) and custom transitions into one method
-- [x] Remove an UIViewController/UIView or unload a module through one method, without using pop、dismiss、removeFromParentViewController、removeFromSuperview in different situations. Router can choose the proper method
+- [x] **Declaration of routable protocol for compile-time checking. Using undeclared protocol will bring compiler error. This is one of the most powerful feature**
+- [x] **Module matching with its protocol**
+- [x] **URL routing support**
+- [x] **Configure the module with its protocol rather than a parameter dictionary**
+- [x] **Required protocol and provided protocol for making thorough decouple**
+- [x] **Adapter for decoupling modules and add compatible interfaces**
+- [x] **Storyboard support. Views from a segue can be auto prepared**
+- [x] Encapsulation for all transition methods and unwind methods in UIKit / AppKit, and also custom transition
 - [x] Error checking for view transition
 - [x] AOP for view transition
-- [x] Detect memory leaks
-- [x] Send custom events to router
-- [x] Auto register all routers
+- [x] Memory leak detection
+- [x] Custom events handling
+- [x] Auto registration
+- [x] Highly scalable
 
 ## Quick Start Guide
 
@@ -67,6 +68,7 @@ Service Router 可以管理任意自定义模块。View Router 进一步封装�
    8. [Adapter](#Adapter)
    9. [Modularization](#Modularization)
    10. [URL Router](#URL-Router)
+   11. [Other Features](#Other-Features)
 4. [Service Router](#Service-Router)
 5. [Demo and Practice](#Demo-and-Practice)
 6. [File Template](#File-Template)
@@ -259,6 +261,8 @@ class NoteEditorViewRouter: ZIKViewRouter<NoteEditorViewController, ViewRouteCon
 ```
 
 </details>
+
+Each router can control their own routing, such as using different custom transition. And the router can be very easy to add additional features.
 
 Read the documentation for more details and more methods to override.
 
@@ -1117,6 +1121,15 @@ public func application(_ app: UIApplication, open url: URL, options: [UIApplica
 </details>
 
 If your project has different requirements for URL router, you can write your URL router by yourself. You can create custom ZIKRouter as parent class, add more powerful features in it. See `ZIKRouter+URLRouter.h`.
+
+### Other Features
+
+There're other features, you can get details in the documentation:
+
+- [Custom Transition](Documentation/English/PerformRoute.md#Custom-Transition) in each router, such as switching view controller in tab bar
+- [Storyboard](Documentation/English/Storyboard.md)
+-  [AOP](Documentation/English/AOP.md) callback in view transition
+- [Handle Custom Event](Documentation/English/PerformRoute.md#Custom-Event)
 
 ### Service Router
 

@@ -120,6 +120,40 @@ typedef void(^ZIKPerformRouteCompletion)(BOOL success, id _Nullable destination,
 
 @end
 
+typedef void(^ZIKRemoveRouteCompletion)(BOOL success, ZIKRouteAction routeAction, NSError *_Nullable error);
+@interface ZIKRemoveRouteConfiguration : ZIKRouteConfiguration <NSCopying>
+
+/**
+ Prepare for removeRoute. Subclass can offer more specific info.
+ 
+ @note
+ Use weakSelf in prepareDestination to avoid retain cycle.
+ */
+@property (nonatomic, copy, nullable) void(^prepareDestination)(id destination);
+
+/**
+ Success handler for router's provider. Each time the router was removed, success handler will be called when the operation succeed.
+ 
+ @note
+ Use weakSelf in successHandler to avoid retain cycle.
+ */
+@property (nonatomic, copy, nullable) void(^successHandler)(void);
+
+/**
+ Completion handler for removeRoute.
+ 
+ @note
+ Use weakSelf in completion to avoid retain cycle.
+ */
+@property (nonatomic, copy, nullable) ZIKRemoveRouteCompletion completionHandler;
+
+/// Success handler for current removing, will reset to nil after removed.
+@property (nonatomic, copy, nullable) void(^performerSuccessHandler)(void);
+
+@end
+
+#pragma mark Makeable
+
 #pragma clang diagnostic push
 #pragma clang diagnostic ignored "-Wstrict-prototypes"
 
@@ -341,38 +375,6 @@ typedef void(^ZIKConstructBlock)();
 @end
 
 #pragma clang diagnostic pop
-
-typedef void(^ZIKRemoveRouteCompletion)(BOOL success, ZIKRouteAction routeAction, NSError *_Nullable error);
-@interface ZIKRemoveRouteConfiguration : ZIKRouteConfiguration <NSCopying>
-
-/**
- Prepare for removeRoute. Subclass can offer more specific info.
- 
- @note
- Use weakSelf in prepareDestination to avoid retain cycle.
- */
-@property (nonatomic, copy, nullable) void(^prepareDestination)(id destination);
-
-/**
- Success handler for router's provider. Each time the router was removed, success handler will be called when the operation succeed.
- 
- @note
- Use weakSelf in successHandler to avoid retain cycle.
- */
-@property (nonatomic, copy, nullable) void(^successHandler)(void);
-
-/**
- Completion handler for removeRoute.
- 
- @note
- Use weakSelf in completion to avoid retain cycle.
- */
-@property (nonatomic, copy, nullable) ZIKRemoveRouteCompletion completionHandler;
-
-/// Success handler for current removing, will reset to nil after removed.
-@property (nonatomic, copy, nullable) void(^performerSuccessHandler)(void);
-
-@end
 
 #pragma mark Strict Configuration
 

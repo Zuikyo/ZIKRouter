@@ -27,7 +27,7 @@ Sample code:
 
 ```objective-c
 // Register a URL
-[URLRouter registerURL:@"app://editor" handler:^(NSDictionary *userInfo) {
+[URLRouter registerURL:@"app://editor" handler:^(NSDictionary *param) {
     UIViewController *editorViewController = [[EditorViewController alloc] initWithParam:param];
     return editorViewController;
 }];

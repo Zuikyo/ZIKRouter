@@ -32,7 +32,7 @@ ZIKRouter 实现了基于接口的模块管理方式，而大部分路由工具�
 
 ```objective-c
 // 注册某个URL
-[URLRouter registerURL:@"app://editor" handler:^(NSDictionary *userInfo) {
+[URLRouter registerURL:@"app://editor" handler:^(NSDictionary *param) {
     UIViewController *editorViewController = [[EditorViewController alloc] initWithParam:param];
     return editorViewController;
 }];

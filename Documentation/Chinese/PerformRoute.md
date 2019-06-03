@@ -169,6 +169,8 @@ class TestViewController: UIViewController {
 
 ### View Router
 
+有时候某些界面需要自定义跳转动画，或者特殊的跳转方式，例如首页 tabbar 的切换，可以在 router 中进行自定义。
+
 如果要进行自定义的界面跳转，需要：
 
 1. 重写`supportedRouteTypes`，添加`ZIKViewRouteTypeCustom`
@@ -379,7 +381,7 @@ class EditorViewRouter: ZIKViewRouter<EditorViewController, ViewRouteConfig> {
 ```objectivec
 @implementation EditorViewRouter
 ...
-- (void)applicationDidEnterBackground:(UIApplication *)application {
++ (void)applicationDidEnterBackground:(UIApplication *)application {
 	// 处理自定义事件
 }
 

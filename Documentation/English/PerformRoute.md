@@ -169,6 +169,8 @@ class TestViewController: UIViewController {
 
 ### View Router
 
+Some views have custom transition animation or some special transition, like switching tab bar item. You can do custom transition in your router.
+
 Steps to support custom transition:
 
 1. Override `supportedRouteTypes`, add`ZIKViewRouteTypeCustom`
@@ -381,7 +383,7 @@ class EditorViewRouter: ZIKViewRouter<EditorViewController, ViewRouteConfig> {
 ```objectivec
 @implementation EditorViewRouter
 ...
-- (void)applicationDidEnterBackground:(UIApplication *)application {
++ (void)applicationDidEnterBackground:(UIApplication *)application {
 	// Handle custom event
 }
 
