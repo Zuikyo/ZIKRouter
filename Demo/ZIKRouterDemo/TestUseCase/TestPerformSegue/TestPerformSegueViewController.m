@@ -9,7 +9,6 @@
 #import "TestPerformSegueViewController.h"
 @import ZIKRouter;
 #import "ZIKInfoViewProtocol.h"
-#import "ZIKSimpleLabelProtocol.h"
 #import "TestPerformSegueViewRouter.h"
 
 @interface TestPerformSegueViewController () <ZIKInfoViewDelegate>

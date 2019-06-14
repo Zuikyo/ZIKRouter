@@ -104,7 +104,7 @@ FOUNDATION_EXTERN ZIKURLRouteKey ZIKURLRouteKeyAction;
 /**
  Register URL pattern, then you can get the router with `+[ZIKAnyServiceRouter routerForURL:]` or perform the url with `+[ZIKAnyServiceRouter performURL:]`.
  
- Supported patterns:
+ Supported pattern samples:
  
  app://service/path
  app://service/path?k=v&k2&v2
@@ -112,6 +112,25 @@ FOUNDATION_EXTERN ZIKURLRouteKey ZIKURLRouteKeyAction;
  app://service/path/:id/:number
  app://service/path/:id/:number?k=v&k2&v2
  app://service/path/:id/path/:number
+ 
+ @code
+ [ZIKAnyServiceRoute
+    makeRouteWithDestination:[LoginService class]
+    makeDestination:^id<LoginServiceInput> _Nullable(ZIKPerformRouteConfig *config, __kindof ZIKRouter *router) {
+        LoginService *destination = [[LoginService alloc] init];
+        return destination;
+ }]
+ .prepareDestination(^(id<LoginServiceInput> destination, ZIKPerformRouteConfig *config, ZIKServiceRouter *router) {
+    // Prepare the destination
+ })
+ .registerURLPattern(@"app://service/login/:uid")
+ .processUserInfoFromURL(^(NSDictionary *userInfo, NSURL *url, ZIKPerformRouteConfig *config, ZIKServiceRouter *router) {
+ 
+ })
+ .performActionFromURL(^(NSString *action, NSDictionary *userInfo, NSURL *url, ZIKPerformRouteConfig *config, ZIKServiceRouter *router) {
+ 
+ });
+ @endcode
  */
 @property (nonatomic, readonly) ZIKServiceRoute<Destination, RouteConfig> *(^registerURLPattern)(NSString *pattern);
 

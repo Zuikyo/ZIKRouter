@@ -755,6 +755,7 @@ NSString *codeForRegisteringRouters() {
 #import "ZIKClassCapabilities.h"
 #if __has_include("ZIKViewRouter.h")
 #import "UIViewController+ZIKViewRouter.h"
+#import "UIView+ZIKViewRouter.h"
 #endif
 
 void zix_checkMemoryLeak(id object, NSTimeInterval delaySecond, void(^handler)(id leakedObject)) {
@@ -818,6 +819,12 @@ void zix_checkMemoryLeak(id object, NSTimeInterval delaySecond, void(^handler)(i
                 }
                 return;
             } else if ([weakObject isKindOfClass:[XXView class]]) {
+#if ZIK_HAS_UIKIT
+                XXViewController *viewController = [weakObject zix_firstAvailableViewController];
+                if ([viewController zix_routed]) {
+                    return;
+                }
+#endif
                 XXView *superview = [weakObject superview];
                 if (superview) {
                     NSLog(@"\n\nZIKRouter memory leak checker:⚠️ destination is not dealloced after removed, make sure there is no retain cycle:\n%@\nIts superview: %@\nThe UIKit system may hold the object, if the view is still in view hierarchy, you can ignore this.\n\n", weakObject, superview);

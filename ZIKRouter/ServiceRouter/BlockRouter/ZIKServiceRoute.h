@@ -14,7 +14,22 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-/// Use ZIKServiceRoute to add service route with blocks, rather than creating subclass of ZIKServiceRouter.
+/**
+ Use ZIKServiceRoute to add service route with blocks, rather than creating subclass of ZIKServiceRouter.
+ 
+ @code
+ [ZIKDestinationServiceRoute(id<LoginServiceInput>)
+    makeRouteWithDestination:[LoginService class]
+    makeDestination:^id<LoginServiceInput> _Nullable(ZIKPerformRouteConfig *config, __kindof ZIKRouter *router) {
+        LoginService *destination = [[LoginService alloc] init];
+        return destination;
+ }]
+ .prepareDestination(^(id<LoginServiceInput> destination, ZIKPerformRouteConfig *config, ZIKServiceRouter *router) {
+    // Prepare the destination
+ })
+ .registerDestinationProtocol(ZIKRoutable(LoginServiceInput));
+ @endcode
+ */
 @interface ZIKServiceRoute<__covariant Destination, __covariant RouteConfig: ZIKPerformRouteConfiguration *> : ZIKRoute<Destination, RouteConfig, ZIKRemoveRouteConfiguration *>
 
 //Set name of this route.

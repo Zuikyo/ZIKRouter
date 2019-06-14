@@ -17,6 +17,7 @@ NS_ASSUME_NONNULL_BEGIN
 @class ZIKRoute;
 @interface ZIKViewRouterType<__covariant Destination: id, __covariant RouteConfig: ZIKViewRouteConfiguration *> ()
 
+- (BOOL)shouldAutoCreateForDestination:(Destination)destination fromSource:(nullable id)source;
 - (ZIKViewRouter<Destination, RouteConfig> *)routerFromSegueIdentifier:(NSString *)identifier sender:(nullable id)sender destination:(XXViewController *)destination source:(XXViewController *)source;
 - (ZIKViewRouter<Destination, RouteConfig> *)routerFromView:(XXView *)destination source:(XXView *)source;
 - (BOOL)_validateSupportedRouteTypesForXXView;

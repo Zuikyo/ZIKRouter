@@ -504,7 +504,7 @@ id<EditorViewInput> destination = [ZIKRouterToView(EditorViewInput) makeDestinat
 
 #### 必需参数与特殊参数
 
-有些参数不能直接通过接口传递：
+有些参数不能直接通过 destination 的接口传递：
 
 * 模块有自定义初始化方法，需要从外部传入一些必需参数后才能创建实例
 

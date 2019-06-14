@@ -9,6 +9,7 @@
 #import "ZIKInfoViewRouter.h"
 #import "ZIKInfoViewController.h"
 @import ZIKRouter.Internal;
+#import "AppRouteRegistry.h"
 
 id<EasyInfoViewProtocol1> makeDestiantionForInfoViewProtocol(ZIKViewRouteConfiguration *configuration) {
     UIStoryboard *sb = [UIStoryboard storyboardWithName:@"Main" bundle:nil];
@@ -28,9 +29,28 @@ DeclareRoutableViewModuleProtocol(EasyInfoViewModuleProtocol)
 @implementation ZIKInfoViewRouter
 
 + (void)registerRoutableDestination {
-    [self registerView:[ZIKInfoViewController class]];
+    
+#if TEST_BLOCK_ROUTES
+    [ZIKDestinationViewRoute(id<ZIKInfoViewProtocol>) makeRouteWithDestination:[ZIKInfoViewController class] makeDestination:^id<ZIKInfoViewProtocol> _Nullable(ZIKViewRouteConfig * _Nonnull config, __kindof ZIKRouter<id<ZIKInfoViewProtocol>,ZIKViewRouteConfig *,ZIKViewRemoveConfiguration *> * _Nonnull router) {
+        UIStoryboard *sb = [UIStoryboard storyboardWithName:@"Main" bundle:nil];
+        ZIKInfoViewController *destination = [sb instantiateViewControllerWithIdentifier:@"info"];
+        destination.title = @"info";
+        return destination;
+    }]
+    .registerDestinationProtocol(ZIKRoutable(ZIKInfoViewProtocol))
+    .registerURLPattern(@"router://info")
+    .destinationFromExternalPrepared(^BOOL(id<ZIKInfoViewProtocol> destination, ZIKViewRouter * _Nonnull router) {
+        if (destination.name.length > 0 && destination.age > 0) {
+            return YES;
+        }
+        return NO;
+    });
+#else
     [self registerViewProtocol:ZIKRoutable(ZIKInfoViewProtocol)];
     [self registerURLPattern:@"router://info"];
+#endif
+    
+    [self registerView:[ZIKInfoViewController class]];
     
     // Test easy factory
     [ZIKDestinationViewRouter(id<EasyInfoViewProtocol1>)
@@ -60,6 +80,7 @@ DeclareRoutableViewModuleProtocol(EasyInfoViewModuleProtocol)
              NSLog(@"_prepareDestination: %@", destination);
          };
          
+         // User is responsible for calling makeDestinationWith and giving parameters
          config.makeDestinationWith = ^id(NSString *title, NSInteger age, __weak _Nullable id<ZIKInfoViewDelegate> delegate) {
              weakConfig.makeDestination = ^ZIKInfoViewController * _Nullable{
                  UIStoryboard *sb = [UIStoryboard storyboardWithName:@"Main" bundle:nil];

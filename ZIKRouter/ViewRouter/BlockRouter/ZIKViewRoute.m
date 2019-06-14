@@ -21,6 +21,7 @@
 #import "ZIKClassCapabilities.h"
 
 @interface ZIKViewRoute()
+@property (nonatomic, copy, nullable) BOOL(^shouldAutoCreateForDestinationBlock)(id destination, id source);
 @property (nonatomic, copy, nullable) BOOL(^destinationFromExternalPreparedBlock)(id destination, ZIKViewRouter *router);
 @property (nonatomic, copy, nullable) ZIKBlockViewRouteTypeMask(^makeSupportedRouteTypesBlock)(void);
 @property (nonatomic, copy, nullable) BOOL(^canPerformCustomRouteBlock)(ZIKViewRouter *router);
@@ -40,6 +41,13 @@
 @dynamic makeDefaultRemoveConfiguration;
 @dynamic prepareDestination;
 @dynamic didFinishPrepareDestination;
+
+- (ZIKViewRoute<id, ZIKViewRouteConfiguration *> *(^)(BOOL(^)(id destination, id source)))shouldAutoCreateForDestination {
+    return ^(BOOL(^block)(id destination, id source)) {
+        self.shouldAutoCreateForDestinationBlock = block;
+        return self;
+    };
+}
 
 - (ZIKViewRoute<id, ZIKViewRouteConfiguration *> *(^)(BOOL(^)(id destination, ZIKViewRouter *router)))destinationFromExternalPrepared {
     return ^(BOOL(^block)(id destination, ZIKViewRouter *router)) {
@@ -206,6 +214,13 @@ _injectedStrictRemoveConfigBuilder:
     };
 }
 
+- (BOOL)shouldAutoCreateForDestination:(id)destination fromSource:(nullable id)source {
+    if (self.shouldAutoCreateForDestinationBlock) {
+        return self.shouldAutoCreateForDestinationBlock(destination, source);
+    }
+    return [self.routerClass shouldAutoCreateForDestination:destination fromSource:source];
+}
+
 - (id)performPath:(ZIKViewRoutePath *)path configuring:(void(NS_NOESCAPE ^)(ZIKViewRouteConfiguration *config))configBuilder {
     return [self performPath:path configuring:configBuilder removing:nil];
 }
@@ -349,13 +364,15 @@ strictConfiguring:(void (^)(ZIKPerformRouteStrictConfiguration<id> * _Nonnull, Z
 }
 
 - (id)routerFromSegueIdentifier:(NSString *)identifier sender:(nullable id)sender destination:(XXViewController *)destination source:(XXViewController *)source {
-    ZIKBlockViewRouter *router = [[self routerClass] routerFromSegueIdentifier:identifier sender:sender destination:destination source:source];
-    router.original_configuration.route = self;
+    ZIKBlockViewRouter *router = [[self routerClass] routerFromSegueIdentifier:identifier sender:sender destination:destination source:source configuring:^(ZIKPerformRouteConfiguration * _Nonnull config) {
+        config.route = self;
+    }];
     return router;
 }
 - (id)routerFromView:(XXView *)destination source:(XXView *)source {
-    ZIKBlockViewRouter *router = [[self routerClass] routerFromView:destination source:source];
-    router.original_configuration.route = self;
+    ZIKBlockViewRouter *router = [[self routerClass] routerFromView:destination source:source configuring:^(ZIKPerformRouteConfiguration * _Nonnull config) {
+        config.route = self;
+    }];
     return router;
 }
 

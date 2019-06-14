@@ -22,7 +22,22 @@ typedef NS_OPTIONS(NSInteger, ZIKBlockViewRouteTypeMask) {
     ZIKBlockViewRouteTypeMaskCustom = ZIKViewRouteTypeMaskCustom
 };
 
-/// Use ZIKViewRoute to add view route with blocks, rather than creating subclass of ZIKViewRouter.
+/**
+ Use ZIKViewRoute to add view route with blocks, rather than creating subclass of ZIKViewRouter.
+ 
+ @code
+ [ZIKDestinationViewRoute(id<LoginViewInput>)
+    makeRouteWithDestination:[LoginViewController class]
+    makeDestination:^id<LoginViewInput> _Nullable(ZIKViewRouteConfig *config, __kindof ZIKRouter *router) {
+        LoginViewController *destination = [[LoginViewController alloc] init];
+        return destination;
+ }]
+ .prepareDestination(^(id<LoginViewInput> destination, ZIKViewRouteConfig *config, ZIKViewRouter *router) {
+    // Prepare the destination
+ })
+ .registerDestinationProtocol(ZIKRoutable(LoginViewInput));
+ @endcode
+ */
 @interface ZIKViewRoute<__covariant Destination, __covariant RouteConfig: ZIKViewRouteConfiguration *> : ZIKRoute<Destination, RouteConfig, ZIKViewRemoveConfiguration *>
 
 //Set name of this route.
@@ -54,6 +69,9 @@ typedef NS_OPTIONS(NSInteger, ZIKBlockViewRouteTypeMask) {
 
 /// Called when view first appears and its preparation is finished. You can check whether destination is prepared correctly. See +didFinishPrepareDestination:configuration:.
 @property (nonatomic, readonly) ZIKViewRoute<Destination, RouteConfig> *(^didFinishPrepareDestination)(void(^)(Destination destination, RouteConfig config, ZIKViewRouter *router));
+
+/// Whether the router should be auto created for destination from storyboard segue or from external addSubview:. See +shouldAutoCreateForDestination:fromSource:.
+@property (nonatomic, readonly) ZIKViewRoute<Destination, RouteConfig> *(^shouldAutoCreateForDestination)(BOOL(^)(Destination destination, _Nullable id source));
 
 /// Whether the destination is all prepared, if not, it requires the performer to prepare it. This method is for destination from storyboard and UIView from -addSubview:. See -destinationFromExternalPrepared:.
 @property (nonatomic, readonly) ZIKViewRoute<Destination, RouteConfig> *(^destinationFromExternalPrepared)(BOOL(^)(Destination destination, ZIKViewRouter *router));

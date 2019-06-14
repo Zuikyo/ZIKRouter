@@ -14,6 +14,7 @@
 NS_ASSUME_NONNULL_BEGIN
 
 @interface ZIKViewRoute<__covariant Destination, __covariant RouteConfig: ZIKViewRouteConfiguration *> ()
+@property (nonatomic, copy, nullable) BOOL(^shouldAutoCreateForDestinationBlock)(Destination destination, id source);
 @property (nonatomic, copy, nullable) BOOL(^destinationFromExternalPreparedBlock)(Destination destination, ZIKViewRouter *router);
 @property (nonatomic, copy, readonly, nullable) ZIKViewRouteTypeMask(^makeSupportedRouteTypesBlock)(void);
 @property (nonatomic, copy, readonly, nullable) BOOL(^canPerformCustomRouteBlock)(ZIKViewRouter *router);

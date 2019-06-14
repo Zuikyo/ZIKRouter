@@ -51,6 +51,30 @@
     }
 }
 
+- (BOOL)zix_isRootView {
+    return [[self nextResponder] isKindOfClass:[XXViewController class]];
+}
+
+- (BOOL)zix_isDuringNavigationTransitionBack {
+#if ZIK_HAS_UIKIT
+    XXViewController *viewController = [self zix_firstAvailableViewController];
+    if (!viewController) {
+        return NO;
+    }
+    UINavigationController *navigationController = viewController.navigationController;
+    if (navigationController && navigationController.transitionCoordinator != nil) {
+        NSArray<XXViewController *> *viewControllers = [navigationController viewControllers];
+        if (viewControllers.count >= 2) {
+            XXViewController *lastlastvc = viewControllers[viewControllers.count - 2];
+            if (!lastlastvc.view.window) {
+                return YES;
+            }
+        }
+    }
+#endif
+    return NO;
+}
+
 - (nullable id)zix_routePerformer {
     NSAssert(self.nextResponder || [self isKindOfClass:[XXWindow class]] || [self window], @"View is not in any view hierarchy.");
     

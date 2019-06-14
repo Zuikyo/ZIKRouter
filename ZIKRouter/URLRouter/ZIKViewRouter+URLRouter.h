@@ -86,7 +86,7 @@ FOUNDATION_EXTERN ZIKURLRouteKey ZIKURLRouteKeyTransitionTypeAddAsSubview;
 /**
  Register URL pattern, then you can get the router with `+[ZIKAnyViewRouter routerForURL:]` or perform the url with `+[ZIKAnyViewRouter performURL:]`.
  
- Supported patterns:
+ Supported pattern samples:
  
  app://view/path
  app://view/path?k=v&k2&v2
@@ -94,6 +94,25 @@ FOUNDATION_EXTERN ZIKURLRouteKey ZIKURLRouteKeyTransitionTypeAddAsSubview;
  app://view/path/:id/:number
  app://view/path/:id/:number?k=v&k2&v2
  app://view/path/:id/path/:number
+ 
+ @code
+ [ZIKAnyViewRoute
+    makeRouteWithDestination:[LoginViewController class]
+    makeDestination:^id<LoginViewInput> _Nullable(ZIKViewRouteConfig *config, __kindof ZIKRouter *router) {
+        LoginViewController *destination = [[LoginViewController alloc] init];
+        return destination;
+ }]
+ .prepareDestination(^(id<LoginViewInput> destination, ZIKViewRouteConfig *config, ZIKViewRouter *router) {
+    // Prepare the destination
+ })
+ .registerURLPattern(@"app://view/login/:uid")
+ .processUserInfoFromURL(^(NSDictionary *userInfo, NSURL *url, ZIKViewRouteConfig *config, ZIKViewRouter *router) {
+ 
+ })
+ .performActionFromURL(^(NSString *action, NSDictionary *userInfo, NSURL *url, ZIKViewRouteConfig *config, ZIKViewRouter *router) {
+ 
+ });
+ @endcode
  */
 @property (nonatomic, readonly) ZIKViewRoute<Destination, RouteConfig> *(^registerURLPattern)(NSString *pattern);
 

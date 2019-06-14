@@ -46,6 +46,11 @@ NS_ASSUME_NONNULL_BEGIN
 - (nullable NSViewController *)zix_firstAvailableViewController;
 #endif
 
+/// Whether the UIView/NSView is root view of some view controller.
+- (BOOL)zix_isRootView;
+
+/// Whether the UIView/NSView is during transition back of navigation controller from another view controller.
+- (BOOL)zix_isDuringNavigationTransitionBack;
 
 /**
  Get the performer UIViewController/NSViewController who routed this view. Only available in and after -willMoveToWindow:.

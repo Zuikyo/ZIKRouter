@@ -513,7 +513,7 @@ id<EditorViewInput> destination = [ZIKRouterToView(EditorViewInput) makeDestinat
 
 #### Required Parameter and Special Parameter
 
-Some parameters can be delivered though destination's protocol:
+Some parameters can't be delivered though destination's protocol:
 
 * the destination class uses custom initializers to create instance, router needs to get required parameter from the caller
 

@@ -8,6 +8,7 @@
 
 #import "ZIKSimpleLabelRouter.h"
 #import "ZIKSimpleLabel.h"
+#import "AppRouteRegistry.h"
 
 @interface ZIKSimpleLabel (ZIKSimpleLabelRouter) <ZIKRoutableView>
 @end
@@ -17,14 +18,43 @@
 @implementation ZIKSimpleLabelRouter
 
 + (void)registerRoutableDestination {
-    [self registerView:[ZIKSimpleLabel class]];
+    
+#if TEST_BLOCK_ROUTES
+    [ZIKDestinationViewRoute(id<ZIKSimpleLabelProtocol>) makeRouteWithDestination:[ZIKSimpleLabel class] makeDestination:^id<ZIKSimpleLabelProtocol> _Nullable(ZIKViewRouteConfig * _Nonnull config, __kindof ZIKRouter<id<ZIKSimpleLabelProtocol>,ZIKViewRouteConfig *,ZIKViewRemoveConfiguration *> * _Nonnull router) {
+        return [[ZIKSimpleLabel alloc] init];
+    }]
+    .registerDestinationProtocol(ZIKRoutable(ZIKSimpleLabelProtocol))
+    .shouldAutoCreateForDestination(^BOOL(ZIKSimpleLabel *destination, id  _Nullable source) {
+        if ([destination zix_isRootView] && [destination zix_isDuringNavigationTransitionBack]) {
+            return NO;
+        }
+        return YES;
+    })
+    .prepareDestination(^(id _Nonnull destination, ZIKViewRouteConfig * _Nonnull config, ZIKViewRouter * _Nonnull router) {
+        
+    })
+    .makeSupportedRouteTypes(^ZIKBlockViewRouteTypeMask{
+        return ZIKBlockViewRouteTypeMaskViewDefault;
+    });
+#else
     [self registerViewProtocol:ZIKRoutable(ZIKSimpleLabelProtocol)];
+#endif
+    
+    [self registerView:[ZIKSimpleLabel class]];
 }
 
 - (id<ZIKRoutableView>)destinationWithConfiguration:(ZIKViewRouteConfiguration *)configuration {
     ZIKSimpleLabel *destination = [[ZIKSimpleLabel alloc] init];
     NSAssert([destination conformsToProtocol:@protocol(ZIKSimpleLabelProtocol)], nil);
     return destination;
+}
+
++ (BOOL)shouldAutoCreateForDestination:(ZIKSimpleLabel *)destination fromSource:(id)source {
+    // You can check whether the destination already has a router or is already prepared, then you can ignore this auto creating.
+    if ([destination zix_isRootView] && [destination zix_isDuringNavigationTransitionBack]) {
+        return NO;
+    }
+    return YES;
 }
 
 - (BOOL)destinationFromExternalPrepared:(ZIKSimpleLabel *)destination {

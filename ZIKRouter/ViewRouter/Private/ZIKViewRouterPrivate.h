@@ -20,7 +20,9 @@ NS_ASSUME_NONNULL_BEGIN
 #pragma mark Internal Initializer
 
 + (instancetype)routerFromSegueIdentifier:(NSString *)identifier sender:(nullable id)sender destination:(XXViewController *)destination source:(XXViewController *)source;
++ (instancetype)routerFromSegueIdentifier:(NSString *)identifier sender:(nullable id)sender destination:(XXViewController *)destination source:(XXViewController *)source configuring:(void(^ _Nullable)(__kindof ZIKViewRouteConfiguration *config))configBuilder;
 + (instancetype)routerFromView:(XXView *)destination source:(XXView *)source;
++ (instancetype)routerFromView:(XXView *)destination source:(XXView *)source configuring:(void(^ _Nullable)(__kindof ZIKViewRouteConfiguration *config))configBuilder;
 
 @end
 
