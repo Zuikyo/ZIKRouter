@@ -524,6 +524,27 @@
 			path = TestPush;
 			sourceTree = "<group>";
 		};
+		F82FA1DE22BD309A00B6B4B5 /* TestViewRouter */ = {
+			isa = PBXGroup;
+			children = (
+				F82ECAB51F17DC51007168AA /* TestPush */,
+				F82ECAB01F17DC51007168AA /* TestPresentModally */,
+				F82ECAAB1F17DC51007168AA /* TestPresentAsPopover */,
+				F82ECA9F1F17DC51007168AA /* TestShow */,
+				F82ECA9A1F17DC51007168AA /* TestShowDetail */,
+				F82ECAA41F17DC51007168AA /* TestPerformSegue */,
+				F82ECA951F17DC51007168AA /* TestAddAsChild */,
+				F82ECA901F17DC51007168AA /* TestAddAsSubview */,
+				F8C021B822056652004FDB27 /* TestMakeDestination */,
+				F82ECA8B1F17DC51007168AA /* TestCustom */,
+				F82ECA7D1F17DC51007168AA /* TestAutoCreate */,
+				F87317D61F924AEC00A5F5D4 /* TestCircularDependencies */,
+				F88DD3011FBB2E2700715097 /* TestClassHierarchy */,
+				F830EFF522045F6300859618 /* TestEasyFactory */,
+			);
+			path = TestViewRouter;
+			sourceTree = "<group>";
+		};
 		F830EFF522045F6300859618 /* TestEasyFactory */ = {
 			isa = PBXGroup;
 			children = (
@@ -540,7 +561,6 @@
 				F83315251F6FBE7900891004 /* TestServiceRouterViewController.m */,
 				F83315261F6FBE7900891004 /* TestServiceRouterViewRouter.h */,
 				F83315271F6FBE7900891004 /* TestServiceRouterViewRouter.m */,
-				F83315311F6FBE9B00891004 /* TimeService */,
 			);
 			path = TestServiceRouter;
 			sourceTree = "<group>";
@@ -655,6 +675,7 @@
 				F846C84E228A8E8100D1CB31 /* InfoViewController */,
 				F846C84C228A8E8100D1CB31 /* CompatibleAlertView */,
 				F846C846228A8E8100D1CB31 /* SimpleLabel */,
+				F83315311F6FBE9B00891004 /* TimeService */,
 			);
 			path = Modules;
 			sourceTree = "<group>";
@@ -801,21 +822,8 @@
 		F8DFBD6A201A12BD0069841B /* TestUseCase */ = {
 			isa = PBXGroup;
 			children = (
-				F82ECAB51F17DC51007168AA /* TestPush */,
-				F82ECAB01F17DC51007168AA /* TestPresentModally */,
-				F82ECAAB1F17DC51007168AA /* TestPresentAsPopover */,
-				F82ECA9F1F17DC51007168AA /* TestShow */,
-				F82ECA9A1F17DC51007168AA /* TestShowDetail */,
-				F82ECAA41F17DC51007168AA /* TestPerformSegue */,
-				F82ECA951F17DC51007168AA /* TestAddAsChild */,
-				F82ECA901F17DC51007168AA /* TestAddAsSubview */,
-				F8C021B822056652004FDB27 /* TestMakeDestination */,
-				F82ECA8B1F17DC51007168AA /* TestCustom */,
-				F82ECA7D1F17DC51007168AA /* TestAutoCreate */,
-				F87317D61F924AEC00A5F5D4 /* TestCircularDependencies */,
-				F88DD3011FBB2E2700715097 /* TestClassHierarchy */,
+				F82FA1DE22BD309A00B6B4B5 /* TestViewRouter */,
 				F83315221F6FBE7900891004 /* TestServiceRouter */,
-				F830EFF522045F6300859618 /* TestEasyFactory */,
 			);
 			path = TestUseCase;
 			sourceTree = "<group>";
