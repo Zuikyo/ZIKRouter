@@ -82,7 +82,7 @@ extension Registry {
             router.registerModuleProtocol(routableProtocol)
             return
         }
-        assert(router.defaultRouteConfiguration() is Protocol, "The router (\(router))'s default configuration must conform to the config protocol (\(configProtocol)) to register.")
+        assert(router.defaultRouteConfiguration() is Protocol, "The module config protocol (\(configProtocol)) should be conformed by the router (\(router))'s defaultRouteConfiguration (\(Swift.type(of: router.defaultRouteConfiguration()))).")
         assert(viewModuleProtocolContainer[_RouteKey(routable: routableViewModule)] == nil, "view config protocol (\(configProtocol)) was already registered with router (\(viewModuleProtocolContainer[_RouteKey(routable: routableViewModule)]!)).")
         viewModuleProtocolContainer[_RouteKey(routable: routableViewModule)] = router
     }
@@ -502,7 +502,7 @@ private class _ViewRouterValidater: ZIKViewRouteAdapter {
     }
     override class func _didFinishRegistration() {
         
-        // Declared protocol by extend RoutableView and RoutableViewModule should be registered
+        // Declared protocols in extension of RoutableView and RoutableViewModule should be registered
         var declaredRoutableTypes = [String]()
         // Types in method signature used as RoutableView<Type>(), RoutableView<Type>(declaredProtocol: Type.self) and RoutableView<Type>(declaredTypeName: typeName), maybe not declared yet
         var viewRoutingTypes = [(String, String)]()

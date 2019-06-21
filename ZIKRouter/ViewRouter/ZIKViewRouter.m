@@ -352,12 +352,6 @@ static NSMutableSet *g_finishingXXViewRouters;
 }
 
 + (BOOL)shouldAutoCreateForDestination:(id)destination fromSource:(nullable id)source {
-//    if ([destination isKindOfClass:[XXView class]]) {
-//        XXView *view = destination;
-//        if ([view zix_isRootView] && [view zix_isDuringNavigationTransitionBack]) {
-//            return NO;
-//        }
-//    }
     return YES;
 }
 
@@ -4253,13 +4247,13 @@ static  ZIKViewRouterType *_Nullable _routerTypeToRegisteredView(Class viewClass
 + (void)registerViewProtocol:(Protocol *)viewProtocol {
     NSAssert(!ZIKViewRouteRegistry.registrationFinished, @"Only register in +registerRoutableDestination.");
 #if ZIKROUTER_CHECK
-    NSAssert1(protocol_conformsToProtocol(viewProtocol, @protocol(ZIKViewRoutable)), @"%@ should conforms to ZIKViewRoutable in DEBUG mode for safety checking", NSStringFromProtocol(viewProtocol));
+    NSAssert1(protocol_conformsToProtocol(viewProtocol, @protocol(ZIKViewRoutable)), @"Routable destination protocol %@ should conforms to ZIKViewRoutable", NSStringFromProtocol(viewProtocol));
 #endif
     [ZIKViewRouteRegistry registerDestinationProtocol:viewProtocol router:self];
 }
 
 + (void)registerModuleProtocol:(Protocol *)configProtocol {
-    NSAssert2([[self defaultRouteConfiguration] conformsToProtocol:configProtocol], @"configProtocol(%@) should be conformed by this router(%@)'s defaultRouteConfiguration.",NSStringFromProtocol(configProtocol),self);
+    NSAssert3([[self defaultRouteConfiguration] conformsToProtocol:configProtocol], @"The module config protocol (%@) should be conformed by the router (%@)'s defaultRouteConfiguration (%@).", NSStringFromProtocol(configProtocol), self, NSStringFromClass([[self defaultRouteConfiguration] class]));
     NSAssert(!ZIKViewRouteRegistry.registrationFinished, @"Only register in +registerRoutableDestination.");
 #if ZIKROUTER_CHECK
     NSAssert1(protocol_conformsToProtocol(configProtocol, @protocol(ZIKViewModuleRoutable)), @"%@ should conforms to ZIKViewModuleRoutable in DEBUG mode for safety checking", NSStringFromProtocol(configProtocol));

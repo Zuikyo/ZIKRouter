@@ -31,7 +31,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 #pragma mark Required Override
 
-/// Register the destination class with those +registerXXX: methods. ZIKViewRouter will call this method before app did finish launching. If a router was not registered with any view class, there'll be an assert failure.
+/// Register the destination class with those +registerXXX: methods. ZIKViewRouter will call this method before app did finish launching. You can also initialize your module in it. If a router was not registered with any view class, there'll be an assert failure.
 + (void)registerRoutableDestination;
 
 /**

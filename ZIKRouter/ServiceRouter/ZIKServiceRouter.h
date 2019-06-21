@@ -389,7 +389,7 @@ typedef void(^ZIKServiceRouteGlobalErrorHandler)(__kindof ZIKServiceRouter * _Nu
 @end
 
 /// Add module config protocol that only has makeDestinationWith, or constructDestination and didMakeDestination to ZIKServiceMakeableConfiguration.
-#define DeclareRoutableServiceModuleProtocol(PROTOCOL) DeclareMakeableConfig(ZIKServiceMakeableConfiguration, PROTOCOL)
+#define DeclareRoutableServiceModuleProtocol(PROTOCOL) ZIX_ADD_CATEGORY(ZIKServiceMakeableConfiguration, PROTOCOL)
 
 @interface ZIKServiceRouter (Utility)
 

@@ -173,7 +173,7 @@ internal class Registry {
             router.registerModuleProtocol(routableProtocol)
             return
         }
-        assert(router.defaultRouteConfiguration() is Protocol, "The router (\(router))'s default configuration must conform to the config protocol (\(configProtocol)) to register.")
+        assert(router.defaultRouteConfiguration() is Protocol, "The module config protocol (\(configProtocol)) should be conformed by the router (\(router))'s defaultRouteConfiguration (\(Swift.type(of: router.defaultRouteConfiguration()))).")
         assert(serviceModuleProtocolContainer[_RouteKey(routable: routableServiceModule)] == nil, "service config protocol (\(configProtocol)) was already registered with router (\(serviceModuleProtocolContainer[_RouteKey(routable: routableServiceModule)]!)).")
         serviceModuleProtocolContainer[_RouteKey(routable: routableServiceModule)] = router
     }
@@ -632,7 +632,7 @@ private class _ServiceRouterValidater: ZIKServiceRouteAdapter {
     }
     override class func _didFinishRegistration() {
         
-        // Declared protocol by extend RoutableService and RoutableServiceModule should be registered
+        // Declared protocol in extension of RoutableService and RoutableServiceModule should be registered
         var declaredRoutableTypes = [String]()
         // Types in method signature used as RoutableService<Type>(), RoutableService<Type>(declaredProtocol: Type.self) and RoutableService<Type>(declaredTypeName: typeName), maybe not declared yet
         var serviceRoutingTypes = [(String, String)]()

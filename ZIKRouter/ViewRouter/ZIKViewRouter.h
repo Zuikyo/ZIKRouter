@@ -42,7 +42,6 @@ NS_ASSUME_NONNULL_BEGIN
  + (void)registerRoutableDestination {
     [self registerView:[LoginViewController class]];
     [self registerViewProtocol:ZIKRoutable(LoginViewInput)];
-    [self registerIdentifier:@"app://urlscheme/aview"];
  }
  
  - (id<LoginViewInput>)destinationWithConfiguration:(ZIKViewRouteConfiguration *)configuration {
@@ -624,7 +623,7 @@ typedef void(^ZIKViewRouteGlobalErrorHandler)(__kindof ZIKViewRouter * _Nullable
 @end
 
 /// Add module config protocol that only has makeDestinationWith, or constructDestination and didMakeDestination to ZIKViewMakeableConfiguration.
-#define DeclareRoutableViewModuleProtocol(PROTOCOL) DeclareMakeableConfig(ZIKViewMakeableConfiguration, PROTOCOL)
+#define DeclareRoutableViewModuleProtocol(PROTOCOL) ZIX_ADD_CATEGORY(ZIKViewMakeableConfiguration, PROTOCOL)
 
 @interface ZIKViewRouter (Utility)
 

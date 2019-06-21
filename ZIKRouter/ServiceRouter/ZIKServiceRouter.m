@@ -149,11 +149,14 @@ static dispatch_semaphore_t g_globalErrorSema;
 
 + (void)registerServiceProtocol:(Protocol *)serviceProtocol {
     NSAssert(!ZIKServiceRouteRegistry.registrationFinished, @"Only register in +registerRoutableDestination.");
+#if ZIKROUTER_CHECK
+    NSAssert1(protocol_conformsToProtocol(serviceProtocol, @protocol(ZIKServiceRoutable)), @"Routable destination protocol %@ should conforms to ZIKServiceRoutable", NSStringFromProtocol(serviceProtocol));
+#endif
     [ZIKServiceRouteRegistry registerDestinationProtocol:serviceProtocol router:self];
 }
 
 + (void)registerModuleProtocol:(Protocol *)configProtocol {
-    NSAssert([[self defaultRouteConfiguration] conformsToProtocol:configProtocol], @"configProtocol should be conformed by this router's defaultRouteConfiguration.");
+    NSAssert3([[self defaultRouteConfiguration] conformsToProtocol:configProtocol], @"The module config protocol (%@) should be conformed by the router (%@)'s defaultRouteConfiguration (%@).", NSStringFromProtocol(configProtocol), self, NSStringFromClass([[self defaultRouteConfiguration] class]));
     NSAssert(!ZIKServiceRouteRegistry.registrationFinished, @"Only register in +registerRoutableDestination.");
     [ZIKServiceRouteRegistry registerModuleProtocol:configProtocol router:self];
 }

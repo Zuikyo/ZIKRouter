@@ -31,10 +31,10 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic, copy, nullable) void(^_prepareDestination)(Destination destination);
 @end
 
-#define DeclareMakeableConfig(Config, Protocol)    \
-@interface Config (Protocol) <Protocol>    \
+#define ZIX_ADD_CATEGORY(CLASS, Protocol)    \
+@interface CLASS (Protocol) <Protocol>    \
 @end    \
-@implementation Config (Protocol) \
+@implementation CLASS (Protocol) \
 @end    \
 
 /// Internal methods for subclass.

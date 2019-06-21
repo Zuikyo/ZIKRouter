@@ -20,4 +20,28 @@ NS_ASSUME_NONNULL_BEGIN
 - (void)addDestructiveButtonTitle:(NSString *)destructiveButtonTitle handler:(void (^)(void))handler;
 @end
 
+/**
+ ZIKLoginModule provides default dependency registration.
+ 
+ The host app can directly call this registration function, just by adding USE_DEFAULT_DEPENDENCY_ZIKLoginModule=1 in Build Settings -> Preprocessor Macros of the host app.
+ 
+ If the host app want to use other dependency instead of ZIKCompatibleAlertModuleInput in ZIKAlertModule, it can ignore this code and registering other adaptee.
+*/
+#if USE_DEFAULT_DEPENDENCY_ZIKLoginModule
+@import ZIKRouter;
+@import ZIKAlertModule;
+
+static inline void registerDependencyOfZIKLoginModule() {
+    [ZIKViewRouteAdapter registerModuleAdapter:ZIKRoutable(ZIKLoginModuleRequiredAlertInput) forAdaptee:ZIKRoutable(ZIKCompatibleAlertModuleInput)];
+}
+
+// Adapting code for default dependency registration
+#define ADAPT_DEFAULT_DEPENDENCY_ZIKLoginModule    \
+@interface ZIKCompatibleAlertViewConfiguration (ZIKLoginModuleRequiredAlertInput) <ZIKLoginModuleRequiredAlertInput>    \
+@end    \
+@implementation ZIKCompatibleAlertViewConfiguration (ZIKLoginModuleRequiredAlertInput) \
+@end    \
+
+#endif
+
 NS_ASSUME_NONNULL_END
