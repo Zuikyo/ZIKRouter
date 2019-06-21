@@ -15,7 +15,7 @@
 #pragma mark Objc Router
 
 #import "TestShowViewRouter.h"
-#import "TestServiceRouterViewRouter.h"
+#import "TestViewRouterViewRouter.h"
 #import "ZIKSimpleLabelRouter.h"
 #import "TestPerformSegueViewRouter.h"
 #import "TestAddAsChildViewRouter.h"
@@ -24,6 +24,7 @@
 #import "MasterViewRouter.h"
 #import "TestMakeDestinationViewRouter.h"
 #import "TestAddAsSubviewViewRouter.h"
+#import "TestAddAsSubviewViewController.h"
 #import "TestPresentModallyViewRouter.h"
 #import "TestShowDetailViewRouter.h"
 #import "TestPresentAsPopoverViewRouter.h"
@@ -38,12 +39,13 @@
 #import "ZIKInfoViewRouter.h"
 #import <ZIKAlertModule/ZIKCompatibleAlertViewRouter.h>
 #import <ZIKLoginModule/ZIKLoginModule.h>
+#import "TestServiceRouterViewRouter.h"
+#import "TestURLServiceRouter.h"
 #import "ZIKTimeServiceRouter.h"
 
 #pragma mark Objc Adapter
 
 #import "DemoRouteAdapter.h"
-
 #import "ZIKRouterDemo-Swift.h"
 
 
@@ -55,17 +57,15 @@
 
 + (void)load {
     ZIKRouteRegistry.autoRegister = NO;
-    [self registerForModulesBeforeRegistrationFinished];
+    [self registerEarlyRequiredModules];
 }
 
 #endif
 
-+ (void)registerForModulesBeforeRegistrationFinished {
++ (void)registerEarlyRequiredModules {
     [URLRouteHandler registerRoutableDestination];
     [MasterViewRouter registerRoutableDestination];
-    
-    //MasterViewController uses router for SwiftSampleViewRouter
-    [AppSwiftRouteRegistry manuallyRegisterEachRouter];
+    [AppSwiftRouteRegistry registerEarlyRequiredModules];
 }
 
 + (void)manuallyRegisterEachRouter {
@@ -77,9 +77,9 @@
 #endif
     
     // Objc routers
+    [TestViewRouterViewRouter registerRoutableDestination];
     [ZIKLoginViewRouter registerRoutableDestination];
     [TestShowViewRouter registerRoutableDestination];
-    [TestServiceRouterViewRouter registerRoutableDestination];
     [ZIKSimpleLabelRouter registerRoutableDestination];
     [TestPerformSegueViewRouter registerRoutableDestination];
     [TestAddAsChildViewRouter registerRoutableDestination];
@@ -88,6 +88,7 @@
 //    [MasterViewRouter registerRoutableDestination];
     [TestMakeDestinationViewRouter registerRoutableDestination];
     [TestAddAsSubviewViewRouter registerRoutableDestination];
+    [TestContentViewRouter registerRoutableDestination];
     [TestPresentModallyViewRouter registerRoutableDestination];
     [TestShowDetailViewRouter registerRoutableDestination];
     [TestPresentAsPopoverViewRouter registerRoutableDestination];
@@ -100,11 +101,15 @@
     [TestURLRouterViewRouter registerRoutableDestination];
     [ZIKInfoViewRouter registerRoutableDestination];
     [ZIKCompatibleAlertViewRouter registerRoutableDestination];
+    [TestServiceRouterViewRouter registerRoutableDestination];
     [ZIKTimeServiceRouter registerRoutableDestination];
+    [TestURLServiceRouter registerRoutableDestination];
     
     ///Can't access swift routers, because it uses generic. You have to register swift router in swift code.
 //    [SwiftSampleViewRouter registerRoutableDestination];
 //    [SwiftServiceRouter registerRoutableDestination];
+    
+    [AppSwiftRouteRegistry manuallyRegisterEachRouter];
     
     // Objc adapters
     [DemoRouteAdapter registerRoutableDestination];

@@ -16,7 +16,7 @@
 @interface AppRouteRegistry : NSObject
 
 /// You have to register routers before any module reqiures them. Those modules are running before registration is finished, such as routable initial view controller from storyboard, and any routers used in this initial view controller.
-+ (void)registerForModulesBeforeRegistrationFinished;
++ (void)registerEarlyRequiredModules;
 
 + (void)manuallyRegisterEachRouter;
 

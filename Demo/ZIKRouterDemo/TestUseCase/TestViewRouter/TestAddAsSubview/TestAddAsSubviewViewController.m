@@ -7,7 +7,6 @@
 //
 
 #import "TestAddAsSubviewViewController.h"
-@import ZIKRouter;
 @import ZIKRouter.Internal;
 #import "ZIKSimpleLabelProtocol.h"
 #import "ZIKInfoViewProtocol.h"
@@ -76,8 +75,6 @@
 
 @end
 
-@interface TestContentViewRouter : ZIKViewRouter
-@end
 @implementation TestContentViewRouter
 
 + (void)registerRoutableDestination {

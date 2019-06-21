@@ -18,7 +18,6 @@
 @implementation TestPresentModallyViewRouter
 
 + (void)registerRoutableDestination {
-    [self registerView:[TestPresentModallyViewController class]];
 #if !TEST_BLOCK_ROUTES
     [self registerURLPattern:@"router://testPresentModally"];
 #else
@@ -44,6 +43,7 @@
         
     });
 #endif
+    [self registerView:[TestPresentModallyViewController class]];
 }
 
 - (id<ZIKRoutableView>)destinationWithConfiguration:(ZIKViewRouteConfiguration *)configuration {

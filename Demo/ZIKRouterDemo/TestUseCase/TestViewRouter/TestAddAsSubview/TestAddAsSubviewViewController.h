@@ -11,3 +11,7 @@
 @interface TestAddAsSubviewViewController : UIViewController
 
 @end
+
+@import ZIKRouter;
+@interface TestContentViewRouter : ZIKViewRouter
+@end

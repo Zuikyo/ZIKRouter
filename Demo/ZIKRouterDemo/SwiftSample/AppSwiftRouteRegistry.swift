@@ -12,12 +12,16 @@ import ZIKRouter
 
 /// Manually register swift routers
 @objc class AppSwiftRouteRegistry: NSObject {
+    @objc class func registerEarlyRequiredModules() {
+        DecoupleSampleViewRouter.registerRoutableDestination()
+    }
     @objc class func manuallyRegisterEachRouter() {
         SwiftSampleViewRouter.registerRoutableDestination()
         SwiftServiceRouter.registerRoutableDestination()
         ZIKInfoViewAdapter.registerRoutableDestination()
         AppBlockRouteRegistry.registerRoutableDestination()
         EasyRouteRegistry.registerRoutableDestination()
+        TestEasyFactoryViewRouter.registerRoutableDestination()
     }
 }
 

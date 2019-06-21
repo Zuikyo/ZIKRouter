@@ -1,13 +1,12 @@
 //
-//  MasterViewController.m
+//  ViewRouteViewController.m
 //  ZIKRouterDemo
 //
-//  Created by zuik on 2017/7/5.
-//  Copyright © 2017 zuik. All rights reserved.
+//  Created by zuik on 2019/6/22.
+//  Copyright © 2019 zuik. All rights reserved.
 //
 
-#import "MasterViewController.h"
-
+#import "TestViewRouterViewController.h"
 #import "TestPushViewRouter.h"
 #import "TestPresentModallyViewRouter.h"
 #import "TestPresentAsPopoverViewRouter.h"
@@ -21,7 +20,6 @@
 #import "TestAutoCreateViewRouter.h"
 #import "TestCircularDependenciesViewRouter.h"
 #import "TestClassHierarchyViewRouter.h"
-#import "TestServiceRouterViewRouter.h"
 #import "TestURLRouterViewRouter.h"
 #import <ZIKLoginModule/ZIKLoginModule.h>
 #import "ZIKRouterDemo-Swift.h"
@@ -40,21 +38,21 @@ typedef NS_ENUM(NSInteger,ZIKRouterTestType) {
     ZIKRouterTestTypeAutoCreate,
     ZIKRouterTestTypeCircularDependencies,
     ZIKRouterTestTypeSubclassHierarchy,
-    ZIKRouterTestTypeServiceRouter,
     ZIKRouterTestTypeSwiftSample,
     ZIKRouterTestTypeURLRouter,
     ZIKRouterTestTypeModularization
 };
 
-@interface MasterViewController () <UIViewControllerPreviewingDelegate>
+@interface TestViewRouterViewController () <UIViewControllerPreviewingDelegate>
 @property (nonatomic, strong) NSArray<NSString *> *cellNames;
 @property (nonatomic, strong) NSArray<Class> *routerTypes;
 @end
 
-@implementation MasterViewController
+@implementation TestViewRouterViewController
 
 - (void)viewDidLoad {
     [super viewDidLoad];
+    
     if ([self respondsToSelector:@selector(registerForPreviewingWithDelegate:sourceView:)]) {
         [self registerForPreviewingWithDelegate:self sourceView:self.view];
     }
@@ -72,7 +70,6 @@ typedef NS_ENUM(NSInteger,ZIKRouterTestType) {
                        @"Test AutoCreate",
                        @"Test Circular Dependencies",
                        @"Test Subclass Hierarchy",
-                       @"Test ServiceRouter",
                        @"Swift Sample",
                        @"Test Easy Factory",
                        @"URL Router",
@@ -92,7 +89,6 @@ typedef NS_ENUM(NSInteger,ZIKRouterTestType) {
                          [TestAutoCreateViewRouter class],
                          [TestCircularDependenciesViewRouter class],
                          [TestClassHierarchyViewRouter class],
-                         [TestServiceRouterViewRouter class],
                          ZIKRouterToView(SwiftSampleViewInput),
                          ZIKViewRouter.toIdentifier(@"testEasyFactory"),
                          [TestURLRouterViewRouter class],
@@ -100,17 +96,6 @@ typedef NS_ENUM(NSInteger,ZIKRouterTestType) {
                          ];
     
     NSAssert(self.cellNames.count == self.routerTypes.count, nil);
-}
-
-- (void)viewWillAppear:(BOOL)animated {
-    self.clearsSelectionOnViewWillAppear = self.splitViewController.isCollapsed;
-    [super viewWillAppear:animated];
-}
-
-#pragma mark - Segues
-
-- (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender {
-    
 }
 
 
@@ -146,7 +131,7 @@ typedef NS_ENUM(NSInteger,ZIKRouterTestType) {
         case ZIKRouterTestTypeAutoCreate:
             routePath = ZIKViewRoutePath.pushFrom(self);
             break;
-        
+            
         default:
             routePath = ZIKViewRoutePath.showDetailFrom(self);
             break;
@@ -182,4 +167,5 @@ typedef NS_ENUM(NSInteger,ZIKRouterTestType) {
         [self.navigationController pushViewController:viewControllerToCommit animated:YES];
     }
 }
+
 @end
