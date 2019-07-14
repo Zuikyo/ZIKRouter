@@ -97,6 +97,7 @@ Service Router 可以管理任意自定义模块。View Router 进一步封装�
 4. [Dependency Injection](Documentation/English/DependencyInjection.md)
 5. [Circular Dependency](Documentation/English/CircularDependencies.md)
 6. [Module Adapter](Documentation/English/ModuleAdapter.md)
+7. [Unit Test](Documentation/English/UnitTest.md)
 
 [FAQ](Documentation/English/FAQ.md)
 
@@ -526,7 +527,7 @@ Instead of  `EditorViewInput`, we use another routable protocol `EditorViewModul
 ```swift
 // In general, a module config protocol only contains `makeDestinationWith`, for declaring parameters and destination type. You can also add other properties or methods
 protocol EditorViewModuleInput: class {
-    // Transfer parameters and make destination
+    // Factory method for transferring parameters and making destination
     var makeDestinationWith: (_ note: Note) -> EditorViewInput? { get }
 }
 ```
@@ -536,187 +537,14 @@ protocol EditorViewModuleInput: class {
 ```objectivec
 // In general, a module config protocol only contains `makeDestinationWith`, for declaring parameters and destination type. You can also add other properties or methods
 @protocol EditorViewModuleInput <ZIKViewModuleRoutable>
- // Transfer parameters and make destination
+ // Factory method for transferring parameters and making destination
 @property (nonatomic, copy, readonly) id<EditorViewInput> _Nullable(^makeDestinationWith)(Note *note);
 @end
 ```
 
 </details>
 
-You can use a configuration subclass and store parameters on its properties.
-
-<details><summary>Configuration Subclass</summary>
-
-```swift
-// Configuration subclass conforming to EditorViewModuleInput
-// Swift generic class won't be in the `__objc_classlist` section of the Mach-O file. So it won't affect the app launching time.
-class EditorViewModuleConfiguration<T>: ZIKViewMakeableConfiguration<NoteEditorViewController>, EditorViewModuleInput {
-    // User is responsible for calling makeDestinationWith and giving parameters
-    var makeDestinationWith: (_ note: Note) -> EditorViewInput? {
-        return { note in
-            // Capture parameters in makeDestination, so we don't need configuration subclass to hold the parameters
-            // MakeDestination will be used for creating destination instance
-            self.makeDestination = { [unowned self] () in
-                // Use custom initializer
-                let destination = NoteEditorViewController(note: note)
-                return destination
-            }
-            if let destination = self.makeDestination?() {
-                // Set makedDestination so router will use this destination when performing
-                self.makedDestination = destination
-                return destination
-            }
-            return nil
-        }
-    }
-}
-
-func makeEditorViewModuleConfiguration() -> ZIKViewMakeableConfiguration<NoteEditorViewController> & EditorViewModuleInput {
-	return EditorViewModuleConfiguration<Any>()
-}
-```
-
-</details>
-
-If the protocol is very simple and you don't need a configuration subclass,or you're using Objective-C and don't want too many subclass, you can choose generic class`ViewMakeableConfiguration`and`ZIKViewMakeableConfiguration`:
-
-```swift
-extension ViewMakeableConfiguration: EditorViewModuleInput where Destination == EditorViewInput, Constructor == (Note) -> EditorViewInput? {
-}
-
-// ViewMakeableConfiguration with generic arguments works as the same as  EditorViewModuleConfiguration
-// The config works like EditorViewModuleConfiguration<Any>()
-func makeEditorViewModuleConfiguration() -> ViewMakeableConfiguration<EditorViewInput, (Note) -> EditorViewInput?> {
-    let config = ViewMakeableConfiguration<EditorViewInput, (Note) -> EditorViewInput?>({ _ in})
-    
-    // User is responsible for calling makeDestinationWith and giving parameters
-    config.makeDestinationWith = { [unowned config] note in
-        // Capture parameters in makeDestination, so we don't need configuration subclass to hold the parameters
-        // MakeDestination will be used for creating destination instance
-        config.makeDestination = { () in
-            // Use custom initializer
-            let destination = NoteEditorViewController(note: note)
-            return destination
-        }
-        if let destination = config.makeDestination?() {
-            // Set makedDestination so router will use this destination when performing
-            config.makedDestination = destination
-            return destination
-        }
-        return nil
-    }
-    return config
-}
-
-```
-
-<details><summary>Objective-C Sample</summary>
-
-Generic class`ZIKViewMakeableConfiguration`has property`makeDestinationWith`with`id(^)()`type. `id(^)()`means the block can accept any parameters. So you can declare your custom parameters of `makeDestinationWith` in protocol.
-
-```objectivec
-// The config works like EditorViewModuleConfiguration
-ZIKViewMakeableConfiguration<NoteEditorViewController *> * makeEditorViewModuleConfiguration() {
-    ZIKViewMakeableConfiguration<NoteEditorViewController *> *config = [ZIKViewMakeableConfiguration<NoteEditorViewController *> new];
-    __weak typeof(config) weakConfig = config;
-    
-    // User is responsible for calling makeDestinationWith and giving parameters
-    config.makeDestinationWith = ^id<EditorViewInput> _Nullable(Note *note) {
-        // Capture parameters in makeDestination, so we don't need configuration subclass to hold the parameters
-        // MakeDestination will be used for creating destination instance
-        weakConfig.makeDestination = ^ NoteEditorViewController * _Nullable{
-            // Use custom initializer
-            NoteEditorViewController *destination = [NoteEditorViewController alloc] initWithNote:note];
-            return destination;
-        };
-        // Set makedDestination so router will use this destination when performing
-        weakConfig.makedDestination = weakConfig.makeDestination();
-        return weakConfig.makedDestination;
-    };
-    return config;
-}
-```
-
-</details>
-
-Override`defaultRouteConfiguration`in router to use your custom configuration:
-
-```swift
-class EditorViewRouter: ZIKViewRouter<NoteEditorViewController, ZIKViewMakeableConfiguration<NoteEditorViewController>> {
-    
-    override class func registerRoutableDestination() {
-        // Register class
-        registerView(NoteEditorViewController.self)
-        // Register module config protocol, then we can use this protocol to fetch the router
-        register(RoutableViewModule<EditorViewModuleInput>())
-    }
-    
-    // Use custom configuration
-    override class func defaultRouteConfiguration() -> ZIKViewMakeableConfiguration<NoteEditorViewController> {
-        return makeEditorViewModuleConfiguration()
-    }
-    
-    override func destination(with configuration: ZIKViewMakeableConfiguration<NoteEditorViewController>) -> NoteEditorViewController? {
-        if let makeDestination = configuration.makeDestination {
-            return makeDestination()
-        }
-        return nil
-    }
-    ...
-}
-```
-
-<details><summary>Objective-C Sample</summary>
-
-```swift
-@interface EditorViewRouter: ZIKViewRouter<NoteEditorViewController, ZIKViewMakeableConfiguration<NoteEditorViewController>>
-@end
-@implementation EditorViewRouter {
-    
-+ (void) registerRoutableDestination {
-    // Register class
-    [self registerView:[NoteEditorViewController class]];
-    // Register module config protocol, then we can use this protocol to fetch the router
-    [self registerModuleProtocol:ZIKRoutable(EditorViewModuleInput)];
-}
-    
-// Use custom configuration
-+(ZIKViewMakeableConfiguration<NoteEditorViewController *> *)defaultRouteConfiguration() {
-    return makeEditorViewModuleConfiguration();
-}
-
-- (NoteEditorViewController *)destinationWithConfiguration:(ZIKViewMakeableConfiguration<NoteEditorViewController *> *)configuration {
-	if (configuration.makeDestination) {
-	    return configuration.makeDestination();
-	}
-	return nil;
-}
-...
-}
-```
-
-</details>
-
-If you're not using router subclass, you can register config factory to create route:
-
-```swift
-// Register EditorViewModuleInput and factory function of custom configuration
-ZIKAnyViewRouter.register(RoutableViewModule<EditorViewModuleInput>(),
-   forMakingView: NoteEditorViewController.self, 
-   making: makeEditorViewModuleConfiguration)
-```
-
-<details><summary>Objective-C Sample</summary>
-
-```objectivec
-// Register EditorViewModuleInput and factory function of custom configuration
-[ZIKModuleViewRouter(EditorViewModuleInput)
-     registerModuleProtocol:ZIKRoutable(EditorViewModuleInput)
-     forMakingView:[NoteEditorViewController class]
-     factory: makeEditorViewModuleConfiguration];
-```
-
-</details>
+This configuration works like a factory for the destination with `EditorViewModuleInput` protocol. It declares parameters for creating the destination.
 
 Now the user can use the module with its module config protocol and transfer parameters:
 
@@ -741,8 +569,6 @@ Note *note = ...
 ```
 
 </details>
-
-In this design pattern, we reduce much glue code for transferring parameters, and the module can re-declare their parameters with generic arguments and module config protocol.
 
 For more detail, read [Transfer Parameters with Custom Configuration](Documentation/English/CustomConfiguration.md).
 

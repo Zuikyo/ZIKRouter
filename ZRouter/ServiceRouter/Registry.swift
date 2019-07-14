@@ -632,6 +632,7 @@ private class _ServiceRouterValidater: ZIKServiceRouteAdapter {
     }
     override class func _didFinishRegistration() {
         
+        var errorDescription = ""
         // Declared protocol in extension of RoutableService and RoutableServiceModule should be registered
         var declaredRoutableTypes = [String]()
         // Types in method signature used as RoutableService<Type>(), RoutableService<Type>(declaredProtocol: Type.self) and RoutableService<Type>(declaredTypeName: typeName), maybe not declared yet
@@ -733,14 +734,18 @@ private class _ServiceRouterValidater: ZIKServiceRouteAdapter {
         }
         
         for declaredProtocol in declaredDestinationProtocols {
-            assert(Registry.serviceProtocolContainer.keys.contains(_RouteKey(key: declaredProtocol)) ||
+            if !(Registry.serviceProtocolContainer.keys.contains(_RouteKey(key: declaredProtocol)) ||
                 Registry.serviceAdapterContainer.keys.contains(_RouteKey(key: declaredProtocol)) ||
-                _ZIKServiceRouterToIdentifier(Registry.makingDestinationIdentifierPrefix + declaredProtocol) != nil, "Declared service protocol (\(declaredProtocol)) is not registered with any router.")
+                _ZIKServiceRouterToIdentifier(Registry.makingDestinationIdentifierPrefix + declaredProtocol) != nil) {
+                errorDescription.append("\n\n❌Declared service protocol (\(declaredProtocol)) is not registered with any router.")
+            }
         }
         for declaredProtocol in declaredModuleProtocols {
-            assert(Registry.serviceModuleProtocolContainer.keys.contains(_RouteKey(key: declaredProtocol)) ||
+            if !(Registry.serviceModuleProtocolContainer.keys.contains(_RouteKey(key: declaredProtocol)) ||
                 Registry.serviceModuleAdapterContainer.keys.contains(_RouteKey(key: declaredProtocol)) ||
-                _ZIKServiceRouterToIdentifier(Registry.makingModuleIdentifierPrefix + declaredProtocol) != nil, "Declared service protocol (\(declaredProtocol)) is not registered with any router.")
+                _ZIKServiceRouterToIdentifier(Registry.makingModuleIdentifierPrefix + declaredProtocol) != nil) {
+                errorDescription.append("\n\n❌Declared service module config protocol (\(declaredProtocol)) is not registered with any router.")
+            }
         }
         
         for (routingType, simplifiedName) in serviceRoutingTypes {
@@ -752,7 +757,9 @@ private class _ServiceRouterValidater: ZIKServiceRouteAdapter {
             if let objcProtocol = NSProtocolFromString(routingTypeName) {
                 routableProtocol  = _routableServiceProtocolFromObject(objcProtocol)
             }
-            assert(declaredDestinationProtocols.contains(simplifiedName) || routableProtocol != nil, "Find invalid generic type usage for routing: RoutableService<\(simplifiedName)>. You should only use declared protocol type as generic type, don't use \"RoutableService<\(simplifiedName)>\" or \"RoutableService(declaredProtocol:\(simplifiedName))\" in your code!")
+            if !(declaredDestinationProtocols.contains(simplifiedName) || routableProtocol != nil) {
+                errorDescription.append("\n\n❌Find invalid generic type usage for routing: RoutableService<\(simplifiedName)>. You should only use declared protocol type as generic type, don't use \"RoutableService<\(simplifiedName)>\" or \"RoutableService(declaredProtocol:\(simplifiedName))\" in your code!")
+            }
         }
         for (routingType, simplifiedName) in serviceModuleRoutingTypes {
             var routingTypeName = routingType
@@ -763,7 +770,9 @@ private class _ServiceRouterValidater: ZIKServiceRouteAdapter {
             if let objcProtocol = NSProtocolFromString(routingTypeName) {
                 routableProtocol  = _routableServiceModuleProtocolFromObject(objcProtocol)
             }
-            assert(declaredModuleProtocols.contains(simplifiedName) || routableProtocol != nil, "Find invalid generic type usage for routing: RoutableServiceModule<\(simplifiedName)>. You should only use declared protocol type as generic type, don't use \"RoutableServiceModule<\(simplifiedName)>\" or \"RoutableServiceModule(declaredProtocol:\(simplifiedName))\" in your code!")
+            if !(declaredModuleProtocols.contains(simplifiedName) || routableProtocol != nil) {
+                errorDescription.append("\n\n❌Find invalid generic type usage for routing: RoutableServiceModule<\(simplifiedName)>. You should only use declared protocol type as generic type, don't use \"RoutableServiceModule<\(simplifiedName)>\" or \"RoutableServiceModule(declaredProtocol:\(simplifiedName))\" in your code!")
+            }
         }
         
         // Destination should conforms to registered destination protocols
@@ -772,7 +781,9 @@ private class _ServiceRouterValidater: ZIKServiceRouteAdapter {
             let badDestinationClass: AnyClass? = ZIKServiceRouteRegistry.validateDestinations(forRoute: route, handler: { (destinationClass) -> Bool in
                 return _swift_typeIsTargetType(destinationClass, serviceProtocol)
             })
-            assert(badDestinationClass == nil, "Registered service class (\(badDestinationClass!)) for router (\(route)) should conform to registered service protocol (\(serviceProtocol)).")
+            if badDestinationClass != nil {
+                errorDescription.append("\n\n❌Registered service class (\(badDestinationClass!)) for router (\(route)) should conform to registered service protocol (\(serviceProtocol)).")
+            }
         }
         
         // Destination should conforms to registered adapter destination protocols
@@ -794,7 +805,9 @@ private class _ServiceRouterValidater: ZIKServiceRouteAdapter {
             let badDestinationClass: AnyClass? = ZIKServiceRouteRegistry.validateDestinations(forRoute: route, handler: { (destinationClass) -> Bool in
                 return _swift_typeIsTargetType(destinationClass, serviceProtocol)
             })
-            assert(badDestinationClass == nil, "Registered service class (\(badDestinationClass!)) for router (\(route)) should conform to registered service adapter protocol (\(serviceProtocol)).")
+            if badDestinationClass != nil {
+                errorDescription.append("\n\n❌Registered service class (\(badDestinationClass!)) for router (\(route)) should conform to registered service adapter protocol (\(serviceProtocol)).")
+            }
         }
         
         // Router's defaultRouteConfiguration should conforms to registered module config protocols
@@ -805,7 +818,9 @@ private class _ServiceRouterValidater: ZIKServiceRouteAdapter {
             }
             let configProtocol = routeKey.type!
             let configType = type(of: routerType.defaultRouteConfiguration())
-            assert(_swift_typeIsTargetType(configType, configProtocol), "The router (\(route))'s default configuration (\(configType)) must conform to the registered config protocol (\(configProtocol)).")
+            if _swift_typeIsTargetType(configType, configProtocol) == false {
+                errorDescription.append("\n\n❌The router (\(route))'s default configuration (\(configType)) must conform to the registered config protocol (\(configProtocol)).")
+            }
         }
         
         // Router's defaultRouteConfiguration should conforms to registered adapter module config protocols
@@ -824,7 +839,14 @@ private class _ServiceRouterValidater: ZIKServiceRouteAdapter {
                 continue
             }
             let configType = Swift.type(of: routerType.defaultRouteConfiguration())
-            assert(_swift_typeIsTargetType(configType, configProtocol), "The router (\(routerType))'s default configuration (\(configType)) must conform to the registered module adapter protocol (\(configProtocol)).")
+            if _swift_typeIsTargetType(configType, configProtocol) == false {
+                errorDescription.append("\n\n❌The router (\(routerType))'s default configuration (\(configType)) must conform to the registered module adapter protocol (\(configProtocol)).")
+            }
+        }
+        
+        if errorDescription.count > 0 {
+            print("\n❌Found router implementation errors: \(errorDescription)")
+            assertionFailure("Found router implementation errors")
         }
     }
 }

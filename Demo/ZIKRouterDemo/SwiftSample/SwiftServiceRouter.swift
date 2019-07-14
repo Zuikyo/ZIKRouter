@@ -28,7 +28,7 @@ class SwiftServiceRouter: ZIKServiceRouter<AnyObject, PerformRouteConfig> {
     
     override class func defaultRouteConfiguration() -> PerformRouteConfig {
         let config = ServiceMakeableConfiguration<SwiftServiceInput, (String) -> Void>({ _ in })
-        config.constructDestination = { [unowned config] (param) in
+        config.constructDestination = { [unowned config] (arguments) in
             config.makeDestination = { () in
                 return SwiftService()
             }

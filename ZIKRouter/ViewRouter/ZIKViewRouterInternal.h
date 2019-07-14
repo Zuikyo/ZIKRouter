@@ -20,7 +20,11 @@
 NS_ASSUME_NONNULL_BEGIN
 
 @interface ZIKViewMakeableConfiguration<__covariant Destination> ()
-/// Prepare the destination from the router internal before `prepareDestination:configuration:`.
+/**
+ Prepare the destination from the router internal before `prepareDestination:configuration:`.
+
+ When it's removed and routed again, this method may be called more than once. You should check whether the destination is already prepared to avoid unnecessary preparation.
+ */
 @property (nonatomic, copy, nullable) void(^_prepareDestination)(Destination destination);
 @end
 
@@ -108,16 +112,11 @@ NS_ASSUME_NONNULL_BEGIN
 + (BOOL)destinationPrepared:(Destination)destination API_DEPRECATED_WITH_REPLACEMENT("destinationFromExternalPrepared:", ios(7.0, 7.0));
 
 /**
- Prepare the destination with the configuration when view first appears.
+ Prepare the destination with the configuration when view first appears. When it's removed and routed again, it's alse treated as first appearance, so this method may be called more than once. You should check whether the destination is already prepared to avoid unnecessary preparation.
  
  The reason of separating instantiation and preparation of destination, is that not all destination are creating from `destinationWithConfiguration:` (destination from storyboard or external), we can reuse the preparation code if we put them in this method.
  
- @note
- When it's removed and routed again, it's alse treated as first appearance, so this method may be called more than once. You should check whether the destination is already prepared to avoid unnecessary preparation.
- 
  If you get a prepared destination by ZIKViewRouteTypeMakeDestination or -prepareDestination:configuring:removing:, this method will be called. When the destination is routing, this method will also be called, because the destination may be changed.
- 
- If configuration conforms to ZIKConfigurationSyncMakeable and makedDestination is not nil, this method won't be called, because destination should already be prepared.
  
  Unwind segue to destination won't call this method.
  

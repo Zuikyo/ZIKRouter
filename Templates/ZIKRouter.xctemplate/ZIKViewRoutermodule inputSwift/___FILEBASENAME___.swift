@@ -23,7 +23,7 @@ class ___VARIABLE_productName___: ZIKViewRouter<___VARIABLE_destinationClass___,
             // Prepare destination
         }
         
-        config.makeDestinationWith = { [unowned config] (param) in
+        config.makeDestinationWith = { [unowned config] (arguments) in
             config.makeDestination = { () in
                 // Instantiate destination. Return nil if configuration is invalid.
                 let destination: ___VARIABLE_destinationClass___? = /*___VARIABLE_destinationClass___()*/

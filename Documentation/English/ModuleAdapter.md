@@ -30,7 +30,7 @@ protocol ModuleARequiredLoginViewInput {
 }
 //Show login view in module A
 Router.perform(
-    to RoutableView<ModuleARequiredLoginViewInput>(),
+    to: RoutableView<ModuleARequiredLoginViewInput>(),
     path: .presentModally(from: self)
     configuring { (config, _) in
         config.prepareDestination = { destination in

@@ -345,7 +345,7 @@ typedef void(^ZIKViewRouteSegueConfiger)(NS_NOESCAPE ZIKViewRouteSegueConfigure)
 @property (nonatomic, copy, nullable) Destination _Nullable(^makeDestination)(void);
 
 /**
- Pass required parameters and make destination. The destination should be prepared before return, because the caller may make destination from the default configuration of the router directly. And you should set makedDestination in makeDestinationWith.
+ Pass required parameters and make destination. You should set makedDestination in makeDestinationWith.
  
  If a module need a few required parameters when creating destination, you can declare in module config protocol:
  @code
@@ -383,9 +383,6 @@ typedef void(^ZIKViewRouteSegueConfiger)(NS_NOESCAPE ZIKViewRouteSegueConfigure)
             };
             // Set makedDestination, so the router won't make destination and prepare destination again when perform with this configuration
             weakConfig.makedDestination = weakConfig.makeDestination();
-            if (weakConfig._prepareDestination) {
-                weakConfig._prepareDestination(weakConfig.makedDestination);
-            }
             return weakConfig.makedDestination;
         };
         return config;

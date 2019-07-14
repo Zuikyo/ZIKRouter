@@ -27,7 +27,7 @@
  @code
  // LoginViewModuleInput inherits from ZIKViewModuleRoutable
  @protocol LoginViewModuleInput <ZIKViewModuleRoutable>
- /// Pass required parameter and return destination with LoginViewInput type.
+ /// Factory method, passing required parameter and return destination with LoginViewInput type
  @property (nonatomic, copy, readonly) id<LoginViewInput> _Nullable(^makeDestinationWith)(NSString *account);
  @end
  @endcode
@@ -60,10 +60,6 @@
  + (ZIKViewRouteConfiguration *)defaultConfiguration {
     ZIKViewMakeableConfiguration<LoginViewController *> *config = [ZIKViewMakeableConfiguration new];
     __weak typeof(config) weakConfig = config;
- 
-    config._prepareDestination = ^(id destination) {
-        // Prepare the destination
-    };
     // User is responsible for calling makeDestinationWith and giving parameters
     config.makeDestinationWith = id^(NSString *account) {
  
@@ -76,9 +72,6 @@
         };
         // Set makedDestination, so the router won't make destination and prepare destination again when perform with this configuration
         weakConfig.makedDestination = weakConfig.makeDestination();
-        if (weakConfig._prepareDestination) {
-            weakConfig._prepareDestination(weakConfig.makedDestination);
-        }
         return weakConfig.makedDestination;
     };
     return config;

@@ -299,7 +299,7 @@ public class ServiceRouter<Destination, ModuleConfig> {
 
 // MARK: Makeable Config
 
-/// Convenient configuration for using custom configuration without configuration subclass.
+/// Convenient configuration as factory for destination for using custom configuration without configuration subclass.
 open class ServiceMakeableConfiguration<Destination, Constructor>: ZIKSwiftServiceMakeableConfiguration {
     
     /// Make destination with block.
@@ -325,7 +325,7 @@ open class ServiceMakeableConfiguration<Destination, Constructor>: ZIKSwiftServi
     }
     
     /**
-     Pass required parameters and make destination. The destination should be prepared before return, because the caller may make destination from the default configuration of the router directly. And you should set makedDestination in makeDestinationWith.
+     Factory method passing required parameters and make destination. You should set makedDestination in makeDestinationWith.
      Genetic Constructor is a factory type like: ServiceMakeableConfiguration<LoginServiceInput, (String) -> LoginServiceInput?>
      
      If a module need a few required parameters when creating destination, you can declare makeDestinationWith in module config protocol:
@@ -359,7 +359,6 @@ open class ServiceMakeableConfiguration<Destination, Constructor>: ZIKSwiftServi
                 return destination
             }
             if let destination = config.makeDestination?() {
-                config.__prepareDestination?(destination)
                 config.makedDestination = destination
                 return destination
             }
@@ -382,7 +381,7 @@ open class ServiceMakeableConfiguration<Destination, Constructor>: ZIKSwiftServi
     public var makeDestinationWith: Constructor
     
     /**
-     Pass required parameters for initializing destination module, and get destination in `didMakeDestination`. You should set makeDestination to capture parameters directly, so you don't need configuration subclass to hold parameters.
+     Asynchronous factory method passing required parameters for initializing destination module, and get destination in `didMakeDestination`. You should set makeDestination to capture parameters directly, so you don't need configuration subclass to hold parameters.
      Genetic Constructor is a function type like: ServiceMakeableConfiguration<LoginServiceInput, (String) -> Void>
      
      If a module need a few required parameters when creating destination, you can declare constructDestination in module config protocol:
@@ -454,6 +453,8 @@ open class ServiceMakeableConfiguration<Destination, Constructor>: ZIKSwiftServi
     }
     
     /// Prepare the destination from the router internal before `prepareDestination(_:configuration:)`.
+    ///
+    /// When it's removed and routed again, this method may be called more than once. You should check whether the destination is already prepared to avoid unnecessary preparation.
     public var __prepareDestination: ((Destination) -> Void)? {
         didSet {
             if self.__prepareDestination == nil {
@@ -503,7 +504,7 @@ open class ServiceMakeableConfiguration<Destination, Constructor>: ZIKSwiftServi
 }
 
 /**
- Convenient configuration for using custom configuration without configuration subclass. Support makeDestinationWith and constructDestination at the same configuration.
+ Convenient configuration as factory for destination for using custom configuration without configuration subclass. Support makeDestinationWith and constructDestination at the same configuration.
  
  If a module need a few required parameters when creating destination, you can declare in module config protocol:
  
@@ -541,7 +542,6 @@ open class ServiceMakeableConfiguration<Destination, Constructor>: ZIKSwiftServi
             return destination
         }
         if let destination = config.makeDestination?() {
-            config.__prepareDestination?(destination)
             config.makedDestination = destination
                 return destination
             }
@@ -598,9 +598,10 @@ open class AnyServiceMakeableConfiguration<Destination, Maker, Constructor>: ZIK
         }
     }
     
+    /// Factory method passing required parameters and make destination. You should set makedDestination in makeDestinationWith.
     public var makeDestinationWith: Maker
     
-    /// Pass required parameters for initializing destination module, and get destination in `didMakeDestination`. You should set makeDestination to capture parameters directly, so you don't need configuration subclass to hold parameters.
+    /// Asynchronous factory method passing required parameters for initializing destination module, and get destination in `didMakeDestination`. You should set makeDestination to capture parameters directly, so you don't need configuration subclass to hold parameters.
     public var constructDestination: Constructor
     
     /// Give the destination with specfic type to the caller. This is auto called and reset to nil after `didFinishPrepareDestination:configuration:`.
@@ -624,6 +625,8 @@ open class AnyServiceMakeableConfiguration<Destination, Maker, Constructor>: ZIK
     }
     
     /// Prepare the destination from the router internal before `prepareDestination(_:configuration:)`.
+    ///
+    /// When it's removed and routed again, this method may be called more than once. You should check whether the destination is already prepared to avoid unnecessary preparation.
     public var __prepareDestination: ((Destination) -> Void)? {
         didSet {
             if self.__prepareDestination == nil {

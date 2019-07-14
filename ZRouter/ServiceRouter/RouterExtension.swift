@@ -95,7 +95,6 @@ public extension ServiceRouterExtension {
                 return destination
             }
             if let destination = config.makeDestination?() {
-                config.__prepareDestination?(destination)
                 config.makedDestination = destination
                 return destination
             }

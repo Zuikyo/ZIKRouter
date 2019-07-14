@@ -157,7 +157,7 @@ typedef void(^ZIKRemoveRouteCompletion)(BOOL success, ZIKRouteAction routeAction
 #pragma clang diagnostic push
 #pragma clang diagnostic ignored "-Wstrict-prototypes"
 
-/// For configuration that can make destination by its own.
+/// For configuration that can make destination by its own, as a factory for the destination.
 @protocol ZIKConfigurationMakeable
 /// Make destination with block.
 @property (nonatomic, copy, readonly, nullable) id _Nullable(^makeDestination)(void);
@@ -166,7 +166,7 @@ typedef void(^ZIKRemoveRouteCompletion)(BOOL success, ZIKRouteAction routeAction
 typedef id _Nullable(^ZIKMakeBlock)();
 /// For configuration that can pass parameters and make destination synchronously.
 @protocol ZIKConfigurationSyncMakeable <ZIKConfigurationMakeable>
-/// Create destination with parameters.
+/// Factory method creating destination with parameters.
 @property (nonatomic, copy, readonly) id _Nullable(^makeDestinationWith)();
 /**
  Maked destination after calling `makeDestinationWith`.
@@ -180,7 +180,7 @@ typedef id _Nullable(^ZIKMakeBlock)();
 typedef void(^ZIKConstructBlock)();
 /// For configuration that can pass parameters and make destination asynchronously.
 @protocol ZIKConfigurationAsyncMakeable <ZIKConfigurationMakeable>
-/// Pass required parameters for initializing destination module, and get destination in `didMakeDestination`.
+/// Asynchronous factory method passing required parameters for initializing destination module, and get destination in `didMakeDestination`.
 @property (nonatomic, copy, readonly) void(^constructDestination)();
 /// Give the destination to the caller.
 @property (nonatomic, copy, nullable) void(^didMakeDestination)(id destination) NS_REFINED_FOR_SWIFT;
@@ -205,7 +205,7 @@ typedef void(^ZIKConstructBlock)();
 @property (nonatomic, copy, nullable) Destination _Nullable(^makeDestination)(void);
 
 /**
- Pass required parameters and make destination. The destination should be prepared before return, because the caller may make destination from the default configuration of the router directly. And you should set makedDestination in makeDestinationWith.
+ Factory method passing required parameters and make destination. You should set makedDestination in makeDestinationWith.
  
  If a module need a few required parameters when creating destination, you can declare in module config protocol:
  @code
@@ -227,9 +227,6 @@ typedef void(^ZIKConstructBlock)();
  making:^ZIKPerformRouteConfiguration<ZIKConfigurationMakeable> * _Nonnull{
      ZIKServiceMakeableConfiguration *config = [ZIKServiceMakeableConfiguration new];
      __weak typeof(config) weakConfig = config;
-     config._prepareDestination = ^(id destination) {
-         // Prepare the destination
-     };
      // User is responsible for calling makeDestinationWith and giving parameters
      config.makeDestinationWith = id^(NSString *account) {
  
@@ -242,9 +239,6 @@ typedef void(^ZIKConstructBlock)();
          };
          // Set makedDestination, so the router won't make destination and prepare destination again when perform with this configuration
          weakConfig.makedDestination = weakConfig.makeDestination();
-         if (weakConfig._prepareDestination) {
-             weakConfig._prepareDestination(weakConfig.makedDestination);
-         }
          return weakConfig.makedDestination;
      };
      return config;
@@ -276,7 +270,7 @@ typedef void(^ZIKConstructBlock)();
 @property (nonatomic, strong, nullable) Destination makedDestination;
 
 /**
- Pass required parameters for initializing destination module, and get destination in `didMakeDestination`.
+ Asynchronous factory method passing required parameters for initializing destination module, and get destination in `didMakeDestination`.
  
  If a module need a few required parameters when creating destination, you can declare in module config protocol:
  @code

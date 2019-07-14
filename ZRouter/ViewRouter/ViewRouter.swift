@@ -769,7 +769,7 @@ open class ViewMakeableConfiguration<Destination, Constructor>: ZIKSwiftViewMake
     }
     
     /**
-     Pass required parameters and make destination. The destination should be prepared before return, because the caller may make destination from the default configuration of the router directly. And you should set makedDestination in makeDestinationWith.
+     Factory method passing required parameters and make destination. You should set makedDestination in makeDestinationWith.
      Genetic Constructor is a factory type like: ViewMakeableConfiguration<LoginViewInput, (String) -> LoginViewInput?>
      
      If a module need a few required parameters when creating destination, you can declare makeDestinationWith in module config protocol:
@@ -803,7 +803,6 @@ open class ViewMakeableConfiguration<Destination, Constructor>: ZIKSwiftViewMake
                 return destination
             }
             if let destination = config.makeDestination?() {
-                config.__prepareDestination?(destination)
                 config.makedDestination = destination
                 return destination
             }
@@ -826,7 +825,7 @@ open class ViewMakeableConfiguration<Destination, Constructor>: ZIKSwiftViewMake
     public var makeDestinationWith: Constructor
     
     /**
-     Pass required parameters for initializing destination module, and get destination in `didMakeDestination`. You should set makeDestination to capture parameters directly, so you don't need configuration subclass to hold parameters.
+     Asynchronous factory method passing required parameters for initializing destination module, and get destination in `didMakeDestination`. You should set makeDestination to capture parameters directly, so you don't need configuration subclass to hold parameters.
      Genetic Constructor is a function type: ViewMakeableConfiguration<LoginViewInput, (String) -> Void>
      
      If a module need a few required parameters when creating destination, you can declare constructDestination in module config protocol:
@@ -899,6 +898,8 @@ open class ViewMakeableConfiguration<Destination, Constructor>: ZIKSwiftViewMake
     }
     
     /// Prepare the destination from the router internal before `prepareDestination(_:configuration:)`.
+    ///
+    /// When it's removed and routed again, this method may be called more than once. You should check whether the destination is already prepared to avoid unnecessary preparation.
     public var __prepareDestination: ((Destination) -> Void)? {
         didSet {
             if self.__prepareDestination == nil {
@@ -986,7 +987,6 @@ open class ViewMakeableConfiguration<Destination, Constructor>: ZIKSwiftViewMake
             return destination
         }
         if let destination = config.makeDestination?() {
-            config.__prepareDestination?(destination)
             config.makedDestination = destination
             return destination
         }
@@ -1043,10 +1043,10 @@ open class AnyViewMakeableConfiguration<Destination, Maker, Constructor>: ZIKSwi
         }
     }
     
-    /// Pass required parameters and make destination. The destination should be prepared before return, because the caller may make destination from the default configuration of the router directly. And you should set makedDestination in makeDestinationWith.
+    /// Factory method passing required parameters and make destination. You should set makedDestination in makeDestinationWith.
     public var makeDestinationWith: Maker
     
-    /// Pass required parameters for initializing destination module, and get destination in `didMakeDestination`. You should set makeDestination to capture parameters directly, so you don't need configuration subclass to hold parameters.
+    /// Asynchronous factory method passsing required parameters for initializing destination module, and get destination in `didMakeDestination`. You should set makeDestination to capture parameters directly, so you don't need configuration subclass to hold parameters.
     public var constructDestination: Constructor
     
     /// Give the destination with specfic type to the caller. This is auto called and reset to nil after `didFinishPrepareDestination:configuration:`.
@@ -1070,6 +1070,8 @@ open class AnyViewMakeableConfiguration<Destination, Maker, Constructor>: ZIKSwi
     }
     
     /// Prepare the destination from the router internal before `prepareDestination(_:configuration:)`.
+    ///
+    /// When it's removed and routed again, this method may be called more than once. You should check whether the destination is already prepared to avoid unnecessary preparation.
     public var __prepareDestination: ((Destination) -> Void)? {
         didSet {
             if self.__prepareDestination == nil {

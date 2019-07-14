@@ -629,12 +629,10 @@ NSErrorDomain const ZIKRouteErrorDomain = @"ZIKRouteErrorDomain";
             hasMakedDestination = YES;            
         }
     }
-    if (!hasMakedDestination) {
-        if (configuration._prepareDestination) {
-            configuration._prepareDestination(destination);
-        }
-        [self prepareDestination:destination configuration:configuration];
+    if (configuration._prepareDestination) {
+        configuration._prepareDestination(destination);
     }
+    [self prepareDestination:destination configuration:configuration];
     [self didFinishPrepareDestination:destination configuration:configuration];
     if ([configuration conformsToProtocol:@protocol(ZIKConfigurationAsyncMakeable)] && [configuration respondsToSelector:@selector(didMakeDestination)]) {
         id<ZIKConfigurationAsyncMakeable> makeableConfig = (id)configuration;

@@ -6,3 +6,4 @@
 #import "RequiredCompatibleAlertModuleInput.h"
 #import "AppRouteRegistry.h"
 #import "ZIKTimeServiceInput.h"
+#import "RequiredLoginViewInput.h"

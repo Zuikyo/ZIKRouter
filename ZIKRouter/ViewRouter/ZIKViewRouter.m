@@ -2760,7 +2760,7 @@ static  ZIKViewRouterType *_Nullable _routerTypeToRegisteredView(Class viewClass
                 if (!destinationRouter) {
                     // Auto create its router
                     ZIKViewRouterType *routerType = _routerTypeToRegisteredView([destination class]);
-                    NSAssert([routerType _validateSupportedRouteTypesForXXView], @"Router for UIView only suppourts ZIKViewRouteTypeAddAsSubview, ZIKViewRouteTypeMakeDestination and ZIKViewRouteTypeCustom, override +supportedRouteTypes in your router.");
+                    NSAssert([routerType _validateSupportedRouteTypesForXXView], @"Router for UIView only supports ZIKViewRouteTypeAddAsSubview, ZIKViewRouteTypeMakeDestination and ZIKViewRouteTypeCustom, override +supportedRouteTypes in your router.");
                     shouldNotifyWillPerform = YES;
                     if ([routerType shouldAutoCreateForDestination:destination fromSource:newSuperview]) {
                         destinationRouter = [routerType routerFromView:destination source:newSuperview];
@@ -2905,7 +2905,7 @@ static  ZIKViewRouterType *_Nullable _routerTypeToRegisteredView(Class viewClass
                         
                         ZIKViewRouterType *routerType = _routerTypeToRegisteredView([destination class]);
                         if (routerType) {
-                            NSAssert([routerType _validateSupportedRouteTypesForXXView], @"Router for UIView only suppourts ZIKViewRouteTypeAddAsSubview, ZIKViewRouteTypeMakeDestination and ZIKViewRouteTypeCustom, override +supportedRouteTypes in your router.");
+                            NSAssert([routerType _validateSupportedRouteTypesForXXView], @"Router for UIView only supports ZIKViewRouteTypeAddAsSubview, ZIKViewRouteTypeMakeDestination and ZIKViewRouteTypeCustom, override +supportedRouteTypes in your router.");
                             if ([routerType shouldAutoCreateForDestination:destination fromSource:source]) {
                                 shouldNotifyWillPerform = YES;
                                 destinationRouter = [routerType routerFromView:destination source:source];
@@ -2995,7 +2995,7 @@ static  ZIKViewRouterType *_Nullable _routerTypeToRegisteredView(Class viewClass
                     if (source) {
                         ZIKViewRouterType *routerType = _routerTypeToRegisteredView([destination class]);
                         if (routerType) {
-                            NSAssert([routerType _validateSupportedRouteTypesForXXView], @"Router for UIView only suppourts ZIKViewRouteTypeAddAsSubview, ZIKViewRouteTypeMakeDestination and ZIKViewRouteTypeCustom, override +supportedRouteTypes in your router.");
+                            NSAssert([routerType _validateSupportedRouteTypesForXXView], @"Router for UIView only supports ZIKViewRouteTypeAddAsSubview, ZIKViewRouteTypeMakeDestination and ZIKViewRouteTypeCustom, override +supportedRouteTypes in your router.");
                             if ([routerType shouldAutoCreateForDestination:destination fromSource:source]) {
                                 shouldNotifyWillPerform = YES;
                                 destinationRouter = [routerType routerFromView:destination source:source];
@@ -4256,7 +4256,7 @@ static  ZIKViewRouterType *_Nullable _routerTypeToRegisteredView(Class viewClass
     NSAssert3([[self defaultRouteConfiguration] conformsToProtocol:configProtocol], @"The module config protocol (%@) should be conformed by the router (%@)'s defaultRouteConfiguration (%@).", NSStringFromProtocol(configProtocol), self, NSStringFromClass([[self defaultRouteConfiguration] class]));
     NSAssert(!ZIKViewRouteRegistry.registrationFinished, @"Only register in +registerRoutableDestination.");
 #if ZIKROUTER_CHECK
-    NSAssert1(protocol_conformsToProtocol(configProtocol, @protocol(ZIKViewModuleRoutable)), @"%@ should conforms to ZIKViewModuleRoutable in DEBUG mode for safety checking", NSStringFromProtocol(configProtocol));
+    NSAssert1(protocol_conformsToProtocol(configProtocol, @protocol(ZIKViewModuleRoutable)), @"Routable module config protocol %@ should conforms to ZIKViewModuleRoutable", NSStringFromProtocol(configProtocol));
 #endif
     [ZIKViewRouteRegistry registerModuleProtocol:configProtocol router:self];
 }
@@ -4356,7 +4356,7 @@ void _registerViewModuleIdentifierWithSwiftFactory(NSString *identifier, Class v
         return nil;
     }
     
-    NSAssert([self _validateSupportedRouteTypesForXXView], @"Router for UIView only suppourts ZIKViewRouteTypeAddAsSubview, ZIKViewRouteTypeMakeDestination and ZIKViewRouteTypeCustom, override +supportedRouteTypes in your router.");
+    NSAssert([self _validateSupportedRouteTypesForXXView], @"Router for UIView only supports ZIKViewRouteTypeAddAsSubview, ZIKViewRouteTypeMakeDestination and ZIKViewRouteTypeCustom, override +supportedRouteTypes in your router.");
 #if ZIK_HAS_UIKIT
     ZIKViewRouteType routeType = ZIKViewRouteTypeAddAsSubview;
     ZIKViewRouteRealType realType = ZIKViewRouteRealTypeAddAsSubview;

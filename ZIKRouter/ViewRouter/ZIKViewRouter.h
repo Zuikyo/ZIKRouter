@@ -449,9 +449,6 @@ typedef void(^ZIKViewRouteGlobalErrorHandler)(__kindof ZIKViewRouter * _Nullable
         };
         // Set makedDestination, so the router won't make destination and prepare destination again when perform with this configuration
         weakConfig.makedDestination = weakConfig.makeDestination();
-        if (weakConfig._prepareDestination) {
-            weakConfig._prepareDestination(weakConfig.makedDestination);
-        }
         return weakConfig.makedDestination;
     };
     return config;
@@ -522,9 +519,6 @@ typedef void(^ZIKViewRouteGlobalErrorHandler)(__kindof ZIKViewRouter * _Nullable
             };
             // Set makedDestination, so the router won't make destination and prepare destination again when perform with this configuration
             weakConfig.makedDestination = weakConfig.makeDestination();
-            if (weakConfig._prepareDestination) {
-                weakConfig._prepareDestination(weakConfig.makedDestination);
-            }
             return weakConfig.makedDestination;
         };
         return config;

@@ -90,6 +90,7 @@ Service Router 可以管理任意自定义模块。View Router 进一步封装�
 4. [依赖注入](DependencyInjection.md)
 5. [循环依赖问题](CircularDependencies.md)
 6. [模块化和解耦](ModuleAdapter.md)
+7. [单元测试](UnitTest.md)
 
 [常见问题](FAQ.md)
 
@@ -510,14 +511,14 @@ id<EditorViewInput> destination = [ZIKRouterToView(EditorViewInput) makeDestinat
 
 * 需要传递的参数并不能都通过 destination 的接口设置，例如参数不属于 destination，而是属于模块内其他组件。如果把参数都放到 destination 的接口上，会导致接口被污染
 
-此时可以对 router 的 configuration 进行扩展，用于保存参数。
+传递必需参数需要使用工厂模式。此时可以对 router 的 configuration 进行扩展，用于保存参数。
 
 之前用于路由的`EditorViewInput`是由 destination 遵守的，现在使用`EditorViewModuleInput`，由自定义的 configuration 遵守，用于声明模块需要的参数：
 
 ```swift
 // protocol 里一般只需要 makeDestinationWith，用于声明参数类型和 destination 类型；也可以添加其他自定义的属性参数或者方法
 protocol EditorViewModuleInput: class {
-    // 传递参数，用于创建模块；这里声明了需要一个 Note 类型的参数，并返回一个 EditorViewInput
+    // 工厂方法，传递参数，用于创建模块；这里声明了需要一个 Note 类型的参数，并返回一个 EditorViewInput
     var makeDestinationWith: (_ note: Note) -> EditorViewInput? { get }
 }
 ```
@@ -527,7 +528,7 @@ protocol EditorViewModuleInput: class {
 ```objectivec
 // 一般只需要 makeDestinationWith，用于声明参数类型和 destination 类型；也可以添加其他自定义的属性参数或者方法
 @protocol EditorViewModuleInput <ZIKViewModuleRoutable>
- // 传递参数，用于创建模块； protocol 里声明了需要一个 Note 类型的参数，并返回一个 EditorViewInput
+ // 工厂方法，传递参数，用于创建模块； protocol 里声明了需要一个 Note 类型的参数，并返回一个 EditorViewInput
  @property (nonatomic, copy, readonly) id<EditorViewInput> _Nullable(^makeDestinationWith)(Note *note);
  @end
 ```
@@ -536,168 +537,7 @@ protocol EditorViewModuleInput: class {
 
 此时的 `EditorViewModuleInput ` 就类似于一个工厂类，通过它来声明和创建 destination。
 
-使用自定义 configuration 时，可以使用 configuration 子类，在子类上用自定义属性传递参数。
-
-<details><summary>configuration 子类</summary>
-
-```swift
-// 使用自定义子类，遵守 EditorViewModuleInput
-// Swift 泛型类不会出现在 Mach-O 的 __objc_classlist 节中，所以不会对 app 的启动速度造成影响
-class EditorViewModuleConfiguration<T>: ZIKViewMakeableConfiguration<NoteEditorViewController>, EditorViewModuleInput {
-    // 使用者调用 makeDestinationWith 向模块传参
-    var makeDestinationWith: (_ note: Note) -> EditorViewInput? {
-        return { note in
-            // makeDestination 会被用于创建 destination
-            // 用闭包捕获了传入的参数，可以直接用于创建 destination
-            self.makeDestination = { [unowned self] () in
-                // 调用自定义初始化方法
-                let destination = NoteEditorViewController(note: note)
-                return destination
-            }
-            if let destination = self.makeDestination?() {
-                // 设置 makedDestination 后，router 在执行时就会直接使用此对象
-                self.makedDestination = destination
-                return destination
-            }
-            return nil
-        }
-    }
-}
-
-func makeEditorViewModuleConfiguration() -> ZIKViewMakeableConfiguration<NoteEditorViewController> & EditorViewModuleInput {
-	return EditorViewModuleConfiguration<Any>()
-}
-```
-
-</details>
-
-如果你的协议很简单，不需要用到 configuration 子类，或者你用的是 Objective-C，不想创建过多的子类影响 app 启动速度，可以用泛型类`ViewMakeableConfiguration`和`ZIKViewMakeableConfiguration`：
-
-```swift
-extension ViewMakeableConfiguration: EditorViewModuleInput where Destination == EditorViewInput, Constructor == (Note) -> EditorViewInput? {
-}
-
-// 用泛型类可以实现 EditorViewModuleConfiguration 子类一样的效果
-// 此时的 config 相当于 EditorViewModuleConfiguration<Any>()
-func makeEditorViewModuleConfiguration() -> ViewMakeableConfiguration<EditorViewInput, (Note) -> EditorViewInput?> {
-    let config = ViewMakeableConfiguration<EditorViewInput, (Note) -> EditorViewInput?>({ _ in})
-    
-    // 使用者调用 makeDestinationWith 向模块传参
-    config.makeDestinationWith = { [unowned config] note in
-        // makeDestination 会被用于创建 destination
-        // 用闭包捕获了传入的参数，可以直接用于创建 destination
-        config.makeDestination = { () in
-            // 调用自定义初始化方法
-            let destination = NoteEditorViewController(note: note)
-            return destination
-        }
-        if let destination = config.makeDestination?() {
-            // 设置 makedDestination 后，router 在执行时就会直接使用此对象
-            config.makedDestination = destination
-            return destination
-        }
-        return nil
-    }
-    return config
-}
-
-```
-
-<details><summary>Objective-C Sample</summary>
-
-泛型类`ZIKViewMakeableConfiguration`有类型为`id(^)()`的`makeDestinationWith`属性，`id(^)()`表示这个 block 接受可变参数，因此可以通过 protocol 自由声明`makeDestinationWith`的参数。
-
-```objectivec
-// 此时的 config 效果和使用子类是一样的
-ZIKViewMakeableConfiguration<NoteEditorViewController *> * makeEditorViewModuleConfiguration() {
-    ZIKViewMakeableConfiguration<NoteEditorViewController *> *config = [ZIKViewMakeableConfiguration<NoteEditorViewController *> new];
-    __weak typeof(config) weakConfig = config;
-    
-    // 配置 makeDestinationWith，使用者调用 makeDestinationWith 向模块传参
-    config.makeDestinationWith = ^id<EditorViewInput> _Nullable(Note *note) {
-        // makeDestination 会被用于创建 destination
-        // 用闭包捕获了传入的参数，可以直接用于创建 destination，不必保存到 configuration 的属性上
-        weakConfig.makeDestination = ^ NoteEditorViewController * _Nullable{
-            // 调用自定义初始化方法
-            NoteEditorViewController *destination = [NoteEditorViewController alloc] initWithNote:note];
-            return destination;
-        };
-        // 设置 makedDestination 后，router 在执行时就会直接使用此对象
-        weakConfig.makedDestination = weakConfig.makeDestination();
-        return weakConfig.makedDestination;
-    };
-    return config;
-}
-```
-
-</details>
-
-创建了自定义 configuration 之后，就可以在创建路由时，在 router 子类中重写`defaultRouteConfiguration`使用自定义的 configuration:
-
-```swift
-class EditorViewRouter: ZIKViewRouter<NoteEditorViewController, ZIKViewMakeableConfiguration<NoteEditorViewController>> {
-    
-    // 使用自定义 configuration
-    override class func defaultRouteConfiguration() -> ZIKViewMakeableConfiguration<NoteEditorViewController> {
-        return makeEditorViewModuleConfiguration()
-    }
-    
-    override func destination(with configuration: ZIKViewMakeableConfiguration<NoteEditorViewController>) -> NoteEditorViewController? {
-        if let makeDestination = configuration.makeDestination {
-            return makeDestination()
-        }
-        return nil
-    }
-    ...
-}
-```
-
-<details><summary>Objective-C Sample</summary>
-
-```swift
-@interface EditorViewRouter: ZIKViewRouter<NoteEditorViewController, ZIKViewMakeableConfiguration<NoteEditorViewController>>
-@end
-@implementation EditorViewRouter {
-    
-// 使用自定义 configuration
-+(ZIKViewMakeableConfiguration<NoteEditorViewController *> *)defaultRouteConfiguration() {
-    return makeEditorViewModuleConfiguration();
-}
-
-- (NoteEditorViewController *)destinationWithConfiguration:(ZIKViewMakeableConfiguration<NoteEditorViewController *> *)configuration {
-	if (configuration.makeDestination) {
-	    return configuration.makeDestination();
-	}
-	return nil;
-}
-...
-}
-```
-
-</details>
-
-除了使用 router 子类，也可以用注册 config 工厂函数的方式创建路由：
-
-```swift
-// 注册 EditorViewModuleInput 和自定义 configuration 的创建函数
-ZIKAnyViewRouter.register(RoutableViewModule<EditorViewModuleInput>(),
-   forMakingView: NoteEditorViewController.self, 
-   making: makeEditorViewModuleConfiguration)
-```
-
-<details><summary>Objective-C Sample</summary>
-
-```objectivec
-// 注册 EditorViewModuleInput 和自定义 configuration 的创建函数
-[ZIKModuleViewRouter(EditorViewModuleInput)
-     registerModuleProtocol:ZIKRoutable(EditorViewModuleInput)
-     forMakingView:[NoteEditorViewController class]
-     factory: makeEditorViewModuleConfiguration];
-```
-
-</details>
-
-模块路由创建完毕后，使用者在调用模块时就能动态传入必需参数，调用者的代码将会变成这样：
+使用者在调用模块时就能动态传入必需参数，调用时代码将会变成这样：
 
 ```swift
 var note = ...
@@ -719,8 +559,6 @@ Note *note = ...
  }];
 ```
 </details>
-
-这种方式省去了很多胶水代码，通过闭包直接传参，无需通过属性保存参数，而且每个模块都能用泛型和 protocol 重新声明参数类型，并且所有的传参都能统一到一个`makeDestinationWith`方法上，后续可以实现通过 URL 统一调用。
 
 更详细的内容，可以参考[自定义 configuration 传参](CustomConfiguration.md)。
 

@@ -21,7 +21,7 @@ NS_ASSUME_NONNULL_BEGIN
 @end
 
 /**
- ZIKLoginModule provides default dependency registration.
+ ZIKLoginModule provides default dependency registration. It's wrapped by macro.
  
  The host app can directly call this registration function, just by adding USE_DEFAULT_DEPENDENCY_ZIKLoginModule=1 in Build Settings -> Preprocessor Macros of the host app.
  

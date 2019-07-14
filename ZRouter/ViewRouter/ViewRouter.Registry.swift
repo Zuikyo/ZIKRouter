@@ -502,6 +502,7 @@ private class _ViewRouterValidater: ZIKViewRouteAdapter {
     }
     override class func _didFinishRegistration() {
         
+        var errorDescription = ""
         // Declared protocols in extension of RoutableView and RoutableViewModule should be registered
         var declaredRoutableTypes = [String]()
         // Types in method signature used as RoutableView<Type>(), RoutableView<Type>(declaredProtocol: Type.self) and RoutableView<Type>(declaredTypeName: typeName), maybe not declared yet
@@ -623,14 +624,18 @@ private class _ViewRouterValidater: ZIKViewRouteAdapter {
         }
         
         for declaredProtocol in declaredDestinationProtocols {
-            assert(Registry.viewProtocolContainer.keys.contains(_RouteKey(key: declaredProtocol)) ||
+            if !(Registry.viewProtocolContainer.keys.contains(_RouteKey(key: declaredProtocol)) ||
                 Registry.viewAdapterContainer.keys.contains(_RouteKey(key: declaredProtocol)) ||
-                _ZIKViewRouterToIdentifier(Registry.makingDestinationIdentifierPrefix + declaredProtocol) != nil, "Declared view protocol (\(declaredProtocol)) is not registered with any router.")
+                _ZIKViewRouterToIdentifier(Registry.makingDestinationIdentifierPrefix + declaredProtocol) != nil) {
+                errorDescription.append("\n\n❌Declared view protocol (\(declaredProtocol)) is not registered with any router.")
+            }
         }
         for declaredProtocol in declaredModuleProtocols {
-            assert(Registry.viewModuleProtocolContainer.keys.contains(_RouteKey(key: declaredProtocol)) ||
+            if !(Registry.viewModuleProtocolContainer.keys.contains(_RouteKey(key: declaredProtocol)) ||
                 Registry.viewModuleAdapterContainer.keys.contains(_RouteKey(key: declaredProtocol)) ||
-                _ZIKViewRouterToIdentifier(Registry.makingModuleIdentifierPrefix + declaredProtocol) != nil, "Declared view protocol (\(declaredProtocol)) is not registered with any router.")
+                _ZIKViewRouterToIdentifier(Registry.makingModuleIdentifierPrefix + declaredProtocol) != nil) {
+                errorDescription.append("\n\n❌Declared view module config protocol (\(declaredProtocol)) is not registered with any router.")
+            }
         }
         
         for (routingType, simplifiedName) in viewRoutingTypes {
@@ -640,9 +645,11 @@ private class _ViewRouterValidater: ZIKViewRouteAdapter {
                 routingTypeName = simplifiedName
             }
             if let objcProtocol = NSProtocolFromString(routingTypeName) {
-                routableProtocol  = _routableViewProtocolFromObject(objcProtocol)
+                routableProtocol = _routableViewProtocolFromObject(objcProtocol)
             }
-            assert(declaredDestinationProtocols.contains(simplifiedName) || routableProtocol != nil, "Find invalid generic type usage for routing: RoutableView<\(simplifiedName)>. You should only use declared protocol type as generic type, don't use \"RoutableView<\(simplifiedName)>\" or \"RoutableView(declaredProtocol:\(simplifiedName))\" in your code !")
+            if !(declaredDestinationProtocols.contains(simplifiedName) || routableProtocol != nil) {
+                errorDescription.append("\n\n❌Find invalid generic type usage for routing: RoutableView<\(simplifiedName)>. You should only use declared protocol type as generic type, don't use \"RoutableView<\(simplifiedName)>\" or \"RoutableView(declaredProtocol:\(simplifiedName))\" in your code !")
+            }
         }
         for (routingType, simplifiedName) in viewModuleRoutingTypes {
             var routingTypeName = routingType
@@ -653,7 +660,9 @@ private class _ViewRouterValidater: ZIKViewRouteAdapter {
             if let objcProtocol = NSProtocolFromString(routingTypeName) {
                 routableProtocol  = _routableViewModuleProtocolFromObject(objcProtocol)
             }
-            assert(declaredModuleProtocols.contains(simplifiedName) || routableProtocol != nil, "Find invalid generic type usage for routing: RoutableViewModule<\(simplifiedName)>. You should only use declared protocol type as generic type, don't use \"RoutableViewModule<\(simplifiedName)>\" or \"RoutableViewModule(declaredProtocol:\(simplifiedName))\" in your code!")
+            if !(declaredModuleProtocols.contains(simplifiedName) || routableProtocol != nil) {
+                errorDescription.append("\n\n❌Find invalid generic type usage for routing: RoutableViewModule<\(simplifiedName)>. You should only use declared protocol type as generic type, don't use \"RoutableViewModule<\(simplifiedName)>\" or \"RoutableViewModule(declaredProtocol:\(simplifiedName))\" in your code!")
+            }
         }
         
         // Destination should conform to registered destination protocols
@@ -662,7 +671,9 @@ private class _ViewRouterValidater: ZIKViewRouteAdapter {
             let badDestinationClass: AnyClass? = ZIKViewRouteRegistry.validateDestinations(forRoute: route, handler: { (destinationClass) -> Bool in
                 return _swift_typeIsTargetType(destinationClass, viewProtocol)
             })
-            assert(badDestinationClass == nil, "Registered view class (\(badDestinationClass!)) for router (\(route)) should conform to registered view protocol (\(viewProtocol)).")
+            if badDestinationClass != nil {
+                errorDescription.append("\n\n❌Registered view class (\(badDestinationClass!)) for router (\(route)) should conform to registered view protocol (\(viewProtocol)).")
+            }
         }
         
         // Destination should conforms to registered adapter destination protocols
@@ -684,7 +695,9 @@ private class _ViewRouterValidater: ZIKViewRouteAdapter {
             let badDestinationClass: AnyClass? = ZIKViewRouteRegistry.validateDestinations(forRoute: route, handler: { (destinationClass) -> Bool in
                 return _swift_typeIsTargetType(destinationClass, viewProtocol)
             })
-            assert(badDestinationClass == nil, "Registered view class (\(badDestinationClass!)) for router (\(route)) should conform to registered view adapter protocol (\(viewProtocol)).")
+            if badDestinationClass != nil {
+                errorDescription.append("\n\n❌Registered view class (\(badDestinationClass!)) for router (\(route)) should conform to registered view adapter protocol (\(viewProtocol)).")
+            }
         }
         
         // Router's defaultRouteConfiguration should conforms to registered module config protocols
@@ -695,7 +708,9 @@ private class _ViewRouterValidater: ZIKViewRouteAdapter {
             }
             let configProtocol = routeKey.type!
             let configType = type(of: routerType.defaultRouteConfiguration())
-            assert(_swift_typeIsTargetType(configType, configProtocol), "The router (\(route))'s default configuration (\(configType)) must conform to the registered config protocol (\(configProtocol)).")
+            if _swift_typeIsTargetType(configType, configProtocol) == false {
+                errorDescription.append("\n\n❌The router (\(route))'s default configuration (\(configType)) must conform to the registered config protocol (\(configProtocol)).")
+            }
         }
         
         // Router's defaultRouteConfiguration should conforms to registered adapter module config protocols
@@ -715,7 +730,14 @@ private class _ViewRouterValidater: ZIKViewRouteAdapter {
             }
             let config = routerType.defaultRouteConfiguration()
             let configType = Swift.type(of: config)
-            assert(_swift_typeIsTargetType(configType, configProtocol), "The router (\(routerType))'s default configuration (\(configType)) must conform to the registered adapter config protocol (\(configProtocol)).")
+            if _swift_typeIsTargetType(configType, configProtocol) == false {
+                errorDescription.append("\n\n❌The router (\(routerType))'s default configuration (\(configType)) must conform to the registered adapter config protocol (\(configProtocol)).")
+            }
+        }
+        
+        if errorDescription.count > 0 {
+            print("\n❌Found router implementation errors: \(errorDescription)")
+            assertionFailure("Found router implementation errors")
         }
     }
 }

@@ -17,8 +17,8 @@ NS_ASSUME_NONNULL_BEGIN
 /**
  Prepare the destination from the router internal before `prepareDestination:configuration:`.
  
- If configuration conforms to ZIKConfigurationSyncMakeable and makedDestination is not nil, this method won't be called, because destination should already be prepared.
-*/
+ When it's removed and routed again, this method may be called more than once. You should check whether the destination is already prepared to avoid unnecessary preparation.
+ */
 @property (nonatomic, copy, nullable) void(^_prepareDestination)(id destination);
 @end
 
@@ -26,7 +26,7 @@ NS_ASSUME_NONNULL_BEGIN
 /**
  Prepare the destination from the router internal before `prepareDestination:configuration:`.
  
- If configuration conforms to ZIKConfigurationSyncMakeable and makedDestination is not nil, this method won't be called, because destination should already be prepared.
+ When it's removed and routed again, this method may be called more than once. You should check whether the destination is already prepared to avoid unnecessary preparation.
  */
 @property (nonatomic, copy, nullable) void(^_prepareDestination)(Destination destination);
 @end

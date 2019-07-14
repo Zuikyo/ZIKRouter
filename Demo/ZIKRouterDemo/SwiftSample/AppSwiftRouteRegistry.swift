@@ -40,7 +40,7 @@ class AppBlockRouteRegistry: ZIKViewRouteAdapter {
                         return SwiftService()
                 }).makeDefaultConfiguration({
                     let config = ServiceMakeableConfiguration<SwiftServiceInput, (String) -> Void>({ _ in })
-                    config.constructDestination = { [unowned config] (param) in
+                    config.constructDestination = { [unowned config] (arguments) in
                         config.makeDestination = { () in
                             return SwiftService()
                         }
@@ -87,6 +87,9 @@ class EasyRouteRegistry: ZIKViewRouteAdapter {
         
         ZIKAnyViewRouter.register(RoutableViewModule<EasyViewModuleInput>(), forMakingView: SwiftSampleViewController.self) { () -> EasyViewModuleInput in
             let config = AnyViewMakeableConfiguration<EasyViewInput, (String, Int)->EasyViewInput?, (String, Int)->Void>(maker: { _,_ in return nil }, constructor: {_,_ in })
+            config.__prepareDestination = { d in
+                
+            }
             config.makeDestinationWith = { [unowned config] (title, num) in
                 config.makeDestination = { () -> EasyViewInput? in
                     let sb = UIStoryboard.init(name: "Main", bundle: nil)
@@ -95,7 +98,6 @@ class EasyRouteRegistry: ZIKViewRouteAdapter {
                     return destination
                 }
                 if let destination = config.makeDestination?() {
-                    config.__prepareDestination?(destination)
                     config.makedDestination = destination
                     return destination
                 }

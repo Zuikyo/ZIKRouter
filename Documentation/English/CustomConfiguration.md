@@ -20,7 +20,7 @@ Instead of  `EditorViewInput`, we use another routable protocol `EditorViewModul
 
 ```swift
 protocol EditorViewModuleInput: class {
-    // Transfer parameters and make destination
+    // Factory method for transferring parameters and making destination
     var makeDestinationWith: (viewModel: EditorViewModel, _ note: Note) -> EditorViewInput? { get }
 }
 ```
@@ -29,7 +29,7 @@ protocol EditorViewModuleInput: class {
 
 ```objectivec
 @protocol EditorViewModuleInput <ZIKViewModuleRoutable>
- //  Transfer parameters for making destination
+ // Factory method for transferring parameters and making destination
  @property (nonatomic, copy, readonly) id<EditorViewInput> _Nullable(^makeDestinationWith)(EditorViewModel *viewModel, Note *note);
  @end
 ```
@@ -45,7 +45,7 @@ You can use a configuration subclass and store parameters on its properties.
 ```swift
 // Configuration subclass conforming to EditorViewModuleInput
 class EditorViewModuleConfiguration<T>: ZIKViewMakeableConfiguration<NoteEditorViewController>, EditorViewModuleInput {
-    // User is responsible for calling makeDestinationWith and giving parameters
+    // Factory method. User is responsible for calling makeDestinationWith and giving parameters
     var makeDestinationWith: (viewModel: EditorViewModel, _ note: Note) -> EditorViewInput? {
         return { viewModel, note in
                 
@@ -69,7 +69,6 @@ class EditorViewModuleConfiguration<T>: ZIKViewMakeableConfiguration<NoteEditorV
             }
             
             if let destination = self.makeDestination?() {
-                self.__prepareDestination?(destination)
                 // The router won't make and prepare destination again when perform with this configuration
                 self.makedDestination = destination
                 return destination
@@ -93,7 +92,7 @@ func makeEditorViewModuleConfiguration() -> ZIKViewMakeableConfiguration<NoteEdi
 
 @implementation EditorViewModuleConfiguration
 
-// User is responsible for calling makeDestinationWith and giving parameters
+// Factory method. User is responsible for calling makeDestinationWith and giving parameters
 - (id<EditorViewInput> _Nullable(^)(Note *))makeDestinationWith {
     return ^id<EditorViewInput> _Nullable(EditorViewModel *viewModel, Note *note) {
         
@@ -118,9 +117,6 @@ func makeEditorViewModuleConfiguration() -> ZIKViewMakeableConfiguration<NoteEdi
         
         // Set makedDestination so router will use this destination when performing
         self.makedDestination = self.makeDestination();
-        if (self._prepareDestination) {
-            self._prepareDestination(self.makedDestination);
-        }
         return self.makedDestination;
     };
 }
@@ -151,7 +147,7 @@ extension ViewMakeableConfiguration: EditorViewModuleInput where Destination == 
 func makeEditorViewModuleConfiguration() -> ViewMakeableConfiguration<EditorViewInput, (EditorViewModel, Note) -> EditorViewInput?> {
     let config = ViewMakeableConfiguration<EditorViewInput, (EditorViewModel, Note) -> EditorViewInput?>({ _,_ in})        
     
-    // User is responsible for calling makeDestinationWith and giving parameters
+    // Factory method. User is responsible for calling makeDestinationWith and giving parameters
     config.makeDestinationWith = { [unowned config] (viewModel, note) in
                                   
         // Prepare the destination
@@ -173,7 +169,6 @@ func makeEditorViewModuleConfiguration() -> ViewMakeableConfiguration<EditorView
             return destination
         }
         if let destination = config.makeDestination?() {
-            config.__prepareDestination?(destination)
             // The router won't make and prepare destination again when perform with this configuration
             config.makedDestination = destination
             return destination

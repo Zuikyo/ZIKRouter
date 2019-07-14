@@ -1,0 +1,12 @@
+//
+//  Config.xcconfig
+//  ZIKRouterDemo
+//
+//  Created by zuik on 2019/6/22.
+//  Copyright © 2019 zuik. All rights reserved.
+//
+
+// Configuration settings file format documentation can be found at:
+// https://help.apple.com/xcode/#/dev745c5c974
+
+GCC_PREPROCESSOR_DEFINITIONS = $(inherited) DEBUG=1 USE_DEFAULT_DEPENDENCY_ZIKLoginModule=1
