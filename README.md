@@ -119,7 +119,7 @@ For Objective-C project:
 pod 'ZIKRouter', '>= 1.1.0'
 
 # or only use ServiceRouter
-pod 'ZIKRouter/ServiceRouter' , '>=1.1.0
+pod 'ZIKRouter/ServiceRouter' , '>=1.1.0'
 ```
 For Swift project:
 
@@ -127,7 +127,7 @@ For Swift project:
 pod 'ZRouter', '>= 1.1.0'
 
 # or only use ServiceRouter
-pod 'ZRouter/ServiceRouter' , '>=1.1.0
+pod 'ZRouter/ServiceRouter' , '>=1.1.0'
 ```
 
 ### Carthage
