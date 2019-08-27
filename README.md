@@ -498,7 +498,7 @@ For more detail, read [Perform Route](Documentation/English/PerformRoute.md).
 
 #### Make Destination
 
-If you don't wan't to show a view, but only need to get instance of the module, you can use `makeDestination`:
+If you don't want to show a view, but only need to get instance of the module, you can use `makeDestination`:
 
 ```swift
 // destination is inferred as EditorViewInput
@@ -869,7 +869,7 @@ For more detail, read [Module Adapter](Documentation/English/ModuleAdapter.md).
 
 ZIKRouter also provides a default URLRouter. It's easy to communicate with modules via url.
 
-URLRouter is not contained by default. If you wan't to use it, add submodule `pod 'ZIKRouter/URLRouter'` to your  `Podfile` , and call `[ZIKRouter enableDefaultURLRouteRule]` to enable URLRouter.
+URLRouter is not contained by default. If you want to use it, add submodule `pod 'ZIKRouter/URLRouter'` to your  `Podfile` , and call `[ZIKRouter enableDefaultURLRouteRule]` to enable URLRouter.
 
 You can register router with a url:
 

@@ -819,7 +819,7 @@ void zix_checkMemoryLeak(id object, NSTimeInterval delaySecond, void(^handler)(i
                 }
                 return;
             } else if ([weakObject isKindOfClass:[XXView class]]) {
-#if ZIK_HAS_UIKIT
+#if __has_include("ZIKViewRouter.h")
                 XXViewController *viewController = [weakObject zix_firstAvailableViewController];
                 if ([viewController zix_routed]) {
                     return;

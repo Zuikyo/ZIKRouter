@@ -130,7 +130,7 @@ Custom Swift generic doesn't support covariance and contravariance. So a `ZIKVie
 
 Only one generic parameter will be set for each router. You can use convenient types like `DestinationViewRouter`,`DestinationServiceRouter`,`ModuleViewRouter`,`ModuleServiceRouter`. `ViewRouter<EditorViewInput, ViewRouteConfig>` can be replaced with `DestinationViewRouter<EditorViewInput>`.
 
-When the router uses a module config protocol, the destination type can't be designated in generic parameter. If you wan't to designated destination type, you should return the destination in module config protocol's interface.
+When the router uses a module config protocol, the destination type can't be designated in generic parameter. If you want to designated destination type, you should return the destination in module config protocol's interface.
 
 ---
 #### Next section：[Perform Route](./PerformRoute.md)

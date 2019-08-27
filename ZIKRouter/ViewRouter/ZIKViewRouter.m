@@ -2415,7 +2415,7 @@ static  ZIKViewRouterType *_Nullable _routerTypeToRegisteredView(Class viewClass
             id parentRemovingFrom = node.zix_parentRemovingFrom;
             id source;
             if (parentRemovingFrom ||
-                (!node.parentViewController && ![node zix_isAppRootViewController])) {
+                (!node.parentViewController && !node.presentingViewController && ![node zix_isAppRootViewController])) {
                 source = parentRemovingFrom;
             } else {
                 node = node.parentViewController;
@@ -2466,7 +2466,7 @@ static  ZIKViewRouterType *_Nullable _routerTypeToRegisteredView(Class viewClass
             id parentRemovingFrom = node.zix_parentRemovingFrom;
             id source;
             if (parentRemovingFrom ||
-                (!node.parentViewController && ![node zix_isAppRootViewController])) {
+                (!node.parentViewController && !node.presentingViewController && ![node zix_isAppRootViewController])) {
                 source = parentRemovingFrom;
             } else {
                 node = node.parentViewController;

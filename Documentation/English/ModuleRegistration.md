@@ -154,7 +154,7 @@ class EditorViewRouter: ZIKViewRouter<EditorViewController, EditorModuleConfigur
 // EditorViewRouter.m
  
  // Custom configuration conforming to EditorModuleInput
- // If you don't wan't to use subclass, you can use category to let ZIKViewRouteConfiguration conform to EditorModuleInput
+ // If you don't want to use subclass, you can use category to let ZIKViewRouteConfiguration conform to EditorModuleInput
  @interface EditorModuleConfiguration: ZIKViewRouteConfiguration <EditorModuleInput>
  @property (nonatomic, copy, nullable) id viewData;
  @property (nonatomic, copy, nullable) Note *noteModel;
@@ -273,7 +273,7 @@ We can't check type of parameters when passing in a dictionary, so it's not reco
 
 ZIKRouter also provides a default URLRouter. It's easy to communicate with modules via url.
 
-URLRouter is not contained by default. If you wan't to use it, add submodule `pod 'ZIKRouter/URLRouter'` to your  `Podfile` , and call `[ZIKRouter enableDefaultURLRouteRule]` to enable URLRouter.
+URLRouter is not contained by default. If you want to use it, add submodule `pod 'ZIKRouter/URLRouter'` to your  `Podfile` , and call `[ZIKRouter enableDefaultURLRouteRule]` to enable URLRouter.
 
 You can register router with a url:
 
