@@ -1377,7 +1377,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				CODE_SIGN_IDENTITY = "";
-				CURRENT_PROJECT_VERSION = 1.1.0;
+				CURRENT_PROJECT_VERSION = 1.1.1;
 				DEFINES_MODULE = YES;
 				DEVELOPMENT_TEAM = "";
 				DYLIB_COMPATIBILITY_VERSION = 1;
@@ -1401,7 +1401,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				CODE_SIGN_IDENTITY = "";
-				CURRENT_PROJECT_VERSION = 1.1.0;
+				CURRENT_PROJECT_VERSION = 1.1.1;
 				DEFINES_MODULE = YES;
 				DEVELOPMENT_TEAM = "";
 				DYLIB_COMPATIBILITY_VERSION = 1;
